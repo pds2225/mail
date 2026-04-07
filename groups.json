@@ -1,0 +1,14 @@
+[
+  {
+    "id": "grp_default",
+    "name": "인천 화장품 수출팀",
+    "active": true,
+    "regions": ["인천"],
+    "keywords": {
+      "logic": "OR",
+      "keywords": ["화장품", "뷰티", "K-뷰티", "해외전시회", "수출지원", "해외진출"]
+    },
+    "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
+    "recipients": ["ekth3691@gmail.com"]
+  }
+]
