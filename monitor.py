@@ -205,12 +205,14 @@ def fetch_myfair(site: dict) -> list[dict]:
         href = norm(a.get("href", "") if a else "")
         link = href if href.startswith("http") else f"https://myfair.co{href}"
         period = norm(cells[-1].get_text())
-        # 등록일: 첫 번째 날짜 패턴 추출 시도
-        posted = extract_date_from_text(period)
+        # 마감일: period의 마지막 날짜 (신청기간 종료일)
+        dates = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", period)
+        deadline = dates[-1].replace(".", "-").replace("/", "-") if dates else period
+        # 등록일: myfair는 신청기간 정보만 제공하므로 날짜불명 처리
         items.append(_item(f"myfair_{stable_id(title+link)}", title, link,
             norm(cells[1].get_text() if len(cells) > 1 else ""),
             norm(cells[2].get_text() if len(cells) > 2 else ""),
-            period, site["name"], posted, agg))
+            deadline, site["name"], "", agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -262,7 +264,7 @@ def fetch_html_generic(site: dict) -> list[dict]:
     for row in soup.select(sel):
         a = row.select_one("a")
         title = norm(a.get_text() if a else row.get_text())
-        if not title: continue
+        if not title or len(title) < 5: continue
         href = a.get("href", "") if a else ""
         link = href if href.startswith("http") else site["url"].rstrip("/") + "/" + href.lstrip("/")
         row_text = row.get_text()
@@ -443,7 +445,7 @@ def fetch_kocca_bbs(site: dict) -> list[dict]:
             if card.name in ("li", "tr", "div"): break
         dates = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
         posted   = dates[0].replace(".", "-") if dates else ""
-        deadline = dates[1].replace(".", "-") if len(dates) >= 3 else (dates[-1].replace(".", "-") if dates else "")
+        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
         items.append(_item(iid, title, link, "한국콘텐츠진흥원", "금융지원",
                            deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
@@ -965,7 +967,7 @@ def main() -> None:
                  len(filtered_new), len(date_matched), len(date_unknown))
     else:
         filtered_new = new_items
-        date_unknown = new_items
+        date_unknown = []
 
     # ⑤ 원본전체 메일 (settings.raw_all_recipients)
     if settings.get("raw_all_enabled", True) and settings.get("raw_all_recipients"):
