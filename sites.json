@@ -22,12 +22,12 @@
     "name": "중소벤처24(SMEs24)",
     "type": "html_table",
     "url": "https://www.smes.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": true,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "통합포털 [PC 실행 시 정상 접속]"
+    "note": "통합포털 [비활성화: SPA/JS 렌더링 필요, 정적 크롤링 불가]"
   },
   {
     "id": "subsidy24",
@@ -45,13 +45,13 @@
     "id": "ntis",
     "name": "NTIS(과학기술지식정보)",
     "type": "html_table",
-    "url": "https://www.ntis.go.kr/",
-    "enabled": true,
+    "url": "https://www.ntis.go.kr/rndgate/eg/un/ra/mng.do",
+    "enabled": false,
     "is_aggregator": true,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "통합포털 - R&D [PC 실행 시 정상 접속]"
+    "note": "국가R&D통합공고 [비활성화: JS 렌더링 필요 - 공고목록 URL 확인됨, 향후 Selenium/API 전환 시 활성화]"
   },
   {
     "id": "iris",
@@ -67,12 +67,12 @@
     "name": "나라장터(G2B)",
     "type": "html_table",
     "url": "https://www.g2b.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": true,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "통합포털 - 조달 [PC 실행 시 정상 접속]"
+    "note": "통합포털 - 조달 [비활성화: JS 렌더링 필요, 차세대 나라장터 전환 후 정적 크롤링 불가]"
   },
   {
     "id": "mss",
@@ -228,13 +228,13 @@
     "id": "kosme",
     "name": "중소벤처기업진흥공단(KOSME)",
     "type": "html_table",
-    "url": "https://www.kosmes.or.kr/",
+    "url": "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "정책자금/수출바우처 [PC 실행 시 정상 접속]"
+    "note": "정책자금/수출바우처 공지사항 목록 [홈페이지에서 공고 목록 URL로 변경]"
   },
   {
     "id": "semas",
@@ -282,13 +282,13 @@
     "id": "ksure",
     "name": "한국무역보험공사(K-SURE)",
     "type": "html_table",
-    "url": "https://www.ksure.or.kr/",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "수출보험/보증 [PC 실행 시 정상 접속]"
+    "note": "수출보험/보증 공고 목록 [홈페이지에서 공고 목록 URL로 변경]"
   },
   {
     "id": "kibo",
@@ -306,25 +306,25 @@
     "id": "kodit",
     "name": "신용보증기금(KODIT)",
     "type": "html_table",
-    "url": "https://www.kodit.co.kr/",
+    "url": "https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "신용보증 [PC 실행 시 정상 접속]"
+    "note": "신용보증 공지사항 목록 [홈페이지에서 공지사항 목록 URL로 변경]"
   },
   {
     "id": "kvic",
     "name": "한국벤처투자(KVIC)",
     "type": "html_table",
-    "url": "https://www.kvic.or.kr/",
-    "enabled": true,
+    "url": "https://www.kvic.or.kr/vcms/contents/view.do?contentsNo=5050101",
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "벤처펀드/모태펀드 [PC 실행 시 정상 접속]"
+    "note": "벤처펀드/모태펀드 [비활성화: JS 렌더링 가능성 높음 - 공고 목록 URL 재확인 필요]"
   },
   {
     "id": "khidi",
@@ -342,25 +342,25 @@
     "id": "keiti",
     "name": "한국환경산업기술원(KEITI)",
     "type": "html_table",
-    "url": "https://www.keiti.re.kr/",
+    "url": "https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "환경산업 지원 [PC 실행 시 정상 접속]"
+    "note": "환경산업 공지/공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
   },
   {
     "id": "ketep",
     "name": "한국에너지기술평가원(KETEP)",
     "type": "html_table",
-    "url": "https://www.ketep.re.kr/",
+    "url": "https://www.ketep.re.kr/businessAcment/list?menuId=MENU002080200000000",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "에너지기술 R&D [PC 실행 시 정상 접속]"
+    "note": "에너지기술 R&D 사업공고 목록 [홈페이지에서 사업공고 목록 URL로 변경]"
   },
   {
     "id": "foodpolis",
@@ -378,13 +378,13 @@
     "id": "kidp",
     "name": "한국디자인진흥원(KIDP)",
     "type": "html_table",
-    "url": "https://www.kidp.or.kr/",
+    "url": "https://www.kidp.or.kr/?menuno=918&act=list",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "디자인산업 지원 [PC 실행 시 정상 접속]"
+    "note": "디자인산업 공고 목록 [홈페이지에서 공고 목록 URL로 변경, XpressEngine CMS]"
   },
   {
     "id": "rdcdp",
@@ -402,25 +402,25 @@
     "id": "sba",
     "name": "서울산업진흥원(SBA)",
     "type": "html_table",
-    "url": "https://www.sba.seoul.kr/Pages/ContentsMenu/Company/SupportInfo.aspx",
+    "url": "https://www.sba.seoul.kr/kr/sbcu31l1",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "서울시 중소기업 [PC 실행 시 정상 접속]"
+    "note": "서울시 중소기업 사업공고 목록 [구 URL에서 신 URL(/kr/)로 변경]"
   },
   {
     "id": "gbsa",
     "name": "경기도경제과학진흥원(GBSA)",
     "type": "html_table",
-    "url": "https://www.gbsa.or.kr/",
+    "url": "https://pms.gbsa.or.kr/info/pblanc/pblancList.do",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "경기도 기업 지원 [PC 실행 시 정상 접속]"
+    "note": "경기도 기업 지원 사업공고 목록 [홈페이지→G-PMS 사업공고 서브도메인(pms.gbsa.or.kr)으로 변경]"
   },
   {
     "id": "itp",
@@ -438,25 +438,25 @@
     "id": "bepa",
     "name": "부산경제진흥원(BEP)",
     "type": "html_table",
-    "url": "https://www.bepa.kr/",
+    "url": "https://www.bepa.kr/kor/view.do?no=1508",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "부산 기업 지원 [PC 실행 시 정상 접속]"
+    "note": "부산 기업 지원 공고/공지사항 목록 [홈페이지에서 공고 목록 URL로 변경]"
   },
   {
     "id": "djtp",
     "name": "대전테크노파크",
     "type": "html_table",
-    "url": "https://www.djtp.or.kr/",
+    "url": "https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "대전 기업 지원 [PC 실행 시 정상 접속]"
+    "note": "대전 기업 지원 일반사업공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
   },
   {
     "id": "myfair",
@@ -571,12 +571,12 @@
     "name": "공공데이터포털",
     "type": "html_table",
     "url": "https://www.data.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": true,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "공공데이터 개방/API [PC 실행 시 정상 접속]"
+    "note": "공공데이터 개방/API [비활성화: 지원사업 공고 사이트 아님, 데이터셋 목록 SPA]"
   },
   {
     "id": "gov24",
@@ -654,13 +654,13 @@
     "id": "incheoncci",
     "name": "인천상공회의소",
     "type": "html_table",
-    "url": "https://www.incheoncci.or.kr/",
+    "url": "https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "수출상담회/바이어매칭 [PC 실행 시 정상 접속]"
+    "note": "수출상담회/바이어매칭 새소식 목록 [URL 오류 수정: incheoncci.or.kr→incheon.korcham.net(대한상공회의소 통합 플랫폼)]"
   },
   {
     "id": "ema",
@@ -690,13 +690,13 @@
     "id": "icgf",
     "name": "인천신용보증재단",
     "type": "html_table",
-    "url": "https://www.icgf.or.kr/",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "소상공인/제조업 보증 [PC 실행 시 정상 접속]"
+    "note": "소상공인/제조업 보증 공고 목록 [URL 오류 수정: icgf.or.kr→icsinbo.or.kr(실제 운영 도메인)]"
   },
   {
     "id": "ic_junggu",
@@ -715,24 +715,24 @@
     "name": "인천 동구청",
     "type": "html_table",
     "url": "https://www.icdonggu.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "국내전시회 참가기업 지원 [PC 실행 시 정상 접속]"
+    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_michuhol",
     "name": "인천 미추홀구청",
     "type": "html_table",
     "url": "https://www.michuhol.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 지원사업 [PC 실행 시 정상 접속]"
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_yeonsu",
@@ -751,72 +751,72 @@
     "name": "인천 남동구청",
     "type": "html_table",
     "url": "https://www.namdong.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "남동공단 기업 지원 [PC 실행 시 정상 접속]"
+    "note": "남동공단 기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_bupyeong",
     "name": "인천 부평구청",
     "type": "html_table",
     "url": "https://www.bpyeong.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 융자/전시회 지원 [PC 실행 시 정상 접속]"
+    "note": "중소기업 융자/전시회 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_gyeyang",
     "name": "인천 계양구청",
     "type": "html_table",
     "url": "https://www.gyeyang.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 지원사업 [PC 실행 시 정상 접속]"
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_seo",
     "name": "인천 서구청",
     "type": "html_table",
     "url": "https://www.seo.incheon.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업육성기금/전시회 지원 [PC 실행 시 정상 접속]"
+    "note": "중소기업육성기금/전시회 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_ganghwa",
     "name": "인천 강화군청",
     "type": "html_table",
     "url": "https://www.ganghwa.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "국내전시회 참가기업 지원 [PC 실행 시 정상 접속]"
+    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "ic_ongjin",
     "name": "인천 옹진군청",
     "type": "html_table",
     "url": "https://www.ongjin.go.kr/",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 지원사업 [PC 실행 시 정상 접속]"
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
   {
     "id": "kotra_trade24",
