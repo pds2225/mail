@@ -261,16 +261,33 @@ def fetch_html_generic(site: dict) -> list[dict]:
     soup = _soup(site["url"])
     if not soup: return []
     items, agg = [], site.get("is_aggregator", False)
+    base = site["url"].rstrip("/")
     for row in soup.select(sel):
         a = row.select_one("a")
         title = norm(a.get_text() if a else row.get_text())
         if not title or len(title) < 5: continue
         href = a.get("href", "") if a else ""
-        link = href if href.startswith("http") else site["url"].rstrip("/") + "/" + href.lstrip("/")
+        # javascript:, #, 빈 href 등 무효 링크 제외
+        if not href or href.startswith("javascript") or href.lstrip() == "#":
+            href = ""
+        if href.startswith("http"):
+            link = href
+        elif href:
+            link = base + "/" + href.lstrip("/")
+        else:
+            link = base
         row_text = row.get_text()
-        posted = extract_date_from_text(row_text)
+        # 날짜 목록: 첫 번째=등록일, 마지막=마감일
+        dates = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", row_text)
+        posted   = dates[0].replace(".", "-") if dates else ""
+        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
+        # 셀 텍스트를 desc로 (제목 셀 제외, 최대 3셀)
+        tds = row.select("td")
+        desc_parts = [norm(td.get_text()) for td in tds
+                      if norm(td.get_text()) and norm(td.get_text()) != title]
+        desc = " | ".join(desc_parts[:3])
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
-                           title, link, "", "", "", site["name"], posted, agg))
+                           title, link, "", desc, deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -872,28 +889,28 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     region_ctx = f"대상지역: {', '.join(regions) if regions else '전국'}"
     kw_ctx = f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[]))}"
     type_ctx = f"지원유형: {', '.join(stypes)}"
-    prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
-중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
-마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
-
-출력 형식:
-━━━━━━━━━━━━━━━━━━
-📌 [사업명]
-• 지원유형:
-• 지원기관:
-• 지원내용/금액:
-• 신청마감:
-• 지역조건:
-• 출처:
-• 🔗 링크
-━━━━━━━━━━━━━━━━━━
-
-공고 목록:
-{items_txt}"""
+    system_prompt = (
+        "당신은 중소기업 지원사업 전문 분석가입니다. "
+        "공고 목록을 간결하고 실용적으로 정리해주세요. "
+        "마감 임박(7일 이내) 공고는 반드시 앞에 배치하세요."
+    )
+    user_prompt = (
+        f"아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.\n"
+        "중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.\n\n"
+        "출력 형식:\n"
+        "━━━━━━━━━━━━━━━━━━\n"
+        "📌 [사업명]\n"
+        "• 지원유형:\n• 지원기관:\n• 지원내용/금액:\n• 신청마감:\n• 지역조건:\n• 출처:\n• 🔗 링크\n"
+        "━━━━━━━━━━━━━━━━━━\n\n"
+        f"공고 목록:\n{items_txt}"
+    )
     try:
         resp = client.messages.create(
-            model="claude-sonnet-4-5", max_tokens=4000,
-            messages=[{"role": "user", "content": prompt}])
+            model="claude-sonnet-4-6",
+            max_tokens=4000,
+            system=[{"type": "text", "text": system_prompt,
+                     "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": user_prompt}])
         return resp.content[0].text.strip()
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
@@ -969,7 +986,13 @@ def main() -> None:
         filtered_new = new_items
         date_unknown = []
 
-    # ⑤ 원본전체 메일 (settings.raw_all_recipients)
+    # ⑤ seen_ids 선저장: 수집된 전체 항목을 먼저 기록
+    # → 이후 이메일 발송 실패 시에도 중복 발송 방지
+    seen_ids.update(it["id"] for it in deduped)
+    save_seen_ids(seen_ids)
+    log.info("seen_ids 저장 완료 (%d건)", len(seen_ids))
+
+    # ⑥ 원본전체 메일 (settings.raw_all_recipients)
     if settings.get("raw_all_enabled", True) and settings.get("raw_all_recipients"):
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
@@ -983,12 +1006,10 @@ def main() -> None:
         )
 
     if not filtered_new:
-        log.info("발송 대상 없음. seen_ids 업데이트 후 종료.")
-        seen_ids.update(it["id"] for it in deduped)
-        save_seen_ids(seen_ids)
+        log.info("발송 대상 없음. 종료.")
         return
 
-    # ⑥ 그룹별 필터 + 발송
+    # ⑦ 그룹별 필터 + 발송
     for group in groups:
         g_items = filter_for_group(filtered_new, group)
         if not g_items:
@@ -1011,9 +1032,6 @@ def main() -> None:
             group.get("recipients", []),
         )
 
-    # ⑦ seen_ids 업데이트
-    seen_ids.update(it["id"] for it in deduped)
-    save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
 
 
