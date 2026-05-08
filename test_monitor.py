@@ -2,16 +2,14 @@
 monitor.py v6 파이프라인 테스트 (실제 API/이메일 호출 없음)
 테스트 항목: ① 중복제거 ② 날짜필터 ③ 지역필터 ④ 키워드필터 ⑤ 지원유형 분류
 """
-import sys, json
-from datetime import datetime, timedelta, timezone
+import sys
+import os
+from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch
 
-# monitor.py 함수 직접 import
 sys.path.insert(0, str(Path(__file__).parent))
 
-# 환경변수 mock (실제 키 불필요)
-import os
+# 환경변수 mock (실제 키 불필요) — monitor 임포트 전에 설정
 os.environ.setdefault("BIZINFO_API_KEY",    "test_key")
 os.environ.setdefault("ANTHROPIC_API_KEY",  "test_key")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "test_pass")
@@ -30,14 +28,16 @@ today     = datetime.now(KST).strftime("%Y-%m-%d")
 MOCK_ITEMS = [
     # [A] 기업마당(통합) + K-Startup(주관) 동일 공고 → K-Startup 유지
     {
-        "id": "bizinfo_001", "title": "2026년 뷰티산업 육성 지원 사업 뷰티 디자인 개발 과제 참여기업 모집",
+        "id": "bizinfo_001",
+        "title": "2026년 뷰티산업 육성 지원 사업 뷰티 디자인 개발 과제 참여기업 모집",
         "link": "https://bizinfo.go.kr/001", "author": "중소벤처기업부",
         "description": "뷰티 디자인 개발 사업화 지원금 바우처",
         "deadline": "2026-04-17", "source": "기업마당",
         "posted_date": yesterday, "is_aggregator": True,
     },
     {
-        "id": "kstartup_176993", "title": "2026년 뷰티산업 육성 지원 사업 「뷰티 디자인 개발 과제」참여기업 모집",
+        "id": "kstartup_176993",
+        "title": "2026년 뷰티산업 육성 지원 사업 「뷰티 디자인 개발 과제」참여기업 모집",
         "link": "https://k-startup.go.kr/176993", "author": "중소벤처기업부",
         "description": "뷰티 디자인 개발 사업화 지원",
         "deadline": "2026-04-17", "source": "K-Startup",
@@ -45,7 +45,8 @@ MOCK_ITEMS = [
     },
     # [B] 인천 화장품 수출바우처 → 인천 그룹 매칭
     {
-        "id": "nipa_001", "title": "2026년 인천 화장품 수출바우처 지원사업",
+        "id": "nipa_001",
+        "title": "2026년 인천 화장품 수출바우처 지원사업",
         "link": "https://nipa.kr/001", "author": "인천테크노파크",
         "description": "인천 소재 화장품 제조업체 수출바우처 지원",
         "deadline": "2026-05-30", "source": "NIPA",
@@ -53,7 +54,8 @@ MOCK_ITEMS = [
     },
     # [C] 경남 로봇 전시회 → 인천 그룹 제외 (타지역)
     {
-        "id": "bizinfo_002", "title": "2026 경남 로봇 해외전시회 참가지원",
+        "id": "bizinfo_002",
+        "title": "2026 경남 로봇 해외전시회 참가지원",
         "link": "https://bizinfo.go.kr/002", "author": "경남테크노파크",
         "description": "경남 소재 로봇기업 해외전시회 참가비 지원",
         "deadline": "2026-04-20", "source": "기업마당",
@@ -61,7 +63,8 @@ MOCK_ITEMS = [
     },
     # [D] 날짜 없음 (날짜불명) → 포함 처리
     {
-        "id": "myfair_001", "title": "K-뷰티 해외박람회 참가 지원",
+        "id": "myfair_001",
+        "title": "K-뷰티 해외박람회 참가 지원",
         "link": "https://myfair.co/001", "author": "KOTRA",
         "description": "K-뷰티 기업 해외박람회 참가비 바우처",
         "deadline": "2026-06-30", "source": "마이페어",
@@ -70,7 +73,8 @@ MOCK_ITEMS = [
     },
     # [E] 오늘 올라온 공고 → D-1 필터로 제외
     {
-        "id": "bizinfo_003", "title": "오늘 올라온 수출 컨설팅 지원사업",
+        "id": "bizinfo_003",
+        "title": "오늘 올라온 수출 컨설팅 지원사업",
         "link": "https://bizinfo.go.kr/003", "author": "중진공",
         "description": "수출 기업 컨설팅 멘토링 지원",
         "deadline": "2026-05-01", "source": "기업마당",
@@ -79,7 +83,8 @@ MOCK_ITEMS = [
     },
     # [F] 전국 화장품 교육 → 인천 그룹 포함 (전국)
     {
-        "id": "kotra_001", "title": "화장품 수출역량강화 교육",
+        "id": "kotra_001",
+        "title": "화장품 수출역량강화 교육",
         "link": "https://kotra.or.kr/001", "author": "KOTRA",
         "description": "화장품 제조기업 수출 역량강화 교육 세미나",
         "deadline": "2026-05-15", "source": "KOTRA",
@@ -94,86 +99,91 @@ TEST_GROUP = {
     "regions": ["인천"],
     "keywords": {"logic": "OR", "keywords": ["화장품", "뷰티", "K-뷰티", "해외전시회", "수출"]},
     "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
-    "recipients": ["ekth3691@gmail.com"],
+    "recipients": ["test@example.com"],
 }
 
-SEP = "=" * 55
 
-def run_test():
-    print(f"\n{SEP}")
-    print("  수출지원 모니터링 v6 파이프라인 테스트")
-    print(SEP)
+# ── pytest 테스트 함수 ────────────────────────────────────────────
 
-    # ── STEP 1: 중복제거 ───────────────────────────────────────────
-    print("\n[1] 중복제거 (주관기관 우선)")
+def test_dedup_keeps_primary_source():
+    """중복제거: 주관기관(K-Startup) 버전 유지, 기업마당 중복 제거"""
     deduped = dedup_items(MOCK_ITEMS)
-    removed = len(MOCK_ITEMS) - len(deduped)
-    print(f"    수집: {len(MOCK_ITEMS)}건 → 중복제거 후: {len(deduped)}건 (제거 {removed}건)")
+    assert any(it["id"] == "kstartup_176993" for it in deduped), \
+        "주관기관(K-Startup) 버전이 유지되어야 함"
+    assert all(it["id"] != "bizinfo_001" for it in deduped), \
+        "기업마당 집계처 중복이 제거되어야 함"
 
-    # K-Startup 버전이 남아야 함
-    kst_survived = any(it["id"] == "kstartup_176993" for it in deduped)
-    biz_removed  = all(it["id"] != "bizinfo_001" for it in deduped)
-    print(f"    ✅ K-Startup 버전 유지: {'OK' if kst_survived else 'FAIL'}")
-    print(f"    ✅ 기업마당 중복 제거:  {'OK' if biz_removed else 'FAIL'}")
 
-    # ── STEP 2: 날짜필터 (D-1) ────────────────────────────────────
-    print(f"\n[2] 날짜필터 (어제={datetime.now(KST).date() - __import__('datetime').timedelta(days=1)})")
+def test_dedup_reduces_count():
+    """중복제거: 전체 건수가 줄어야 함"""
+    deduped = dedup_items(MOCK_ITEMS)
+    assert len(deduped) < len(MOCK_ITEMS), \
+        f"중복제거 후 건수({len(deduped)})가 원본({len(MOCK_ITEMS)})보다 적어야 함"
+
+
+def test_date_filter_excludes_today():
+    """날짜필터(D-1): 오늘 등록 공고는 matched/unknown 어디에도 없어야 함"""
+    deduped = dedup_items(MOCK_ITEMS)
     matched, unknown = date_filter(deduped, days_back=1)
-    today_excluded = all(it["id"] != "bizinfo_003" for it in matched + unknown)
-    print(f"    날짜 매칭: {len(matched)}건 / 날짜불명: {len(unknown)}건")
-    print(f"    ✅ 오늘 공고 제외: {'OK' if today_excluded else 'FAIL'}")
-    print(f"    ✅ 날짜불명 포함:  {'OK' if any(it['id']=='myfair_001' for it in unknown) else 'FAIL'}")
+    all_results = matched + unknown
+    assert all(it["id"] != "bizinfo_003" for it in all_results), \
+        "오늘 등록 공고(bizinfo_003)는 날짜필터로 제외되어야 함"
 
-    # 처리 대상: 날짜 매칭 + 날짜불명
-    target_items = matched + unknown
-    print(f"    처리 대상: {len(target_items)}건")
 
-    # ── STEP 3: 그룹 필터 ─────────────────────────────────────────
-    print(f"\n[3] 그룹 필터 — '{TEST_GROUP['name']}'")
-    g_items = filter_for_group(target_items, TEST_GROUP)
-    경남_excluded = all(it["id"] != "bizinfo_002" for it in g_items)
-    인천_included = any(it["id"] == "nipa_001" for it in g_items)
-    전국_included = any(it["id"] == "kotra_001" for it in g_items)
-    print(f"    그룹 매칭: {len(g_items)}건")
-    print(f"    ✅ 경남 공고 제외:       {'OK' if 경남_excluded else 'FAIL'}")
-    print(f"    ✅ 인천 화장품 공고 포함: {'OK' if 인천_included else 'FAIL'}")
-    print(f"    ✅ 전국 화장품 공고 포함: {'OK' if 전국_included else 'FAIL'}")
+def test_date_filter_includes_unknown():
+    """날짜필터: 날짜불명(posted_date='') 공고는 unknown에 포함되어야 함"""
+    deduped = dedup_items(MOCK_ITEMS)
+    matched, unknown = date_filter(deduped, days_back=1)
+    assert any(it["id"] == "myfair_001" for it in unknown), \
+        "날짜불명 공고(myfair_001)는 unknown 목록에 포함되어야 함"
 
-    # ── STEP 4: 지원유형 분류 ─────────────────────────────────────
-    print("\n[4] 지원유형 자동 분류")
-    type_tests = [
-        ("수출바우처 지원", ["지원금/바우처"]),
-        ("컨설팅 멘토링 세미나", ["컨설팅·교육·상담"]),
-        ("VC 투자 엔젤투자", ["투자"]),
-        ("해외진출 협력 네트워크", ["그외"]),
-    ]
-    all_ok = True
-    for title, expected in type_tests:
-        result = classify_support_type({"title": title, "description": ""})
-        ok = any(e in result for e in expected)
-        print(f"    {'✅' if ok else '❌'} '{title}' → {result} (기대: {expected})")
-        if not ok: all_ok = False
 
-    # ── 최종 결과 요약 ─────────────────────────────────────────────
-    print(f"\n{SEP}")
-    print("  최종 파이프라인 요약")
-    print(SEP)
-    print(f"  수집:       {len(MOCK_ITEMS)}건")
-    print(f"  중복제거:   → {len(deduped)}건 ({removed}건 제거)")
-    print(f"  날짜필터:   → {len(target_items)}건 (오늘 공고 제외)")
-    print(f"  그룹필터:   → {len(g_items)}건 (인천 화장품팀 기준)")
-    print()
-    print("  [그룹 매칭 공고 목록]")
-    for it in g_items:
-        types = ", ".join(it.get("_types", ["미분류"]))
-        print(f"  📌 {it['title'][:45]}")
-        print(f"     유형:{types} | 출처:{it['source']} | 등록:{it.get('posted_date') or '불명'}")
-    print(SEP)
+def test_group_filter_excludes_other_region():
+    """그룹 지역 필터: 타지역(경남) 공고는 제외"""
+    deduped = dedup_items(MOCK_ITEMS)
+    matched, unknown = date_filter(deduped, days_back=1)
+    g_items = filter_for_group(matched + unknown, TEST_GROUP)
+    assert all(it["id"] != "bizinfo_002" for it in g_items), \
+        "경남 공고(bizinfo_002)는 인천 그룹에서 제외되어야 함"
 
-    pass_cnt = sum([
-        kst_survived, biz_removed, today_excluded, 경남_excluded, 인천_included, 전국_included, all_ok
-    ])
-    print(f"\n  테스트 결과: {pass_cnt}/7 통과\n")
 
-if __name__ == "__main__":
-    run_test()
+def test_group_filter_includes_target_region():
+    """그룹 지역 필터: 지정 지역(인천) 공고는 포함"""
+    deduped = dedup_items(MOCK_ITEMS)
+    matched, unknown = date_filter(deduped, days_back=1)
+    g_items = filter_for_group(matched + unknown, TEST_GROUP)
+    assert any(it["id"] == "nipa_001" for it in g_items), \
+        "인천 화장품 공고(nipa_001)가 그룹 필터에 포함되어야 함"
+
+
+def test_group_filter_includes_nationwide():
+    """그룹 지역 필터: 특정 지역이 없는 전국 공고는 포함"""
+    deduped = dedup_items(MOCK_ITEMS)
+    matched, unknown = date_filter(deduped, days_back=1)
+    g_items = filter_for_group(matched + unknown, TEST_GROUP)
+    assert any(it["id"] == "kotra_001" for it in g_items), \
+        "전국 대상 공고(kotra_001)가 그룹 필터에 포함되어야 함"
+
+
+def test_classify_support_type_voucher():
+    """지원유형 분류: 바우처/지원금 키워드"""
+    result = classify_support_type({"title": "수출바우처 지원", "description": ""})
+    assert "지원금/바우처" in result, f"'지원금/바우처' 분류 실패: {result}"
+
+
+def test_classify_support_type_consulting():
+    """지원유형 분류: 컨설팅·교육·상담 키워드"""
+    result = classify_support_type({"title": "컨설팅 멘토링 세미나", "description": ""})
+    assert "컨설팅·교육·상담" in result, f"'컨설팅·교육·상담' 분류 실패: {result}"
+
+
+def test_classify_support_type_investment():
+    """지원유형 분류: 투자 키워드"""
+    result = classify_support_type({"title": "VC 투자 엔젤투자", "description": ""})
+    assert "투자" in result, f"'투자' 분류 실패: {result}"
+
+
+def test_classify_support_type_other():
+    """지원유형 분류: 미해당 → 그외"""
+    result = classify_support_type({"title": "해외진출 협력 네트워크", "description": ""})
+    assert "그외" in result, f"'그외' 분류 실패: {result}"
