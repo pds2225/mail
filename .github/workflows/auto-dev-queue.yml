@@ -1,0 +1,58 @@
+name: Auto Dev Queue
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (미리보기만, 실제 변경 없음)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+  # schedule:
+  #   # 매일 오전 9시 KST (UTC 00:00) — 활성화하려면 주석 해제
+  #   # 주의: 활성화 전 AUTO_DEV_PAT Secret 설정 필수
+  #   - cron: '0 0 * * *'
+
+concurrency:
+  group: auto-dev-queue
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  run-queue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTO_DEV_PAT || github.token }}
+          fetch-depth: 0
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Auto Dev Queue 실행
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTO_DEV_PAT || github.token }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: python scripts/auto_dev_queue.py
+
+      - name: 상태 파일 커밋
+        run: |
+          git config user.name "auto-dev-queue[bot]"
+          git config user.email "auto-dev-queue[bot]@users.noreply.github.com"
+          git add TASKS.md auto_dev_state.json done_tasks.md failed_tasks.md blocked_tasks.md || true
+          git diff --staged --quiet || git commit -m "chore(auto-dev): update queue state [skip ci]"
+          git push || true
