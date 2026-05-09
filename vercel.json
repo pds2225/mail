@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/run.py",    "use": "@vercel/python" },
+    { "src": "api/health.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/api/run",    "dest": "/api/run.py"    },
+    { "src": "/api/health", "dest": "/api/health.py" }
+  ],
+  "functions": {
+    "api/run.py": {
+      "maxDuration": 60
+    }
+  }
+}
