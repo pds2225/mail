@@ -151,31 +151,36 @@ def preflight_check() -> list[str]:
     """사전 검증. 문제 목록 반환 (비어있으면 통과)"""
     issues: list[str] = []
 
+    # 1. 필수 파일 존재 여부
     if not TASKS_PATH.exists():
         issues.append("TASKS.md 파일이 없습니다")
         return issues
 
+    # 2. TASKS.md 구조 확인
     content = TASKS_PATH.read_text(encoding="utf-8")
+    for section in ["PENDING", "RUNNING", "DONE", "FAILED", "BLOCKED"]:
+        if f"## {section}" not in content:
+            issues.append(f"TASKS.md에 ## {section} 섹션이 없습니다")
 
-    if "## PENDING" not in content:
-        issues.append("TASKS.md에 ## PENDING 섹션이 없습니다")
-    if "## RUNNING" not in content:
-        issues.append("TASKS.md에 ## RUNNING 섹션이 없습니다")
-    if "## DONE" not in content:
-        issues.append("TASKS.md에 ## DONE 섹션이 없습니다")
-    if "## FAILED" not in content:
-        issues.append("TASKS.md에 ## FAILED 섹션이 없습니다")
-    if "## BLOCKED" not in content:
-        issues.append("TASKS.md에 ## BLOCKED 섹션이 없습니다")
-
-    rules_path = ROOT / "RULES.md"
-    if not rules_path.exists():
+    # 3. RULES.md 존재
+    if not (ROOT / "RULES.md").exists():
         issues.append("RULES.md 파일이 없습니다")
 
+    # 4. 앱 진입점 확인
     for pf in PROTECTED_FILES:
         full = ROOT / pf
         if not full.exists() and pf in ("monitor.py", "streamlit_app.py"):
             issues.append(f"앱 진입점 파일 누락: {pf}")
+
+    # 5. 이메일 발송 관련 파일이 보호 대상인지 확인
+    for pf in PROTECTED_FILES:
+        if (ROOT / pf).exists():
+            log(f"  🔒 보호 파일 확인: {pf}")
+
+    # 6. Secret 이름 안내 (값은 출력하지 않음)
+    github_token = os.environ.get("GITHUB_TOKEN")
+    if not github_token:
+        log("  ℹ️ GITHUB_TOKEN 미설정 (PR 생성 시 필요)")
 
     return issues
 

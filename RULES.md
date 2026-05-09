@@ -7,21 +7,29 @@
 | # | 규칙 | 설명 |
 |---|------|------|
 | 1 | 실제 이메일 자동 발송 금지 | auto-dev 작업에서 실제 SMTP/Gmail/IMAP 발송 절대 금지 |
-| 2 | draft/preview/dry-run만 허용 | 기본 동작은 "draft 생성", "preview 생성", "dry-run"까지만 |
+| 2 | preview/draft/dry-run만 허용 | 기본 동작은 "preview 생성", "draft 생성", "dry-run"까지만 |
 | 3 | 수신자 이메일 마스킹 | 로그에 이메일 주소 전체 출력 금지 (예: `e***@gmail.com`) |
 | 4 | 민감정보 로그 금지 | 이메일 본문, 첨부파일, API Key, Token 로그 출력 금지 |
 | 5 | Secret 하드코딩 금지 | Gmail/SMTP/IMAP Secret 값을 코드에 하드코딩 금지 |
-| 6 | 발송 전 사용자 승인 필수 | send 기능은 사용자 명시 승인 후에만 가능하도록 문서화 |
+| 6 | 발송 전 사용자 승인 필수 | send 기능은 사용자 명시 승인 플래그가 있을 때만 허용 |
 | 7 | 테스트에서 실제 발송 금지 | 테스트는 mock/dry-run만 허용 |
-| 8 | 중복 발송 방지 | 동일 내용 중복 발송 방지 규칙 필수 |
+| 8 | 실패 시 자동 재발송 금지 | 발송 실패 시 자동 재시도 금지 |
+| 9 | 중복 발송 방지 | 동일 내용 중복 발송 방지 규칙 필수 |
 
-## 2. 환경변수 (Vercel / GitHub)
+## 2. 환경변수
 
-| 환경변수 이름 | 용도 | dry-run 안전 |
+### GitHub Actions Secrets
+
+| Secret 이름 | 용도 | 필수 여부 |
+|-------------|------|----------|
+| `OPENAI_API_KEY` | AI 기능 | 선택 |
+| `ANTHROPIC_API_KEY` | Claude AI 요약 | 선택 |
+| `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
+
+### Vercel Environment Variables
+
+| 환경변수 이름 | 용도 | dry-run 상태 |
 |--------------|------|-------------|
-| `OPENAI_API_KEY` | AI 기능 | ⚠️ 실행 시에만 사용 |
-| `ANTHROPIC_API_KEY` | AI 기능 (선택) | ⚠️ 실행 시에만 사용 |
-| `AUTO_DEV_PAT` | GitHub PR 생성용 | ✅ 안전 |
 | `GMAIL_ADDRESS` | 메일 발신 주소 | 🚫 발송 기능 검증 전까지 미사용 |
 | `GMAIL_APP_PASSWORD` | Gmail 앱 비밀번호 | 🚫 발송 기능 검증 전까지 미사용 |
 | `SMTP_HOST` | SMTP 서버 주소 | 🚫 발송 기능 검증 전까지 미사용 |
@@ -29,7 +37,7 @@
 | `IMAP_HOST` | IMAP 서버 주소 | 🚫 발송 기능 검증 전까지 미사용 |
 | `IMAP_PORT` | IMAP 서버 포트 | 🚫 발송 기능 검증 전까지 미사용 |
 
-> **중요:** Mail 관련 Secret(`GMAIL_*`, `SMTP_*`, `IMAP_*`)은 실제 발송 기능이 검증되기 전까지 사용하지 않음. 자동개발 큐에서는 dry-run / draft-only 기준으로만 동작.
+> **중요:** Mail 관련 환경변수(`GMAIL_*`, `SMTP_*`, `IMAP_*`)는 실제 발송 기능이 검증되기 전까지 필수로 요구하지 않음. 자동개발 큐에서는 dry-run / draft-only 기준으로만 동작.
 
 ## 3. 기존 앱 보호 규칙
 
@@ -43,7 +51,7 @@
 | 6 | 대규모 리팩토링 금지 |
 | 7 | 불필요한 패키지 설치 금지 |
 
-## 3. TASK 처리 규칙
+## 4. TASK 처리 규칙
 
 | # | 규칙 |
 |---|------|
@@ -56,7 +64,7 @@
 | 7 | 동일 TASK는 최대 2회까지만 재시도 |
 | 8 | BLOCKED TASK는 자동 재시도하지 않음 |
 
-## 4. 실패 처리 규칙
+## 5. 실패 처리 규칙
 
 | 상황 | 처리 |
 |------|------|
@@ -71,7 +79,7 @@
 | 변경사항 없음 | → SKIPPED 또는 DONE |
 | PR 중복 | → 기존 PR 링크 출력 |
 
-## 5. 금지 파일 수정 목록
+## 6. 금지 파일 수정 목록
 
 자동개발 큐가 절대 수정해서는 안 되는 파일:
 
@@ -82,7 +90,7 @@ streamlit_app.py
 .env.example
 ```
 
-## 6. 수정 가능 파일
+## 7. 수정 가능 파일
 
 자동개발 큐가 수정할 수 있는 파일:
 
