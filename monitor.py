@@ -10,22 +10,53 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin, quote
 
 import httpx
 from anthropic import Anthropic
 from bs4 import BeautifulSoup
 
+BASE_DIR = Path(__file__).resolve().parent
+
+# ── Playwright fetcher 모듈 동적 임포트 ──────────────────────────────────────
+try:
+    from fetchers.playwright_fetcher import (
+        fetch_keit   as _pw_fetch_keit,
+        fetch_kiat   as _pw_fetch_kiat,
+        fetch_thevc  as _pw_fetch_thevc,
+        fetch_connectworks as _pw_fetch_connectworks,
+        fetch_semas  as _pw_fetch_semas,
+        fetch_pw_table as _pw_fetch_table,
+    )
+    _PW_OK = True
+except ImportError:
+    _PW_OK = False
+    def _pw_noop(site):
+        log.warning("playwright 미설치 — %s 건너뜀", site.get("name"))
+        return []
+    _pw_fetch_keit = _pw_fetch_kiat = _pw_fetch_thevc = _pw_noop
+    _pw_fetch_connectworks = _pw_fetch_semas = _pw_fetch_table = _pw_noop
+
 # ── 환경변수 ─────────────────────────────────────────────────────────────────
-BIZINFO_API_KEY    = os.environ["BIZINFO_API_KEY"]
-ANTHROPIC_API_KEY  = os.environ["ANTHROPIC_API_KEY"]
-GMAIL_ADDRESS      = os.environ.get("GMAIL_ADDRESS", "ekth3691@gmail.com")
-GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
+def _require_env(key: str) -> str:
+    val = os.environ.get(key, "").strip()
+    if not val:
+        raise EnvironmentError(
+            f"필수 환경변수 누락: {key}\n"
+            f"  → .env 파일에 {key}=<값> 을 추가하세요."
+        )
+    return val
+
+BIZINFO_API_KEY    = _require_env("BIZINFO_API_KEY")
+ANTHROPIC_API_KEY  = _require_env("ANTHROPIC_API_KEY")
+GMAIL_ADDRESS      = _require_env("GMAIL_ADDRESS")
+GMAIL_APP_PASSWORD = _require_env("GMAIL_APP_PASSWORD")
 
 # ── 경로 ─────────────────────────────────────────────────────────────────────
-SITES_PATH    = Path("sites.json")
-GROUPS_PATH   = Path("groups.json")
-SETTINGS_PATH = Path("settings.json")
-SEEN_IDS_PATH = Path("seen_ids.json")
+SITES_PATH    = BASE_DIR / "sites.json"
+GROUPS_PATH   = BASE_DIR / "groups.json"
+SETTINGS_PATH = BASE_DIR / "settings.json"
+SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -85,7 +116,15 @@ def load_json(path: Path, default):
         return default
 
 def save_json(path: Path, data) -> None:
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    content = json.dumps(data, ensure_ascii=False, indent=2)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    try:
+        tmp.write_text(content, encoding="utf-8")
+        tmp.replace(path)
+    except Exception as e:
+        log.error("파일 저장 실패 %s: %s", path, e)
+        tmp.unlink(missing_ok=True)
+        raise
 
 def normalize_title(title: str) -> str:
     """중복 판별용 제목 정규화: 소문자 + 특수문자/공백 제거"""
@@ -121,7 +160,11 @@ def load_seen_ids() -> set[str]:
     return {str(x) for x in raw if x} if isinstance(raw, list) else set()
 
 def save_seen_ids(ids: set[str]) -> None:
-    save_json(SEEN_IDS_PATH, sorted(ids)[-MAX_SEEN_IDS:])
+    # 날짜 포함 ID(bizinfo_20260415 등)는 날짜순, 나머지는 알파벳순 → 최신 MAX_SEEN_IDS 유지
+    def _sort_key(s: str) -> str:
+        m = re.search(r"(\d{4}-\d{2}-\d{2}|\d{8})", s)
+        return m.group(1) if m else s
+    save_json(SEEN_IDS_PATH, sorted(ids, key=_sort_key)[-MAX_SEEN_IDS:])
 
 def load_sites() -> list[dict]:
     sites = load_json(SITES_PATH, [])
@@ -136,8 +179,15 @@ def load_groups() -> list[dict]:
     return active
 
 def load_settings() -> dict:
-    default = {"date_filter_enabled": True, "days_back": 1,
-               "raw_all_enabled": True, "raw_all_recipients": []}
+    default = {
+        "date_filter_enabled": True,
+        "days_back": 1,
+        "raw_all_enabled": True,
+        "raw_all_recipients": [],
+        "claude_model": "claude-sonnet-4-6",
+        "claude_max_tokens": 4000,
+        "fetch_max_workers": 10,
+    }
     return {**default, **load_json(SETTINGS_PATH, {})}
 
 
@@ -192,29 +242,9 @@ def fetch_bizinfo(site: dict) -> list[dict]:
     return items
 
 
-def fetch_myfair(site: dict) -> list[dict]:
-    soup = _soup(site["url"])
-    if not soup: return []
-    items, agg = [], site.get("is_aggregator", True)
-    for row in soup.select("table tbody tr, table tr"):
-        cells = row.select("td")
-        if len(cells) < 2: continue
-        a = cells[0].select_one("a")
-        title = norm(a.get_text() if a else cells[0].get_text())
-        if not title: continue
-        href = norm(a.get("href", "") if a else "")
-        link = href if href.startswith("http") else f"https://myfair.co{href}"
-        period = norm(cells[-1].get_text())
-        # 마감일: period의 마지막 날짜 (신청기간 종료일)
-        dates = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", period)
-        deadline = dates[-1].replace(".", "-").replace("/", "-") if dates else period
-        # 등록일: myfair는 신청기간 정보만 제공하므로 날짜불명 처리
-        items.append(_item(f"myfair_{stable_id(title+link)}", title, link,
-            norm(cells[1].get_text() if len(cells) > 1 else ""),
-            norm(cells[2].get_text() if len(cells) > 2 else ""),
-            deadline, site["name"], "", agg))
-    log.info("%s: %d건", site["name"], len(items))
-    return items
+def fetch_myfair_legacy(site: dict) -> list[dict]:
+    # 하위호환용 - fetch_myfair로 대체됨
+    return fetch_myfair(site)
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
@@ -257,37 +287,24 @@ def fetch_kstartup(site: dict) -> list[dict]:
 
 
 def fetch_html_generic(site: dict) -> list[dict]:
-    sel = site.get("selectors", {}).get("row", "table tbody tr")
-    soup = _soup(site["url"])
+    sel    = site.get("selectors", {}).get("row", "table tbody tr")
+    verify = site.get("ssl_verify", True)
+    soup   = _soup(site["url"])
     if not soup: return []
     items, agg = [], site.get("is_aggregator", False)
-    base = site["url"].rstrip("/")
     for row in soup.select(sel):
         a = row.select_one("a")
         title = norm(a.get_text() if a else row.get_text())
-        if not title or len(title) < 5: continue
+        if not title: continue
         href = a.get("href", "") if a else ""
-        # javascript:, #, 빈 href 등 무효 링크 제외
-        if not href or href.startswith("javascript") or href.lstrip() == "#":
-            href = ""
-        if href.startswith("http"):
-            link = href
-        elif href:
-            link = base + "/" + href.lstrip("/")
-        else:
-            link = base
+        link = urljoin(site["url"], href) if href else site["url"]
         row_text = row.get_text()
-        # 날짜 목록: 첫 번째=등록일, 마지막=마감일
-        dates = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", row_text)
-        posted   = dates[0].replace(".", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
-        # 셀 텍스트를 desc로 (제목 셀 제외, 최대 3셀)
-        tds = row.select("td")
-        desc_parts = [norm(td.get_text()) for td in tds
-                      if norm(td.get_text()) and norm(td.get_text()) != title]
-        desc = " | ".join(desc_parts[:3])
+        dates    = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
+        # 첫 날짜 = 등록일, 마지막 날짜 = 마감일 (두 개 이상)
+        posted   = dates[0].replace(".", "-").replace("/", "-") if dates else ""
+        deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
-                           title, link, "", desc, deadline, site["name"], posted, agg))
+                           title, link, "", "", deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -462,7 +479,7 @@ def fetch_kocca_bbs(site: dict) -> list[dict]:
             if card.name in ("li", "tr", "div"): break
         dates = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
         posted   = dates[0].replace(".", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
+        deadline = dates[1].replace(".", "-") if len(dates) >= 3 else (dates[-1].replace(".", "-") if dates else "")
         items.append(_item(iid, title, link, "한국콘텐츠진흥원", "금융지원",
                            deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
@@ -666,31 +683,254 @@ def fetch_mss(site: dict) -> list[dict]:
     return items
 
 
+
+# ── BizOK (비즈오케이 - 인천기업지원) ─────────────────────────────────────
+def fetch_bizok(site: dict) -> list[dict]:
+    """BizOK 인천기업지원: a[href*='act=detail&policyno='] 패턴
+    제목에 분야·번호·상태가 붙어있어 정리 필요
+    """
+    BASE = "https://bizok.incheon.go.kr"
+    soup = _soup(site["url"])
+    if not soup: return []
+    items, agg = [], site.get("is_aggregator", False)
+    seen = set()
+    for a in soup.find_all("a", href=re.compile(r"act=detail&policyno=")):
+        raw_title = norm(a.get_text())
+        if not raw_title or len(raw_title) < 5: continue
+        href = a.get("href", "")
+        m = re.search(r"policyno=(\d+)", href)
+        if not m: continue
+        pno = m.group(1)
+        if pno in seen: continue
+        seen.add(pno)
+        link = href if href.startswith("http") else BASE + href
+        iid  = f"bizok_{pno}"
+        # 제목 정제: "(No.6874)접수중[뷰티] 실제제목신청기간..." → 실제제목만
+        title = re.sub(r"^.*?\)\s*(?:접수중|마감|예정)?\s*", "", raw_title)
+        title = re.sub(r"\s*신청기간.*$", "", title).strip()
+        if not title: title = raw_title[:50]
+        # 날짜
+        dates = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", raw_title)
+        posted = dates[0].replace(".", "-") if dates else ""
+        items.append(_item(iid, title, link, "비즈오케이(인천기업지원)",
+                           "", "", site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+
+def fetch_mssmiv(site: dict) -> list[dict]:
+    """중소기업 혁신바우처 공고: table tbody tr, onclick=goDetail(seq)
+    상세 URL: /portal/board/BoardView?seq=N (GET 방식 작동)
+    """
+    BASE = "https://www.mssmiv.com"
+    soup = _soup(site["url"])
+    if not soup: return []
+    items, agg = [], site.get("is_aggregator", False)
+    for tr in soup.select("table tbody tr"):
+        a = tr.select_one("a[onclick]")
+        if not a: continue
+        title = norm(a.get_text())
+        if not title or len(title) < 5: continue
+        m = re.search(r"goDetail\((\d+)\)", a.get("onclick", ""))
+        if not m: continue
+        seq  = m.group(1)
+        link = f"{BASE}/portal/board/BoardView?seq={seq}"
+        iid  = f"mssmiv_{seq}"
+        tds  = tr.select("td")
+        td_text = " ".join(td.get_text(strip=True) for td in tds)
+        dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
+        posted  = dates[0].replace(".", "-") if dates else ""
+        items.append(_item(iid, title, link, "중소기업혁신바우처(중소벤처기업부)",
+                           "", "", site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+
+def fetch_exportvoucher(site: dict) -> list[dict]:
+    """수출바우처 공고: 메인 페이지에서 goDetail('ntt_id','bbs_id') 추출
+    bbs_id=1 → 공지사항(/portal/board/boardView POST)
+    bbs_id=2 → 자료실
+    상세 링크는 POST 방식이므로 boardView URL에 파라미터 붙여 GET 링크로 구성
+    """
+    BASE   = "https://www.exportvoucher.com"
+    soup   = _soup(site["url"], extra_headers={"Referer": BASE + "/"})
+    if not soup: return []
+
+    items, agg = [], site.get("is_aggregator", False)
+    seen = set()
+
+    for a in soup.find_all("a"):
+        title = norm(a.get_text())
+        if not title or len(title) < 5: continue
+        # href 또는 태그 전체 문자열에서 goDetail 추출
+        tag_str = str(a)
+        m = re.search(r"goDetail\(['\"](\d+)['\"],\s*['\"](\d+)['\"]", tag_str)
+        if not m: continue
+        ntt_id, bbs_id = m.group(1), m.group(2)
+        # 노이즈 제목 제거 (보안점검, 공지 등)
+        NOISE = re.compile(r"보안점검|열람금지|시스템\s*점검|서비스\s*중단")
+        if NOISE.search(title): continue
+
+        if bbs_id == "1":   # 공지사항 (사업공고 포함)
+            menu = "EZ005004000"
+        elif bbs_id == "2": # 자료실
+            menu = "EZ005005000"
+        else:
+            continue  # FAQ 등 제외
+
+        link = f"{BASE}/portal/board/boardView?bbs_id={bbs_id}&ntt_id={ntt_id}&active_menu_cd={menu}"
+        iid  = f"exportvoucher_{ntt_id}"
+
+        # 날짜는 목록에서 확인 불가 → 빈 값
+        items.append(_item(iid, title, link, "수출바우처(KOTRA/중진공)",
+                           "", "", site["name"], "", agg))
+
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+
+# ── KEIT (한국산업기술평가관리원) ────────────────────────────────────────────
+def fetch_keit(site: dict) -> list[dict]:
+    """KEIT 사업공고: onclick=goView('list_no') → 상세 URL 구성
+    URL: /board.es?mid=a10304000000&bid=0013&act=view&list_no=N
+    """
+    BASE = "https://www.keit.re.kr"
+    soup = _soup(site["url"])
+    if not soup: return []
+    items, agg = [], site.get("is_aggregator", False)
+    for tr in soup.select("table tbody tr"):
+        a = tr.select_one("a[onclick]")
+        if not a: continue
+        title = norm(a.get_text())
+        if not title or len(title) < 5: continue
+        m = re.search(r"goView\(['\"]?(\d+)", a.get("onclick", ""))
+        if not m: continue
+        list_no = m.group(1)
+        link = f"{BASE}/board.es?mid=a10304000000&bid=0013&act=view&list_no={list_no}"
+        iid  = f"keit_{list_no}"
+        tds  = tr.select("td")
+        td_text = " ".join(td.get_text(strip=True) for td in tds)
+        dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
+        posted  = dates[0].replace(".", "-") if dates else ""
+        items.append(_item(iid, title, link, "한국산업기술평가관리원(KEIT)",
+                           "", "", site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+# ── SBA (서울산업진흥원) ─────────────────────────────────────────────────────
+def fetch_sba(site: dict) -> list[dict]:
+    """SBA 홈페이지에서 NoticeDetail/PostingDetail/BusinessApply href 추출"""
+    BASE = "https://www.sba.seoul.kr"
+    soup = _soup(site["url"])
+    if not soup: return []
+    items, agg = [], site.get("is_aggregator", False)
+    seen = set()
+    pats = re.compile(r"NoticeDetail|PostingDetail|BusinessApply")
+    for a in soup.find_all("a", href=pats):
+        title = norm(a.get_text())
+        if not title or len(title) < 5: continue
+        href = a.get("href", "")
+        link = href if href.startswith("http") else BASE + href
+        if link in seen: continue
+        seen.add(link)
+        iid = f"sba_{stable_id(link)}"
+        # 날짜: 부모 텍스트에서
+        parent = a
+        for _ in range(4):
+            if parent.parent: parent = parent.parent
+        ptxt = parent.get_text(" ", strip=True)
+        dates  = re.findall(r"\d{4}-\d{2}-\d{2}", ptxt)
+        posted = dates[0] if dates else ""
+        items.append(_item(iid, title, link, "서울산업진흥원(SBA)",
+                           "", "", site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+# ── myfair 수정 (table tbody tr 기반) ────────────────────────────────────────
+def fetch_myfair(site: dict) -> list[dict]:
+    """마이페어: table tbody tr, 마감일 td에서 추출"""
+    soup = _soup(site["url"])
+    if not soup: return []
+    items, agg = [], site.get("is_aggregator", True)
+    for tr in soup.select("table tbody tr"):
+        a = tr.select_one("a[href]")
+        if not a: continue
+        title = norm(a.get_text())
+        if not title or len(title) < 5: continue
+        href  = a.get("href", "")
+        link  = href if href.startswith("http") else "https://myfair.co" + href
+        iid   = f"myfair_{stable_id(title + link)}"
+        tds   = tr.select("td")
+        td_text = " ".join(td.get_text(strip=True) for td in tds)
+        # 날짜 범위에서 시작일/종료일 추출
+        dates = re.findall(r"\d{4}-\d{2}-\d{2}", td_text)
+        posted   = dates[0] if dates else ""
+        deadline = dates[-1] if len(dates) >= 2 else ""
+        # 주관기관
+        author = norm(tds[1].get_text()) if len(tds) > 1 else ""
+        items.append(_item(iid, title, link, author or "마이페어",
+                           "", deadline, site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 FETCHERS = {
-    "bizinfo_api":   fetch_bizinfo,
-    "myfair_html":   fetch_myfair,
-    "kstartup_html": fetch_kstartup,
-    "kita_html":     fetch_kita,
-    "iris_api":      fetch_iris,
-    "smtech_html":   fetch_smtech,
-    "kocca_pims":    fetch_kocca_pims,
-    "kocca_bbs":     fetch_kocca_bbs,
-    "gtp_html":      fetch_gtp,
-    "gsp_html":      fetch_gsp,
-    "ccei_html":     fetch_ccei,
-    "nipa_html":     fetch_nipa,
-    "mss_html":      fetch_mss,
-    "itp_html":      fetch_itp,
-    "html_table":    fetch_html_generic,
-    "html_card":     fetch_html_generic,
+    "bizinfo_api":        fetch_bizinfo,
+    "myfair_html":        fetch_myfair,
+    "kstartup_html":      fetch_kstartup,
+    "kita_html":          fetch_kita,
+    "iris_api":           fetch_iris,
+    "smtech_html":        fetch_smtech,
+    "kocca_pims":         fetch_kocca_pims,
+    "kocca_bbs":          fetch_kocca_bbs,
+    "gtp_html":           fetch_gtp,
+    "gsp_html":           fetch_gsp,
+    "ccei_html":          fetch_ccei,
+    "nipa_html":          fetch_nipa,
+    "mss_html":           fetch_mss,
+    "itp_html":           fetch_itp,
+    "bizok_html":         fetch_bizok,
+    "exportvoucher_html": fetch_exportvoucher,
+    "mssmiv_html":        fetch_mssmiv,
+    "keit_html":          fetch_keit,
+    "sba_html":           fetch_sba,
+    "html_table":         fetch_html_generic,
+    "html_card":          fetch_html_generic,
+    # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
+    "pw_keit":         _pw_fetch_keit,
+    "pw_kiat":         _pw_fetch_kiat,
+    "pw_thevc":        _pw_fetch_thevc,
+    "pw_connectworks": _pw_fetch_connectworks,
+    "pw_semas":        _pw_fetch_semas,
+    "pw_table":        _pw_fetch_table,
 }
 
-def fetch_all(sites: list[dict]) -> list[dict]:
-    result = []
-    for s in sites:
+
+def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
+    """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트."""
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    result: list[dict] = []
+
+    def _fetch(s: dict) -> list[dict]:
         fn = FETCHERS.get(s.get("type", ""))
-        if fn: result.extend(fn(s))
-        else: log.warning("알 수 없는 타입: %s (%s)", s.get("type"), s.get("name"))
+        if fn:
+            return fn(s)
+        log.warning("알 수 없는 타입: %s (%s)", s.get("type"), s.get("name"))
+        return []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(_fetch, s): s for s in sites}
+        for f in as_completed(futures):
+            try:
+                result.extend(f.result())
+            except Exception as e:
+                log.error("수집 실패 (%s): %s", futures[f].get("name"), e)
     return result
 
 
@@ -822,24 +1062,42 @@ def support_match(item: dict, enabled_types: list[str]) -> bool:
 
 
 def filter_for_group(items: list[dict], group: dict) -> list[dict]:
+    """
+    그룹 필터링 개선판:
+    1) source_always_include: 출처가 인천 관련 기관이면 키워드/지역 무관 포함
+    2) region_match + keyword_match + support_match 기본 로직
+    """
     result = []
+    always_srcs = [s.lower() for s in group.get("source_always_include", [])]
+
     for it in items:
+        # ① 인천 주관기관 출처 → 무조건 포함 (지역·키워드 불문)
+        src = (it.get("source","") + " " + it.get("author","")).lower()
+        if always_srcs and any(s in src for s in always_srcs):
+            if support_match(it, group.get("support_types", ALL_SUPPORT_TYPES)):
+                result.append({**it, "_types": classify_support_type(it)})
+                continue
+
+        # ② 일반 필터: 지역 + 키워드 + 지원유형
         if (region_match(it, group.get("regions", [])) and
                 keyword_match(it, group.get("keywords", {})) and
                 support_match(it, group.get("support_types", ALL_SUPPORT_TYPES))):
             result.append({**it, "_types": classify_support_type(it)})
+
     log.info("그룹 '%s' 필터: %d → %d건", group.get("name"), len(items), len(result))
     return result
+
 
 
 # ══════════════════════════════════════════════════════════════════
 # 렌더링 / Claude 요약
 # ══════════════════════════════════════════════════════════════════
 
-def render_all(items: list[dict], dedup_count: int, date_unknown: int) -> str:
+def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_unknown: bool = True) -> str:
     by_src: dict[str, list] = {}
     for it in items: by_src.setdefault(it.get("source", "기타"), []).append(it)
-    lines = [f"전체 수집 — {len(items)}건 (중복제거 후) / 날짜불명 {date_unknown}건 포함\n"]
+    unknown_note = f" / 날짜불명 {date_unknown}건 포함" if include_unknown and date_unknown else (f" / 날짜불명 {date_unknown}건 제외됨" if not include_unknown and date_unknown else "")
+    lines = [f"전체 수집 — {len(items)}건 (중복제거 후){unknown_note}\n"]
     for src, src_items in by_src.items():
         lines += [f"\n【 {src} 】 {len(src_items)}건", "─" * 30]
         for it in src_items:
@@ -889,28 +1147,28 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     region_ctx = f"대상지역: {', '.join(regions) if regions else '전국'}"
     kw_ctx = f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[]))}"
     type_ctx = f"지원유형: {', '.join(stypes)}"
-    system_prompt = (
-        "당신은 중소기업 지원사업 전문 분석가입니다. "
-        "공고 목록을 간결하고 실용적으로 정리해주세요. "
-        "마감 임박(7일 이내) 공고는 반드시 앞에 배치하세요."
-    )
-    user_prompt = (
-        f"아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.\n"
-        "중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.\n\n"
-        "출력 형식:\n"
-        "━━━━━━━━━━━━━━━━━━\n"
-        "📌 [사업명]\n"
-        "• 지원유형:\n• 지원기관:\n• 지원내용/금액:\n• 신청마감:\n• 지역조건:\n• 출처:\n• 🔗 링크\n"
-        "━━━━━━━━━━━━━━━━━━\n\n"
-        f"공고 목록:\n{items_txt}"
-    )
+    prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
+중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
+마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
+
+출력 형식:
+━━━━━━━━━━━━━━━━━━
+📌 [사업명]
+• 지원유형:
+• 지원기관:
+• 지원내용/금액:
+• 신청마감:
+• 지역조건:
+• 출처:
+• 🔗 링크
+━━━━━━━━━━━━━━━━━━
+
+공고 목록:
+{items_txt}"""
     try:
         resp = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=4000,
-            system=[{"type": "text", "text": system_prompt,
-                     "cache_control": {"type": "ephemeral"}}],
-            messages=[{"role": "user", "content": user_prompt}])
+            model="claude-sonnet-4-6", max_tokens=4000,
+            messages=[{"role": "user", "content": prompt}])
         return resp.content[0].text.strip()
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
@@ -920,6 +1178,16 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 # ══════════════════════════════════════════════════════════════════
 # 이메일
 # ══════════════════════════════════════════════════════════════════
+
+def _mask_email(email: str) -> str:
+    local, sep, domain = (email or "").partition("@")
+    if not sep:
+        return "***"
+    if len(local) <= 2:
+        local_masked = local[:1] + "*"
+    else:
+        local_masked = local[:2] + "*" * (len(local) - 2)
+    return f"{local_masked}@{domain}"
 
 def send_email(subject: str, body: str, to: str) -> None:
     msg = MIMEMultipart("alternative")
@@ -932,23 +1200,29 @@ def send_email(subject: str, body: str, to: str) -> None:
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
         srv.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
         srv.sendmail(GMAIL_ADDRESS, to, msg.as_string())
-    log.info("발송 → %s | %s", to, subject)
+    log.info("발송 완료 → %s", _mask_email(to))
 
 def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
     for to in recipients:
         try:
             send_email(subject, body, to)
         except Exception as e:
-            log.error("발송 실패 (%s): %s", to, e)
+            log.error("발송 실패 (%s): %s", _mask_email(to), e)
 
 
 # ══════════════════════════════════════════════════════════════════
 # 메인
 # ══════════════════════════════════════════════════════════════════
 
-def main() -> None:
+def execute_monitor(
+    *,
+    allow_send: bool = False,
+    include_raw_all: bool = False,
+    persist_seen: bool = False,
+) -> dict:
     now = datetime.now(KST)
-    log.info("=== 모니터링 시작 v6 (%s) ===", now.strftime("%Y-%m-%d %H:%M KST"))
+    mode = "send" if allow_send else "preview"
+    log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
     sites    = load_sites()
     groups   = load_groups()
@@ -956,12 +1230,18 @@ def main() -> None:
     seen_ids = load_seen_ids()
     days_back = settings.get("days_back", 1)
 
-    if not sites:  log.info("활성 사이트 없음. 종료."); return
-    if not groups: log.info("활성 그룹 없음. 종료."); return
+    if not sites:
+        log.info("활성 사이트 없음. 종료.")
+        return {"ok": True, "mode": mode, "reason": "no_active_sites"}
+    if not groups:
+        log.info("활성 그룹 없음. 종료.")
+        return {"ok": True, "mode": mode, "reason": "no_active_groups"}
 
     # ① 전체 수집
     all_items = fetch_all(sites)
-    if not all_items: log.info("수집 0건. 종료."); return
+    if not all_items:
+        log.info("수집 0건. 종료.")
+        return {"ok": True, "mode": mode, "reason": "no_items"}
     log.info("수집 완료: %d건", len(all_items))
 
     # ② 중복 제거
@@ -976,63 +1256,100 @@ def main() -> None:
     target_date = (now - timedelta(days=days_back)).date()
     date_str    = now.strftime("%m/%d")
 
+    include_unknown = settings.get("include_date_unknown", False)
+    date_unknown: list = []
     if settings.get("date_filter_enabled", True):
         date_matched, date_unknown = date_filter(new_items, days_back)
-        # 날짜 확인된 것만 엄선 + 날짜 불명인 것도 포함 (정보 손실 방지)
-        filtered_new = date_matched + date_unknown
-        log.info("날짜필터 후 처리 대상: %d건 (확정 %d + 날짜불명 %d)",
-                 len(filtered_new), len(date_matched), len(date_unknown))
+        if include_unknown:
+            filtered_new = date_matched + date_unknown
+            log.info("날짜필터 후 처리 대상: %d건 (확정 %d + 날짜불명 %d 포함)",
+                     len(filtered_new), len(date_matched), len(date_unknown))
+        else:
+            filtered_new = date_matched
+            log.info("날짜필터 후 처리 대상: %d건 (확정만, 날짜불명 %d건 제외)",
+                     len(filtered_new), len(date_unknown))
     else:
         filtered_new = new_items
         date_unknown = []
 
-    # ⑤ seen_ids 선저장: 수집된 전체 항목을 먼저 기록
-    # → 이후 이메일 발송 실패 시에도 중복 발송 방지
-    seen_ids.update(it["id"] for it in deduped)
-    save_seen_ids(seen_ids)
-    log.info("seen_ids 저장 완료 (%d건)", len(seen_ids))
-
-    # ⑥ 원본전체 메일 (settings.raw_all_recipients)
-    if settings.get("raw_all_enabled", True) and settings.get("raw_all_recipients"):
+    # ⑤ 원본전체 메일 (settings.raw_all_recipients)
+    if (
+        allow_send
+        and include_raw_all
+        and settings.get("raw_all_enabled", True)
+        and settings.get("raw_all_recipients")
+    ):
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
             f"기준일자: {target_date} (D-{days_back}) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
             f"날짜필터 후 발송대상: {len(filtered_new)}건\n\n"
-        ) + render_all(filtered_new, dedup_removed, len(date_unknown))
+        ) + render_all(filtered_new, dedup_removed, len(date_unknown), include_unknown)
         send_to_list(
             f"[원본전체] 수출·해외진출 공고 ({date_str}) — {len(filtered_new)}건",
             body_raw, settings["raw_all_recipients"],
         )
 
     if not filtered_new:
-        log.info("발송 대상 없음. 종료.")
-        return
+        log.info("처리 대상 없음. 종료.")
+        if persist_seen:
+            seen_ids.update(it["id"] for it in deduped)
+            save_seen_ids(seen_ids)
+        return {
+            "ok": True,
+            "mode": mode,
+            "collected": len(all_items),
+            "deduped": len(deduped),
+            "new_items": len(new_items),
+            "filtered_items": 0,
+            "date_unknown_items": len(date_unknown),
+            "sent_groups": [],
+        }
 
-    # ⑦ 그룹별 필터 + 발송
+    # ⑥ 그룹별 필터 + 발송
+    sent_groups: list[dict] = []
     for group in groups:
         g_items = filter_for_group(filtered_new, group)
         if not g_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
-        summary = claude_summarize(g_items, group)
-        kw_cfg  = group.get("keywords", {})
-        header  = (
-            f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-            f"기준일자: {target_date} (D-{days_back}) 공고\n"
-            f"그룹: {group.get('name')}\n"
-            f"지역: {', '.join(group.get('regions',[])) or '전국'} / "
-            f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[])[:4])}\n"
-            f"지원유형: {', '.join(group.get('support_types', ALL_SUPPORT_TYPES))}\n"
-            f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
-        )
-        send_to_list(
-            f"[{group.get('name')}] 지원사업 공고 ({date_str}) — {len(g_items)}건",
-            header + summary,
-            group.get("recipients", []),
-        )
+        sent_groups.append({"name": group.get("name"), "matched_items": len(g_items)})
+        if allow_send:
+            summary = claude_summarize(g_items, group)
+            kw_cfg  = group.get("keywords", {})
+            header  = (
+                f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
+                f"기준일자: {target_date} (D-{days_back}) 공고\n"
+                f"그룹: {group.get('name')}\n"
+                f"지역: {', '.join(group.get('regions',[])) or '전국'} / "
+                f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[])[:4])}\n"
+                f"지원유형: {', '.join(group.get('support_types', ALL_SUPPORT_TYPES))}\n"
+                f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
+            )
+            send_to_list(
+                f"[{group.get('name')}] 지원사업 공고 ({date_str}) — {len(g_items)}건",
+                header + summary,
+                group.get("recipients", []),
+            )
 
+    # ⑦ seen_ids 업데이트
+    if persist_seen:
+        seen_ids.update(it["id"] for it in deduped)
+        save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
+    return {
+        "ok": True,
+        "mode": mode,
+        "collected": len(all_items),
+        "deduped": len(deduped),
+        "new_items": len(new_items),
+        "filtered_items": len(filtered_new),
+        "date_unknown_items": len(date_unknown),
+        "sent_groups": sent_groups,
+    }
+
+def main() -> None:
+    execute_monitor(allow_send=True, include_raw_all=True, persist_seen=True)
 
 
 if __name__ == "__main__":

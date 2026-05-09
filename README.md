@@ -1,93 +1,68 @@
-# 수출·지원사업 공고 모니터링 시스템
+# Mail Project (Vercel Ready)
 
-정부지원사업·해외전시회 공고를 자동 수집하고, 조건에 맞는 공고를 이메일로 발송하는 시스템입니다.
+이 프로젝트는 기존 로컬 실행형 Mail 모니터링을 Vercel 배포형 구조로 전환한 버전입니다.
 
-## 주요 기능
+## Project Type
 
-- **80개 소스** 자동 수집 (기업마당·KITA·IRIS·NIPA·KOCCA·인천TP 등)
-- **중복 제거** — 통합포털(기업마당 등)과 주관기관 중복 시 주관기관 우선 유지
-- **날짜 필터** — 어제(D-1) 올라온 공고만 수신
-- **그룹별 발송** — 지역·키워드·지원유형 조건을 그룹으로 설정, 수신자별 맞춤 발송
-- **Claude AI 요약** — 공고 선별 및 요약
-- **Streamlit 관리 UI** — 소스·그룹·키워드 웹에서 관리
+- Runtime: Python
+- Frontend entry: `auto_mail_web.html` (정적 페이지)
+- API entry: `api/index.py` (Vercel Python Serverless Function)
+- Core mail logic: `monitor.py`
 
-## 설치
+## Vercel Deployment
 
-```bash
-pip install -r requirements.txt
-```
+1. Vercel에 저장소 연결
+2. Root Directory를 이 프로젝트 루트로 지정
+3. Environment Variables 설정
+4. 배포 실행
 
-## 환경변수 설정
+`vercel.json`에서 아래 라우팅을 사용합니다.
 
-`.env.example`을 복사해서 `.env` 파일을 만들고 실제 키를 입력합니다.
+- `/` -> `auto_mail_web.html`
+- `/api/*` -> `api/index.py`
 
-```bash
-cp .env.example .env
-# .env 파일을 열어서 키 입력
-```
+## Required Environment Variables (Vercel)
 
-```
-BIZINFO_API_KEY=기업마당_API_키
-ANTHROPIC_API_KEY=Claude_API_키
-GMAIL_ADDRESS=발신_Gmail_주소
-GMAIL_APP_PASSWORD=Gmail_앱비밀번호
-```
+- `GMAIL_ADDRESS`
+- `GMAIL_APP_PASSWORD`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `IMAP_HOST`
+- `IMAP_PORT`
 
-> **Gmail 앱비밀번호** 발급: Google 계정 → 보안 → 2단계 인증 → 앱 비밀번호
+추가로 기존 기능에서 사용하는 키가 필요합니다.
 
-## 실행
+- `BIZINFO_API_KEY`
+- `ANTHROPIC_API_KEY`
 
-### 모니터링 실행 (메일 발송)
-```bash
-# Windows
-run_monitor.bat
+비밀값은 절대 코드에 하드코딩하지 말고, Vercel Environment Variables로만 관리하세요.
 
-# Mac/Linux
-python monitor.py
-```
+## Safe Mail Sending Rules
 
-### 관리 UI
-```bash
-# Windows
-run_dashboard.bat
+- 기본 실행은 `dry_run=true` (미리보기/검증 모드)
+- 실제 발송은 `confirm_send="SEND"`를 명시한 경우에만 허용
+- 수신자 이메일은 로그에 마스킹되어 기록
+- 이메일 본문/첨부 내용은 로그에 출력하지 않음
+- 테스트에서 실제 발송 금지
 
-# Mac/Linux
-python -m streamlit run streamlit_app.py
-# 브라우저에서 http://localhost:8501 접속
-```
+`POST /api/run` 요청 예시:
 
-## 설정 파일
+- 기본(안전): `{"dry_run": true}`
+- 실제 발송(명시 승인): `{"dry_run": false, "confirm_send": "SEND"}`
 
-| 파일 | 설명 |
-|------|------|
-| `sites.json` | 수집할 사이트 목록 (UI에서 편집 가능) |
-| `groups.json` | 그룹별 조건 + 수신자 (UI에서 편집 가능) |
-| `settings.json` | 날짜필터·원본전체 메일 설정 |
-| `seen_ids.json` | 중복방지 DB (자동 생성, Git 제외) |
+## Local Notes
 
-## 관리 UI 탭 구성
+- 기존처럼 `python monitor.py` 실행 시에는 실제 발송 경로를 유지합니다.
+- Vercel serverless 환경은 로컬 파일 영구 저장을 보장하지 않으므로, `seen_ids.json` 기반 중복 방지는 제한적입니다.
+  - 권장 대체안: Redis/DB/KV 같은 영구 저장소로 전환
 
-| 탭 | 기능 |
-|------|------|
-| 📡 소스 관리 | 사이트 추가/수정/삭제, URL 자동 분석 |
-| 👥 그룹 관리 | 지역·키워드·지원유형·수신자 설정 |
-| ⚙️ 설정 | 날짜필터·원본전체 메일 설정 |
-| ▶ 실행 | 현황 확인 + 즉시 실행 |
+## 운영 안정성 권고
 
-## 자동 실행 설정 (매일)
+현재 Gmail SMTP 방식은 임시/소규모 운영에는 사용 가능하지만, 운영 안정성을 위해 아래 이메일 API로 전환을 권장합니다.
 
-**Windows 작업 스케줄러:**
-1. 작업 스케줄러 열기
-2. 기본 작업 만들기
-3. 트리거: 매일 오전 8시
-4. 동작: `D:\auto_mail\run_monitor.bat` 실행
+- Resend
+- SendGrid
+- Postmark
 
-## 수집 소스 현황
+이번 변경에서는 발송 인프라를 Gmail SMTP에서 이메일 API로 전환하지 않았습니다.
 
-| 구분 | 사이트 수 |
-|------|---------|
-| 전용 크롤러 (IRIS·MSS·NIPA·KITA·KOCCA·ITP 등) | 14개 |
-| 표준 HTML 크롤러 | 66개 |
-| **합계 (활성)** | **70개** |
-
-> 일부 정부기관 사이트는 서버 IP 차단 정책으로 인해 개인 PC에서 실행 시 정상 동작합니다.
