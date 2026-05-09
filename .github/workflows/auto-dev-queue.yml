@@ -50,9 +50,14 @@ jobs:
         run: python scripts/auto_dev_queue.py
 
       - name: 상태 파일 커밋
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           git config user.name "auto-dev-queue[bot]"
           git config user.email "auto-dev-queue[bot]@users.noreply.github.com"
           git add TASKS.md auto_dev_state.json done_tasks.md failed_tasks.md blocked_tasks.md || true
-          git diff --staged --quiet || git commit -m "chore(auto-dev): update queue state [skip ci]"
-          git push || true
+          if git diff --staged --quiet; then
+            echo "변경사항 없음 — 커밋 생략"
+          else
+            git commit -m "chore(auto-dev): update queue state [skip ci]"
+            git push || true
+          fi
