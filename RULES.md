@@ -1,23 +1,37 @@
-# Auto Dev Queue — RULES (Mail 프로젝트 전용)
+# Auto Dev Queue — RULES (Vercel Mail 프로젝트 전용)
 
-> 이 파일은 자동개발 큐가 Mail 프로젝트에서 준수해야 할 안전규칙을 정의합니다.
+> 이 파일은 자동개발 큐가 Vercel Mail 프로젝트에서 준수해야 할 안전규칙을 정의합니다.
 
 ## 1. Mail 프로젝트 안전규칙
 
 | # | 규칙 | 설명 |
 |---|------|------|
-| 1 | 실제 이메일 자동 발송 금지 | auto-dev 작업에서 실제 SMTP/Gmail 발송 절대 금지 |
-| 2 | draft/preview까지만 허용 | 기본 동작은 "draft 생성" 또는 "preview 생성"까지만 |
-| 3 | 수신자 이메일 마스킹 | 로그에 이메일 주소 그대로 출력 금지 (예: `e***@gmail.com`) |
+| 1 | 실제 이메일 자동 발송 금지 | auto-dev 작업에서 실제 SMTP/Gmail/IMAP 발송 절대 금지 |
+| 2 | draft/preview/dry-run만 허용 | 기본 동작은 "draft 생성", "preview 생성", "dry-run"까지만 |
+| 3 | 수신자 이메일 마스킹 | 로그에 이메일 주소 전체 출력 금지 (예: `e***@gmail.com`) |
 | 4 | 민감정보 로그 금지 | 이메일 본문, 첨부파일, API Key, Token 로그 출력 금지 |
 | 5 | Secret 하드코딩 금지 | Gmail/SMTP/IMAP Secret 값을 코드에 하드코딩 금지 |
-| 6 | 발송 전 사용자 승인 필수 | 메일 발송은 반드시 사용자 승인 버튼 또는 명시적 send 단계 필요 |
+| 6 | 발송 전 사용자 승인 필수 | send 기능은 사용자 명시 승인 후에만 가능하도록 문서화 |
 | 7 | 테스트에서 실제 발송 금지 | 테스트는 mock/dry-run만 허용 |
-| 8 | mock/dry-run 우선 | 테스트용 mock email client 또는 dry-run 모드 우선 사용 |
-| 9 | 실패 시 재발송 금지 | 발송 실패 시 자동 재시도 금지 |
-| 10 | 중복 발송 방지 | 동일 내용 중복 발송 방지 로직 필수 |
+| 8 | 중복 발송 방지 | 동일 내용 중복 발송 방지 규칙 필수 |
 
-## 2. 기존 앱 보호 규칙
+## 2. 환경변수 (Vercel / GitHub)
+
+| 환경변수 이름 | 용도 | dry-run 안전 |
+|--------------|------|-------------|
+| `OPENAI_API_KEY` | AI 기능 | ⚠️ 실행 시에만 사용 |
+| `ANTHROPIC_API_KEY` | AI 기능 (선택) | ⚠️ 실행 시에만 사용 |
+| `AUTO_DEV_PAT` | GitHub PR 생성용 | ✅ 안전 |
+| `GMAIL_ADDRESS` | 메일 발신 주소 | 🚫 발송 기능 검증 전까지 미사용 |
+| `GMAIL_APP_PASSWORD` | Gmail 앱 비밀번호 | 🚫 발송 기능 검증 전까지 미사용 |
+| `SMTP_HOST` | SMTP 서버 주소 | 🚫 발송 기능 검증 전까지 미사용 |
+| `SMTP_PORT` | SMTP 서버 포트 | 🚫 발송 기능 검증 전까지 미사용 |
+| `IMAP_HOST` | IMAP 서버 주소 | 🚫 발송 기능 검증 전까지 미사용 |
+| `IMAP_PORT` | IMAP 서버 포트 | 🚫 발송 기능 검증 전까지 미사용 |
+
+> **중요:** Mail 관련 Secret(`GMAIL_*`, `SMTP_*`, `IMAP_*`)은 실제 발송 기능이 검증되기 전까지 사용하지 않음. 자동개발 큐에서는 dry-run / draft-only 기준으로만 동작.
+
+## 3. 기존 앱 보호 규칙
 
 | # | 규칙 |
 |---|------|

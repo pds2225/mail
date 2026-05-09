@@ -1,4 +1,4 @@
-"""Auto Dev Queue — Mail 프로젝트 자동개발 큐 실행기
+"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
@@ -10,8 +10,9 @@
 
 주의:
 - Secret/API Key/메일 계정 값은 절대 출력하지 않음
-- 실제 이메일 발송 금지
+- 실제 이메일 발송 금지 (dry-run / draft-only 기준)
 - 기존 앱 파일 수정 금지
+- Mail 관련 Secret은 발송 기능 검증 전까지 미사용
 """
 from __future__ import annotations
 
@@ -32,6 +33,8 @@ FAILED_PATH = ROOT / "failed_tasks.md"
 BLOCKED_PATH = ROOT / "blocked_tasks.md"
 
 PROTECTED_FILES = {"monitor.py", "streamlit_app.py", ".env", ".env.example"}
+MAIL_SECRETS = {"GMAIL_ADDRESS", "GMAIL_APP_PASSWORD", "SMTP_HOST", "SMTP_PORT",
+                "IMAP_HOST", "IMAP_PORT"}
 MAX_RETRY = 2
 
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
@@ -182,7 +185,8 @@ def preflight_check() -> list[str]:
 def check_email_send_risk(task_title: str) -> bool:
     """TASK 제목에 실제 발송 위험 키워드가 있는지 확인"""
     danger_keywords = ["실제 발송", "send email", "smtp send", "메일 발송 실행",
-                       "이메일 전송", "real send", "production send"]
+                       "이메일 전송", "real send", "production send",
+                       "imap connect", "smtp connect", "메일 연결"]
     title_lower = task_title.lower()
     return any(kw in title_lower for kw in danger_keywords)
 
