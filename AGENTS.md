@@ -28,3 +28,21 @@ No linting tool is configured in the repo. Use `python3 -m ruff check .` if `ruf
 - Use `python3` not `python` — no `python` symlink exists in this environment.
 - JSON config files (`sites.json`, `groups.json`, `settings.json`) are the data store — no database needed.
 - `seen_ids.json` is auto-generated at runtime and git-ignored.
+
+### Auto Dev Queue
+
+이 프로젝트에는 방치형 자동개발 큐 인프라가 포함되어 있습니다.
+
+- **TASKS.md** — 작업 큐 (PENDING/RUNNING/DONE/FAILED/BLOCKED)
+- **RULES.md** — Mail 프로젝트 전용 안전규칙
+- **scripts/auto_dev_queue.py** — 큐 실행기
+- **auto_dev_state.json** — 실행 상태 추적
+- **.github/workflows/auto-dev-queue.yml** — GHA 워크플로우 (수동 실행 또는 스케줄)
+
+자동개발 큐 실행: `python3 scripts/auto_dev_queue.py`
+
+**핵심 안전규칙:**
+- 기존 앱 파일(`monitor.py`, `streamlit_app.py`) 수정 금지
+- 실제 이메일 발송 금지 (dry-run/mock만 허용)
+- Secret/API Key 로그 출력 금지
+- 자동 merge 금지 (PR 생성까지만)
