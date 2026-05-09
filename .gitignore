@@ -1,5 +1,7 @@
 # 환경변수 (절대 올리지 말 것)
 .env
+.env.*
+*.env.txt
 
 # 실행 중 생성되는 파일
 seen_ids.json
@@ -25,3 +27,7 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Vercel / Node
+.vercel/
+node_modules/
