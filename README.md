@@ -69,7 +69,7 @@
 ## Auto Dev Queue
 
 1. `TASKS.md`의 `## PENDING` 섹션에 `TASK-NNN: <작업 설명>` 형식으로 태스크를 추가합니다.
-2. `python scripts/auto_dev_queue.py`를 실행하면 PENDING 목록에서 1개를 자동으로 처리합니다.
+2. `python3 scripts/auto_dev_queue.py`를 실행하면 PENDING 목록에서 1개를 자동으로 처리합니다.
 3. 처리 중인 태스크는 `## RUNNING`으로, 완료되면 `## DONE`으로 이동합니다.
 4. 실패하거나 조건 미충족 시 `## FAILED` / `## BLOCKED`로 이동하며 사유가 기록됩니다.
 5. GitHub Actions에서 자동 실행 시 Summary에 실행 TASK, 결과, 다음 TASK가 표시됩니다.
