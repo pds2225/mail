@@ -53,6 +53,32 @@ def new_group_id() -> str:
     import time
     return f"grp_{int(time.time())}"
 
+def _norm_group_ui(group: dict) -> dict:
+    """UI용: 구버전(keywords.logic) → 신버전(or_keywords/and_keyword_groups) 정규화."""
+    if "or_keywords" in group or "and_keyword_groups" in group or "exclude_keywords" in group:
+        return group
+    kw_cfg = group.get("keywords", {})
+    kws    = kw_cfg.get("keywords", [])
+    logic  = kw_cfg.get("logic", "OR").upper()
+    norm   = {**group}
+    if logic == "AND":
+        norm["or_keywords"]        = []
+        norm["and_keyword_groups"] = [kws] if kws else []
+    else:
+        norm["or_keywords"]        = kws
+        norm["and_keyword_groups"] = []
+    norm.setdefault("exclude_keywords", [])
+    return norm
+
+def _parse_and_groups(text: str) -> list:
+    """AND 그룹 textarea 파싱. 한 줄 = 한 AND 그룹, 쉼표로 단어 구분."""
+    result = []
+    for line in text.splitlines():
+        kws = [k.strip() for k in line.split(",") if k.strip()]
+        if kws:
+            result.append(kws)
+    return result
+
 
 # ── 초기화 ───────────────────────────────────────────────────────────────────
 def init_defaults() -> None:
@@ -201,11 +227,12 @@ with tab_sites:
 with tab_groups:
     groups: list[dict] = load_json(GROUPS_PATH, [])
     st.subheader(f"등록된 그룹 ({len(groups)}개)")
-    st.caption("그룹 = 조건(지역+키워드+지원유형) + 수신자. 그룹마다 별도 메일 발송.")
+    st.caption("그룹 = 필수조건(지역) + OR/AND/제외 키워드 + 지원유형 + 수신자. 그룹마다 별도 메일 발송.")
 
     for i, grp in enumerate(groups):
         icon = "✅" if grp.get("active") else "❌"
-        rgns = ", ".join(grp.get("regions", [])) or "전국"
+        _req = grp.get("required_conditions", {}).get("regions", grp.get("regions", []))
+        rgns = ", ".join(_req) or "전국"
         with st.expander(f"{icon} {grp['name']}  ·  지역: {rgns}", expanded=False):
 
             # 기본 정보
@@ -215,45 +242,70 @@ with tab_groups:
             with g2:
                 g_active = st.checkbox("활성화", value=grp.get("active", True), key=f"g_on_{i}")
 
-            st.markdown("**📍 지역 설정**")
-            st.caption("선택한 지역 + 전국 공고만 수신. 미선택 시 전체 수신.")
+            st.markdown("**📍 필수조건 — 지역** (선택 지역 + 전국 공고만 수신, 미선택 시 전체)")
+            _grp_rgns = grp.get("required_conditions", {}).get("regions", grp.get("regions", []))
             g_regions = st.multiselect("지역 선택", KNOWN_REGIONS,
-                                        default=grp.get("regions", []), key=f"g_reg_{i}")
+                                        default=_grp_rgns, key=f"g_reg_{i}")
 
-            st.markdown("**🔑 키워드 조건**")
-            kw_cfg = grp.get("keywords", {"logic": "OR", "keywords": []})
-            gk1, gk2 = st.columns([1, 3])
-            with gk1:
-                g_logic = st.radio("조건", ["OR", "AND"], key=f"g_logic_{i}",
-                                    index=0 if kw_cfg.get("logic","OR") == "OR" else 1,
-                                    horizontal=True)
-            with gk2:
-                st.caption("OR: 하나라도 포함  |  AND: 전부 포함")
+            _gn = _norm_group_ui(grp)
 
-            kw_list = kw_cfg.get("keywords", [])
-            # 키워드 태그 표시 + 삭제
-            kw_del = None
-            if kw_list:
-                cols = st.columns(min(len(kw_list), 5))
-                for j, kw in enumerate(kw_list):
-                    with cols[j % 5]:
-                        if st.button(f"❌ {kw}", key=f"g_kw_del_{i}_{j}", use_container_width=True):
-                            kw_del = kw
-            if kw_del:
-                kw_list.remove(kw_del)
-                grp["keywords"] = {"logic": g_logic, "keywords": kw_list}
+            # ── OR 키워드 ──────────────────────────────────────────
+            st.markdown("**🔑 OR 키워드** (하나 이상 포함 시 통과)")
+            or_list = list(_gn.get("or_keywords", []))
+            or_del = None
+            if or_list:
+                or_cols = st.columns(min(len(or_list), 5))
+                for j, kw in enumerate(or_list):
+                    with or_cols[j % 5]:
+                        if st.button(f"❌ {kw}", key=f"g_or_del_{i}_{j}", use_container_width=True):
+                            or_del = kw
+            if or_del:
+                or_list.remove(or_del)
+                grp.update({"or_keywords": or_list, "required_conditions": {"regions": g_regions}})
                 save_json(GROUPS_PATH, groups); st.rerun()
+            ork1, ork2 = st.columns([3, 1])
+            with ork1:
+                new_or_kw = st.text_input("OR 키워드 추가", placeholder="예: 화장품",
+                                           key=f"g_or_add_{i}", label_visibility="collapsed")
+            with ork2:
+                if st.button("➕", key=f"g_or_btn_{i}", use_container_width=True,
+                              disabled=not new_or_kw.strip()):
+                    if new_or_kw.strip() not in or_list:
+                        or_list.append(new_or_kw.strip())
+                        grp.update({"or_keywords": or_list, "required_conditions": {"regions": g_regions}})
+                        save_json(GROUPS_PATH, groups); st.rerun()
 
-            gka1, gka2 = st.columns([3, 1])
-            with gka1:
-                new_kw = st.text_input("키워드 추가", placeholder="예: 화장품", key=f"g_kw_add_{i}",
-                                        label_visibility="collapsed")
-            with gka2:
-                if st.button("➕", key=f"g_kw_btn_{i}", use_container_width=True,
-                              disabled=not new_kw.strip()):
-                    if new_kw.strip() not in kw_list:
-                        kw_list.append(new_kw.strip())
-                        grp["keywords"] = {"logic": g_logic, "keywords": kw_list}
+            # ── AND 키워드 그룹 ────────────────────────────────────
+            st.markdown("**🔗 AND 키워드 그룹** (한 줄 = 한 그룹, 그룹 내 키워드 전부 포함 시 통과)")
+            st.caption("쉼표로 구분.  예:  AI, 사업화")
+            and_default = "\n".join(", ".join(ag) for ag in _gn.get("and_keyword_groups", []))
+            g_and_text = st.text_area("AND 키워드 그룹", value=and_default, height=80,
+                                       key=f"g_and_{i}", label_visibility="collapsed")
+
+            # ── 제외 키워드 ────────────────────────────────────────
+            st.markdown("**🚫 제외 키워드** (포함되면 해당 공고 제외)")
+            excl_list = list(_gn.get("exclude_keywords", []))
+            excl_del = None
+            if excl_list:
+                excl_cols = st.columns(min(len(excl_list), 5))
+                for j, kw in enumerate(excl_list):
+                    with excl_cols[j % 5]:
+                        if st.button(f"❌ {kw}", key=f"g_excl_del_{i}_{j}", use_container_width=True):
+                            excl_del = kw
+            if excl_del:
+                excl_list.remove(excl_del)
+                grp.update({"exclude_keywords": excl_list, "required_conditions": {"regions": g_regions}})
+                save_json(GROUPS_PATH, groups); st.rerun()
+            exk1, exk2 = st.columns([3, 1])
+            with exk1:
+                new_excl_kw = st.text_input("제외 키워드 추가", placeholder="예: 대기업",
+                                              key=f"g_excl_add_{i}", label_visibility="collapsed")
+            with exk2:
+                if st.button("➕", key=f"g_excl_btn_{i}", use_container_width=True,
+                              disabled=not new_excl_kw.strip()):
+                    if new_excl_kw.strip() not in excl_list:
+                        excl_list.append(new_excl_kw.strip())
+                        grp.update({"exclude_keywords": excl_list, "required_conditions": {"regions": g_regions}})
                         save_json(GROUPS_PATH, groups); st.rerun()
 
             st.markdown("**📂 지원유형**")
@@ -284,8 +336,10 @@ with tab_groups:
                     groups[i] = {
                         **grp,
                         "name": g_name, "active": g_active,
-                        "regions": g_regions,
-                        "keywords": {"logic": g_logic, "keywords": kw_list},
+                        "required_conditions": {"regions": g_regions},
+                        "or_keywords": or_list,
+                        "and_keyword_groups": _parse_and_groups(g_and_text),
+                        "exclude_keywords": excl_list,
                         "support_types": g_stypes,
                         "recipients": [e.strip() for e in recip_text.splitlines() if e.strip()],
                     }
@@ -300,24 +354,27 @@ with tab_groups:
     with st.form("add_group", clear_on_submit=True):
         ng1, ng2 = st.columns(2)
         with ng1:
-            ng_name = st.text_input("그룹명 *", placeholder="예: 경기 제조업 수출팀")
-            ng_regions = st.multiselect("지역", KNOWN_REGIONS)
+            ng_name    = st.text_input("그룹명 *", placeholder="예: 경기 제조업 수출팀")
+            ng_regions = st.multiselect("필수조건 — 지역", KNOWN_REGIONS)
+            ng_email   = st.text_input("수신자 이메일 *", placeholder="example@gmail.com")
         with ng2:
-            ng_logic = st.radio("키워드 조건", ["OR", "AND"], horizontal=True)
-            ng_kws   = st.text_input("키워드 (쉼표 구분)", placeholder="화장품, 뷰티, 수출")
-            ng_email = st.text_input("수신자 이메일 *", placeholder="example@gmail.com")
+            ng_or_kws   = st.text_input("OR 키워드 (쉼표 구분)", placeholder="화장품, 뷰티, 수출")
+            ng_excl_kws = st.text_input("제외 키워드 (쉼표 구분)", placeholder="대기업, 공기업")
+        ng_and_text = st.text_area("AND 키워드 그룹 (한 줄=한 그룹, 쉼표 구분)",
+                                    placeholder="AI, 사업화\nSaaS, 투자", height=80)
         ng_stypes = st.multiselect("지원유형", ALL_SUPPORT_TYPES, default=ALL_SUPPORT_TYPES)
         if st.form_submit_button("그룹 추가", use_container_width=True):
             if not ng_name.strip() or not ng_email.strip():
                 st.error("그룹명과 이메일은 필수입니다.")
             else:
-                kws = [k.strip() for k in ng_kws.split(",") if k.strip()]
                 groups.append({
                     "id": new_group_id(), "name": ng_name.strip(), "active": True,
-                    "regions": ng_regions,
-                    "keywords": {"logic": ng_logic, "keywords": kws},
-                    "support_types": ng_stypes or ALL_SUPPORT_TYPES,
-                    "recipients": [ng_email.strip()],
+                    "required_conditions": {"regions": ng_regions},
+                    "or_keywords":        [k.strip() for k in ng_or_kws.split(",") if k.strip()],
+                    "and_keyword_groups": _parse_and_groups(ng_and_text),
+                    "exclude_keywords":   [k.strip() for k in ng_excl_kws.split(",") if k.strip()],
+                    "support_types":      ng_stypes or ALL_SUPPORT_TYPES,
+                    "recipients":         [ng_email.strip()],
                 })
                 save_json(GROUPS_PATH, groups); st.success(f"'{ng_name}' 추가 완료!"); st.rerun()
 
@@ -329,12 +386,15 @@ with tab_groups:
 
 | 조건 | 설명 |
 |------|------|
-| **지역** | 선택 지역 + "전국" 공고 수신. 미선택 시 모든 공고 |
-| **키워드(OR)** | 키워드 중 하나라도 포함된 공고 |
-| **키워드(AND)** | 키워드 전부 포함된 공고만 (엄격) |
+| **필수조건(지역)** | 선택 지역 + "전국" 공고만 수신. 미선택 시 모든 지역 |
+| **OR 키워드** | 하나 이상 포함된 공고 통과 |
+| **AND 키워드 그룹** | 한 줄의 키워드 전부 포함 시 통과 (한 그룹이라도 충족하면 됨) |
+| **제외 키워드** | 포함되면 해당 공고 제외 |
 | **지원유형** | 체크된 유형의 공고만 포함 |
 
-→ 예: "인천 화장품팀" = 지역:인천 + 키워드:화장품/뷰티(OR) + 유형:지원금/컨설팅
+필터 순서: 지역 필수 → 제외 키워드 → OR/AND 키워드 → 지원유형
+
+→ 예: "인천 화장품팀" = 지역:인천(필수) + OR키워드:화장품/뷰티 + 제외:없음 + 유형:지원금/컨설팅
         """)
 
 
