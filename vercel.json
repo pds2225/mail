@@ -1,29 +1,25 @@
 {
   "version": 2,
   "functions": {
-    "api/*.py": {
+    "api/health.py": {
+      "runtime": "vercel-python@3.0"
+    },
+    "api/index.py": {
       "runtime": "vercel-python@3.0"
     }
   },
-  "builds": [
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "auto_mail_web.html",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
+    {
+      "src": "/api/health",
+      "dest": "api/health.py"
+    },
     {
       "src": "/api/(.*)",
       "dest": "api/index.py"
     },
     {
       "src": "/",
-      "dest": "auto_mail_web.html"
+      "dest": "/auto_mail_web.html"
     }
   ]
 }
-
