@@ -1054,6 +1054,27 @@ def keyword_match(item: dict, kw_cfg: dict) -> bool:
     return all(k in text for k in kws) if logic == "AND" else any(k in text for k in kws)
 
 
+def _normalize_group(group: dict) -> dict:
+    """구버전(keywords.logic) → 신버전(or_keywords/and_keyword_groups) 정규화.
+    신버전 필드가 하나라도 있으면 그대로 반환."""
+    if "or_keywords" in group or "and_keyword_groups" in group or "exclude_keywords" in group:
+        if "required_conditions" not in group:
+            group = {**group, "required_conditions": {"regions": group.get("regions", [])}}
+        return group
+    kw_cfg = group.get("keywords", {})
+    kws    = kw_cfg.get("keywords", [])
+    logic  = kw_cfg.get("logic", "OR").upper()
+    norm   = {**group, "required_conditions": {"regions": group.get("regions", [])}}
+    if logic == "AND":
+        norm["or_keywords"]       = []
+        norm["and_keyword_groups"] = [kws] if kws else []
+    else:
+        norm["or_keywords"]       = kws
+        norm["and_keyword_groups"] = []
+    norm.setdefault("exclude_keywords", [])
+    return norm
+
+
 def support_match(item: dict, enabled_types: list[str]) -> bool:
     if not enabled_types or set(enabled_types) == set(ALL_SUPPORT_TYPES):
         return True
@@ -1063,28 +1084,51 @@ def support_match(item: dict, enabled_types: list[str]) -> bool:
 
 def filter_for_group(items: list[dict], group: dict) -> list[dict]:
     """
-    그룹 필터링 개선판:
-    1) source_always_include: 출처가 인천 관련 기관이면 키워드/지역 무관 포함
-    2) region_match + keyword_match + support_match 기본 로직
+    신버전 조건 구조(or_keywords / and_keyword_groups / exclude_keywords / required_conditions)
+    로 필터링. 구버전(keywords.logic) 그룹은 _normalize_group 으로 자동 변환.
+    처리 순서: ① 출처 무조건 포함 → ② 필수조건(지역) → ③ 제외 키워드
+              → ④ OR/AND 키워드 → ⑤ 지원유형
     """
-    result = []
-    always_srcs = [s.lower() for s in group.get("source_always_include", [])]
+    g           = _normalize_group(group)
+    result      = []
+    always_srcs = [s.lower() for s in g.get("source_always_include", [])]
+    req_regions = g.get("required_conditions", {}).get("regions", [])
+    or_kws      = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
+    and_groups  = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
+    excl_kws    = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
 
     for it in items:
-        # ① 인천 주관기관 출처 → 무조건 포함 (지역·키워드 불문)
-        src = (it.get("source","") + " " + it.get("author","")).lower()
+        text = f"{it.get('title','')} {it.get('description','')} {it.get('author','')}".lower()
+        src  = (it.get("source","") + " " + it.get("author","")).lower()
+
+        # ① 출처 기반 무조건 포함
         if always_srcs and any(s in src for s in always_srcs):
-            if support_match(it, group.get("support_types", ALL_SUPPORT_TYPES)):
+            if support_match(it, g.get("support_types", ALL_SUPPORT_TYPES)):
                 result.append({**it, "_types": classify_support_type(it)})
                 continue
 
-        # ② 일반 필터: 지역 + 키워드 + 지원유형
-        if (region_match(it, group.get("regions", [])) and
-                keyword_match(it, group.get("keywords", {})) and
-                support_match(it, group.get("support_types", ALL_SUPPORT_TYPES))):
-            result.append({**it, "_types": classify_support_type(it)})
+        # ② 필수조건: 지역 (OR 방식 — 하나라도 맞으면 통과, 비어 있으면 전체 통과)
+        if not region_match(it, req_regions):
+            continue
 
-    log.info("그룹 '%s' 필터: %d → %d건", group.get("name"), len(items), len(result))
+        # ③ 제외 키워드: 하나라도 포함되면 제외
+        if excl_kws and any(k in text for k in excl_kws):
+            continue
+
+        # ④ 키워드 조건 (OR/AND 모두 비어 있으면 전체 통과)
+        if or_kws or and_groups:
+            or_pass  = any(k in text for k in or_kws)
+            and_pass = any(all(k in text for k in ag) for ag in and_groups)
+            if not (or_pass or and_pass):
+                continue
+
+        # ⑤ 지원유형
+        if not support_match(it, g.get("support_types", ALL_SUPPORT_TYPES)):
+            continue
+
+        result.append({**it, "_types": classify_support_type(it)})
+
+    log.info("그룹 '%s' 필터: %d → %d건", g.get("name"), len(items), len(result))
     return result
 
 
@@ -1135,18 +1179,22 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     if not items: return ""
     limited = items[:MAX_FOR_CLAUDE]
     client  = Anthropic(api_key=ANTHROPIC_API_KEY)
-    kw_cfg  = group.get("keywords", {})
-    regions = group.get("regions", [])
-    stypes  = group.get("support_types", ALL_SUPPORT_TYPES)
+    g           = _normalize_group(group)
+    req_regions = g.get("required_conditions", {}).get("regions", [])
+    stypes      = g.get("support_types", ALL_SUPPORT_TYPES)
+    or_kws      = g.get("or_keywords", [])
+    and_groups  = g.get("and_keyword_groups", [])
     items_txt = "\n\n".join(
         f"[{i+1}] [{' · '.join(it.get('_types', ['미분류']))}] [등록:{it.get('posted_date','날짜불명')}]\n"
         f"제목: {it['title']}\n기관: {it['author']}\n내용: {it['description']}\n"
         f"마감: {it['deadline']}\n출처: {it['source']}\n링크: {it['link']}"
         for i, it in enumerate(limited)
     )
-    region_ctx = f"대상지역: {', '.join(regions) if regions else '전국'}"
-    kw_ctx = f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[]))}"
-    type_ctx = f"지원유형: {', '.join(stypes)}"
+    region_ctx = f"대상지역: {', '.join(req_regions) if req_regions else '전국'}"
+    kw_parts   = ([f"OR({', '.join(or_kws[:4])})"] if or_kws else []) + \
+                 [f"AND({', '.join(ag)})" for ag in and_groups[:2]]
+    kw_ctx     = "키워드: " + " | ".join(kw_parts) if kw_parts else "키워드: 전체"
+    type_ctx   = f"지원유형: {', '.join(stypes)}"
     prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
 중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
 마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
@@ -1315,15 +1363,20 @@ def execute_monitor(
             continue
         sent_groups.append({"name": group.get("name"), "matched_items": len(g_items)})
         if allow_send:
-            summary = claude_summarize(g_items, group)
-            kw_cfg  = group.get("keywords", {})
+            summary    = claude_summarize(g_items, group)
+            g_norm     = _normalize_group(group)
+            req_rgns   = g_norm.get("required_conditions", {}).get("regions", [])
+            _or_kws    = g_norm.get("or_keywords", [])
+            _and_grps  = g_norm.get("and_keyword_groups", [])
+            _kw_parts  = ([f"OR({', '.join(_or_kws[:3])})"] if _or_kws else []) + \
+                         [f"AND({', '.join(ag)})" for ag in _and_grps[:2]]
+            kw_str     = " | ".join(_kw_parts) or "전체"
             header  = (
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
                 f"기준일자: {target_date} (D-{days_back}) 공고\n"
                 f"그룹: {group.get('name')}\n"
-                f"지역: {', '.join(group.get('regions',[])) or '전국'} / "
-                f"키워드({kw_cfg.get('logic','OR')}): {', '.join(kw_cfg.get('keywords',[])[:4])}\n"
-                f"지원유형: {', '.join(group.get('support_types', ALL_SUPPORT_TYPES))}\n"
+                f"지역: {', '.join(req_rgns) or '전국'} / 키워드: {kw_str}\n"
+                f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
                 f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
             )
             send_to_list(

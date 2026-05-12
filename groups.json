@@ -3,11 +3,12 @@
     "id": "grp_default",
     "name": "인천 화장품 수출팀",
     "active": true,
-    "regions": ["인천"],
-    "keywords": {
-      "logic": "OR",
-      "keywords": ["화장품", "뷰티", "K-뷰티", "해외전시회", "수출지원", "해외진출"]
+    "required_conditions": {
+      "regions": ["인천"]
     },
+    "or_keywords": ["화장품", "뷰티", "K-뷰티", "해외전시회", "수출지원", "해외진출"],
+    "and_keyword_groups": [],
+    "exclude_keywords": [],
     "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
     "recipients": ["ekth3691@gmail.com"]
   },
@@ -15,11 +16,12 @@
     "id": "grp_ai_saas",
     "name": "서울/전국 AI·SaaS팀",
     "active": true,
-    "regions": ["서울"],
-    "keywords": {
-      "logic": "OR",
-      "keywords": ["AI", "인공지능", "데이터", "SaaS"]
+    "required_conditions": {
+      "regions": ["서울"]
     },
+    "or_keywords": ["AI", "인공지능", "데이터", "SaaS"],
+    "and_keyword_groups": [],
+    "exclude_keywords": [],
     "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
     "recipients": ["ekth3691@gmail.com"]
   }
