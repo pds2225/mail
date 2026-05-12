@@ -1,13 +1,19 @@
 {
   "version": 2,
-  "functions": {
-    "api/health.py": {
-      "runtime": "vercel-python@3.0"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
     },
-    "api/index.py": {
-      "runtime": "vercel-python@3.0"
+    {
+      "src": "api/health.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "auto_mail_web.html",
+      "use": "@vercel/static"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/health",
