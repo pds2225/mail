@@ -1,11 +1,6 @@
-from __future__ import annotations
-
+from http.server import BaseHTTPRequestHandler
+import json
 import os
-from typing import Any
-
-from flask import Flask, jsonify, request
-
-app = Flask(__name__)
 
 REQUIRED_ENV_KEYS = [
     "GMAIL_ADDRESS",
@@ -16,61 +11,75 @@ REQUIRED_ENV_KEYS = [
     "IMAP_PORT",
 ]
 
+class handler(BaseHTTPRequestHandler):
+    def _json(self, code: int, data: dict) -> None:
+        body = json.dumps(data, ensure_ascii=False).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
-def _missing_env_keys() -> list[str]:
-    return [key for key in REQUIRED_ENV_KEYS if not os.environ.get(key, "").strip()]
-
-
-@app.get("/api/health")
-def health() -> Any:
-    missing = _missing_env_keys()
-    return jsonify(
-        {
-            "ok": True,
-            "service": "auto-mail",
-            "mode": "serverless",
-            "missing_env_keys": missing,
-        }
-    )
-
-
-@app.post("/api/run")
-def run_monitor() -> Any:
-    body = request.get_json(silent=True) or {}
-    dry_run = body.get("dry_run", True)
-    confirm_send = body.get("confirm_send") == "SEND"
-    include_raw_all = bool(body.get("include_raw_all", False))
-    persist_seen = bool(body.get("persist_seen", False))
-
-    allow_send = (not dry_run) and confirm_send
-    if not dry_run and not confirm_send:
-        return (
-            jsonify(
-                {
-                    "ok": False,
-                    "error": "Explicit send confirmation required",
-                    "hint": "Use dry_run=true, or set confirm_send='SEND' to send.",
-                }
-            ),
-            400,
-        )
-
-    try:
-        from monitor import execute_monitor
-
-        result = execute_monitor(
-            allow_send=allow_send,
-            include_raw_all=include_raw_all,
-            persist_seen=persist_seen,
-        )
-        return jsonify(
-            {
+    def do_GET(self):
+        path = self.path.split("?")[0]
+        if path in ("/api/health", "/api/health/"):
+            missing = [k for k in REQUIRED_ENV_KEYS if not os.environ.get(k, "").strip()]
+            self._json(200, {
                 "ok": True,
-                "requested_dry_run": bool(dry_run),
-                "effective_send": allow_send,
-                "result": result,
-            }
-        )
-    except Exception as exc:
-        return jsonify({"ok": False, "error": str(exc)}), 500
+                "service": "auto-mail",
+                "mode": "serverless",
+                "missing_env_keys": missing,
+            })
+        else:
+            self._json(200, {
+                "ok": True,
+                "service": "auto-mail",
+                "note": "Use POST /api/run to trigger monitor",
+            })
+
+    def do_POST(self):
+        path = self.path.split("?")[0]
+        if path not in ("/api/run", "/api/run/"):
+            self._json(404, {"ok": False, "error": "Unknown endpoint"})
+            return
+
+        # lazy import: monitor.py has module-level env checks
+        try:
+            from monitor import execute_monitor
+        except Exception as exc:
+            self._json(500, {"ok": False, "error": f"Monitor import failed: {exc}"})
+            return
+
+        content_len = int(self.headers.get("Content-Length", 0))
+        body_raw = self.rfile.read(content_len).decode() if content_len else "{}"
+        try:
+            body = json.loads(body_raw) if body_raw else {}
+        except json.JSONDecodeError:
+            body = {}
+
+        dry_run = body.get("dry_run", True)
+        confirm_send = body.get("confirm_send") == "SEND"
+        allow_send = (not dry_run) and confirm_send
+
+        if not dry_run and not confirm_send:
+            self._json(400, {
+                "ok": False,
+                "error": "Explicit send confirmation required",
+                "hint": "Use dry_run=true, or set confirm_send='SEND' to send.",
+            })
+            return
+
+        try:
+            result = execute_monitor(
+                allow_send=allow_send,
+                include_raw_all=bool(body.get("include_raw_all", False)),
+                persist_seen=bool(body.get("persist_seen", False)),
+            )
+            self._json(200, {"ok": True, "result": result})
+        except Exception as exc:
+            self._json(500, {"ok": False, "error": str(exc)})
+
+    def log_message(self, fmt, *args):
+        pass  # suppress default access log
+
 
