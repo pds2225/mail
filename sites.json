@@ -913,5 +913,17 @@
       "row": "table tbody tr"
     },
     "note": "인천TP 마케팅센터(뷰티산업육성) [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "custom_f4574ebb",
+    "name": "예술경영지원센터",
+    "type": "html_card",
+    "url": "https://www.gokams.or.kr/01_news/notice_list.aspx",
+    "note": "예술분야 기초창업 지원사업",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "ul li"
+    }
   }
 ]

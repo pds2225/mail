@@ -18,6 +18,7 @@ os.environ.setdefault("GMAIL_ADDRESS",      "test@test.com")
 from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
+    fetch_html_generic, extract_date_from_text,
     KST, ALL_SUPPORT_TYPES,
 )
 
@@ -187,3 +188,81 @@ def test_classify_support_type_other():
     """지원유형 분류: 미해당 → 그외"""
     result = classify_support_type({"title": "해외진출 협력 네트워크", "description": ""})
     assert "그외" in result, f"'그외' 분류 실패: {result}"
+
+
+def test_extract_date_from_text_supports_korean_date():
+    """날짜 추출: 2026년 5월 9일 같은 한국어 날짜도 YYYY-MM-DD로 정규화"""
+    assert extract_date_from_text("등록일 2026년 5월 9일") == "2026-05-09"
+
+
+def test_fetch_html_generic_uses_configured_date_selectors(monkeypatch):
+    """공통 HTML 파서: sites.json의 날짜 selector가 있으면 그 값을 우선 사용"""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <table>
+      <tbody>
+        <tr>
+          <td class="title"><a href="/notice/1">K-뷰티 해외진출 지원</a></td>
+          <td class="posted">2026.05.15</td>
+          <td class="deadline">2026년 6월 1일</td>
+          <td class="author">한국보건산업진흥원</td>
+        </tr>
+      </tbody>
+    </table>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {
+        "id": "khidi_test",
+        "name": "KHIDI 테스트",
+        "url": "https://example.com/list",
+        "is_aggregator": False,
+        "selectors": {
+            "row": "table tbody tr",
+            "title": ".title a",
+            "link": ".title a",
+            "date": ".posted",
+            "deadline": ".deadline",
+            "author": ".author",
+        },
+    }
+
+    items = fetch_html_generic(site)
+
+    assert len(items) == 1
+    assert items[0]["title"] == "K-뷰티 해외진출 지원"
+    assert items[0]["link"] == "https://example.com/notice/1"
+    assert items[0]["posted_date"] == "2026-05-15"
+    assert items[0]["deadline"] == "2026-06-01"
+    assert items[0]["author"] == "한국보건산업진흥원"
+
+
+def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
+    """공통 HTML 파서: 설계 문서의 date_selector 필드명도 그대로 지원"""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <ul>
+      <li>
+        <a href="view.aspx?id=1">예술분야 기초창업 지원사업</a>
+        <span class="posted">2026/05/15</span>
+      </li>
+    </ul>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {
+        "id": "kams_test",
+        "name": "KAMS 테스트",
+        "url": "https://example.com/notice_list.aspx",
+        "date_selector": ".posted",
+        "selectors": {"row": "ul li"},
+    }
+
+    items = fetch_html_generic(site)
+
+    assert len(items) == 1
+    assert items[0]["posted_date"] == "2026-05-15"

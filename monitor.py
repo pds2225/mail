@@ -144,16 +144,35 @@ def is_imminent(deadline: str) -> bool:
     return False
 
 def extract_date_from_text(text: str) -> str:
-    """텍스트에서 YYYY-MM-DD 또는 YYYY.MM.DD 날짜 추출 (가장 첫 번째)"""
-    m = re.search(r"(\d{4})[.\-/](\d{2})[.\-/](\d{2})", text)
+    """텍스트에서 날짜 추출 (YYYY-MM-DD). 다양한 포맷 지원."""
+    if not text:
+        return ""
+    # 1. 표준 ISO: 2026-05-15 또는 2026.05.15 또는 2026/05/15
+    m = re.search(r"(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})", text)
     if m:
-        return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    # 2. 한국어: 2026년 05월 15일 또는 2026년 5월 15일
+    m = re.search(r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", text)
+    if m:
+        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    # 3. 간격 있는 ISO: 2026 - 05 - 15
+    m = re.search(r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})", text)
+    if m:
+        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
     return ""
 
 
-# ══════════════════════════════════════════════════════════════════
-# 설정 로더
-# ══════════════════════════════════════════════════════════════════
+def select_text(root: Any, selector: str) -> str:
+    """CSS selector로 찾은 첫 요소의 텍스트를 반환."""
+    if not selector:
+        return ""
+    node = root.select_one(selector)
+    return norm(node.get_text(" ", strip=True)) if node else ""
+
+
+def select_date(root: Any, selector: str) -> str:
+    """CSS selector로 찾은 영역에서 등록일/마감일 날짜를 YYYY-MM-DD로 반환."""
+    return extract_date_from_text(select_text(root, selector))
 
 def load_seen_ids() -> set[str]:
     raw = load_json(SEEN_IDS_PATH, [])
@@ -229,8 +248,10 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         ttl = norm(it.get("pblancNm", it.get("title", "")))
         lnk = norm(it.get("pblancUrl", it.get("link", "")))
         if not iid: iid = f"bizinfo_{stable_id(ttl + lnk)}"
-        # 등록일 추출 시도
-        posted = norm(it.get("regDt", it.get("pblancDt", "")))
+        # 등록일 추출 시도 (다양한 키 이름 지원)
+        posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
+        if posted and len(posted) >= 10:
+            posted = posted[:10]  # YYYY-MM-DD HH:MM:SS → YYYY-MM-DD
         if not posted:
             posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
         items.append(_item(iid, ttl, lnk,
@@ -287,14 +308,20 @@ def fetch_kstartup(site: dict) -> list[dict]:
 
 
 def fetch_html_generic(site: dict) -> list[dict]:
-    sel    = site.get("selectors", {}).get("row", "table tbody tr")
-    verify = site.get("ssl_verify", True)
+    selectors = site.get("selectors", {})
+    sel    = selectors.get("row", "table tbody tr")
+    date_selector = site.get("date_selector") or selectors.get("date", "")
+    deadline_selector = site.get("deadline_selector") or selectors.get("deadline", "")
     soup   = _soup(site["url"])
     if not soup: return []
     items, agg = [], site.get("is_aggregator", False)
     for row in soup.select(sel):
-        a = row.select_one("a")
+        title_selector = selectors.get("title", "")
+        link_selector = selectors.get("link", "a")
+        a = row.select_one(link_selector) if link_selector else row.select_one("a")
         title = norm(a.get_text() if a else row.get_text())
+        if title_selector:
+            title = select_text(row, title_selector) or title
         if not title: continue
         href = a.get("href", "") if a else ""
         link = urljoin(site["url"], href) if href else site["url"]
@@ -303,8 +330,12 @@ def fetch_html_generic(site: dict) -> list[dict]:
         # 첫 날짜 = 등록일, 마지막 날짜 = 마감일 (두 개 이상)
         posted   = dates[0].replace(".", "-").replace("/", "-") if dates else ""
         deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
+        posted = select_date(row, date_selector) or posted
+        deadline = select_date(row, deadline_selector) or deadline
+        author = select_text(row, selectors.get("author", ""))
+        desc = select_text(row, selectors.get("description", ""))
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
-                           title, link, "", "", deadline, site["name"], posted, agg))
+                           title, link, author, desc, deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 

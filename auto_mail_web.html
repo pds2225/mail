@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모니터링 설정 관리</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: { 50:'#f0f9ff', 100:'#e0f2fe', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1' }
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f8fafc; }
+  .tab-btn { transition: all .15s; }
+  .tab-btn.active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight:600; }
+  .toggle { position:relative; display:inline-block; width:44px; height:24px; }
+  .toggle input { opacity:0; width:0; height:0; }
+  .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#cbd5e1; border-radius:24px; transition:.2s; }
+  .slider:before { position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.2s; }
+  input:checked + .slider { background:#0284c7; }
+  input:checked + .slider:before { transform:translateX(20px); }
+  .badge { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:9999px; font-size:12px; font-weight:500; }
+  .badge-green { background:#dcfce7; color:#166534; }
+  .badge-red { background:#fee2e2; color:#991b1b; }
+  .badge-gray { background:#f1f5f9; color:#475569; }
+  .card { background:white; border-radius:12px; border:1px solid #e2e8f0; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; border:none; transition:all .15s; }
+  .btn-primary { background:#0284c7; color:white; }
+  .btn-primary:hover { background:#0369a1; }
+  .btn-secondary { background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; }
+  .btn-secondary:hover { background:#e2e8f0; }
+  .btn-danger { background:#fee2e2; color:#991b1b; }
+  .btn-danger:hover { background:#fecaca; }
+  .input { width:100%; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; outline:none; }
+  .input:focus { border-color:#0284c7; box-shadow:0 0 0 3px #e0f2fe; }
+  select.input { background:white; }
+  .section-title { font-size:13px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+  .tag { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; background:#f0f9ff; border:1px solid #bae6fd; color:#0369a1; border-radius:6px; font-size:13px; }
+  .tag button { background:none; border:none; cursor:pointer; color:#0369a1; font-size:15px; line-height:1; padding:0; }
+  .copy-area { font-family:monospace; font-size:12px; background:#0f172a; color:#94a3b8; border-radius:8px; padding:16px; white-space:pre; overflow-x:auto; max-height:300px; overflow-y:auto; }
+  .group-card { background:white; border-radius:12px; border:1px solid #e2e8f0; padding:20px; margin-bottom:16px; }
+  .stat-box { text-align:center; }
+  .search-box { position:relative; }
+  .search-box input { padding-left:36px; }
+  .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#94a3b8; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ── 초기 데이터 ───────────────────────────────────────────────────
+const INITIAL_SITES = [
+  {
+    "id": "bizinfo",
+    "name": "기업마당(Bizinfo)",
+    "type": "bizinfo_api",
+    "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
+    "enabled": true,
+    "is_aggregator": true,
+    "note": "통합포털"
+  },
+  {
+    "id": "kstartup",
+    "name": "K-Startup",
+    "type": "kstartup_html",
+    "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "통합포털 - 창업지원"
+  },
+  {
+    "id": "smes24",
+    "name": "중소벤처24(SMEs24)",
+    "type": "html_table",
+    "url": "https://www.smes.go.kr/",
+    "enabled": true,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "subsidy24",
+    "name": "보조금24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/subsidy",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 [비활성화: 홈페이지, 공고목록 직접접근 불가]"
+  },
+  {
+    "id": "ntis",
+    "name": "NTIS(과학기술지식정보)",
+    "type": "html_table",
+    "url": "https://www.ntis.go.kr/",
+    "enabled": true,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 - R&D [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "iris",
+    "name": "IRIS(범부처통합연구지원)",
+    "type": "iris_api",
+    "url": "https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituListView.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "전용 API"
+  },
+  {
+    "id": "g2b",
+    "name": "나라장터(G2B)",
+    "type": "html_table",
+    "url": "https://www.g2b.go.kr/",
+    "enabled": true,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 - 조달 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "mss",
+    "name": "중소벤처기업부",
+    "type": "mss_html",
+    "url": "https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중기부 직접 게시 [PC 실행 시 정상]"
+  },
+  {
+    "id": "msit",
+    "name": "과학기술정보통신부",
+    "type": "html_table",
+    "url": "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "과기부 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "motie",
+    "name": "산업통상자원부",
+    "type": "html_table",
+    "url": "https://www.motie.go.kr/kor/article/ATCL2826a2625",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "산업부"
+  },
+  {
+    "id": "moel",
+    "name": "고용노동부",
+    "type": "html_table",
+    "url": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "mafra",
+    "name": "농림축산식품부",
+    "type": "html_table",
+    "url": "https://www.mafra.go.kr/bbs/mafra/68/artclList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "농식품부 [PC 실행 시 정상]"
+  },
+  {
+    "id": "mof",
+    "name": "해양수산부",
+    "type": "html_table",
+    "url": "https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "mcst",
+    "name": "문화체육관광부",
+    "type": "html_table",
+    "url": "https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "moef",
+    "name": "기획재정부",
+    "type": "html_table",
+    "url": "https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "molit",
+    "name": "국토교통부",
+    "type": "html_table",
+    "url": "https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "nipa",
+    "name": "정보통신산업진흥원(NIPA)",
+    "type": "nipa_html",
+    "url": "https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "ICT/SW/AI/콘텐츠 [PC 실행 시 정상]"
+  },
+  {
+    "id": "kiat",
+    "name": "한국산업기술진흥원(KIAT)",
+    "type": "html_table",
+    "url": "https://www.kiat.or.kr/front/user/board/boardList.do?bbsId=BBS_0000011",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] 404 Not Found (2026-04-09 확인)"
+  },
+  {
+    "id": "keit",
+    "name": "한국산업기술평가관리원(KEIT)",
+    "type": "html_table",
+    "url": "https://www.keit.re.kr/notice/noticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] 404 Not Found (2026-04-09 확인)"
+  },
+  {
+    "id": "kotra",
+    "name": "KOTRA(대한무역투자진흥공사)",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/kp/biz/notificationList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "해외진출/수출 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kosme",
+    "name": "중소벤처기업진흥공단(KOSME)",
+    "type": "html_table",
+    "url": "https://www.kosmes.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "정책자금/수출바우처 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "semas",
+    "name": "소상공인시장진흥공단(SEMAS)",
+    "type": "html_table",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=BBS_0000009",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소상공인 지원사업 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+  },
+  {
+    "id": "kised",
+    "name": "창업진흥원(KISED)",
+    "type": "html_table",
+    "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "창업 패키지/사관학교 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kocca_pims",
+    "name": "한국콘텐츠진흥원(사업공고)",
+    "type": "kocca_pims",
+    "url": "https://www.kocca.kr/kocca/pims/list.do?menuNo=204104",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 사업공고"
+  },
+  {
+    "id": "kocca_bbs",
+    "name": "한국콘텐츠진흥원(금융)",
+    "type": "kocca_bbs",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 금융지원"
+  },
+  {
+    "id": "ksure",
+    "name": "한국무역보험공사(K-SURE)",
+    "type": "html_table",
+    "url": "https://www.ksure.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "수출보험/보증 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kibo",
+    "name": "기술보증기금(KIBO)",
+    "type": "html_table",
+    "url": "https://www.kibo.or.kr/main/kor/bbs/bbs.do?bbsId=BBSMSTR_000000000036",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "기술보증기금 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+  },
+  {
+    "id": "kodit",
+    "name": "신용보증기금(KODIT)",
+    "type": "html_table",
+    "url": "https://www.kodit.co.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "신용보증 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kvic",
+    "name": "한국벤처투자(KVIC)",
+    "type": "html_table",
+    "url": "https://www.kvic.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "벤처펀드/모태펀드 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "khidi",
+    "name": "한국보건산업진흥원(KHIDI)",
+    "type": "html_table",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU02096",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "보건/의료/바이오 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "keiti",
+    "name": "한국환경산업기술원(KEITI)",
+    "type": "html_table",
+    "url": "https://www.keiti.re.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "환경산업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ketep",
+    "name": "한국에너지기술평가원(KETEP)",
+    "type": "html_table",
+    "url": "https://www.ketep.re.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "에너지기술 R&D [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "foodpolis",
+    "name": "한국식품산업클러스터진흥원",
+    "type": "html_table",
+    "url": "https://www.foodpolis.kr/foodpolis/bbs/list.do?bbsId=FS_02",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "식품산업클러스터 지원사업 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+  },
+  {
+    "id": "kidp",
+    "name": "한국디자인진흥원(KIDP)",
+    "type": "html_table",
+    "url": "https://www.kidp.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "디자인산업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "rdcdp",
+    "name": "지역디자인통합플랫폼",
+    "type": "html_table",
+    "url": "https://www.rdcdp.or.kr/index.do?menu_id=00000746",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "지역 디자인 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "sba",
+    "name": "서울산업진흥원(SBA)",
+    "type": "html_table",
+    "url": "https://www.sba.seoul.kr/Pages/ContentsMenu/Company/SupportInfo.aspx",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "서울시 중소기업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "gbsa",
+    "name": "경기도경제과학진흥원(GBSA)",
+    "type": "html_table",
+    "url": "https://www.gbsa.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "경기도 기업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "itp",
+    "name": "인천테크노파크",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=13",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 지원사업 공지사항 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "bepa",
+    "name": "부산경제진흥원(BEP)",
+    "type": "html_table",
+    "url": "https://www.bepa.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] SSL CERTIFICATE_VERIFY_FAILED (2026-04-09 확인)"
+  },
+  {
+    "id": "djtp",
+    "name": "대전테크노파크",
+    "type": "html_table",
+    "url": "https://www.djtp.or.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "대전 기업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "myfair",
+    "name": "마이페어",
+    "type": "myfair_html",
+    "url": "https://myfair.co/support-program-list",
+    "enabled": true,
+    "is_aggregator": true,
+    "note": "통합포털 - 해외전시회 [PC 실행 시 정상]"
+  },
+  {
+    "id": "kita",
+    "name": "한국무역협회(KITA)",
+    "type": "kita_html",
+    "url": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "무역협회"
+  },
+  {
+    "id": "smtech",
+    "name": "SMTECH(중소기업기술개발)",
+    "type": "smtech_html",
+    "url": "https://www.smtech.go.kr/front/ifg/no/notice02_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소기업 기술개발"
+  },
+  {
+    "id": "gtp",
+    "name": "경기TP",
+    "type": "gtp_html",
+    "url": "https://pms.gtp.or.kr/web/business/webBusinessList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "경기테크노파크"
+  },
+  {
+    "id": "gsp",
+    "name": "경기스타트업플랫폼",
+    "type": "gsp_html",
+    "url": "https://www.gsp.or.kr/supportProject/UVSL0001.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "경기 스타트업"
+  },
+  {
+    "id": "ccei_biz",
+    "name": "창조경제혁신센터(공고)",
+    "type": "ccei_html",
+    "url": "https://ccei.creativekorea.or.kr/service/business_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "창조경제 지원사업"
+  },
+  {
+    "id": "ccei_evt",
+    "name": "창조경제혁신센터(행사)",
+    "type": "ccei_html",
+    "url": "https://ccei.creativekorea.or.kr/service/event_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "창조경제 행사"
+  },
+  {
+    "id": "seoultp",
+    "name": "서울TP",
+    "type": "html_table",
+    "url": "https://www.seoultp.or.kr/user/nd19746.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "서울테크노파크 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kovwa",
+    "name": "한국여성벤처협회",
+    "type": "html_table",
+    "url": "https://kovwa.or.kr/94",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "여성벤처 지원사업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ppi",
+    "name": "혁신제품지정공고(나라장터)",
+    "type": "html_table",
+    "url": "https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do",
+    "enabled": true,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "혁신제품 지정/조달 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kocca_general",
+    "name": "한국콘텐츠진흥원(일반공고)",
+    "type": "kocca_bbs",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 일반 지원사업 공고"
+  },
+  {
+    "id": "data_go",
+    "name": "공공데이터포털",
+    "type": "html_table",
+    "url": "https://www.data.go.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] WinError 10054 서버 강제 차단 (2026-04-09 확인)"
+  },
+  {
+    "id": "gov24",
+    "name": "정부24(Gov.kr)",
+    "type": "html_table",
+    "url": "https://www.gov.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "정부 서비스 통합 포털 [비활성화: 홈페이지, 공고목록 직접접근 불가]"
+  },
+  {
+    "id": "bizok",
+    "name": "비즈오케이(BizOK) - 인천기업지원",
+    "type": "html_table",
+    "url": "https://bizok.incheon.go.kr/open_content/support.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 기업지원 통합플랫폼 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "bizok_plan",
+    "name": "비즈오케이 - 인천 연간사업공고계획",
+    "type": "html_table",
+    "url": "https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 연간 공고 일정표 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "incheon_city",
+    "name": "인천광역시청 - 공고/고시",
+    "type": "html_table",
+    "url": "https://www.incheon.go.kr/IC010205",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천시 공식 공고 페이지 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "itp_notice",
+    "name": "인천테크노파크(ITP) - 공지사항",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=15",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 공지/보도자료 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ifez",
+    "name": "인천경제자유구역청(IFEZ)",
+    "type": "html_table",
+    "url": "https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "송도/영종/청라 입주기업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "incheoncci",
+    "name": "인천상공회의소",
+    "type": "html_table",
+    "url": "https://www.incheoncci.or.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] DNS 실패 getaddrinfo (2026-04-09 확인)"
+  },
+  {
+    "id": "ema",
+    "name": "인천수출경영자협의회",
+    "type": "html_table",
+    "url": "https://www.ema.or.kr/bbs/support",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 뷰티기업 인프라구축 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "insupport",
+    "name": "인천소상공인종합지원센터",
+    "type": "html_table",
+    "url": "http://www.insupport.or.kr/sub/?mcode=0404010000",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소공인 클린제조환경 조성 등 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "icgf",
+    "name": "인천신용보증재단",
+    "type": "html_table",
+    "url": "https://www.icgf.or.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] DNS 실패 getaddrinfo (2026-04-09 확인)"
+  },
+  {
+    "id": "ic_junggu",
+    "name": "인천 중구청",
+    "type": "html_table",
+    "url": "https://www.icjg.go.kr/krcm01b",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업육성자금 등 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_donggu",
+    "name": "인천 동구청",
+    "type": "html_table",
+    "url": "https://www.icdonggu.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] SSL CERTIFICATE_VERIFY_FAILED (2026-04-09 확인)"
+  },
+  {
+    "id": "ic_michuhol",
+    "name": "인천 미추홀구청",
+    "type": "html_table",
+    "url": "https://www.michuhol.go.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_yeonsu",
+    "name": "인천 연수구청",
+    "type": "html_table",
+    "url": "https://www.yeonsu.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [비활성화: 리다이렉트 루프]"
+  },
+  {
+    "id": "ic_namdong",
+    "name": "인천 남동구청",
+    "type": "html_table",
+    "url": "https://www.namdong.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] SSL CERTIFICATE_VERIFY_FAILED (2026-04-09 확인)"
+  },
+  {
+    "id": "ic_bupyeong",
+    "name": "인천 부평구청",
+    "type": "html_table",
+    "url": "https://www.bpyeong.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] DNS 실패 getaddrinfo (2026-04-09 확인)"
+  },
+  {
+    "id": "ic_gyeyang",
+    "name": "인천 계양구청",
+    "type": "html_table",
+    "url": "https://www.gyeyang.go.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_seo",
+    "name": "인천 서구청",
+    "type": "html_table",
+    "url": "https://www.seo.incheon.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업육성기금/전시회 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_ganghwa",
+    "name": "인천 강화군청",
+    "type": "html_table",
+    "url": "https://www.ganghwa.go.kr/",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "국내전시회 참가기업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_ongjin",
+    "name": "인천 옹진군청",
+    "type": "html_table",
+    "url": "https://www.ongjin.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "[비활성화] SSL CERTIFICATE_VERIFY_FAILED (2026-04-09 확인)"
+  },
+  {
+    "id": "kotra_trade24",
+    "name": "KOTRA 무역투자24 - 사업공고",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/bigList/20000020753",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "수출바우처/해외전시회/시장개척단 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "semas_announce",
+    "name": "소상공인시장진흥공단 - 사업공고",
+    "type": "html_table",
+    "url": "https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소공인 지원사업 공고 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "khidi_kbeauty",
+    "name": "한국보건산업진흥원(K-뷰티공고)",
+    "type": "html_table",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU01108",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "K-뷰티 해외판매장/플래그십허브 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "connectworks",
+    "name": "커넥트웍스(인천TP공고)",
+    "type": "html_card",
+    "url": "https://works.connect24.kr/search_result.php?org=인천테크노파크",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": ".card,.item,li"
+    },
+    "note": "인천TP 공고 모아보기 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "rndcircle",
+    "name": "디써클(RnD Circle) - 지원사업",
+    "type": "html_table",
+    "url": "https://app.rndcircle.io/gov-grant",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "K-뷰티 관련 공고 수집 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "thevc",
+    "name": "더브이씨(THE VC) - 지원사업",
+    "type": "html_table",
+    "url": "https://thevc.kr/grants",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 지원사업 공고 수집 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "bizcube",
+    "name": "비즈큐브(BizCube)",
+    "type": "html_table",
+    "url": "https://bizcube-sol.com/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "해외바이어 초청 수출상담회 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "itp_marketing",
+    "name": "인천TP 마케팅센터(뷰티산업육성)",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=36",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 마케팅센터(뷰티산업육성) [PC 실행 시 정상 접속]"
+  }
+];
+const INITIAL_GROUPS = [
+  {
+    "id": "grp_default",
+    "name": "인천 화장품 수출팀",
+    "active": true,
+    "regions": [
+      "인천"
+    ],
+    "keywords": {
+      "logic": "OR",
+      "keywords": [
+        "화장품",
+        "뷰티",
+        "K-뷰티",
+        "해외전시회",
+        "수출지원",
+        "해외진출"
+      ]
+    },
+    "support_types": [
+      "지원금/바우처",
+      "컨설팅·교육·상담",
+      "투자",
+      "그외"
+    ],
+    "recipients": [
+      "ekth3691@gmail.com"
+    ]
+  }
+];
+const INITIAL_SETTINGS = {
+  "date_filter_enabled": true,
+  "days_back": 1,
+  "raw_all_enabled": true,
+  "raw_all_recipients": [
+    "ekth3691@gmail.com"
+  ],
+  "claude_model": "claude-sonnet-4-5",
+  "claude_max_tokens": 4000,
+  "fetch_max_workers": 10
+};
+
+const SUPPORT_TYPES = ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"];
+const ALL_KNOWN_REGIONS = ["서울","부산","대구","인천","광주","대전","울산","세종","경기","강원","충북","충남","전북","전남","경북","경남","제주"];
+
+// ── 상태 관리 ─────────────────────────────────────────────────────
+let state = {
+  tab: "sites",
+  sites: JSON.parse(JSON.stringify(INITIAL_SITES)),
+  groups: JSON.parse(JSON.stringify(INITIAL_GROUPS)),
+  settings: JSON.parse(JSON.stringify(INITIAL_SETTINGS)),
+  siteSearch: "",
+  siteFilter: "all",
+  exportModal: null,
+  newKw: "",
+  newRegion: "",
+  newRecipient: "",
+  toast: null,
+};
+
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
+}
+
+// ── 헬퍼 ──────────────────────────────────────────────────────────
+function showToast(msg, type="success") {
+  state.toast = {msg, type};
+  render();
+  setTimeout(() => { state.toast = null; render(); }, 2500);
+}
+
+function downloadJSON(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  showToast(filename + " 다운로드 완료");
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => showToast("클립보드에 복사됨"));
+}
+
+function getEnabledCount() { return state.sites.filter(s => s.enabled !== false).length; }
+function getDisabledCount() { return state.sites.filter(s => s.enabled === false).length; }
+
+function filteredSites() {
+  return state.sites.filter(s => {
+    const q = state.siteSearch.toLowerCase();
+    const matchSearch = !q || s.name.toLowerCase().includes(q) || (s.note||"").toLowerCase().includes(q) || s.id.toLowerCase().includes(q);
+    const matchFilter = state.siteFilter === "all" || 
+      (state.siteFilter === "active" && s.enabled !== false) ||
+      (state.siteFilter === "inactive" && s.enabled === false);
+    return matchSearch && matchFilter;
+  });
+}
+
+// ── 렌더 ──────────────────────────────────────────────────────────
+function render() {
+  document.getElementById("app").innerHTML = buildApp();
+  attachEvents();
+}
+
+function buildApp() {
+  return `
+  <div class="min-h-screen">
+    ${buildHeader()}
+    ${buildTabs()}
+    <div class="max-w-3xl mx-auto px-4 py-4">
+      ${state.tab === "sites"   ? buildSitesTab()   : ""}
+      ${state.tab === "groups"  ? buildGroupsTab()  : ""}
+      ${state.tab === "settings"? buildSettingsTab(): ""}
+    </div>
+    ${buildToast()}
+  </div>`;
+}
+
+function buildHeader() {
+  return `
+  <div style="background:white; border-bottom:1px solid #e2e8f0; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10;">
+    <div>
+      <div style="font-size:18px; font-weight:700; color:#0f172a;">⚙️ 모니터링 설정</div>
+      <div style="font-size:12px; color:#64748b;">수집 사이트 · 키워드 · 알림 설정</div>
+    </div>
+    <button class="btn btn-primary" onclick="exportAll()">💾 전체 저장</button>
+  </div>`;
+}
+
+function buildTabs() {
+  const tabs = [
+    { id:"sites",    label:`사이트 (${getEnabledCount()}/${state.sites.length})` },
+    { id:"groups",   label:`그룹 (${state.groups.length})` },
+    { id:"settings", label:"설정" },
+  ];
+  return `
+  <div style="background:white; border-bottom:1px solid #e2e8f0; display:flex; padding:0 20px; overflow-x:auto;">
+    ${tabs.map(t => `
+      <button class="tab-btn ${state.tab===t.id?'active':''}"
+        style="padding:12px 16px; border:none; background:none; font-size:14px; color:${state.tab===t.id?'#0284c7':'#64748b'}; white-space:nowrap; cursor:pointer;"
+        onclick="setState({tab:'${t.id}'})">
+        ${t.label}
+      </button>
+    `).join("")}
+  </div>`;
+}
+
+function buildSitesTab() {
+  const filtered = filteredSites();
+  return `
+  <div>
+    <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center;">
+      <div class="search-box" style="flex:1; min-width:180px;">
+        <span class="search-icon">🔍</span>
+        <input class="input" placeholder="사이트 검색..." value="${state.siteSearch}"
+          oninput="setState({siteSearch:this.value})" style="padding-left:32px;">
+      </div>
+      <select class="input" style="width:auto; min-width:110px;" onchange="setState({siteFilter:this.value})">
+        <option value="all" ${state.siteFilter==='all'?'selected':''}>전체</option>
+        <option value="active" ${state.siteFilter==='active'?'selected':''}>활성만</option>
+        <option value="inactive" ${state.siteFilter==='inactive'?'selected':''}>비활성만</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:12px; margin-bottom:12px;">
+      <div class="card" style="flex:1; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:700; color:#0284c7;">${getEnabledCount()}</div>
+        <div style="font-size:12px; color:#64748b;">활성</div>
+      </div>
+      <div class="card" style="flex:1; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:700; color:#94a3b8;">${getDisabledCount()}</div>
+        <div style="font-size:12px; color:#64748b;">비활성</div>
+      </div>
+      <div class="card" style="flex:1; padding:12px; text-align:center;">
+        <div style="font-size:22px; font-weight:700; color:#334155;">${state.sites.length}</div>
+        <div style="font-size:12px; color:#64748b;">전체</div>
+      </div>
+    </div>
+    ${filtered.length === 0 ? '<div style="text-align:center; color:#94a3b8; padding:40px;">검색 결과 없음</div>' : ''}
+    ${filtered.map((site, i) => buildSiteRow(site, i)).join("")}
+    <div style="padding:12px; text-align:center;">
+      <button class="btn btn-primary" onclick="downloadJSON('sites.json', state.sites)" style="width:100%;">
+        ⬇️ sites.json 다운로드
+      </button>
+    </div>
+  </div>`;
+}
+
+function buildSiteRow(site) {
+  const enabled = site.enabled !== false;
+  return `
+  <div class="card" style="padding:14px 16px; margin-bottom:8px; display:flex; align-items:center; gap:12px; opacity:${enabled?1:0.6};">
+    <label class="toggle" style="flex-shrink:0;">
+      <input type="checkbox" ${enabled?'checked':''} onchange="toggleSite('${site.id}')">
+      <span class="slider"></span>
+    </label>
+    <div style="flex:1; min-width:0;">
+      <div style="font-size:14px; font-weight:600; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${site.name}</div>
+      ${site.note ? `<div style="font-size:11px; color:#94a3b8; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${site.note}</div>` : ''}
+    </div>
+    <div style="flex-shrink:0;">
+      ${enabled ? '<span class="badge badge-green">활성</span>' : '<span class="badge badge-gray">비활성</span>'}
+    </div>
+  </div>`;
+}
+
+function buildGroupsTab() {
+  return `
+  <div>
+    ${state.groups.map((g, gi) => buildGroupCard(g, gi)).join("")}
+    <button class="btn btn-secondary" onclick="addGroup()" style="width:100%; justify-content:center; margin-bottom:8px;">
+      ＋ 그룹 추가
+    </button>
+    <div style="padding:12px; text-align:center;">
+      <button class="btn btn-primary" onclick="downloadJSON('groups.json', state.groups)" style="width:100%;">
+        ⬇️ groups.json 다운로드
+      </button>
+    </div>
+  </div>`;
+}
+
+function buildGroupCard(g, gi) {
+  const kwds = g.keywords?.keywords || [];
+  const regions = g.regions || [];
+  const recipients = g.recipients || [];
+  const logic = g.keywords?.logic || "OR";
+
+  return `
+  <div class="group-card">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <input class="input" style="font-size:16px; font-weight:700; border:none; padding:0; flex:1;"
+        value="${escHtml(g.name)}" placeholder="그룹명"
+        onchange="updateGroup(${gi}, 'name', this.value)">
+      <div style="display:flex; gap:8px; align-items:center; flex-shrink:0; margin-left:8px;">
+        <label class="toggle">
+          <input type="checkbox" ${g.active!==false?'checked':''}
+            onchange="updateGroup(${gi}, 'active', this.checked)">
+          <span class="slider"></span>
+        </label>
+        ${state.groups.length > 1 ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="removeGroup(${gi})">삭제</button>` : ''}
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div class="section-title">🌍 지역</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+        ${regions.map((r,ri) => `
+          <span class="tag">${r}
+            <button onclick="removeRegion(${gi},${ri})">×</button>
+          </span>`).join("")}
+        ${regions.length === 0 ? '<span style="font-size:12px; color:#94a3b8;">전국 (지역 없음)</span>' : ''}
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        ${ALL_KNOWN_REGIONS.filter(r => !regions.includes(r)).slice(0,8).map(r => `
+          <button class="btn btn-secondary" style="padding:4px 10px; font-size:12px;" onclick="addRegion(${gi},'${r}')">+${r}</button>
+        `).join("")}
+        <div style="display:flex; gap:4px; flex:1; min-width:100px;">
+          <input class="input" style="font-size:13px;" placeholder="직접입력"
+            id="region-input-${gi}" onkeydown="if(event.key==='Enter') addRegionCustom(${gi})">
+          <button class="btn btn-secondary" style="flex-shrink:0; padding:6px 10px;" onclick="addRegionCustom(${gi})">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <div class="section-title" style="margin:0;">🔑 키워드</div>
+        <div style="display:flex; background:#f1f5f9; border-radius:6px; overflow:hidden;">
+          <button style="padding:3px 10px; font-size:12px; border:none; cursor:pointer; font-weight:500;
+            background:${logic==='OR'?'#0284c7':'#f1f5f9'}; color:${logic==='OR'?'white':'#475569'};"
+            onclick="updateGroup(${gi}, 'logic', 'OR')">OR</button>
+          <button style="padding:3px 10px; font-size:12px; border:none; cursor:pointer; font-weight:500;
+            background:${logic==='AND'?'#0284c7':'#f1f5f9'}; color:${logic==='AND'?'white':'#475569'};"
+            onclick="updateGroup(${gi}, 'logic', 'AND')">AND</button>
+        </div>
+        <span style="font-size:11px; color:#94a3b8;">${logic==='OR'?'하나라도 포함':'모두 포함'}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+        ${kwds.map((k,ki) => `
+          <span class="tag">${escHtml(k)}
+            <button onclick="removeKeyword(${gi},${ki})">×</button>
+          </span>`).join("")}
+      </div>
+      <div style="display:flex; gap:6px;">
+        <input class="input" placeholder="키워드 입력 후 Enter"
+          id="kw-input-${gi}" onkeydown="if(event.key==='Enter') addKeyword(${gi})">
+        <button class="btn btn-secondary" style="flex-shrink:0;" onclick="addKeyword(${gi})">+</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <div class="section-title">📂 지원유형</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        ${SUPPORT_TYPES.map(t => `
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px;">
+            <input type="checkbox" ${(g.support_types||[]).includes(t)?'checked':''}
+              onchange="toggleSupportType(${gi},'${t}',this.checked)"
+              style="width:15px; height:15px; accent-color:#0284c7;">
+            ${t}
+          </label>`).join("")}
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">📧 수신자</div>
+      ${recipients.map((r,ri) => `
+        <div style="display:flex; gap:6px; margin-bottom:6px; align-items:center;">
+          <input class="input" style="font-size:13px;" value="${escHtml(r)}"
+            onchange="updateRecipient(${gi},${ri},this.value)">
+          <button class="btn btn-danger" style="flex-shrink:0; padding:6px 8px; font-size:12px;"
+            onclick="removeRecipient(${gi},${ri})">×</button>
+        </div>`).join("")}
+      <div style="display:flex; gap:6px; margin-top:4px;">
+        <input class="input" style="font-size:13px;" placeholder="이메일 추가"
+          id="recip-input-${gi}" onkeydown="if(event.key==='Enter') addRecipient(${gi})">
+        <button class="btn btn-secondary" style="flex-shrink:0;" onclick="addRecipient(${gi})">+</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildSettingsTab() {
+  const s = state.settings;
+  return `
+  <div>
+    <div class="card" style="padding:20px; margin-bottom:12px;">
+      <div style="font-size:15px; font-weight:700; color:#1e293b; margin-bottom:16px;">📅 수집 설정</div>
+
+      <div style="margin-bottom:16px;">
+        <div class="section-title">날짜 필터 (D-N)</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <label class="toggle">
+            <input type="checkbox" ${s.date_filter_enabled?'checked':''}
+              onchange="updateSetting('date_filter_enabled', this.checked)">
+            <span class="slider"></span>
+          </label>
+          <span style="font-size:13px; color:#475569;">${s.date_filter_enabled ? '활성 (어제 공고만 수집)' : '비활성 (날짜 제한 없음)'}</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div class="section-title">기준일 (며칠 전)</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="number" class="input" min="1" max="30" style="width:80px;"
+            value="${s.days_back}" onchange="updateSetting('days_back', parseInt(this.value))">
+          <span style="font-size:13px; color:#64748b;">일 전 공고 수집</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">병렬 수집 스레드</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="number" class="input" min="1" max="30" style="width:80px;"
+            value="${s.fetch_max_workers}" onchange="updateSetting('fetch_max_workers', parseInt(this.value))">
+          <span style="font-size:13px; color:#64748b;">동시 수집 수 (높을수록 빠름)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px; margin-bottom:12px;">
+      <div style="font-size:15px; font-weight:700; color:#1e293b; margin-bottom:16px;">📧 원본전체 메일</div>
+
+      <div style="margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <label class="toggle">
+            <input type="checkbox" ${s.raw_all_enabled?'checked':''}
+              onchange="updateSetting('raw_all_enabled', this.checked)">
+            <span class="slider"></span>
+          </label>
+          <span style="font-size:13px; color:#475569;">원본 전체 공고 메일 발송</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">수신자</div>
+        ${(s.raw_all_recipients||[]).map((r,ri) => `
+          <div style="display:flex; gap:6px; margin-bottom:6px;">
+            <input class="input" style="font-size:13px;" value="${escHtml(r)}"
+              onchange="updateRawRecipient(${ri}, this.value)">
+            <button class="btn btn-danger" style="flex-shrink:0; padding:6px 8px; font-size:12px;"
+              onclick="removeRawRecipient(${ri})">×</button>
+          </div>`).join("")}
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <input class="input" style="font-size:13px;" placeholder="이메일 추가" id="raw-recip-input"
+            onkeydown="if(event.key==='Enter') addRawRecipient()">
+          <button class="btn btn-secondary" style="flex-shrink:0;" onclick="addRawRecipient()">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px; margin-bottom:12px;">
+      <div style="font-size:15px; font-weight:700; color:#1e293b; margin-bottom:16px;">🤖 Claude 설정</div>
+
+      <div style="margin-bottom:12px;">
+        <div class="section-title">모델</div>
+        <select class="input" onchange="updateSetting('claude_model', this.value)">
+          ${['claude-sonnet-4-6','claude-sonnet-4-5','claude-haiku-4-5-20251001'].map(m =>
+            `<option value="${m}" ${s.claude_model===m?'selected':''}>${m}</option>`).join("")}
+        </select>
+      </div>
+
+      <div>
+        <div class="section-title">최대 토큰</div>
+        <input type="number" class="input" min="1000" max="8000" step="500"
+          value="${s.claude_max_tokens}" onchange="updateSetting('claude_max_tokens', parseInt(this.value))">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="downloadJSON('settings.json', state.settings)" style="width:100%;">
+      ⬇️ settings.json 다운로드
+    </button>
+  </div>`;
+}
+
+function buildToast() {
+  if (!state.toast) return "";
+  const colors = state.toast.type === "success" ? "background:#dcfce7; color:#166534; border:1px solid #86efac;" : "background:#fee2e2; color:#991b1b; border:1px solid #fca5a5;";
+  return `
+  <div style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%); ${colors} padding:10px 20px; border-radius:8px; font-size:14px; font-weight:500; box-shadow:0 4px 12px rgba(0,0,0,.1); z-index:100; white-space:nowrap;">
+    ${state.toast.msg}
+  </div>`;
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── 이벤트 핸들러 ────────────────────────────────────────────────
+function attachEvents() {}  // onclick으로 처리
+
+function toggleSite(id) {
+  const site = state.sites.find(s => s.id === id);
+  if (site) site.enabled = site.enabled === false ? true : false;
+  render();
+}
+
+function updateGroup(gi, field, value) {
+  if (field === "name") state.groups[gi].name = value;
+  else if (field === "active") state.groups[gi].active = value;
+  else if (field === "logic") state.groups[gi].keywords.logic = value;
+  render();
+}
+
+function addKeyword(gi) {
+  const input = document.getElementById(`kw-input-${gi}`);
+  const kw = input?.value?.trim();
+  if (!kw) return;
+  if (!state.groups[gi].keywords) state.groups[gi].keywords = {logic:"OR",keywords:[]};
+  if (!state.groups[gi].keywords.keywords.includes(kw)) {
+    state.groups[gi].keywords.keywords.push(kw);
+  }
+  render();
+}
+
+function removeKeyword(gi, ki) {
+  state.groups[gi].keywords.keywords.splice(ki, 1);
+  render();
+}
+
+function addRegion(gi, region) {
+  if (!state.groups[gi].regions) state.groups[gi].regions = [];
+  if (!state.groups[gi].regions.includes(region)) state.groups[gi].regions.push(region);
+  render();
+}
+
+function addRegionCustom(gi) {
+  const input = document.getElementById(`region-input-${gi}`);
+  const r = input?.value?.trim();
+  if (!r) return;
+  addRegion(gi, r);
+}
+
+function removeRegion(gi, ri) {
+  state.groups[gi].regions.splice(ri, 1);
+  render();
+}
+
+function addRecipient(gi) {
+  const input = document.getElementById(`recip-input-${gi}`);
+  const r = input?.value?.trim();
+  if (!r) return;
+  if (!state.groups[gi].recipients) state.groups[gi].recipients = [];
+  state.groups[gi].recipients.push(r);
+  render();
+}
+
+function updateRecipient(gi, ri, val) {
+  state.groups[gi].recipients[ri] = val;
+}
+
+function removeRecipient(gi, ri) {
+  state.groups[gi].recipients.splice(ri, 1);
+  render();
+}
+
+function toggleSupportType(gi, type, checked) {
+  const st = state.groups[gi].support_types || [];
+  if (checked && !st.includes(type)) st.push(type);
+  if (!checked) {
+    const idx = st.indexOf(type);
+    if (idx >= 0) st.splice(idx, 1);
+  }
+  state.groups[gi].support_types = st;
+  render();
+}
+
+function addGroup() {
+  state.groups.push({
+    id: "grp_" + Date.now(),
+    name: "새 그룹",
+    active: true,
+    regions: [],
+    keywords: {logic:"OR", keywords:[]},
+    support_types: [...SUPPORT_TYPES],
+    recipients: [],
+  });
+  render();
+}
+
+function removeGroup(gi) {
+  if (confirm("그룹을 삭제할까요?")) {
+    state.groups.splice(gi, 1);
+    render();
+  }
+}
+
+function updateSetting(key, value) {
+  state.settings[key] = value;
+  render();
+}
+
+function addRawRecipient() {
+  const input = document.getElementById("raw-recip-input");
+  const r = input?.value?.trim();
+  if (!r) return;
+  if (!state.settings.raw_all_recipients) state.settings.raw_all_recipients = [];
+  state.settings.raw_all_recipients.push(r);
+  render();
+}
+
+function updateRawRecipient(ri, val) {
+  state.settings.raw_all_recipients[ri] = val;
+}
+
+function removeRawRecipient(ri) {
+  state.settings.raw_all_recipients.splice(ri, 1);
+  render();
+}
+
+function exportAll() {
+  downloadJSON('sites.json', state.sites);
+  setTimeout(() => downloadJSON('groups.json', state.groups), 300);
+  setTimeout(() => downloadJSON('settings.json', state.settings), 600);
+  showToast("sites.json · groups.json · settings.json 저장 완료");
+}
+
+// 초기 렌더
+render();
+</script>
+</body>
+</html>
