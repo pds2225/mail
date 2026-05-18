@@ -31,3 +31,5 @@ Thumbs.db
 # Vercel / Node
 .vercel/
 node_modules/
+
+.claude/
