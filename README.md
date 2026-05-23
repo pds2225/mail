@@ -74,3 +74,49 @@
 4. 실패하거나 조건 미충족 시 `## FAILED` / `## BLOCKED`로 이동하며 사유가 기록됩니다.
 5. GitHub Actions에서 자동 실행 시 Summary에 실행 TASK, 결과, 다음 TASK가 표시됩니다.
 
+## Customer Intake 자동화
+
+고객사 서류(PDF/PNG/JPG)를 OCR로 읽어 Google Sheets `고객사_마스터DB` 등에 기록하는 **inbox 자동 처리**입니다.  
+**기존 메일 모니터링(`monitor.py`)·실제 메일 발송과는 연결되지 않습니다.** 점수화·랭킹 기능이 아닙니다.
+
+### 사용 방법 (일상)
+
+1. 사업자등록증 등 파일을 **`D:\customer_intake_inbox`** 에 넣기만 하면 됩니다.
+2. PC 로그인 후 백그라운드 감시가 파일을 자동 처리합니다.
+3. 결과는 아래 폴더에서 확인합니다.
+   - **`D:\customer_intake_done`** — 처리 성공
+   - **`D:\customer_intake_failed`** — 처리 실패
+   - **`D:\customer_intake_reports`** — Markdown 보고서·`watch.log`
+
+환경 설정은 **`D:\mail\.env`** 를 그대로 사용합니다 (Python이 자동 로드).
+
+### 스크립트 (PowerShell, `D:\mail`에서 실행)
+
+| 용도 | 파일 |
+|------|------|
+| **최초 1회** — 로그인 시 자동 감시 등록 | `D:\mail\install_customer_intake_autostart.ps1` |
+| **실패/멈춤 시** — 폴더 복구·감시 재등록·1회 처리 | `D:\mail\repair_customer_intake.ps1` |
+| **진단** — Python·폴더·스케줄러·로그 확인 | `D:\mail\doctor_customer_intake.ps1` |
+| 수동 1회 처리 | `D:\mail\run_customer_intake_once.ps1` |
+| 자동시작 해제 | `D:\mail\uninstall_customer_intake_autostart.ps1` |
+
+`install` / `repair` 는 **관리자 PowerShell**에서 실행하세요.
+
+```powershell
+cd D:\mail
+.\install_customer_intake_autostart.ps1
+```
+
+### 보장하지 않는 항목 (외부 권한·서비스)
+
+아래는 이 레포만으로 보장할 수 없습니다. 계정·콘솔·스프레드시트에서 직접 확인해야 합니다.
+
+- Google Cloud 서비스 계정 키 유효성·만료
+- Google Sheets 스프레드시트 **편집 권한** (서비스 계정 이메일 공유)
+- NAVER CLOVA OCR API 할당량·요금·URL/Secret 정확성
+- Windows 작업 스케줄러 정책(회사 PC 보안 정책으로 차단되는 경우)
+
+`.env`에 `GOOGLE_SHEET_ID`·서비스 계정·`CLOVA_OCR_*` 가 없으면 **중단하지 않고** Mock OCR + dry_run 으로 처리하며, 보고서에 미설정 항목만 표시합니다.
+
+자세한 내용: `docs/CUSTOMER_INTAKE.md`
+
