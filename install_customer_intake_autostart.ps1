@@ -6,20 +6,19 @@ $RepoRoot = "D:\mail"
 Set-Location $RepoRoot
 . "$RepoRoot\_customer_intake_bootstrap.ps1"
 
-$WatchScript = Join-Path $RepoRoot "run_customer_intake_watch.ps1"
 $TaskName = "MailRepo_CustomerIntakeWatch"
-
-if (-not (Test-Path $WatchScript)) {
-    Write-Error "Missing: $WatchScript"
-}
-
 $pythonExe = Get-CustomerIntakePython
+$logFile = "D:\customer_intake_reports\watch.log"
 
-$psExe = (Get-Command powershell.exe).Source
-$arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$WatchScript`""
+$arguments = "-m customer_intake.watcher --watch --dry-run auto"
 
-$action = New-ScheduledTaskAction -Execute $psExe -Argument $arguments -WorkingDirectory $RepoRoot
+$action = New-ScheduledTaskAction `
+    -Execute $pythonExe `
+    -Argument $arguments `
+    -WorkingDirectory $RepoRoot
+
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+
 $settings = New-ScheduledTaskSettingsSet `
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries `
@@ -37,13 +36,13 @@ Register-ScheduledTask `
     -Force | Out-Null
 
 Start-ScheduledTask -TaskName $TaskName
-Start-Sleep -Seconds 4
+Start-Sleep -Seconds 5
 $info = Get-ScheduledTaskInfo -TaskName $TaskName
 
 Write-Host ""
-Write-Host "OK: Scheduled task $TaskName" -ForegroundColor Green
+Write-Host "OK: $TaskName" -ForegroundColor Green
 Write-Host "  Python: $pythonExe"
 Write-Host "  inbox: D:\customer_intake_inbox"
-Write-Host "  log: D:\customer_intake_reports\watch.log"
-Write-Host "  LastTaskResult: $($info.LastTaskResult)"
+Write-Host "  log: $logFile"
+Write-Host "  LastTaskResult: $($info.LastTaskResult) (0=OK)"
 Write-Host "  Uninstall: .\uninstall_customer_intake_autostart.ps1" -ForegroundColor DarkGray
