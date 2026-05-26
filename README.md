@@ -89,6 +89,7 @@
    - **`D:\customer_intake_reports`** — Markdown 보고서·`watch.log`
 
 환경 설정은 **`D:\mail\.env`** 를 그대로 사용합니다 (Python이 자동 로드).
+기본 실행 스크립트는 `--dry-run auto`입니다. Google Sheets 설정이 완비되어 있으면 실제 기록하고, Sheets 설정이 없으면 dry_run으로 보고서만 생성합니다. OCR은 별도로 CLOVA 설정이 있으면 실제 OCR, 없으면 Mock OCR을 사용합니다.
 
 ### 스크립트 (PowerShell, `D:\mail`에서 실행)
 
