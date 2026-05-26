@@ -1,11 +1,18 @@
-# 환경변수 (절대 올리지 말 것)
+# 환경변수·인증 (절대 올리지 말 것)
 .env
 .env.*
+!.env.example
 *.env.txt
+secrets/
+!secrets/README.md
 
 # 실행 중 생성되는 파일
 seen_ids.json
 test_results.json
+customer_intake/reports/
+customer_intake/processed_files.json
+customer_intake/_test_done/
+customer_intake/_test_reports/
 
 # Python
 __pycache__/
