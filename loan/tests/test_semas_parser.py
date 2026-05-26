@@ -29,6 +29,18 @@ def test_parse_notices_extracts_relevant_anchor_and_date():
     assert "정책자금" in notices[0].keywords
 
 
+
+
+def test_parse_notices_skips_navigation_links():
+    html = """
+    <nav>
+      <a href="/ols/man/SMAN018M/page.do">정책자금한눈에보기</a>
+      <a href="/ols/man/SMAN055M/page.do">직접대출</a>
+      <a href="https://www.juso.go.kr/openIndexPage.do">도로명주소안내</a>
+    </nav>
+    """
+    assert parse_notices(html, "https://ols.semas.or.kr/ols/man/SMAN051M/page.do") == []
+
 def test_date_filter_splits_today_recent_old_and_unknown():
     notices = [
         SemasNotice("오늘 정책자금 공지", "https://example.com/a", "2026-05-26", ["정책자금"]),

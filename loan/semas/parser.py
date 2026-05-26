@@ -13,6 +13,25 @@ from bs4 import BeautifulSoup
 from loan.semas.keywords import POLICY_LOAN_KEYWORDS, detect_keywords, normalize_space
 
 
+SKIP_NAV_TITLES = {
+    "소상공인정책자금",
+    "사이트맵",
+    "정책자금한눈에보기",
+    "금리안내",
+    "공지사항",
+    "직접대출",
+    "대리대출",
+    "도로명주소안내",
+    "자주하는질문과답변",
+    "상환스케줄계산기",
+    "지역센터찾기",
+    "지역본부찾기",
+    "로그인",
+    "회원가입",
+    "검색",
+}
+
+
 @dataclass(frozen=True)
 class SemasNotice:
     title: str
@@ -65,9 +84,12 @@ def _candidate_from_anchor(anchor, base_url: str) -> SemasNotice | None:
     title = normalize_space(anchor.get_text(" ", strip=True))
     if not title or len(title) < 4:
         return None
+    compact_title = title.replace(" ", "")
+    if compact_title in SKIP_NAV_TITLES:
+        return None
     href = (anchor.get("href") or "").strip()
     href_lower = href.lower()
-    if any(blocked in href_lower for blocked in ("login", "logout", "javascript:login")):
+    if any(blocked in href_lower for blocked in ("login", "logout", "javascript:login", "juso.go.kr")):
         return None
     url = urljoin(base_url, href) if href and not href_lower.startswith("javascript") else base_url
     parent = anchor

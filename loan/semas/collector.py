@@ -219,9 +219,14 @@ def _serialize_notice(notice: SemasNotice) -> dict[str, Any]:
 def _build_judgment(result: dict[str, Any], classified: dict[str, Any]) -> dict[str, str]:
     new_count = len(classified["new"])
     duplicate_count = int(classified["duplicate_removed_count"])
+    notice_visible = bool(result.get("notice_page_visible"))
+    notice_available = "가능" if classified["unique"] or notice_visible else ("미확인" if result["connection_result"] == "가능" else "불가")
+    notice_basis = f"관련 후보 {len(classified['unique'])}건 추출"
+    if not classified["unique"] and notice_visible:
+        notice_basis = "공지/안내 페이지 문구 확인, 목록 후보 없음"
     return {
-        "공지 확인 가능 여부": "가능" if classified["unique"] else ("미확인" if result["connection_result"] == "가능" else "불가"),
-        "공지 확인 근거": f"관련 후보 {len(classified['unique'])}건 추출",
+        "공지 확인 가능 여부": notice_available,
+        "공지 확인 근거": notice_basis,
         "신규 공지 여부": "신규" if new_count else ("기존" if classified["existing"] else "미확인"),
         "신규 공지 근거": f"최근/날짜불명 후보 중 신규 {new_count}건",
         "중복 여부": "중복" if duplicate_count else "중복 아님",
@@ -280,6 +285,7 @@ def run_scan(
         "duplicate_removed_count": classified["duplicate_removed_count"],
         "keyword_presence": keyword_presence(page_text) if page_text else {},
         "keyword_evidence": keyword_evidence(page_text) if page_text else {},
+        "notice_page_visible": ("공지" in page_text or "안내" in page_text) if page_text else False,
         "errors": errors,
         "next_actions": [
             "신규 공지가 있으면 상세 내용을 검토하세요.",
