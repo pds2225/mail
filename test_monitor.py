@@ -2,6 +2,7 @@
 monitor.py v6 파이프라인 테스트 (실제 API/이메일 호출 없음)
 테스트 항목: ① 중복제거 ② 날짜필터 ③ 지역필터 ④ 키워드필터 ⑤ 지원유형 분류
 """
+import json
 import sys
 import os
 from datetime import datetime, timedelta
@@ -266,3 +267,19 @@ def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
 
     assert len(items) == 1
     assert items[0]["posted_date"] == "2026-05-15"
+
+
+def test_semas_loan_ols_site_registered_but_disabled_until_selector_safe():
+    """소진공 정책자금 온라인신청은 selector 검증 전까지 비활성 유지."""
+    sites = json.loads(Path("sites.json").read_text(encoding="utf-8"))
+    by_id = {site["id"]: site for site in sites}
+
+    assert "semas" in by_id, "기존 semas 항목은 유지되어야 함"
+    assert "semas_loan_ols" in by_id, "신규 소진공 정책자금 사이트가 등록되어야 함"
+
+    site = by_id["semas_loan_ols"]
+    assert site["url"] == "https://ols.semas.or.kr/ols/man/SMAN051M/page.do"
+    assert site["type"] == "html_table"
+    assert site["selectors"]["row"] == "table tbody tr"
+    assert site["enabled"] is False
+    assert "기존 html_table 파서로 제목/링크 추출 불가" in site["note"]

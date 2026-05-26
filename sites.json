@@ -249,6 +249,18 @@
     "note": "소상공인 지원사업 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
   },
   {
+    "id": "semas_loan_ols",
+    "name": "소진공 정책자금 온라인신청",
+    "type": "html_table",
+    "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소상공인 정책자금 온라인신청/공지 확인용 [비로그인 확인 범위] [비활성화: 정적 HTML table tbody tr 0건, 목록은 AJAX POST /ols/man/SMAN051M/search.do에서 로드되어 기존 html_table 파서로 제목/링크 추출 불가]"
+  },
+  {
     "id": "kised",
     "name": "창업진흥원(KISED)",
     "type": "html_table",
