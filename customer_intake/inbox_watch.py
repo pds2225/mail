@@ -38,6 +38,10 @@ class DebouncedCallback:
         self.callback = callback
         self._timer: threading.Timer | None = None
         self._lock = threading.Lock()
+        # Prevents two timer threads from executing the callback concurrently.
+        # Without this, a slow OCR+Sheets run (>debounce delay) can overlap with
+        # a second fire, causing duplicate Google Sheets rows for the same file.
+        self._exec_lock = threading.Lock()
 
     def trigger(self) -> None:
         with self._lock:
@@ -48,10 +52,11 @@ class DebouncedCallback:
             self._timer.start()
 
     def _fire(self) -> None:
-        try:
-            self.callback()
-        except Exception:
-            log.exception("inbox 처리 콜백 실패")
+        with self._exec_lock:
+            try:
+                self.callback()
+            except Exception:
+                log.exception("inbox 처리 콜백 실패")
 
 
 def run_watch_loop(on_change: Callable[[], None], *, stop_event: threading.Event | None = None) -> None:
