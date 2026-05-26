@@ -72,7 +72,7 @@ D:\customer_intake_inbox
 
 ### ② 실행
 
-**미리보기 (권장·기본)** — Sheets에 안 쓰고 결과만 확인:
+**자동 모드 (권장·기본)** — `.env`에 Sheets 설정이 완성되어 있으면 실제 기록, 없으면 미리보기:
 
 ```powershell
 cd D:\mail
@@ -93,7 +93,7 @@ cd D:\mail
 .\run_customer_intake_once_real.ps1
 ```
 
-(실행 전 경고 + `Y` 입력 필요)
+(실행 전 경고 + `Y` 입력 필요. Sheets 설정이 부족하면 중단하지 않고 dry_run으로 전환됩니다.)
 
 ### ③ 결과 확인
 
@@ -106,14 +106,18 @@ cd D:\mail
 
 ---
 
-## 3. OCR 모드 표시
+## 3. 실행 모드와 자동 폴백
 
 실행 시작 시 콘솔에 표시됩니다.
 
 | 표시 | 의미 |
 |------|------|
-| `[OCR] Mock OCR (테스트)` | `.env`에 CLOVA 미설정 → 샘플 JSON으로 추출 테스트 |
+| `[OCR] Mock OCR` | `CLOVA_OCR_URL`, `CLOVA_OCR_SECRET`가 둘 다 없으면 `mock_ocr_result.json`으로 추출 테스트 |
 | `[OCR] 실제 CLOVA OCR` | CLOVA API로 실제 문서 인식 |
+| `[Sheets] 미기록 (dry_run=true)` | Google Sheets에 쓰지 않고 보고서와 파일 이동만 수행 |
+| `[Sheets] 실제 기록 (dry_run=false)` | `GOOGLE_SHEET_ID`와 서비스 계정 JSON이 확인되어 Sheets에 기록 |
+
+`--dry-run auto`가 기본입니다. Sheets 설정이 준비되어 있으면 실제 기록, 부족하면 dry_run으로 계속 처리합니다. `--dry-run false`를 직접 지정해도 Sheets 설정이 부족하면 실패 종료 대신 dry_run으로 폴백하고 시작 배너와 보고서에 누락 항목을 남깁니다.
 
 ---
 
@@ -132,9 +136,15 @@ cd D:\mail
 
 ```powershell
 cd D:\mail
-python -m customer_intake.watcher --once --dry-run true
-python -m customer_intake.watcher --watch --dry-run true
+python -m customer_intake.watcher --once --dry-run auto
+python -m customer_intake.watcher --watch --dry-run auto
 python -m customer_intake.watcher --once --dry-run false
+```
+
+레거시 경로 지정 실행도 유지됩니다. 단일 파일이나 폴더를 직접 지정할 때만 사용하세요.
+
+```powershell
+python -m customer_intake.main --path D:\some_folder --dry-run true
 ```
 
 ---
@@ -157,7 +167,19 @@ python -m customer_intake.watcher --once --dry-run false
 
 ## 7. 환경변수 누락 시
 
-`dry_run=false` 또는 `run_customer_intake_once_real.ps1` 실행 시 필수 값이 없으면 **어떤 변수를 어디에 넣을지** 안내 후 종료합니다.
+필수 값이 없어도 기본적으로 처리는 계속됩니다.
+
+| 누락 항목 | 동작 |
+|-----------|------|
+| CLOVA OCR URL/Secret 전체 또는 일부 | Mock OCR 사용 |
+| `GOOGLE_SHEET_ID` | dry_run으로 전환, Sheets 미기록 |
+| Google 서비스 계정 JSON | dry_run으로 전환, Sheets 미기록 |
+
+서비스 계정 JSON은 아래 순서로 확인합니다.
+
+1. `GOOGLE_SERVICE_ACCOUNT_JSON_PATH`
+2. `GOOGLE_SERVICE_ACCOUNT_JSON`이 파일 경로인 경우
+3. `D:\mail\secrets\google_service_account.json`
 
 ---
 
@@ -190,4 +212,44 @@ D:\mail\
     env_check.py          ← 환경 검증·OCR 모드 표시
     watcher.py
     ...
+```
+
+### 처리 흐름
+
+1. `watcher.py`가 inbox에서 지원 파일(`.pdf`, `.png`, `.jpg`, `.jpeg`)을 찾습니다.
+2. 파일 크기가 안정될 때까지 잠시 대기해 복사 중인 파일을 피합니다.
+3. `clova_ocr_client.py`가 CLOVA OCR 또는 Mock OCR을 실행합니다.
+4. `extractor.py`가 사업자등록번호, 고객사명, 대표자명 등 Sheets 컬럼에 맞는 레코드를 만듭니다.
+5. `sheets_writer.py`가 dry_run이면 미리보기만 만들고, 실제 모드면 Google Sheets에 기록합니다.
+6. `processed_store.py`가 파일 내용 SHA-256을 `customer_intake/processed_files.json`에 저장해 같은 파일 재처리를 막습니다.
+7. 처리 결과에 따라 파일을 done/failed 폴더로 이동하고 `report.py`가 Markdown 보고서를 저장합니다.
+
+### Watch 모드 운영 메모
+
+- `watchdog`가 설치되어 있으면 OS 파일 이벤트를 사용하고, 없으면 폴더 스냅샷을 주기적으로 비교합니다.
+- 연속 파일 이벤트는 `CUSTOMER_INTAKE_DEBOUNCE_SEC` 동안 모아 한 번만 처리합니다.
+- 느린 OCR/Sheets 처리 중 새 이벤트가 와도 동시에 두 번 실행되지 않도록 내부 실행 락을 사용합니다.
+- 기동 직후 inbox에 이미 있던 파일도 1회 처리합니다.
+
+### 중복 처리 기준
+
+같은 파일명 기준이 아니라 파일 내용 해시 기준입니다. 이름을 바꿔 다시 넣어도 내용이 같으면 신규 Sheets 행을 만들지 않고 기존 처리 상태에 따라 done 또는 failed 폴더로 이동합니다. 재처리가 꼭 필요하면 파일 내용을 수정하거나, 운영자가 `customer_intake/processed_files.json`에서 해당 항목을 신중히 정리해야 합니다.
+
+---
+
+## 10. 문제 해결 Runbook
+
+| 증상 | 확인할 것 | 조치 |
+|------|-----------|------|
+| Sheets에 기록되지 않음 | 시작 배너의 `[Sheets] 미기록`, 보고서의 `.env` 누락 항목 | `.env`의 `GOOGLE_SHEET_ID`, 서비스 계정 JSON 경로, 스프레드시트 공유 권한 확인 |
+| 실제 문서를 넣었는데 샘플처럼 추출됨 | 시작 배너의 `[OCR] Mock OCR` | `CLOVA_OCR_URL`과 `CLOVA_OCR_SECRET`를 둘 다 설정 |
+| watch가 반응하지 않음 | `D:\customer_intake_reports\watch.log`, `watchdog` 설치 여부 | `.\doctor_customer_intake.ps1` 실행 후 필요 시 `.\repair_customer_intake.ps1` |
+| 파일이 failed로 이동됨 | 해당 실행 보고서와 watch 로그 | 원본 파일 열림/복사 중 여부, OCR API 오류, Sheets 권한 오류 확인 |
+| 같은 파일이 계속 스킵됨 | `customer_intake/processed_files.json`의 동일 해시 처리 이력 | 정상 동작입니다. 재처리가 필요한 경우 처리 이력을 백업 후 정리 |
+
+운영 점검 명령:
+
+```powershell
+cd D:\mail
+.\doctor_customer_intake.ps1
 ```
