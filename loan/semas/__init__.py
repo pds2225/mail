@@ -1,0 +1,2 @@
+"""SEMAS loan notice scanner."""
+
