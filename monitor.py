@@ -93,6 +93,111 @@ KNOWN_REGIONS = {
     "충청", "전라", "경상", "수도권", "호남", "영남",
 }
 
+APPLICANT_REGION_CITY = "인천광역시"
+APPLICANT_REGION_DISTRICT = "남동구"
+INCHEON_DISTRICTS = [
+    "강화군", "계양구", "남동구", "동구", "미추홀구",
+    "부평구", "서구", "연수구", "옹진군", "중구",
+]
+
+GENERAL_INCLUDE_KEYWORD_ALIASES = [
+    ("베트남", ["베트남"]),
+    ("동남아", ["동남아"]),
+    ("해외", ["해외"]),
+    ("글로벌", ["글로벌"]),
+    ("박람회", ["박람회"]),
+    ("전시회", ["전시회", "해외전시회"]),
+    ("소상공인", ["소상공인"]),
+    ("지원금", ["지원금"]),
+    ("공장", ["공장"]),
+    ("스마트", ["스마트"]),
+    ("스마트공장", ["스마트공장"]),
+    ("스마트팩토리", ["스마트팩토리"]),
+    ("제조DX", ["제조dx", "제조 dx"]),
+    ("제조 디지털전환", ["제조 디지털전환"]),
+    ("디지털전환", ["디지털전환"]),
+    ("공정개선", ["공정개선"]),
+    ("공정자동화", ["공정자동화"]),
+    ("자동화", ["자동화"]),
+    ("생산성 향상", ["생산성 향상"]),
+    ("MES", ["mes"]),
+    ("ERP", ["erp"]),
+    ("제조혁신", ["제조혁신"]),
+    ("제조AI", ["제조ai", "제조 ai"]),
+    ("로봇", ["로봇"]),
+    ("설비개선", ["설비개선"]),
+]
+
+PRIORITY_KEYWORD_ALIASES = [
+    ("혁신바우처", ["혁신바우처", "혁신 바우처"]),
+    ("수출바우처", ["수출바우처", "수출 바우처"]),
+    ("스마트공장", ["스마트공장"]),
+    ("스마트팩토리", ["스마트팩토리"]),
+    ("제조DX", ["제조dx", "제조 dx"]),
+    ("공정개선", ["공정개선"]),
+    ("공정자동화", ["공정자동화"]),
+    ("자동화", ["자동화"]),
+    ("제조혁신", ["제조혁신"]),
+]
+
+FACTORY_KEYWORD_ALIASES = [
+    ("공장", ["공장"]),
+    ("공장등록", ["공장등록"]),
+    ("공장등록증", ["공장등록증"]),
+    ("제조시설", ["제조시설"]),
+    ("생산시설", ["생산시설"]),
+    ("제조공장", ["제조공장"]),
+    ("사업장", ["사업장"]),
+    ("제조업 영위", ["제조업 영위"]),
+    ("제조기업", ["제조기업"]),
+    ("공장 보유", ["공장 보유", "공장보유"]),
+    ("공장 임차", ["공장 임차", "공장임차"]),
+    ("임대공장", ["임대공장"]),
+    ("산업단지", ["산업단지"]),
+    ("입주기업", ["입주기업"]),
+]
+
+FACTORY_REQUIRED_TERMS = [
+    "공장등록증", "제조시설", "생산시설", "제조업 영위", "공장 보유",
+    "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
+]
+
+APPLICATION_KEYWORDS = [
+    "모집공고", "지원계획 공고", "참여기업 모집", "수요기업 모집", "신청접수",
+    "지원사업 공고", "해외전시회", "박람회", "전시회", "수출상담회",
+    "바이어 매칭", "마케팅 지원", "판로지원", "수출지원", "글로벌", "해외",
+    "베트남", "동남아", "화장품", "뷰티", "k-beauty", "소상공인", "지원금",
+    "혁신바우처", "혁신 바우처", "수출바우처", "수출 바우처", "스마트공장",
+    "스마트팩토리", "공정개선", "공정자동화", "설비개선", "구축 지원사업",
+]
+
+GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
+
+EXCLUSION_RULES = [
+    ("GUIDELINE_OR_MANUAL", "guideline", "unknown", [
+        "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
+        "공동인증서", "공인인증서", "매뉴얼", "사용 안내", "유의사항", "시스템 이용 안내",
+    ]),
+    ("INFO_SESSION", "info_session", "unknown", ["설명회", "오리엔테이션"]),
+    ("EDUCATION_ONLY", "education", "unknown", [
+        "교육 일정", "교육일정", "분야별 교육", "선정기업 교육", "수요기업 교육", "공급기업 교육",
+    ]),
+    ("SUPPLIER_ONLY", "application_notice", "supplier", [
+        "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
+    ]),
+    ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
+        "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
+    ]),
+    ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
+]
+
+REGION_EXCLUDE_PHRASES = [
+    "수도권 제외", "수도권 소재 기업 제외", "서울·경기·인천 제외", "서울 경기 인천 제외",
+    "수도권 소재 기업 신청 불가", "인천 제외", "비수도권 기업 대상",
+    "지역제조 중 수도권 제외", "인천 소재 기업 신청 불가",
+]
+OPEN_DEADLINE_TERMS = ["상시접수", "수시접수", "예산 소진 시까지", "예산소진 시까지", "예산 소진시까지"]
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
@@ -146,22 +251,45 @@ def is_imminent(deadline: str) -> bool:
     return False
 
 def extract_date_from_text(text: str) -> str:
-    """텍스트에서 날짜 추출 (YYYY-MM-DD). 다양한 포맷 지원."""
+    """텍스트에서 첫 날짜를 YYYY-MM-DD로 추출."""
+    dates = _parse_date_candidates(text)
+    return dates[0][1].isoformat() if dates else ""
+
+
+def _valid_date(year: int, month: int, day: int):
+    try:
+        return datetime(year, month, day).date()
+    except ValueError:
+        return None
+
+
+def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tuple[int, Any]]:
+    """공고 날짜 표현에서 날짜 후보를 원문 위치순으로 반환."""
     if not text:
-        return ""
-    # 1. 표준 ISO: 2026-05-15 또는 2026.05.15 또는 2026/05/15
-    m = re.search(r"(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})", text)
-    if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    # 2. 한국어: 2026년 05월 15일 또는 2026년 5월 15일
-    m = re.search(r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", text)
-    if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    # 3. 간격 있는 ISO: 2026 - 05 - 15
-    m = re.search(r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})", text)
-    if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    return ""
+        return []
+    base_year = base_year or datetime.now(KST).year
+    candidates: list[tuple[int, Any]] = []
+    patterns = [
+        (r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 1),
+        (r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", 1),
+        (r"'?(\d{2})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 2000),
+        (r"(?<!\d)(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)", None),
+    ]
+    for pattern, year_mode in patterns:
+        for m in re.finditer(pattern, text):
+            if year_mode is None:
+                year, month, day = base_year, int(m.group(1)), int(m.group(2))
+            elif year_mode == 2000:
+                year, month, day = 2000 + int(m.group(1)), int(m.group(2)), int(m.group(3))
+            else:
+                year, month, day = int(m.group(1)), int(m.group(2)), int(m.group(3))
+            parsed = _valid_date(year, month, day)
+            if parsed:
+                candidates.append((m.start(), parsed))
+    deduped: dict[Any, tuple[int, Any]] = {}
+    for pos, parsed in candidates:
+        deduped.setdefault(parsed, (pos, parsed))
+    return sorted(deduped.values(), key=lambda pair: pair[0])
 
 
 def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
@@ -1135,26 +1263,117 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
 
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
-    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(k in text for k in kws)]
+    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(k.lower() in text for k in kws)]
     return matched or ["그외"]
 
 
+def _notice_text(item: dict) -> str:
+    return f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('deadline','')}".lower()
+
+
+def _unique(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for value in values:
+        if value and value not in seen:
+            seen.add(value)
+            result.append(value)
+    return result
+
+
+def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
+    matches: list[str] = []
+    for label, keys in aliases:
+        if any(key.lower() in text for key in keys):
+            matches.append(label)
+    return _unique(matches)
+
+
+def classify_deadline_status(item: dict, today=None) -> str:
+    today = today or datetime.now(KST).date()
+    text = _notice_text(item)
+    if any(term in text for term in OPEN_DEADLINE_TERMS):
+        return "open"
+    dates = [parsed for _, parsed in _parse_date_candidates(text, today.year)]
+    if not dates:
+        return "unknown"
+    start_date, end_date = dates[0], dates[-1]
+    if end_date < today:
+        return "closed"
+    if len(dates) >= 2 and start_date > today:
+        return "upcoming"
+    if ("접수 예정" in text or "접수예정" in text) and start_date > today:
+        return "upcoming"
+    return "open"
+
+
+def classify_region(item: dict) -> dict:
+    text = _notice_text(item)
+    eligible_regions: list[str] = []
+    excluded_regions: list[str] = []
+    region_status = "unknown"
+    district_status = "unknown"
+
+    if any(phrase in text for phrase in REGION_EXCLUDE_PHRASES):
+        return {
+            "region_status": "not_eligible",
+            "district_status": "not_eligible",
+            "eligible_regions": [],
+            "excluded_regions": [APPLICANT_REGION_CITY, APPLICANT_REGION_DISTRICT],
+        }
+
+    if "남동구 제외" in text or "남동구 소재 기업 제외" in text:
+        excluded_regions.append(APPLICANT_REGION_DISTRICT)
+        return {
+            "region_status": "not_eligible",
+            "district_status": "not_eligible",
+            "eligible_regions": [],
+            "excluded_regions": excluded_regions,
+        }
+
+    mentioned_districts = [district for district in INCHEON_DISTRICTS if district in text]
+    if APPLICANT_REGION_DISTRICT in mentioned_districts:
+        eligible_regions.append(APPLICANT_REGION_DISTRICT)
+        region_status = "eligible"
+        district_status = "eligible"
+    elif mentioned_districts:
+        excluded_regions.extend(mentioned_districts)
+        region_status = "not_eligible"
+        district_status = "not_eligible"
+    elif "전국" in text or "인천광역시 소재" in text or "인천 소재" in text or "인천 지역" in text or "인천지역" in text:
+        eligible_regions.append(APPLICANT_REGION_CITY)
+        region_status = "eligible"
+        district_status = "eligible"
+    elif "인천" in text:
+        eligible_regions.append(APPLICANT_REGION_CITY)
+        region_status = "eligible"
+        district_status = "eligible"
+    elif any(region.lower() in text for region in KNOWN_REGIONS):
+        region_status = "not_eligible"
+        district_status = "not_eligible"
+
+    return {
+        "region_status": region_status,
+        "district_status": district_status,
+        "eligible_regions": _unique(eligible_regions),
+        "excluded_regions": _unique(excluded_regions),
+    }
+
+
 def region_match(item: dict, group_regions: list[str]) -> bool:
-    """그룹 지역 조건 매칭. 지역 미설정 시 전체 통과."""
+    """그룹 지역 조건 매칭. 남동구 신청 불가 공고는 인천 그룹에서 제외."""
     if not group_regions:
         return True
-    text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+    region_info = classify_region(item)
+    if region_info["region_status"] == "not_eligible" or region_info["district_status"] == "not_eligible":
+        return False
+    text = _notice_text(item)
     g_regions = [r.lower() for r in group_regions]
-    # 그룹 지역 포함 → 통과
     if any(r in text for r in g_regions):
         return True
-    # "전국" 명시 → 통과
     if "전국" in text:
         return True
-    # 어떤 지역도 언급 안 됨 → 전국 공고로 판단 → 통과
-    if not any(kr in text for kr in KNOWN_REGIONS):
-        return True
-    return False
+    return region_info["region_status"] == "unknown" and not any(kr.lower() in text for kr in KNOWN_REGIONS)
 
 
 def keyword_match(item: dict, kw_cfg: dict) -> bool:
@@ -1172,6 +1391,11 @@ def _normalize_group(group: dict) -> dict:
     if "or_keywords" in group or "and_keyword_groups" in group or "exclude_keywords" in group:
         if "required_conditions" not in group:
             group = {**group, "required_conditions": {"regions": group.get("regions", [])}}
+        group = {**group}
+        group.setdefault("exclude_keywords", [])
+        group.setdefault("priority_keywords", [label for label, _ in PRIORITY_KEYWORD_ALIASES])
+        group.setdefault("applicant_region_city", APPLICANT_REGION_CITY)
+        group.setdefault("applicant_region_district", APPLICANT_REGION_DISTRICT)
         return group
     kw_cfg = group.get("keywords", {})
     kws    = kw_cfg.get("keywords", [])
@@ -1184,6 +1408,9 @@ def _normalize_group(group: dict) -> dict:
         norm["or_keywords"]       = kws
         norm["and_keyword_groups"] = []
     norm.setdefault("exclude_keywords", [])
+    norm.setdefault("priority_keywords", [label for label, _ in PRIORITY_KEYWORD_ALIASES])
+    norm.setdefault("applicant_region_city", APPLICANT_REGION_CITY)
+    norm.setdefault("applicant_region_district", APPLICANT_REGION_DISTRICT)
     return norm
 
 
@@ -1194,53 +1421,212 @@ def support_match(item: dict, enabled_types: list[str]) -> bool:
     return any(t in enabled_types for t in types)
 
 
-def filter_for_group(items: list[dict], group: dict) -> list[dict]:
-    """
-    신버전 조건 구조(or_keywords / and_keyword_groups / exclude_keywords / required_conditions)
-    로 필터링. 구버전(keywords.logic) 그룹은 _normalize_group 으로 자동 변환.
-    처리 순서: ① 출처 무조건 포함 → ② 필수조건(지역) → ③ 제외 키워드
-              → ④ OR/AND 키워드 → ⑤ 지원유형
-    """
-    g           = _normalize_group(group)
-    result      = []
+def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
+    """공고 1건에 필터링 판정 필드를 부여한다."""
+    g = _normalize_group(group or {})
+    text = _notice_text(item)
+    result = {**item}
+    reason_codes: list[str] = []
+    excluded_keywords: list[str] = []
+    target_type = "unknown"
+    notice_type = "unknown"
+
+    matched_keywords = _find_keyword_aliases(text, GENERAL_INCLUDE_KEYWORD_ALIASES)
+    priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
+    factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
+    matched_keywords = _unique(matched_keywords + factory_keywords)
+    factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
+    factory_condition = bool(factory_keywords)
+    service_hits = [kw for kw in GENERAL_SERVICE_EXCLUDE_KEYWORDS if kw in text]
+    application_like = any(kw in text for kw in APPLICATION_KEYWORDS)
+    smart_info = any(kw in priority_keywords for kw in ["스마트공장", "스마트팩토리", "제조DX", "공정개선", "공정자동화", "자동화", "제조혁신"])
+
+    for code, rule_notice_type, rule_target_type, keywords in EXCLUSION_RULES:
+        hits = [kw for kw in keywords if kw in text]
+        if hits:
+            reason_codes.append(code)
+            excluded_keywords.extend(hits)
+            if notice_type == "unknown":
+                if code == "GUIDELINE_OR_MANUAL" and any("매뉴얼" in hit for hit in hits):
+                    notice_type = "manual"
+                elif code == "GUIDELINE_OR_MANUAL" and any("부정수급" in hit for hit in hits):
+                    notice_type = "admin_notice"
+                else:
+                    notice_type = rule_notice_type
+            if rule_target_type != "unknown":
+                target_type = rule_target_type
+
+    if service_hits:
+        excluded_keywords.extend(service_hits)
+        if "설명회" in service_hits:
+            reason_codes.append("INFO_SESSION")
+            notice_type = "info_session"
+        elif not application_like or ("단독" in text and not priority_keywords):
+            reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
+            notice_type = "general_info"
+
+    if smart_info and notice_type in {"education", "info_session", "general_info", "guideline", "manual"}:
+        reason_codes.append("SMART_FACTORY_INFO_ONLY")
+
+    if target_type == "unknown":
+        if any(kw in text for kw in ["공급기업", "수행기관", "서비스 제공자"]):
+            target_type = "supplier"
+        elif any(kw in text for kw in ["기선정", "선정기업 대상", "협약", "정산", "결과보고"]):
+            target_type = "selected_company"
+        elif any(kw in text for kw in ["수요기업", "참여기업", "중소기업", "소상공인", "제조기업", "신청 기업"]):
+            target_type = "demand_company"
+
+    if notice_type == "unknown" and application_like:
+        notice_type = "application_notice"
+    elif notice_type == "unknown" and any(kw in text for kw in ["일반 안내", "안내"]):
+        notice_type = "general_info"
+
+    deadline_status = classify_deadline_status(item, today)
+    if deadline_status == "closed":
+        reason_codes.append("CLOSED_DEADLINE")
+    elif deadline_status == "unknown":
+        reason_codes.append("MISSING_APPLICATION_PERIOD")
+
+    region_info = classify_region(item)
+    if region_info["region_status"] == "not_eligible":
+        reason_codes.append("REGION_NOT_ELIGIBLE")
+    if region_info["district_status"] == "not_eligible":
+        reason_codes.append("DISTRICT_NOT_ELIGIBLE")
+    if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
+        reason_codes.append("LOW_CONFIDENCE")
+    if "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
+        reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
+
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
+    src = (item.get("source", "") + " " + item.get("author", "")).lower()
+    source_bypass = always_srcs and any(s in src for s in always_srcs)
     req_regions = g.get("required_conditions", {}).get("regions", [])
-    or_kws      = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
-    and_groups  = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
-    excl_kws    = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
+    if group is not None and not source_bypass and not region_match(item, req_regions):
+        reason_codes.append("REGION_NOT_ELIGIBLE")
 
-    for it in items:
-        text = f"{it.get('title','')} {it.get('description','')} {it.get('author','')}".lower()
-        src  = (it.get("source","") + " " + it.get("author","")).lower()
+    excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
+    group_excluded = [k for k in excl_kws if k in text]
+    if group_excluded:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.extend(group_excluded)
 
-        # ① 출처 기반 무조건 포함
-        if always_srcs and any(s in src for s in always_srcs):
-            if support_match(it, g.get("support_types", ALL_SUPPORT_TYPES)):
-                result.append({**it, "_types": classify_support_type(it)})
-                continue
+    or_kws = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
+    and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
+    group_keyword_pass = True
+    if group is not None and not source_bypass and (or_kws or and_groups):
+        group_keyword_pass = any(k in text for k in or_kws) or any(all(k in text for k in ag) for ag in and_groups)
+        if not group_keyword_pass:
+            reason_codes.append("INDUSTRY_NOT_MATCHED")
 
-        # ② 필수조건: 지역 (OR 방식 — 하나라도 맞으면 통과, 비어 있으면 전체 통과)
-        if not region_match(it, req_regions):
-            continue
+    if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
+        reason_codes.append("INDUSTRY_NOT_MATCHED")
 
-        # ③ 제외 키워드: 하나라도 포함되면 제외
-        if excl_kws and any(k in text for k in excl_kws):
-            continue
+    if not application_like and not priority_keywords:
+        reason_codes.append("NOT_GRANT_NOTICE")
 
-        # ④ 키워드 조건 (OR/AND 모두 비어 있으면 전체 통과)
-        if or_kws or and_groups:
-            or_pass  = any(k in text for k in or_kws)
-            and_pass = any(all(k in text for k in ag) for ag in and_groups)
-            if not (or_pass or and_pass):
-                continue
+    relevance_score = 0
+    relevance_score += len(set(matched_keywords)) * 2
+    relevance_score += len(set(priority_keywords)) * 10
+    relevance_score += 5 if application_like else 0
+    relevance_score += 4 if factory_condition else 0
+    if service_hits and not application_like:
+        relevance_score -= 6
+    if reason_codes:
+        relevance_score -= 10
 
-        # ⑤ 지원유형
-        if not support_match(it, g.get("support_types", ALL_SUPPORT_TYPES)):
-            continue
+    reason_codes = _unique(reason_codes)
+    excluded_keywords = _unique(excluded_keywords)
+    region_status = region_info["region_status"]
+    district_status = region_info["district_status"]
+    hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+    is_relevant = (
+        not hard_reasons
+        and deadline_status in {"open", "upcoming"}
+        and region_status == "eligible"
+        and district_status == "eligible"
+        and application_like
+        and group_keyword_pass
+    )
+    review_needed = (
+        not is_relevant
+        and bool(priority_keywords)
+        and not (set(reason_codes) & {
+            "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
+            "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
+            "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
+        })
+    )
 
-        result.append({**it, "_types": classify_support_type(it)})
+    required_conditions = []
+    notes = []
+    if factory_required:
+        required_conditions.append("공장보유 또는 제조시설 조건")
+        notes.append("공장 보유 여부 확인 필요")
+    if district_status == "unknown":
+        notes.append("남동구 소재 기업 신청 가능 여부 확인 필요")
+    if "ONLY_SPECIFIC_INDUSTRIAL_COMPLEX" in reason_codes:
+        notes.append("특정 산업단지 입주 여부 확인 필요")
 
-    log.info("그룹 '%s' 필터: %d → %d건", g.get("name"), len(items), len(result))
+    result.update({
+        "is_relevant": is_relevant,
+        "target_type": target_type,
+        "notice_type": notice_type,
+        "deadline_status": deadline_status,
+        "region_status": region_status,
+        "industry_status": "matched" if group_keyword_pass or matched_keywords or priority_keywords else "not_matched",
+        "matched_keywords": matched_keywords,
+        "excluded_keywords": excluded_keywords,
+        "priority_keyword": bool(priority_keywords),
+        "priority_keywords": priority_keywords,
+        "relevance_score": relevance_score,
+        "exclude_reason_codes": reason_codes,
+        "filter_confidence": "high" if is_relevant or reason_codes else "medium",
+        "applicant_region_city": g.get("applicant_region_city", APPLICANT_REGION_CITY),
+        "applicant_region_district": g.get("applicant_region_district", APPLICANT_REGION_DISTRICT),
+        "eligible_regions": region_info["eligible_regions"],
+        "excluded_regions": region_info["excluded_regions"],
+        "district_status": district_status,
+        "factory_condition": factory_condition,
+        "factory_required": True if factory_required else False,
+        "required_conditions": required_conditions,
+        "notes": notes,
+        "review_needed": review_needed,
+        "_types": classify_support_type(item),
+    })
+    return result
+
+
+def _notice_sort_key(item: dict) -> tuple[int, int, int]:
+    return (
+        0 if item.get("priority_keyword") else 1,
+        -int(item.get("relevance_score", 0)),
+        0 if item.get("deadline_status") == "open" else 1,
+    )
+
+
+def filter_for_group_with_diagnostics(items: list[dict], group: dict, today=None) -> dict:
+    included: list[dict] = []
+    review: list[dict] = []
+    excluded: list[dict] = []
+    for item in items:
+        evaluated = evaluate_notice(item, group, today)
+        if evaluated.get("is_relevant"):
+            included.append(evaluated)
+        elif evaluated.get("review_needed"):
+            review.append(evaluated)
+        else:
+            excluded.append(evaluated)
+    included.sort(key=_notice_sort_key)
+    review.sort(key=_notice_sort_key)
+    excluded.sort(key=lambda it: (",".join(it.get("exclude_reason_codes", [])), it.get("title", "")))
+    return {"included": included, "review": review, "excluded": excluded}
+
+
+def filter_for_group(items: list[dict], group: dict) -> list[dict]:
+    """그룹별 최종 추천 공고만 반환한다."""
+    diagnostics = filter_for_group_with_diagnostics(items, group)
+    result = diagnostics["included"]
+    log.info("그룹 '%s' 필터: %d → %d건", group.get("name"), len(items), len(result))
     return result
 
 
@@ -1273,29 +1659,102 @@ def mail_topic(items: list[dict]) -> str:
 
 def fallback_body(items: list[dict]) -> str:
     lines: list[str] = []
+    items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
     if imminent:
         lines += ["⚠️ 마감 임박 (7일 이내)"]
         for it in imminent:
             lines.append(f"- {it['title']} | 마감: {it['deadline']}")
         lines.append("")
-    for it in items:
-        lines += ["━━━━━━━━━━━━━━━━━━",
-                  f"📌 {it['title']}",
-                  f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
-                  f"• 지원기관: {it['author'] or '미기재'}",
-                  f"• 지원내용: {it['description'] or '미기재'}",
-                  f"• 신청마감: {it['deadline'] or '미기재'}",
-                  f"• 등록일: {it.get('posted_date') or '날짜불명'}",
-                  f"• 출처: {it['source']}",
-                  f"• 🔗 {it['link'] or '미기재'}",
-                  "━━━━━━━━━━━━━━━━━━"]
+    sections = [
+        ("1. 우선 추천 공고", [it for it in items if it.get("priority_keyword")]),
+        ("2. 일반 추천 공고", [it for it in items if not it.get("priority_keyword")]),
+    ]
+    for section_title, section_items in sections:
+        if not section_items:
+            continue
+        lines.append(section_title)
+        for it in section_items:
+            region_label = _region_label(it)
+            factory_label = _factory_label(it)
+            smart_label = _smart_relevance_label(it)
+            matched = ", ".join(it.get("matched_keywords", [])) or "미기재"
+            priority = ", ".join(it.get("priority_keywords", [])) or "없음"
+            notes = " / ".join(it.get("notes", [])) or "없음"
+            lines += ["━━━━━━━━━━━━━━━━━━",
+                      f"📌 {it['title']}",
+                      f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
+                      f"• 지원기관: {it['author'] or '미기재'}",
+                      f"• 지원내용: {it['description'] or '미기재'}",
+                      f"• 신청마감: {it['deadline'] or '미기재'} ({it.get('deadline_status', 'unknown')})",
+                      f"• 지역 적합성: {region_label}",
+                      f"• 공장 조건: {factory_label}",
+                      f"• 스마트공장 관련성: {smart_label}",
+                      f"• 매칭 키워드: {matched}",
+                      f"• 우선 키워드: {priority}",
+                      f"• 확인 메모: {notes}",
+                      f"• 등록일: {it.get('posted_date') or '날짜불명'}",
+                      f"• 출처: {it['source']}",
+                      f"• 🔗 {it['link'] or '미기재'}",
+                      "━━━━━━━━━━━━━━━━━━"]
+        lines.append("")
+    return "\n".join(lines).strip()
+
+
+def _region_label(item: dict) -> str:
+    if item.get("district_status") == "not_eligible":
+        return "남동구 불가"
+    if item.get("region_status") == "eligible" and APPLICANT_REGION_DISTRICT in item.get("eligible_regions", []):
+        return "남동구 가능"
+    if item.get("region_status") == "eligible":
+        return "인천 전체"
+    return "확인 필요"
+
+
+def _factory_label(item: dict) -> str:
+    if item.get("factory_required") is True:
+        return "공장보유 필요"
+    if item.get("factory_condition"):
+        return "공장보유 우대"
+    if item.get("factory_required") == "unknown":
+        return "확인 필요"
+    return "해당 없음"
+
+
+def _smart_relevance_label(item: dict) -> str:
+    smart_terms = {"스마트", "스마트공장", "스마트팩토리", "제조DX", "공정개선", "공정자동화", "자동화", "제조혁신"}
+    matched = set(item.get("matched_keywords", [])) | set(item.get("priority_keywords", []))
+    if matched & smart_terms:
+        return "높음"
+    if "공장" in matched or item.get("factory_condition"):
+        return "보통"
+    return "낮음"
+
+
+def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
+    if not items:
+        return ""
+    lines = ["| 공고명 | 제외 사유 코드 | 제외 판단 근거 |", "|---|---|---|"]
+    for it in items[:limit]:
+        title = str(it.get("title", "")).replace("|", "/")
+        codes = ", ".join(it.get("exclude_reason_codes", [])) or "LOW_CONFIDENCE"
+        basis_parts = []
+        if it.get("excluded_keywords"):
+            basis_parts.append("키워드: " + ", ".join(it.get("excluded_keywords", [])[:5]))
+        if it.get("deadline_status") in {"closed", "unknown"}:
+            basis_parts.append(f"접수기간: {it.get('deadline_status')}")
+        if it.get("region_status") == "not_eligible" or it.get("district_status") == "not_eligible":
+            basis_parts.append("지역/구 조건 불일치")
+        basis = " / ".join(basis_parts) or "신청 가능성 낮음"
+        lines.append(f"| {title} | {codes} | {basis} |")
+    if len(items) > limit:
+        lines.append(f"| 외 {len(items) - limit}건 | - | 표시 제한 |")
     return "\n".join(lines)
 
 
 def claude_summarize(items: list[dict], group: dict) -> str:
     if not items: return ""
-    limited = items[:MAX_FOR_CLAUDE]
+    limited = sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE]
     client  = Anthropic(api_key=ANTHROPIC_API_KEY)
     g           = _normalize_group(group)
     req_regions = g.get("required_conditions", {}).get("regions", [])
@@ -1305,7 +1764,12 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     items_txt = "\n\n".join(
         f"[{i+1}] [{' · '.join(it.get('_types', ['미분류']))}] [등록:{it.get('posted_date','날짜불명')}]\n"
         f"제목: {it['title']}\n기관: {it['author']}\n내용: {it['description']}\n"
-        f"마감: {it['deadline']}\n출처: {it['source']}\n링크: {it['link']}"
+        f"마감: {it['deadline']} ({it.get('deadline_status', 'unknown')})\n"
+        f"지역 적합성: {_region_label(it)}\n공장 조건: {_factory_label(it)}\n"
+        f"스마트공장 관련성: {_smart_relevance_label(it)}\n"
+        f"매칭 키워드: {', '.join(it.get('matched_keywords', [])) or '미기재'}\n"
+        f"우선 키워드: {', '.join(it.get('priority_keywords', [])) or '없음'}\n"
+        f"점수: {it.get('relevance_score', 0)}\n출처: {it['source']}\n링크: {it['link']}"
         for i, it in enumerate(limited)
     )
     region_ctx = f"대상지역: {', '.join(req_regions) if req_regions else '전국'}"
@@ -1325,6 +1789,9 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 • 지원내용/금액:
 • 신청마감:
 • 지역조건:
+• 공장 조건:
+• 스마트공장 관련성:
+• 매칭 키워드:
 • 출처:
 • 🔗 링크
 ━━━━━━━━━━━━━━━━━━
@@ -1471,16 +1938,38 @@ def execute_monitor(
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
             "sent_groups": [],
+            "preview_groups": [],
         }
 
     # ⑥ 그룹별 필터 + 발송
     sent_groups: list[dict] = []
+    preview_groups: list[dict] = []
     for group in groups:
-        g_items = filter_for_group(filtered_new, group)
+        diagnostics = filter_for_group_with_diagnostics(filtered_new, group)
+        g_items = diagnostics["included"]
+        review_items = diagnostics["review"]
+        excluded_items = diagnostics["excluded"]
+        if not allow_send:
+            preview_groups.append({
+                "name": group.get("name"),
+                "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
+                "matched_items": len(g_items),
+                "review_items": len(review_items),
+                "excluded_items": len(excluded_items),
+                "sample_titles": [it.get("title") for it in g_items[:5]],
+                "review_titles": [it.get("title") for it in review_items[:5]],
+                "excluded_summary": render_excluded_summary(excluded_items),
+            })
         if not g_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
-        sent_groups.append({"name": group.get("name"), "matched_items": len(g_items)})
+        sent_groups.append({
+            "name": group.get("name"),
+            "matched_items": len(g_items),
+            "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
+            "review_items": len(review_items),
+            "excluded_items": len(excluded_items) if not allow_send else 0,
+        })
         if allow_send:
             summary    = claude_summarize(g_items, group)
             g_norm     = _normalize_group(group)
@@ -1518,6 +2007,7 @@ def execute_monitor(
         "filtered_items": len(filtered_new),
         "date_unknown_items": len(date_unknown),
         "sent_groups": sent_groups,
+        "preview_groups": preview_groups,
     }
 
 def main() -> None:
