@@ -338,6 +338,8 @@ def fetch_html_generic(site: dict) -> list[dict]:
         if not title: continue
         href = a.get("href", "") if a else ""
         link = urljoin(site["url"], href) if href else site["url"]
+        if not href or link.split("#")[0] == site["url"].split("#")[0] or href.startswith("javascript:"):
+            continue
         row_text = row.get_text()
         dates    = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
         # 첫 날짜 = 등록일, 마지막 날짜 = 마감일 (두 개 이상)

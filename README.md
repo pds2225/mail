@@ -50,6 +50,20 @@
 - 기본(안전): `{"dry_run": true}`
 - 실제 발송(명시 승인): `{"dry_run": false, "confirm_send": "SEND"}`
 
+## 소진공 정책자금 점검 모듈
+
+정책자금 전용 기능은 기존 메일 모니터링과 분리된 `loan/` 패키지에 있습니다.
+
+- 대상 설정: `loan/config/semas.yml`
+- 리포트: `reports/loan/semas_loan_scan.md`
+- 중복 상태 파일: `reports/loan/semas_seen_notices.json`
+- 수동 실행: `python3 -m loan.semas.collector --run-mode dry-run --send-email false`
+- 실제 테스트 메일: `ALLOW_SEND_EMAIL=true python3 -m loan.semas.collector --run-mode dry-run --send-email true`
+
+메일 발송은 기존 변수명인 `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`, 선택 변수 `SMTP_HOST`, `SMTP_PORT`를 재사용합니다. 수신자는 `MAIL_TO`가 있으면 우선 사용하고, 없으면 기존 `settings.json`의 `raw_all_recipients`와 `groups.json`의 `recipients`를 사용합니다.
+
+GitHub Actions에서는 **소진공 정책자금 수동 점검** workflow를 실행하고 `run_mode`, `send_email`, `lookback_days`를 선택합니다. 외부 사이트 접속 또는 SMTP 설정이 실패해도 Markdown 리포트 artifact는 생성됩니다.
+
 ## Local Notes
 
 - 기존처럼 `python monitor.py` 실행 시에는 실제 발송 경로를 유지합니다.
