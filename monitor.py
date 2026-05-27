@@ -64,7 +64,6 @@ MAX_SEEN_IDS   = 1000
 MAX_FOR_CLAUDE = 15
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
-CREDIT_GUARANTEE_TITLE = "신용보증재단 공고"
 HTTP_HEADERS   = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -428,6 +427,8 @@ def fetch_regional_credit_guarantee(site: dict) -> list[dict]:
         return _fetch_gcgf_notices(site)
     if parser == "icsinbo_json":
         return _fetch_icsinbo_notices(site)
+    if parser == "seoul_city_fund":
+        return _fetch_seoul_credit_fund_page(site)
     return fetch_html_generic(site)
 
 
@@ -486,6 +487,26 @@ def _fetch_icsinbo_notices(site: dict) -> list[dict]:
         ))
     log.info("%s: %d건", site["name"], len(items))
     return items
+
+
+def _fetch_seoul_credit_fund_page(site: dict) -> list[dict]:
+    soup = _soup(site["url"])
+    if not soup:
+        return []
+    title = select_text(soup, "title") or "서울시 중소기업육성자금 융자지원"
+    title = re.sub(r"\s*<.*$", "", title).strip() or title
+    text = norm(soup.get_text(" ", strip=True))
+    if "서울신용보증재단" not in text or not _is_credit_guarantee_notice(title):
+        log.info("%s: 0건", site["name"])
+        return []
+    posted = extract_date_from_text(text[:1000])
+    item = _item(
+        f"{site['id']}_{stable_id(title + site['url'])}",
+        title, site["url"], site["name"], f"지역: {site.get('region', '')} / 서울신용보증재단 상담·접수",
+        "", site["name"], posted, site.get("is_aggregator", False),
+    )
+    log.info("%s: 1건", site["name"])
+    return [item]
 
 
 def fetch_kita(site: dict) -> list[dict]:
@@ -1338,7 +1359,9 @@ def mail_topic(items: list[dict]) -> str:
     if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
         return SEMAS_LOAN_TITLE
     if items and all("신용보증재단" in it.get("source", "") for it in items):
-        return CREDIT_GUARANTEE_TITLE
+        return SEMAS_LOAN_TITLE
+    if items and all(it.get("source") == SEMAS_LOAN_SOURCE or "신용보증재단" in it.get("source", "") for it in items):
+        return SEMAS_LOAN_TITLE
     return "수출·해외진출 공고"
 
 

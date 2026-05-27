@@ -731,15 +731,15 @@
     "id": "scgf",
     "name": "서울신용보증재단",
     "type": "regional_credit_guarantee",
-    "url": "https://www.seoulshinbo.co.kr/",
-    "enabled": false,
+    "url": "https://news.seoul.go.kr/economy/rearing-funds",
+    "enabled": true,
     "is_aggregator": false,
     "region": "서울",
-    "parser": "html_table",
+    "parser": "seoul_city_fund",
     "selectors": {
-      "row": "table tbody tr"
+      "row": "h1"
     },
-    "note": "서울신용보증재단 공지사항 [비활성화: Cloud VM에서 공식 도메인 연결 reset으로 selector 검증 불가]"
+    "note": "서울신용보증재단 서울시 중소기업육성자금 [서울시 공식 페이지 검증, 재단 공식 도메인은 Cloud VM에서 연결 reset]"
   },
   {
     "id": "ic_junggu",

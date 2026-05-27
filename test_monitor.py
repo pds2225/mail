@@ -423,9 +423,42 @@ def test_regional_credit_guarantee_maps_icsinbo_json(monkeypatch):
     assert "num=1428" in items[0]["link"]
 
 
-def test_mail_topic_uses_credit_guarantee_title_for_foundations_only():
-    """지역신보 단독 메일은 전용 제목을 사용."""
-    assert mail_topic([{"source": "경기신용보증재단"}, {"source": "인천신용보증재단"}]) == "신용보증재단 공고"
+def test_regional_credit_guarantee_maps_seoul_city_fund_page(monkeypatch):
+    """서울신보 공식 도메인 차단 시 서울시 자금 페이지를 기존 item 스키마로 변환."""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <html>
+      <head><title>2026년 중소기업육성자금 융자지원</title></head>
+      <body>
+        <h1>2026년 중소기업육성자금 융자지원</h1>
+        <p>서울신용보증재단을 통해 자금 상담 및 접수 가능</p>
+      </body>
+    </html>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+    site = {
+        "id": "scgf",
+        "name": "서울신용보증재단",
+        "type": "regional_credit_guarantee",
+        "url": "https://news.seoul.go.kr/economy/rearing-funds",
+        "region": "서울",
+        "parser": "seoul_city_fund",
+    }
+
+    items = fetch_regional_credit_guarantee(site)
+
+    assert len(items) == 1
+    assert items[0]["title"] == "2026년 중소기업육성자금 융자지원"
+    assert items[0]["source"] == "서울신용보증재단"
+    assert "지역: 서울" in items[0]["description"]
+
+
+def test_mail_topic_combines_credit_guarantee_with_semas_policy_fund_title():
+    """지역신보 공고는 소상공인 정책자금 제목으로 합산."""
+    assert mail_topic([{"source": "경기신용보증재단"}, {"source": "인천신용보증재단"}]) == "소상공인 정책자금 공고"
+    assert mail_topic([{"source": "소진공 정책자금 온라인신청"}, {"source": "서울신용보증재단"}]) == "소상공인 정책자금 공고"
 
 
 # ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
