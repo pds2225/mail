@@ -64,6 +64,7 @@ MAX_SEEN_IDS   = 1000
 MAX_FOR_CLAUDE = 15
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
+CREDIT_GUARANTEE_TITLE = "신용보증재단 공고"
 HTTP_HEADERS   = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -418,6 +419,73 @@ def _is_semas_policy_fund_notice(title: str, category: str) -> bool:
     if category == "대출정보":
         return True
     return any(keyword in title for keyword in ("정책자금", "자금", "대출", "상환", "융자"))
+
+
+def fetch_regional_credit_guarantee(site: dict) -> list[dict]:
+    """서울/경기/인천 지역신용보증재단 공지 수집."""
+    parser = site.get("parser", "html_table")
+    if parser == "gcgf_html":
+        return _fetch_gcgf_notices(site)
+    if parser == "icsinbo_json":
+        return _fetch_icsinbo_notices(site)
+    return fetch_html_generic(site)
+
+
+def _is_credit_guarantee_notice(title: str) -> bool:
+    keywords = ("보증", "자금", "융자", "대출", "금융", "특례", "협약", "경영안정")
+    excludes = ("채용", "입찰", "복지카드", "서포터즈", "만족도", "평가위원", "입주기관", "대관시설")
+    return any(keyword in title for keyword in keywords) and not any(ex in title for ex in excludes)
+
+
+def _fetch_gcgf_notices(site: dict) -> list[dict]:
+    soup = _soup(site["url"])
+    if not soup:
+        return []
+    items, agg = [], site.get("is_aggregator", False)
+    base = "https://www.gcgf.or.kr"
+    for row in soup.select(site.get("selectors", {}).get("row", "table tbody tr")):
+        cells = row.select("td")
+        a = row.select_one("a.pstInfoBtn[data-id]")
+        title = norm(a.get_text(" ", strip=True) if a else "")
+        if not title or not _is_credit_guarantee_notice(title):
+            continue
+        pst_sn = norm(a.get("data-id", ""))
+        posted = extract_date_from_text(norm(cells[2].get_text(" ", strip=True) if len(cells) > 2 else ""))
+        link = f"{base}/gcgf/pt/pst/selectPstInfo.do?mi=1024&bbsId=1002&pstSn={quote(pst_sn)}" if pst_sn else site["url"]
+        items.append(_item(
+            f"{site['id']}_{pst_sn or stable_id(title + link)}",
+            title, link, site["name"], f"지역: {site.get('region', '')}", "",
+            site["name"], posted, agg,
+        ))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def _fetch_icsinbo_notices(site: dict) -> list[dict]:
+    items, agg = [], site.get("is_aggregator", False)
+    try:
+        headers = {**HTTP_HEADERS, "Accept": "application/json,text/html,*/*"}
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True) as c:
+            r = c.get(site["url"])
+            r.raise_for_status()
+            data = r.json()
+    except Exception as e:
+        log.error("%s 공지 JSON 실패: %s", site.get("name", "인천신용보증재단"), e)
+        return []
+    for row in data.get("brdList") or []:
+        title = norm(row.get("title", ""))
+        if not title or not _is_credit_guarantee_notice(title):
+            continue
+        num = norm(row.get("num", ""))
+        posted = extract_date_from_text(norm(row.get("write_dt", "")))
+        link = urljoin(site["url"], f"/home/board/brdDetail.do?currentPage=1&menu_cd=000096&num={quote(num)}&searchData=data&searchText=") if num else site["url"]
+        items.append(_item(
+            f"{site['id']}_{num or stable_id(title + link)}",
+            title, link, site["name"], f"지역: {site.get('region', '')}", "",
+            site["name"], posted, agg,
+        ))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
 
 
 def fetch_kita(site: dict) -> list[dict]:
@@ -1011,6 +1079,7 @@ FETCHERS = {
     "keit_html":          fetch_keit,
     "sba_html":           fetch_sba,
     "semas_loan_ols":     fetch_semas_loan_ols,
+    "regional_credit_guarantee": fetch_regional_credit_guarantee,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
@@ -1268,6 +1337,8 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
 def mail_topic(items: list[dict]) -> str:
     if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
         return SEMAS_LOAN_TITLE
+    if items and all("신용보증재단" in it.get("source", "") for it in items):
+        return CREDIT_GUARANTEE_TITLE
     return "수출·해외진출 공고"
 
 

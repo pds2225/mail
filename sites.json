@@ -702,14 +702,44 @@
   {
     "id": "icgf",
     "name": "인천신용보증재단",
-    "type": "html_table",
-    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044",
+    "type": "regional_credit_guarantee",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000096",
     "enabled": true,
     "is_aggregator": false,
+    "region": "인천",
+    "parser": "icsinbo_json",
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "소상공인/제조업 보증 공고 목록 [URL 오류 수정: icgf.or.kr→icsinbo.or.kr(실제 운영 도메인)]"
+    "note": "인천신용보증재단 공지사항 [비로그인 JSON brdList 검증, 보증/자금 관련 공고만 수집]"
+  },
+  {
+    "id": "gcgf",
+    "name": "경기신용보증재단",
+    "type": "regional_credit_guarantee",
+    "url": "https://www.gcgf.or.kr/gcgf/pt/pst/selectPstList.do?bbsId=1002&mi=1024",
+    "enabled": true,
+    "is_aggregator": false,
+    "region": "경기",
+    "parser": "gcgf_html",
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "경기신용보증재단 공지사항 [비로그인 table 검증, 보증/자금 관련 공고만 수집]"
+  },
+  {
+    "id": "scgf",
+    "name": "서울신용보증재단",
+    "type": "regional_credit_guarantee",
+    "url": "https://www.seoulshinbo.co.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "region": "서울",
+    "parser": "html_table",
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "서울신용보증재단 공지사항 [비활성화: Cloud VM에서 공식 도메인 연결 reset으로 selector 검증 불가]"
   },
   {
     "id": "ic_junggu",

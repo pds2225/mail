@@ -19,7 +19,8 @@ os.environ.setdefault("GMAIL_ADDRESS",      "test@test.com")
 from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
-    fetch_html_generic, fetch_semas_loan_ols, extract_date_from_text,
+    fetch_html_generic, fetch_regional_credit_guarantee,
+    fetch_semas_loan_ols, extract_date_from_text,
     previous_business_day, mail_topic, KST, ALL_SUPPORT_TYPES,
 )
 
@@ -363,6 +364,68 @@ def test_fetch_semas_loan_ols_maps_ajax_results(monkeypatch):
 def test_mail_topic_uses_semas_policy_fund_title_for_semas_only():
     """소진공 정책자금 단독 메일은 전용 제목을 사용."""
     assert mail_topic([{"source": "소진공 정책자금 온라인신청"}]) == "소상공인 정책자금 공고"
+
+
+def test_regional_credit_guarantee_maps_icsinbo_json(monkeypatch):
+    """지역신보 JSON 목록에서 보증/자금 공고만 기존 item 스키마로 변환."""
+    import monitor
+
+    class FakeResponse:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "brdList": [
+                    {
+                        "num": "1428",
+                        "title": "2026 희망인천 특례보증 시행 안내",
+                        "write_dt": "2026-03-30",
+                    },
+                    {
+                        "num": "1450",
+                        "title": "소상공인복합클러스터 공공존 입주기관 모집공고",
+                        "write_dt": "2026-05-26",
+                    },
+                ]
+            }
+
+    class FakeClient:
+        def __init__(self, *args, **kwargs):
+            return None
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def get(self, url):
+            return FakeResponse()
+
+    monkeypatch.setattr(monitor.httpx, "Client", FakeClient)
+    site = {
+        "id": "icgf",
+        "name": "인천신용보증재단",
+        "type": "regional_credit_guarantee",
+        "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000096",
+        "region": "인천",
+        "parser": "icsinbo_json",
+    }
+
+    items = fetch_regional_credit_guarantee(site)
+
+    assert len(items) == 1
+    assert items[0]["id"] == "icgf_1428"
+    assert items[0]["title"] == "2026 희망인천 특례보증 시행 안내"
+    assert items[0]["posted_date"] == "2026-03-30"
+    assert "지역: 인천" in items[0]["description"]
+    assert "num=1428" in items[0]["link"]
+
+
+def test_mail_topic_uses_credit_guarantee_title_for_foundations_only():
+    """지역신보 단독 메일은 전용 제목을 사용."""
+    assert mail_topic([{"source": "경기신용보증재단"}, {"source": "인천신용보증재단"}]) == "신용보증재단 공고"
 
 
 # ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
