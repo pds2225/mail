@@ -19,6 +19,7 @@ from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
     fetch_html_generic, extract_date_from_text,
+    _extract_mssmiv_application_period, _mssmiv_detail,
     KST, ALL_SUPPORT_TYPES,
 )
 
@@ -266,6 +267,55 @@ def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
 
     assert len(items) == 1
     assert items[0]["posted_date"] == "2026-05-15"
+
+
+def test_extract_mssmiv_application_period_from_detail_text():
+    text = (
+        "2026년 중소기업 혁신바우처사업 2차 지원계획을 붙임과 같이 공고합니다. "
+        "□ 신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지 "
+        "중소기업 혁신플랫폼에서 신청 □ 사업문의 : 고객센터"
+    )
+
+    assert _extract_mssmiv_application_period(text) == (
+        "신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지"
+    )
+
+
+def test_mssmiv_detail_extracts_posted_date_and_description():
+    html = """
+    <table class="table view">
+      <thead>
+        <tr><th>
+          <div class="title-top">
+            <span class="tit">2026년 중소기업 혁신바우처 사업 2차 지원계획공고</span>
+            <div class="writer">
+              <dl><dt>작성자</dt><dd>박기둥</dd></dl>
+              <dl><dt>등록일</dt><dd class="date">2026-02-27</dd></dl>
+            </div>
+          </div>
+        </th></tr>
+      </thead>
+      <tbody><tr><td>
+        <textarea id="nttCn">&lt;p&gt;□ 신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지 신청&lt;/p&gt;</textarea>
+      </td></tr></tbody>
+    </table>
+    """
+
+    class DummyResponse:
+        text = html
+
+        def raise_for_status(self):
+            return None
+
+    class DummyClient:
+        def post(self, *args, **kwargs):
+            return DummyResponse()
+
+    title, posted, desc = _mssmiv_detail(DummyClient(), {"bbs_id": "1"}, "971", "https://example.com")
+
+    assert title == "2026년 중소기업 혁신바우처 사업 2차 지원계획공고"
+    assert posted == "2026-02-27"
+    assert "신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지 신청" in desc
 
 
 # ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
