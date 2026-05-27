@@ -366,6 +366,14 @@ def test_mail_topic_uses_semas_policy_fund_title_for_semas_only():
     assert mail_topic([{"source": "소진공 정책자금 온라인신청"}]) == "소상공인 정책자금 공고"
 
 
+def test_mail_topic_supports_context_specific_default_title():
+    """일반/혼합 공고의 기본 제목은 호출 맥락에서 지정할 수 있다."""
+    items = [{"source": "기업마당"}, {"source": "KOTRA"}]
+
+    assert mail_topic(items) == "수출·해외진출 공고"
+    assert mail_topic(items, default="지원사업 공고") == "지원사업 공고"
+
+
 def test_regional_credit_guarantee_maps_icsinbo_json(monkeypatch):
     """지역신보 JSON 목록에서 보증/자금 공고만 기존 item 스키마로 변환."""
     import monitor

@@ -1334,12 +1334,12 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
     return "\n".join(lines).strip()
 
 
-def mail_topic(items: list[dict]) -> str:
+def mail_topic(items: list[dict], default: str = "수출·해외진출 공고") -> str:
     if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
         return SEMAS_LOAN_TITLE
     if items and all("신용보증재단" in it.get("source", "") for it in items):
         return CREDIT_GUARANTEE_TITLE
-    return "수출·해외진출 공고"
+    return default
 
 
 def fallback_body(items: list[dict]) -> str:
@@ -1570,7 +1570,7 @@ def execute_monitor(
                 f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
             )
             send_to_list(
-                f"[{group.get('name')}] {mail_topic(g_items)} ({date_str}) — {len(g_items)}건",
+                f"[{group.get('name')}] {mail_topic(g_items, default='지원사업 공고')} ({date_str}) — {len(g_items)}건",
                 header + summary,
                 group.get("recipients", []),
             )
