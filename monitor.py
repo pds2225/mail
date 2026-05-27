@@ -62,6 +62,8 @@ SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
 KST            = timezone(timedelta(hours=9))
 MAX_SEEN_IDS   = 1000
 MAX_FOR_CLAUDE = 15
+SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
+SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
 HTTP_HEADERS   = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -160,6 +162,17 @@ def extract_date_from_text(text: str) -> str:
     if m:
         return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
     return ""
+
+
+def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
+    """주말을 건너뛴 직전 영업일 계산."""
+    day = (from_dt or datetime.now(KST)).date()
+    remaining = max(1, days_back)
+    while remaining:
+        day -= timedelta(days=1)
+        if day.weekday() < 5:
+            remaining -= 1
+    return day
 
 
 def select_text(root: Any, selector: str) -> str:
@@ -340,6 +353,71 @@ def fetch_html_generic(site: dict) -> list[dict]:
                            title, link, author, desc, deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
+
+
+def fetch_semas_loan_ols(site: dict) -> list[dict]:
+    """소진공 정책자금 온라인신청 공지 목록 AJAX 수집."""
+    search_url = urljoin(site["url"], "/ols/man/SMAN051M/search.do")
+    headers = {
+        **HTTP_HEADERS,
+        "Accept": "application/json,text/html,*/*",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Referer": site["url"],
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    items, agg = [], site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True) as c:
+            for page_no in range(1, max_pages + 1):
+                r = c.post(search_url, data={
+                    "bltwtrClcd": "",
+                    "bltwtrTitNm": "",
+                    "searchStd": "",
+                    "pageNo": str(page_no),
+                })
+                r.raise_for_status()
+                data = r.json()
+                rows = data.get("result") or []
+                if not rows:
+                    break
+                for row in rows:
+                    loan_type = norm(row.get("loanSeCdNm", ""))
+                    category = norm(row.get("bltwtrClcd", ""))
+                    title = norm(row.get("bltwtrTitNm", ""))
+                    seq = norm(row.get("bltwtrSeq", ""))
+                    bbs_type = norm(row.get("bbsTypeCd", ""))
+                    if not title or not _is_semas_policy_fund_notice(title, category):
+                        continue
+                    posted = extract_date_from_text(norm(row.get("frstRegDt", "")))
+                    desc_parts = [
+                        part for part in [
+                            f"대출구분: {loan_type}" if loan_type else "",
+                            f"구분: {category}" if category else "",
+                            f"공지번호: {seq}" if seq else "",
+                        ] if part
+                    ]
+                    iid = f"{site['id']}_{seq}_{bbs_type}" if seq else f"{site['id']}_{stable_id(title)}"
+                    items.append(_item(
+                        iid, title, site["url"], "소상공인시장진흥공단",
+                        " / ".join(desc_parts), "", site["name"], posted, agg,
+                    ))
+    except Exception as e:
+        log.error("소진공 정책자금 공지 API 실패: %s", e)
+        return []
+
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def _is_semas_policy_fund_notice(title: str, category: str) -> bool:
+    if category == "대출정보":
+        return True
+    return any(keyword in title for keyword in ("정책자금", "자금", "대출", "상환", "융자"))
 
 
 def fetch_kita(site: dict) -> list[dict]:
@@ -932,6 +1010,7 @@ FETCHERS = {
     "mssmiv_html":        fetch_mssmiv,
     "keit_html":          fetch_keit,
     "sba_html":           fetch_sba,
+    "semas_loan_ols":     fetch_semas_loan_ols,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
@@ -1026,11 +1105,11 @@ def dedup_items(items: list[dict]) -> list[dict]:
 
 def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list[dict]]:
     """
-    posted_date가 있는 아이템은 target_date와 비교.
+    posted_date가 있는 아이템은 직전 영업일 target_date와 비교.
     posted_date가 없으면 날짜 불명(unknown)으로 분류.
     반환: (target_date 아이템, 날짜불명 아이템)
     """
-    target = (datetime.now(KST) - timedelta(days=days_back)).date()
+    target = previous_business_day(days_back=days_back)
     matched, unknown = [], []
     for it in items:
         pd = it.get("posted_date", "").strip()
@@ -1044,7 +1123,7 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
             # else: 다른 날짜 → 제외
         except ValueError:
             unknown.append(it)
-    log.info("날짜필터(D-%d, 기준=%s): 매칭 %d건 / 날짜불명 %d건 / 제외 %d건",
+    log.info("날짜필터(직전영업일-%d, 기준=%s): 매칭 %d건 / 날짜불명 %d건 / 제외 %d건",
              days_back, target, len(matched), len(unknown),
              len(items) - len(matched) - len(unknown))
     return matched, unknown
@@ -1184,6 +1263,12 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
             if it.get("link"): lines.append(f"  링크: {it['link']}")
             lines.append("")
     return "\n".join(lines).strip()
+
+
+def mail_topic(items: list[dict]) -> str:
+    if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
+        return SEMAS_LOAN_TITLE
+    return "수출·해외진출 공고"
 
 
 def fallback_body(items: list[dict]) -> str:
@@ -1333,8 +1418,8 @@ def execute_monitor(
     new_items = [it for it in deduped if it["id"] and it["id"] not in seen_ids]
     log.info("신규(미발송): %d건 / 전체: %d건", len(new_items), len(deduped))
 
-    # ④ 날짜 필터 (D-1)
-    target_date = (now - timedelta(days=days_back)).date()
+    # ④ 날짜 필터 (직전 영업일)
+    target_date = previous_business_day(now, days_back)
     date_str    = now.strftime("%m/%d")
 
     include_unknown = settings.get("include_date_unknown", False)
@@ -1360,14 +1445,15 @@ def execute_monitor(
         and settings.get("raw_all_enabled", True)
         and settings.get("raw_all_recipients")
     ):
+        raw_topic = mail_topic(filtered_new)
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-            f"기준일자: {target_date} (D-{days_back}) 공고\n"
+            f"기준일자: {target_date} (직전영업일-{days_back}) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
             f"날짜필터 후 발송대상: {len(filtered_new)}건\n\n"
         ) + render_all(filtered_new, dedup_removed, len(date_unknown), include_unknown)
         send_to_list(
-            f"[원본전체] 수출·해외진출 공고 ({date_str}) — {len(filtered_new)}건",
+            f"[원본전체] {raw_topic} ({date_str}) — {len(filtered_new)}건",
             body_raw, settings["raw_all_recipients"],
         )
 
@@ -1406,14 +1492,14 @@ def execute_monitor(
             kw_str     = " | ".join(_kw_parts) or "전체"
             header  = (
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-                f"기준일자: {target_date} (D-{days_back}) 공고\n"
+                f"기준일자: {target_date} (직전영업일-{days_back}) 공고\n"
                 f"그룹: {group.get('name')}\n"
                 f"지역: {', '.join(req_rgns) or '전국'} / 키워드: {kw_str}\n"
                 f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
                 f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
             )
             send_to_list(
-                f"[{group.get('name')}] 지원사업 공고 ({date_str}) — {len(g_items)}건",
+                f"[{group.get('name')}] {mail_topic(g_items)} ({date_str}) — {len(g_items)}건",
                 header + summary,
                 group.get("recipients", []),
             )

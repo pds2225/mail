@@ -2,9 +2,10 @@
 monitor.py v6 파이프라인 테스트 (실제 API/이메일 호출 없음)
 테스트 항목: ① 중복제거 ② 날짜필터 ③ 지역필터 ④ 키워드필터 ⑤ 지원유형 분류
 """
+import json
 import sys
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -18,12 +19,12 @@ os.environ.setdefault("GMAIL_ADDRESS",      "test@test.com")
 from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
-    fetch_html_generic, extract_date_from_text,
-    KST, ALL_SUPPORT_TYPES,
+    fetch_html_generic, fetch_semas_loan_ols, extract_date_from_text,
+    previous_business_day, mail_topic, KST, ALL_SUPPORT_TYPES,
 )
 
 # ── 테스트용 mock 공고 ────────────────────────────────────────────
-yesterday = (datetime.now(KST) - timedelta(days=1)).strftime("%Y-%m-%d")
+previous_workday = previous_business_day().strftime("%Y-%m-%d")
 today     = datetime.now(KST).strftime("%Y-%m-%d")
 
 MOCK_ITEMS = [
@@ -34,7 +35,7 @@ MOCK_ITEMS = [
         "link": "https://bizinfo.go.kr/001", "author": "중소벤처기업부",
         "description": "뷰티 디자인 개발 사업화 지원금 바우처",
         "deadline": "2026-04-17", "source": "기업마당",
-        "posted_date": yesterday, "is_aggregator": True,
+        "posted_date": previous_workday, "is_aggregator": True,
     },
     {
         "id": "kstartup_176993",
@@ -42,7 +43,7 @@ MOCK_ITEMS = [
         "link": "https://k-startup.go.kr/176993", "author": "중소벤처기업부",
         "description": "뷰티 디자인 개발 사업화 지원",
         "deadline": "2026-04-17", "source": "K-Startup",
-        "posted_date": yesterday, "is_aggregator": False,
+        "posted_date": previous_workday, "is_aggregator": False,
     },
     # [B] 인천 화장품 수출바우처 → 인천 그룹 매칭
     {
@@ -51,7 +52,7 @@ MOCK_ITEMS = [
         "link": "https://nipa.kr/001", "author": "인천테크노파크",
         "description": "인천 소재 화장품 제조업체 수출바우처 지원",
         "deadline": "2026-05-30", "source": "NIPA",
-        "posted_date": yesterday, "is_aggregator": False,
+        "posted_date": previous_workday, "is_aggregator": False,
     },
     # [C] 경남 로봇 전시회 → 인천 그룹 제외 (타지역)
     {
@@ -60,7 +61,7 @@ MOCK_ITEMS = [
         "link": "https://bizinfo.go.kr/002", "author": "경남테크노파크",
         "description": "경남 소재 로봇기업 해외전시회 참가비 지원",
         "deadline": "2026-04-20", "source": "기업마당",
-        "posted_date": yesterday, "is_aggregator": True,
+        "posted_date": previous_workday, "is_aggregator": True,
     },
     # [D] 날짜 없음 (날짜불명) → 포함 처리
     {
@@ -89,7 +90,7 @@ MOCK_ITEMS = [
         "link": "https://kotra.or.kr/001", "author": "KOTRA",
         "description": "화장품 제조기업 수출 역량강화 교육 세미나",
         "deadline": "2026-05-15", "source": "KOTRA",
-        "posted_date": yesterday, "is_aggregator": False,
+        "posted_date": previous_workday, "is_aggregator": False,
     },
 ]
 
@@ -195,6 +196,12 @@ def test_extract_date_from_text_supports_korean_date():
     assert extract_date_from_text("등록일 2026년 5월 9일") == "2026-05-09"
 
 
+def test_previous_business_day_skips_weekend():
+    """직전영업일 계산: 월요일 실행 시 금요일 공고를 기준으로 삼음."""
+    monday = datetime(2026, 5, 25, 9, 0, tzinfo=KST)
+    assert previous_business_day(monday).isoformat() == "2026-05-22"
+
+
 def test_fetch_html_generic_uses_configured_date_selectors(monkeypatch):
     """공통 HTML 파서: sites.json의 날짜 selector가 있으면 그 값을 우선 사용"""
     from bs4 import BeautifulSoup
@@ -266,6 +273,96 @@ def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
 
     assert len(items) == 1
     assert items[0]["posted_date"] == "2026-05-15"
+
+
+def test_semas_loan_ols_site_registered_as_active_dedicated_fetcher():
+    """소진공 정책자금 온라인신청은 전용 수집기로 기존 메일링에 합류."""
+    sites = json.loads(Path("sites.json").read_text(encoding="utf-8"))
+    by_id = {site["id"]: site for site in sites}
+
+    assert "semas" in by_id, "기존 semas 항목은 유지되어야 함"
+    assert "semas_loan_ols" in by_id, "신규 소진공 정책자금 사이트가 등록되어야 함"
+
+    site = by_id["semas_loan_ols"]
+    assert site["url"] == "https://ols.semas.or.kr/ols/man/SMAN051M/page.do"
+    assert site["type"] == "semas_loan_ols"
+    assert site["selectors"]["row"] == "table tbody tr"
+    assert site["enabled"] is True
+    assert "AJAX POST" in site["note"]
+
+
+def test_fetch_semas_loan_ols_maps_ajax_results(monkeypatch):
+    """소진공 정책자금 AJAX 응답을 기존 공고 item 스키마로 변환."""
+    import monitor
+
+    calls = []
+
+    class FakeResponse:
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "result": [
+                    {
+                        "bltwtrTitNm": "2026년 5월 재도전특별자금 신청안내",
+                        "bltwtrSeq": 371,
+                        "bbsTypeCd": "01",
+                        "loanSeCdNm": "직접대출",
+                        "bltwtrClcd": "대출정보",
+                        "frstRegDt": "2026-05-08",
+                    },
+                    {
+                        "bltwtrTitNm": "『AI+ OpenData 챌린지』 참여기업 모집공고",
+                        "bltwtrSeq": 372,
+                        "bbsTypeCd": "01",
+                        "loanSeCdNm": "직접대출",
+                        "bltwtrClcd": "기타",
+                        "frstRegDt": "2026-05-11",
+                    }
+                ]
+            }
+
+    class FakeClient:
+        def __init__(self, *args, **kwargs):
+            self.headers = kwargs.get("headers", {})
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def post(self, url, data):
+            calls.append((url, data, self.headers))
+            return FakeResponse()
+
+    monkeypatch.setattr(monitor.httpx, "Client", FakeClient)
+    site = {
+        "id": "semas_loan_ols",
+        "name": "소진공 정책자금 온라인신청",
+        "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
+        "is_aggregator": False,
+        "max_pages": 1,
+    }
+
+    items = fetch_semas_loan_ols(site)
+
+    assert len(items) == 1
+    assert items[0]["id"] == "semas_loan_ols_371_01"
+    assert items[0]["title"] == "2026년 5월 재도전특별자금 신청안내"
+    assert items[0]["link"] == site["url"]
+    assert items[0]["author"] == "소상공인시장진흥공단"
+    assert items[0]["posted_date"] == "2026-05-08"
+    assert "대출구분: 직접대출" in items[0]["description"]
+    assert calls[0][0] == "https://ols.semas.or.kr/ols/man/SMAN051M/search.do"
+    assert calls[0][1]["pageNo"] == "1"
+    assert calls[0][2]["X-Requested-With"] == "XMLHttpRequest"
+
+
+def test_mail_topic_uses_semas_policy_fund_title_for_semas_only():
+    """소진공 정책자금 단독 메일은 전용 제목을 사용."""
+    assert mail_topic([{"source": "소진공 정책자금 온라인신청"}]) == "소상공인 정책자금 공고"
 
 
 # ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
