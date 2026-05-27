@@ -855,7 +855,7 @@ def fetch_mssmiv(site: dict) -> list[dict]:
                 tds  = tr.select("td")
                 td_text = " ".join(td.get_text(strip=True) for td in tds)
                 dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
-                posted  = dates[-1].replace(".", "-") if dates else ""
+                posted  = dates[0].replace(".", "-") if dates else ""
                 detail_title, detail_posted, desc = _mssmiv_detail(c, form_data, seq, BASE)
                 if detail_title: title = detail_title
                 if detail_posted: posted = detail_posted
