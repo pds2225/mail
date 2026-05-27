@@ -251,14 +251,15 @@
   {
     "id": "semas_loan_ols",
     "name": "소진공 정책자금 온라인신청",
-    "type": "html_table",
+    "type": "semas_loan_ols",
     "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
+    "max_pages": 3,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "소상공인 정책자금 온라인신청/공지 확인용 [비로그인 확인 범위] [비활성화: 정적 HTML table tbody tr 0건, 목록은 AJAX POST /ols/man/SMAN051M/search.do에서 로드되어 기존 html_table 파서로 제목/링크 추출 불가]"
+    "note": "소상공인 정책자금 온라인신청/공지 확인용 [비로그인 확인 범위] [AJAX POST /ols/man/SMAN051M/search.do 전용 수집]"
   },
   {
     "id": "kised",

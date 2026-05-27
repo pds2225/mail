@@ -340,6 +340,65 @@ def fetch_html_generic(site: dict) -> list[dict]:
     return items
 
 
+def fetch_semas_loan_ols(site: dict) -> list[dict]:
+    """소진공 정책자금 온라인신청 공지 목록 AJAX 수집."""
+    search_url = urljoin(site["url"], "/ols/man/SMAN051M/search.do")
+    headers = {
+        **HTTP_HEADERS,
+        "Accept": "application/json,text/html,*/*",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Referer": site["url"],
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    items, agg = [], site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True) as c:
+            for page_no in range(1, max_pages + 1):
+                r = c.post(search_url, data={
+                    "bltwtrClcd": "",
+                    "bltwtrTitNm": "",
+                    "searchStd": "",
+                    "pageNo": str(page_no),
+                })
+                r.raise_for_status()
+                data = r.json()
+                rows = data.get("result") or []
+                if not rows:
+                    break
+                for row in rows:
+                    title = norm(row.get("bltwtrTitNm", ""))
+                    seq = norm(row.get("bltwtrSeq", ""))
+                    bbs_type = norm(row.get("bbsTypeCd", ""))
+                    if not title:
+                        continue
+                    posted = extract_date_from_text(norm(row.get("frstRegDt", "")))
+                    loan_type = norm(row.get("loanSeCdNm", ""))
+                    category = norm(row.get("bltwtrClcd", ""))
+                    desc_parts = [
+                        part for part in [
+                            f"대출구분: {loan_type}" if loan_type else "",
+                            f"구분: {category}" if category else "",
+                            f"공지번호: {seq}" if seq else "",
+                        ] if part
+                    ]
+                    iid = f"{site['id']}_{seq}_{bbs_type}" if seq else f"{site['id']}_{stable_id(title)}"
+                    items.append(_item(
+                        iid, title, site["url"], "소상공인시장진흥공단",
+                        " / ".join(desc_parts), "", site["name"], posted, agg,
+                    ))
+    except Exception as e:
+        log.error("소진공 정책자금 공지 API 실패: %s", e)
+        return []
+
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 def fetch_kita(site: dict) -> list[dict]:
     """한국무역협회(KITA) 진행중인 사업 크롤러
     URL: https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do
@@ -930,6 +989,7 @@ FETCHERS = {
     "mssmiv_html":        fetch_mssmiv,
     "keit_html":          fetch_keit,
     "sba_html":           fetch_sba,
+    "semas_loan_ols":     fetch_semas_loan_ols,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
