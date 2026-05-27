@@ -84,6 +84,15 @@
     "note": "중기부 직접 게시 [PC 실행 시 정상]"
   },
   {
+    "id": "mssmiv",
+    "name": "중소기업혁신바우처",
+    "type": "mssmiv_html",
+    "url": "https://www.mssmiv.com/portal/board/BoardList",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소기업 혁신바우처 공고 [PC 실행 시 정상 접속]"
+  },
+  {
     "id": "msit",
     "name": "과학기술정보통신부",
     "type": "html_table",

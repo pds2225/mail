@@ -26,6 +26,9 @@
     ],
     "recipients": [
       "ekth3691@gmail.com"
+    ],
+    "source_always_include": [
+      "중소기업혁신바우처"
     ]
   },
   {
@@ -53,6 +56,9 @@
     ],
     "recipients": [
       "ekth3691@gmail.com"
+    ],
+    "source_always_include": [
+      "중소기업혁신바우처"
     ]
   }
 ]
