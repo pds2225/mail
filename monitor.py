@@ -832,30 +832,102 @@ def fetch_bizok(site: dict) -> list[dict]:
 
 def fetch_mssmiv(site: dict) -> list[dict]:
     """중소기업 혁신바우처 공고: table tbody tr, onclick=goDetail(seq)
-    상세 URL: /portal/board/BoardView?seq=N (GET 방식 작동)
+    상세는 목록 form의 ntt_id POST 방식이며, GET 공유 링크는 bbs_id/ntt_id가 필요.
     """
     BASE = "https://www.mssmiv.com"
-    soup = _soup(site["url"])
-    if not soup: return []
     items, agg = [], site.get("is_aggregator", False)
-    for tr in soup.select("table tbody tr"):
-        a = tr.select_one("a[onclick]")
-        if not a: continue
-        title = norm(a.get_text())
-        if not title or len(title) < 5: continue
-        m = re.search(r"goDetail\((\d+)\)", a.get("onclick", ""))
-        if not m: continue
-        seq  = m.group(1)
-        link = f"{BASE}/portal/board/BoardView?seq={seq}"
-        iid  = f"mssmiv_{seq}"
-        tds  = tr.select("td")
-        td_text = " ".join(td.get_text(strip=True) for td in tds)
-        dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
-        posted  = dates[0].replace(".", "-") if dates else ""
-        items.append(_item(iid, title, link, "중소기업혁신바우처(중소벤처기업부)",
-                           "", "", site["name"], posted, agg))
+    try:
+        with httpx.Client(timeout=30, headers=HTTP_HEADERS, follow_redirects=True) as c:
+            r = c.get(site["url"]); r.raise_for_status()
+            soup = BeautifulSoup(r.text, "html.parser")
+            form_data = _mssmiv_form_data(soup)
+
+            for tr in soup.select("table tbody tr"):
+                a = tr.select_one("a[onclick]")
+                if not a: continue
+                title = norm(a.get_text())
+                if not title or len(title) < 5: continue
+                m = re.search(r"goDetail\((\d+)\)", a.get("onclick", ""))
+                if not m: continue
+                seq  = m.group(1)
+                link = f"{BASE}/portal/board/BoardView?bbs_id=1&ntt_id={seq}&activeMenuCd=EZ009001000"
+                iid  = f"mssmiv_{seq}"
+                tds  = tr.select("td")
+                td_text = " ".join(td.get_text(strip=True) for td in tds)
+                dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
+                posted  = dates[-1].replace(".", "-") if dates else ""
+                detail_title, detail_posted, desc = _mssmiv_detail(c, form_data, seq, BASE)
+                if detail_title: title = detail_title
+                if detail_posted: posted = detail_posted
+                period = _extract_mssmiv_application_period(desc)
+                items.append(_item(iid, title, link, "중소기업혁신바우처(중소벤처기업부)",
+                                   desc, period, site["name"], posted, agg))
+    except Exception as e:
+        log.error("%s 수집 실패: %s", site["name"], e)
+        return []
     log.info("%s: %d건", site["name"], len(items))
     return items
+
+
+def _mssmiv_form_data(soup) -> dict[str, str]:
+    form = soup.find("form", {"name": "aform"})
+    if not form:
+        return {"activeMenuCd": "EZ009001000", "bbs_id": "1"}
+    data = {
+        inp.get("name"): inp.get("value", "")
+        for inp in form.select("input[name]")
+        if inp.get("name")
+    }
+    data.setdefault("activeMenuCd", "EZ009001000")
+    data.setdefault("bbs_id", "1")
+    return data
+
+
+def _mssmiv_detail(client: httpx.Client, form_data: dict[str, str], seq: str, base: str) -> tuple[str, str, str]:
+    data = {**form_data, "ntt_id": seq}
+    try:
+        r = client.post(f"{base}/portal/board/BoardView", data=data,
+                        headers={"Referer": f"{base}/portal/board/BoardList"})
+        r.raise_for_status()
+        soup = BeautifulSoup(r.text, "html.parser")
+    except Exception as e:
+        log.warning("중소기업혁신바우처 상세 수집 실패(%s): %s", seq, e)
+        return "", "", ""
+
+    title = norm(select_text(soup, ".table.view .title-top .tit"))
+    posted = ""
+    for dl in soup.select(".writer dl"):
+        if "등록일" in dl.get_text(" ", strip=True):
+            posted = extract_date_from_text(dl.get_text(" ", strip=True))
+            break
+
+    textarea = soup.select_one("textarea#nttCn")
+    if textarea:
+        raw = html.unescape(textarea.get_text("\n", strip=True))
+        desc = BeautifulSoup(raw, "html.parser").get_text(" ", strip=True)
+    else:
+        desc = soup.get_text(" ", strip=True)
+    return title, posted, norm(desc)
+
+
+def _extract_mssmiv_application_period(text: str) -> str:
+    """상세 본문에서 신청기간/신청방법 문장의 접수기간 부분을 추출."""
+    text = norm(re.sub(r"<[^>]+>", " ", html.unescape(text or "")))
+    if not text:
+        return ""
+    for label in ("신청기간 연장", "신청기간", "접수기간", "모집기간", "신청방법"):
+        idx = text.find(label)
+        if idx == -1:
+            continue
+        snippet = text[idx:idx + 260]
+        until = snippet.find("까지")
+        if until != -1:
+            snippet = snippet[:until + len("까지")]
+        snippet = re.split(r"\s(?:※|□|구분|신청대상|사업문의|문의)\s", snippet)[0]
+        snippet = norm(snippet)
+        if re.search(r"\d{2,4}[.\-/년]\s*\d{1,2}", snippet):
+            return snippet
+    return ""
 
 
 
@@ -1285,12 +1357,38 @@ def fallback_body(items: list[dict]) -> str:
                   f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
                   f"• 지원기관: {it['author'] or '미기재'}",
                   f"• 지원내용: {it['description'] or '미기재'}",
-                  f"• 신청마감: {it['deadline'] or '미기재'}",
-                  f"• 등록일: {it.get('posted_date') or '날짜불명'}",
+                  f"• 게시일: {it.get('posted_date') or '날짜불명'}",
+                  f"• 접수기간/신청마감: {it['deadline'] or '미기재'}",
                   f"• 출처: {it['source']}",
                   f"• 🔗 {it['link'] or '미기재'}",
                   "━━━━━━━━━━━━━━━━━━"]
     return "\n".join(lines)
+
+
+def _append_missing_date_facts(summary: str, items: list[dict]) -> str:
+    """Claude가 날짜 필드를 생략해도 원문 게시일/접수기간은 항상 보존."""
+    needs_append = False
+    for it in items:
+        posted = it.get("posted_date") or ""
+        deadline = it.get("deadline") or ""
+        if (posted and posted not in summary) or (deadline and deadline not in summary):
+            needs_append = True
+            break
+    if not needs_append:
+        return summary
+
+    lines = ["", "", "## 원문 수집 정보 (게시일/접수기간)", ""]
+    for it in items:
+        lines += [
+            "━━━━━━━━━━━━━━━━━━",
+            f"📌 {it['title']}",
+            f"• 게시일: {it.get('posted_date') or '날짜불명'}",
+            f"• 접수기간/신청마감: {it.get('deadline') or '미기재'}",
+            f"• 출처: {it['source']}",
+            f"• 🔗 {it.get('link') or '미기재'}",
+            "━━━━━━━━━━━━━━━━━━",
+        ]
+    return summary.rstrip() + "\n".join(lines)
 
 
 def claude_summarize(items: list[dict], group: dict) -> str:
@@ -1305,7 +1403,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     items_txt = "\n\n".join(
         f"[{i+1}] [{' · '.join(it.get('_types', ['미분류']))}] [등록:{it.get('posted_date','날짜불명')}]\n"
         f"제목: {it['title']}\n기관: {it['author']}\n내용: {it['description']}\n"
-        f"마감: {it['deadline']}\n출처: {it['source']}\n링크: {it['link']}"
+        f"접수기간/마감: {it['deadline']}\n출처: {it['source']}\n링크: {it['link']}"
         for i, it in enumerate(limited)
     )
     region_ctx = f"대상지역: {', '.join(req_regions) if req_regions else '전국'}"
@@ -1323,7 +1421,8 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 • 지원유형:
 • 지원기관:
 • 지원내용/금액:
-• 신청마감:
+• 게시일:
+• 접수기간/신청마감:
 • 지역조건:
 • 출처:
 • 🔗 링크
@@ -1335,7 +1434,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
         resp = client.messages.create(
             model="claude-sonnet-4-6", max_tokens=4000,
             messages=[{"role": "user", "content": prompt}])
-        return resp.content[0].text.strip()
+        return _append_missing_date_facts(resp.content[0].text.strip(), limited)
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)
