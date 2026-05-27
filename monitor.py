@@ -1278,6 +1278,32 @@ def fallback_body(items: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def _append_missing_date_facts(summary: str, items: list[dict]) -> str:
+    """Claude가 날짜 필드를 생략해도 원문 게시일/접수기간은 항상 보존."""
+    needs_append = False
+    for it in items:
+        posted = it.get("posted_date") or ""
+        deadline = it.get("deadline") or ""
+        if (posted and posted not in summary) or (deadline and deadline not in summary):
+            needs_append = True
+            break
+    if not needs_append:
+        return summary
+
+    lines = ["", "", "## 원문 수집 정보 (게시일/접수기간)", ""]
+    for it in items:
+        lines += [
+            "━━━━━━━━━━━━━━━━━━",
+            f"📌 {it['title']}",
+            f"• 게시일: {it.get('posted_date') or '날짜불명'}",
+            f"• 접수기간/신청마감: {it.get('deadline') or '미기재'}",
+            f"• 출처: {it['source']}",
+            f"• 🔗 {it.get('link') or '미기재'}",
+            "━━━━━━━━━━━━━━━━━━",
+        ]
+    return summary.rstrip() + "\n".join(lines)
+
+
 def claude_summarize(items: list[dict], group: dict) -> str:
     if not items: return ""
     limited = items[:MAX_FOR_CLAUDE]
@@ -1321,7 +1347,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
         resp = client.messages.create(
             model="claude-sonnet-4-6", max_tokens=4000,
             messages=[{"role": "user", "content": prompt}])
-        return resp.content[0].text.strip()
+        return _append_missing_date_facts(resp.content[0].text.strip(), limited)
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)

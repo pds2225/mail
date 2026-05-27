@@ -19,7 +19,7 @@ from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
     fetch_html_generic, extract_date_from_text,
-    _extract_mssmiv_application_period, _mssmiv_detail,
+    _append_missing_date_facts, _extract_mssmiv_application_period, _mssmiv_detail,
     KST, ALL_SUPPORT_TYPES,
 )
 
@@ -316,6 +316,23 @@ def test_mssmiv_detail_extracts_posted_date_and_description():
     assert title == "2026년 중소기업 혁신바우처 사업 2차 지원계획공고"
     assert posted == "2026-02-27"
     assert "신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지 신청" in desc
+
+
+def test_append_missing_date_facts_preserves_source_dates():
+    summary = "## 활용 가능한 공고 없음"
+    items = [{
+        "title": "2026년 중소기업 혁신바우처 사업 2차 지원계획공고",
+        "posted_date": "2026-02-27",
+        "deadline": "신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지",
+        "source": "중소기업혁신바우처",
+        "link": "https://www.mssmiv.com/portal/board/BoardView?bbs_id=1&ntt_id=971",
+    }]
+
+    body = _append_missing_date_facts(summary, items)
+
+    assert "원문 수집 정보" in body
+    assert "• 게시일: 2026-02-27" in body
+    assert "• 접수기간/신청마감: 신청방법 : 26.2.27.(금) 10시 ~ 26.3.13(금) 18시 까지" in body
 
 
 # ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
