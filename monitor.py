@@ -198,6 +198,18 @@ REGION_EXCLUDE_PHRASES = [
 ]
 OPEN_DEADLINE_TERMS = ["상시접수", "수시접수", "예산 소진 시까지", "예산소진 시까지", "예산 소진시까지"]
 
+# 신청·모집 기간 라벨 (우선순위 순). 협약/사업기간과 구분한다.
+APPLICATION_PERIOD_LABELS = (
+    "신청기간", "모집기간", "접수기간", "지원신청기간", "참가신청기간",
+    "신청 일정", "접수 일정", "모집 일정",
+)
+NON_APPLICATION_PERIOD_LABELS = (
+    "협약기간", "사업기간", "수행기간", "지원기간", "운영기간", "서비스 완료",
+    "사업 추진 기간", "지원 기간",
+)
+DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr")
+MAX_DETAIL_ENRICH = 40
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
@@ -290,6 +302,187 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
     for pos, parsed in candidates:
         deduped.setdefault(parsed, (pos, parsed))
     return sorted(deduped.values(), key=lambda pair: pair[0])
+
+
+def _parse_period_dates(segment: str, base_year: int | None = None) -> list[Any]:
+    """신청·모집 구간 텍스트에서 시작·종료일 후보를 추출."""
+    if not segment:
+        return []
+    base_year = base_year or datetime.now(KST).year
+    ym = re.search(r"'?(\d{2})\s*년", segment)
+    if ym:
+        base_year = 2000 + int(ym.group(1))
+    ym = re.search(r"(\d{4})\s*년", segment)
+    if ym:
+        base_year = int(ym.group(1))
+    dates = [parsed for _, parsed in _parse_date_candidates(segment, base_year)]
+    for m in re.finditer(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", segment):
+        parsed = _valid_date(base_year, int(m.group(1)), int(m.group(2)))
+        if parsed:
+            dates.append(parsed)
+    return sorted(set(dates))
+
+
+def extract_application_period(text: str) -> dict[str, str]:
+    """본문에서 신청·모집·접수 기간만 추출 (협약기간 등 제외)."""
+    if not text:
+        return {}
+    normalized = text.replace("\xa0", " ")
+    for label in APPLICATION_PERIOD_LABELS:
+        pattern = rf"{re.escape(label)}\s*[:：]?\s*([^\nㅇ]+)"
+        m = re.search(pattern, normalized, flags=re.IGNORECASE)
+        if not m:
+            continue
+        segment = m.group(1).strip()
+        if "까지" in segment:
+            segment = segment[: segment.index("까지") + 2]
+        dates = _parse_period_dates(segment)
+        if not dates:
+            continue
+        start, end = dates[0].isoformat(), dates[-1].isoformat()
+        display = f"{start} ~ {end}" if start != end else end
+        return {"start": start, "end": end, "display": display, "label": label}
+    return {}
+
+
+def resolve_item_deadline(item: dict) -> str:
+    """표시·필터용 마감일: 신청기간 우선, 없으면 기존 deadline."""
+    period = extract_application_period(_notice_body_text(item))
+    if period.get("display"):
+        return period["display"]
+    return (item.get("deadline") or "").strip()
+
+
+def _detect_target_regions(text: str) -> dict[str, Any]:
+    """지원 대상 지역 힌트 (전국 / 특정 시·도)."""
+    if not text:
+        return {"regions": [], "nationwide": False}
+    regions: list[str] = []
+    nationwide = False
+    for phrase in ("전국", "국내 전체", "국내전체", "제한 없음"):
+        if phrase in text:
+            nationwide = True
+    patterns = [
+        r"소재지가\s*([가-힣]+(?:도|광역시|특별시|특별자치시|특별자치도))",
+        r"([가-힣]+(?:광역시|특별시|특별자치시|특별자치도|도))\s*소재",
+        r"지역\s*[:：]\s*([가-힣]+(?:광역시|도|특별시|특별자치시|특별자치도))",
+        r"지원\s*지역\s*[:：]\s*([가-힣]+(?:광역시|도|특별시))",
+    ]
+    for pattern in patterns:
+        for m in re.finditer(pattern, text):
+            val = norm(m.group(1))
+            if val and val not in regions:
+                regions.append(val)
+    region_title_hints = [
+        (r"경기도|경기\s", "경기"),
+        (r"부산광역시|부산\s", "부산"),
+        (r"서울특별시|서울\s", "서울"),
+        (r"대구광역시|대구\s", "대구"),
+        (r"광주광역시|광주\s", "광주"),
+        (r"대전광역시|대전\s", "대전"),
+        (r"울산광역시|울산\s", "울산"),
+        (r"세종특별자치시|세종\s", "세종"),
+        (r"인천광역시|인천\s", "인천"),
+        (r"제주특별자치도|제주\s", "제주"),
+        (r"강원특별자치도|강원도|강원\s", "강원"),
+        (r"충청북도|충북\s", "충북"),
+        (r"충청남도|충남\s", "충남"),
+        (r"전라북도|전북\s", "전북"),
+        (r"전라남도|전남\s", "전남"),
+        (r"경상북도|경북\s", "경북"),
+        (r"경상남도|경남\s", "경남"),
+    ]
+    for pattern, label in region_title_hints:
+        if re.search(pattern, text):
+            if label not in regions:
+                regions.append(label)
+    return {"regions": regions, "nationwide": nationwide}
+
+
+def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
+    """상세 페이지에서 본문·지역·신청기간 추출."""
+    result: dict[str, str] = {}
+    if "k-startup.go.kr" in url:
+        for tit in soup.select("p.tit"):
+            label = norm(tit.get_text())
+            nxt = tit.find_next("p", class_="txt")
+            if not nxt:
+                continue
+            val = norm(nxt.get_text())
+            if label == "지역" and val:
+                result["region_field"] = val
+            if label == "신청기간" and val:
+                result["application_period_text"] = val
+        body = soup.select_one(".view_cont, .content_view, #contents")
+        if body:
+            result["body"] = body.get_text("\n", strip=True)[:12000]
+    elif "exportvoucher.com" in url:
+        body = soup.select_one(".board_view, .view_cont, .bbs_view, article, #contents")
+        if not body:
+            body = soup
+        result["body"] = body.get_text("\n", strip=True)[:12000]
+    else:
+        body = soup.select_one("article, .view_cont, #contents, main")
+        if body:
+            result["body"] = body.get_text("\n", strip=True)[:12000]
+    return result
+
+
+def enrich_item_from_detail(item: dict) -> dict:
+    """상세 페이지를 조회해 description·deadline·지역 정보를 보강."""
+    link = (item.get("link") or "").strip()
+    if not link or item.get("detail_enriched"):
+        return item
+    if not any(host in link for host in DETAIL_ENRICH_HOSTS):
+        return item
+    soup = _soup(link)
+    if not soup:
+        return item
+    fields = _parse_detail_from_page(soup, link)
+    updated = {**item, "detail_enriched": True}
+    body = fields.get("body", "")
+    if body:
+        desc = (item.get("description") or "").strip()
+        updated["description"] = f"{desc}\n{body}".strip() if desc else body
+    if fields.get("region_field"):
+        updated["region_field"] = fields["region_field"]
+    period_src = fields.get("application_period_text") or updated.get("description", "")
+    period = extract_application_period(period_src) or extract_application_period(body)
+    if period.get("display"):
+        updated["deadline"] = period["display"]
+        updated["application_period"] = period
+    elif not (updated.get("deadline") or "").strip():
+        # 상세만 있고 라벨이 없을 때 — 협약기간 등 비신청 라벨 구간은 제외
+        scrubbed = body
+        for lbl in NON_APPLICATION_PERIOD_LABELS:
+            scrubbed = re.sub(
+                rf"{re.escape(lbl)}\s*[:：]?\s*[^\nㅇ]+",
+                "",
+                scrubbed,
+                flags=re.IGNORECASE,
+            )
+        period = extract_application_period(scrubbed)
+        if period.get("display"):
+            updated["deadline"] = period["display"]
+            updated["application_period"] = period
+    posted = extract_date_from_text(body)
+    if posted and not (updated.get("posted_date") or "").strip():
+        updated["posted_date"] = posted
+    return updated
+
+
+def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict]:
+    """신규 공고 중 상세 보강이 필요한 항목만 HTTP 상세 조회."""
+    targets = [
+        it for it in items
+        if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
+        and not it.get("detail_enriched")
+    ][:limit]
+    if not targets:
+        return items
+    log.info("상세 보강: %d건", len(targets))
+    enriched_map = {it["id"]: enrich_item_from_detail(it) for it in targets}
+    return [enriched_map.get(it["id"], it) if it["id"] in enriched_map else it for it in items]
 
 
 def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
@@ -469,10 +662,12 @@ def fetch_html_generic(site: dict) -> list[dict]:
         if not href or link.split("#")[0] == site["url"].split("#")[0] or href.startswith("javascript:"):
             continue
         row_text = row.get_text()
+        period   = extract_application_period(row_text)
         dates    = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
-        # 첫 날짜 = 등록일, 마지막 날짜 = 마감일 (두 개 이상)
         posted   = dates[0].replace(".", "-").replace("/", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
+        deadline = period.get("display", "")
+        if not deadline:
+            deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
         posted = select_date(row, date_selector) or posted
         deadline = select_date(row, deadline_selector) or deadline
         author = select_text(row, selectors.get("author", ""))
@@ -1267,8 +1462,15 @@ def classify_support_type(item: dict) -> list[str]:
     return matched or ["그외"]
 
 
+def _notice_body_text(item: dict) -> str:
+    """마감(deadline) 필드 제외 본문 — 잘못된 기간 오염 방지."""
+    return f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+
+
 def _notice_text(item: dict) -> str:
-    return f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('deadline','')}".lower()
+    body = _notice_body_text(item)
+    deadline = (item.get("deadline") or "").strip().lower()
+    return f"{body} {deadline}".strip()
 
 
 def _unique(values: list[str]) -> list[str]:
@@ -1294,7 +1496,34 @@ def classify_deadline_status(item: dict, today=None) -> str:
     text = _notice_text(item)
     if any(term in text for term in OPEN_DEADLINE_TERMS):
         return "open"
-    dates = [parsed for _, parsed in _parse_date_candidates(text, today.year)]
+    body_text = _notice_body_text(item)
+    period = item.get("application_period") or extract_application_period(body_text)
+    if period.get("end"):
+        try:
+            end_date = datetime.strptime(period["end"], "%Y-%m-%d").date()
+            start_date = datetime.strptime(period.get("start", period["end"]), "%Y-%m-%d").date()
+        except ValueError:
+            end_date = start_date = None
+        if end_date:
+            if end_date < today:
+                return "closed"
+            if start_date and start_date > today:
+                return "upcoming"
+            return "open"
+    # 신청기간 라벨이 없을 때만 본문 날짜 사용 (협약기간·deadline 필드 오인 방지)
+    scrubbed = body_text
+    for lbl in NON_APPLICATION_PERIOD_LABELS:
+        scrubbed = re.sub(
+            rf"{re.escape(lbl.lower())}\s*[:：]?\s*[^\nㅇ]+",
+            "",
+            scrubbed,
+            flags=re.IGNORECASE,
+        )
+    dates = [parsed for _, parsed in _parse_date_candidates(scrubbed, today.year)]
+    if not dates:
+        raw_deadline = (item.get("deadline") or "").strip()
+        if raw_deadline:
+            dates = [parsed for _, parsed in _parse_date_candidates(raw_deadline, today.year)]
     if not dates:
         return "unknown"
     start_date, end_date = dates[0], dates[-1]
@@ -1309,17 +1538,32 @@ def classify_deadline_status(item: dict, today=None) -> str:
 
 def classify_region(item: dict) -> dict:
     text = _notice_text(item)
+    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
     eligible_regions: list[str] = []
     excluded_regions: list[str] = []
     region_status = "unknown"
     district_status = "unknown"
 
-    if any(phrase in text for phrase in REGION_EXCLUDE_PHRASES):
+    if any(phrase in raw_text for phrase in REGION_EXCLUDE_PHRASES):
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
             "eligible_regions": [],
             "excluded_regions": [APPLICANT_REGION_CITY, APPLICANT_REGION_DISTRICT],
+        }
+
+    target = _detect_target_regions(raw_text)
+    explicit_regions = list(target.get("regions") or [])
+    if item.get("region_field"):
+        explicit_regions.append(norm(item["region_field"]))
+    explicit_regions = _unique(explicit_regions)
+    other_only = [r for r in explicit_regions if "인천" not in r]
+    if other_only and not any("인천" in r for r in explicit_regions):
+        return {
+            "region_status": "not_eligible",
+            "district_status": "not_eligible",
+            "eligible_regions": [],
+            "excluded_regions": _unique(other_only),
         }
 
     if "남동구 제외" in text or "남동구 소재 기업 제외" in text:
@@ -1340,7 +1584,11 @@ def classify_region(item: dict) -> dict:
         excluded_regions.extend(mentioned_districts)
         region_status = "not_eligible"
         district_status = "not_eligible"
-    elif "전국" in text or "인천광역시 소재" in text or "인천 소재" in text or "인천 지역" in text or "인천지역" in text:
+    elif target.get("nationwide") or "전국" in text:
+        eligible_regions.append(APPLICANT_REGION_CITY)
+        region_status = "eligible"
+        district_status = "eligible"
+    elif "인천광역시 소재" in text or "인천 소재" in text or "인천 지역" in text or "인천지역" in text:
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
@@ -1373,7 +1621,9 @@ def region_match(item: dict, group_regions: list[str]) -> bool:
         return True
     if "전국" in text:
         return True
-    return region_info["region_status"] == "unknown" and not any(kr.lower() in text for kr in KNOWN_REGIONS)
+    if region_info["region_status"] == "eligible":
+        return True
+    return False
 
 
 def keyword_match(item: dict, kw_cfg: dict) -> bool:
@@ -1643,8 +1893,9 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
     for src, src_items in by_src.items():
         lines += [f"\n【 {src} 】 {len(src_items)}건", "─" * 30]
         for it in src_items:
+            dl = resolve_item_deadline(it)
             lines += [f"▸ {it['title']}",
-                      f"  기관: {it['author'] or '미기재'} | 마감: {it['deadline'] or '미기재'}"
+                      f"  기관: {it['author'] or '미기재'} | 마감: {dl or '미기재'}"
                       f" | 등록: {it.get('posted_date') or '날짜불명'}"]
             if it.get("link"): lines.append(f"  링크: {it['link']}")
             lines.append("")
@@ -1686,7 +1937,7 @@ def fallback_body(items: list[dict]) -> str:
                       f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
                       f"• 지원기관: {it['author'] or '미기재'}",
                       f"• 지원내용: {it['description'] or '미기재'}",
-                      f"• 신청마감: {it['deadline'] or '미기재'} ({it.get('deadline_status', 'unknown')})",
+                      f"• 신청마감: {resolve_item_deadline(it) or '미기재'} ({it.get('deadline_status', 'unknown')})",
                       f"• 지역 적합성: {region_label}",
                       f"• 공장 조건: {factory_label}",
                       f"• 스마트공장 관련성: {smart_label}",
@@ -1764,7 +2015,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     items_txt = "\n\n".join(
         f"[{i+1}] [{' · '.join(it.get('_types', ['미분류']))}] [등록:{it.get('posted_date','날짜불명')}]\n"
         f"제목: {it['title']}\n기관: {it['author']}\n내용: {it['description']}\n"
-        f"마감: {it['deadline']} ({it.get('deadline_status', 'unknown')})\n"
+        f"마감: {resolve_item_deadline(it)} ({it.get('deadline_status', 'unknown')})\n"
         f"지역 적합성: {_region_label(it)}\n공장 조건: {_factory_label(it)}\n"
         f"스마트공장 관련성: {_smart_relevance_label(it)}\n"
         f"매칭 키워드: {', '.join(it.get('matched_keywords', [])) or '미기재'}\n"
@@ -1884,6 +2135,8 @@ def execute_monitor(
     # ③ 신규 필터 (seen_ids)
     new_items = [it for it in deduped if it["id"] and it["id"] not in seen_ids]
     log.info("신규(미발송): %d건 / 전체: %d건", len(new_items), len(deduped))
+
+    new_items = enrich_items(new_items)
 
     # ④ 날짜 필터 (직전 영업일)
     target_date = previous_business_day(now, days_back)
