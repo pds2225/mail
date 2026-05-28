@@ -50,6 +50,31 @@
 - 기본(안전): `{"dry_run": true}`
 - 실제 발송(명시 승인): `{"dry_run": false, "confirm_send": "SEND"}`
 
+## 지원사업 공고 필터링 기준
+
+`monitor.py`는 수집된 공고를 발송 전에 판정 필드로 보강한 뒤 `is_relevant=true`인 신청 가능 공고만 최종 추천합니다.
+
+- 포함/가점: 베트남, 동남아, 해외, 글로벌, 박람회, 전시회, 소상공인, 지원금, 공장, 스마트 및 스마트공장/제조DX/공정자동화 계열
+- 우선 검토: 혁신바우처, 수출바우처, 스마트공장 계열 키워드
+- 필수 제외: 행정공지, 지침, 매뉴얼, 교육, 설명회, 공급기업/수행기관 모집, 기선정 기업 절차, 마감 완료, 인천/남동구 신청 불가 공고
+- 지역 기준: 신청기업 소재지를 인천광역시 남동구로 보고, 인천 내 특정 구 제한에서 남동구가 빠지면 제외합니다.
+- 공장 조건: 공장등록증, 제조시설, 공장 보유, 제조업 영위 등은 점수와 조건 메모에 반영합니다.
+- `dry_run`/preview 결과에는 제외 공고 요약과 `exclude_reason_codes`가 포함됩니다.
+
+## 소진공 정책자금 점검 모듈
+
+정책자금 전용 기능은 기존 메일 모니터링과 분리된 `loan/` 패키지에 있습니다.
+
+- 대상 설정: `loan/config/semas.yml`
+- 리포트: `reports/loan/semas_loan_scan.md`
+- 중복 상태 파일: `reports/loan/semas_seen_notices.json`
+- 수동 실행: `python3 -m loan.semas.collector --run-mode dry-run --send-email false`
+- 실제 테스트 메일: `ALLOW_SEND_EMAIL=true python3 -m loan.semas.collector --run-mode dry-run --send-email true`
+
+메일 발송은 기존 변수명인 `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`, 선택 변수 `SMTP_HOST`, `SMTP_PORT`를 재사용합니다. 수신자는 `MAIL_TO`가 있으면 우선 사용하고, 없으면 기존 `settings.json`의 `raw_all_recipients`와 `groups.json`의 `recipients`를 사용합니다.
+
+GitHub Actions에서는 **소진공 정책자금 수동 점검** workflow를 실행하고 `run_mode`, `send_email`, `lookback_days`를 선택합니다. 외부 사이트 접속 또는 SMTP 설정이 실패해도 Markdown 리포트 artifact는 생성됩니다.
+
 ## Local Notes
 
 - 기존처럼 `python monitor.py` 실행 시에는 실제 발송 경로를 유지합니다.

@@ -13,7 +13,12 @@ from customer_intake.extractor import extract_from_ocr
 from customer_intake.file_scanner import scan_input
 from customer_intake.report import RunSummary, save_report
 from customer_intake.sheets_writer import SheetsWriter
-from customer_intake.watcher import _parse_bool, main as watcher_main
+from customer_intake.watcher import main as watcher_main
+
+
+def _parse_bool(value: str) -> bool:
+    """Convert "true"/"false"/"auto" CLI arg to bool (True = dry_run)."""
+    return value.strip().lower() not in ("0", "false", "no", "n", "off")
 
 log = logging.getLogger("customer_intake")
 
