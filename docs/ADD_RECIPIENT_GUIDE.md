@@ -2,6 +2,25 @@
 
 실제 이메일 주소를 코드에 하드코딩하지 마세요. 설정 파일만 수정합니다.
 
+## Vercel UI (Next.js)
+
+| 항목 | 내용 |
+|------|------|
+| 화면 | `/recipients` (`web/app/recipients/page.tsx`) |
+| 검증 API | `POST /api/recipients/validate` |
+| 패킷 API | `POST /api/recipients/packet` |
+| 패킷 파일 | `WORKS/RECIPIENT_UPDATE_PACKET.md` (로컬 FS 쓰기 가능 시) |
+
+절차:
+
+1. Vercel 배포 URL → **수신자** 메뉴
+2. 이메일 입력 (한 줄에 하나, 또는 쉼표 구분)
+3. **검증** → 형식·중복 결과 확인 (목록은 마스킹만 표시)
+4. **PR 패킷 생성** → 마크다운 복사 후 GitHub PR 작성
+5. merge 승인 후에만 `groups.json` / `settings.json` 운영 반영
+
+**금지:** Vercel에서 승인 없이 JSON 직접 저장, 실제 SMTP 발송, 임의 주소를 코드에 커밋.
+
 ## 설정 위치
 
 | 용도 | 파일 | 필드 |
