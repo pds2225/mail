@@ -8,6 +8,8 @@ secrets/
 
 # 실행 중 생성되는 파일
 seen_ids.json
+logs/*.md
+!logs/.gitkeep
 test_results.json
 reports/loan/semas_loan_scan.md
 reports/loan/semas_seen_notices.json
