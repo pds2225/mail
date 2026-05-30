@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { PacketPanel } from "@/app/components/PacketPanel";
+import { SITE_PACKET_STORAGE_KEY } from "@/lib/packet-store";
 import { COLLECTOR_TYPES, SITE_CATEGORIES } from "@/lib/site-types";
 
 const defaultForm = {
@@ -19,6 +21,7 @@ export default function SiteAddPage() {
   const [validation, setValidation] = useState<Record<string, unknown> | null>(null);
   const [packet, setPacket] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -44,6 +47,7 @@ export default function SiteAddPage() {
 
   async function generatePacket() {
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/sites/packet", {
         method: "POST",
@@ -51,6 +55,12 @@ export default function SiteAddPage() {
         body: JSON.stringify({ ...form, probeUrl: form.testCollect }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "검증 실패 — 패킷을 생성하지 않았습니다.");
+        if (data.validation) setValidation({ validation: data.validation });
+        setPacket(null);
+        return;
+      }
       setPacket(data);
       if (data.validation) setValidation(data);
     } finally {
@@ -198,23 +208,8 @@ export default function SiteAddPage() {
         </div>
       )}
 
-      {packet?.packetMarkdown ? (
-        <div className="card">
-          <h3>PR 패킷</h3>
-          <p style={{ fontSize: 14 }}>{String(packet.notice)}</p>
-          <p>
-            브랜치 제안: <code>{String(packet.branch)}</code>
-          </p>
-          <pre className="pre">{String(packet.packetMarkdown)}</pre>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => navigator.clipboard.writeText(String(packet.packetMarkdown))}
-          >
-            패킷 복사
-          </button>
-        </div>
-      ) : null}
+      {error ? <p className="error">{error}</p> : null}
+      <PacketPanel title="PR 패킷" storageKey={SITE_PACKET_STORAGE_KEY} packet={packet} />
     </div>
   );
 }

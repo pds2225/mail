@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { loadGroups, loadSettings, loadSites } from "@/lib/config-loader";
+import { maskGroupsForApi, maskSettingsForApi } from "@/lib/config-mask";
+import { configSourceLabel } from "@/lib/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -10,20 +12,11 @@ export async function GET() {
     const settings = loadSettings();
     return NextResponse.json({
       ok: true,
-      source: "github_repo_files",
-      counts: { sites: sites.length, groups: groups.length },
+      source: configSourceLabel() === "bundled" ? "github_repo_files_bundled" : "github_repo_files",
+      counts: { sites: sites.length, groups: (groups as unknown[]).length },
       sites,
-      groups,
-      settings: {
-        ...settings,
-        raw_all_recipients: Array.isArray(settings.raw_all_recipients)
-          ? (settings.raw_all_recipients as string[]).map((e) =>
-              typeof e === "string" && e.includes("@")
-                ? e.replace(/^(.{2})[^@]*(@.*)$/, "$1***$2")
-                : e,
-            )
-          : settings.raw_all_recipients,
-      },
+      groups: maskGroupsForApi(groups as unknown[]),
+      settings: maskSettingsForApi(settings),
     });
   } catch (e) {
     return NextResponse.json(

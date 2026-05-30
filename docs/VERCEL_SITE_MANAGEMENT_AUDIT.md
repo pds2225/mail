@@ -61,3 +61,16 @@
 | GitHub 완전 자동화 | 2.0 | 토큰·Draft PR은 NEEDS_USER |
 
 **종합: 4.0 / 5.0** — 승인 기반 PR 워크플로에 적합.
+
+---
+
+## PR #37 후속 보강 (2026-05-30)
+
+| 항목 | 보강 내용 |
+|------|-----------|
+| Vercel FS | `web/scripts/copy-config.mjs` → `web/data/*.json` 빌드 번들 |
+| 수신자 노출 | `/api/config` groups·settings 마스킹 (`config-mask.ts`) |
+| 패킷 지속성 | `sessionStorage` + `.md`/JSON 다운로드 (`PacketPanel`) |
+| sites patch | `siteJsonPatch` + 전체 미리보기(truncated) |
+| 수신자 패킷 | 그룹 선택 UI, append-only patch, valid만 반영 |
+| PR #37 상태 | **merged** — 동일 브랜치에 후속 커밋 push (새 PR 없음) |

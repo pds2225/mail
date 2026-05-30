@@ -6,5 +6,12 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const body = (await req.json()) as { emails?: string[] };
   const validation = validateRecipients(body.emails || []);
-  return NextResponse.json({ ok: validation.rejected.length === 0, validation });
+  return NextResponse.json({
+    ok: validation.rejected.length === 0 && validation.valid.length > 0,
+    validation: {
+      validCount: validation.valid.length,
+      masked: validation.masked,
+      rejected: validation.rejected.map((r) => ({ reason: r.reason })),
+    },
+  });
 }

@@ -1,3 +1,5 @@
 .next/
 out/
 *.tsbuildinfo
+data/*.json
+!data/.gitkeep

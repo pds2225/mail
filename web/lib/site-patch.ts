@@ -4,10 +4,19 @@ export function buildSitesPatch(existing: SiteRecord[], addition: SiteRecord): S
   return [...existing, addition];
 }
 
-export function jsonPatchSnippet(existing: SiteRecord[], addition: SiteRecord): string {
-  const next = buildSitesPatch(existing, addition);
-  const last = next[next.length - 1];
-  return JSON.stringify(last, null, 2);
+/** Single site object to append to sites.json array. */
+export function jsonPatchSnippet(_existing: SiteRecord[], addition: SiteRecord): string {
+  return JSON.stringify(addition, null, 2);
+}
+
+/** Full sites.json after append (for manual replace review). */
+export function fullSitesJsonAfterAdd(existing: SiteRecord[], addition: SiteRecord): string {
+  return JSON.stringify(buildSitesPatch(existing, addition), null, 2);
+}
+
+/** jq-style instruction for PR authors. */
+export function sitesJsonApplyHint(siteId: string): string {
+  return `sites.json 배열 끝에 아래 객체 1건 추가 (id: ${siteId})`;
 }
 
 export function unifiedDiffLines(existing: SiteRecord[], addition: SiteRecord): string[] {

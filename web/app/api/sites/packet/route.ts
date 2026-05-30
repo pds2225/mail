@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { loadSites } from "@/lib/config-loader";
 import { buildSiteAddPacket } from "@/lib/packet-markdown";
-import { buildSitesPatch } from "@/lib/site-patch";
+import { buildSitesPatch, jsonPatchSnippet } from "@/lib/site-patch";
 import { repoRoot } from "@/lib/paths";
 import type { SiteAddInput } from "@/lib/site-types";
 import { probeUrlReachable, validateSiteInput } from "@/lib/site-validation";
@@ -29,8 +29,10 @@ export async function POST(req: Request) {
       site,
       validation,
       existingCount: existing.length,
+      existingSites: existing,
       urlReachable,
     });
+    const siteJsonPatch = jsonPatchSnippet(existing, site);
 
     const nextSites = buildSitesPatch(existing, site);
     const writtenPaths: string[] = [];
@@ -50,10 +52,11 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       branch,
-      site,
+      site: { id: site.id, name: site.name, type: site.type, url: site.url, enabled: site.enabled },
       validation,
       urlReachable,
-      sitesJsonPreview: nextSites.slice(-3),
+      siteJsonPatch,
+      sitesJsonPreview: nextSites.slice(-2),
       packetPaths: writtenPaths,
       packetMarkdown: markdown,
       prTitle: `feat(sites): add ${site.id} — ${site.name}`,

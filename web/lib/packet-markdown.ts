@@ -1,6 +1,6 @@
 import type { SiteRecord } from "./site-types";
 import type { SiteValidationResult } from "./site-validation";
-import { jsonPatchSnippet } from "./site-patch";
+import { fullSitesJsonAfterAdd, jsonPatchSnippet, sitesJsonApplyHint } from "./site-patch";
 import { maskEmail } from "./recipient-validation";
 
 export function buildSiteAddPacket(params: {
@@ -8,10 +8,12 @@ export function buildSiteAddPacket(params: {
   site: SiteRecord;
   validation: SiteValidationResult;
   existingCount: number;
+  existingSites: SiteRecord[];
   urlReachable: boolean | null;
 }): string {
-  const { branch, site, validation, existingCount, urlReachable } = params;
-  const snippet = jsonPatchSnippet([], site);
+  const { branch, site, validation, existingCount, existingSites, urlReachable } = params;
+  const snippet = jsonPatchSnippet(existingSites, site);
+  const fullJson = fullSitesJsonAfterAdd(existingSites, site);
 
   return `# SITE_ADD_PR_PACKET
 
@@ -22,11 +24,25 @@ export function buildSiteAddPacket(params: {
 
 - \`sites.json\` (${existingCount}건 → ${existingCount + 1}건)
 
-## 추가될 사이트 JSON
+## 추가될 사이트 JSON (${sitesJsonApplyHint(site.id)})
 
 \`\`\`json
 ${snippet}
 \`\`\`
+
+## sites.json 반영 힌트
+
+\`\`\`text
+${sitesJsonApplyHint(site.id)}
+\`\`\`
+
+<details>
+<summary>전체 sites.json 미리보기 (승인 전 diff 검토용)</summary>
+
+\`\`\`json
+${fullJson.slice(0, 12000)}${fullJson.length > 12000 ? "\n... (truncated)" : ""}
+\`\`\`
+</details>
 
 ## 검증 요약
 
@@ -79,8 +95,9 @@ export function buildRecipientPacket(params: {
   target: "group" | "raw_all";
   groupId?: string;
   groupName?: string;
-  added: string[];
+  addedValid: string[];
   validation: ReturnType<typeof import("./recipient-validation").validateRecipients>;
+  patchSnippet: string;
 }): string {
   const masked = params.validation.masked.join(", ") || "(없음)";
   return `# RECIPIENT_UPDATE_PACKET
@@ -88,9 +105,15 @@ export function buildRecipientPacket(params: {
 생성 시각: ${new Date().toISOString()}
 대상: ${params.target === "group" ? `groups.json → ${params.groupName || params.groupId}` : "settings.json → raw_all_recipients"}
 
-## 추가 요청 이메일 (마스킹)
+## 추가 요청 이메일 (마스킹, valid만)
 
-${params.added.map((e) => `- ${maskEmail(e)}`).join("\n")}
+${params.addedValid.map((e) => `- ${maskEmail(e)}`).join("\n") || "- (없음)"}
+
+## 반영용 JSON 패치 (마스킹된 recipients 목록 — 실제 주소는 PR 작성 시 valid 목록 참고)
+
+\`\`\`json
+${params.patchSnippet}
+\`\`\`
 
 ## 검증 결과
 

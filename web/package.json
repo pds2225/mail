@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/copy-config.mjs && next dev",
+    "build": "node scripts/copy-config.mjs && next build",
     "start": "next start",
-    "test": "vitest run",
+    "test": "node scripts/copy-config.mjs && vitest run",
     "lint": "next lint"
   },
   "dependencies": {
