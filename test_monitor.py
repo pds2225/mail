@@ -20,6 +20,7 @@ from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
     fetch_html_generic, fetch_semas_loan_ols, extract_date_from_text,
+    extract_application_period, resolve_item_deadline, classify_region,
     previous_business_day, mail_topic, KST, ALL_SUPPORT_TYPES,
     evaluate_notice, filter_for_group_with_diagnostics, render_excluded_summary,
 )
@@ -407,6 +408,82 @@ def evaluated(title, description="전국 중소기업 대상 신청접수", dead
 def test_extract_date_from_text_supports_short_year_and_month_day_deadline():
     assert extract_date_from_text("'26.5.13(수) 18시") == "2026-05-13"
     assert extract_date_from_text("~ 5.13(수) 18시까지") == "2026-05-13"
+
+
+def test_extract_application_period_prefers_application_over_agreement():
+    sample = (
+        "ㅇ 협약기간 : '26년 1월 1일 ~ '26년 11월 30일\n"
+        "ㅇ 신청기간 : 26년 1월 27일(화) ~ 2월 09일(월) 18시까지"
+    )
+    period = extract_application_period(sample)
+    assert period["start"] == "2026-01-27"
+    assert period["end"] == "2026-02-09"
+    assert period["display"] == "2026-01-27 ~ 2026-02-09"
+
+
+def test_resolve_item_deadline_ignores_agreement_period_in_body():
+    item = {
+        "title": "2026 경기 수출 기회 바우처 지원사업 모집공고",
+        "description": "ㅇ 협약기간 : 2026-01-01 ~ 2026-11-30",
+        "deadline": "2026-01-01 ~ 2026-11-30",
+    }
+    item["description"] += (
+        "\nㅇ 신청기간 : 26년 1월 27일(화) ~ 2월 09일(월) 18시까지"
+    )
+    assert resolve_item_deadline(item) == "2026-01-27 ~ 2026-02-09"
+
+
+def test_classify_region_excludes_gyeonggi_and_busan_targets():
+    gyeonggi = classify_region({
+        "title": "2026 경기 수출 기회 바우처 지원사업 모집공고",
+        "description": "지원대상 : 본사 또는 공장 소재지가 경기도인 중소 제조 기업",
+    })
+    assert gyeonggi["region_status"] == "not_eligible"
+
+    busan = classify_region({
+        "title": "뿌리산업 BIZ 플랫폼 지원 기업 모집",
+        "region_field": "부산광역시",
+        "description": "공고일 기준 부산 소재 기업",
+    })
+    assert busan["region_status"] == "not_eligible"
+
+
+def test_evaluate_excludes_gyeonggi_voucher_for_incheon_group():
+    item = {
+        "id": "exportvoucher_test",
+        "title": "2026 경기 수출 기회 바우처 지원사업 모집공고",
+        "description": (
+            "지원대상 : 경기도 소재 중소 제조 기업 신청접수\n"
+            "ㅇ 신청기간 : 26년 1월 27일(화) ~ 2월 09일(월) 18시까지"
+        ),
+        "deadline": "2026-01-27 ~ 2026-02-09",
+        "link": "https://www.exportvoucher.com/portal/board/boardView?ntt_id=1",
+        "author": "KOTRA 경기지원본부",
+        "source": "수출바우처",
+        "posted_date": "2026-01-28",
+        "is_aggregator": False,
+    }
+    result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "REGION_NOT_ELIGIBLE" in result["exclude_reason_codes"]
+
+
+def test_evaluate_excludes_busan_kstartup_for_incheon_group():
+    item = {
+        "id": "kstartup_177831",
+        "title": "뿌리산업 BIZ 플랫폼 지원 기업 모집",
+        "description": "공고일 기준 부산 소재 기업 신청접수",
+        "region_field": "부산광역시",
+        "deadline": "2026-04-30",
+        "link": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?pbancSn=177831",
+        "author": "한국로봇융합연구원",
+        "source": "K-Startup",
+        "posted_date": "2026-01-28",
+        "is_aggregator": False,
+    }
+    result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "REGION_NOT_ELIGIBLE" in result["exclude_reason_codes"]
 
 
 def test_filter_excludes_admin_guideline_education_supplier_selected_and_info_cases():
