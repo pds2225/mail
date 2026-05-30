@@ -62,6 +62,10 @@ SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
 KST            = timezone(timedelta(hours=9))
 MAX_SEEN_IDS   = 1000
 MAX_FOR_CLAUDE = 15
+COLLECTOR_FILE = "monitor.py"
+EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
+_ALLOW_SMTP_SEND = False
+_ALLOW_PERSIST_SEEN = True
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
 HTTP_HEADERS   = {
@@ -513,6 +517,9 @@ def load_seen_ids() -> set[str]:
     return {str(x) for x in raw if x} if isinstance(raw, list) else set()
 
 def save_seen_ids(ids: set[str]) -> None:
+    if not _ALLOW_PERSIST_SEEN or os.environ.get("MONITOR_NO_PERSIST_SEEN") == "1":
+        log.info("seen_ids 저장 생략 (dry-run / persist 비활성)")
+        return
     # 날짜 포함 ID(bizinfo_20260415 등)는 날짜순, 나머지는 알파벳순 → 최신 MAX_SEEN_IDS 유지
     def _sort_key(s: str) -> str:
         m = re.search(r"(\d{4}-\d{2}-\d{2}|\d{8})", s)
@@ -1346,6 +1353,100 @@ FETCHERS = {
 }
 
 
+def _coverage_risk_level(row: dict) -> str:
+    if not row.get("enabled", True):
+        return "낮음"
+    if row.get("fetch_error") or not row.get("fetch_success"):
+        return "높음"
+    if row.get("date_unknown_count", 0) > 0 and row.get("posted_parsed_count", 0) == 0:
+        return "높음"
+    if row.get("date_unknown_count", 0) > row.get("posted_parsed_count", 0):
+        return "중간"
+    return "낮음"
+
+
+def fetch_site_coverage(
+    sites: list[dict] | None = None,
+    *,
+    days_back: int = 1,
+) -> list[dict]:
+    """사이트별 수집·날짜 파싱 현황 (병렬 fetch_all과 별도 순차 실행)."""
+    sites = sites if sites is not None else load_json(SITES_PATH, [])
+    target = previous_business_day(days_back=days_back)
+    rows: list[dict] = []
+    for site in sites:
+        stype = site.get("type", "")
+        fn = FETCHERS.get(stype)
+        row: dict[str, Any] = {
+            "site_id": site.get("id", ""),
+            "site_name": site.get("name", ""),
+            "collector_type": stype,
+            "collector_file": COLLECTOR_FILE,
+            "collector_fn": fn.__name__ if fn else "",
+            "url": site.get("url", ""),
+            "enabled": site.get("enabled", True),
+            "fetch_success": False,
+            "fetch_error": "",
+            "item_count": 0,
+            "posted_parsed_count": 0,
+            "date_unknown_count": 0,
+            "today_target_count": 0,
+            "dedup_removed_estimate": 0,
+            "final_mail_target_estimate": 0,
+            "missing_risk": "높음",
+        }
+        if not site.get("enabled", True):
+            row["fetch_error"] = "disabled_in_config"
+            row["missing_risk"] = "낮음"
+            rows.append(row)
+            continue
+        if not fn:
+            row["fetch_error"] = f"unknown_type:{stype}"
+            rows.append(row)
+            continue
+        try:
+            items = fn(site)
+            row["fetch_success"] = True
+            row["item_count"] = len(items)
+            matched, unknown, _excl = partition_posted_dates(items, days_back)
+            row["posted_parsed_count"] = len(matched)
+            row["date_unknown_count"] = len(unknown)
+            row["today_target_count"] = len(matched)
+            row["dedup_removed_estimate"] = 0
+            row["final_mail_target_estimate"] = len(matched) + len(unknown)
+        except Exception as exc:
+            row["fetch_error"] = str(exc)[:200]
+        row["missing_risk"] = _coverage_risk_level(row)
+        rows.append(row)
+    return rows
+
+
+def validate_recipients(recipients: list[str]) -> dict[str, list[str]]:
+    """수신자 검증·중복제거. 원문은 valid/rejected, masked는 로그용."""
+    valid: list[str] = []
+    rejected: list[str] = []
+    seen: set[str] = set()
+    for raw in recipients or []:
+        if raw is None:
+            continue
+        email = str(raw).strip()
+        if not email:
+            continue
+        key = email.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        if EMAIL_RE.match(email):
+            valid.append(email)
+        else:
+            rejected.append(email)
+    return {
+        "valid": valid,
+        "rejected": rejected,
+        "masked": [_mask_email(e) for e in valid],
+    }
+
+
 def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
     """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트."""
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -1426,14 +1527,15 @@ def dedup_items(items: list[dict]) -> list[dict]:
 # 날짜 필터 (D-1: 어제 올라온 공고)
 # ══════════════════════════════════════════════════════════════════
 
-def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list[dict]]:
+def partition_posted_dates(
+    items: list[dict], days_back: int = 1,
+) -> tuple[list[dict], list[dict], list[dict]]:
     """
-    posted_date가 있는 아이템은 직전 영업일 target_date와 비교.
-    posted_date가 없으면 날짜 불명(unknown)으로 분류.
-    반환: (target_date 아이템, 날짜불명 아이템)
+    posted_date 기준 분류.
+    반환: (직전영업일 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
     """
     target = previous_business_day(days_back=days_back)
-    matched, unknown = [], []
+    matched, unknown, excluded = [], [], []
     for it in items:
         pd = it.get("posted_date", "").strip()
         if not pd:
@@ -1443,13 +1545,45 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
             item_date = datetime.strptime(pd[:10], "%Y-%m-%d").date()
             if item_date == target:
                 matched.append(it)
-            # else: 다른 날짜 → 제외
+            else:
+                excluded.append({**it, "_excluded_posted_date": pd[:10]})
         except ValueError:
             unknown.append(it)
-    log.info("날짜필터(직전영업일-%d, 기준=%s): 매칭 %d건 / 날짜불명 %d건 / 제외 %d건",
-             days_back, target, len(matched), len(unknown),
-             len(items) - len(matched) - len(unknown))
+    log.info(
+        "날짜분류(직전영업일-%d, 기준=%s): 확정 %d / 날짜불명 %d / 제외 %d",
+        days_back, target, len(matched), len(unknown), len(excluded),
+    )
+    return matched, unknown, excluded
+
+
+def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list[dict]]:
+    """하위 호환: (확정, 날짜불명)만 반환."""
+    matched, unknown, _excluded = partition_posted_dates(items, days_back)
     return matched, unknown
+
+
+def assess_date_unknown_risk(item: dict) -> str:
+    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음."""
+    text = _notice_body_text(item)
+    if any(kw in text for kw in APPLICATION_KEYWORDS):
+        if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
+            return "높음"
+        return "중간"
+    if item.get("deadline") or extract_application_period(text):
+        return "중간"
+    return "낮음"
+
+
+def build_date_review_queue(unknown_items: list[dict]) -> list[dict]:
+    """date_unknown → 수동검토 큐 (메일 대상과 분리 기록)."""
+    queue: list[dict] = []
+    for it in unknown_items:
+        queue.append({
+            **it,
+            "date_unknown_risk": assess_date_unknown_risk(it),
+            "review_reason": "posted_date_missing_or_unparsed",
+        })
+    return queue
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -2087,7 +2221,14 @@ def send_email(subject: str, body: str, to: str) -> None:
     log.info("발송 완료 → %s", _mask_email(to))
 
 def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
-    for to in recipients:
+    if not _ALLOW_SMTP_SEND:
+        checked = validate_recipients(recipients)
+        log.info(
+            "발송 생략 (allow_send=False): subject=%s recipients=%s",
+            subject[:60], ", ".join(checked["masked"]) or "(없음)",
+        )
+        return
+    for to in validate_recipients(recipients)["valid"]:
         try:
             send_email(subject, body, to)
         except Exception as e:
@@ -2104,6 +2245,10 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
 ) -> dict:
+    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN
+    _ALLOW_SMTP_SEND = allow_send
+    _ALLOW_PERSIST_SEEN = persist_seen
+
     now = datetime.now(KST)
     mode = "send" if allow_send else "preview"
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
@@ -2143,20 +2288,29 @@ def execute_monitor(
     date_str    = now.strftime("%m/%d")
 
     include_unknown = settings.get("include_date_unknown", False)
+    date_matched: list = []
     date_unknown: list = []
+    date_excluded: list = []
+    date_review_queue: list = []
     if settings.get("date_filter_enabled", True):
-        date_matched, date_unknown = date_filter(new_items, days_back)
+        date_matched, date_unknown, date_excluded = partition_posted_dates(new_items, days_back)
+        date_review_queue = build_date_review_queue(date_unknown)
         if include_unknown:
             filtered_new = date_matched + date_unknown
-            log.info("날짜필터 후 처리 대상: %d건 (확정 %d + 날짜불명 %d 포함)",
-                     len(filtered_new), len(date_matched), len(date_unknown))
+            log.info(
+                "날짜필터 후 처리 대상: %d건 (확정 %d + 날짜불명 %d 메일포함, review %d건)",
+                len(filtered_new), len(date_matched), len(date_unknown), len(date_review_queue),
+            )
         else:
             filtered_new = date_matched
-            log.info("날짜필터 후 처리 대상: %d건 (확정만, 날짜불명 %d건 제외)",
-                     len(filtered_new), len(date_unknown))
+            log.info(
+                "날짜필터 후 메일 대상: %d건 (확정만) / review queue: %d건 / 제외 %d건",
+                len(filtered_new), len(date_review_queue), len(date_excluded),
+            )
     else:
         filtered_new = new_items
         date_unknown = []
+        date_excluded = []
 
     # ⑤ 원본전체 메일 (settings.raw_all_recipients)
     if (
@@ -2190,6 +2344,10 @@ def execute_monitor(
             "new_items": len(new_items),
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
+            "date_review_queue": date_review_queue,
+            "date_excluded_count": len(date_excluded),
+            "mail_sent": False,
+            "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
             "sent_groups": [],
             "preview_groups": [],
         }
@@ -2251,25 +2409,204 @@ def execute_monitor(
         seen_ids.update(it["id"] for it in deduped)
         save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
+    final_mail_count = sum(len(filter_for_group(filtered_new, g)) for g in groups)
     return {
         "ok": True,
         "mode": mode,
         "collected": len(all_items),
         "deduped": len(deduped),
+        "dedup_removed": dedup_removed,
         "new_items": len(new_items),
         "filtered_items": len(filtered_new),
+        "date_matched_count": len(date_matched) if settings.get("date_filter_enabled", True) else len(filtered_new),
         "date_unknown_items": len(date_unknown),
+        "date_review_queue": date_review_queue,
+        "date_review_queue_count": len(date_review_queue),
+        "date_excluded_count": len(date_excluded),
+        "final_mail_target_count": final_mail_count,
+        "mail_sent": bool(allow_send and _ALLOW_SMTP_SEND),
+        "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
     }
+
 
 def main() -> None:
     execute_monitor(allow_send=True, include_raw_all=True, persist_seen=True)
 
 
+def _write_markdown_table(headers: list[str], rows: list[list[str]]) -> str:
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    for row in rows:
+        lines.append("| " + " | ".join(str(c).replace("|", "/") for c in row) + " |")
+    return "\n".join(lines)
+
+
+def write_coverage_report(
+    rows: list[dict],
+    path: Path | None = None,
+    *,
+    run_at: datetime | None = None,
+) -> Path:
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / "site_collection_coverage_report.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    headers = [
+        "사이트", "collector", "URL", "수집", "건수", "날짜파싱", "date_unknown",
+        "오늘기준", "누락위험", "오류",
+    ]
+    table_rows = []
+    for r in rows:
+        table_rows.append([
+            r.get("site_name", ""),
+            r.get("collector_type", ""),
+            (r.get("url", "") or "")[:50],
+            "OK" if r.get("fetch_success") else "FAIL",
+            r.get("item_count", 0),
+            r.get("posted_parsed_count", 0),
+            r.get("date_unknown_count", 0),
+            r.get("today_target_count", 0),
+            r.get("missing_risk", ""),
+            r.get("fetch_error", "")[:40],
+        ])
+    body = (
+        f"# 사이트별 수집 커버리지\n\n"
+        f"- 생성: {run_at.strftime('%Y-%m-%d %H:%M KST')}\n"
+        f"- collector 파일: `{COLLECTOR_FILE}`\n\n"
+        + _write_markdown_table(headers, table_rows)
+        + "\n"
+    )
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+def write_today_missing_risk_report(
+    result: dict,
+    path: Path | None = None,
+    *,
+    run_at: datetime | None = None,
+) -> Path:
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / "today_notice_missing_risk_report.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    queue = result.get("date_review_queue") or []
+    high = [it for it in queue if it.get("date_unknown_risk") == "높음"]
+    lines = [
+        "# 오늘 공고 누락 위험 보고",
+        "",
+        f"- 생성: {run_at.strftime('%Y-%m-%d %H:%M KST')}",
+        f"- 직전영업일 확정: {result.get('date_matched_count', 0)}건",
+        f"- date_unknown (review queue): {result.get('date_review_queue_count', 0)}건",
+        f"- 날짜 제외(전일·기타): {result.get('date_excluded_count', 0)}건",
+        f"- include_date_unknown: 설정값에 따름",
+        "",
+        "## 위험도 높음 (수동 확인 권장)",
+        "",
+    ]
+    if not high:
+        lines.append("(없음)")
+    else:
+        for it in high[:50]:
+            lines.append(f"- [{it.get('date_unknown_risk')}] {it.get('title', '')[:80]} ({it.get('source', '')})")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def write_review_queue_report(
+    queue: list[dict],
+    path: Path | None = None,
+    *,
+    run_at: datetime | None = None,
+) -> Path:
+    run_at = run_at or datetime.now(KST)
+    stamp = run_at.strftime("%Y%m%d")
+    path = path or (BASE_DIR / "logs" / f"review_queue_{stamp}.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"# Review queue — {run_at.strftime('%Y-%m-%d %H:%M KST')}",
+        "",
+        "posted_date가 없거나 파싱되지 않은 공고입니다. 메일 설정에 따라 발송 대상에서 빠질 수 있습니다.",
+        "",
+    ]
+    if not queue:
+        lines.append("(항목 없음)")
+    else:
+        for it in queue:
+            lines.append(
+                f"- **{it.get('date_unknown_risk', '?')}** | {it.get('title', '')[:100]} | "
+                f"{it.get('source', '')} | {it.get('link', '')[:80]}"
+            )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def run_dry_run(
+    *,
+    write_reports: bool = True,
+    fetch_coverage: bool = True,
+) -> dict:
+    """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증."""
+    os.environ["MONITOR_NO_PERSIST_SEEN"] = "1"
+    seen_before = SEEN_IDS_PATH.stat().st_mtime if SEEN_IDS_PATH.exists() else None
+
+    coverage_rows: list[dict] = []
+    if fetch_coverage:
+        all_sites = load_json(SITES_PATH, [])
+        coverage_rows = fetch_site_coverage(all_sites)
+
+    result = execute_monitor(allow_send=False, include_raw_all=False, persist_seen=False)
+    result["coverage"] = coverage_rows
+    result["recipient_audit"] = {
+        g.get("name"): validate_recipients(g.get("recipients", []))
+        for g in load_groups()
+    }
+    settings = load_settings()
+    result["recipient_audit"]["raw_all"] = validate_recipients(
+        settings.get("raw_all_recipients", []),
+    )
+
+    seen_after = SEEN_IDS_PATH.stat().st_mtime if SEEN_IDS_PATH.exists() else None
+    result["seen_ids_file_changed"] = seen_before != seen_after
+
+    if write_reports:
+        write_coverage_report(coverage_rows)
+        write_today_missing_risk_report(result)
+        write_review_queue_report(result.get("date_review_queue") or [])
+
+    return result
+
+
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="수출·지원사업 모니터")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="발송·seen_ids 저장 없이 preview 및 logs/ 보고서 생성",
+    )
+    parser.add_argument(
+        "--skip-coverage-fetch",
+        action="store_true",
+        help="dry-run 시 사이트별 순차 수집 생략(네트워크 절약)",
+    )
+    args = parser.parse_args()
     try:
-        main()
+        if args.dry_run:
+            summary = run_dry_run(fetch_coverage=not args.skip_coverage_fetch)
+            log.info(
+                "dry-run 완료: 수집=%s 신규=%s review_queue=%s mail_sent=%s seen_changed=%s",
+                summary.get("collected"),
+                summary.get("new_items"),
+                summary.get("date_review_queue_count"),
+                summary.get("mail_sent"),
+                summary.get("seen_ids_file_changed"),
+            )
+        else:
+            main()
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise
