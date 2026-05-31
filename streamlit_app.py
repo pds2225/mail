@@ -4,6 +4,9 @@
 import hashlib, json, subprocess, sys
 from pathlib import Path
 import streamlit as st
+import logging
+# Streamlit 초기화 경고 억제
+logging.getLogger("streamlit.runtime.scriptrunner.script_runner").setLevel(logging.ERROR)
 
 # ── 경로 ─────────────────────────────────────────────────────────────────────
 SITES_PATH    = Path("sites.json")
