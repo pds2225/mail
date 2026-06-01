@@ -192,25 +192,25 @@
     "id": "kiat",
     "name": "한국산업기술진흥원(KIAT)",
     "type": "html_table",
-    "url": "https://www.kiat.or.kr/front/user/board/boardList.do?bbsId=BBS_0000011",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "KIAT - URL 변경됨, PC에서 확인 필요"
+    "note": "KIAT 사업공고 [2026-06 URL 갱신: /front/user/board → /front/board/boardContentsListPage.do?board_id=90]"
   },
   {
     "id": "keit",
     "name": "한국산업기술평가관리원(KEIT)",
     "type": "html_table",
-    "url": "https://www.keit.re.kr/notice/noticeList.do",
+    "url": "https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "KEIT - URL 수정"
+    "note": "KEIT 지원사업공고 [2026-06 URL 갱신: www.keit.re.kr/notice → itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do]"
   },
   {
     "id": "kotra",
@@ -307,13 +307,13 @@
     "id": "kibo",
     "name": "기술보증기금(KIBO)",
     "type": "html_table",
-    "url": "https://www.kibo.or.kr/main/kor/bbs/bbs.do?bbsId=BBSMSTR_000000000036",
+    "url": "https://www.kibo.or.kr/main/board/boardType38.do?mode=list&article.offset=0",
     "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "기술보증기금 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+    "note": "기술보증기금 공지사항 [2026-06 URL 갱신: kor/bbs/bbs.do?bbsId=BBSMSTR → main/board/boardType38.do] [비활성화 유지: JS렌더링 필요]"
   },
   {
     "id": "kodit",
@@ -367,13 +367,13 @@
     "id": "ketep",
     "name": "한국에너지기술평가원(KETEP)",
     "type": "html_table",
-    "url": "https://www.ketep.re.kr/businessAcment/list?menuId=MENU002080200000000",
+    "url": "https://www.ketep.re.kr/businessAcment?menuId=MENU002080200000000",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "에너지기술 R&D 사업공고 목록 [홈페이지에서 사업공고 목록 URL로 변경]"
+    "note": "에너지기술 R&D 사업공고 [2026-06 URL 갱신: businessAcment/list?menuId → businessAcment?menuId, 전체 491건 테이블 형식]"
   },
   {
     "id": "foodpolis",
@@ -775,13 +775,13 @@
     "id": "ic_bupyeong",
     "name": "인천 부평구청",
     "type": "html_table",
-    "url": "https://www.bpyeong.go.kr/",
-    "enabled": false,
+    "url": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do",
+    "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 융자/전시회 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+    "note": "부평구 고시·공고/입법예고 [2026-06 도메인 정정: bpyeong.go.kr(존재X) → icbp.go.kr + 고시공고 게시판 URL 추가]"
   },
   {
     "id": "ic_gyeyang",

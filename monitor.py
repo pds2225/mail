@@ -60,7 +60,7 @@ SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
-MAX_SEEN_IDS   = 1000
+MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
@@ -1076,7 +1076,7 @@ def fetch_sba(site: dict) -> list[dict]:
         link = href if href.startswith("http") else BASE + href
         if link in seen: continue
         seen.add(link)
-        iid = f"sba_{stable_id(link)}"
+        iid = f"sba_{stable_id(title)}"
         # 날짜: 부모 텍스트에서
         parent = a
         for _ in range(4):
@@ -1993,9 +1993,10 @@ def execute_monitor(
                 group.get("recipients", []),
             )
 
-    # ⑦ seen_ids 업데이트
+    # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:
         seen_ids.update(it["id"] for it in deduped)
+        seen_ids.update(it["id"] for it in date_unknown if it.get("id"))
         save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
     return {
