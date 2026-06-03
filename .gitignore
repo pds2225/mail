@@ -11,6 +11,10 @@ seen_ids.json
 test_results.json
 reports/loan/semas_loan_scan.md
 reports/loan/semas_seen_notices.json
+# 검수 결과 파일 (런타임 생성, 직접 배포하지 않음)
+reports/review/*_review.md
+reports/review/*_send.csv
+reports/review/*_mail_draft.txt
 customer_intake/reports/
 customer_intake/processed_files.json
 customer_intake/_test_done/

@@ -1,7 +1,7 @@
 """수출지원 모니터링 관리 대시보드 v6
 실행: streamlit run streamlit_app.py
 """
-import hashlib, json, subprocess, sys
+import hashlib, json, re, subprocess, sys
 from pathlib import Path
 import streamlit as st
 import logging
@@ -117,8 +117,8 @@ init_defaults()
 st.set_page_config(page_title="수출지원 모니터링", page_icon="📡", layout="wide")
 st.title("📡 수출지원 모니터링 관리")
 
-tab_sites, tab_groups, tab_settings, tab_run = st.tabs(
-    ["📡 소스 관리", "👥 그룹 관리", "⚙️ 설정", "▶ 실행"]
+tab_sites, tab_groups, tab_settings, tab_run, tab_review = st.tabs(
+    ["📡 소스 관리", "👥 그룹 관리", "⚙️ 설정", "▶ 실행", "🔍 공고 검수"]
 )
 
 
@@ -490,3 +490,94 @@ with tab_run:
             st.subheader("실행 로그")
             log_out = (result.stdout + result.stderr).strip()
             st.code(log_out or "(출력 없음)", language="text")
+
+
+# ══════════════════════════════════════════════════════════════════
+# TAB 5 — 공고 검수
+# ══════════════════════════════════════════════════════════════════
+with tab_review:
+    st.subheader("🔍 공고 정확도 검수")
+    st.caption("공고를 보낼 / 확인필요 / 제외로 분류합니다. 실제 메일 발송 없이 초안 파일만 생성합니다.")
+
+    review_dir = Path("reports/review")
+
+    btn_col1, btn_col2 = st.columns(2)
+    with btn_col1:
+        if st.button("▶ 샘플 데이터로 검수", type="primary", use_container_width=True,
+                     help="API/네트워크 불필요 — 내장 샘플 5건으로 즉시 검증"):
+            with st.spinner("검수 중..."):
+                proc = subprocess.run(
+                    [sys.executable, "review_pipeline.py", "--sample"],
+                    capture_output=True, text=True, encoding="utf-8", errors="replace",
+                )
+            if proc.returncode == 0:
+                st.success("✅ 검수 완료!")
+                st.rerun()
+            else:
+                st.error("❌ 검수 실패")
+                st.code((proc.stdout + proc.stderr)[:2000], language="text")
+    with btn_col2:
+        if st.button("▶ 실제 수집 후 검수", use_container_width=True,
+                     help="BIZINFO_API_KEY 등 환경변수 필요. 수십 초 소요."):
+            with st.spinner("수집 및 검수 중... (수십 초 소요)"):
+                proc = subprocess.run(
+                    [sys.executable, "review_pipeline.py", "--collect"],
+                    capture_output=True, text=True, encoding="utf-8", errors="replace",
+                )
+            if proc.returncode == 0:
+                st.success("✅ 검수 완료!")
+                st.rerun()
+            else:
+                st.error("❌ 실패 (API 키 또는 네트워크 확인 필요)")
+                st.code((proc.stdout + proc.stderr)[:2000], language="text")
+
+    st.divider()
+
+    # 최신 검수 리포트 표시
+    report_files = sorted(review_dir.glob("*_review.md")) if review_dir.exists() else []
+    if report_files:
+        latest = report_files[-1]
+        today_str = latest.stem.replace("_review", "")
+        st.markdown(f"**최근 검수 결과:** `{latest.name}`")
+
+        content = latest.read_text(encoding="utf-8")
+
+        # 요약 섹션 추출
+        summary_match = re.search(r"## 요약\n(.*?)---", content, re.DOTALL)
+        if summary_match:
+            st.markdown(summary_match.group(1).strip())
+
+        # 3개 탭으로 분리 표시
+        sections = re.split(r"\n---\n", content)
+        t_send, t_review, t_exclude = st.tabs(["✅ 보낼 공고", "⚠️ 확인필요", "❌ 제외"])
+        with t_send:
+            st.markdown(sections[1].strip() if len(sections) > 1 else "_(없음)_")
+        with t_review:
+            st.markdown(sections[2].strip() if len(sections) > 2 else "_(없음)_")
+        with t_exclude:
+            st.markdown(sections[3].strip() if len(sections) > 3 else "_(없음)_")
+
+        st.divider()
+        dl1, dl2 = st.columns(2)
+        csv_path   = review_dir / f"{today_str}_send.csv"
+        draft_path = review_dir / f"{today_str}_mail_draft.txt"
+        with dl1:
+            if csv_path.exists():
+                st.download_button(
+                    "📥 보낼 공고 CSV 다운로드",
+                    csv_path.read_bytes(),
+                    file_name=csv_path.name,
+                    mime="text/csv",
+                    use_container_width=True,
+                )
+        with dl2:
+            if draft_path.exists():
+                st.download_button(
+                    "📧 메일 초안 다운로드",
+                    draft_path.read_text(encoding="utf-8"),
+                    file_name=draft_path.name,
+                    mime="text/plain",
+                    use_container_width=True,
+                )
+    else:
+        st.info("검수 결과가 없습니다. '▶ 샘플 데이터로 검수'를 눌러 먼저 실행하세요.")
