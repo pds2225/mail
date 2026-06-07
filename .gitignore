@@ -51,3 +51,5 @@ node_modules/
 groups.backup.*.json
 reports/site_diagnostic_*.json
 reports/site_diagnostic_*.md
+.omc/
+.bkit/
