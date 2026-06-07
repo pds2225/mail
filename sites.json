@@ -606,7 +606,7 @@
   {
     "id": "bizok",
     "name": "비즈오케이(BizOK) - 인천기업지원",
-    "type": "html_table",
+    "type": "bizok_html",
     "url": "https://bizok.incheon.go.kr/open_content/support.do",
     "enabled": true,
     "is_aggregator": false,
@@ -630,7 +630,7 @@
   {
     "id": "incheon_city",
     "name": "인천광역시청 - 공고/고시",
-    "type": "html_table",
+    "type": "incheon_city_html",
     "url": "https://www.incheon.go.kr/IC010205",
     "enabled": true,
     "is_aggregator": false,

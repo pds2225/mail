@@ -554,20 +554,32 @@ def _print_verification(result: dict[str, Any]) -> None:
         c = it.get("category", "기타")
         cats_send[c] = cats_send.get(c, 0) + 1
 
-    print("\n── 검증 결과 ─────────────────────────────────────────────────")
-    print(f"  1. 중복 공고 제거:           {result['removed_dups']}건 제거됨  ✓")
-    print(f"  2. 마감일 경과 공고 제외:    {expired_count}건 → 제외 목록  ✓")
-    print(f"  3. URL 없는 공고 → 확인필요: {no_url_count}건  ✓")
-    print(f"  4. 필수필드 누락 → 확인필요: {missing_fields}건  ✓")
+    print("\n[검증 결과]")
+    print(f"  1. 중복 공고 제거:           {result['removed_dups']}건 제거됨  [OK]")
+    print(f"  2. 마감일 경과 공고 제외:    {expired_count}건 -> 제외 목록  [OK]")
+    print(f"  3. URL 없는 공고 -> 확인필요: {no_url_count}건  [OK]")
+    print(f"  4. 필수필드 누락 -> 확인필요: {missing_fields}건  [OK]")
     print(f"  5. 분야 분류 결과:           {cats_send}")
-    print(f"  6. 결과 파일 생성:           3종 생성됨  ✓")
-    print(f"  7. 실제 발송 차단:           SMTP 미호출 — 초안 파일만 생성  ✓")
-    print("───────────────────────────────────────────────────────────────")
+    print(f"  6. 결과 파일 생성:           3종 생성됨  [OK]")
+    print(f"  7. 실제 발송 차단:           SMTP 미호출 - 초안 파일만 생성  [OK]")
+    print("-" * 63)
 
 
 # ── 메인 ─────────────────────────────────────────────────────────────────────
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows CP949 콘솔에서 한글·특수문자 출력 깨짐 방지
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+    if hasattr(sys.stderr, "reconfigure"):
+        try:
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
     parser = argparse.ArgumentParser(
         description="공고 정확도 검수 파이프라인",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -592,7 +604,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.input:
         input_path = Path(args.input)
         if not input_path.exists():
-            print(f"❌ 입력 파일 없음: {input_path}", file=sys.stderr)
+            print(f"[ERR] 입력 파일 없음: {input_path}", file=sys.stderr)
             return 1
         raw_items = json.loads(input_path.read_text(encoding="utf-8"))
         if not isinstance(raw_items, list):
@@ -612,8 +624,8 @@ def main(argv: list[str] | None = None) -> int:
             raw_items = fetch_all(load_sites())
             print(f"수집 완료: {len(raw_items)}건")
         except Exception as exc:
-            print(f"❌ 수집 실패: {exc}", file=sys.stderr)
-            print("  → --sample 옵션으로 샘플 데이터 사용 가능", file=sys.stderr)
+            print(f"[ERR] 수집 실패: {exc}", file=sys.stderr)
+            print("  -> --sample 옵션으로 샘플 데이터 사용 가능", file=sys.stderr)
             return 1
 
     else:
@@ -625,7 +637,7 @@ def main(argv: list[str] | None = None) -> int:
     result = run_review(raw_items)
 
     # 요약 출력
-    print(f"\n── 결과 요약 ──────────────────────────────────────────────────")
+    print(f"\n[결과 요약]")
     print(f"  총 입력:   {result['total_input']}건")
     print(f"  중복 제거: {result['removed_dups']}건")
     print(f"  보낼 공고: {len(result['send'])}건")
@@ -634,7 +646,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # 파일 생성
     paths = generate_review_report(result, output_dir)
-    print(f"\n── 결과 파일 ──────────────────────────────────────────────────")
+    print(f"\n[결과 파일]")
     for name, path in paths.items():
         print(f"  {name:12s}: {path}")
 

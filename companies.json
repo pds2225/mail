@@ -1,0 +1,51 @@
+{
+  "companies": [
+    {
+      "id": "cmp_incheon_mfg",
+      "name": "인천 남동구 제조수출 기업",
+      "email": "ekth3691@gmail.com",
+      "active": true,
+      "region": { "city": "인천", "district": "남동구" },
+      "industry_keywords": ["화장품", "뷰티", "K-뷰티", "제조", "제조업"],
+      "interest_keywords": [
+        "수출", "해외전시회", "해외진출", "글로벌", "박람회", "전시회",
+        "스마트공장", "스마트팩토리", "제조DX", "공정개선", "공정자동화",
+        "혁신바우처", "수출바우처"
+      ],
+      "exclude_keywords": [
+        "설명회", "교육일정", "교육 일정", "오리엔테이션", "공급기업", "수행기관",
+        "기선정", "정산", "협약", "결과보고", "지침 안내", "매뉴얼 안내"
+      ],
+      "has_factory": true,
+      "export_focus": true,
+      "support_type_prefs": ["지원금/바우처", "투자"],
+      "match_threshold": 50,
+      "weights": {
+        "industry_match": 12,
+        "interest_match": 8,
+        "region_district": 30,
+        "region_city": 22,
+        "region_nationwide": 14,
+        "factory_bonus": 10,
+        "export_bonus": 10,
+        "support_type_bonus": 8,
+        "exclude_penalty": -60,
+        "region_mismatch_penalty": -40
+      }
+    },
+    {
+      "id": "cmp_seoul_ai",
+      "name": "서울 AI·SaaS 스타트업",
+      "email": "ekth3691@gmail.com",
+      "active": true,
+      "region": { "city": "서울", "district": "" },
+      "industry_keywords": ["AI", "인공지능", "데이터", "SaaS", "소프트웨어"],
+      "interest_keywords": ["사업화", "스타트업", "창업", "R&D", "기술개발"],
+      "exclude_keywords": ["설명회", "교육일정", "공급기업", "수행기관"],
+      "has_factory": false,
+      "export_focus": false,
+      "support_type_prefs": ["지원금/바우처", "투자"],
+      "match_threshold": 50
+    }
+  ]
+}
