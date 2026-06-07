@@ -11,6 +11,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # .env 자동 로드 (customer_intake import 시 1회)
 def _load_dotenv() -> None:
     try:
+        from dotenv import load_dotenv as _load_shared
+        _load_shared(r"D:\.env.shared")
         from dotenv import load_dotenv
     except ImportError:
         return

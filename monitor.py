@@ -60,7 +60,7 @@ SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
-MAX_SEEN_IDS   = 1000
+MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
@@ -1159,6 +1159,39 @@ def fetch_bizok(site: dict) -> list[dict]:
     return items
 
 
+def fetch_incheon_city(site: dict) -> list[dict]:
+    """인천광역시청 공고/고시: table 없이 a[href*='/view?repSeq='] 링크 목록."""
+    BASE = "https://www.incheon.go.kr"
+    soup = _soup(site["url"])
+    if not soup:
+        return []
+    items, agg = [], site.get("is_aggregator", False)
+    seen: set[str] = set()
+    for a in soup.find_all("a", href=re.compile(r"/IC010205/view\?repSeq=")):
+        href = a.get("href", "")
+        m = re.search(r"repSeq=([^&]+)", href)
+        if not m:
+            continue
+        rep_seq = m.group(1)
+        if rep_seq in seen:
+            continue
+        seen.add(rep_seq)
+        title = norm(a.get_text())
+        if not title or len(title) < 4:
+            continue
+        link = href if href.startswith("http") else urljoin(BASE, href)
+        parent = a.find_parent(["li", "tr", "div"])
+        row_text = parent.get_text(" ", strip=True) if parent else ""
+        dates = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
+        posted = dates[0].replace(".", "-").replace("/", "-") if dates else ""
+        deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
+        items.append(_item(
+            f"incheon_city_{rep_seq}", title, link, "인천광역시",
+            "", deadline, site["name"], posted, agg,
+        ))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
 
 def fetch_mssmiv(site: dict) -> list[dict]:
     """중소기업 혁신바우처 공고: table tbody tr, onclick=goDetail(seq)
@@ -1278,7 +1311,7 @@ def fetch_sba(site: dict) -> list[dict]:
         link = href if href.startswith("http") else BASE + href
         if link in seen: continue
         seen.add(link)
-        iid = f"sba_{stable_id(link)}"
+        iid = f"sba_{stable_id(title)}"
         # 날짜: 부모 텍스트에서
         parent = a
         for _ in range(4):
@@ -1336,6 +1369,7 @@ FETCHERS = {
     "mss_html":           fetch_mss,
     "itp_html":           fetch_itp,
     "bizok_html":         fetch_bizok,
+    "incheon_city_html":  fetch_incheon_city,
     "exportvoucher_html": fetch_exportvoucher,
     "mssmiv_html":        fetch_mssmiv,
     "keit_html":          fetch_keit,
@@ -2404,9 +2438,10 @@ def execute_monitor(
                 group.get("recipients", []),
             )
 
-    # ⑦ seen_ids 업데이트
+    # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:
         seen_ids.update(it["id"] for it in deduped)
+        seen_ids.update(it["id"] for it in date_unknown if it.get("id"))
         save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
     final_mail_count = sum(len(filter_for_group(filtered_new, g)) for g in groups)

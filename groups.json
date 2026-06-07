@@ -109,7 +109,17 @@
     "recipients": [
       "ekth3691@gmail.com",
       "dvd197001@gmail.com"
-    ]
+    ],
+    "score_threshold": 50,
+    "weights": {
+      "priority_match": 30,
+      "or_keyword_match": 5,
+      "exclude_penalty": -50,
+      "region_match": 20
+    },
+    "llm_check_enabled": false,
+    "llm_check_threshold_band": [40, 70],
+    "llm_call_limit_per_run": 30
   },
   {
     "id": "grp_ai_saas",

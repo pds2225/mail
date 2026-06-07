@@ -38,6 +38,8 @@ log = logging.getLogger(__name__)
 
 def _load_dotenv() -> None:
     try:
+        from dotenv import load_dotenv as _load_shared
+        _load_shared(r"D:\.env.shared")
         from dotenv import load_dotenv
     except ImportError:
         return
