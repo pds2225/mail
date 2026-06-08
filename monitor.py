@@ -1704,6 +1704,164 @@ def classify_deadline_status(item: dict, today=None) -> str:
     return "open"
 
 
+# ── 업력 / 지원금액 / 일반 지역 (그룹에 해당 설정이 있을 때만 적용) ──────────────
+# 기존 인천 그룹 동작에는 영향이 없도록, business_years / min_support_amount /
+# 비(非)인천 applicant_region_city 가 설정된 그룹에서만 아래 로직이 동작한다.
+
+_GF_YEARS = r"(\d+(?:\.\d+)?)"
+_GF_BIZ_CTX = "창업|업력|설립|개업|사업|업종|기업|법인|소상공인|중소기업|업체|예비창업"
+
+
+def _years_value(num: str, unit: str) -> float:
+    return float(num) / 12.0 if "개월" in unit else float(num)
+
+
+def extract_business_year_requirement(text: str) -> dict | None:
+    """공고가 요구하는 업력(창업·설립 경과연수) 범위를 추출한다.
+    반환: {"min": float|None, "max": float|None} (신청 가능 업력 구간) 또는 None(언급 없음)."""
+    if not text:
+        return None
+    t = unicodedata.normalize("NFKC", text).replace(",", "")
+    if not re.search(r"창업|업력|설립|개업|사업\s*개시|업종\s*영위|예비창업", t):
+        return None
+    found_min: float | None = None
+    found_max: float | None = None
+
+    def upd_max(v: float) -> None:
+        nonlocal found_max
+        found_max = v if found_max is None else min(found_max, v)
+
+    def upd_min(v: float) -> None:
+        nonlocal found_min
+        found_min = v if found_min is None else max(found_min, v)
+
+    # 범위: "창업 3~7년", "업력 3년 ~ 7년"
+    for m in re.finditer(rf"(?:창업|업력|설립)[^\n]{{0,10}}?{_GF_YEARS}\s*년?\s*[~∼\-]\s*{_GF_YEARS}\s*년", t):
+        upd_min(float(m.group(1)))
+        upd_max(float(m.group(2)))
+    # 상한: "7년 이내 / 미만 / 이하" (업력 문맥일 때만)
+    for m in re.finditer(rf"{_GF_YEARS}\s*(년|개월)\s*(?:이내|미만|이하)", t):
+        if re.search(_GF_BIZ_CTX, t[max(0, m.start() - 15):m.end() + 10]):
+            upd_max(_years_value(m.group(1), m.group(2)))
+    # 하한: "3년 이상 / 초과" (업력 문맥일 때만)
+    for m in re.finditer(rf"{_GF_YEARS}\s*(년|개월)\s*(?:이상|초과)", t):
+        if re.search(_GF_BIZ_CTX, t[max(0, m.start() - 15):m.end() + 10]):
+            upd_min(_years_value(m.group(1), m.group(2)))
+    if found_min is None and found_max is None:
+        return None
+    return {"min": found_min, "max": found_max}
+
+
+def business_years_status(item: dict, group: dict) -> str:
+    """그룹 신청자 업력 구간과 공고 업력 요건의 호환성. eligible/not_eligible/unknown/n/a."""
+    cfg = group.get("business_years")
+    if not cfg:
+        return "n/a"
+    req = extract_business_year_requirement(_notice_text(item))
+    if req is None:
+        return "unknown"
+    lo_raw = cfg.get("min_exclusive")
+    if lo_raw is None:
+        lo_raw = cfg.get("min", 0)
+    lo = float(lo_raw if lo_raw is not None else 0)
+    hi_raw = cfg.get("max_inclusive", cfg.get("max"))
+    hi = float(hi_raw) if hi_raw is not None else float("inf")
+    plo = req["min"] if req["min"] is not None else 0.0
+    phi = req["max"] if req["max"] is not None else float("inf")
+    # 신청자 업력 구간 (lo, hi] 와 공고 허용 구간 [plo, phi] 의 교집합 존재 여부
+    return "eligible" if max(lo, plo) <= min(hi, phi) else "not_eligible"
+
+
+def extract_support_amount(text: str) -> int | None:
+    """공고 본문에서 최대 지원금액(원)을 추출한다. 없으면 None."""
+    if not text:
+        return None
+    t = unicodedata.normalize("NFKC", text).replace(",", "").replace(" ", "")
+    amounts: list[int] = []
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*억", t):
+        amounts.append(int(float(m.group(1)) * 100_000_000))
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*천만", t):
+        amounts.append(int(float(m.group(1)) * 10_000_000))
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*백만", t):
+        amounts.append(int(float(m.group(1)) * 1_000_000))
+    for m in re.finditer(r"(?<![천백.\d])(\d{1,6})\s*만\s*원?", t):
+        amounts.append(int(m.group(1)) * 10_000)
+    for m in re.finditer(r"(?<!\d)(\d{7,})\s*원", t):
+        amounts.append(int(m.group(1)))
+    return max(amounts) if amounts else None
+
+
+def support_amount_status(item: dict, group: dict) -> str:
+    """그룹 최소 지원금액 기준과 공고 금액 비교. eligible/not_eligible/unknown/n/a."""
+    threshold = group.get("min_support_amount")
+    if not threshold:
+        return "n/a"
+    amt = extract_support_amount(_notice_text(item))
+    if amt is None:
+        return "unknown"
+    threshold = int(threshold)
+    if group.get("min_support_amount_inclusive", False):
+        return "eligible" if amt >= threshold else "not_eligible"
+    return "eligible" if amt > threshold else "not_eligible"
+
+
+def _short_region(city: str) -> str:
+    """'경기도' → '경기' 처럼 광역 명칭을 KNOWN_REGIONS 단축형으로 변환."""
+    for r in sorted(KNOWN_REGIONS, key=len, reverse=True):
+        if r and r in city:
+            return r
+    return city
+
+
+def classify_region_for_group(item: dict, group: dict) -> dict:
+    """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
+    인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
+    text = _notice_text(item)
+    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    city = group.get("applicant_region_city", "")
+    label = (group.get("applicant_region_label") or _short_region(city) or city).lower()
+    district = group.get("applicant_region_district", "")
+    districts = [d for d in ([district] + group.get("applicant_districts", [])) if d]
+
+    def result(rs: str, ds: str, elig: list[str], excl: list[str]) -> dict:
+        return {"region_status": rs, "district_status": ds,
+                "eligible_regions": _unique(elig), "excluded_regions": _unique(excl)}
+
+    for phrase in group.get("region_exclude_phrases", []):
+        if phrase in raw_text:
+            return result("not_eligible", "not_eligible", [], [district or city])
+    for d in districts:
+        short_d = d.replace("시", "").replace("군", "").replace("구", "")
+        if f"{d} 제외" in raw_text or (short_d and f"{short_d} 제외" in raw_text):
+            return result("not_eligible", "not_eligible", [], [d])
+
+    target = _detect_target_regions(raw_text)
+    detected = [r.lower() for r in (target.get("regions") or [])]
+    nationwide = target.get("nationwide") or "전국" in text
+
+    district_hits = []
+    for d in districts:
+        short_d = d.replace("시", "").replace("군", "").replace("구", "")
+        if d.lower() in text or (short_d and short_d.lower() in text):
+            district_hits.append(d)
+
+    if nationwide:
+        return result("eligible", "eligible", [city or label], [])
+    if district_hits:
+        return result("eligible", "eligible", district_hits, [])
+
+    region_hit = bool(label) and (label in detected or label in text)
+    other_regions = [r for r in detected if r != label]
+    if region_hit:
+        # 우리 광역 언급 + 특정 타 시·군 한정 아님 → 적합(시·군 미상이나 포함 우선)
+        return result("eligible", "eligible", [city or label], [])
+    if other_regions:
+        return result("not_eligible", "not_eligible", [], other_regions)
+    if any(r.lower() in text for r in KNOWN_REGIONS):
+        return result("not_eligible", "not_eligible", [], [])
+    return result("unknown", "unknown", [], [])
+
+
 def classify_region(item: dict) -> dict:
     text = _notice_text(item)
     raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
@@ -1905,22 +2063,26 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     elif deadline_status == "unknown":
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
-    region_info = classify_region(item)
+    applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
+    use_generic_region = bool(group) and applicant_city != APPLICANT_REGION_CITY
+    region_info = classify_region_for_group(item, g) if use_generic_region else classify_region(item)
     if region_info["region_status"] == "not_eligible":
         reason_codes.append("REGION_NOT_ELIGIBLE")
     if region_info["district_status"] == "not_eligible":
         reason_codes.append("DISTRICT_NOT_ELIGIBLE")
     if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
         reason_codes.append("LOW_CONFIDENCE")
-    if "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
+    if not use_generic_region and "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
         reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
 
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
     src = (item.get("source", "") + " " + item.get("author", "")).lower()
     source_bypass = always_srcs and any(s in src for s in always_srcs)
     req_regions = g.get("required_conditions", {}).get("regions", [])
-    if group is not None and not source_bypass and not region_match(item, req_regions):
-        reason_codes.append("REGION_NOT_ELIGIBLE")
+    if group is not None and not source_bypass:
+        region_ok = (region_info["region_status"] == "eligible") if use_generic_region else region_match(item, req_regions)
+        if not region_ok:
+            reason_codes.append("REGION_NOT_ELIGIBLE")
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
     group_excluded = [k for k in excl_kws if k in text]
@@ -1941,6 +2103,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_GRANT_NOTICE")
+
+    biz_years_status = business_years_status(item, g) if group is not None else "n/a"
+    amount_status = support_amount_status(item, g) if group is not None else "n/a"
+    if biz_years_status == "not_eligible":
+        reason_codes.append("BUSINESS_YEARS_NOT_ELIGIBLE")
+    if amount_status == "not_eligible":
+        reason_codes.append("AMOUNT_TOO_LOW")
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
@@ -1984,6 +2153,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         notes.append("남동구 소재 기업 신청 가능 여부 확인 필요")
     if "ONLY_SPECIFIC_INDUSTRIAL_COMPLEX" in reason_codes:
         notes.append("특정 산업단지 입주 여부 확인 필요")
+    if biz_years_status == "unknown":
+        notes.append("업력 조건 확인 필요 — 공고에 업력 명시 없음")
+    if amount_status == "unknown":
+        notes.append("지원금액 조건 확인 필요 — 공고에 금액 명시 없음")
 
     result.update({
         "is_relevant": is_relevant,
@@ -2009,6 +2182,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "required_conditions": required_conditions,
         "notes": notes,
         "review_needed": review_needed,
+        "business_years_status": biz_years_status,
+        "support_amount_status": amount_status,
         "_types": classify_support_type(item),
     })
     return result
@@ -2121,12 +2296,15 @@ def fallback_body(items: list[dict]) -> str:
 
 
 def _region_label(item: dict) -> str:
+    district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
+    city = item.get("applicant_region_city") or APPLICANT_REGION_CITY
+    is_default = city == APPLICANT_REGION_CITY
     if item.get("district_status") == "not_eligible":
-        return "남동구 불가"
-    if item.get("region_status") == "eligible" and APPLICANT_REGION_DISTRICT in item.get("eligible_regions", []):
-        return "남동구 가능"
+        return "남동구 불가" if is_default else f"{district} 불가"
+    if item.get("region_status") == "eligible" and district in item.get("eligible_regions", []):
+        return "남동구 가능" if is_default else f"{district} 가능"
     if item.get("region_status") == "eligible":
-        return "인천 전체"
+        return "인천 전체" if is_default else f"{city} 전체"
     return "확인 필요"
 
 
@@ -2164,6 +2342,10 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
             basis_parts.append(f"접수기간: {it.get('deadline_status')}")
         if it.get("region_status") == "not_eligible" or it.get("district_status") == "not_eligible":
             basis_parts.append("지역/구 조건 불일치")
+        if it.get("business_years_status") == "not_eligible":
+            basis_parts.append("업력 조건 불일치")
+        if it.get("support_amount_status") == "not_eligible":
+            basis_parts.append("지원금액 기준 미달")
         basis = " / ".join(basis_parts) or "신청 가능성 낮음"
         lines.append(f"| {title} | {codes} | {basis} |")
     if len(items) > limit:
