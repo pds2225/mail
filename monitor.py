@@ -16,6 +16,18 @@ import httpx
 from anthropic import Anthropic
 from bs4 import BeautifulSoup
 
+# ── 기업 맞춤 정밀 매칭(2차 컷오프) — 선택적 ────────────────────────────────────
+# evaluate_notice(1차 필터) 통과분에 대해 기업 프로필(companies.json) 점수로
+# 정밀 컷오프. 모듈/파일이 없거나 비활성이면 기존 동작 그대로(하위호환).
+try:
+    from company_match import (
+        load_companies as _load_companies,
+        match_for_company as _match_for_company,
+    )
+    _CM_OK = True
+except ImportError:
+    _CM_OK = False
+
 BASE_DIR = Path(__file__).resolve().parent
 
 # ── Playwright fetcher 모듈 동적 임포트 ──────────────────────────────────────
@@ -547,6 +559,11 @@ def load_settings() -> dict:
         "claude_model": "claude-sonnet-4-6",
         "claude_max_tokens": 4000,
         "fetch_max_workers": 10,
+        # 기업 맞춤 정밀 매칭(2차 컷오프). 그룹에 company_id 연결 + 이 값 true 일 때만 적용.
+        "company_match_enabled": False,
+        # 게시일이 기준일(today)보다 이 일수 넘게 지난 공고를 '옛날 공고'로 강제 제외.
+        # null(기본)이면 미적용 — 기존 '직전영업일 정확일치' 로직만 사용.
+        "max_posted_age_days": None,
     }
     return {**default, **load_json(SETTINGS_PATH, {})}
 
@@ -1562,13 +1579,17 @@ def dedup_items(items: list[dict]) -> list[dict]:
 # ══════════════════════════════════════════════════════════════════
 
 def partition_posted_dates(
-    items: list[dict], days_back: int = 1,
+    items: list[dict], days_back: int = 1, max_age_days: int | None = None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """
     posted_date 기준 분류.
     반환: (직전영업일 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
+
+    max_age_days 가 지정되면, 게시일이 오늘 기준 그 일수보다 오래된 공고는
+    '옛날 공고'로 간주해 강제 제외(_excluded_reason="too_old"). None 이면 미적용.
     """
     target = previous_business_day(days_back=days_back)
+    today = datetime.now(KST).date()
     matched, unknown, excluded = [], [], []
     for it in items:
         pd = it.get("posted_date", "").strip()
@@ -1577,12 +1598,16 @@ def partition_posted_dates(
             continue
         try:
             item_date = datetime.strptime(pd[:10], "%Y-%m-%d").date()
-            if item_date == target:
-                matched.append(it)
-            else:
-                excluded.append({**it, "_excluded_posted_date": pd[:10]})
         except ValueError:
             unknown.append(it)
+            continue
+        if max_age_days is not None and (today - item_date).days > max_age_days:
+            excluded.append({**it, "_excluded_posted_date": pd[:10], "_excluded_reason": "too_old"})
+            continue
+        if item_date == target:
+            matched.append(it)
+        else:
+            excluded.append({**it, "_excluded_posted_date": pd[:10]})
     log.info(
         "날짜분류(직전영업일-%d, 기준=%s): 확정 %d / 날짜불명 %d / 제외 %d",
         days_back, target, len(matched), len(unknown), len(excluded),
@@ -2048,6 +2073,26 @@ def filter_for_group(items: list[dict], group: dict) -> list[dict]:
     return result
 
 
+def refine_included_by_company(
+    included: list[dict], group: dict, settings: dict, companies_by_id: dict,
+) -> tuple[list[dict], list[dict]]:
+    """evaluate_notice 통과분(included)을 그룹에 연결된 기업 프로필로 2차 정밀 컷오프.
+
+    그룹의 'company_id' 가 companies.json 의 기업과 연결되고
+    settings.company_match_enabled 가 true 일 때만 적용한다.
+    적용 시 기업 match_threshold 이상만 통과(점수 내림차순 정렬), 미달은 강등 목록으로 반환.
+    비활성/미연결/프로필 부재 → (included 원본, []) 그대로 (하위호환).
+    """
+    if not (settings.get("company_match_enabled") and _CM_OK):
+        return included, []
+    cid = group.get("company_id")
+    company = companies_by_id.get(cid) if cid else None
+    if not company:
+        return included, []
+    result = _match_for_company(included, company)
+    return result["matched"], result["rejected"]
+
+
 
 # ══════════════════════════════════════════════════════════════════
 # 렌더링 / Claude 요약
@@ -2327,7 +2372,9 @@ def execute_monitor(
     date_excluded: list = []
     date_review_queue: list = []
     if settings.get("date_filter_enabled", True):
-        date_matched, date_unknown, date_excluded = partition_posted_dates(new_items, days_back)
+        date_matched, date_unknown, date_excluded = partition_posted_dates(
+            new_items, days_back, max_age_days=settings.get("max_posted_age_days"),
+        )
         date_review_queue = build_date_review_queue(date_unknown)
         if include_unknown:
             filtered_new = date_matched + date_unknown
@@ -2387,6 +2434,15 @@ def execute_monitor(
         }
 
     # ⑥ 그룹별 필터 + 발송
+    # 기업 맞춤 정밀 매칭(2차 컷오프)용 기업 프로필 로드 (활성화 시에만)
+    companies_by_id: dict = {}
+    if settings.get("company_match_enabled") and _CM_OK:
+        try:
+            companies_by_id = {c["id"]: c for c in _load_companies()}
+            log.info("기업 프로필 로드: %d개 (정밀 매칭 활성)", len(companies_by_id))
+        except Exception as e:
+            log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
+
     sent_groups: list[dict] = []
     preview_groups: list[dict] = []
     for group in groups:
@@ -2394,6 +2450,11 @@ def execute_monitor(
         g_items = diagnostics["included"]
         review_items = diagnostics["review"]
         excluded_items = diagnostics["excluded"]
+        # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
+        g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
+        if _demoted:
+            review_items = review_items + _demoted
+            log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
         if not allow_send:
             preview_groups.append({
                 "name": group.get("name"),
@@ -2444,7 +2505,8 @@ def execute_monitor(
         seen_ids.update(it["id"] for it in date_unknown if it.get("id"))
         save_seen_ids(seen_ids)
     log.info("=== 완료 ===")
-    final_mail_count = sum(len(filter_for_group(filtered_new, g)) for g in groups)
+    # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
+    final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
     return {
         "ok": True,
         "mode": mode,
