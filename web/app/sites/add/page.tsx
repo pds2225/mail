@@ -58,42 +58,55 @@ export default function SiteAddPage() {
     }
   }
 
-  const v = validation?.validation as {
-    errors?: { message: string }[];
-    warnings?: { message: string }[];
-    checks?: Record<string, unknown>;
-  } | undefined;
+  const v = validation?.validation as
+    | {
+        errors?: { message: string }[];
+        warnings?: { message: string }[];
+        checks?: Record<string, unknown>;
+      }
+    | undefined;
 
   return (
     <div>
-      <h1>사이트 추가</h1>
-      <p style={{ color: "#64748b" }}>
-        저장은 PR 패킷 생성입니다. 운영 <code>sites.json</code>은 자동 변경되지 않습니다.
-      </p>
+      <header className="page-header">
+        <h1 className="page-title">사이트 추가</h1>
+        <p className="page-desc">
+          저장은 PR 패킷 생성입니다. 운영 <code>sites.json</code>은 자동 변경되지 않습니다.
+        </p>
+      </header>
 
       <div className="card">
         <div className="grid2">
-          <div>
-            <label className="label">사이트명 *</label>
+          <div className="field">
+            <label className="label" htmlFor="f-name">
+              사이트명 *
+            </label>
             <input
+              id="f-name"
               className="input"
               value={form.name}
               onChange={(e) => update("name", e.target.value)}
               placeholder="예: OOO 지원사업"
             />
           </div>
-          <div>
-            <label className="label">URL *</label>
+          <div className="field">
+            <label className="label" htmlFor="f-url">
+              URL *
+            </label>
             <input
+              id="f-url"
               className="input"
               value={form.url}
               onChange={(e) => update("url", e.target.value)}
               placeholder="https://"
             />
           </div>
-          <div>
-            <label className="label">그룹/카테고리</label>
+          <div className="field">
+            <label className="label" htmlFor="f-cat">
+              그룹/카테고리
+            </label>
             <select
+              id="f-cat"
               className="select"
               value={form.category}
               onChange={(e) => update("category", e.target.value)}
@@ -105,9 +118,12 @@ export default function SiteAddPage() {
               ))}
             </select>
           </div>
-          <div>
-            <label className="label">수집 방식 *</label>
+          <div className="field">
+            <label className="label" htmlFor="f-col">
+              수집 방식 *
+            </label>
             <select
+              id="f-col"
               className="select"
               value={form.collectorType}
               onChange={(e) => update("collectorType", e.target.value)}
@@ -120,54 +136,72 @@ export default function SiteAddPage() {
             </select>
           </div>
         </div>
-        <div style={{ marginTop: "1rem" }}>
-          <label className="label">메모</label>
+
+        <div className="field mt">
+          <label className="label" htmlFor="f-note">
+            메모
+          </label>
           <textarea
+            id="f-note"
             className="textarea"
             rows={2}
             value={form.note}
             onChange={(e) => update("note", e.target.value)}
           />
         </div>
-        <div style={{ display: "flex", gap: "1.5rem", marginTop: "1rem", flexWrap: "wrap" }}>
-          <label>
+
+        <div className="check-row mt">
+          <label className="check">
             <input
               type="checkbox"
               checked={form.enabled}
               onChange={(e) => update("enabled", e.target.checked)}
-            />{" "}
+            />
             활성
           </label>
-          <label>
+          <label className="check">
             <input
               type="checkbox"
               checked={form.isAggregator}
               onChange={(e) => update("isAggregator", e.target.checked)}
-            />{" "}
+            />
             통합포털(aggregator)
           </label>
-          <label>
+          <label className="check">
             <input
               type="checkbox"
               checked={form.testCollect}
               onChange={(e) => update("testCollect", e.target.checked)}
-            />{" "}
+            />
             URL 접근 테스트
           </label>
         </div>
-        <div style={{ display: "flex", gap: 8, marginTop: "1.25rem" }}>
-          <button type="button" className="btn btn-secondary" onClick={runValidate} disabled={loading}>
-            검증
+
+        <div className="row mt">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={runValidate}
+            disabled={loading}
+          >
+            {loading ? "처리 중…" : "검증"}
           </button>
-          <button type="button" className="btn btn-primary" onClick={generatePacket} disabled={loading}>
-            PR 패킷 생성
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={generatePacket}
+            disabled={loading}
+          >
+            {loading ? "처리 중…" : "PR 패킷 생성"}
           </button>
         </div>
       </div>
 
       {v?.errors?.length ? (
         <div className="card">
-          <h3>오류</h3>
+          <h3 className="card-title">
+            오류 <span className="badge badge-red">{v.errors.length}</span>
+          </h3>
           {v.errors.map((e, i) => (
             <p key={i} className="error">
               {e.message}
@@ -175,9 +209,12 @@ export default function SiteAddPage() {
           ))}
         </div>
       ) : null}
+
       {v?.warnings?.length ? (
         <div className="card">
-          <h3>경고</h3>
+          <h3 className="card-title">
+            경고 <span className="badge badge-gray">{v.warnings.length}</span>
+          </h3>
           {v.warnings.map((e, i) => (
             <p key={i} className="warn">
               {e.message}
@@ -185,9 +222,10 @@ export default function SiteAddPage() {
           ))}
         </div>
       ) : null}
+
       {v?.checks && (
         <div className="card">
-          <h3>수집 누락 점검</h3>
+          <h3 className="card-title">수집 누락 점검</h3>
           <ul>
             {Object.entries(v.checks).map(([k, val]) => (
               <li key={k}>
@@ -200,7 +238,7 @@ export default function SiteAddPage() {
 
       {packet?.packetMarkdown ? (
         <div className="card">
-          <h3>PR 패킷</h3>
+          <h3 className="card-title">PR 패킷</h3>
           <p style={{ fontSize: 14 }}>{String(packet.notice)}</p>
           <p>
             브랜치 제안: <code>{String(packet.branch)}</code>
@@ -208,7 +246,7 @@ export default function SiteAddPage() {
           <pre className="pre">{String(packet.packetMarkdown)}</pre>
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary mt"
             onClick={() => navigator.clipboard.writeText(String(packet.packetMarkdown))}
           >
             패킷 복사
