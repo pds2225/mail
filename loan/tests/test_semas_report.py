@@ -69,8 +69,11 @@ def test_missing_smtp_does_not_abort_report(tmp_path, monkeypatch):
     monkeypatch.setenv("SEMAS_LOAN_URL", "https://example.com/semas")
     monkeypatch.setenv("ALLOW_SEND_EMAIL", "true")
     monkeypatch.setenv("MAIL_TO", "loan-recipient@example.test")  # pragma: allowlist secret
-    monkeypatch.delenv("GMAIL_ADDRESS", raising=False)  # pragma: allowlist secret
-    monkeypatch.delenv("GMAIL_APP_PASSWORD", raising=False)
+    # run_scan 내부 _load_dotenv 가 .env 를 override=False 로 다시 읽어 자격을 되살릴 수 있어
+    # delenv 만으로는 격리가 안 된다(실제 SMTP 발송 위험). 빈 값으로 강제하면 override=False 로
+    # 덮이지 않아 send_email 이 SMTP 연결 전에 RuntimeError 로 빠진다(실제 발송 차단).
+    monkeypatch.setenv("GMAIL_ADDRESS", "")  # pragma: allowlist secret
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "")
 
     result = run_scan(
         run_mode="dry-run",
