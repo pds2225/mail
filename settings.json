@@ -6,5 +6,7 @@
   "raw_all_recipients": [
     "ekth3691@gmail.com",
     "khban99@gmail.com"
-  ]
+  ],
+  "company_match_enabled": true,
+  "max_posted_age_days": null
 }
