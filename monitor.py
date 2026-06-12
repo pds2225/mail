@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-import hashlib, html, json, logging, os, re, smtplib, unicodedata
+import hashlib, html, json, logging, os, re, smtplib, ssl, unicodedata
 from datetime import datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -572,14 +572,37 @@ def load_settings() -> dict:
 # 크롤러
 # ══════════════════════════════════════════════════════════════════
 
-def _soup(url: str, extra_headers: dict | None = None, **kwargs):
+def _legacy_ssl_ctx() -> ssl.SSLContext:
+    """한국 정부/공공 사이트의 legacy SSL·cipher 호환용 컨텍스트."""
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    ctx.set_ciphers("DEFAULT@SECLEVEL=0")
     try:
-        hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
-        with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True) as c:
-            r = c.get(url, **kwargs); r.raise_for_status()
-            return BeautifulSoup(r.text, "html.parser")
-    except Exception as e:
-        log.error("접속 실패 %s: %s", url, e); return None
+        ctx.options |= ssl.OP_LEGACY_SERVER_CONNECT  # OpenSSL 3.x
+    except AttributeError:
+        pass
+    return ctx
+
+
+def _soup(url: str, extra_headers: dict | None = None, **kwargs):
+    hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
+    # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
+    # 정상 사이트는 (1)에서 즉시 성공 → 기존 동작·속도 보존. SSL 실패만 폴백.
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify: Any = True if stage == "strict" else (
+            False if stage == "no_verify" else _legacy_ssl_ctx())
+        try:
+            with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
+                              verify=verify) as c:
+                r = c.get(url, **kwargs); r.raise_for_status()
+                return BeautifulSoup(r.text, "html.parser")
+        except httpx.HTTPStatusError as e:
+            log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
+        except Exception as e:
+            last_err = e; continue
+    log.error("접속 실패 %s: %s", url, last_err); return None
 
 def _item(id_, title, link, author, desc, deadline, source,
           posted_date="", is_aggregator=False) -> dict:
