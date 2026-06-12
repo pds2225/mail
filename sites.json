@@ -937,6 +937,15 @@
     "note": "KOTRA/중진공 수출바우처 공지 — 상세에서 신청기간·지역 추출"
   },
   {
+    "id": "mssmiv",
+    "name": "중소기업 혁신바우처(MSSMIV)",
+    "type": "mssmiv_html",
+    "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소벤처기업부 혁신바우처 공지사항(사업공고 포함) — goDetail(seq)→BoardView?seq"
+  },
+  {
     "id": "custom_f4574ebb",
     "name": "예술경영지원센터",
     "type": "html_card",

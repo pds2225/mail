@@ -1258,16 +1258,26 @@ def fetch_exportvoucher(site: dict) -> list[dict]:
     items, agg = [], site.get("is_aggregator", False)
     seen = set()
 
+    # 목록 URL의 bbs_id (신버전 goDetail(ntt_id) 1인자일 때 게시판 구분에 사용)
+    mbbs = re.search(r"bbs_id=(\d+)", site["url"])
+    default_bbs = mbbs.group(1) if mbbs else "1"
+    # 노이즈 제목 제거 (보안점검, 공지 등)
+    NOISE = re.compile(r"보안점검|열람금지|시스템\s*점검|서비스\s*중단")
+
     for a in soup.find_all("a"):
         title = norm(a.get_text())
         if not title or len(title) < 5: continue
         # href 또는 태그 전체 문자열에서 goDetail 추출
         tag_str = str(a)
-        m = re.search(r"goDetail\(['\"](\d+)['\"],\s*['\"](\d+)['\"]", tag_str)
-        if not m: continue
-        ntt_id, bbs_id = m.group(1), m.group(2)
-        # 노이즈 제목 제거 (보안점검, 공지 등)
-        NOISE = re.compile(r"보안점검|열람금지|시스템\s*점검|서비스\s*중단")
+        # 사이트 개편 대응: 신 goDetail(123) 1인자 / 구 goDetail('123','1') 2인자 모두 지원
+        m2 = re.search(r"goDetail\(\s*['\"]?(\d+)['\"]?\s*,\s*['\"]?(\d+)['\"]?\s*\)", tag_str)
+        m1 = re.search(r"goDetail\(\s*(\d+)\s*\)", tag_str)
+        if m2:
+            ntt_id, bbs_id = m2.group(1), m2.group(2)
+        elif m1:
+            ntt_id, bbs_id = m1.group(1), default_bbs
+        else:
+            continue
         if NOISE.search(title): continue
 
         if bbs_id == "1":   # 공지사항 (사업공고 포함)
