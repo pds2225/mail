@@ -36,21 +36,28 @@ export default function RecipientsPage() {
 
   return (
     <div>
-      <h1>수신자 검증 · PR 패킷</h1>
-      <p style={{ color: "#64748b" }}>
-        이메일은 <code>groups.json</code> / <code>settings.json</code>에 PR로만 반영합니다. 임의
-        주소를 코드에 추가하지 않습니다.
-      </p>
+      <header className="page-header">
+        <h1 className="page-title">수신자 검증 · PR 패킷</h1>
+        <p className="page-desc">
+          이메일은 <code>groups.json</code> / <code>settings.json</code>에 PR로만 반영합니다. 임의
+          주소를 코드에 추가하지 않습니다.
+        </p>
+      </header>
+
       <div className="card">
-        <label className="label">이메일 (줄바꿈·쉼표 구분)</label>
+        <label className="label" htmlFor="emails">
+          이메일 (줄바꿈·쉼표 구분)
+        </label>
         <textarea
+          id="emails"
           className="textarea"
           rows={4}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="user@example.com"
         />
-        <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+        <p className="hint">검증 후 PR 패킷을 생성하면 변경 내용을 복사해 PR로 반영할 수 있습니다.</p>
+        <div className="row mt">
           <button type="button" className="btn btn-secondary" onClick={validate}>
             검증
           </button>
@@ -59,21 +66,27 @@ export default function RecipientsPage() {
           </button>
         </div>
       </div>
+
       {validation?.masked?.length ? (
         <div className="card">
-          <h3>유효 (마스킹)</h3>
-          <ul>
+          <h3 className="card-title">
+            유효 <span className="badge badge-green">{validation.masked.length}</span>
+          </h3>
+          <div className="row">
             {validation.masked.map((m, i) => (
-              <li key={i}>
-                <code>{m}</code>
-              </li>
+              <span key={i} className="tag">
+                {m}
+              </span>
             ))}
-          </ul>
+          </div>
         </div>
       ) : null}
+
       {validation?.rejected?.length ? (
         <div className="card">
-          <h3>거부됨</h3>
+          <h3 className="card-title">
+            거부됨 <span className="badge badge-red">{validation.rejected.length}</span>
+          </h3>
           {validation.rejected.map((r, i) => (
             <p key={i} className="error">
               {r.reason}: (마스킹됨)
@@ -81,9 +94,10 @@ export default function RecipientsPage() {
           ))}
         </div>
       ) : null}
+
       {packet?.packetMarkdown ? (
         <div className="card">
-          <h3>RECIPIENT_UPDATE_PACKET</h3>
+          <h3 className="card-title">RECIPIENT_UPDATE_PACKET</h3>
           <pre className="pre">{String(packet.packetMarkdown)}</pre>
         </div>
       ) : null}
