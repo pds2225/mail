@@ -3,5 +3,8 @@
   "days_back": 1,
   "include_date_unknown": false,
   "raw_all_enabled": true,
-  "raw_all_recipients": ["ekth3691@gmail.com"]
+  "raw_all_recipients": [
+    "ekth3691@gmail.com",
+    "khban99@gmail.com"
+  ]
 }

@@ -108,7 +108,8 @@
     ],
     "recipients": [
       "ekth3691@gmail.com",
-      "dvd197001@gmail.com"
+      "dvd197001@gmail.com",
+      "khban99@gmail.com"
     ],
     "score_threshold": 50,
     "weights": {
@@ -118,7 +119,10 @@
       "region_match": 20
     },
     "llm_check_enabled": false,
-    "llm_check_threshold_band": [40, 70],
+    "llm_check_threshold_band": [
+      40,
+      70
+    ],
     "llm_call_limit_per_run": 30
   },
   {
@@ -157,7 +161,8 @@
       "그외"
     ],
     "recipients": [
-      "ekth3691@gmail.com"
+      "ekth3691@gmail.com",
+      "khban99@gmail.com"
     ]
   },
   {
@@ -208,7 +213,8 @@
     "min_support_amount": 3000000,
     "min_support_amount_inclusive": false,
     "recipients": [
-      "ekth3691@gmail.com"
+      "ekth3691@gmail.com",
+      "khban99@gmail.com"
     ],
     "score_threshold": 50
   }
