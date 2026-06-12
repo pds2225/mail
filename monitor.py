@@ -595,11 +595,12 @@ def _item(id_, title, link, author, desc, deadline, source,
 
 
 def fetch_bizinfo(site: dict) -> list[dict]:
+    # 전체 분류·전체 건수 수집(실측 1456건). 분류필터 없음 → 금융·기술·인력·수출·내수·창업·경영 등 전 분류.
+    # (과거엔 수출(04)분류·100건 상한만 받아 1300건+ 누락)
     try:
-        with httpx.Client(timeout=30, headers=HTTP_HEADERS) as c:
+        with httpx.Client(timeout=60, headers=HTTP_HEADERS) as c:
             r = c.get(site["url"], params={
-                "crtfcKey": BIZINFO_API_KEY, "dataType": "json",
-                "searchLclasId": "04", "searchCnt": "100"})
+                "crtfcKey": BIZINFO_API_KEY, "dataType": "json", "searchCnt": "99999"})
             r.raise_for_status(); data = r.json()
     except Exception as e:
         log.error("기업마당 API 실패: %s", e); return []
