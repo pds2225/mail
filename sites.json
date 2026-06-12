@@ -1382,7 +1382,7 @@
     "name": "경남지역인적자원개발위원회",
     "type": "html_table",
     "url": "https://gnhrd.or.kr/bbs/board.php?bo_table=notice",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -2366,7 +2366,7 @@
     "name": "신용보증재단중앙회",
     "type": "html_table",
     "url": "https://www.koreg.or.kr/koreg/na/ntt/selectNttList.do?mi=1026&bbsId=1031",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
     "selectors": {
@@ -2396,7 +2396,7 @@
     "name": "안양시상권활성화센터",
     "type": "html_table",
     "url": "https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=3887",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -2675,7 +2675,7 @@
     "name": "전북특별자치도경제통상진흥원",
     "type": "html_table",
     "url": "https://www.jbba.kr/bbs/board.php?bo_table=sub01_09",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상"
   },
@@ -2693,7 +2693,7 @@
     "name": "전주정보문화산업진흥원",
     "type": "html_table",
     "url": "https://www.jica.or.kr/2025/inner.php?sMenu=A1000",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "사업공고 / 주기:주 1회 / 우선순위:상"
   },
@@ -2702,7 +2702,7 @@
     "name": "전주정보문화산업진흥원",
     "type": "html_table",
     "url": "https://www.jica.or.kr/2025/inner.php?sMenu=A2000",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "일반공지 / 주기:주 1회 / 우선순위:중"
   },
@@ -3086,7 +3086,7 @@
     "name": "창원산업진흥원",
     "type": "html_table",
     "url": "https://www.cwip.or.kr/bbs/board.php?bo_table=b0501",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -3206,7 +3206,7 @@
     "name": "충남농업6차산업센터",
     "type": "html_table",
     "url": "https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -3332,7 +3332,7 @@
     "name": "충북테크노파크",
     "type": "html_table",
     "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -3341,7 +3341,7 @@
     "name": "충북테크노파크",
     "type": "html_table",
     "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "사업공고-타기관 / 주기:주 2~3회 / 우선순위:상"
   },
@@ -3350,7 +3350,7 @@
     "name": "충북테크노파크 컨택센터",
     "type": "html_table",
     "url": "https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -3974,7 +3974,7 @@
     "name": "화성산업진흥원",
     "type": "html_table",
     "url": "https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
@@ -3983,7 +3983,7 @@
     "name": "화성시인재육성재단",
     "type": "html_table",
     "url": "https://www.hstree.org/news/notice.do",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },
