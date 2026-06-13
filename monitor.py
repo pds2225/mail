@@ -651,40 +651,40 @@ def fetch_myfair_legacy(site: dict) -> list[dict]:
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    soup = _soup(site["url"], params={
-        "schMenuId": "10090", "pageIndex": "1", "viewCount": "100", "pbancSttus": "ing"})
-    if not soup: return []
+    # 사업공고가 공공(PBC010)·민간(PBC020)으로 분리됨 → 둘 다 수집.
+    # 과거엔 pbancClssCd 미전송 → 서버 기본값 PBC010(공공)만 받아 민간 공고를 전부 누락.
     items, agg = [], site.get("is_aggregator", False)
-    for card in soup.select(".notice"):
-        a = card.select_one("a")
-        title = norm(a.get_text() if a else "")
-        if not title: continue
-        sn = ""
-        for btn in card.select("button[onclick]"):
-            m = re.search(r"\d+", btn.get("onclick", ""))
-            if m: sn = m.group(0); break
-        if not sn and a:
-            m = re.search(r"\d+", a.get("href", ""))
-            if m: sn = m.group(0)
-        link = (f"https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
-                f"?pbancClssCd=PBC010&schM=view&pbancSn={sn}") if sn else site["url"]
-        spans = card.select("span.list")
-        org = norm(spans[0].get_text()) if spans else ""
-        dl = next((norm(sp.get_text().replace("마감일자", ""))
-                   for sp in spans if "마감일자" in sp.get_text()), "")
-        # 등록일: D-n 뱃지에서 역산 (D-0~D-7 이면 최근)
-        posted = ""
-        day_flag = card.select_one(".flag.day")
-        if day_flag:
-            dm = re.search(r"D-?(\d+)", day_flag.get_text())
-            if dm:
-                days_left = int(dm.group(1))
-                # 마감일에서 역산은 부정확 → 빈 문자열 유지
-        flag = card.select_one(".flag:not(.day):not(.flag_agency)")
-        iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
-        items.append(_item(iid, title, link, org,
-                           norm(flag.get_text()) if flag else "", dl,
-                           site["name"], posted, agg))
+    seen_sn = set()
+    for clss in ("PBC010", "PBC020"):
+        soup = _soup(site["url"], params={
+            "schMenuId": "10090", "pageIndex": "1", "viewCount": "100",
+            "pbancSttus": "ing", "pbancClssCd": clss})
+        if not soup: continue
+        for card in soup.select(".notice"):
+            a = card.select_one("a")
+            title = norm(a.get_text() if a else "")
+            if not title: continue
+            sn = ""
+            for btn in card.select("button[onclick]"):
+                m = re.search(r"\d+", btn.get("onclick", ""))
+                if m: sn = m.group(0); break
+            if not sn and a:
+                m = re.search(r"\d+", a.get("href", ""))
+                if m: sn = m.group(0)
+            if sn and sn in seen_sn: continue
+            if sn: seen_sn.add(sn)
+            link = (f"https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
+                    f"?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else site["url"]
+            spans = card.select("span.list")
+            org = norm(spans[0].get_text()) if spans else ""
+            dl = next((norm(sp.get_text().replace("마감일자", ""))
+                       for sp in spans if "마감일자" in sp.get_text()), "")
+            posted = ""
+            flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+            iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
+            items.append(_item(iid, title, link, org,
+                               norm(flag.get_text()) if flag else "", dl,
+                               site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
