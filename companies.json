@@ -46,6 +46,45 @@
       "export_focus": false,
       "support_type_prefs": ["지원금/바우처", "투자"],
       "match_threshold": 50
+    },
+    {
+      "id": "cmp_bnco",
+      "name": "비앤코인터내셔날 (인천 남동구 여성 제조수출)",
+      "email": "ekth3691@gmail.com",
+      "active": true,
+      "region": { "city": "인천", "district": "남동구" },
+      "industry_keywords": [
+        "화장품", "뷰티", "K-뷰티", "코스메틱",
+        "무용", "발레", "포인트슈즈", "토슈즈", "신발", "슈즈", "무용용품", "스포츠용품",
+        "제조", "제조업"
+      ],
+      "interest_keywords": [
+        "수출", "해외전시회", "해외진출", "글로벌", "박람회", "전시회", "바이어", "무역", "해외마케팅", "베트남", "동남아",
+        "사업화", "판로", "판로개척", "마케팅", "브랜딩", "브랜드", "디자인", "디자인개발", "제품디자인", "굿디자인",
+        "여성기업", "지식재산", "특허", "상표", "IP",
+        "혁신바우처", "수출바우처", "바우처", "정책자금", "융자", "보증"
+      ],
+      "exclude_keywords": [
+        "설명회", "교육일정", "교육 일정", "오리엔테이션", "공급기업", "수행기관",
+        "기선정", "정산", "협약", "결과보고", "지침 안내", "매뉴얼 안내", "모집결과", "선정결과",
+        "청년창업", "멘티"
+      ],
+      "has_factory": false,
+      "export_focus": true,
+      "support_type_prefs": ["지원금/바우처", "투자", "융자"],
+      "match_threshold": 45,
+      "weights": {
+        "industry_match": 12,
+        "interest_match": 8,
+        "region_district": 30,
+        "region_city": 24,
+        "region_nationwide": 16,
+        "factory_bonus": 8,
+        "export_bonus": 12,
+        "support_type_bonus": 8,
+        "exclude_penalty": -60,
+        "region_mismatch_penalty": -40
+      }
     }
   ]
 }
