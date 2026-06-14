@@ -1948,12 +1948,15 @@ def classify_region(item: dict) -> dict:
         }
 
     target = _detect_target_regions(raw_text)
+    # 전국/지역무관 공고는 행사 개최지 등 타지역명이 본문에 있어도 탈락시키지 않는다.
+    # (classify_region_for_group 은 이미 nationwide 를 우선 처리 — 동일 정책으로 정렬)
+    nationwide = bool(target.get("nationwide")) or "전국" in text
     explicit_regions = list(target.get("regions") or [])
     if item.get("region_field"):
         explicit_regions.append(norm(item["region_field"]))
     explicit_regions = _unique(explicit_regions)
     other_only = [r for r in explicit_regions if "인천" not in r]
-    if other_only and not any("인천" in r for r in explicit_regions):
+    if other_only and not any("인천" in r for r in explicit_regions) and not nationwide:
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
