@@ -19,7 +19,7 @@ os.environ.setdefault("GMAIL_ADDRESS",      "test@test.com")
 from monitor import (
     dedup_items, date_filter, filter_for_group,
     classify_support_type, normalize_title,
-    fetch_html_generic, fetch_semas_loan_ols, extract_date_from_text,
+    fetch_html_generic, fetch_semas_loan_ols, fetch_mssmiv, extract_date_from_text,
     extract_application_period, resolve_item_deadline, classify_region,
     previous_business_day, mail_topic, KST, ALL_SUPPORT_TYPES,
     evaluate_notice, filter_for_group_with_diagnostics, render_excluded_summary,
@@ -275,6 +275,59 @@ def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
 
     assert len(items) == 1
     assert items[0]["posted_date"] == "2026-05-15"
+
+
+def test_fetch_mssmiv_extracts_deadline_when_list_has_two_dates(monkeypatch):
+    """중소기업혁신바우처: 목록 td에 등록일+마감일 2개면 마지막을 접수마감으로."""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <table>
+      <tbody>
+        <tr>
+          <td><a onclick="goDetail(985)">2026년 중소기업 혁신바우처 운영기관 모집 공고</a></td>
+          <td>2026-06-08</td>
+          <td>2026-06-30</td>
+        </tr>
+      </tbody>
+    </table>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {"name": "중소기업 혁신바우처(MSSMIV)",
+            "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1"}
+    items = fetch_mssmiv(site)
+
+    assert len(items) == 1
+    assert items[0]["posted_date"] == "2026-06-08"
+    assert items[0]["deadline"] == "2026-06-30"
+
+
+def test_fetch_mssmiv_leaves_deadline_empty_when_only_one_date(monkeypatch):
+    """중소기업혁신바우처: 목록에 날짜가 등록일 1개뿐이면 마감일은 빈 문자열."""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <table>
+      <tbody>
+        <tr>
+          <td><a onclick="goDetail(964)">중소기업 혁신바우처 운영기관 안내</a></td>
+          <td>2026-02-13</td>
+        </tr>
+      </tbody>
+    </table>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {"name": "중소기업 혁신바우처(MSSMIV)",
+            "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1"}
+    items = fetch_mssmiv(site)
+
+    assert len(items) == 1
+    assert items[0]["posted_date"] == "2026-02-13"
+    assert items[0]["deadline"] == ""
 
 
 def test_semas_loan_ols_site_registered_as_active_dedicated_fetcher():

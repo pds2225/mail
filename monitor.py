@@ -1304,8 +1304,10 @@ def fetch_mssmiv(site: dict) -> list[dict]:
         td_text = " ".join(td.get_text(strip=True) for td in tds)
         dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
         posted  = dates[0].replace(".", "-") if dates else ""
+        # 목록 td에 날짜가 등록일+마감일 2개 이상이면 마지막을 접수마감으로
+        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
         items.append(_item(iid, title, link, "중소기업혁신바우처(중소벤처기업부)",
-                           "", "", site["name"], posted, agg))
+                           "", deadline, site["name"], posted, agg))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
