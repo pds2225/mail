@@ -230,6 +230,30 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 
+# 보안: 로그(특히 httpx 요청 로그)에 평문 노출되는 API 인증키를 마스킹한다.
+# 정부 공공데이터 인증키(crtfcKey 등)가 요청 URL 쿼리로 들어가 INFO 로그에
+# 그대로 찍히던 문제 차단. 로깅 계층(핸들러)에서만 가리므로 실제 요청값엔 영향 없음.
+class _RedactSecretsFilter(logging.Filter):
+    _SECRET_RE = re.compile(
+        r"\b((?:crtfcKey|serviceKey|apiKey|api_key|secretKey|authKey|key)=)[^&\s'\"]+",
+        re.IGNORECASE,
+    )
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        try:
+            msg = record.getMessage()
+            redacted = self._SECRET_RE.sub(r"\1***", msg)
+            if redacted != msg:
+                record.msg, record.args = redacted, ()
+        except Exception:
+            pass
+        return True
+
+
+for _h in logging.getLogger().handlers:
+    _h.addFilter(_RedactSecretsFilter())
+
+
 # ══════════════════════════════════════════════════════════════════
 # 유틸
 # ══════════════════════════════════════════════════════════════════
