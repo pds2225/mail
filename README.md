@@ -1,147 +1,118 @@
-# Mail Project (Vercel Ready)
+# 📬 Mail — 정부지원사업 공고를 대신 찾아 메일로 알려주는 프로그램
 
-이 프로젝트는 기존 로컬 실행형 Mail 모니터링을 Vercel 배포형 구조로 전환한 버전입니다.
+> 한 줄 요약: **여러 지원사업 사이트를 매일 자동으로 돌아다니며, 우리 회사에 맞는 공고만 골라서 이메일로 보내주는** 자동화 도구입니다.
 
-## Project Type
+---
 
-- Runtime: Python
-- Frontend entry: `auto_mail_web.html` (정적 페이지)
-- API entry: `api/index.py` (Vercel Python Serverless Function)
-- Core mail logic: `monitor.py`
+## 1. 이게 뭐예요? (비개발자용 설명)
 
-## Vercel Deployment
+정부·기관에서 올라오는 **지원사업 공고**(지원금, 바우처, 스마트공장, 수출지원 등)는
+사이트마다 흩어져 있고 매일 새로 올라옵니다. 사람이 일일이 들어가서 확인하기 어렵습니다.
 
-1. Vercel에 저장소 연결
-2. Root Directory를 이 프로젝트 루트로 지정
-3. Environment Variables 설정
-4. 배포 실행
+이 프로그램은 그 일을 **대신** 해줍니다.
 
-`vercel.json`에서 아래 라우팅을 사용합니다.
+1. 여러 공고 사이트(기업마당, K-Startup, 수출바우처 등)를 **자동으로 돌면서** 새 공고를 모읍니다.
+2. 모은 공고 중 **우리 회사에 신청 가능한 것만** 걸러냅니다.
+3. 추려진 공고를 **이메일로 정리해서** 보내줍니다.
 
-- `/` -> `auto_mail_web.html`
-- `/api/*` -> `api/index.py`
+쉽게 말하면 **"지원사업 공고 자동 비서"** 입니다.
 
-## Required Environment Variables (Vercel)
+---
 
-- `GMAIL_ADDRESS`
-- `GMAIL_APP_PASSWORD`
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `IMAP_HOST`
-- `IMAP_PORT`
+## 2. 무엇을 자동으로 해주나요?
 
-추가로 기존 기능에서 사용하는 키가 필요합니다.
+이 프로젝트 안에는 서로 독립적인 기능 3가지가 들어 있습니다.
 
-- `BIZINFO_API_KEY`
-- `ANTHROPIC_API_KEY`
+| 기능 | 하는 일 | 비고 |
+|------|---------|------|
+| **① 공고 수집·필터·메일** | 지원사업 공고를 모아 우리 회사에 맞는 것만 메일로 발송 | 핵심 기능 (`monitor.py`) |
+| **② 정책자금 점검** | 소상공인시장진흥공단(소진공) 정책자금 공고를 따로 점검 | `loan/` 폴더 |
+| **③ 고객사 서류 자동 입력** | 사업자등록증 등 서류 사진을 읽어 구글 시트에 자동 정리 | `customer_intake` (메일 기능과 별개) |
 
-비밀값은 절대 코드에 하드코딩하지 말고, Vercel Environment Variables로만 관리하세요.
+---
 
-## Safe Mail Sending Rules
+## 3. 어떤 공고를 "우리 회사 것"으로 골라주나요?
 
-- 기본 실행은 `dry_run=true` (미리보기/검증 모드)
-- 실제 발송은 `confirm_send="SEND"`를 명시한 경우에만 허용
-- 수신자 이메일은 로그에 마스킹되어 기록
-- 이메일 본문/첨부 내용은 로그에 출력하지 않음
-- 테스트에서 실제 발송 금지
+우리 회사 기준(**인천광역시 남동구 / 제조업**)에 맞춰 자동으로 판단합니다.
 
-`POST /api/run` 요청 예시:
+- ✅ **잘 골라줌(가점)**: 베트남·동남아·해외·글로벌, 박람회·전시회, 소상공인, 지원금, 공장·스마트공장·제조 자동화 관련
+- ⭐ **특히 우선**: 혁신바우처, 수출바우처, 스마트공장 관련
+- ❌ **자동 제외**: 단순 행정공지·지침·매뉴얼·교육·설명회, 수행기관 모집, 이미 마감된 공고, 인천 남동구가 신청 불가인 공고
 
-- 기본(안전): `{"dry_run": true}`
-- 실제 발송(명시 승인): `{"dry_run": false, "confirm_send": "SEND"}`
+> 즉, "신청해도 되는 공고"만 메일로 오고, "우리랑 상관없는 공고"는 알아서 걸러집니다.
 
-## 지원사업 공고 필터링 기준
+---
 
-`monitor.py`는 수집된 공고를 발송 전에 판정 필드로 보강한 뒤 `is_relevant=true`인 신청 가능 공고만 최종 추천합니다.
+## 4. 실수로 메일이 잘못 나가지 않게 (안전장치)
 
-- 포함/가점: 베트남, 동남아, 해외, 글로벌, 박람회, 전시회, 소상공인, 지원금, 공장, 스마트 및 스마트공장/제조DX/공정자동화 계열
-- 우선 검토: 혁신바우처, 수출바우처, 스마트공장 계열 키워드
-- 필수 제외: 행정공지, 지침, 매뉴얼, 교육, 설명회, 공급기업/수행기관 모집, 기선정 기업 절차, 마감 완료, 인천/남동구 신청 불가 공고
-- 지역 기준: 신청기업 소재지를 인천광역시 남동구로 보고, 인천 내 특정 구 제한에서 남동구가 빠지면 제외합니다.
-- 공장 조건: 공장등록증, 제조시설, 공장 보유, 제조업 영위 등은 점수와 조건 메모에 반영합니다.
-- `dry_run`/preview 결과에는 제외 공고 요약과 `exclude_reason_codes`가 포함됩니다.
+이 프로그램은 **기본적으로 "미리보기 모드"** 로 동작합니다. 즉, 실제로 메일을 쏘지 않고
+"어떤 메일이 나갈지"만 보여줍니다. 진짜 발송은 **사람이 명확히 허락했을 때만** 됩니다.
 
-## 소진공 정책자금 점검 모듈
+- 기본값: 미리보기(검증)만 → 실제 발송 안 함
+- 실제 발송: 발송 승인을 명시했을 때만 허용
+- 받는사람 이메일은 기록에 **가려서(마스킹)** 남고, 메일 본문 내용은 기록에 남기지 않음
 
-정책자금 전용 기능은 기존 메일 모니터링과 분리된 `loan/` 패키지에 있습니다.
+---
 
-- 대상 설정: `loan/config/semas.yml`
-- 리포트: `reports/loan/semas_loan_scan.md`
-- 중복 상태 파일: `reports/loan/semas_seen_notices.json`
-- 수동 실행: `python3 -m loan.semas.collector --run-mode dry-run --send-email false`
-- 실제 테스트 메일: `ALLOW_SEND_EMAIL=true python3 -m loan.semas.collector --run-mode dry-run --send-email true`
+## 5. 어디서·어떻게 동작하나요?
 
-메일 발송은 기존 변수명인 `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`, 선택 변수 `SMTP_HOST`, `SMTP_PORT`를 재사용합니다. 수신자는 `MAIL_TO`가 있으면 우선 사용하고, 없으면 기존 `settings.json`의 `raw_all_recipients`와 `groups.json`의 `recipients`를 사용합니다.
+- 평소에는 **자동으로(서버에서 정해진 시간마다)** 돌도록 만들어져 있습니다.
+- 화면(웹페이지)에서 직접 실행해 볼 수도 있습니다. (`auto_mail_web.html`)
+- 프로그램의 "두뇌"는 `monitor.py` 파일이고, 인터넷에 올려서 자동 실행하는 구조(Vercel)도 준비돼 있습니다.
 
-GitHub Actions에서는 **소진공 정책자금 수동 점검** workflow를 실행하고 `run_mode`, `send_email`, `lookback_days`를 선택합니다. 외부 사이트 접속 또는 SMTP 설정이 실패해도 Markdown 리포트 artifact는 생성됩니다.
+---
 
-## Local Notes
+## 6. 고객사 서류 자동 입력 (③번 기능, 일상 사용법)
 
-- 기존처럼 `python monitor.py` 실행 시에는 실제 발송 경로를 유지합니다.
-- Vercel serverless 환경은 로컬 파일 영구 저장을 보장하지 않으므로, `seen_ids.json` 기반 중복 방지는 제한적입니다.
-  - 권장 대체안: Redis/DB/KV 같은 영구 저장소로 전환
+사업자등록증 같은 서류를 폴더에 넣기만 하면, 글자를 읽어서 구글 시트에 자동으로 정리해 줍니다.
 
-## 운영 안정성 권고
+1. 서류 파일(PDF/사진)을 **`D:\customer_intake_inbox`** 폴더에 넣습니다.
+2. PC가 켜져 있으면 백그라운드에서 **자동으로 처리**됩니다.
+3. 결과 확인 폴더:
+   - 성공 → `D:\customer_intake_done`
+   - 실패 → `D:\customer_intake_failed`
+   - 보고서 → `D:\customer_intake_reports`
 
-현재 Gmail SMTP 방식은 임시/소규모 운영에는 사용 가능하지만, 운영 안정성을 위해 아래 이메일 API로 전환을 권장합니다.
+> 자세한 설치·복구 방법은 `docs/CUSTOMER_INTAKE.md` 와 `D:\mail` 폴더의 `install_customer_intake_autostart.ps1` 등 도우미 파일을 참고하세요.
 
-- Resend
-- SendGrid
-- Postmark
+---
 
-이번 변경에서는 발송 인프라를 Gmail SMTP에서 이메일 API로 전환하지 않았습니다.
+## 7. (개발자·운영자용) 기술 정보
 
-## Auto Dev Queue
+평소 사용에는 필요 없습니다. 설치·배포·점검할 때만 참고하세요.
 
-1. `TASKS.md`의 `## PENDING` 섹션에 `TASK-NNN: <작업 설명>` 형식으로 태스크를 추가합니다.
-2. `python3 scripts/auto_dev_queue.py`를 실행하면 PENDING 목록에서 1개를 자동으로 처리합니다.
-3. 처리 중인 태스크는 `## RUNNING`으로, 완료되면 `## DONE`으로 이동합니다.
-4. 실패하거나 조건 미충족 시 `## FAILED` / `## BLOCKED`로 이동하며 사유가 기록됩니다.
-5. GitHub Actions에서 자동 실행 시 Summary에 실행 TASK, 결과, 다음 TASK가 표시됩니다.
+### 구성
+- 실행 언어: Python
+- 화면: `auto_mail_web.html` (정적 페이지)
+- 자동 실행 입구: `api/index.py` (Vercel 서버리스 함수)
+- 핵심 로직: `monitor.py`
 
-## Customer Intake 자동화
+### 필요한 비밀 설정값 (환경변수)
+코드에 직접 적지 말고, 반드시 **환경변수(또는 `.env`)** 로만 관리합니다.
 
-고객사 서류(PDF/PNG/JPG)를 OCR로 읽어 Google Sheets `고객사_마스터DB` 등에 기록하는 **inbox 자동 처리**입니다.  
-**기존 메일 모니터링(`monitor.py`)·실제 메일 발송과는 연결되지 않습니다.** 점수화·랭킹 기능이 아닙니다.
+`GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`, `SMTP_HOST`, `SMTP_PORT`, `IMAP_HOST`, `IMAP_PORT`,
+`BIZINFO_API_KEY`, `ANTHROPIC_API_KEY`
 
-### 사용 방법 (일상)
-
-1. 사업자등록증 등 파일을 **`D:\customer_intake_inbox`** 에 넣기만 하면 됩니다.
-2. PC 로그인 후 백그라운드 감시가 파일을 자동 처리합니다.
-3. 결과는 아래 폴더에서 확인합니다.
-   - **`D:\customer_intake_done`** — 처리 성공
-   - **`D:\customer_intake_failed`** — 처리 실패
-   - **`D:\customer_intake_reports`** — Markdown 보고서·`watch.log`
-
-환경 설정은 **`D:\mail\.env`** 를 그대로 사용합니다 (Python이 자동 로드).
-
-### 스크립트 (PowerShell, `D:\mail`에서 실행)
-
-| 용도 | 파일 |
-|------|------|
-| **최초 1회** — 로그인 시 자동 감시 등록 | `D:\mail\install_customer_intake_autostart.ps1` |
-| **실패/멈춤 시** — 폴더 복구·감시 재등록·1회 처리 | `D:\mail\repair_customer_intake.ps1` |
-| **진단** — Python·폴더·스케줄러·로그 확인 | `D:\mail\doctor_customer_intake.ps1` |
-| 수동 1회 처리 | `D:\mail\run_customer_intake_once.ps1` |
-| 자동시작 해제 | `D:\mail\uninstall_customer_intake_autostart.ps1` |
-
-`install` / `repair` 는 **관리자 PowerShell**에서 실행하세요.
-
+### 실행 (Windows PowerShell)
 ```powershell
 cd D:\mail
-.\install_customer_intake_autostart.ps1
+python monitor.py
 ```
 
-### 보장하지 않는 항목 (외부 권한·서비스)
+### 정책자금 점검 모듈 (②번 기능)
+```powershell
+cd D:\mail
+python -m loan.semas.collector --run-mode dry-run --send-email false
+```
+- 대상 설정: `loan/config/semas.yml`
+- 리포트: `reports/loan/semas_loan_scan.md`
 
-아래는 이 레포만으로 보장할 수 없습니다. 계정·콘솔·스프레드시트에서 직접 확인해야 합니다.
+### 안전·운영 메모
+- 테스트에서 **실제 메일 발송 금지** (항상 미리보기/모의 실행).
+- 비밀번호·API 키는 화면에 출력하거나 코드에 넣지 않습니다.
+- `main` 브랜치에 바로 올리지 않고, 작업 브랜치 → 검증 → PR 순서로 반영합니다.
+- 현재 Gmail 발송 방식은 소규모용입니다. 안정 운영이 필요하면 Resend·SendGrid·Postmark 같은 이메일 API 전환을 권장합니다.
 
-- Google Cloud 서비스 계정 키 유효성·만료
-- Google Sheets 스프레드시트 **편집 권한** (서비스 계정 이메일 공유)
-- NAVER CLOVA OCR API 할당량·요금·URL/Secret 정확성
-- Windows 작업 스케줄러 정책(회사 PC 보안 정책으로 차단되는 경우)
+---
 
-`.env`에 `GOOGLE_SHEET_ID`·서비스 계정·`CLOVA_OCR_*` 가 없으면 **중단하지 않고** Mock OCR + dry_run 으로 처리하며, 보고서에 미설정 항목만 표시합니다.
-
-자세한 내용: `docs/CUSTOMER_INTAKE.md`
-
+**원격 저장소:** https://github.com/pds2225/mail
