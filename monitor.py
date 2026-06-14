@@ -1094,37 +1094,51 @@ def fetch_ccei(site: dict) -> list[dict]:
 
 # ── ITP (인천테크노파크) ─────────────────────────────────────────────────────
 def fetch_itp(site: dict) -> list[dict]:
-    """ITP 게시판: a[href='javascript:fncShow(seq)'] → 상세 URL 구성
-    tmid 파라미터로 게시판 구분 (15=공지, 36=마케팅센터 등)
+    """ITP 게시판: a[href='javascript:fncShow(seq)'] → 상세 URL 구성.
+    PageNum 페이지네이션(fncBoardPage→frmSearch.PageNum)을 순회하되 최근 N페이지만 수집.
+    (게시판이 수년치 아카이브 300건+ → 전량은 느리고 무의미. 모니터는 D-1 등록분만 발송하므로
+     최근 페이지면 충분. 과거엔 1페이지만 받아 게시 많은 날 누락 위험이 있었음)
+    tmid 파라미터로 게시판 구분 (13=사업공고, 15=공지, 36=마케팅센터 등)
     """
     BASE   = "https://www.itp.or.kr"
     DETAIL = BASE + "/intro.asp"
-    soup   = _soup(site["url"], extra_headers={"Referer": BASE + "/"})
-    if not soup: return []
+    base_url = site["url"]
+    sep      = "&" if "?" in base_url else "?"
 
     # tmid 추출
-    tmid_m = re.search(r"tmid=(\d+)", site["url"])
+    tmid_m = re.search(r"tmid=(\d+)", base_url)
     tmid   = tmid_m.group(1) if tmid_m else "15"
 
     items, agg = [], site.get("is_aggregator", False)
-    # ITP는 <tbody> 없이 <table><tr> 직접 구조
-    for tr in soup.find_all("tr"):
-        a = tr.select_one("a[href]")
-        if not a: continue
-        title = norm(a.get_text())
-        if not title or len(title) < 5: continue
-        href = a.get("href", "")
-        m    = re.search(r"fncShow\(['\"]?(\d+)", href)
-        if not m: continue
-        seq  = m.group(1)
-        link = f"{DETAIL}?tmid={tmid}&mode=view&seq={seq}"
-        iid  = f"itp_{tmid}_{seq}"
-        tds  = tr.select("td")
-        td_text = " ".join(td.get_text(strip=True) for td in tds)
-        dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
-        posted  = dates[0].replace(".", "-") if dates else ""
-        items.append(_item(iid, title, link, "인천테크노파크(ITP)",
-                           "", "", site["name"], posted, agg))
+    seen = set()
+    max_pages = site.get("max_pages", 3)   # 최근 N페이지만(아카이브 전량 X). 필요시 site["max_pages"]로 상향
+    for cp in range(1, max_pages + 1):
+        soup = _soup(f"{base_url}{sep}PageNum={cp}", extra_headers={"Referer": BASE + "/"})
+        if not soup: break
+        page_new = 0
+        # ITP는 <tbody> 없이 <table><tr> 직접 구조
+        for tr in soup.find_all("tr"):
+            a = tr.select_one("a[href]")
+            if not a: continue
+            title = norm(a.get_text())
+            if not title or len(title) < 5: continue
+            href = a.get("href", "")
+            m    = re.search(r"fncShow\(['\"]?(\d+)", href)
+            if not m: continue
+            seq  = m.group(1)
+            if seq in seen: continue        # 고정 공지가 매 페이지 반복 → seq로 중복 제거
+            seen.add(seq)
+            page_new += 1
+            link = f"{DETAIL}?tmid={tmid}&mode=view&seq={seq}"
+            iid  = f"itp_{tmid}_{seq}"
+            tds  = tr.select("td")
+            td_text = " ".join(td.get_text(strip=True) for td in tds)
+            dates   = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", td_text)
+            posted  = dates[0].replace(".", "-") if dates else ""
+            items.append(_item(iid, title, link, "인천테크노파크(ITP)",
+                               "", "", site["name"], posted, agg))
+        if page_new == 0:  # 새 공고 없음(끝 도달 또는 전부 중복) → 종료
+            break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
