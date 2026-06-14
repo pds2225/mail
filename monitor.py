@@ -1106,32 +1106,42 @@ def fetch_itp(site: dict) -> list[dict]:
 
 
 def fetch_nipa(site: dict) -> list[dict]:
-    """a[href*='nttDetail'] 패턴, relative → absolute 변환"""
+    """a[href*='nttDetail'] 패턴, relative → absolute 변환.
+    curPage 페이지네이션을 순회해 전체 수집(과거엔 1페이지 10건만 받아 대량 누락 — 실측 tab=2만 390건).
+    """
     BASE = "https://www.nipa.kr/home/bsnsAll/0/"
-    soup = _soup(site["url"])
-    if not soup: return []
     items, agg = [], site.get("is_aggregator", False)
     seen = set()
-    for a in soup.find_all("a", href=re.compile(r"nttDetail")):
-        title = norm(a.get_text())
-        if not title or len(title) < 5: continue
-        href = a.get("href", "")
-        link = href if href.startswith("http") else BASE + href.lstrip("./")
-        if link in seen: continue
-        seen.add(link)
-        iid  = f"nipa_{stable_id(title + link)}"
-        # nttNo 추출 → 안정적 ID
-        m = re.search(r"nttNo=(\d+)", link)
-        if m: iid = f"nipa_{m.group(1)}"
-        card = a
-        for _ in range(5):
-            if card.parent: card = card.parent
-            if card.name in ("li", "tr", "div", "dl"): break
-        dates    = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
-        posted   = dates[0].replace(".", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
-        items.append(_item(iid, title, link, "정보통신산업진흥원(NIPA)",
-                           "", deadline, site["name"], posted, agg))
+    base_url  = site["url"]
+    sep       = "&" if "?" in base_url else "?"
+    max_pages = site.get("max_pages", 60)  # 안전 상한(실측 39페이지) — site 설정으로 조정 가능
+    for cp in range(1, max_pages + 1):
+        soup = _soup(f"{base_url}{sep}curPage={cp}")
+        if not soup: break
+        page_new = 0
+        for a in soup.find_all("a", href=re.compile(r"nttDetail")):
+            title = norm(a.get_text())
+            if not title or len(title) < 5: continue
+            href = a.get("href", "")
+            link = href if href.startswith("http") else BASE + href.lstrip("./")
+            if link in seen: continue
+            seen.add(link)
+            page_new += 1
+            iid  = f"nipa_{stable_id(title + link)}"
+            # nttNo 추출 → 안정적 ID
+            m = re.search(r"nttNo=(\d+)", link)
+            if m: iid = f"nipa_{m.group(1)}"
+            card = a
+            for _ in range(5):
+                if card.parent: card = card.parent
+                if card.name in ("li", "tr", "div", "dl"): break
+            dates    = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
+            posted   = dates[0].replace(".", "-") if dates else ""
+            deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
+            items.append(_item(iid, title, link, "정보통신산업진흥원(NIPA)",
+                               "", deadline, site["name"], posted, agg))
+        if page_new == 0:  # 새 공고 없음(끝 도달 또는 전부 중복) → 종료
+            break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
