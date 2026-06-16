@@ -78,6 +78,10 @@ COLLECTOR_FILE = "monitor.py"
 EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
 _ALLOW_SMTP_SEND = False
 _ALLOW_PERSIST_SEEN = True
+# 발송 결과 카운터(이번 run) — 실패/0통 폰 알림용
+_SEND_OK = 0
+_SEND_FAIL = 0
+_LAST_SEND_ERR = ""
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
 HTTP_HEADERS   = {
@@ -2618,11 +2622,59 @@ def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
             subject[:60], ", ".join(checked["masked"]) or "(없음)",
         )
         return
+    global _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
     for to in validate_recipients(recipients)["valid"]:
         try:
             send_email(subject, body, to)
+            _SEND_OK += 1
         except Exception as e:
+            _SEND_FAIL += 1
+            _LAST_SEND_ERR = str(e)
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
+
+
+def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "warning") -> None:
+    """폰 푸시(ntfy) 발송. NTFY_TOPIC 환경변수가 있을 때만. 실패해도 본 작업엔 영향 없음."""
+    topic = os.environ.get("NTFY_TOPIC", "").strip()
+    if not topic:
+        log.info("NTFY_TOPIC 미설정 — 폰 알림 생략")
+        return
+    try:
+        ascii_title = title.encode("ascii", "ignore").decode().strip() or "mail-monitor"
+        httpx.post(
+            f"https://ntfy.sh/{topic}",
+            data=message.encode("utf-8"),
+            headers={"Title": ascii_title, "Priority": priority, "Tags": tags},
+            timeout=15,
+        )
+        log.info("ntfy 폰 알림 발송 완료")
+    except Exception as e:
+        log.warning("ntfy 알림 실패(무시): %s", e)
+
+
+def _post_run_alert(result: dict) -> None:
+    """클라우드 자동발송(main) 직후 실패/0통이면 폰 알림. 크래시는 워크플로 if:failure가 담당."""
+    if not isinstance(result, dict) or not result.get("ok"):
+        return
+    stat = (
+        f"수집 {result.get('collected', 0)}→신규 {result.get('new_items', 0)}"
+        f"→대상 {result.get('filtered_items', 0)}건"
+    )
+    if _SEND_FAIL > 0:
+        alert_ntfy(
+            "mail send FAILED",
+            f"⚠️ 공고 메일 발송 실패 {_SEND_FAIL}건 (성공 {_SEND_OK}건).\n"
+            f"마지막 오류: {_LAST_SEND_ERR[:200]}\n{stat}",
+            priority="high", tags="rotating_light",
+        )
+    elif _SEND_OK == 0 and os.environ.get("ALERT_ON_ZERO", "1") == "1":
+        alert_ntfy(
+            "mail 0 sent",
+            f"ℹ️ 오늘 공고 메일 0통 (조건 매칭/신규 없음).\n{stat}",
+            priority="default", tags="information_source",
+        )
+    else:
+        log.info("발송 정상: 성공 %d건 — 폰 알림 생략", _SEND_OK)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -2635,9 +2687,12 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
 ) -> dict:
-    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN
+    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
     _ALLOW_SMTP_SEND = allow_send
     _ALLOW_PERSIST_SEEN = persist_seen
+    _SEND_OK = 0
+    _SEND_FAIL = 0
+    _LAST_SEND_ERR = ""
 
     now = datetime.now(KST)
     mode = "send" if allow_send else "preview"
@@ -2840,7 +2895,8 @@ def execute_monitor(
 
 
 def main() -> None:
-    execute_monitor(allow_send=True, include_raw_all=True, persist_seen=True)
+    result = execute_monitor(allow_send=True, include_raw_all=True, persist_seen=True)
+    _post_run_alert(result)
 
 
 def _write_markdown_table(headers: list[str], rows: list[list[str]]) -> str:
