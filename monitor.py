@@ -592,6 +592,10 @@ def load_settings() -> dict:
         # 게시일이 기준일(today)보다 이 일수 넘게 지난 공고를 '옛날 공고'로 강제 제외.
         # null(기본)이면 미적용 — 기존 '직전영업일 정확일치' 로직만 사용.
         "max_posted_age_days": None,
+        # 날짜불명(게시일 못읽음) 공고 처리정책:
+        #   strict=제외(검토대기) / recall=신청키워드·마감 살아있는 것만 포함 / all=전부 포함
+        #   None이면 legacy include_date_unknown 으로 결정(True→all, False→strict).
+        "date_unknown_policy": None,
     }
     return {**default, **load_json(SETTINGS_PATH, {})}
 
@@ -1733,6 +1737,23 @@ def build_date_review_queue(unknown_items: list[dict]) -> list[dict]:
     return queue
 
 
+def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[list[dict], list[dict]]:
+    """재현(recall) 정책으로 날짜불명 공고를 (메일포함, 검토잔여)로 분리.
+      - all   : 전부 메일 포함
+      - recall: 위험도 '중간'·'높음'(신청키워드 있거나 마감 살아있음)만 포함, '낮음'은 검토대기
+      - strict(기본): 전부 검토대기(메일 미포함)
+    '안 놓치기' 목적 — 게시일을 못 읽어도 신청성 신호가 있으면 발송한다."""
+    if policy == "all":
+        return list(unknown_items), []
+    if policy == "recall":
+        included: list[dict] = []
+        remaining: list[dict] = []
+        for it in unknown_items:
+            (included if assess_date_unknown_risk(it) in ("높음", "중간") else remaining).append(it)
+        return included, remaining
+    return [], list(unknown_items)
+
+
 # ══════════════════════════════════════════════════════════════════
 # 그룹 필터
 # ══════════════════════════════════════════════════════════════════
@@ -2733,6 +2754,8 @@ def execute_monitor(
     date_str    = now.strftime("%m/%d")
 
     include_unknown = settings.get("include_date_unknown", False)
+    # 날짜불명 처리정책: 명시값 우선, 없으면 legacy include_date_unknown 로 결정
+    unknown_policy = settings.get("date_unknown_policy") or ("all" if include_unknown else "strict")
     date_matched: list = []
     date_unknown: list = []
     date_excluded: list = []
@@ -2741,19 +2764,14 @@ def execute_monitor(
         date_matched, date_unknown, date_excluded = partition_posted_dates(
             new_items, days_back, max_age_days=settings.get("max_posted_age_days"),
         )
-        date_review_queue = build_date_review_queue(date_unknown)
-        if include_unknown:
-            filtered_new = date_matched + date_unknown
-            log.info(
-                "날짜필터 후 처리 대상: %d건 (확정 %d + 날짜불명 %d 메일포함, review %d건)",
-                len(filtered_new), len(date_matched), len(date_unknown), len(date_review_queue),
-            )
-        else:
-            filtered_new = date_matched
-            log.info(
-                "날짜필터 후 메일 대상: %d건 (확정만) / review queue: %d건 / 제외 %d건",
-                len(filtered_new), len(date_review_queue), len(date_excluded),
-            )
+        included_unknown, remaining_unknown = split_unknown_by_policy(date_unknown, unknown_policy)
+        date_review_queue = build_date_review_queue(remaining_unknown)
+        filtered_new = date_matched + included_unknown
+        log.info(
+            "날짜필터 후 메일대상 %d건 (확정 %d + 날짜불명포함 %d/%d, 정책=%s) / 검토대기 %d / 제외 %d",
+            len(filtered_new), len(date_matched), len(included_unknown), len(date_unknown),
+            unknown_policy, len(date_review_queue), len(date_excluded),
+        )
     else:
         filtered_new = new_items
         date_unknown = []
