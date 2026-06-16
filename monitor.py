@@ -1922,6 +1922,24 @@ def _short_region(city: str) -> str:
     return city
 
 
+_TITLE_TAG_RE = re.compile(r"^\s*\[([^\]\n]{1,40})\]")
+_KNOWN_REGION_SHORT = (
+    "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종",
+    "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+)
+
+
+def _title_region_tags(item: dict) -> list[str]:
+    """제목 맨 앞 [ … ] 태그 안의 광역 약칭을 모두 반환(없으면 []). 한국 정부공고에서
+    제목 앞 [지역] 은 '그 지역 기업 대상'의 강한 신호. 복수지역(예: [서울ㆍ인천ㆍ경기])은
+    포함된 광역을 전부 잡아, 그룹 지역이 그 목록에 있으면 통과시켜 recall 손실을 막는다."""
+    m = _TITLE_TAG_RE.match(str(item.get("title", "")))
+    if not m:
+        return []
+    inner = m.group(1)
+    return [r for r in _KNOWN_REGION_SHORT if r in inner]
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -1943,6 +1961,12 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if f"{d} 제외" in raw_text or (short_d and f"{short_d} 제외" in raw_text):
             return result("not_eligible", "not_eligible", [], [d])
+
+    # 제목 [광역] 태그에 그룹 지역이 없으면 nationwide 여도 차단(타지역 한정 신호).
+    # 복수지역 태그는 포함 광역을 전부 보고, 그룹 지역이 있으면 통과(recall 보존).
+    tags = _title_region_tags(item)
+    if tags and label not in tags:
+        return result("not_eligible", "not_eligible", [], tags)
 
     target = _detect_target_regions(raw_text)
     detected = [r.lower() for r in (target.get("regions") or [])]
@@ -1985,6 +2009,24 @@ def classify_region(item: dict) -> dict:
             "district_status": "not_eligible",
             "eligible_regions": [],
             "excluded_regions": [APPLICANT_REGION_CITY, APPLICANT_REGION_DISTRICT],
+        }
+
+    # 제목 [광역] 태그 우선 판정: 인천 미포함이면 nationwide 여도 차단(타지역 한정),
+    # 인천 포함이면(복수지역 [서울ㆍ인천ㆍ경기] 등) eligible 로 확정해 recall 보존.
+    tags = _title_region_tags(item)
+    if tags:
+        if "인천" in tags:
+            return {
+                "region_status": "eligible",
+                "district_status": "eligible",
+                "eligible_regions": [APPLICANT_REGION_CITY],
+                "excluded_regions": [],
+            }
+        return {
+            "region_status": "not_eligible",
+            "district_status": "not_eligible",
+            "eligible_regions": [],
+            "excluded_regions": tags,
         }
 
     target = _detect_target_regions(raw_text)
