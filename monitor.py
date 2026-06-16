@@ -329,7 +329,7 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
         (r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 1),
         (r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", 1),
         (r"'?(\d{2})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 2000),
-        (r"(?<!\d)(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)", None),
+        (r"(?<![\d.])(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)(?![%％배억만천원조점])", None),
     ]
     for pattern, year_mode in patterns:
         for m in re.finditer(pattern, text):
@@ -1672,17 +1672,31 @@ def dedup_items(items: list[dict]) -> list[dict]:
 
 def partition_posted_dates(
     items: list[dict], days_back: int = 1, max_age_days: int | None = None,
+    now_dt: datetime | None = None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """
     posted_date 기준 분류.
-    반환: (직전영업일 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
+    반환: (대상기간 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
+
+    대상기간 = 직전영업일(target) + 그 직후 ~ 오늘 사이의 주말(토/일).
+    매일 도는 cron 이 '직전영업일' 하루만 잡으면, 토·일에 게시된 공고는 어떤
+    실행일의 직전영업일과도 일치하지 않아 영구 누락된다(주말 recall 손실). 그래서
+    직전영업일 직후의 토·일 게시물도 함께 포함한다(평일 실행은 단일일=기존 동작 동일).
 
     max_age_days 가 지정되면, 게시일이 오늘 기준 그 일수보다 오래된 공고는
     '옛날 공고'로 간주해 강제 제외(_excluded_reason="too_old"). None 이면 미적용.
     """
-    target = previous_business_day(days_back=days_back)
-    today = datetime.now(KST).date()
+    now = now_dt or datetime.now(KST)
+    target = previous_business_day(now, days_back)
+    today = now.date()
     matched, unknown, excluded = [], [], []
+
+    def _in_window(d) -> bool:
+        if d == target:
+            return True
+        # 직전영업일 직후 ~ 오늘 이전의 주말(토/일) 게시물도 포함 (주말 누락 방지)
+        return target < d < today and d.weekday() >= 5
+
     for it in items:
         pd = it.get("posted_date", "").strip()
         if not pd:
@@ -1696,13 +1710,13 @@ def partition_posted_dates(
         if max_age_days is not None and (today - item_date).days > max_age_days:
             excluded.append({**it, "_excluded_posted_date": pd[:10], "_excluded_reason": "too_old"})
             continue
-        if item_date == target:
+        if _in_window(item_date):
             matched.append(it)
         else:
             excluded.append({**it, "_excluded_posted_date": pd[:10]})
     log.info(
-        "날짜분류(직전영업일-%d, 기준=%s): 확정 %d / 날짜불명 %d / 제외 %d",
-        days_back, target, len(matched), len(unknown), len(excluded),
+        "날짜분류(직전영업일-%d, target=%s, today=%s): 확정 %d / 날짜불명 %d / 제외 %d",
+        days_back, target, today, len(matched), len(unknown), len(excluded),
     )
     return matched, unknown, excluded
 
@@ -1760,7 +1774,7 @@ def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[lis
 
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
-    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(k.lower() in text for k in kws)]
+    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(_kw_in_text(text, k.lower()) for k in kws)]
     return matched or ["그외"]
 
 
@@ -1785,10 +1799,23 @@ def _unique(values: list[str]) -> list[str]:
     return result
 
 
+def _kw_in_text(text_lower: str, kw_lower: str) -> bool:
+    """키워드가 본문(이미 소문자)에 있는지 판정.
+    ASCII 전용 키워드(AI/SaaS/MES/ERP/IP/VC 등)는 단어경계 매칭으로 'email'의 'ai',
+    'enterprise'의 'erp', 'equipment'의 'ip' 같은 부분문자열 오매칭을 막는다(precision).
+    한글 등 비ASCII 키워드는 띄어쓰기 없는 합성어가 흔하므로 부분문자열 매칭을 유지한다(recall).
+    scoring._kw_hit 와 동일 정책 — 두 모듈의 키워드 매칭 일관성 유지."""
+    if not kw_lower:
+        return False
+    if kw_lower.isascii():
+        return re.search(r"(?<![a-z0-9])" + re.escape(kw_lower) + r"(?![a-z0-9])", text_lower) is not None
+    return kw_lower in text_lower
+
+
 def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
     matches: list[str] = []
     for label, keys in aliases:
-        if any(key.lower() in text for key in keys):
+        if any(_kw_in_text(text, key.lower()) for key in keys):
             matches.append(label)
     return _unique(matches)
 
@@ -2137,7 +2164,7 @@ def keyword_match(item: dict, kw_cfg: dict) -> bool:
         return True
     logic = kw_cfg.get("logic", "OR").upper()
     text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
-    return all(k in text for k in kws) if logic == "AND" else any(k in text for k in kws)
+    return all(_kw_in_text(text, k) for k in kws) if logic == "AND" else any(_kw_in_text(text, k) for k in kws)
 
 
 def _normalize_group(group: dict) -> dict:
@@ -2264,7 +2291,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             reason_codes.append("REGION_NOT_ELIGIBLE")
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
-    group_excluded = [k for k in excl_kws if k in text]
+    group_excluded = [k for k in excl_kws if _kw_in_text(text, k)]
     if group_excluded:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.extend(group_excluded)
@@ -2273,7 +2300,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
     group_keyword_pass = True
     if group is not None and not source_bypass and (or_kws or and_groups):
-        group_keyword_pass = any(k in text for k in or_kws) or any(all(k in text for k in ag) for ag in and_groups)
+        group_keyword_pass = any(_kw_in_text(text, k) for k in or_kws) or any(all(_kw_in_text(text, k) for k in ag) for ag in and_groups)
         if not group_keyword_pass:
             reason_codes.append("INDUSTRY_NOT_MATCHED")
 
