@@ -2633,6 +2633,15 @@ def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
 
 
+VOUCHER_KEYWORDS = ("수출바우처", "혁신바우처")
+
+
+def _is_voucher(it: dict) -> bool:
+    """수출바우처·혁신바우처 공고인지(제목·우선키워드 기준). 별도 강조·푸시 대상."""
+    text = str(it.get("title", "")) + " " + " ".join(it.get("priority_keywords", []) or [])
+    return any(v in text for v in VOUCHER_KEYWORDS)
+
+
 def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "warning") -> None:
     """폰 푸시(ntfy) 발송. NTFY_TOPIC 환경변수가 있을 때만. 실패해도 본 작업엔 영향 없음."""
     topic = os.environ.get("NTFY_TOPIC", "").strip()
@@ -2851,6 +2860,18 @@ def execute_monitor(
             _kw_parts  = ([f"OR({', '.join(_or_kws[:3])})"] if _or_kws else []) + \
                          [f"AND({', '.join(ag)})" for ag in _and_grps[:2]]
             kw_str     = " | ".join(_kw_parts) or "전체"
+            # 수출·혁신 바우처 공고는 별도 강조(메일 상단 블록 + 폰 푸시 ntfy)
+            voucher_items = [it for it in g_items if _is_voucher(it)]
+            voucher_block = ""
+            if voucher_items:
+                voucher_block = (
+                    f"🔔🔔 [수출·혁신 바우처 공고 {len(voucher_items)}건 — 우선 확인!] 🔔🔔\n"
+                    + "".join(
+                        f"  • {it['title']} (마감 {resolve_item_deadline(it) or '미기재'})\n"
+                        for it in voucher_items
+                    )
+                    + "\n"
+                )
             header  = (
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
                 f"기준일자: {target_date} (직전영업일) 공고\n"
@@ -2861,9 +2882,16 @@ def execute_monitor(
             )
             send_to_list(
                 f"[{group.get('name')}] {mail_topic(g_items)} ({date_str}) — {len(g_items)}건",
-                header + summary,
+                header + voucher_block + summary,
                 group.get("recipients", []),
             )
+            if voucher_items:
+                alert_ntfy(
+                    f"voucher {len(voucher_items)}",
+                    f"🔔 [{group.get('name')}] 수출·혁신 바우처 공고 {len(voucher_items)}건!\n"
+                    + "\n".join(f"- {it['title'][:50]}" for it in voucher_items[:5]),
+                    priority="high", tags="loudspeaker",
+                )
 
     # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:
