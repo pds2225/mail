@@ -2769,7 +2769,7 @@ def execute_monitor(
         raw_topic = mail_topic(filtered_new)
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-            f"기준일자: {target_date} (직전영업일-{days_back}) 공고\n"
+            f"기준일자: {target_date} (직전영업일) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
             f"날짜필터 후 발송대상: {len(filtered_new)}건\n\n"
         ) + render_all(filtered_new, dedup_removed, len(date_unknown), include_unknown)
@@ -2853,7 +2853,7 @@ def execute_monitor(
             kw_str     = " | ".join(_kw_parts) or "전체"
             header  = (
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-                f"기준일자: {target_date} (직전영업일-{days_back}) 공고\n"
+                f"기준일자: {target_date} (직전영업일) 공고\n"
                 f"그룹: {group.get('name')}\n"
                 f"지역: {', '.join(req_rgns) or '전국'} / 키워드: {kw_str}\n"
                 f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
