@@ -1,0 +1,13 @@
+{
+  "channel": {
+    "item": {
+      "pblancId": "PBLN_000000000088881",
+      "pblancNm": "대체구조(channel.item) 단일항목 공고",
+      "pblancUrl": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000088881",
+      "jrsdInsttNm": "중소벤처기업부",
+      "bsnsSumryCn": "channel.item 분기 검증용 단일 항목입니다.",
+      "reqstBeginEndDe": "2026-06-05 ~ 2026-06-25",
+      "regDt": "2026-06-09"
+    }
+  }
+}
