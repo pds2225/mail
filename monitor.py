@@ -193,6 +193,41 @@ APPLICATION_KEYWORDS = [
 
 GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
 
+# ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
+# 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
+# 행정고지를 함께 올린다. 원본전체 메일에서 이를 걸러낸다(그룹메일은 키워드로 이미 차단).
+ADMIN_NOTICE_KEYWORDS = [
+    "주민등록", "무단전출", "전출자", "행정예고", "행정 예고",
+    "입찰공고", "입찰 공고", "낙찰", "개찰", "수의계약", "긴급입찰", "재입찰",
+    "의견청취", "도시관리계획", "도시계획변경", "지적재조사", "지적공부",
+    "공람공고", "공람 공고", "열람공고", "최고 공고", "최고공고",
+    "발급 통지", "통지 반송", "반송 공고", "공시송달",
+    "체납", "압류", "공매", "과태료", "명단 공개", "명단공개",
+    "후보자등록", "위원 위촉", "위원 위촉 공고", "소집공고", "소집 공고",
+    "교통통제", "도로명주소", "정비구역", "보상계획", "감정평가", "환지계획",
+    "청문 공고", "공유재산", "매각공고", "대부공고", "cctv 설치", "방범용 cctv",
+]
+GRANT_SIGNAL_KEYWORDS = [
+    "지원사업", "지원 사업", "지원금", "보조금", "바우처", "사업화", "사업 공고",
+    "모집공고", "모집 공고", "참여기업", "수요기업", "공모", "융자", "정책자금",
+    "창업", "육성", "r&d", "연구개발", "기술개발", "수출", "판로", "마케팅",
+    "컨설팅", "멘토링", "인증지원", "시제품", "입주기업", "투자유치",
+    "장려금", "지원 안내", "지원계획", "지원대상", "참가기업", "참가신청",
+]
+
+
+def is_admin_noise(item: dict) -> bool:
+    """지자체 고시/공고 게시판에 섞이는 '비지원 행정고지'(주민등록·CCTV·입찰·행정예고 등)인지.
+    행정 신호가 있고 지원사업 신호가 전혀 없을 때만 True. 지원 신호가 하나라도 있으면
+    False(recall 보호) — 진짜 지원공고는 놓치지 않는다."""
+    text = f"{item.get('title','')} {item.get('description','')}".lower()
+    if not any(k.lower() in text for k in ADMIN_NOTICE_KEYWORDS):
+        return False
+    if any(k.lower() in text for k in GRANT_SIGNAL_KEYWORDS):
+        return False
+    return True
+
+
 EXCLUSION_RULES = [
     ("GUIDELINE_OR_MANUAL", "guideline", "unknown", [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
@@ -329,7 +364,7 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
         (r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 1),
         (r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", 1),
         (r"'?(\d{2})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 2000),
-        (r"(?<!\d)(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)", None),
+        (r"(?<![\d.])(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)(?![%％배억만천원조점])", None),
     ]
     for pattern, year_mode in patterns:
         for m in re.finditer(pattern, text):
@@ -1672,17 +1707,31 @@ def dedup_items(items: list[dict]) -> list[dict]:
 
 def partition_posted_dates(
     items: list[dict], days_back: int = 1, max_age_days: int | None = None,
+    now_dt: datetime | None = None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """
     posted_date 기준 분류.
-    반환: (직전영업일 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
+    반환: (대상기간 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
+
+    대상기간 = 직전영업일(target) + 그 직후 ~ 오늘 사이의 주말(토/일).
+    매일 도는 cron 이 '직전영업일' 하루만 잡으면, 토·일에 게시된 공고는 어떤
+    실행일의 직전영업일과도 일치하지 않아 영구 누락된다(주말 recall 손실). 그래서
+    직전영업일 직후의 토·일 게시물도 함께 포함한다(평일 실행은 단일일=기존 동작 동일).
 
     max_age_days 가 지정되면, 게시일이 오늘 기준 그 일수보다 오래된 공고는
     '옛날 공고'로 간주해 강제 제외(_excluded_reason="too_old"). None 이면 미적용.
     """
-    target = previous_business_day(days_back=days_back)
-    today = datetime.now(KST).date()
+    now = now_dt or datetime.now(KST)
+    target = previous_business_day(now, days_back)
+    today = now.date()
     matched, unknown, excluded = [], [], []
+
+    def _in_window(d) -> bool:
+        if d == target:
+            return True
+        # 직전영업일 직후 ~ 오늘 이전의 주말(토/일) 게시물도 포함 (주말 누락 방지)
+        return target < d < today and d.weekday() >= 5
+
     for it in items:
         pd = it.get("posted_date", "").strip()
         if not pd:
@@ -1696,13 +1745,13 @@ def partition_posted_dates(
         if max_age_days is not None and (today - item_date).days > max_age_days:
             excluded.append({**it, "_excluded_posted_date": pd[:10], "_excluded_reason": "too_old"})
             continue
-        if item_date == target:
+        if _in_window(item_date):
             matched.append(it)
         else:
             excluded.append({**it, "_excluded_posted_date": pd[:10]})
     log.info(
-        "날짜분류(직전영업일-%d, 기준=%s): 확정 %d / 날짜불명 %d / 제외 %d",
-        days_back, target, len(matched), len(unknown), len(excluded),
+        "날짜분류(직전영업일-%d, target=%s, today=%s): 확정 %d / 날짜불명 %d / 제외 %d",
+        days_back, target, today, len(matched), len(unknown), len(excluded),
     )
     return matched, unknown, excluded
 
@@ -1760,7 +1809,7 @@ def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[lis
 
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
-    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(k.lower() in text for k in kws)]
+    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(_kw_in_text(text, k.lower()) for k in kws)]
     return matched or ["그외"]
 
 
@@ -1785,10 +1834,23 @@ def _unique(values: list[str]) -> list[str]:
     return result
 
 
+def _kw_in_text(text_lower: str, kw_lower: str) -> bool:
+    """키워드가 본문(이미 소문자)에 있는지 판정.
+    ASCII 전용 키워드(AI/SaaS/MES/ERP/IP/VC 등)는 단어경계 매칭으로 'email'의 'ai',
+    'enterprise'의 'erp', 'equipment'의 'ip' 같은 부분문자열 오매칭을 막는다(precision).
+    한글 등 비ASCII 키워드는 띄어쓰기 없는 합성어가 흔하므로 부분문자열 매칭을 유지한다(recall).
+    scoring._kw_hit 와 동일 정책 — 두 모듈의 키워드 매칭 일관성 유지."""
+    if not kw_lower:
+        return False
+    if kw_lower.isascii():
+        return re.search(r"(?<![a-z0-9])" + re.escape(kw_lower) + r"(?![a-z0-9])", text_lower) is not None
+    return kw_lower in text_lower
+
+
 def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
     matches: list[str] = []
     for label, keys in aliases:
-        if any(key.lower() in text for key in keys):
+        if any(_kw_in_text(text, key.lower()) for key in keys):
             matches.append(label)
     return _unique(matches)
 
@@ -2137,7 +2199,7 @@ def keyword_match(item: dict, kw_cfg: dict) -> bool:
         return True
     logic = kw_cfg.get("logic", "OR").upper()
     text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
-    return all(k in text for k in kws) if logic == "AND" else any(k in text for k in kws)
+    return all(_kw_in_text(text, k) for k in kws) if logic == "AND" else any(_kw_in_text(text, k) for k in kws)
 
 
 def _normalize_group(group: dict) -> dict:
@@ -2264,7 +2326,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             reason_codes.append("REGION_NOT_ELIGIBLE")
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
-    group_excluded = [k for k in excl_kws if k in text]
+    group_excluded = [k for k in excl_kws if _kw_in_text(text, k)]
     if group_excluded:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.extend(group_excluded)
@@ -2273,7 +2335,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
     group_keyword_pass = True
     if group is not None and not source_bypass and (or_kws or and_groups):
-        group_keyword_pass = any(k in text for k in or_kws) or any(all(k in text for k in ag) for ag in and_groups)
+        group_keyword_pass = any(_kw_in_text(text, k) for k in or_kws) or any(all(_kw_in_text(text, k) for k in ag) for ag in and_groups)
         if not group_keyword_pass:
             reason_codes.append("INDUSTRY_NOT_MATCHED")
 
@@ -2682,6 +2744,48 @@ def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "wa
         log.warning("ntfy 알림 실패(무시): %s", e)
 
 
+# ── 집중 모니터링 워치리스트 ──────────────────────────────────────────────────
+# 사용자가 준 키워드/제목 또는 URL 에 걸리는 공고는 날짜·그룹 필터를 우회해 강제 포함하고
+# 전용 메일 + 폰 푸시로 강조한다. '놓치면 안 되는 공고'를 절대 안 놓치기 위한 장치.
+WATCHLIST_PATH = BASE_DIR / "watchlist.json"
+
+
+def load_watchlist() -> dict:
+    """watchlist.json 로드(키워드·URL·수신자). 없거나 형식오류면 빈 워치리스트."""
+    raw = load_json(WATCHLIST_PATH, {})
+    if not isinstance(raw, dict):
+        return {"keywords": [], "urls": [], "recipients": []}
+    return {
+        "keywords": [str(k).strip() for k in (raw.get("keywords") or []) if str(k).strip()],
+        "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
+        "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
+    }
+
+
+def _norm_url(u: str) -> str:
+    """비교용 URL 정규화: 스킴·www·쿼리·앵커·끝슬래시 제거 + 소문자."""
+    u = (u or "").strip().lower()
+    u = re.sub(r"^https?://", "", u)
+    u = re.sub(r"^www\.", "", u)
+    return u.split("?")[0].split("#")[0].rstrip("/")
+
+
+def is_watchlisted(item: dict, watchlist: dict) -> bool:
+    """공고가 워치리스트(키워드/제목 또는 URL)에 걸리는지. 걸리면 강제포함·강조 대상.
+    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text)."""
+    kws = watchlist.get("keywords") or []
+    if kws:
+        text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+        if any(_kw_in_text(text, k.lower()) for k in kws):
+            return True
+    nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
+    if nurls:
+        link = _norm_url(item.get("link") or item.get("url") or "")
+        if link and any(link.startswith(n) or n in link for n in nurls):
+            return True
+    return False
+
+
 def _post_run_alert(result: dict) -> None:
     """클라우드 자동발송(main) 직후 실패/0통이면 폰 알림. 크래시는 워크플로 if:failure가 담당."""
     if not isinstance(result, dict) or not result.get("ok"):
@@ -2758,6 +2862,15 @@ def execute_monitor(
 
     new_items = enrich_items(new_items)
 
+    # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
+    watchlist = load_watchlist()
+    watch_hits = (
+        [it for it in new_items if is_watchlisted(it, watchlist)]
+        if (watchlist["keywords"] or watchlist["urls"]) else []
+    )
+    if watch_hits:
+        log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
+
     # ④ 날짜 필터 (직전 영업일)
     target_date = previous_business_day(now, days_back)
     date_str    = now.strftime("%m/%d")
@@ -2786,22 +2899,51 @@ def execute_monitor(
         date_unknown = []
         date_excluded = []
 
-    # ⑤ 원본전체 메일 (settings.raw_all_recipients)
+    # 워치리스트 매칭분 강제포함 — 날짜필터로 빠졌어도 '절대 안 놓침'
+    if watch_hits:
+        _wl_seen = {it["id"] for it in filtered_new}
+        for it in watch_hits:
+            if it.get("id") and it["id"] not in _wl_seen:
+                filtered_new.append(it)
+                _wl_seen.add(it["id"])
+        # 집중 모니터링 전용 메일 + 폰 푸시 (raw_all 설정과 무관하게 보장)
+        if allow_send:
+            wl_recipients = watchlist["recipients"] or settings.get("raw_all_recipients") or []
+            if wl_recipients:
+                wl_body = "🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n" + "".join(
+                    f"[{i}] {it.get('title', '(제목없음)')}\n"
+                    f"  마감: {resolve_item_deadline(it) or '미기재'}\n"
+                    f"  링크: {it.get('link') or it.get('url') or '미기재'}\n\n"
+                    for i, it in enumerate(watch_hits, 1)
+                )
+                send_to_list(f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})", wl_body, wl_recipients)
+            alert_ntfy(
+                "watchlist",
+                f"집중 모니터링 공고 {len(watch_hits)}건!\n"
+                + "\n".join(f"- {it.get('title', '')[:50]}" for it in watch_hits[:5]),
+                priority="high", tags="dart",
+            )
+
+    # ⑤ 원본전체 메일 — 지자체 행정고지(주민등록·CCTV·입찰 등) 노이즈 제외(precision)
+    raw_items = [it for it in filtered_new if not is_admin_noise(it)]
+    raw_dropped = len(filtered_new) - len(raw_items)
+    if raw_dropped:
+        log.info("원본전체 행정노이즈 제외: %d건", raw_dropped)
     if (
         allow_send
         and include_raw_all
         and settings.get("raw_all_enabled", True)
         and settings.get("raw_all_recipients")
     ):
-        raw_topic = mail_topic(filtered_new)
+        raw_topic = mail_topic(raw_items)
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
             f"기준일자: {target_date} (직전영업일) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
-            f"날짜필터 후 발송대상: {len(filtered_new)}건\n\n"
-        ) + render_all(filtered_new, dedup_removed, len(date_unknown), include_unknown)
+            f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지 {raw_dropped}건 제외)\n\n"
+        ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         send_to_list(
-            f"[원본전체] {raw_topic} ({date_str}) — {len(filtered_new)}건",
+            f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건",
             body_raw, settings["raw_all_recipients"],
         )
 
