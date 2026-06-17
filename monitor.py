@@ -1890,7 +1890,10 @@ def classify_deadline_status(item: dict, today=None) -> str:
             dates = [parsed for _, parsed in _parse_date_candidates(raw_deadline, today.year)]
     if not dates:
         return "unknown"
-    start_date, end_date = dates[0], dates[-1]
+    # 마감일 = 파싱된 날짜 중 '가장 늦은' 날짜(max). 이전엔 위치순 마지막(dates[-1])을 마감으로 봐서,
+    # 본문 뒤쪽에 과거 참조일(문의일·작년 실적 등)이 있으면 살아있는 공고도 '마감됨'으로 오판했다.
+    # max 로 바꿔 '모든 날짜가 과거일 때만' closed → 현재 모집중 공고의 과잉 마감거름 해소(recall).
+    start_date, end_date = min(dates), max(dates)
     if end_date < today:
         return "closed"
     if len(dates) >= 2 and start_date > today:
