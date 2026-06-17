@@ -105,4 +105,4 @@ def test_execute_monitor_excludes_noise_from_raw_all(monkeypatch):
     # 행정고지 제목은 본문에 없어야, 지원공고 제목은 있어야 한다
     assert "주민등록" not in body and "CCTV" not in body and "행정예고" not in body
     assert "수출바우처" in body
-    assert "행정고지 2건 제외" in body
+    assert "행정고지·잡공고 2건 제외" in body

@@ -229,6 +229,24 @@ def is_admin_noise(item: dict) -> bool:
     return True
 
 
+# [원본전체] 보고 메일에서 뺄 잡공고 — 공지·결과발표·채용·입찰·총회 등 '지원 기회'가 아닌 게시물.
+REPORT_JUNK_KEYWORDS = [
+    "공지사항", "결과발표", "결과 발표", "선정결과", "선정 결과", "모집결과", "모집 결과",
+    "합격자", "최종선정", "최종 선정", "평가결과", "채용공고", "직원채용", "신규채용",
+    "입찰공고", "낙찰", "계약체결", "정기총회", "임시총회", "공청회", "성료", "개최결과",
+    "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
+    "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
+    "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
+    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+]
+
+
+def is_report_junk(item: dict) -> bool:
+    """[원본전체] 보고 메일용 잡공고 판정. 제목에 위 표현이 있으면 True(지원 기회 아님)."""
+    title = str(item.get("title", ""))
+    return any(j in title for j in REPORT_JUNK_KEYWORDS)
+
+
 EXCLUSION_RULES = [
     ("GUIDELINE_OR_MANUAL", "guideline", "unknown", [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
@@ -2493,19 +2511,64 @@ def refine_included_by_company(
 # 렌더링 / Claude 요약
 # ══════════════════════════════════════════════════════════════════
 
+_REPORT_REGION_RANK = {"전국": 3, "서울": 4, "경기": 5, "인천": 6, "충청": 7}
+_REPORT_BUCKET_LABEL = {1: "기업마당", 2: "K-스타트업", 3: "전국 대상", 4: "서울",
+                        5: "경기", 6: "인천", 7: "충청", 8: "기타"}
+
+
+def _report_region(item: dict) -> str:
+    """[원본전체] 정렬용 지역 판정. 지역 미표기는 '전국' 기본 + 주관기관명으로 지역 보강."""
+    tags = _title_region_tags(item)
+    text = f"{item.get('title','')} {item.get('description','')} {item.get('region_field','')}"
+    src = f"{item.get('author','')} {item.get('source','')}"
+    det = _detect_target_regions(text)
+    regions = set(tags) | set(det.get("regions", []))
+    for r in ("서울", "경기", "인천", "부산", "대구", "광주", "대전", "울산", "세종",
+              "강원", "전북", "전남", "경북", "경남", "제주"):
+        if r in src:
+            regions.add(r)
+    if any(x in src or x in text for x in ("충남", "충북", "충청")):
+        regions.add("충청")
+    if det.get("nationwide") or "전국" in text:
+        return "전국"
+    for r in ("서울", "경기", "인천"):
+        if r in regions:
+            return r
+    if regions & {"충북", "충남", "충청"}:
+        return "충청"
+    if regions:
+        return "기타지역"
+    return "전국"
+
+
+def _report_rank(item: dict) -> int:
+    """[원본전체] 정렬 순서: 1기업마당 2K스타트업 3전국 4서울 5경기 6인천 7충청 8기타."""
+    src = (str(item.get("source", "")) + " " + str(item.get("author", ""))).lower()
+    if "기업마당" in src or "bizinfo" in src:
+        return 1
+    if "startup" in src or "k스타트업" in src or "케이스타트업" in src:
+        return 2
+    return _REPORT_REGION_RANK.get(_report_region(item), 8)
+
+
 def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_unknown: bool = True) -> str:
-    by_src: dict[str, list] = {}
-    for it in items: by_src.setdefault(it.get("source", "기타"), []).append(it)
+    # 출처·지역 순으로 묶어 정렬: 기업마당 > K스타트업 > 전국 > 서울 > 경기 > 인천 > 충청 > 기타.
+    buckets: dict[int, list] = {}
+    for it in items:
+        buckets.setdefault(_report_rank(it), []).append(it)
     unknown_note = f" / 날짜불명 {date_unknown}건 포함" if include_unknown and date_unknown else (f" / 날짜불명 {date_unknown}건 제외됨" if not include_unknown and date_unknown else "")
     lines = [f"전체 수집 — {len(items)}건 (중복제거 후){unknown_note}\n"]
-    for src, src_items in by_src.items():
-        lines += [f"\n【 {src} 】 {len(src_items)}건", "─" * 30]
+    for rank in sorted(buckets):
+        src_items = buckets[rank]
+        label = _REPORT_BUCKET_LABEL.get(rank, "기타")
+        lines += [f"\n━━━ {label} — {len(src_items)}건 ━━━"]
         for it in src_items:
             dl = resolve_item_deadline(it)
             lines += [f"▸ {it['title']}",
-                      f"  기관: {it['author'] or '미기재'} | 마감: {dl or '미기재'}"
+                      f"  기관: {it.get('author') or '미기재'} | 마감: {dl or '미기재'}"
                       f" | 등록: {it.get('posted_date') or '날짜불명'}"]
-            if it.get("link"): lines.append(f"  링크: {it['link']}")
+            if it.get("link"):
+                lines.append(f"  링크: {it['link']}")
             lines.append("")
     return "\n".join(lines).strip()
 
@@ -2952,11 +3015,11 @@ def execute_monitor(
                 priority="high", tags="dart",
             )
 
-    # ⑤ 원본전체 메일 — 지자체 행정고지(주민등록·CCTV·입찰 등) 노이즈 제외(precision)
-    raw_items = [it for it in filtered_new if not is_admin_noise(it)]
+    # ⑤ 원본전체 메일 — 행정고지(주민등록·CCTV·입찰)+잡공고(공지·결과·채용·총회 등) 제외 후 출처·지역순 정렬
+    raw_items = [it for it in filtered_new if not is_admin_noise(it) and not is_report_junk(it)]
     raw_dropped = len(filtered_new) - len(raw_items)
     if raw_dropped:
-        log.info("원본전체 행정노이즈 제외: %d건", raw_dropped)
+        log.info("원본전체 행정고지·잡공고 제외: %d건", raw_dropped)
     if (
         allow_send
         and include_raw_all
@@ -2968,7 +3031,7 @@ def execute_monitor(
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
             f"기준일자: {target_date} (직전영업일) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
-            f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지 {raw_dropped}건 제외)\n\n"
+            f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지·잡공고 {raw_dropped}건 제외)\n\n"
         ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         send_to_list(
             f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건",
