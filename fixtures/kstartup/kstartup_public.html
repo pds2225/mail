@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>K-Startup 공공(PBC010) 사업공고 목록(축약 픽스처)</title></head>
+<body>
+<!-- fetch_kstartup 재생용 공공(PBC010) 축약본: .notice 카드 2개.
+     파서가 읽는 구조 = a(제목) + button[onclick](sn) + span.list(org, 마감일자) + .flag(desc) -->
+<ul class="notice_list">
+  <li class="notice">
+    <span class="flag day">D-7</span>
+    <span class="flag flag_agency">중소벤처기업부</span>
+    <span class="flag">공공기관 모집</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=1001">2026년 공공 창업도약패키지 지원사업 공고</a>
+    <button type="button" onclick="goView('1001'); return false;">상세보기</button>
+    <span class="list">창업진흥원</span>
+    <span class="list">접수기간 : 2026.06.01 ~ 2026.06.30</span>
+    <span class="list">마감일자 2026-06-30</span>
+  </li>
+  <li class="notice">
+    <span class="flag day">D-14</span>
+    <span class="flag flag_agency">과학기술정보통신부</span>
+    <span class="flag">공공 R&D 지원</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=1002">2026년 공공 딥테크 팁스(TIPS) 신규지원 공고</a>
+    <button type="button" onclick="goView('1002'); return false;">상세보기</button>
+    <span class="list">정보통신기획평가원</span>
+    <span class="list">마감일자 2026-07-15</span>
+  </li>
+</ul>
+</body>
+</html>
