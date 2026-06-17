@@ -2509,7 +2509,16 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
 def mail_topic(items: list[dict]) -> str:
     if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
         return SEMAS_LOAN_TITLE
-    return "수출·해외진출 공고"
+    # 내용 기반 제목 — 기존엔 무조건 '수출·해외진출 공고' 고정이라 AI 공고도 그 제목으로 오발송됨.
+    # 우선키워드 빈도 top 2 로 라벨링, 없으면 중립 '지원사업 공고'.
+    counts: dict[str, int] = {}
+    for it in items:
+        for k in (it.get("priority_keywords") or []):
+            counts[k] = counts.get(k, 0) + 1
+    if counts:
+        top = sorted(counts, key=lambda k: (-counts[k], k))[:2]
+        return "·".join(top) + " 공고"
+    return "지원사업 공고"
 
 
 def fallback_body(items: list[dict]) -> str:
