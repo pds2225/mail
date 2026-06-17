@@ -3291,22 +3291,94 @@ def write_review_queue_report(
     return path
 
 
+def write_coverage_anomaly_report(
+    anomalies: list[dict],
+    path: Path | None = None,
+    *,
+    run_at: datetime | None = None,
+) -> Path:
+    """수집 이상탐지 결과를 별도 마크다운으로 저장(dry-run 보고서)."""
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / "coverage_anomaly_report.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# 수집 이상탐지",
+        "",
+        f"- 생성: {run_at.strftime('%Y-%m-%d %H:%M KST')}",
+        f"- 감지: {len(anomalies)}건 "
+        f"(high {sum(1 for a in anomalies if a.get('severity') == 'high')} / "
+        f"medium {sum(1 for a in anomalies if a.get('severity') == 'medium')})",
+        "",
+    ]
+    if not anomalies:
+        lines.append("(이상 없음 — baseline 대비 0건 급락·수집실패·급감 없음)")
+    else:
+        order = {"high": 0, "medium": 1, "low": 2}
+        for a in sorted(anomalies, key=lambda x: order.get(x.get("severity", "low"), 3)):
+            lines.append(
+                f"- **{a.get('severity', '')}** | {a.get('site_name', '')} | "
+                f"{a.get('reason', '')} | 평소 {a.get('baseline', 0)}→오늘 {a.get('current', 0)}건 | "
+                f"{(a.get('url', '') or '')[:80]}"
+            )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) -> list[dict]:
+    """커버리지 이상탐지: baseline 대비 0건 급락·수집실패·급감을 찾아 (보수적으로) 폰 알림.
+
+    안전 설계: 전체를 try/except 로 감싸 이상탐지 실패가 본 작업(메일)에 영향 0.
+    baseline 이력이 있는 사이트만 비교(첫 실행/신규 사이트 오탐 방지). high 가 있을 때만,
+    그리고 allow_alert 일 때만 ntfy 1회 발송. 그 후 성공한 사이트로 baseline 갱신·저장.
+    반환: 감지된 anomaly dict 리스트(없으면 빈 리스트).
+    """
+    try:
+        import coverage_alert as _ca  # noqa: PLC0415
+
+        baseline = _ca.load_coverage_baseline()
+        anomalies = _ca.detect_coverage_anomalies(rows, baseline)
+        highs = [a for a in anomalies if a.get("severity") == "high"]
+        if highs and allow_alert:
+            alert_ntfy(
+                "Coverage drop",
+                _ca.format_anomaly_message(anomalies),
+                priority="high",
+                tags="warning",
+            )
+        new_baseline = _ca.update_coverage_baseline(baseline, rows)
+        _ca.save_coverage_baseline(new_baseline)
+        return anomalies
+    except Exception as e:  # 이상탐지 실패는 절대 본 작업을 막지 않는다
+        log.warning("커버리지 이상탐지 실패(무시): %s", e)
+        return []
+
+
 def run_dry_run(
     *,
     write_reports: bool = True,
     fetch_coverage: bool = True,
+    allow_coverage_alert: bool = False,
 ) -> dict:
-    """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증."""
+    """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증.
+
+    allow_coverage_alert: 커버리지 이상탐지에서 high 발견 시 실제 ntfy 알림 발송 여부.
+    기본 False(수동 dry-run 노이즈 방지). 스케줄에서 활성화하려면 True 로 호출.
+    """
     os.environ["MONITOR_NO_PERSIST_SEEN"] = "1"
     seen_before = SEEN_IDS_PATH.stat().st_mtime if SEEN_IDS_PATH.exists() else None
 
     coverage_rows: list[dict] = []
+    coverage_anomalies: list[dict] = []
     if fetch_coverage:
         all_sites = load_json(SITES_PATH, [])
         coverage_rows = fetch_site_coverage(all_sites)
+        coverage_anomalies = run_coverage_anomaly_check(
+            coverage_rows, allow_alert=allow_coverage_alert,
+        )
 
     result = execute_monitor(allow_send=False, include_raw_all=False, persist_seen=False)
     result["coverage"] = coverage_rows
+    result["coverage_anomalies"] = coverage_anomalies
     result["recipient_audit"] = {
         g.get("name"): validate_recipients(g.get("recipients", []))
         for g in load_groups()
@@ -3321,6 +3393,7 @@ def run_dry_run(
 
     if write_reports:
         write_coverage_report(coverage_rows)
+        write_coverage_anomaly_report(coverage_anomalies)
         write_today_missing_risk_report(result)
         write_review_queue_report(result.get("date_review_queue") or [])
 
@@ -3341,10 +3414,18 @@ if __name__ == "__main__":
         action="store_true",
         help="dry-run 시 사이트별 순차 수집 생략(네트워크 절약)",
     )
+    parser.add_argument(
+        "--coverage-alert",
+        action="store_true",
+        help="dry-run 커버리지 이상탐지에서 high 발견 시 실제 폰 알림(ntfy) 발송",
+    )
     args = parser.parse_args()
     try:
         if args.dry_run:
-            summary = run_dry_run(fetch_coverage=not args.skip_coverage_fetch)
+            summary = run_dry_run(
+                fetch_coverage=not args.skip_coverage_fetch,
+                allow_coverage_alert=args.coverage_alert,
+            )
             log.info(
                 "dry-run 완료: 수집=%s 신규=%s review_queue=%s mail_sent=%s seen_changed=%s",
                 summary.get("collected"),
