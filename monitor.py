@@ -619,7 +619,7 @@ def load_settings() -> dict:
         "days_back": 1,
         "raw_all_enabled": True,
         "raw_all_recipients": [],
-        "claude_model": "claude-sonnet-4-6",
+        "claude_model": "claude-haiku-4-5-20251001",
         "claude_max_tokens": 4000,
         "fetch_max_workers": 10,
         # 기업 맞춤 정밀 매칭(2차 컷오프). 그룹에 company_id 연결 + 이 값 true 일 때만 적용.
@@ -2671,7 +2671,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 {items_txt}"""
     try:
         resp = client.messages.create(
-            model="claude-sonnet-4-6", max_tokens=4000,
+            model="claude-haiku-4-5-20251001", max_tokens=4000,
             messages=[{"role": "user", "content": prompt}])
         return resp.content[0].text.strip()
     except Exception as e:
