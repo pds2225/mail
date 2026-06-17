@@ -119,7 +119,7 @@
       "exclude_penalty": -50,
       "region_match": 20
     },
-    "llm_check_enabled": false,
+    "llm_check_enabled": true,
     "llm_check_threshold_band": [
       40,
       70
@@ -130,7 +130,6 @@
     "id": "grp_ai_saas",
     "name": "서울/전국 AI·SaaS팀",
     "active": true,
-    "company_id": "cmp_seoul_ai",
     "required_conditions": {
       "regions": [
         "서울"
@@ -142,7 +141,22 @@
       "AI",
       "인공지능",
       "데이터",
-      "SaaS"
+      "SaaS",
+      "머신러닝",
+      "딥러닝",
+      "챗봇",
+      "생성형AI",
+      "클라우드",
+      "빅데이터",
+      "디지털전환",
+      "DX",
+      "사물인터넷",
+      "IoT",
+      "LLM",
+      "알고리즘",
+      "소프트웨어",
+      "SW",
+      "데이터분석"
     ],
     "and_keyword_groups": [],
     "exclude_keywords": [
@@ -167,7 +181,14 @@
     "recipients": [
       "ekth3691@gmail.com",
       "khban99@gmail.com"
-    ]
+    ],
+    "score_threshold": 1,
+    "llm_check_enabled": true,
+    "llm_check_threshold_band": [
+      40,
+      70
+    ],
+    "llm_call_limit_per_run": 30
   },
   {
     "id": "grp_goyang",
@@ -220,7 +241,13 @@
       "ekth3691@gmail.com",
       "khban99@gmail.com"
     ],
-    "score_threshold": 50
+    "score_threshold": 50,
+    "llm_check_enabled": true,
+    "llm_check_threshold_band": [
+      40,
+      70
+    ],
+    "llm_call_limit_per_run": 30
   },
   {
     "id": "grp_bnco",
@@ -358,6 +385,6 @@
       "exclude_penalty": -50,
       "region_match": 20
     },
-    "llm_check_enabled": false
+    "llm_check_enabled": true
   }
 ]

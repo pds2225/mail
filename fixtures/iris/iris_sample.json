@@ -1,0 +1,28 @@
+{
+  "listBsnsAncmBtinSitu": [
+    {
+      "ancmId": "20260017",
+      "ancmTl": "2026년도 범부처 바이오·의료기술개발사업 신규과제 공고",
+      "sorgnNm": "한국연구재단",
+      "rcveEndDe": "2026.07.31",
+      "ancmDe": "2026.06.16",
+      "pbofrTpSeNmLst": "자유공모, 지정공모"
+    },
+    {
+      "ancmId": "20260018",
+      "ancmTl": "  2026년   소재·부품·장비   핵심기술개발사업   공고  ",
+      "sorgnNm": "한국산업기술기획평가원",
+      "rcveEndDe": "2026.08.15",
+      "ancmDe": "2026.06.17",
+      "pbofrTpSeNmLst": "품목지정형"
+    },
+    {
+      "ancmId": "20260019",
+      "ancmTl": "",
+      "sorgnNm": "정보통신기획평가원",
+      "rcveEndDe": "2026.09.01",
+      "ancmDe": "2026.06.15",
+      "pbofrTpSeNmLst": "지정공모"
+    }
+  ]
+}

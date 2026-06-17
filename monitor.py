@@ -619,7 +619,7 @@ def load_settings() -> dict:
         "days_back": 1,
         "raw_all_enabled": True,
         "raw_all_recipients": [],
-        "claude_model": "claude-sonnet-4-6",
+        "claude_model": "claude-haiku-4-5-20251001",
         "claude_max_tokens": 4000,
         "fetch_max_workers": 10,
         # 기업 맞춤 정밀 매칭(2차 컷오프). 그룹에 company_id 연결 + 이 값 true 일 때만 적용.
@@ -2509,10 +2509,31 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
 def mail_topic(items: list[dict]) -> str:
     if items and all(it.get("source") == SEMAS_LOAN_SOURCE for it in items):
         return SEMAS_LOAN_TITLE
-    return "수출·해외진출 공고"
+    # 내용 기반 제목 — 기존엔 무조건 '수출·해외진출 공고' 고정이라 AI 공고도 그 제목으로 오발송됨.
+    # 우선키워드 빈도 top 2 로 라벨링, 없으면 중립 '지원사업 공고'.
+    counts: dict[str, int] = {}
+    for it in items:
+        for k in (it.get("priority_keywords") or []):
+            counts[k] = counts.get(k, 0) + 1
+    if counts:
+        top = sorted(counts, key=lambda k: (-counts[k], k))[:2]
+        return "·".join(top) + " 공고"
+    return "지원사업 공고"
+
+
+def _plain_text(s: str, limit: int = 600) -> str:
+    """HTML 태그·엔티티 제거 → 사용자용 평문(메일 본문에 코드/태그 노출 방지). 길면 자른다."""
+    if not s:
+        return ""
+    if "<" in s:
+        s = BeautifulSoup(s, "html.parser").get_text(" ", strip=True)
+    s = html.unescape(s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
 def fallback_body(items: list[dict]) -> str:
+    # 표시 정책: 사용자에게 필요한 정보만. HTML/내부코드·매칭키워드·스마트공장 등은 숨김.
     lines: list[str] = []
     items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
@@ -2530,28 +2551,31 @@ def fallback_body(items: list[dict]) -> str:
             continue
         lines.append(section_title)
         for it in section_items:
+            desc = _plain_text(it.get("description", ""))
+            block = [
+                "━━━━━━━━━━━━━━━━━━",
+                f"📌 {it.get('title') or '(제목없음)'}",
+                f"• 지원기관: {it.get('author') or '미기재'}",
+                f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
+            ]
+            if desc:
+                block.append(f"• 지원내용: {desc}")
+            block.append(f"• 신청마감: {resolve_item_deadline(it) or '미기재'}")
             region_label = _region_label(it)
-            factory_label = _factory_label(it)
-            smart_label = _smart_relevance_label(it)
-            matched = ", ".join(it.get("matched_keywords", [])) or "미기재"
-            priority = ", ".join(it.get("priority_keywords", [])) or "없음"
-            notes = " / ".join(it.get("notes", [])) or "없음"
-            lines += ["━━━━━━━━━━━━━━━━━━",
-                      f"📌 {it['title']}",
-                      f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
-                      f"• 지원기관: {it['author'] or '미기재'}",
-                      f"• 지원내용: {it['description'] or '미기재'}",
-                      f"• 신청마감: {resolve_item_deadline(it) or '미기재'} ({it.get('deadline_status', 'unknown')})",
-                      f"• 지역 적합성: {region_label}",
-                      f"• 공장 조건: {factory_label}",
-                      f"• 스마트공장 관련성: {smart_label}",
-                      f"• 매칭 키워드: {matched}",
-                      f"• 우선 키워드: {priority}",
-                      f"• 확인 메모: {notes}",
-                      f"• 등록일: {it.get('posted_date') or '날짜불명'}",
-                      f"• 출처: {it['source']}",
-                      f"• 🔗 {it['link'] or '미기재'}",
-                      "━━━━━━━━━━━━━━━━━━"]
+            if not region_label.endswith("전체"):     # 비제약('…전체')은 생략, 제약/확인필요만 표시
+                block.append(f"• 지역: {region_label}")
+            if it.get("factory_required") is True:
+                block.append("• 공장보유 필요")
+            notes = [n for n in (it.get("notes") or []) if n]
+            if notes:
+                block.append(f"• 확인: {' / '.join(notes)}")
+            block += [
+                f"• 등록일: {it.get('posted_date') or '날짜불명'}",
+                f"• 출처: {it.get('source') or '미기재'}",
+                f"• 🔗 {it.get('link') or '미기재'}",
+                "━━━━━━━━━━━━━━━━━━",
+            ]
+            lines += block
         lines.append("")
     return "\n".join(lines).strip()
 
@@ -2662,7 +2686,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 {items_txt}"""
     try:
         resp = client.messages.create(
-            model="claude-sonnet-4-6", max_tokens=4000,
+            model="claude-haiku-4-5-20251001", max_tokens=4000,
             messages=[{"role": "user", "content": prompt}])
         return resp.content[0].text.strip()
     except Exception as e:
@@ -3036,13 +3060,18 @@ def execute_monitor(
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
                 f"기준일자: {target_date} (직전영업일) 공고\n"
                 f"그룹: {group.get('name')}\n"
-                f"지역: {', '.join(req_rgns) or '전국'} / 키워드: {kw_str}\n"
+                f"지역: {', '.join(req_rgns) or '전국'}\n"
                 f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
                 f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
             )
+            # 키워드는 제목/상단에서 빼고 본문 최하단에 참고용으로만(숨김처리)
+            kw_footer = (
+                "\n\n────────────────────────────────\n"
+                f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
+            )
             send_to_list(
-                f"[{group.get('name')}] {mail_topic(g_items)} ({date_str}) — {len(g_items)}건",
-                header + voucher_block + summary,
+                f"[{group.get('name')}] {len(g_items)}건 ({date_str})",
+                header + voucher_block + summary + kw_footer,
                 group.get("recipients", []),
             )
             if voucher_items:

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>NIPA 사업공고 목록 page1</title></head>
+<body>
+<div id="contents">
+  <ul class="board_list">
+    <!-- 카드 1: 상대경로 href + nttNo → 안정 id nipa_40001, 날짜 2개(posted+deadline) -->
+    <li class="item">
+      <a href="./nttDetail?bbsNo=4&amp;nttNo=40001&amp;tab=2">2026년 ICT 융합 기술개발 지원사업 공고</a>
+      <span class="date">접수기간 2026.06.01 ~ 2026.06.30</span>
+    </li>
+    <!-- 카드 2: 절대경로 href(http) + nttNo → 안정 id nipa_40002, 날짜 1개(posted만, deadline 빈값) -->
+    <li class="item">
+      <a href="https://www.nipa.kr/home/bsnsAll/0/nttDetail?bbsNo=4&amp;nttNo=40002&amp;tab=2">2026년 AI 바우처 지원사업 모집 공고</a>
+      <span class="date">등록일 2026.06.05</span>
+    </li>
+  </ul>
+
+  <table class="board_table">
+    <tbody>
+      <!-- 카드 3: tr 부모, 상대경로 + nttNo, 날짜 3개 → posted=첫번째, deadline=마지막 -->
+      <tr>
+        <td class="num">40003</td>
+        <td class="subject">
+          <a href="nttDetail?bbsNo=4&amp;nttNo=40003&amp;tab=2">2026년 SW 인재양성 콘텐츠 제작 지원 공고</a>
+        </td>
+        <td class="period">2026.06.10 / 마감 2026.07.15 (게시 2026.06.09)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 카드 4: nttDetail 이지만 nttNo 파라미터 없음 → 안정 id 폴백(nipa_<stable_id(title+link)>) -->
+  <dl class="card">
+    <dt><a href="./nttDetail?bbsNo=4&amp;tab=2&amp;searchKey=hangul">2026년 디지털 콘텐츠 글로벌 진출 지원 공고</a></dt>
+    <dd class="date">2026-06-12 ~ 2026-08-01</dd>
+  </dl>
+
+  <!-- 노이즈: nttDetail 아닌 링크는 무시되어야 함 -->
+  <a href="./otherList?bbsNo=4&amp;tab=2">목록 더보기(무시 대상)</a>
+  <!-- 노이즈: 제목 5자 미만은 스킵되어야 함 -->
+  <a href="./nttDetail?bbsNo=4&amp;nttNo=99999&amp;tab=2">공고</a>
+</div>
+</body>
+</html>

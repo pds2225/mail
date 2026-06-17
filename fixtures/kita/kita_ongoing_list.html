@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>한국무역협회(KITA) 진행중인 사업</title></head>
+<body>
+  <div id="container">
+    <ul class="biz_list">
+      <!-- 항목 1: 정상 카드 (사업 + 지역 둘 다, 모집기간 시작·마감) -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="javascript:void(0);" onclick="goDetailPage('202603046')">2026년 무역아카데미 수출전문가 양성과정 참가기업 모집 공고</a>
+        </div>
+        <div class="info">
+          <span class="period">모집기간 : 2026.03.04 ~ 2026.04.20</span>
+          <span class="type">사업 : 인력양성</span>
+          <span class="region">지역 : 서울</span>
+        </div>
+      </li>
+
+      <!-- 항목 2: 정상 카드 (사업만, 지역 없음, 날짜 하이픈 표기) -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="javascript:void(0);" onclick="goDetailPage('202603099')">중소기업 해외전시회 단체참가 지원 신청 안내</a>
+        </div>
+        <div class="info">
+          <span class="period">모집기간 : 2026-05-01 ~ 2026-06-30</span>
+          <span class="type">사업 : 수출마케팅</span>
+        </div>
+      </li>
+
+      <!-- 항목 3: 정상 카드 (모집기간 없음 → posted=extract_date_from_text, deadline="") -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="#" onclick="goDetailPage('202601010')">FTA 활용 원산지증명 실무 컨설팅 참가기업 상시 모집</a>
+        </div>
+        <div class="info">
+          <span class="region">지역 : 부산</span>
+          <span class="etc">등록일 2026.02.15 기준</span>
+        </div>
+      </li>
+
+      <!-- NOISE: goDetailPage 없는 일반 링크 → onclick 매칭 안 됨, 제외 -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="/asocBiz/notice">한국무역협회 사업안내 메인 페이지로 이동</a>
+        </div>
+      </li>
+
+      <!-- NOISE: 5자 미만 제목 → len(title) < 5 로 스킵 -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="#" onclick="goDetailPage('202609999')">공고</a>
+        </div>
+      </li>
+
+      <!-- NOISE: goDetailPage 인자가 숫자 아님 → m_id 없음, continue -->
+      <li class="biz_item">
+        <div class="subject">
+          <a href="#" onclick="goDetailPage('event-banner')">진행중 사업 안내 배너 클릭 영역입니다</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>
