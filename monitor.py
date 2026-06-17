@@ -193,6 +193,41 @@ APPLICATION_KEYWORDS = [
 
 GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
 
+# ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
+# 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
+# 행정고지를 함께 올린다. 원본전체 메일에서 이를 걸러낸다(그룹메일은 키워드로 이미 차단).
+ADMIN_NOTICE_KEYWORDS = [
+    "주민등록", "무단전출", "전출자", "행정예고", "행정 예고",
+    "입찰공고", "입찰 공고", "낙찰", "개찰", "수의계약", "긴급입찰", "재입찰",
+    "의견청취", "도시관리계획", "도시계획변경", "지적재조사", "지적공부",
+    "공람공고", "공람 공고", "열람공고", "최고 공고", "최고공고",
+    "발급 통지", "통지 반송", "반송 공고", "공시송달",
+    "체납", "압류", "공매", "과태료", "명단 공개", "명단공개",
+    "후보자등록", "위원 위촉", "위원 위촉 공고", "소집공고", "소집 공고",
+    "교통통제", "도로명주소", "정비구역", "보상계획", "감정평가", "환지계획",
+    "청문 공고", "공유재산", "매각공고", "대부공고", "cctv 설치", "방범용 cctv",
+]
+GRANT_SIGNAL_KEYWORDS = [
+    "지원사업", "지원 사업", "지원금", "보조금", "바우처", "사업화", "사업 공고",
+    "모집공고", "모집 공고", "참여기업", "수요기업", "공모", "융자", "정책자금",
+    "창업", "육성", "r&d", "연구개발", "기술개발", "수출", "판로", "마케팅",
+    "컨설팅", "멘토링", "인증지원", "시제품", "입주기업", "투자유치",
+    "장려금", "지원 안내", "지원계획", "지원대상", "참가기업", "참가신청",
+]
+
+
+def is_admin_noise(item: dict) -> bool:
+    """지자체 고시/공고 게시판에 섞이는 '비지원 행정고지'(주민등록·CCTV·입찰·행정예고 등)인지.
+    행정 신호가 있고 지원사업 신호가 전혀 없을 때만 True. 지원 신호가 하나라도 있으면
+    False(recall 보호) — 진짜 지원공고는 놓치지 않는다."""
+    text = f"{item.get('title','')} {item.get('description','')}".lower()
+    if not any(k.lower() in text for k in ADMIN_NOTICE_KEYWORDS):
+        return False
+    if any(k.lower() in text for k in GRANT_SIGNAL_KEYWORDS):
+        return False
+    return True
+
+
 EXCLUSION_RULES = [
     ("GUIDELINE_OR_MANUAL", "guideline", "unknown", [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
@@ -2813,22 +2848,26 @@ def execute_monitor(
         date_unknown = []
         date_excluded = []
 
-    # ⑤ 원본전체 메일 (settings.raw_all_recipients)
+    # ⑤ 원본전체 메일 — 지자체 행정고지(주민등록·CCTV·입찰 등) 노이즈 제외(precision)
+    raw_items = [it for it in filtered_new if not is_admin_noise(it)]
+    raw_dropped = len(filtered_new) - len(raw_items)
+    if raw_dropped:
+        log.info("원본전체 행정노이즈 제외: %d건", raw_dropped)
     if (
         allow_send
         and include_raw_all
         and settings.get("raw_all_enabled", True)
         and settings.get("raw_all_recipients")
     ):
-        raw_topic = mail_topic(filtered_new)
+        raw_topic = mail_topic(raw_items)
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
             f"기준일자: {target_date} (직전영업일) 공고\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
-            f"날짜필터 후 발송대상: {len(filtered_new)}건\n\n"
-        ) + render_all(filtered_new, dedup_removed, len(date_unknown), include_unknown)
+            f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지 {raw_dropped}건 제외)\n\n"
+        ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         send_to_list(
-            f"[원본전체] {raw_topic} ({date_str}) — {len(filtered_new)}건",
+            f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건",
             body_raw, settings["raw_all_recipients"],
         )
 
