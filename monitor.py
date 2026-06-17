@@ -1207,14 +1207,17 @@ def fetch_itp(site: dict) -> list[dict]:
 
 def fetch_nipa(site: dict) -> list[dict]:
     """a[href*='nttDetail'] 패턴, relative → absolute 변환.
-    curPage 페이지네이션을 순회해 전체 수집(과거엔 1페이지 10건만 받아 대량 누락 — 실측 tab=2만 390건).
+    curPage 페이지네이션을 순회해 전체 수집(과거엔 1페이지 10건만 받아 대량 누락).
+    참고: URL의 tab 파라미터는 서버가 무시하고 bbsNo 전체 목록을 반환 → 실측 ~207페이지/2067건.
+    페이지에 새 공고가 0건이면(page_new==0) 끝에 도달한 것이라 자연 종료하므로,
+    max_pages 는 무한루프 방지용 안전 상한일 뿐(전량 수집이 기본).
     """
     BASE = "https://www.nipa.kr/home/bsnsAll/0/"
     items, agg = [], site.get("is_aggregator", False)
     seen = set()
     base_url  = site["url"]
     sep       = "&" if "?" in base_url else "?"
-    max_pages = site.get("max_pages", 60)  # 안전 상한(실측 39페이지) — site 설정으로 조정 가능
+    max_pages = site.get("max_pages", 300)  # 전량 수집 안전 상한(실측 ~207페이지) — site 설정으로 조정 가능
     for cp in range(1, max_pages + 1):
         soup = _soup(f"{base_url}{sep}curPage={cp}")
         if not soup: break
