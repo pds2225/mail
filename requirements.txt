@@ -12,3 +12,5 @@ google-auth>=2.29.0
 google-api-python-client>=2.100.0
 google-auth-httplib2>=0.2.0
 watchdog>=4.0.0
+pytest>=8.0.0
+respx>=0.21.0

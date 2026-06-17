@@ -1,0 +1,30 @@
+{
+  "jsonArray": [
+    {
+      "pblancId": "PBLN_000000000099991",
+      "pblancNm": "2026년 수출바우처 지원사업 통합공고",
+      "pblancUrl": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000099991",
+      "jrsdInsttNm": "중소벤처기업진흥공단",
+      "bsnsSumryCn": "수출 초보기업의 해외 마케팅 비용을 바우처로 지원합니다.",
+      "reqstBeginEndDe": "2026-06-01 ~ 2026-06-30",
+      "regDt": "2026-06-15 09:30:00"
+    },
+    {
+      "pblancId": "PBLN_000000000099992",
+      "pblancNm": "혁신바우처 R&D 지원 공고",
+      "pblancUrl": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000099992",
+      "jrsdInsttNm": "한국산업기술진흥원",
+      "bsnsSumryCn": "혁신형 중소기업의 기술개발 컨설팅을 지원합니다.",
+      "reqstBeginEndDe": "2026-06-10 ~ 2026-07-10",
+      "regDt": "2026-06-12"
+    },
+    {
+      "pblancNm": "지역특화 창업 지원 공고(아이디 없음)",
+      "pblancUrl": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/view.do?pblancId=PBLN_000000000099993",
+      "jrsdInsttNm": "창업진흥원",
+      "bsnsSumryCn": "예비창업자의 사업화 자금을 지원합니다.",
+      "reqstBeginEndDe": "2026-06-20 ~ 2026-07-31",
+      "regDt": "2026-06-11"
+    }
+  ]
+}
