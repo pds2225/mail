@@ -23,6 +23,7 @@ from monitor import (
     extract_application_period, resolve_item_deadline, classify_region,
     previous_business_day, mail_topic, KST, ALL_SUPPORT_TYPES,
     evaluate_notice, filter_for_group_with_diagnostics, render_excluded_summary,
+    classify_deadline_status,
 )
 
 # ── 테스트용 mock 공고 ────────────────────────────────────────────
@@ -723,3 +724,83 @@ def test_debounced_callback_serialises_concurrent_fires():
         "두 _fire() 호출이 동시에 callback을 실행했습니다 — 중복 처리 버그"
     )
     assert call_count[0] == 2, "두 fire 모두 실행되어야 합니다 (직렬화, 누락 아님)"
+
+
+# ── 작업 A·C: 키워드 보강 회귀 테스트 ──────────────────────────────────────────
+
+def test_open_deadline_terms_new_items_positive():
+    """OPEN_DEADLINE_TERMS 신규: 상시모집·연중수시가 title/description에 있으면 'open'"""
+    assert classify_deadline_status(
+        {"title": "OO사업 상시모집 안내", "description": "", "deadline": ""},
+        FILTER_TODAY,
+    ) == "open"
+    assert classify_deadline_status(
+        {"title": "OO 연중수시 모집", "description": "", "deadline": ""},
+        FILTER_TODAY,
+    ) == "open"
+    assert classify_deadline_status(
+        {"title": "OO 모집", "description": "연중수시 접수", "deadline": ""},
+        FILTER_TODAY,
+    ) == "open"
+    # 단독 '상시'는 추가하지 않음 — '상시 근로자 5인 이상 기업'은 여전히 open이 아님
+    assert classify_deadline_status(
+        {"title": "상시 근로자 5인 이상 기업", "description": "", "deadline": ""},
+        FILTER_TODAY,
+    ) != "open"
+
+
+def test_application_keywords_positive_chamgasinjung():
+    """'참가신청' APPLICATION_KEYWORDS 추가 → region-eligible 본문에서 is_relevant=True"""
+    result = evaluate_notice(
+        notice("OO 참가신청 공고", description="인천 소재 중소 제조 기업 수출"),
+        POLICY_GROUP,
+        FILTER_TODAY,
+    )
+    assert result["is_relevant"] is True
+    assert result["exclude_reason_codes"] == []
+
+
+def test_application_keywords_positive_gongmo():
+    """'공모' APPLICATION_KEYWORDS 추가 → region-eligible 본문에서 is_relevant=True"""
+    result = evaluate_notice(
+        notice("OO 공모 공고", description="인천 소재 중소 제조 기업 수출"),
+        POLICY_GROUP,
+        FILTER_TODAY,
+    )
+    assert result["is_relevant"] is True
+    assert result["exclude_reason_codes"] == []
+
+
+def test_negative_gate_guard_ungyongjiwongonggo_excluded():
+    """'지원공고' 미추가 잠금: '운영지원공고'는 여전히 NOT_GRANT_NOTICE로 제외.
+    region/group은 통과(인천 소재, '지원' in or_keywords), application 게이트만 막힘.
+    '지원공고'를 APPLICATION_KEYWORDS에 추가하면 is_relevant=True로 뒤집혀 이 테스트가 red."""
+    item = notice(title="운영지원공고", description="인천 소재 중소기업")
+    result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "NOT_GRANT_NOTICE" in result["exclude_reason_codes"]
+    # '지원' in or_keywords → group_keyword_pass=True(통과) — application 게이트만 차단
+    assert "지원" in POLICY_GROUP["or_keywords"]
+
+
+def test_membership_assertions():
+    """키워드 리스트 멤버십: 단독 일반어·미승인어는 없고, 승인 신규어는 있음"""
+    import monitor
+    assert "모집" not in monitor.APPLICATION_KEYWORDS
+    assert "접수" not in monitor.APPLICATION_KEYWORDS
+    assert "지원공고" not in monitor.APPLICATION_KEYWORDS
+    assert "상시" not in monitor.OPEN_DEADLINE_TERMS
+    assert "공모" in monitor.APPLICATION_KEYWORDS
+    assert "참가신청" in monitor.APPLICATION_KEYWORDS
+    assert "상시모집" in monitor.OPEN_DEADLINE_TERMS
+    assert "연중수시" in monitor.OPEN_DEADLINE_TERMS
+
+
+def test_gongmo_known_overtriggering_cost():
+    # 의도된 과탐 비용 — 비지원 '청년 사진 공모전'이 region/group eligible이면
+    # '공모' substring이 NOT_GRANT_NOTICE 게이트를 열음(2345-2346).
+    # '공모' 채택의 알려진·수용된 부작용.
+    # 후속 경계매칭 PR에서 이 단언을 is False로 뒤집어 제거할 것.
+    item = notice(title="청년 사진 공모전", description="인천 소재 중소 제조 기업 수출")
+    result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
+    assert result["is_relevant"] is True
