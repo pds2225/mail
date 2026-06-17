@@ -130,7 +130,6 @@
     "id": "grp_ai_saas",
     "name": "서울/전국 AI·SaaS팀",
     "active": true,
-    "company_id": "cmp_seoul_ai",
     "required_conditions": {
       "regions": [
         "서울"
