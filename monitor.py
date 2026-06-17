@@ -2744,6 +2744,48 @@ def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "wa
         log.warning("ntfy 알림 실패(무시): %s", e)
 
 
+# ── 집중 모니터링 워치리스트 ──────────────────────────────────────────────────
+# 사용자가 준 키워드/제목 또는 URL 에 걸리는 공고는 날짜·그룹 필터를 우회해 강제 포함하고
+# 전용 메일 + 폰 푸시로 강조한다. '놓치면 안 되는 공고'를 절대 안 놓치기 위한 장치.
+WATCHLIST_PATH = BASE_DIR / "watchlist.json"
+
+
+def load_watchlist() -> dict:
+    """watchlist.json 로드(키워드·URL·수신자). 없거나 형식오류면 빈 워치리스트."""
+    raw = load_json(WATCHLIST_PATH, {})
+    if not isinstance(raw, dict):
+        return {"keywords": [], "urls": [], "recipients": []}
+    return {
+        "keywords": [str(k).strip() for k in (raw.get("keywords") or []) if str(k).strip()],
+        "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
+        "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
+    }
+
+
+def _norm_url(u: str) -> str:
+    """비교용 URL 정규화: 스킴·www·쿼리·앵커·끝슬래시 제거 + 소문자."""
+    u = (u or "").strip().lower()
+    u = re.sub(r"^https?://", "", u)
+    u = re.sub(r"^www\.", "", u)
+    return u.split("?")[0].split("#")[0].rstrip("/")
+
+
+def is_watchlisted(item: dict, watchlist: dict) -> bool:
+    """공고가 워치리스트(키워드/제목 또는 URL)에 걸리는지. 걸리면 강제포함·강조 대상.
+    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text)."""
+    kws = watchlist.get("keywords") or []
+    if kws:
+        text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+        if any(_kw_in_text(text, k.lower()) for k in kws):
+            return True
+    nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
+    if nurls:
+        link = _norm_url(item.get("link") or item.get("url") or "")
+        if link and any(link.startswith(n) or n in link for n in nurls):
+            return True
+    return False
+
+
 def _post_run_alert(result: dict) -> None:
     """클라우드 자동발송(main) 직후 실패/0통이면 폰 알림. 크래시는 워크플로 if:failure가 담당."""
     if not isinstance(result, dict) or not result.get("ok"):
@@ -2820,6 +2862,15 @@ def execute_monitor(
 
     new_items = enrich_items(new_items)
 
+    # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
+    watchlist = load_watchlist()
+    watch_hits = (
+        [it for it in new_items if is_watchlisted(it, watchlist)]
+        if (watchlist["keywords"] or watchlist["urls"]) else []
+    )
+    if watch_hits:
+        log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
+
     # ④ 날짜 필터 (직전 영업일)
     target_date = previous_business_day(now, days_back)
     date_str    = now.strftime("%m/%d")
@@ -2847,6 +2898,31 @@ def execute_monitor(
         filtered_new = new_items
         date_unknown = []
         date_excluded = []
+
+    # 워치리스트 매칭분 강제포함 — 날짜필터로 빠졌어도 '절대 안 놓침'
+    if watch_hits:
+        _wl_seen = {it["id"] for it in filtered_new}
+        for it in watch_hits:
+            if it.get("id") and it["id"] not in _wl_seen:
+                filtered_new.append(it)
+                _wl_seen.add(it["id"])
+        # 집중 모니터링 전용 메일 + 폰 푸시 (raw_all 설정과 무관하게 보장)
+        if allow_send:
+            wl_recipients = watchlist["recipients"] or settings.get("raw_all_recipients") or []
+            if wl_recipients:
+                wl_body = "🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n" + "".join(
+                    f"[{i}] {it.get('title', '(제목없음)')}\n"
+                    f"  마감: {resolve_item_deadline(it) or '미기재'}\n"
+                    f"  링크: {it.get('link') or it.get('url') or '미기재'}\n\n"
+                    for i, it in enumerate(watch_hits, 1)
+                )
+                send_to_list(f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})", wl_body, wl_recipients)
+            alert_ntfy(
+                "watchlist",
+                f"집중 모니터링 공고 {len(watch_hits)}건!\n"
+                + "\n".join(f"- {it.get('title', '')[:50]}" for it in watch_hits[:5]),
+                priority="high", tags="dart",
+            )
 
     # ⑤ 원본전체 메일 — 지자체 행정고지(주민등록·CCTV·입찰 등) 노이즈 제외(precision)
     raw_items = [it for it in filtered_new if not is_admin_noise(it)]
