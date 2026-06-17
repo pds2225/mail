@@ -1,0 +1,28 @@
+{
+  "result": [
+    {
+      "bltwtrTitNm": "2026년 소상공인 정책자금 융자 신청 안내",
+      "loanSeCdNm": "직접대출",
+      "bltwtrClcd": "대출정보",
+      "bltwtrSeq": "5001",
+      "bbsTypeCd": "10",
+      "frstRegDt": "2026.06.15"
+    },
+    {
+      "bltwtrTitNm": "온라인 신청 시스템 점검 안내",
+      "loanSeCdNm": "",
+      "bltwtrClcd": "일반공지",
+      "bltwtrSeq": "5002",
+      "bbsTypeCd": "20",
+      "frstRegDt": "2026.06.14"
+    },
+    {
+      "bltwtrTitNm": "긴급경영안정자금 상환 일정 변경 공지",
+      "loanSeCdNm": "대리대출",
+      "bltwtrClcd": "일반공지",
+      "bltwtrSeq": "5003",
+      "bbsTypeCd": "20",
+      "frstRegDt": "2026.06.13"
+    }
+  ]
+}

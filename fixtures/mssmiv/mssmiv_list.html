@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>중소기업 혁신바우처 공지사항</title></head>
+<body>
+<div class="board_wrap">
+  <table class="board_list">
+    <thead>
+      <tr><th>번호</th><th>제목</th><th>등록일</th><th>접수마감</th></tr>
+    </thead>
+    <tbody>
+      <!-- 항목 1: 날짜 2개 → posted(첫) + deadline(마지막) -->
+      <tr>
+        <td>10</td>
+        <td><a href="#" onclick="goDetail(4001); return false;">2026년 중소기업 혁신바우처 사업 참여기업 모집 공고</a></td>
+        <td>2026.06.10</td>
+        <td>2026.07.15</td>
+      </tr>
+      <!-- 항목 2: 날짜 1개 → posted 만, deadline 빈값 -->
+      <tr>
+        <td>9</td>
+        <td><a href="javascript:void(0);" onclick="goDetail(4002)">혁신바우처 수행기관 추가 모집 안내</a></td>
+        <td>2026.06.08</td>
+        <td>-</td>
+      </tr>
+      <!-- 항목 3: 제목 5자 미만 → 스킵 -->
+      <tr>
+        <td>8</td>
+        <td><a href="#" onclick="goDetail(4003)">공지</a></td>
+        <td>2026.06.05</td>
+        <td>-</td>
+      </tr>
+      <!-- 노이즈 행: a[onclick] 없음 → 스킵 -->
+      <tr>
+        <td colspan="4">등록된 게시물이 없습니다.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

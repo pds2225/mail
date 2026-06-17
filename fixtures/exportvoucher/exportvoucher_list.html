@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>수출바우처 공지사항</title></head>
+<body>
+  <div id="container">
+    <table class="board_list">
+      <tbody>
+        <!-- 2-arg goDetail: 공지(bbs_id=1) → menu EZ005004000 -->
+        <tr>
+          <td class="title">
+            <a href="javascript:void(0);" onclick="goDetail('1001','1')">2026년 수출바우처 참여기업 모집 공고</a>
+          </td>
+        </tr>
+        <!-- 2-arg goDetail: 자료실(bbs_id=2) → menu EZ005005000 -->
+        <tr>
+          <td class="title">
+            <a href="javascript:void(0);" onclick="goDetail('2002','2')">수출바우처 사업운영 지침 자료 안내</a>
+          </td>
+        </tr>
+        <!-- 1-arg goDetail: bbs_id 생략 → 목록 URL의 bbs_id=1 기본값 사용 -->
+        <tr>
+          <td class="title">
+            <a href="#" onclick="goDetail(3003)">개편 신버전 단일인자 수출바우처 추가 공고</a>
+          </td>
+        </tr>
+        <!-- NOISE: 시스템 점검 제목 → 필터로 제외 -->
+        <tr>
+          <td class="title">
+            <a href="#" onclick="goDetail('4004','1')">서버 시스템 점검에 따른 서비스 안내</a>
+          </td>
+        </tr>
+        <!-- 제외 게시판(bbs_id=3, 예: FAQ) → continue 로 제외 -->
+        <tr>
+          <td class="title">
+            <a href="#" onclick="goDetail('5005','3')">자주 묻는 질문 FAQ 게시판 안내문</a>
+          </td>
+        </tr>
+        <!-- 5자 미만 제목 → len(title) < 5 로 스킵 -->
+        <tr>
+          <td class="title">
+            <a href="#" onclick="goDetail('6006','1')">공지</a>
+          </td>
+        </tr>
+        <!-- goDetail 없는 일반 링크 → 제외 -->
+        <tr>
+          <td class="title">
+            <a href="/portal/main">수출바우처 포털 메인으로 이동하기 링크</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
