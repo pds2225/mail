@@ -2127,7 +2127,9 @@ def extract_support_amount(text: str) -> int | None:
         amounts.append(int(float(m.group(1)) * 10_000_000))
     for m in re.finditer(r"(\d+(?:\.\d+)?)\s*백만", t):
         amounts.append(int(float(m.group(1)) * 1_000_000))
-    for m in re.finditer(r"(?<![천백.\d])(\d{1,6})\s*만\s*원?", t):
+    # ★'원' 옵션 뒤 음수전방탐색 — '100만명/50만개/100만건' 등 비금액 '만'을 금액으로 오추출하지
+    #   않는다(정당 공고를 AMOUNT_TOO_LOW 로 잘못 제외하던 recall 버그 차단). '500만원'=5,000,000 유지.
+    for m in re.finditer(r"(?<![천백.\d])(\d{1,6})\s*만\s*원?(?![명개건회사세팀])", t):
         amounts.append(int(m.group(1)) * 10_000)
     for m in re.finditer(r"(?<!\d)(\d{7,})\s*원", t):
         amounts.append(int(m.group(1)))
