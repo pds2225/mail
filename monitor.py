@@ -106,6 +106,16 @@ SUPPORT_TYPE_RULES: dict[str, list[str]] = {
 }
 ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 
+# K-Startup 상세 '지원분야'(공식 카테고리=권위값) → 우리 지원유형 버킷 매핑.
+# 제목 키워드 추측이 놓치는 '사업화/정책자금/융자' 등을 지원금/바우처로 정확화하고,
+# '멘토링·컨설팅·교육'은 컨설팅으로 확정한다. 키들은 소문자 비교(한글은 영향 없음).
+# '그외'로 가는 분야(시설·행사·글로벌 등)는 매핑하지 않는다(기본값과 동일 → 잡음 방지).
+KSTARTUP_FIELD_TO_TYPE = {
+    "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
+    "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
+    "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
+}
+
 # 지역 키워드 (전국 판별용)
 KNOWN_REGIONS = {
     "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종",
@@ -153,6 +163,19 @@ _NON_GG_LOCALITIES = (
     "노원", "은평", "서대문", "마포", "양천", "강서", "구로", "금천", "영등포",
     "동작", "관악", "서초", "강남", "송파", "강동",
 )
+
+# ── 타지역 override 일반화(전 그룹: 경기/서울/인천 …) ───────────────────
+# 수도권 family: 권역(A) 차단에서 상호 제외(예: 인천 그룹에 '경기권/서울권/수도권'은
+# 차단 안 함). ★(B) 기초자치 지역명에는 family 를 적용하지 않는다 — 적용하면 경기 그룹이
+# 서울자치구(성북/동대문) 차단을 잃는다(검증으로 확인된 함정).
+_METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
+# 광역권 토큰(명명그룹). 매치된 광역이 own family 가 아니면 타지역 한정으로 본다.
+_KWON_NAMED_RE = re.compile(
+    r"(?P<r>강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산|서울|인천|경기|수도)\s*권"
+)
+# 전 지역명(광역 + 서울 자치구). own 지역명은 헬퍼가 런타임에 제외한다(★own 자치구는
+# 풀네임 정확매칭만 — 인천 '동구→동' short-form 이 '동대문'을 substring 으로 삼키는 함정 방지).
+_ALL_LOCALITIES = _NON_GG_LOCALITIES + ("경기",)
 
 APPLICANT_REGION_CITY = "인천광역시"
 APPLICANT_REGION_DISTRICT = "남동구"
@@ -816,7 +839,9 @@ def fetch_kstartup(site: dict) -> list[dict]:
             org = norm(spans[0].get_text()) if spans else ""
             dl = next((norm(sp.get_text().replace("마감일자", ""))
                        for sp in spans if "마감일자" in sp.get_text()), "")
-            posted = ""
+            # 게시일(등록일자) — 목록 카드에 '등록일자 YYYY-MM-DD'로 존재(기존엔 미추출→날짜불명).
+            pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
+            posted = extract_date_from_text(pm.group(1)) if pm else ""
             flag = card.select_one(".flag:not(.day):not(.flag_agency)")
             iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
             items.append(_item(iid, title, link, org,
@@ -1883,6 +1908,19 @@ def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[lis
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
     matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(_kw_in_text(text, k.lower()) for k in kws)]
+    # K-Startup 상세 '지원분야'(권위 카테고리)가 있으면 정확 매핑을 합집합으로 보강 —
+    # 키워드 추측이 놓친 '사업화/정책자금'을 지원금/바우처로, '멘토링ㆍ컨설팅ㆍ교육'을 컨설팅으로.
+    sf = (item.get("support_field") or "").lower()
+    if sf:
+        had_keyword = bool(matched)
+        for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
+            if kw in sf and bucket not in matched:
+                matched.append(bucket)
+        # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
+        #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
+        #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
+        if not had_keyword and "그외" not in matched:
+            matched.append("그외")
     return matched or ["그외"]
 
 
@@ -2136,6 +2174,41 @@ def _title_region_tags(item: dict) -> list[str]:
     return [r for r in _KNOWN_REGION_SHORT if r in inner]
 
 
+def _other_region_block(item: dict, own_meta: dict):
+    """'지역=전국'으로 박혀도 명백한 타지역 한정이면 차단사유 반환(아니면 None) — recall-safe.
+    own_meta={'label': 광역약칭(예 '경기'/'서울'/'인천'), 'districts': [자치구 풀네임...]}.
+    own 신호(자치구 풀네임/광역명) 또는 사람이 쓴 제목·본문 '전국'이 있으면 None(미발동).
+    (A) own family 가 아닌 광역권 토큰(제목), (B) 기초자치단체·지역재단 주관 + 비-own 지역명."""
+    title = str(item.get("title", ""))
+    raw_text = f"{title} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    text = _notice_text(item)
+    org_text = f"{item.get('organizer_field','')} {item.get('author','')}"
+    own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
+    own_label = (own_meta.get("label") or "").strip().lower()
+    districts = [d for d in own_meta.get("districts", []) if d]
+    fam = {f.lower() for f in (_METRO_FAMILY if own_label in {x.lower() for x in _METRO_FAMILY} else {own_label})}
+
+    own_present = (
+        any(d.lower() in text for d in districts)            # own 자치구 풀네임
+        or (own_label and own_label in own_blob)             # own 광역명
+    )
+    explicit_nationwide = ("전국" in title) or ("전국" in str(item.get("description", "")))
+    if own_present or explicit_nationwide:
+        return None
+    # (A) 광역권 토큰 — own family 외 광역이면 차단
+    for mch in _KWON_NAMED_RE.finditer(title):
+        norm_r = "수도권" if mch.group("r") == "수도" else mch.group("r")
+        if norm_r.lower() not in fam:
+            return "타지역 권역"
+    # (B) 기초자치단체/지역재단 주관 + 비-own 지역명 (전국운영기관 제외)
+    if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
+        own_loc = {own_label} | {d.lower() for d in districts}
+        other = [loc for loc in _ALL_LOCALITIES if loc in org_text and loc.lower() not in own_loc]
+        if other:
+            return other[:3]
+    return None
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -2174,29 +2247,11 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         if d.lower() in text or (short_d and short_d.lower() in text):
             district_hits.append(d)
 
-    # ── recall-safe 타지역 override ──────────────────────────────────────
-    # '지역'이 '전국'으로 박혀도, own-region(경기/고양/김포) 신호가 전혀 없고 명백한
-    # 타지역 한정 신호가 있으면 거른다. own-region 이 하나라도 보이면 절대 미발동
-    # (정당한 경기 공고 보호 — recall 1순위). 애매하면 발동 안 함.
-    org_text = f"{item.get('organizer_field','')} {item.get('author','')}"
-    own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
-    own_tokens = [t for t in [city, label] + districts if t]
-    own_present = (bool(district_hits) or label in detected
-                   or any(t.lower() in own_blob for t in own_tokens))
-    # 사람이 쓴 제목/본문에 명시적 '전국' 신호가 있으면 진짜 전국공고로 보고 override 미발동.
-    # (K-Startup region_field='전국' 드롭다운은 신뢰불가 — 강원권 행사·지역 청년공간도 전국으로
-    #  박혀 있어 가드로 쓰면 안 된다. 사람이 쓴 제목/본문의 '전국'만 신뢰한다 — recall 보존.)
-    title = str(item.get("title", ""))
-    explicit_nationwide = ("전국" in title) or ("전국" in str(item.get("description", "")))
-    if not own_present and not explicit_nationwide:
-        # (A) 제목의 비경기 광역권 토큰(강원권·충청권 등)
-        if _NON_GG_KWON_RE.search(title):
-            return result("not_eligible", "not_eligible", [], ["타지역 권역"])
-        # (B) 기초자치단체/지역재단 주관 + 비경기 지역명 (전국운영기관 제외)
-        if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
-            other_loc = [loc for loc in _NON_GG_LOCALITIES if loc in org_text]
-            if other_loc:
-                return result("not_eligible", "not_eligible", [], other_loc[:3])
+    # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
+    _ovr = _other_region_block(item, {"label": label, "districts": districts})
+    if _ovr is not None:
+        return result("not_eligible", "not_eligible", [],
+                      [_ovr] if isinstance(_ovr, str) else list(_ovr))
 
     if nationwide:
         return result("eligible", "eligible", [city or label], [])
@@ -2253,6 +2308,13 @@ def classify_region(item: dict) -> dict:
     # 전국/지역무관 공고는 행사 개최지 등 타지역명이 본문에 있어도 탈락시키지 않는다.
     # (classify_region_for_group 은 이미 nationwide 를 우선 처리 — 동일 정책으로 정렬)
     nationwide = bool(target.get("nationwide")) or "전국" in text
+    # 인천 그룹에도 동일 recall-safe 타지역 override 적용(own=인천, 수도권 family 상호제외).
+    # own(인천/INCHEON_DISTRICTS) 또는 사람이 쓴 제목·본문 '전국'이 있으면 미발동(기존 분기 보존).
+    _ovr = _other_region_block(item, {"label": "인천", "districts": INCHEON_DISTRICTS})
+    if _ovr is not None:
+        return {"region_status": "not_eligible", "district_status": "not_eligible",
+                "eligible_regions": [],
+                "excluded_regions": [_ovr] if isinstance(_ovr, str) else list(_ovr)}
     explicit_regions = list(target.get("regions") or [])
     if item.get("region_field"):
         explicit_regions.append(norm(item["region_field"]))
@@ -2558,7 +2620,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "review_needed": review_needed,
         "business_years_status": biz_years_status,
         "support_amount_status": amount_status,
-        "_types": classify_support_type(item),
+        # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
+        "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
     })
     return result
 
