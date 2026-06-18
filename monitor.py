@@ -30,6 +30,17 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# ── .env 자동 로딩 (단독 실행 시 환경변수 주입) ──────────────────────────────
+# monitor.py 를 직접 실행하면 .env / .env.shared 의 키(BIZINFO_API_KEY 등)를
+# 환경변수로 주입한다. load_dotenv 는 override=False 가 기본이라, 이미 설정된
+# 환경변수(스케줄러/상위 프로세스 주입분)는 덮어쓰지 않는다(멱등·무해).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env")                # 로컬 전용 키
+    load_dotenv(BASE_DIR.parent / ".env.shared")  # 공통 키(BIZINFO_API_KEY 등)
+except ImportError:
+    pass
+
 # ── Playwright fetcher 모듈 동적 임포트 ──────────────────────────────────────
 try:
     from fetchers.playwright_fetcher import (
