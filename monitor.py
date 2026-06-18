@@ -113,6 +113,47 @@ KNOWN_REGIONS = {
     "충청", "전라", "경상", "수도권", "호남", "영남",
 }
 
+# ── K-Startup 상세 구조화 필드(p.tit/p.txt 라벨) → item 전용 키 매핑 ──────
+# 본문(.view_cont 등) 셀렉터가 현행 K-Startup 페이지에서 비어, 업력/대상/지역 등
+# 핵심 신호가 통째로 누락됐다. 라벨쌍에서 직접 거둔다.
+# ★숫자(년/만세)가 든 값(창업업력·대상연령)은 description/body 에 합치지 않는다 —
+#   extract_business_year_requirement 가 '1년미만,…,10년미만' 멀티셀렉트를 max=1 로
+#   잘못 접어 정당공고를 대량 누락시키기 때문(전용 매퍼가 따로 해석).
+KSTARTUP_DETAIL_LABELS = {
+    "지역": "region_field",
+    "신청기간": "application_period_text",
+    "창업업력": "business_age_text",
+    "대상": "target_field",
+    "대상연령": "target_age_field",
+    "주관기관명": "organizer_field",
+    "제외대상": "exclude_target_field",
+    "지원분야": "support_field",
+}
+
+# 비경기 '광역권' 토큰(강원권·충청권·호남권 등). 수도권/경기권/서울권은 경기를
+# 포함·인접하므로 차단 대상에서 제외한다(recall 보호).
+_NON_GG_KWON_RE = re.compile(
+    r"(?:강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산)\s*권"
+)
+# 기초자치단체/지역재단 주관 신호(강한 지역귀속). 비경기 지역명과 함께 있을 때만
+# 타지역 한정으로 본다.
+_LOCAL_GOV_ORG_RE = re.compile(r"구청|시청|군청|도청|문화재단|문화관광재단")
+# 지역명이 들어가도 전국사업을 운영하는 기관 — (B) 차단에서 제외(서울창조경제혁신센터
+# 주관 KAMCO 등 전국 정당공고 보호).
+_NATIONAL_SCOPE_ORG_RE = re.compile(
+    r"창조경제혁신센터|테크노파크|산학협력단|대학교|대학원|진흥원|진흥공단|연구원|협회|진흥재단"
+)
+# 비경기 지역명(광역 + 서울 자치구 + 명확한 비경기 도시). ★경기 지역명은 절대
+# 넣지 않는다 — 넣으면 정당한 경기 공고를 누락(recall 위반)한다.
+_NON_GG_LOCALITIES = (
+    # ★'광주'는 경기도 광주시와 광주광역시가 충돌 → '광주광역'으로 좁혀 경기 광주시 보호.
+    "서울", "인천", "부산", "대구", "광주광역", "대전", "울산", "세종",
+    "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+    "종로", "용산", "성동", "광진", "동대문", "중랑", "성북", "강북", "도봉",
+    "노원", "은평", "서대문", "마포", "양천", "강서", "구로", "금천", "영등포",
+    "동작", "관악", "서초", "강남", "송파", "강동",
+)
+
 APPLICANT_REGION_CITY = "인천광역시"
 APPLICANT_REGION_DISTRICT = "남동구"
 INCHEON_DISTRICTS = [
@@ -503,14 +544,15 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
     if "k-startup.go.kr" in url:
         for tit in soup.select("p.tit"):
             label = norm(tit.get_text())
+            key = KSTARTUP_DETAIL_LABELS.get(label)
+            if not key:
+                continue
             nxt = tit.find_next("p", class_="txt")
             if not nxt:
                 continue
             val = norm(nxt.get_text())
-            if label == "지역" and val:
-                result["region_field"] = val
-            if label == "신청기간" and val:
-                result["application_period_text"] = val
+            if val and key not in result:   # 같은 라벨 중복 시 첫 값만
+                result[key] = val
         body = soup.select_one(".view_cont, .content_view, #contents")
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
@@ -544,6 +586,15 @@ def enrich_item_from_detail(item: dict) -> dict:
         updated["description"] = f"{desc}\n{body}".strip() if desc else body
     if fields.get("region_field"):
         updated["region_field"] = fields["region_field"]
+    # K-Startup 구조화 신호(업력/대상/주관기관 등) 전용 키로 보존 — 숫자 든 값은
+    # description 에 합치지 않는다(매처가 멀티셀렉트를 오해석해 누락하는 것 방지).
+    for k in ("business_age_text", "target_field", "target_age_field",
+              "organizer_field", "exclude_target_field", "support_field"):
+        if fields.get(k):
+            updated[k] = fields[k]
+    # 주관기관명은 author 가 비었을 때만 표시용으로 보강(지역 override 는 양쪽 다 본다).
+    if fields.get("organizer_field") and not (updated.get("author") or "").strip():
+        updated["author"] = fields["organizer_field"]
     period_src = fields.get("application_period_text") or updated.get("description", "")
     period = extract_application_period(period_src) or extract_application_period(body)
     if period.get("display"):
@@ -1973,11 +2024,44 @@ def extract_business_year_requirement(text: str) -> dict | None:
     return {"min": found_min, "max": found_max}
 
 
+_KSTARTUP_BIZ_BUCKET_RE = re.compile(r"(\d+)\s*년\s*(?:미만|이내|이하)")
+
+
+def parse_kstartup_business_buckets(text: str, cfg: dict) -> str:
+    """K-Startup '창업업력' 멀티셀렉트를 그룹 신청자 업력구간과 비교.
+    값 예: '1년미만, 5년미만, 10년미만' / '전체' / '예비창업자'.
+    각 'N년미만'은 '업력 N년 미만 기업 신청가능'(상한 N)을 뜻하고, 멀티셀렉트는
+    그 합집합이라 사실상 '가장 큰 N 까지 허용'이다. 신청자 구간 (lo, hi] 와
+    겹치려면 (lo < 업력 < N) 인 업력이 있어야 하므로 N > lo 가 필요충분.
+    eligible / not_eligible / unknown(애매 → 통과, recall 우선)."""
+    if not text:
+        return "unknown"
+    t = unicodedata.normalize("NFKC", text)
+    if "전체" in t:
+        return "eligible"
+    lo_raw = cfg.get("min_exclusive")
+    if lo_raw is None:
+        lo_raw = cfg.get("min", 0)
+    lo = float(lo_raw if lo_raw is not None else 0)
+    ns = [int(mm.group(1)) for mm in _KSTARTUP_BIZ_BUCKET_RE.finditer(t)]
+    if ns:
+        return "eligible" if any(n > lo for n in ns) else "not_eligible"
+    # 연수 버킷 없이 '예비창업자'만 → 창업 전·극초기 전용 → 신청자(업력 보유 기업) 불가
+    if "예비창업자" in t:
+        return "not_eligible"
+    return "unknown"
+
+
 def business_years_status(item: dict, group: dict) -> str:
     """그룹 신청자 업력 구간과 공고 업력 요건의 호환성. eligible/not_eligible/unknown/n/a."""
     cfg = group.get("business_years")
     if not cfg:
         return "n/a"
+    # K-Startup 상세의 '창업업력' 전용 필드가 있으면 멀티셀렉트 전용 매퍼 우선
+    # (generic 추출기는 '1년미만,…,10년미만'을 max=1 로 오접어 정당공고를 누락시킴).
+    bucket_text = item.get("business_age_text")
+    if bucket_text:
+        return parse_kstartup_business_buckets(bucket_text, cfg)
     req = extract_business_year_requirement(_notice_text(item))
     if req is None:
         return "unknown"
@@ -2089,6 +2173,30 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if d.lower() in text or (short_d and short_d.lower() in text):
             district_hits.append(d)
+
+    # ── recall-safe 타지역 override ──────────────────────────────────────
+    # '지역'이 '전국'으로 박혀도, own-region(경기/고양/김포) 신호가 전혀 없고 명백한
+    # 타지역 한정 신호가 있으면 거른다. own-region 이 하나라도 보이면 절대 미발동
+    # (정당한 경기 공고 보호 — recall 1순위). 애매하면 발동 안 함.
+    org_text = f"{item.get('organizer_field','')} {item.get('author','')}"
+    own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
+    own_tokens = [t for t in [city, label] + districts if t]
+    own_present = (bool(district_hits) or label in detected
+                   or any(t.lower() in own_blob for t in own_tokens))
+    # 사람이 쓴 제목/본문에 명시적 '전국' 신호가 있으면 진짜 전국공고로 보고 override 미발동.
+    # (K-Startup region_field='전국' 드롭다운은 신뢰불가 — 강원권 행사·지역 청년공간도 전국으로
+    #  박혀 있어 가드로 쓰면 안 된다. 사람이 쓴 제목/본문의 '전국'만 신뢰한다 — recall 보존.)
+    title = str(item.get("title", ""))
+    explicit_nationwide = ("전국" in title) or ("전국" in str(item.get("description", "")))
+    if not own_present and not explicit_nationwide:
+        # (A) 제목의 비경기 광역권 토큰(강원권·충청권 등)
+        if _NON_GG_KWON_RE.search(title):
+            return result("not_eligible", "not_eligible", [], ["타지역 권역"])
+        # (B) 기초자치단체/지역재단 주관 + 비경기 지역명 (전국운영기관 제외)
+        if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
+            other_loc = [loc for loc in _NON_GG_LOCALITIES if loc in org_text]
+            if other_loc:
+                return result("not_eligible", "not_eligible", [], other_loc[:3])
 
     if nationwide:
         return result("eligible", "eligible", [city or label], [])
