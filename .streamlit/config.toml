@@ -1,0 +1,13 @@
+# Streamlit 설정 (로컬 + Streamlit Cloud 공용)
+# 대시보드 자체는 시크릿 없이도 구동됩니다. "▶ 실행" 탭의 monitor.py 호출에만
+# 시크릿(BIZINFO_API_KEY 등)이 필요하며, Cloud에서는 Secrets로 주입합니다.
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#2563eb"
