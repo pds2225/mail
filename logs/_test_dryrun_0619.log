@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "D:\mail\monitor.py", line 62, in <module>
+    BIZINFO_API_KEY    = _require_env("BIZINFO_API_KEY")
+  File "D:\mail\monitor.py", line 56, in _require_env
+    raise EnvironmentError(
+    ...<2 lines>...
+    )
+OSError: 필수 환경변수 누락: BIZINFO_API_KEY
+  → .env 파일에 BIZINFO_API_KEY=<값> 을 추가하세요.
