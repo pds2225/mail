@@ -99,6 +99,53 @@ cd D:\mail
 python monitor.py
 ```
 
+### `monitor.py` 운영 런북
+
+`monitor.py` 는 `sites.json` → `groups.json` → `settings.json` 순서의 설정을 읽어
+수집, 중복제거, 게시일 필터, 그룹별 추천, AI 요약, 메일 발송을 한 번에 실행합니다.
+
+#### 환경변수 로딩
+- 단독 실행 시 `D:\mail\.env` 를 먼저 읽고, 이어서 상위 폴더의 `D:\.env.shared` 를 읽습니다.
+- 이미 서버·스케줄러·상위 프로세스가 주입한 환경변수는 덮어쓰지 않습니다.
+- 필수 값이 없으면 시작 단계에서 중단됩니다: `BIZINFO_API_KEY`, `ANTHROPIC_API_KEY`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`.
+- `.env` 파일과 실제 키 값은 저장소에 커밋하지 않습니다.
+
+#### 안전 실행 예시
+```powershell
+# 실제 발송과 seen_ids.json 저장 없이 전체 파이프라인 점검
+python monitor.py --dry-run
+
+# 네트워크 커버리지 수집을 생략하고 빠르게 dry-run
+python monitor.py --dry-run --skip-coverage-fetch
+
+# 테스트 실발송 시 모든 그룹·raw_all·watchlist 수신자를 한 주소로 강제
+python monitor.py --only-to tester@example.com
+```
+
+- `--dry-run` 은 SMTP 발송과 `seen_ids.json` 저장을 막고, `logs/` 아래에 점검 보고서를 씁니다.
+- `--only-to` 는 발송 경로와 관계없이 최종 수신자를 지정한 1개 주소로 바꿉니다. 테스트 실발송 때만 사용합니다.
+- 수신자는 발송 직전에 형식 검증·중복제거를 거치며, 로그에는 마스킹된 주소만 남습니다.
+
+#### 필터 판정 기준
+- 게시일 기준은 직전영업일이며, 월요일 실행 시 직전 금요일과 주말 게시물을 함께 포함합니다.
+- 게시일을 읽지 못한 공고는 `date_unknown_policy` 설정에 따라 포함, 제외, 검토대기로 나뉩니다.
+- 검토대기는 `logs/review_queue_YYYYMMDD.md` 에 남고, 누락 위험 요약은 `logs/today_notice_missing_risk_report.md` 에 기록됩니다.
+- 그룹 필터는 지역, 지원금액, 지원사업 성격, 게시일, 접수기간을 함께 판단합니다.
+- 지원금액 기준이 있는 그룹은 `min_support_amount` 를 사용합니다. 금액을 찾지 못하면 recall 우선으로 통과시키며, `100만명`, `100만건`, `만 20세` 같은 비금액 표현은 금액으로 보지 않습니다.
+
+#### 개발자 검증
+```bash
+# API 키 없이 실행되는 단위·운영 테스트
+python3 -m pytest test_monitor.py test_monitor_ops.py test_decision_matrix.py -v
+
+# 실제 사이트 HTTP 수집 점검(BIZINFO_API_KEY 필요)
+python3 test_fetch.py
+```
+
+`test_decision_matrix.py` 는 지역, 지원금액, 지원사업 성격, 게시일, 접수기간 조합을
+`included` / `review` / `excluded` 버킷으로 고정해 회귀를 막습니다. 새 필터 조건을
+추가할 때는 이 진리표에 기대 동작을 먼저 반영하세요.
+
 ### 정책자금 점검 모듈 (②번 기능)
 ```powershell
 cd D:\mail

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-06-19
+
+- Documented the `monitor.py` operations runbook: dotenv loading, dry-run behavior, `--only-to` test-send guard, recipient validation, review reports, and decision-matrix filter coverage.
+- Clarified support amount filtering pitfalls, including non-money `만` expressions that must not be treated as grant amounts.
+
 ## 2026-05-27
 
 - Added grant notice classification fields, keyword scoring, priority keyword handling, deadline status, Incheon Namdong-gu eligibility, factory/smart-factory matching, and dry-run excluded summaries.
