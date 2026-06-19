@@ -30,6 +30,17 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# ── .env 자동 로딩 (단독 실행 시 환경변수 주입) ──────────────────────────────
+# monitor.py 를 직접 실행하면 .env / .env.shared 의 키(BIZINFO_API_KEY 등)를
+# 환경변수로 주입한다. load_dotenv 는 override=False 가 기본이라, 이미 설정된
+# 환경변수(스케줄러/상위 프로세스 주입분)는 덮어쓰지 않는다(멱등·무해).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env")                # 로컬 전용 키
+    load_dotenv(BASE_DIR.parent / ".env.shared")  # 공통 키(BIZINFO_API_KEY 등)
+except ImportError:
+    pass
+
 # ── Playwright fetcher 모듈 동적 임포트 ──────────────────────────────────────
 try:
     from fetchers.playwright_fetcher import (
@@ -2778,7 +2789,13 @@ def _mask_email(email: str) -> str:
         local_masked = local[:2] + "*" * (len(local) - 2)
     return f"{local_masked}@{domain}"
 
+# 테스트 실발송 안전장치: 값이 있으면 모든 발송 수신자를 이 주소 하나로 강제한다.
+# (그룹·raw_all·watchlist 등 모든 발송 경로가 send_email/send_to_list 를 거치므로 여기서 일괄 차단)
+_ONLY_TO: str = ""
+
 def send_email(subject: str, body: str, to: str) -> None:
+    if _ONLY_TO:
+        to = _ONLY_TO
     msg = MIMEMultipart("alternative")
     msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
     msg.attach(MIMEText(body, "plain", "utf-8"))
@@ -2792,6 +2809,8 @@ def send_email(subject: str, body: str, to: str) -> None:
     log.info("발송 완료 → %s", _mask_email(to))
 
 def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
+    if _ONLY_TO:
+        recipients = [_ONLY_TO]
     if not _ALLOW_SMTP_SEND:
         checked = validate_recipients(recipients)
         log.info(
@@ -3344,7 +3363,17 @@ if __name__ == "__main__":
         action="store_true",
         help="dry-run 시 사이트별 순차 수집 생략(네트워크 절약)",
     )
+    parser.add_argument(
+        "--only-to",
+        default="",
+        metavar="EMAIL",
+        help="모든 발송 수신자를 이 주소 하나로 강제(테스트 실발송용 안전장치). "
+             "그룹·raw_all·watchlist 어떤 경로든 이 주소로만 나간다.",
+    )
     args = parser.parse_args()
+    if args.only_to:
+        _ONLY_TO = args.only_to
+        log.info("only-to 모드: 모든 발송 수신자를 %s 로 강제합니다(테스트)", _mask_email(args.only_to))
     try:
         if args.dry_run:
             summary = run_dry_run(fetch_coverage=not args.skip_coverage_fetch)
