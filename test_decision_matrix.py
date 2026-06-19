@@ -46,7 +46,7 @@ def base(gid):
 
 def bucket_of(item, gid):
     d = m.filter_for_group_with_diagnostics([item], G[gid], TODAY)
-    for b in ("included", "review", "excluded"):
+    for b in ("included", "region_unknown", "review", "excluded"):
         if d[b]:
             return b, d[b][0]
     return "none", {}
@@ -111,13 +111,15 @@ def test_region_other_localgov_excluded(gid):
 
 
 @pytest.mark.parametrize("gid", ACTIVE)
-def test_region_unknown_observed_excluded(gid):
-    """★관측앵커(통과 단정 금지): region unknown → 현행 excluded + REGION_NOT_ELIGIBLE.
-    recall-적격화는 ADR 정책변경 사안(현행 hard-exclude 유지)."""
+def test_region_unknown_surfaced_not_excluded(gid):
+    """★정책변경(2026-06-19): 지역 단서 전무 → 버리지 말고 '지역 미상' 버킷으로 surface(recall).
+    '확실한 타지역'(not_eligible)과 달리 REGION_NOT_ELIGIBLE 를 붙이지 않는다."""
     b, ev = bucket_of(mk(gid, title=base(gid)["title"].split(" ", 1)[1],
                          description="중소기업 신청접수"), gid)
     record("region", "unknown", gid)
-    assert b == "excluded" and "REGION_NOT_ELIGIBLE" in ev["exclude_reason_codes"]
+    assert b == "region_unknown", (gid, b, ev.get("exclude_reason_codes"))
+    assert "REGION_NOT_ELIGIBLE" not in ev["exclude_reason_codes"]
+    assert ev.get("region_unknown_review") is True
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -158,10 +160,22 @@ def test_amount_over_threshold_included():
     assert b == "included" and ev["support_amount_status"] == "eligible"
 
 
-def test_amount_under_threshold_excluded():
+def test_amount_under_threshold_not_filtered():
+    """★정책변경(2026-06-19): 지원금 필터 비활성 — 금액 미달이어도 제외하지 않는다(recall).
+    합성 임계 그룹(min_support_amount=3,000,000)이라도 enforce_amount_filter 없으면 게이트 미적용.
+    표시값(support_amount_status)은 여전히 'not_eligible'로 산출되지만 제외엔 영향 없음."""
     b, ev = _amount_bucket(_amount_item(description="서울 AI 솔루션 신청접수 지원금 200만원"))
     record("amount", "under", "grp_prestartup_ai")
-    assert b == "excluded" and "AMOUNT_TOO_LOW" in ev["exclude_reason_codes"]
+    assert b == "included" and "AMOUNT_TOO_LOW" not in ev["exclude_reason_codes"]
+    assert ev["support_amount_status"] == "not_eligible"
+
+
+def test_amount_filter_reenabled_by_group_flag_excludes():
+    """역호환: 그룹에 enforce_amount_filter=true 면 금액 필터가 다시 작동(미달→excluded)."""
+    g = _amount_group(); g["enforce_amount_filter"] = True
+    item = _amount_item(description="서울 AI 솔루션 신청접수 지원금 200만원")
+    d = m.filter_for_group_with_diagnostics([item], g, TODAY)
+    assert d["excluded"] and "AMOUNT_TOO_LOW" in d["excluded"][0]["exclude_reason_codes"]
 
 
 def test_amount_unknown_included():
