@@ -117,12 +117,76 @@ SUPPORT_TYPE_RULES: dict[str, list[str]] = {
 }
 ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 
+# K-Startup 상세 '지원분야'(공식 카테고리=권위값) → 우리 지원유형 버킷 매핑.
+# 제목 키워드 추측이 놓치는 '사업화/정책자금/융자' 등을 지원금/바우처로 정확화하고,
+# '멘토링·컨설팅·교육'은 컨설팅으로 확정한다. 키들은 소문자 비교(한글은 영향 없음).
+# '그외'로 가는 분야(시설·행사·글로벌 등)는 매핑하지 않는다(기본값과 동일 → 잡음 방지).
+KSTARTUP_FIELD_TO_TYPE = {
+    "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
+    "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
+    "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
+}
+
 # 지역 키워드 (전국 판별용)
 KNOWN_REGIONS = {
     "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종",
     "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
     "충청", "전라", "경상", "수도권", "호남", "영남",
 }
+
+# ── K-Startup 상세 구조화 필드(p.tit/p.txt 라벨) → item 전용 키 매핑 ──────
+# 본문(.view_cont 등) 셀렉터가 현행 K-Startup 페이지에서 비어, 업력/대상/지역 등
+# 핵심 신호가 통째로 누락됐다. 라벨쌍에서 직접 거둔다.
+# ★숫자(년/만세)가 든 값(창업업력·대상연령)은 description/body 에 합치지 않는다 —
+#   extract_business_year_requirement 가 '1년미만,…,10년미만' 멀티셀렉트를 max=1 로
+#   잘못 접어 정당공고를 대량 누락시키기 때문(전용 매퍼가 따로 해석).
+KSTARTUP_DETAIL_LABELS = {
+    "지역": "region_field",
+    "신청기간": "application_period_text",
+    "창업업력": "business_age_text",
+    "대상": "target_field",
+    "대상연령": "target_age_field",
+    "주관기관명": "organizer_field",
+    "제외대상": "exclude_target_field",
+    "지원분야": "support_field",
+}
+
+# 비경기 '광역권' 토큰(강원권·충청권·호남권 등). 수도권/경기권/서울권은 경기를
+# 포함·인접하므로 차단 대상에서 제외한다(recall 보호).
+_NON_GG_KWON_RE = re.compile(
+    r"(?:강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산)\s*권"
+)
+# 기초자치단체/지역재단 주관 신호(강한 지역귀속). 비경기 지역명과 함께 있을 때만
+# 타지역 한정으로 본다.
+_LOCAL_GOV_ORG_RE = re.compile(r"구청|시청|군청|도청|문화재단|문화관광재단")
+# 지역명이 들어가도 전국사업을 운영하는 기관 — (B) 차단에서 제외(서울창조경제혁신센터
+# 주관 KAMCO 등 전국 정당공고 보호).
+_NATIONAL_SCOPE_ORG_RE = re.compile(
+    r"창조경제혁신센터|테크노파크|산학협력단|대학교|대학원|진흥원|진흥공단|연구원|협회|진흥재단"
+)
+# 비경기 지역명(광역 + 서울 자치구 + 명확한 비경기 도시). ★경기 지역명은 절대
+# 넣지 않는다 — 넣으면 정당한 경기 공고를 누락(recall 위반)한다.
+_NON_GG_LOCALITIES = (
+    # ★'광주'는 경기도 광주시와 광주광역시가 충돌 → '광주광역'으로 좁혀 경기 광주시 보호.
+    "서울", "인천", "부산", "대구", "광주광역", "대전", "울산", "세종",
+    "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+    "종로", "용산", "성동", "광진", "동대문", "중랑", "성북", "강북", "도봉",
+    "노원", "은평", "서대문", "마포", "양천", "강서", "구로", "금천", "영등포",
+    "동작", "관악", "서초", "강남", "송파", "강동",
+)
+
+# ── 타지역 override 일반화(전 그룹: 경기/서울/인천 …) ───────────────────
+# 수도권 family: 권역(A) 차단에서 상호 제외(예: 인천 그룹에 '경기권/서울권/수도권'은
+# 차단 안 함). ★(B) 기초자치 지역명에는 family 를 적용하지 않는다 — 적용하면 경기 그룹이
+# 서울자치구(성북/동대문) 차단을 잃는다(검증으로 확인된 함정).
+_METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
+# 광역권 토큰(명명그룹). 매치된 광역이 own family 가 아니면 타지역 한정으로 본다.
+_KWON_NAMED_RE = re.compile(
+    r"(?P<r>강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산|서울|인천|경기|수도)\s*권"
+)
+# 전 지역명(광역 + 서울 자치구). own 지역명은 헬퍼가 런타임에 제외한다(★own 자치구는
+# 풀네임 정확매칭만 — 인천 '동구→동' short-form 이 '동대문'을 substring 으로 삼키는 함정 방지).
+_ALL_LOCALITIES = _NON_GG_LOCALITIES + ("경기",)
 
 APPLICANT_REGION_CITY = "인천광역시"
 APPLICANT_REGION_DISTRICT = "남동구"
@@ -514,14 +578,15 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
     if "k-startup.go.kr" in url:
         for tit in soup.select("p.tit"):
             label = norm(tit.get_text())
+            key = KSTARTUP_DETAIL_LABELS.get(label)
+            if not key:
+                continue
             nxt = tit.find_next("p", class_="txt")
             if not nxt:
                 continue
             val = norm(nxt.get_text())
-            if label == "지역" and val:
-                result["region_field"] = val
-            if label == "신청기간" and val:
-                result["application_period_text"] = val
+            if val and key not in result:   # 같은 라벨 중복 시 첫 값만
+                result[key] = val
         body = soup.select_one(".view_cont, .content_view, #contents")
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
@@ -555,6 +620,15 @@ def enrich_item_from_detail(item: dict) -> dict:
         updated["description"] = f"{desc}\n{body}".strip() if desc else body
     if fields.get("region_field"):
         updated["region_field"] = fields["region_field"]
+    # K-Startup 구조화 신호(업력/대상/주관기관 등) 전용 키로 보존 — 숫자 든 값은
+    # description 에 합치지 않는다(매처가 멀티셀렉트를 오해석해 누락하는 것 방지).
+    for k in ("business_age_text", "target_field", "target_age_field",
+              "organizer_field", "exclude_target_field", "support_field"):
+        if fields.get(k):
+            updated[k] = fields[k]
+    # 주관기관명은 author 가 비었을 때만 표시용으로 보강(지역 override 는 양쪽 다 본다).
+    if fields.get("organizer_field") and not (updated.get("author") or "").strip():
+        updated["author"] = fields["organizer_field"]
     period_src = fields.get("application_period_text") or updated.get("description", "")
     period = extract_application_period(period_src) or extract_application_period(body)
     if period.get("display"):
@@ -776,7 +850,9 @@ def fetch_kstartup(site: dict) -> list[dict]:
             org = norm(spans[0].get_text()) if spans else ""
             dl = next((norm(sp.get_text().replace("마감일자", ""))
                        for sp in spans if "마감일자" in sp.get_text()), "")
-            posted = ""
+            # 게시일(등록일자) — 목록 카드에 '등록일자 YYYY-MM-DD'로 존재(기존엔 미추출→날짜불명).
+            pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
+            posted = extract_date_from_text(pm.group(1)) if pm else ""
             flag = card.select_one(".flag:not(.day):not(.flag_agency)")
             iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
             items.append(_item(iid, title, link, org,
@@ -1843,6 +1919,19 @@ def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[lis
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
     matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(_kw_in_text(text, k.lower()) for k in kws)]
+    # K-Startup 상세 '지원분야'(권위 카테고리)가 있으면 정확 매핑을 합집합으로 보강 —
+    # 키워드 추측이 놓친 '사업화/정책자금'을 지원금/바우처로, '멘토링ㆍ컨설팅ㆍ교육'을 컨설팅으로.
+    sf = (item.get("support_field") or "").lower()
+    if sf:
+        had_keyword = bool(matched)
+        for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
+            if kw in sf and bucket not in matched:
+                matched.append(bucket)
+        # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
+        #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
+        #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
+        if not had_keyword and "그외" not in matched:
+            matched.append("그외")
     return matched or ["그외"]
 
 
@@ -1984,11 +2073,44 @@ def extract_business_year_requirement(text: str) -> dict | None:
     return {"min": found_min, "max": found_max}
 
 
+_KSTARTUP_BIZ_BUCKET_RE = re.compile(r"(\d+)\s*년\s*(?:미만|이내|이하)")
+
+
+def parse_kstartup_business_buckets(text: str, cfg: dict) -> str:
+    """K-Startup '창업업력' 멀티셀렉트를 그룹 신청자 업력구간과 비교.
+    값 예: '1년미만, 5년미만, 10년미만' / '전체' / '예비창업자'.
+    각 'N년미만'은 '업력 N년 미만 기업 신청가능'(상한 N)을 뜻하고, 멀티셀렉트는
+    그 합집합이라 사실상 '가장 큰 N 까지 허용'이다. 신청자 구간 (lo, hi] 와
+    겹치려면 (lo < 업력 < N) 인 업력이 있어야 하므로 N > lo 가 필요충분.
+    eligible / not_eligible / unknown(애매 → 통과, recall 우선)."""
+    if not text:
+        return "unknown"
+    t = unicodedata.normalize("NFKC", text)
+    if "전체" in t:
+        return "eligible"
+    lo_raw = cfg.get("min_exclusive")
+    if lo_raw is None:
+        lo_raw = cfg.get("min", 0)
+    lo = float(lo_raw if lo_raw is not None else 0)
+    ns = [int(mm.group(1)) for mm in _KSTARTUP_BIZ_BUCKET_RE.finditer(t)]
+    if ns:
+        return "eligible" if any(n > lo for n in ns) else "not_eligible"
+    # 연수 버킷 없이 '예비창업자'만 → 창업 전·극초기 전용 → 신청자(업력 보유 기업) 불가
+    if "예비창업자" in t:
+        return "not_eligible"
+    return "unknown"
+
+
 def business_years_status(item: dict, group: dict) -> str:
     """그룹 신청자 업력 구간과 공고 업력 요건의 호환성. eligible/not_eligible/unknown/n/a."""
     cfg = group.get("business_years")
     if not cfg:
         return "n/a"
+    # K-Startup 상세의 '창업업력' 전용 필드가 있으면 멀티셀렉트 전용 매퍼 우선
+    # (generic 추출기는 '1년미만,…,10년미만'을 max=1 로 오접어 정당공고를 누락시킴).
+    bucket_text = item.get("business_age_text")
+    if bucket_text:
+        return parse_kstartup_business_buckets(bucket_text, cfg)
     req = extract_business_year_requirement(_notice_text(item))
     if req is None:
         return "unknown"
@@ -2016,7 +2138,9 @@ def extract_support_amount(text: str) -> int | None:
         amounts.append(int(float(m.group(1)) * 10_000_000))
     for m in re.finditer(r"(\d+(?:\.\d+)?)\s*백만", t):
         amounts.append(int(float(m.group(1)) * 1_000_000))
-    for m in re.finditer(r"(?<![천백.\d])(\d{1,6})\s*만\s*원?", t):
+    # ★'원' 옵션 뒤 음수전방탐색 — '100만명/50만개/100만건' 등 비금액 '만'을 금액으로 오추출하지
+    #   않는다(정당 공고를 AMOUNT_TOO_LOW 로 잘못 제외하던 recall 버그 차단). '500만원'=5,000,000 유지.
+    for m in re.finditer(r"(?<![천백.\d])(\d{1,6})\s*만\s*원?(?![명개건회사세팀])", t):
         amounts.append(int(m.group(1)) * 10_000)
     for m in re.finditer(r"(?<!\d)(\d{7,})\s*원", t):
         amounts.append(int(m.group(1)))
@@ -2063,6 +2187,41 @@ def _title_region_tags(item: dict) -> list[str]:
     return [r for r in _KNOWN_REGION_SHORT if r in inner]
 
 
+def _other_region_block(item: dict, own_meta: dict):
+    """'지역=전국'으로 박혀도 명백한 타지역 한정이면 차단사유 반환(아니면 None) — recall-safe.
+    own_meta={'label': 광역약칭(예 '경기'/'서울'/'인천'), 'districts': [자치구 풀네임...]}.
+    own 신호(자치구 풀네임/광역명) 또는 사람이 쓴 제목·본문 '전국'이 있으면 None(미발동).
+    (A) own family 가 아닌 광역권 토큰(제목), (B) 기초자치단체·지역재단 주관 + 비-own 지역명."""
+    title = str(item.get("title", ""))
+    raw_text = f"{title} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    text = _notice_text(item)
+    org_text = f"{item.get('organizer_field','')} {item.get('author','')}"
+    own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
+    own_label = (own_meta.get("label") or "").strip().lower()
+    districts = [d for d in own_meta.get("districts", []) if d]
+    fam = {f.lower() for f in (_METRO_FAMILY if own_label in {x.lower() for x in _METRO_FAMILY} else {own_label})}
+
+    own_present = (
+        any(d.lower() in text for d in districts)            # own 자치구 풀네임
+        or (own_label and own_label in own_blob)             # own 광역명
+    )
+    explicit_nationwide = ("전국" in title) or ("전국" in str(item.get("description", "")))
+    if own_present or explicit_nationwide:
+        return None
+    # (A) 광역권 토큰 — own family 외 광역이면 차단
+    for mch in _KWON_NAMED_RE.finditer(title):
+        norm_r = "수도권" if mch.group("r") == "수도" else mch.group("r")
+        if norm_r.lower() not in fam:
+            return "타지역 권역"
+    # (B) 기초자치단체/지역재단 주관 + 비-own 지역명 (전국운영기관 제외)
+    if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
+        own_loc = {own_label} | {d.lower() for d in districts}
+        other = [loc for loc in _ALL_LOCALITIES if loc in org_text and loc.lower() not in own_loc]
+        if other:
+            return other[:3]
+    return None
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -2100,6 +2259,12 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if d.lower() in text or (short_d and short_d.lower() in text):
             district_hits.append(d)
+
+    # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
+    _ovr = _other_region_block(item, {"label": label, "districts": districts})
+    if _ovr is not None:
+        return result("not_eligible", "not_eligible", [],
+                      [_ovr] if isinstance(_ovr, str) else list(_ovr))
 
     if nationwide:
         return result("eligible", "eligible", [city or label], [])
@@ -2156,6 +2321,13 @@ def classify_region(item: dict) -> dict:
     # 전국/지역무관 공고는 행사 개최지 등 타지역명이 본문에 있어도 탈락시키지 않는다.
     # (classify_region_for_group 은 이미 nationwide 를 우선 처리 — 동일 정책으로 정렬)
     nationwide = bool(target.get("nationwide")) or "전국" in text
+    # 인천 그룹에도 동일 recall-safe 타지역 override 적용(own=인천, 수도권 family 상호제외).
+    # own(인천/INCHEON_DISTRICTS) 또는 사람이 쓴 제목·본문 '전국'이 있으면 미발동(기존 분기 보존).
+    _ovr = _other_region_block(item, {"label": "인천", "districts": INCHEON_DISTRICTS})
+    if _ovr is not None:
+        return {"region_status": "not_eligible", "district_status": "not_eligible",
+                "eligible_regions": [],
+                "excluded_regions": [_ovr] if isinstance(_ovr, str) else list(_ovr)}
     explicit_regions = list(target.get("regions") or [])
     if item.get("region_field"):
         explicit_regions.append(norm(item["region_field"]))
@@ -2461,7 +2633,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "review_needed": review_needed,
         "business_years_status": biz_years_status,
         "support_amount_status": amount_status,
-        "_types": classify_support_type(item),
+        # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
+        "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
     })
     return result
 
@@ -2789,7 +2962,13 @@ def _mask_email(email: str) -> str:
         local_masked = local[:2] + "*" * (len(local) - 2)
     return f"{local_masked}@{domain}"
 
+# 테스트 실발송 안전장치: 값이 있으면 모든 발송 수신자를 이 주소 하나로 강제한다.
+# (그룹·raw_all·watchlist 등 모든 발송 경로가 send_email/send_to_list 를 거치므로 여기서 일괄 차단)
+_ONLY_TO: str = ""
+
 def send_email(subject: str, body: str, to: str) -> None:
+    if _ONLY_TO:
+        to = _ONLY_TO
     msg = MIMEMultipart("alternative")
     msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
     msg.attach(MIMEText(body, "plain", "utf-8"))
@@ -2803,6 +2982,8 @@ def send_email(subject: str, body: str, to: str) -> None:
     log.info("발송 완료 → %s", _mask_email(to))
 
 def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
+    if _ONLY_TO:
+        recipients = [_ONLY_TO]
     if not _ALLOW_SMTP_SEND:
         checked = validate_recipients(recipients)
         log.info(
@@ -3355,7 +3536,17 @@ if __name__ == "__main__":
         action="store_true",
         help="dry-run 시 사이트별 순차 수집 생략(네트워크 절약)",
     )
+    parser.add_argument(
+        "--only-to",
+        default="",
+        metavar="EMAIL",
+        help="모든 발송 수신자를 이 주소 하나로 강제(테스트 실발송용 안전장치). "
+             "그룹·raw_all·watchlist 어떤 경로든 이 주소로만 나간다.",
+    )
     args = parser.parse_args()
+    if args.only_to:
+        _ONLY_TO = args.only_to
+        log.info("only-to 모드: 모든 발송 수신자를 %s 로 강제합니다(테스트)", _mask_email(args.only_to))
     try:
         if args.dry_run:
             summary = run_dry_run(fetch_coverage=not args.skip_coverage_fetch)
