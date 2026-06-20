@@ -89,6 +89,57 @@ def test_send_to_list_skips_smtp_when_allow_send_false():
         mock_send.assert_not_called()
 
 
+def test_send_to_list_only_to_overrides_all_recipients(monkeypatch):
+    import monitor
+
+    sent_to = []
+    monkeypatch.setattr(monitor, "_ALLOW_SMTP_SEND", True)
+    monkeypatch.setattr(monitor, "_ONLY_TO", "safe@example.com")
+    monkeypatch.setattr(
+        monitor,
+        "send_email",
+        lambda subject, body, to: sent_to.append(to),
+    )
+
+    send_to_list(
+        "subj",
+        "body",
+        ["original-1@example.com", "original-2@example.com"],
+    )
+
+    assert sent_to == ["safe@example.com"]
+
+
+def test_send_email_only_to_overrides_envelope_and_header(monkeypatch):
+    import monitor
+
+    sent_messages = []
+
+    class FakeSMTP:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def login(self, address, password):
+            self.login_args = (address, password)
+
+        def sendmail(self, from_addr, to_addrs, message):
+            sent_messages.append((from_addr, to_addrs, message))
+
+    monkeypatch.setattr(monitor, "_ONLY_TO", "safe@example.com")
+    monkeypatch.setattr(monitor.smtplib, "SMTP_SSL", lambda host, port: FakeSMTP())
+
+    monitor.send_email("subj", "body", "original@example.com")
+
+    assert len(sent_messages) == 1
+    _, envelope_to, message = sent_messages[0]
+    assert envelope_to == "safe@example.com"
+    assert "To: safe@example.com" in message
+    assert "original@example.com" not in message
+
+
 def test_save_seen_ids_skipped_when_persist_disabled():
     import monitor
     monitor._ALLOW_PERSIST_SEEN = False
