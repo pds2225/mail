@@ -38,17 +38,27 @@ def main() -> int:
         write_reports=True,
         fetch_coverage=not args.skip_coverage_fetch,
     )
+    preview = summary.get("preview_groups", []) or []
+    ru_groups = [g for g in preview if g.get("region_unknown_items")]
     public = {
         k: summary[k]
         for k in summary
         if k not in ("date_review_queue", "coverage", "recipient_audit", "preview_groups")
     }
+    # 지역 미상(확인 필요) 합계 — 보고 메일 하단에 함께 발송될 공고 수(누락 방지 가시화)
+    public["region_unknown_total"] = sum(g.get("region_unknown_items", 0) for g in preview)
     if args.json:
         print(json.dumps(public, ensure_ascii=False, indent=2, default=str))
     else:
         print("=== monitor dry-run summary ===")
         for key, val in public.items():
             print(f"  {key}: {val}")
+        if ru_groups:
+            print("\n=== 지역 미상(확인 필요) — 보고 메일 하단에 함께 발송 ===")
+            for g in ru_groups:
+                print(f"  [{g.get('name')}] {g.get('region_unknown_items')}건")
+                for t in g.get("region_unknown_titles", []):
+                    print(f"     - {t}")
         print("Reports: logs/site_collection_coverage_report.md")
         print("         logs/today_notice_missing_risk_report.md")
         print("         logs/review_queue_YYYYMMDD.md")
