@@ -2199,11 +2199,13 @@ def _other_region_block(item: dict, own_meta: dict):
     own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
     own_label = (own_meta.get("label") or "").strip().lower()
     districts = [d for d in own_meta.get("districts", []) if d]
-    fam = {f.lower() for f in (_METRO_FAMILY if own_label in {x.lower() for x in _METRO_FAMILY} else {own_label})}
+    extra = {str(r).strip().lower() for r in own_meta.get("extra", []) if str(r).strip()}
+    fam = {f.lower() for f in (_METRO_FAMILY if own_label in {x.lower() for x in _METRO_FAMILY} else {own_label})} | extra
 
     own_present = (
         any(d.lower() in text for d in districts)            # own 자치구 풀네임
         or (own_label and own_label in own_blob)             # own 광역명
+        or any(e and e in own_blob for e in extra)           # 추가 적격 지역(수도권 묶음 등)
     )
     explicit_nationwide = ("전국" in title) or ("전국" in str(item.get("description", "")))
     if own_present or explicit_nationwide:
@@ -2215,7 +2217,7 @@ def _other_region_block(item: dict, own_meta: dict):
             return "타지역 권역"
     # (B) 기초자치단체/지역재단 주관 + 비-own 지역명 (전국운영기관 제외)
     if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
-        own_loc = {own_label} | {d.lower() for d in districts}
+        own_loc = {own_label} | {d.lower() for d in districts} | extra
         other = [loc for loc in _ALL_LOCALITIES if loc in org_text and loc.lower() not in own_loc]
         if other:
             return other[:3]
@@ -2231,6 +2233,9 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     label = (group.get("applicant_region_label") or _short_region(city) or city).lower()
     district = group.get("applicant_region_district", "")
     districts = [d for d in ([district] + group.get("applicant_districts", [])) if d]
+    # 추가 적격 지역(예: 서울 그룹에 인천·경기·수도권) — 신청자가 신청 가능한 다른 광역.
+    extra_regions = [str(r).strip().lower() for r in group.get("extra_eligible_regions", []) if str(r).strip()]
+    own_regions = [r for r in ([label] + extra_regions) if r]
 
     def result(rs: str, ds: str, elig: list[str], excl: list[str]) -> dict:
         return {"region_status": rs, "district_status": ds,
@@ -2261,7 +2266,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
             district_hits.append(d)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
-    _ovr = _other_region_block(item, {"label": label, "districts": districts})
+    _ovr = _other_region_block(item, {"label": label, "districts": districts, "extra": extra_regions})
     if _ovr is not None:
         return result("not_eligible", "not_eligible", [],
                       [_ovr] if isinstance(_ovr, str) else list(_ovr))
@@ -2271,8 +2276,8 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     if district_hits:
         return result("eligible", "eligible", district_hits, [])
 
-    region_hit = bool(label) and (label in detected or label in text)
-    other_regions = [r for r in detected if r != label]
+    region_hit = bool(own_regions) and any((r in detected) or (r in text) for r in own_regions)
+    other_regions = [r for r in detected if r not in own_regions]
     if region_hit:
         # 우리 광역 언급 + 특정 타 시·군 한정 아님 → 적합(시·군 미상이나 포함 우선)
         return result("eligible", "eligible", [city or label], [])
