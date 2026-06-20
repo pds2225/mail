@@ -356,7 +356,7 @@ NON_APPLICATION_PERIOD_LABELS = (
     "협약기간", "사업기간", "수행기간", "지원기간", "운영기간", "서비스 완료",
     "사업 추진 기간", "지원 기간",
 )
-DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr")
+DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr")
 MAX_DETAIL_ENRICH = 40
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -595,6 +595,10 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
         if not body:
             body = soup
         result["body"] = body.get_text("\n", strip=True)[:12000]
+    elif "nipa.kr" in url:
+        body = soup.select_one(".detail") or soup.select_one(".tab3.bsnsWrap")
+        if body:
+            result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
         body = soup.select_one("article, .view_cont, #contents, main")
         if body:
@@ -3485,7 +3489,7 @@ def write_review_queue_report(
         for it in queue:
             lines.append(
                 f"- **{it.get('date_unknown_risk', '?')}** | {it.get('title', '')[:100]} | "
-                f"{it.get('source', '')} | {it.get('link', '')[:80]}"
+                f"{it.get('source', '')} | {it.get('link', '')}"
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
