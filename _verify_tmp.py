@@ -4,7 +4,7 @@ for k in ['BIZINFO_API_KEY', 'ANTHROPIC_API_KEY', 'GMAIL_ADDRESS', 'GMAIL_APP_PA
     os.environ.setdefault(k, 'x')
 import monitor
 
-r = monitor.run_dry_run(fetch_coverage=False)
+r = monitor.run_dry_run(fetch_coverage=True)
 
 print('==== 결과 요약 ====')
 for k, v in r.items():
