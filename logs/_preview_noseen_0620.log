@@ -1,0 +1,576 @@
+2026-06-20 22:21:32,427 INFO === 모니터링 시작 v6 (2026-06-20 22:21 KST) / mode=preview ===
+2026-06-20 22:21:32,429 INFO 사이트: 220개 활성
+2026-06-20 22:21:32,429 INFO 그룹: 4개 활성
+2026-06-20 22:21:34,089 INFO HTTP Request: GET https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112 "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,092 INFO 과학기술정보통신부: 0건
+2026-06-20 22:21:34,094 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&searchCnt=99999 "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,095 INFO 기업마당(Bizinfo): 0건
+2026-06-20 22:21:34,109 INFO HTTP Request: GET https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,171 INFO HTTP Request: GET https://www.motie.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 301 Moved Permanently"
+2026-06-20 22:21:34,266 INFO 고용노동부: 10건
+2026-06-20 22:21:34,320 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-06-20 22:21:34,394 INFO HTTP Request: GET https://www.motir.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,402 INFO HTTP Request: GET https://www.mafra.go.kr/bbs/mafra/68/artclList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,475 INFO 농림축산식품부: 10건
+2026-06-20 22:21:34,549 INFO HTTP Request: GET https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310 "HTTP/1.1 200 OK"
+2026-06-20 22:21:34,557 INFO 산업통상자원부: 0건
+2026-06-20 22:21:34,824 INFO 중소벤처기업부: 10건
+2026-06-20 22:21:35,296 INFO HTTP Request: GET https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10 "HTTP/1.1 404 Not Found"
+2026-06-20 22:21:35,297 ERROR 접속 실패 https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10: Client error '404 Not Found' for url 'https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-06-20 22:21:35,353 INFO HTTP Request: GET https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp "HTTP/1.1 302 Found"
+2026-06-20 22:21:35,386 INFO HTTP Request: GET https://www.mcst.go.kr/site/s_notice/press/pressView.jsp "HTTP/1.1 200 OK"
+2026-06-20 22:21:35,391 INFO 문화체육관광부: 0건
+2026-06-20 22:21:35,450 INFO HTTP Request: POST https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:35,452 INFO IRIS(범부처통합연구지원): 10건
+2026-06-20 22:21:35,747 INFO HTTP Request: GET https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 301 Moved Permanently"
+2026-06-20 22:21:35,907 INFO HTTP Request: GET https://mofe.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 200 OK"
+2026-06-20 22:21:36,166 INFO 기획재정부: 0건
+2026-06-20 22:21:36,324 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.0 307 Temporary Redirect"
+2026-06-20 22:21:36,444 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-06-20 22:21:36,577 INFO K-Startup: 30건
+2026-06-20 22:21:36,578 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=1 "HTTP/1.1 200 200"
+2026-06-20 22:21:36,579 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.1 200 OK"
+2026-06-20 22:21:36,730 INFO 국토교통부: 10건
+2026-06-20 22:21:36,790 INFO HTTP Request: GET https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90 "HTTP/1.1 200 200"
+2026-06-20 22:21:36,815 INFO 한국산업기술진흥원(KIAT): 0건
+2026-06-20 22:21:37,215 INFO HTTP Request: GET https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:37,223 INFO 한국산업기술평가관리원(KEIT): 0건
+2026-06-20 22:21:37,265 INFO HTTP Request: GET https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do "HTTP/1.1 200 200"
+2026-06-20 22:21:37,340 INFO HTTP Request: GET https://www.kotra.or.kr/kp/biz/notificationList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:37,388 INFO KOTRA(대한무역투자진흥공사): 0건
+2026-06-20 22:21:37,390 INFO 중소벤처기업진흥공단(KOSME): 0건
+2026-06-20 22:21:37,972 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-06-20 22:21:38,002 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-06-20 22:21:38,033 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-06-20 22:21:38,034 INFO 소진공 정책자금 온라인신청: 30건
+2026-06-20 22:21:38,428 INFO HTTP Request: GET https://www.kised.or.kr/menu.es?mid=a10201000000 "HTTP/1.1 200 200"
+2026-06-20 22:21:38,431 INFO 창업진흥원(KISED): 0건
+2026-06-20 22:21:38,652 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=2 "HTTP/1.1 200 200"
+2026-06-20 22:21:38,823 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104 "HTTP/1.1 200 200"
+2026-06-20 22:21:38,942 INFO 한국콘텐츠진흥원(사업공고): 10건
+2026-06-20 22:21:39,049 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392 "HTTP/1.1 200 200"
+2026-06-20 22:21:39,209 INFO 한국콘텐츠진흥원(금융): 11건
+2026-06-20 22:21:39,272 INFO HTTP Request: GET https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 308 Permanent Redirect"
+2026-06-20 22:21:39,419 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU02096 "HTTP/1.1 200 200"
+2026-06-20 22:21:39,439 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:39,492 INFO 한국보건산업진흥원(KHIDI): 10건
+2026-06-20 22:21:39,586 INFO HTTP Request: GET https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 200 OK"
+2026-06-20 22:21:39,593 INFO 한국무역보험공사(K-SURE): 0건
+2026-06-20 22:21:39,687 INFO 신용보증기금(KODIT): 0건
+2026-06-20 22:21:40,027 INFO HTTP Request: GET https://www.ketep.re.kr/businessAcment?menuId=MENU002080200000000 "HTTP/1.1 200 OK"
+2026-06-20 22:21:40,138 INFO 한국에너지기술평가원(KETEP): 10건
+2026-06-20 22:21:40,270 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=3 "HTTP/1.1 200 200"
+2026-06-20 22:21:40,344 INFO HTTP Request: GET https://www.kidp.or.kr/?menuno=918&act=list "HTTP/1.1 200 OK"
+2026-06-20 22:21:40,580 INFO HTTP Request: GET https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277 "HTTP/1.1 200 OK"
+2026-06-20 22:21:40,640 INFO 한국환경산업기술원(KEITI): 0건
+2026-06-20 22:21:40,670 INFO HTTP Request: GET https://www.rdcdp.or.kr/index.do?menu_id=00000746 "HTTP/1.1 200 "
+2026-06-20 22:21:40,779 INFO 지역디자인통합플랫폼: 0건
+2026-06-20 22:21:40,852 INFO HTTP Request: GET https://pms.gbsa.or.kr/info/pblanc/pblancList.do "HTTP/1.1 200 "
+2026-06-20 22:21:40,863 INFO 경기도경제과학진흥원(GBSA): 0건
+2026-06-20 22:21:40,908 INFO HTTP Request: GET https://www.sba.seoul.kr/kr/sbcu31l1 "HTTP/1.1 301 Moved Permanently"
+2026-06-20 22:21:40,911 INFO 한국디자인진흥원(KIDP): 0건
+2026-06-20 22:21:41,177 INFO HTTP Request: GET https://www.sba.seoul.kr "HTTP/1.1 200 OK"
+2026-06-20 22:21:41,328 INFO 서울산업진흥원(SBA): 0건
+2026-06-20 22:21:41,619 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=4 "HTTP/1.1 200 200"
+2026-06-20 22:21:42,190 INFO HTTP Request: GET https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do "HTTP/1.1 200 "
+2026-06-20 22:21:42,339 INFO HTTP Request: GET https://myfair.co/support-program-list "HTTP/1.1 200 OK"
+2026-06-20 22:21:42,344 INFO 한국무역협회(KITA): 10건
+2026-06-20 22:21:42,347 INFO 마이페어: 0건
+2026-06-20 22:21:42,452 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice02_list.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:42,526 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=5 "HTTP/1.1 200 200"
+2026-06-20 22:21:42,532 INFO SMTECH(중소기업기술개발): 15건
+2026-06-20 22:21:42,848 INFO HTTP Request: GET https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102 "HTTP/1.1 200 "
+2026-06-20 22:21:42,928 INFO 대전테크노파크: 12건
+2026-06-20 22:21:43,212 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/business_list.do "HTTP/1.1 200 200"
+2026-06-20 22:21:43,247 INFO 창조경제혁신센터(공고): 2건
+2026-06-20 22:21:43,249 INFO HTTP Request: GET https://pms.gtp.or.kr/web/business/webBusinessList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:43,309 INFO 경기TP: 10건
+2026-06-20 22:21:43,313 INFO HTTP Request: GET https://www.gsp.or.kr/supportProject/UVSL0001.do "HTTP/1.1 200 "
+2026-06-20 22:21:43,350 INFO 경기스타트업플랫폼: 7건
+2026-06-20 22:21:43,424 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:43,487 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/event_list.do "HTTP/1.1 200 200"
+2026-06-20 22:21:43,530 INFO 창조경제혁신센터(행사): 2건
+2026-06-20 22:21:43,663 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=6 "HTTP/1.1 200 200"
+2026-06-20 22:21:44,028 INFO HTTP Request: GET https://www.bepa.kr/kor/view.do?no=1508 "HTTP/1.1 200 200"
+2026-06-20 22:21:44,161 INFO 부산경제진흥원(BEP): 12건
+2026-06-20 22:21:44,784 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:44,818 INFO 비즈오케이(BizOK) - 인천기업지원: 12건
+2026-06-20 22:21:44,820 INFO HTTP Request: GET https://kovwa.or.kr/94 "HTTP/1.1 200 OK"
+2026-06-20 22:21:44,937 INFO 한국여성벤처협회: 0건
+2026-06-20 22:21:45,068 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=7 "HTTP/1.1 200 200"
+2026-06-20 22:21:45,082 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp "HTTP/1.1 200 OK"
+2026-06-20 22:21:45,206 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024 "HTTP/1.1 200 200"
+2026-06-20 22:21:45,240 INFO 비즈오케이 - 인천 연간사업공고계획: 0건
+2026-06-20 22:21:45,290 INFO 한국콘텐츠진흥원(일반공고): 1건
+2026-06-20 22:21:46,015 INFO HTTP Request: GET https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:46,058 INFO 혁신제품지정공고(나라장터): 0건
+2026-06-20 22:21:46,116 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=8 "HTTP/1.1 200 200"
+2026-06-20 22:21:46,219 INFO HTTP Request: GET https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228 "HTTP/1.1 200 OK"
+2026-06-20 22:21:46,229 INFO 인천상공회의소: 0건
+2026-06-20 22:21:46,761 INFO HTTP Request: GET https://www.ema.or.kr/bbs/support "HTTP/1.1 200 OK"
+2026-06-20 22:21:46,784 INFO 인천수출경영자협의회: 15건
+2026-06-20 22:21:46,811 INFO HTTP Request: GET https://www.incheon.go.kr/IC010205 "HTTP/1.1 200 OK"
+2026-06-20 22:21:46,884 INFO HTTP Request: GET http://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 301 Moved Permanently"
+2026-06-20 22:21:46,963 INFO 인천광역시청 - 공고/고시: 10건
+2026-06-20 22:21:46,964 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=9 "HTTP/1.1 200 200"
+2026-06-20 22:21:47,471 INFO HTTP Request: GET https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044 "HTTP/1.1 200 "
+2026-06-20 22:21:47,552 INFO HTTP Request: GET https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03 "HTTP/1.1 200 200"
+2026-06-20 22:21:47,555 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-06-20 22:21:47,558 INFO 인천신용보증재단: 0건
+2026-06-20 22:21:47,580 INFO 인천소상공인종합지원센터: 15건
+2026-06-20 22:21:47,627 INFO 인천경제자유구역청(IFEZ): 10건
+2026-06-20 22:21:47,900 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=10 "HTTP/1.1 200 200"
+2026-06-20 22:21:48,095 INFO HTTP Request: GET https://www.icjg.go.kr/krcm01b "HTTP/1.1 200 OK"
+2026-06-20 22:21:48,147 INFO 인천 중구청: 20건
+2026-06-20 22:21:48,233 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=2 "HTTP/1.1 200 OK"
+2026-06-20 22:21:48,581 INFO HTTP Request: GET https://www.kotra.or.kr/bigList/20000020753 "HTTP/1.1 200 OK"
+2026-06-20 22:21:48,583 INFO KOTRA 무역투자24 - 사업공고: 0건
+2026-06-20 22:21:48,593 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:48,940 INFO HTTP Request: GET https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:49,240 INFO HTTP Request: GET https://www.seoultp.or.kr/user/nd19746.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:49,257 INFO 서울TP: 0건
+2026-06-20 22:21:49,282 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=11 "HTTP/1.1 200 200"
+2026-06-20 22:21:49,527 INFO 인천 부평구청: 0건
+2026-06-20 22:21:50,202 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=12 "HTTP/1.1 200 200"
+2026-06-20 22:21:50,253 INFO HTTP Request: GET https://www.exportvoucher.com/portal/board/boardList?bbs_id=1&active_menu_cd=EZ005004000 "HTTP/1.1 200 OK"
+2026-06-20 22:21:50,283 INFO 수출바우처(수출지원기반활용): 13건
+2026-06-20 22:21:50,304 INFO HTTP Request: GET https://www.mssmiv.com/portal/board/BoardList?bbsId=1 "HTTP/1.1 200 "
+2026-06-20 22:21:50,349 INFO 중소기업 혁신바우처(MSSMIV): 14건
+2026-06-20 22:21:50,414 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU01108 "HTTP/1.1 200 200"
+2026-06-20 22:21:50,511 INFO 한국보건산업진흥원(K-뷰티공고): 23건
+2026-06-20 22:21:51,066 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=13 "HTTP/1.1 200 200"
+2026-06-20 22:21:51,171 INFO HTTP Request: GET https://hespa.or.kr/main/index.php?m_cd=23 "HTTP/1.1 200 OK"
+2026-06-20 22:21:51,196 INFO (재)헬스케어스파산업진흥원: 1건
+2026-06-20 22:21:51,197 INFO HTTP Request: GET https://www.gokams.or.kr/01_news/notice_list.aspx "HTTP/1.1 200 OK"
+2026-06-20 22:21:51,226 INFO 예술경영지원센터: 111건
+2026-06-20 22:21:51,307 INFO HTTP Request: GET https://www.smes.go.kr/mainbiz/usr/board/comNotice.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:51,342 INFO MainBiz 메인 / 경영혁신형 중소기업: 10건
+2026-06-20 22:21:51,726 INFO HTTP Request: GET https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc "HTTP/1.1 200 OK"
+2026-06-20 22:21:51,727 INFO 소상공인시장진흥공단 - 사업공고: 0건
+2026-06-20 22:21:52,039 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=14 "HTTP/1.1 200 200"
+2026-06-20 22:21:52,149 INFO HTTP Request: GET http://www.gwef.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-06-20 22:21:52,182 INFO 강원경영자총협회: 15건
+2026-06-20 22:21:52,255 INFO HTTP Request: GET https://gsipa.or.kr/board/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-06-20 22:21:52,307 INFO HTTP Request: GET https://www.gwsinbo.or.kr/board/board_list.php?board_name=notice "HTTP/1.1 200 OK"
+2026-06-20 22:21:52,313 INFO 강릉과학산업진흥원: 50건
+2026-06-20 22:21:52,370 INFO 강원신용보증재단: 21건
+2026-06-20 22:21:52,499 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=3 "HTTP/1.1 200 OK"
+2026-06-20 22:21:52,556 INFO 인천테크노파크: 30건
+2026-06-20 22:21:52,586 INFO HTTP Request: GET https://gwse.or.kr/bbs/board.php?bo_table=sub41 "HTTP/1.1 200 OK"
+2026-06-20 22:21:52,613 INFO 강원지속가능경제지원센터: 20건
+2026-06-20 22:21:52,771 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=2 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,217 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=15 "HTTP/1.1 200 200"
+2026-06-20 22:21:53,293 INFO HTTP Request: GET https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,343 INFO 강원지역인적자원개발위원회: 10건
+2026-06-20 22:21:53,463 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01a&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,530 INFO 강원테크노파크: 21건
+2026-06-20 22:21:53,531 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,586 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01b&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,730 INFO 강원테크노파크: 51건
+2026-06-20 22:21:53,832 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub61 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,879 INFO 강원특별자치도경제진흥원: 15건
+2026-06-20 22:21:53,888 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21 "HTTP/1.1 200 OK"
+2026-06-20 22:21:53,948 INFO 강원특별자치도경제진흥원: 15건
+2026-06-20 22:21:54,772 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=16 "HTTP/1.1 200 200"
+2026-06-20 22:21:55,186 INFO HTTP Request: GET https://www.gmr.or.kr/base/board/list?boardManagementNo=1&menuLevel=2&menuNo=14 "HTTP/1.1 200 200"
+2026-06-20 22:21:55,357 INFO HTTP Request: GET https://www.gcon.or.kr/gcon/bbs/B0000001/list.do?menuNo=200057 "HTTP/1.1 200 200"
+2026-06-20 22:21:55,360 INFO 경기도시장상권진흥원: 10건
+2026-06-20 22:21:55,471 INFO 경기콘텐츠진흥원: 15건
+2026-06-20 22:21:55,488 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=17 "HTTP/1.1 200 200"
+2026-06-20 22:21:55,644 INFO HTTP Request: GET https://www.gwff.kr/base/board/list?boardManagementNo=21&menuLevel=2&menuNo=23 "HTTP/1.1 200 200"
+2026-06-20 22:21:55,753 INFO 경기도여성가족재단: 10건
+2026-06-20 22:21:55,826 INFO HTTP Request: GET https://www.gghrd.or.kr/board/notice.php "HTTP/1.1 200 OK"
+2026-06-20 22:21:55,857 INFO 경기지역인적자원개발위원회: 21건
+2026-06-20 22:21:56,239 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=3 "HTTP/1.1 200 OK"
+2026-06-20 22:21:56,307 INFO 인천테크노파크(ITP) - 공지사항: 30건
+2026-06-20 22:21:56,434 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=18 "HTTP/1.1 200 200"
+2026-06-20 22:21:56,509 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=anno "HTTP/1.1 200 OK"
+2026-06-20 22:21:56,573 INFO 경기테크노파크: 20건
+2026-06-20 22:21:56,610 INFO HTTP Request: GET https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/list/sub4_1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:56,631 INFO 경남6차산업지원센터: 10건
+2026-06-20 22:21:56,670 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=expert "HTTP/1.1 200 OK"
+2026-06-20 22:21:56,671 INFO HTTP Request: GET https://www.gbsa.or.kr/board/notice.do "HTTP/1.1 200 "
+2026-06-20 22:21:56,685 INFO HTTP Request: GET https://www.gnsinbo.or.kr/bbs/board.php?bo_table=01_03_01_01 "HTTP/1.1 200 OK"
+2026-06-20 22:21:56,788 INFO 경기테크노파크: 20건
+2026-06-20 22:21:56,837 INFO 경기도경제과학진흥원: 10건
+2026-06-20 22:21:56,894 INFO 경남신용보증재단: 15건
+2026-06-20 22:21:57,465 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=2 "HTTP/1.1 200 OK"
+2026-06-20 22:21:57,665 INFO HTTP Request: GET https://gnhrd.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-06-20 22:21:57,771 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=19 "HTTP/1.1 200 200"
+2026-06-20 22:21:57,782 INFO 경남지역인적자원개발위원회: 12건
+2026-06-20 22:21:57,933 INFO HTTP Request: GET http://kbef.or.kr/zbxe/support1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:57,959 INFO 경북경영자총협회: 22건
+2026-06-20 22:21:58,161 INFO HTTP Request: GET https://www.gntp.or.kr/board/list "HTTP/1.1 200 "
+2026-06-20 22:21:58,346 INFO HTTP Request: GET https://gbssc.or.kr/notice/ "HTTP/1.1 200 OK"
+2026-06-20 22:21:58,348 INFO 경남테크노파크: 0건
+2026-06-20 22:21:58,391 INFO 경북광역자활센터: 15건
+2026-06-20 22:21:58,465 INFO HTTP Request: GET http://www.geea.or.kr/bbs/notice "HTTP/1.1 200 OK"
+2026-06-20 22:21:58,488 INFO 경북북부경영자협회: 27건
+2026-06-20 22:21:58,598 INFO HTTP Request: GET https://forwoman.or.kr/main/contents.do?a_num=59464232 "HTTP/1.1 200 OK"
+2026-06-20 22:21:58,670 INFO 경북여성정책개발원: 11건
+2026-06-20 22:21:59,097 INFO HTTP Request: GET http://gbhrd.or.kr/zbxe/?mid=support1 "HTTP/1.1 200 OK"
+2026-06-20 22:21:59,126 INFO 경북지역인적자원개발위원회: 23건
+2026-06-20 22:21:59,292 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=20 "HTTP/1.1 200 200"
+2026-06-20 22:21:59,298 INFO HTTP Request: GET https://www.gfund.kr/hp/info/M04_L01.do "HTTP/1.1 200 OK"
+2026-06-20 22:21:59,320 INFO 경상북도 중소기업육성자금 GFund: 5건
+2026-06-20 22:21:59,780 INFO HTTP Request: GET https://www.gipa.or.kr/community/01_1.php "HTTP/1.1 200 OK"
+2026-06-20 22:21:59,787 INFO HTTP Request: GET http://gbse.or.kr/HOME/gbse/sub.htm?nav_code=gbs1566979318 "HTTP/1.1 200 OK"
+2026-06-20 22:21:59,871 INFO 고양산업진흥원: 10건
+2026-06-20 22:22:00,026 INFO HTTP Request: GET http://www.gjef.or.kr/ko/28 "HTTP/1.1 200 OK"
+2026-06-20 22:22:00,134 INFO 광주경영자총협회: 15건
+2026-06-20 22:22:00,170 INFO HTTP Request: GET https://www.gepa.kr/?page_id=51 "HTTP/1.1 200 OK"
+2026-06-20 22:22:00,371 INFO 경상북도경제진흥원: 10건
+2026-06-20 22:22:00,372 INFO HTTP Request: GET https://www.gjep.or.kr/cms/bbs/cms.php?dk_cms=comm_01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:00,489 INFO 경상북도사회적경제지원센터: 10건
+2026-06-20 22:22:00,556 INFO 광주경제진흥상생일자리재단: 15건
+2026-06-20 22:22:00,696 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=21 "HTTP/1.1 200 200"
+2026-06-20 22:22:00,762 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=3 "HTTP/1.1 200 OK"
+2026-06-20 22:22:00,814 INFO 인천TP 마케팅센터(뷰티산업육성): 15건
+2026-06-20 22:22:01,026 INFO HTTP Request: GET https://www.gjsec.kr/bbs/board.php?bo_table=noti&sca=%EC%84%BC%ED%84%B0 "HTTP/1.1 200 OK"
+2026-06-20 22:22:01,059 INFO 광주사회적경제지원센터: 21건
+2026-06-20 22:22:01,318 INFO HTTP Request: GET https://www.gjcci.or.kr/user/board/lists/board_cd/3010 "HTTP/1.1 200 OK"
+2026-06-20 22:22:01,355 INFO 광주상공회의소: 13건
+2026-06-20 22:22:01,577 INFO HTTP Request: GET http://www.gjjahwal.or.kr/ko/36 "HTTP/1.1 200 OK"
+2026-06-20 22:22:01,888 INFO HTTP Request: GET https://www.gwangjuhrd.or.kr/user2/board/lists/board_cd/5010 "HTTP/1.1 200 OK"
+2026-06-20 22:22:01,892 INFO 광주광역자활센터: 15건
+2026-06-20 22:22:01,937 INFO 광주지역인적자원개발위원회: 11건
+2026-06-20 22:22:02,087 INFO HTTP Request: GET https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003 "HTTP/1.1 200 200"
+2026-06-20 22:22:02,120 INFO HTTP Request: GET https://gj.riia.or.kr/board/businessAnnouncement "HTTP/1.1 200 "
+2026-06-20 22:22:02,158 INFO HTTP Request: GET https://www.gjtp.or.kr/home/business.cs?m=8 "HTTP/1.1 200 OK"
+2026-06-20 22:22:02,252 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=22 "HTTP/1.1 200 200"
+2026-06-20 22:22:02,263 INFO 광주정보문화산업진흥원: 22건
+2026-06-20 22:22:02,283 INFO 광주지역산업진흥원: 13건
+2026-06-20 22:22:02,378 INFO 광주테크노파크: 30건
+2026-06-20 22:22:02,526 INFO HTTP Request: GET https://www.ne.go.kr/user/bbs/BD_selectBbsList.do?q_bbsSn=1003 "HTTP/1.1 200 OK"
+2026-06-20 22:22:02,609 INFO 국가교육위원회: 10건
+2026-06-20 22:22:03,219 INFO HTTP Request: GET https://www.kaia.re.kr/portal/bbs/list/B0000006.do?menuNo=200547 "HTTP/1.1 200 OK"
+2026-06-20 22:22:03,343 INFO 국토교통과학기술진흥원: 10건
+2026-06-20 22:22:03,563 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_01.html "HTTP/1.1 200 OK"
+2026-06-20 22:22:03,610 INFO 군포산업진흥원: 29건
+2026-06-20 22:22:03,611 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_02.html "HTTP/1.1 200 OK"
+2026-06-20 22:22:03,666 INFO 군포산업진흥원: 30건
+2026-06-20 22:22:04,016 INFO HTTP Request: GET https://www.kibo.or.kr/main/board/boardType01.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:04,044 INFO HTTP Request: GET https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do?schPblancDiv=01 "HTTP/1.1 302 Found"
+2026-06-20 22:22:04,114 INFO HTTP Request: GET https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/list.do "HTTP/1.1 200 "
+2026-06-20 22:22:04,156 INFO 기업 SOS: 10건
+2026-06-20 22:22:04,158 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200View.do?schPblancDiv=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:04,205 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=23 "HTTP/1.1 200 200"
+2026-06-20 22:22:04,239 INFO 기술보증기금(기보): 10건
+2026-06-20 22:22:04,350 INFO 기업마당: 15건
+2026-06-20 22:22:04,405 INFO HTTP Request: GET https://www.hrd4u.or.kr/hrddoctor/web/board/list.do?mId=34 "HTTP/1.1 200 OK"
+2026-06-20 22:22:04,472 INFO 기업직업훈련지원시스템: 14건
+2026-06-20 22:22:04,770 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/ntfcPblancList.do?key=***&cate_cd=1&searchCnd=40900000000 "HTTP/1.1 200 OK"
+2026-06-20 22:22:04,972 INFO 김포시청: 10건
+2026-06-20 22:22:05,032 INFO HTTP Request: GET https://www.koreahana.or.kr/home/kor/board.do?ptSignature=QnrvtOekzKclpksn74dfsVKJGpwSxgFZ4viFnbbXAD0%3D&menuPos=51 "HTTP/1.1 200 200"
+2026-06-20 22:22:05,119 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/selectBbsNttList.do?bbsNo=292&key=*** "HTTP/1.1 200 OK"
+2026-06-20 22:22:05,172 INFO 남북하나재단: 33건
+2026-06-20 22:22:05,397 INFO 김포시청: 18건
+2026-06-20 22:22:05,824 INFO HTTP Request: GET https://www.kwpi.or.kr/home/sub?menukey=7311 "HTTP/1.1 200 200"
+2026-06-20 22:22:05,831 INFO HTTP Request: GET https://www.nyj.go.kr/www/selectEminwonWebList.do?key=***&sa1=01&sa1=02&sa1=04&sa1=05&sc4=2024 "HTTP/1.1 200 OK"
+2026-06-20 22:22:05,860 INFO 노사발전재단 일터혁신플랫폼: 10건
+2026-06-20 22:22:05,876 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=24 "HTTP/1.1 200 200"
+2026-06-20 22:22:06,038 INFO HTTP Request: GET https://nongshinbo.nonghyup.com/user/indexSub.do?codyMenuSeq=258789404&siteId=nongshinbo "HTTP/1.1 200 OK"
+2026-06-20 22:22:06,182 INFO 남양주시청: 10건
+2026-06-20 22:22:06,298 INFO 농림수산업자신용보증기금(농신보): 16건
+2026-06-20 22:22:06,346 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=319& "HTTP/1.1 200 OK"
+2026-06-20 22:22:06,395 INFO 대구경북경제자유구역청: 10건
+2026-06-20 22:22:06,520 INFO HTTP Request: GET http://www.dgef.or.kr/Home/board/default.asp?v=1&s_no=1&m=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:06,547 INFO 대구경영자총협회: 20건
+2026-06-20 22:22:06,618 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=321& "HTTP/1.1 200 OK"
+2026-06-20 22:22:06,658 INFO 대구경북경제자유구역청: 11건
+2026-06-20 22:22:07,397 INFO HTTP Request: GET https://startup.daegu.go.kr/index.do?menu_id=00002552 "HTTP/1.1 200 OK"
+2026-06-20 22:22:07,417 INFO HTTP Request: GET https://www.sinbo.or.kr/sub04_01_01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:07,481 INFO 대전신용보증재단: 10건
+2026-06-20 22:22:07,482 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=25 "HTTP/1.1 200 200"
+2026-06-20 22:22:07,538 INFO 대구창업허브 DASH: 7건
+2026-06-20 22:22:08,240 INFO HTTP Request: GET https://djhrd.or.kr/sub0101 "HTTP/1.1 200 OK"
+2026-06-20 22:22:08,270 INFO 대전지역인적자원개발위원회: 10건
+2026-06-20 22:22:08,525 INFO HTTP Request: GET https://djtp.or.kr/pbanc?mid=a20101000000 "HTTP/1.1 200 "
+2026-06-20 22:22:08,727 INFO HTTP Request: GET https://d.nts.go.kr/daejeonnts/na/ntt/selectNttList.do?mi=5114&bbsId=6032 "HTTP/1.1 200 OK"
+2026-06-20 22:22:08,747 INFO 대전테크노파크: 10건
+2026-06-20 22:22:08,748 INFO HTTP Request: GET https://djtp.or.kr/board.es?mid=a20201000000&bid=0101 "HTTP/1.1 200 "
+2026-06-20 22:22:08,813 INFO 대전테크노파크: 10건
+2026-06-20 22:22:08,814 INFO HTTP Request: GET http://www.bsef.or.kr/03_news/news01.php "HTTP/1.1 200 OK"
+2026-06-20 22:22:08,843 INFO 부산경영자총협회: 18건
+2026-06-20 22:22:08,871 INFO 대전지방국세청: 22건
+2026-06-20 22:22:08,892 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=26 "HTTP/1.1 200 200"
+2026-06-20 22:22:09,251 INFO HTTP Request: GET https://sehub.net/archives/category/alarm/opencat "HTTP/1.1 200 OK"
+2026-06-20 22:22:09,309 INFO 서울특별시 사회적경제지원센터: 17건
+2026-06-20 22:22:09,345 INFO HTTP Request: GET https://www.sjepa.or.kr/news-announcement "HTTP/1.1 200 OK"
+2026-06-20 22:22:09,414 INFO 세종일자리경제진흥원: 10건
+2026-06-20 22:22:10,108 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=notice01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:10,158 INFO 세종테크노파크: 15건
+2026-06-20 22:22:10,204 INFO HTTP Request: GET https://www.sida.kr/notification/news.html "HTTP/1.1 200 OK"
+2026-06-20 22:22:10,229 INFO 시흥산업진흥원: 20건
+2026-06-20 22:22:10,271 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=business01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:10,413 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=27 "HTTP/1.1 200 200"
+2026-06-20 22:22:10,432 INFO 세종테크노파크: 15건
+2026-06-20 22:22:10,720 INFO HTTP Request: GET http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:10,746 INFO 울산양산경영자총협회: 15건
+2026-06-20 22:22:11,051 INFO HTTP Request: GET https://www.djbea.or.kr/board?menuId=MENU00310&siteId=null "HTTP/1.1 200 200"
+2026-06-20 22:22:11,165 INFO 대전일자리경제진흥원: 10건
+2026-06-20 22:22:11,396 INFO HTTP Request: GET https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=*** "HTTP/1.1 200 OK"
+2026-06-20 22:22:11,466 INFO 안양시상권활성화센터: 13건
+2026-06-20 22:22:11,531 INFO HTTP Request: GET https://www.ubpi.or.kr/sub/?mcode=0403010000 "HTTP/1.1 200 OK"
+2026-06-20 22:22:11,625 INFO HTTP Request: GET https://www.ulsanhrd.or.kr/bbs/list.php?board_id=notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:11,648 INFO 울산지역인적자원개발위원회: 18건
+2026-06-20 22:22:11,690 INFO 울산일자리경제진흥원: 10건
+2026-06-20 22:22:11,906 INFO HTTP Request: GET https://www.utp.or.kr/board/board.php?bo_table=sub0501&menu_group=4&sno=0401 "HTTP/1.1 200 OK"
+2026-06-20 22:22:11,981 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=28 "HTTP/1.1 200 200"
+2026-06-20 22:22:11,988 INFO 울산테크노파크: 18건
+2026-06-20 22:22:12,710 INFO HTTP Request: GET https://www.wmit.or.kr/announce/businessAnnounceList.do "HTTP/1.1 200 "
+2026-06-20 22:22:12,791 INFO 원주의료기기산업진흥원: 10건
+2026-06-20 22:22:12,858 INFO HTTP Request: GET https://www.innobiz.net/company/company1_list.asp "HTTP/1.1 200 OK"
+2026-06-20 22:22:12,880 INFO 이노비즈협회(사)중소기업기술혁신: 10건
+2026-06-20 22:22:12,925 INFO HTTP Request: GET https://ypa.or.kr/information/businessnotice/ "HTTP/1.1 200 OK"
+2026-06-20 22:22:13,041 INFO 용인시산업진흥원: 36건
+2026-06-20 22:22:13,135 INFO HTTP Request: GET https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101 "HTTP/1.1 200 OK"
+2026-06-20 22:22:13,196 INFO 인천광역시사회적경제지원센터: 27건
+2026-06-20 22:22:13,412 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business "HTTP/1.1 200 OK"
+2026-06-20 22:22:13,462 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=29 "HTTP/1.1 200 200"
+2026-06-20 22:22:13,481 INFO 인천디자인지원센터: 37건
+2026-06-20 22:22:13,608 INFO HTTP Request: GET https://www.inef.or.kr/news/notice.php "HTTP/1.1 200 OK"
+2026-06-20 22:22:13,646 INFO 인천경영자총협회: 28건
+2026-06-20 22:22:14,006 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business2 "HTTP/1.1 200 OK"
+2026-06-20 22:22:14,071 INFO 인천디자인지원센터: 25건
+2026-06-20 22:22:14,165 INFO HTTP Request: GET https://event.jbci.or.kr/sub/s1_1.html "HTTP/1.1 200 OK"
+2026-06-20 22:22:14,217 INFO 전북창조경제혁신센터: 7건
+2026-06-20 22:22:14,518 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-06-20 22:22:14,542 INFO 인천소상공인종합지원센터: 15건
+2026-06-20 22:22:14,601 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000002&menuCd=DOM_000000101002000000&contentsSid=4&cpath= "HTTP/1.1 200 OK"
+2026-06-20 22:22:14,623 INFO HTTP Request: GET https://www.ep.go.kr/www/selectBbsNttList.do?bbsNo=42&key=*** "HTTP/1.1 200 OK"
+2026-06-20 22:22:14,662 INFO 전북테크노파크: 11건
+2026-06-20 22:22:14,754 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=30 "HTTP/1.1 200 200"
+2026-06-20 22:22:14,878 INFO 은평구청: 10건
+2026-06-20 22:22:15,108 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub01_09 "HTTP/1.1 200 OK"
+2026-06-20 22:22:15,120 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000006&menuCd=DOM_000000102001000000&paging=ok&gbun=&searchType=&keyword=&pageNo=1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:15,166 INFO 전북특별자치도경제통상진흥원: 20건
+2026-06-20 22:22:15,217 INFO 전북테크노파크: 41건
+2026-06-20 22:22:15,381 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub02_07_01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:15,384 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A1000 "HTTP/1.1 200 OK"
+2026-06-20 22:22:15,428 INFO 전북특별자치도경제통상진흥원: 15건
+2026-06-20 22:22:15,698 INFO 전주정보문화산업진흥원: 9건
+2026-06-20 22:22:15,840 INFO HTTP Request: GET https://tmdf.or.kr/sub/sub03_01.php "HTTP/1.1 200 OK"
+2026-06-20 22:22:15,890 INFO 전통시장육성재단: 10건
+2026-06-20 22:22:16,024 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A2000 "HTTP/1.1 200 OK"
+2026-06-20 22:22:16,150 INFO HTTP Request: GET https://www.nipa.kr/home/2-1 "HTTP/1.1 200 200"
+2026-06-20 22:22:16,217 INFO 정보통신산업진흥원: 12건
+2026-06-20 22:22:16,285 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=31 "HTTP/1.1 200 200"
+2026-06-20 22:22:16,291 INFO 전주정보문화산업진흥원: 9건
+2026-06-20 22:22:16,549 INFO HTTP Request: GET https://www.nipa.kr/home/2-2 "HTTP/1.1 200 200"
+2026-06-20 22:22:16,621 INFO 정보통신산업진흥원: 10건
+2026-06-20 22:22:16,743 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?Mcode=11182 "HTTP/1.1 200 OK"
+2026-06-20 22:22:16,814 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%A0%84%EB%AC%B8%EA%B0%80&srchSort=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:16,834 INFO 정부24: 16건
+2026-06-20 22:22:16,894 INFO 정부24: 16건
+2026-06-20 22:22:17,074 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%9E%90%EB%AC%B8%EB%8B%A8&srchSort=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:17,175 INFO 정부24: 16건
+2026-06-20 22:22:17,342 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EB%A9%98%ED%86%A0&srchSort=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:17,424 INFO 정부24: 16건
+2026-06-20 22:22:17,657 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EA%B0%95%EC%82%AC&srchSort=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:17,724 INFO 정부24: 16건
+2026-06-20 22:22:17,819 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%ED%8F%89%EA%B0%80%EC%9C%84%EC%9B%90&srchSort=01 "HTTP/1.1 200 OK"
+2026-06-20 22:22:17,897 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=32 "HTTP/1.1 200 200"
+2026-06-20 22:22:17,898 INFO 정부24: 16건
+2026-06-20 22:22:18,209 INFO HTTP Request: GET http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:18,270 INFO HTTP Request: GET http://www.jejuhrd.or.kr/index.php/contents/community/notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:18,272 INFO 제주경영자총협회: 20건
+2026-06-20 22:22:18,284 INFO 제주지역인적자원개발위원회: 10건
+2026-06-20 22:22:18,479 INFO HTTP Request: GET https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:18,532 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:18,586 INFO 제주신용보증재단: 16건
+2026-06-20 22:22:18,626 INFO 제주특별자치도 경제통상진흥원: 16건
+2026-06-20 22:22:18,797 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:18,858 INFO 제주특별자치도 경제통상진흥원: 18건
+2026-06-20 22:22:19,065 INFO HTTP Request: GET https://jeju.pass.or.kr/notice-board "HTTP/1.1 200 OK"
+2026-06-20 22:22:19,103 INFO 제주특별자치도사회서비스원: 10건
+2026-06-20 22:22:19,406 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice01_list.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:19,487 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-06-20 22:22:19,646 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=33 "HTTP/1.1 200 200"
+2026-06-20 22:22:20,014 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,031 INFO HTTP Request: GET https://www.kosi.re.kr/kosbiWar/front/functionDisplay?menuFrontNo=239693504401196147746371791605890541073&menuFrontURL=front/announceList "HTTP/1.1 200 200"
+2026-06-20 22:22:20,090 INFO 중소상공인희망재단: 10건
+2026-06-20 22:22:20,145 INFO 중소벤처기업연구원: 20건
+2026-06-20 22:22:20,182 INFO HTTP Request: GET https://www.tipa.or.kr/s040101/index/page/1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,184 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=3 "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,231 INFO 중소기업기술정보진흥원(TIPA): 10건
+2026-06-20 22:22:20,232 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice03_list.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,262 INFO 중소상공인희망재단: 10건
+2026-06-20 22:22:20,334 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-06-20 22:22:20,427 INFO HTTP Request: GET https://www.cwip.or.kr/bbs/board.php?bo_table=b0501 "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,581 INFO 창원산업진흥원: 12건
+2026-06-20 22:22:20,816 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:20,859 INFO 첨단정보통신융합산업기술원: 22건
+2026-06-20 22:22:21,137 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=34 "HTTP/1.1 200 200"
+2026-06-20 22:22:21,650 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=business "HTTP/1.1 200 OK"
+2026-06-20 22:22:21,681 INFO 첨단정보통신융합산업기술원: 19건
+2026-06-20 22:22:21,765 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_bsm080_001.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:21,846 INFO HTTP Request: GET https://www.cepa.or.kr/notice/notice.do?pm=6&ms=32 "HTTP/1.1 200 200"
+2026-06-20 22:22:21,855 INFO 청년창업사관학교: 10건
+2026-06-20 22:22:21,896 INFO 충남경제진흥원: 10건
+2026-06-20 22:22:21,899 INFO HTTP Request: GET https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/ "HTTP/1.1 200 "
+2026-06-20 22:22:22,449 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=35 "HTTP/1.1 200 200"
+2026-06-20 22:22:22,522 INFO HTTP Request: GET https://www.ctp.or.kr/business/data.do "HTTP/1.1 200 200"
+2026-06-20 22:22:22,564 INFO 충남테크노파크: 10건
+2026-06-20 22:22:22,565 INFO HTTP Request: GET http://xn--6-482fq5fy8gs7i6jc.com/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:22,593 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_not002_001.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:22,597 INFO 충북농촌융복합산업지원센터: 15건
+2026-06-20 22:22:22,602 INFO HTTP Request: GET https://www.cnse.kr/app/board/index?md_id=center_news "HTTP/1.1 200 OK"
+2026-06-20 22:22:22,697 INFO 충남사회적경제지원센터: 10건
+2026-06-20 22:22:22,750 INFO 청년창업사관학교: 10건
+2026-06-20 22:22:22,936 INFO HTTP Request: GET https://www.cbsinbo.or.kr/sub.php?code=123 "HTTP/1.1 200 OK"
+2026-06-20 22:22:22,958 INFO HTTP Request: GET http://www.cbse.co/board/blist/notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:22,961 INFO 충북신용보증재단: 15건
+2026-06-20 22:22:22,976 INFO 충북사회적경제센터: 22건
+2026-06-20 22:22:23,753 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=36 "HTTP/1.1 200 200"
+2026-06-20 22:22:23,860 INFO 충남농업6차산업센터: 10건
+2026-06-20 22:22:24,027 INFO HTTP Request: GET https://www.cjrhrdc.org/board/notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:24,062 INFO 충북지역인적자원개발위원회: 20건
+2026-06-20 22:22:24,286 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=65 "HTTP/1.1 200 200"
+2026-06-20 22:22:24,287 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=66 "HTTP/1.1 200 200"
+2026-06-20 22:22:24,337 INFO 충청남도 소상공인 지원센터: 10건
+2026-06-20 22:22:24,340 INFO 충청남도 소상공인 지원센터: 10건
+2026-06-20 22:22:24,397 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36 "HTTP/1.1 200 OK"
+2026-06-20 22:22:24,484 INFO HTTP Request: GET https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6 "HTTP/1.1 200 OK"
+2026-06-20 22:22:24,490 INFO 충북테크노파크: 15건
+2026-06-20 22:22:24,569 INFO 충북테크노파크 컨택센터: 10건
+2026-06-20 22:22:24,581 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526 "HTTP/1.1 200 OK"
+2026-06-20 22:22:24,684 INFO 충북테크노파크: 15건
+2026-06-20 22:22:25,225 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=37 "HTTP/1.1 200 200"
+2026-06-20 22:22:25,287 INFO HTTP Request: GET https://www.cba.ne.kr/home/sub.php?menukey=140 "HTTP/1.1 200 OK"
+2026-06-20 22:22:25,339 INFO 충청북도기업진흥원: 15건
+2026-06-20 22:22:25,455 INFO HTTP Request: GET https://www.cbsb.kr/home/sub.php?menukey=288 "HTTP/1.1 200 OK"
+2026-06-20 22:22:25,505 INFO 충청북도소상공인지원센터: 13건
+2026-06-20 22:22:26,028 INFO HTTP Request: GET https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword= "HTTP/1.1 200 200"
+2026-06-20 22:22:26,105 INFO 한국건강가정진흥원: 11건
+2026-06-20 22:22:26,160 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=23 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,196 INFO 한국경영기술지도사회: 11건
+2026-06-20 22:22:26,313 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=28 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,342 INFO 한국경영기술지도사회: 10건
+2026-06-20 22:22:26,400 INFO HTTP Request: GET https://mainbiz.or.kr/notice/notice.asp?smen=1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,435 INFO 한국경영혁신중소기업협회: 10건
+2026-06-20 22:22:26,463 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=128 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,499 INFO 한국경영기술지도사회: 17건
+2026-06-20 22:22:26,568 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=38 "HTTP/1.1 200 200"
+2026-06-20 22:22:26,732 INFO HTTP Request: GET https://mainbiz.or.kr/notice/company.asp?smen=2 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,765 INFO 한국경영혁신중소기업협회: 10건
+2026-06-20 22:22:26,895 INFO HTTP Request: GET https://mainbiz.or.kr/notice/library.asp?smen=8 "HTTP/1.1 200 OK"
+2026-06-20 22:22:26,942 INFO 한국경영혁신중소기업협회: 10건
+2026-06-20 22:22:27,473 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:27,573 INFO 한국무역보험공사: 114건
+2026-06-20 22:22:27,798 INFO HTTP Request: GET https://www.kma.or.kr/usrs/tutor/tutorForm.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:27,965 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=39 "HTTP/1.1 200 200"
+2026-06-20 22:22:27,968 INFO 한국능률협회(KMA): 86건
+2026-06-20 22:22:28,023 INFO HTTP Request: GET https://www.kipa.org/kipa/ip004/kw_apquestion_0501.jsp "HTTP/1.1 200 OK"
+2026-06-20 22:22:28,027 INFO HTTP Request: GET https://www.kipa.org/kipa/notice/kw_0403_01.jsp "HTTP/1.1 200 OK"
+2026-06-20 22:22:28,095 INFO 한국발명진흥회: 10건
+2026-06-20 22:22:28,264 INFO 한국발명진흥회: 10건
+2026-06-20 22:22:28,265 INFO HTTP Request: GET https://www.keit.re.kr/board.es?mid=a10301010000&bid=0009 "HTTP/1.1 200 OK"
+2026-06-20 22:22:28,297 INFO 한국산업기술기획평가원(KEIT): 2건
+2026-06-20 22:22:28,422 INFO HTTP Request: GET https://www.hrdkorea.or.kr/3/1/1 "HTTP/1.1 200 OK"
+2026-06-20 22:22:28,538 INFO 한국산업인력공단(HRDK): 10건
+2026-06-20 22:22:28,725 INFO HTTP Request: GET https://www.lmca.or.kr/22 "HTTP/1.1 200 OK"
+2026-06-20 22:22:28,810 INFO 한국상생지원협회: 6건
+2026-06-20 22:22:28,955 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU00099 "HTTP/1.1 200 200"
+2026-06-20 22:22:29,061 INFO HTTP Request: GET https://www.knrec.or.kr/biz/pds/notice/list.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:29,066 INFO 한국보건산업진흥원: 10건
+2026-06-20 22:22:29,068 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=40 "HTTP/1.1 200 200"
+2026-06-20 22:22:29,258 INFO 한국에너지공단 신재생에너지센터: 22건
+2026-06-20 22:22:29,443 INFO HTTP Request: GET https://www.inventor.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-06-20 22:22:29,483 INFO 한국여성발명협회: 15건
+2026-06-20 22:22:29,642 INFO HTTP Request: GET https://www.kisa.or.kr/401 "HTTP/1.1 200 200"
+2026-06-20 22:22:29,709 INFO 한국인터넷진흥원(KISA): 10건
+2026-06-20 22:22:30,012 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104&recptSt= "HTTP/1.1 200 200"
+2026-06-20 22:22:30,030 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000137.do?menuNo=204802 "HTTP/1.1 200 200"
+2026-06-20 22:22:30,099 INFO 한국콘텐츠진흥원: 10건
+2026-06-20 22:22:30,176 INFO 한국콘텐츠진흥원: 10건
+2026-06-20 22:22:30,571 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=41 "HTTP/1.1 200 200"
+2026-06-20 22:22:30,760 INFO HTTP Request: GET https://ksa.or.kr/bbs/ksa_kr/1021/artclList.do?layout=unknown "HTTP/1.1 302 Found"
+2026-06-20 22:22:30,818 INFO HTTP Request: GET https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do "HTTP/1.1 200 "
+2026-06-20 22:22:30,876 INFO HTTP Request: GET https://www.hongcheon.go.kr/www/selectBbsNttList.do?bbsNo=1&key=*** "HTTP/1.1 200 OK"
+2026-06-20 22:22:30,879 INFO 화성산업진흥원: 4건
+2026-06-20 22:22:30,978 INFO 홍천군청: 10건
+2026-06-20 22:22:31,019 INFO HTTP Request: GET https://www.hstree.org/news/notice.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:31,137 INFO HTTP Request: GET https://www.keco.or.kr/web/lay1/bbs/S1T10C108/A/18/list.do "HTTP/1.1 200 "
+2026-06-20 22:22:31,146 INFO 화성시인재육성재단: 11건
+2026-06-20 22:22:31,247 INFO 한국환경공단: 10건
+2026-06-20 22:22:31,248 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=42 "HTTP/1.1 200 200"
+2026-06-20 22:22:31,467 INFO HTTP Request: GET https://www.ksa.or.kr/ksa_kr/5217/subview.do "HTTP/1.1 200 OK"
+2026-06-20 22:22:31,508 INFO 한국표준협회(KSA): 10건
+2026-06-20 22:22:31,736 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=43 "HTTP/1.1 200 200"
+2026-06-20 22:22:31,803 INFO HTTP Request: GET https://ksa.or.kr/ksa_kr/16279/subview.do;jsessionid=08B99A0D6D0EF041FC6DB04E34BAAA8A?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa3NhX2tyJTJGMTAyMSUyRmFydGNsTGlzdC5kbyUzRg%3D%3D "HTTP/1.1 200 OK"
+2026-06-20 22:22:31,847 INFO 한국표준협회(KSA): 10건
+2026-06-20 22:22:32,243 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=44 "HTTP/1.1 200 200"
+2026-06-20 22:22:32,747 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=45 "HTTP/1.1 200 200"
+2026-06-20 22:22:33,266 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=46 "HTTP/1.1 200 200"
+2026-06-20 22:22:33,781 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=47 "HTTP/1.1 200 200"
+2026-06-20 22:22:34,289 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=48 "HTTP/1.1 200 200"
+2026-06-20 22:22:34,761 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=49 "HTTP/1.1 200 200"
+2026-06-20 22:22:35,223 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=50 "HTTP/1.1 200 200"
+2026-06-20 22:22:35,705 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=51 "HTTP/1.1 200 200"
+2026-06-20 22:22:36,228 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=52 "HTTP/1.1 200 200"
+2026-06-20 22:22:36,772 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=53 "HTTP/1.1 200 200"
+2026-06-20 22:22:37,266 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=54 "HTTP/1.1 200 200"
+2026-06-20 22:22:37,767 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=55 "HTTP/1.1 200 200"
+2026-06-20 22:22:38,237 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=56 "HTTP/1.1 200 200"
+2026-06-20 22:22:38,746 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=57 "HTTP/1.1 200 200"
+2026-06-20 22:22:39,231 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=58 "HTTP/1.1 200 200"
+2026-06-20 22:22:39,860 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=59 "HTTP/1.1 200 200"
+2026-06-20 22:22:40,337 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=60 "HTTP/1.1 200 200"
+2026-06-20 22:22:40,895 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=61 "HTTP/1.1 200 200"
+2026-06-20 22:22:41,410 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=62 "HTTP/1.1 200 200"
+2026-06-20 22:22:41,874 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=63 "HTTP/1.1 200 200"
+2026-06-20 22:22:42,359 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=64 "HTTP/1.1 200 200"
+2026-06-20 22:22:42,837 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=65 "HTTP/1.1 200 200"
+2026-06-20 22:22:43,330 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=66 "HTTP/1.1 200 200"
+2026-06-20 22:22:43,806 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=67 "HTTP/1.1 200 200"
+2026-06-20 22:22:44,237 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=68 "HTTP/1.1 200 200"
+2026-06-20 22:22:44,747 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=69 "HTTP/1.1 200 200"
+2026-06-20 22:22:45,232 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=70 "HTTP/1.1 200 200"
+2026-06-20 22:22:45,721 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=71 "HTTP/1.1 200 200"
+2026-06-20 22:22:46,180 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=72 "HTTP/1.1 200 200"
+2026-06-20 22:22:46,638 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=73 "HTTP/1.1 200 200"
+2026-06-20 22:22:47,121 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=74 "HTTP/1.1 200 200"
+2026-06-20 22:22:47,610 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=75 "HTTP/1.1 200 200"
+2026-06-20 22:22:48,065 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=76 "HTTP/1.1 200 200"
+2026-06-20 22:22:48,552 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=77 "HTTP/1.1 200 200"
+2026-06-20 22:22:49,029 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=78 "HTTP/1.1 200 200"
+2026-06-20 22:22:49,480 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=79 "HTTP/1.1 200 200"
+2026-06-20 22:22:49,944 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=80 "HTTP/1.1 200 200"
+2026-06-20 22:22:50,383 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=81 "HTTP/1.1 200 200"
+2026-06-20 22:22:50,854 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=82 "HTTP/1.1 200 200"
+2026-06-20 22:22:51,315 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=83 "HTTP/1.1 200 200"
+2026-06-20 22:22:51,826 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=84 "HTTP/1.1 200 200"
+2026-06-20 22:22:52,336 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=85 "HTTP/1.1 200 200"
+2026-06-20 22:22:52,821 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=86 "HTTP/1.1 200 200"
+2026-06-20 22:22:53,286 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=87 "HTTP/1.1 200 200"
+2026-06-20 22:22:53,771 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=88 "HTTP/1.1 200 200"
+2026-06-20 22:22:54,212 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=89 "HTTP/1.1 200 200"
+2026-06-20 22:22:54,668 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=90 "HTTP/1.1 200 200"
+2026-06-20 22:22:55,104 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=91 "HTTP/1.1 200 200"
+2026-06-20 22:22:55,605 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=92 "HTTP/1.1 200 200"
+2026-06-20 22:22:56,075 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=93 "HTTP/1.1 200 200"
+2026-06-20 22:22:56,676 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=94 "HTTP/1.1 200 200"
+2026-06-20 22:22:57,120 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=95 "HTTP/1.1 200 200"
+2026-06-20 22:22:57,561 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=96 "HTTP/1.1 200 200"
+2026-06-20 22:22:57,994 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=97 "HTTP/1.1 200 200"
+2026-06-20 22:22:58,467 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=98 "HTTP/1.1 200 200"
+2026-06-20 22:22:58,964 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=99 "HTTP/1.1 200 200"
+2026-06-20 22:22:59,471 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=100 "HTTP/1.1 200 200"
+2026-06-20 22:22:59,920 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=101 "HTTP/1.1 200 200"
+2026-06-20 22:23:00,376 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=102 "HTTP/1.1 200 200"
+2026-06-20 22:23:00,836 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=103 "HTTP/1.1 200 200"
+2026-06-20 22:23:01,290 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=104 "HTTP/1.1 200 200"
+2026-06-20 22:23:01,794 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=105 "HTTP/1.1 200 200"
+2026-06-20 22:23:02,289 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=106 "HTTP/1.1 200 200"
+2026-06-20 22:23:02,768 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=107 "HTTP/1.1 200 200"
+2026-06-20 22:23:03,399 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=108 "HTTP/1.1 200 200"
+2026-06-20 22:23:03,902 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=109 "HTTP/1.1 200 200"
+2026-06-20 22:23:04,628 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=110 "HTTP/1.1 200 200"
+2026-06-20 22:23:05,269 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=111 "HTTP/1.1 200 200"
+2026-06-20 22:23:05,807 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=112 "HTTP/1.1 200 200"
+2026-06-20 22:23:06,350 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=113 "HTTP/1.1 200 200"
+2026-06-20 22:23:06,990 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=114 "HTTP/1.1 200 200"
+2026-06-20 22:23:07,534 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=115 "HTTP/1.1 200 200"
+2026-06-20 22:23:08,380 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=116 "HTTP/1.1 200 200"
