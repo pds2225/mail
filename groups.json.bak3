@@ -408,11 +408,6 @@
       40,
       70
     ],
-    "llm_call_limit_per_run": 30,
-    "extra_eligible_regions": [
-      "인천",
-      "경기",
-      "수도권"
-    ]
+    "llm_call_limit_per_run": 30
   }
 ]
