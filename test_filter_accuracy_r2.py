@@ -51,17 +51,17 @@ def test_seoul_group_blocks_busan_kwon():
                 "grp_ai_saas") == "not_eligible"
 
 
-def test_goyang_blocks_gangwon_lips_preserved():
-    """라운드1 신고#1 — 헬퍼 일반화 후에도 보존."""
+def test_prestartup_ai_blocks_gangwon_lips_preserved():
+    """라운드1 신고#1 — 헬퍼 일반화 후에도 보존(서울 own + 수도권 extra 그룹에서도 강원권 차단)."""
     assert _gen({"title": "2026 강원권 LIPS INVESTOR DAY",
-                 "author": "강원창조경제혁신센터", "region_field": "전국"}, "grp_goyang") == "not_eligible"
+                 "author": "강원창조경제혁신센터", "region_field": "전국"}, "grp_prestartup_ai") == "not_eligible"
 
 
 def test_busan_kwon_blocked_for_all_metro_groups():
     item = {"title": "부산권 제조 지원", "author": "x", "region_field": "전국"}
-    assert _inc(item) == "not_eligible"                       # 인천
-    assert _gen(item, "grp_goyang") == "not_eligible"          # 경기
-    assert _gen(item, "grp_ai_saas") == "not_eligible"         # 서울
+    assert _inc(item) == "not_eligible"                          # 인천
+    assert _gen(item, "grp_prestartup_ai") == "not_eligible"      # 서울+수도권(예비창업 AI)
+    assert _gen(item, "grp_ai_saas") == "not_eligible"           # 서울
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -82,10 +82,10 @@ def test_seoul_group_spares_metro_family_kwon():
                 "grp_ai_saas") != "not_eligible"
 
 
-def test_goyang_seongbuk_localgov_still_blocked():
-    """헬퍼 일반화 후에도 경기 그룹의 서울자치구(성북) 기초자치 차단 유지."""
+def test_prestartup_ai_seongbuk_localgov_still_blocked():
+    """헬퍼 일반화 후에도 서울자치구(성북) 기초자치 단독 주관은 차단 유지(타 자치구 누락 방지)."""
     assert _gen({"title": "길음 청년창업", "author": "재단법인 성북문화재단",
-                 "region_field": "전국"}, "grp_goyang") == "not_eligible"
+                 "region_field": "전국"}, "grp_prestartup_ai") == "not_eligible"
 
 
 def test_incheon_short_district_no_swallow():
@@ -97,7 +97,7 @@ def test_national_org_ccei_spared_all_groups():
     """창조경제혁신센터 주관 전국공고 — (B) 차단 제외(전국 정당공고 보호)."""
     item = {"title": "2026 KAMCO TechBlaze 모집 공고", "author": "서울창조경제혁신센터",
             "region_field": "전국"}
-    assert _gen(item, "grp_goyang") == "eligible"
+    assert _gen(item, "grp_prestartup_ai") == "eligible"
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -139,12 +139,13 @@ def test_support_field_grant_only_preserves_etc_gate():
     assert "그외" in types and "지원금/바우처" in types
 
 
-def test_goyang_consulting_only_notice_not_dropped():
-    """end-to-end: 키워드 없는 정당 공고가 support_field=멘토링이어도 goyang에서 누락 안 됨."""
-    item = {"title": "고양시 창업도약 참여기업 모집 신청접수", "description": "신청",
+def test_prestartup_ai_consulting_only_notice_not_dropped():
+    """end-to-end: 정당 공고가 support_field=멘토링이어도 prestartup_ai에서 누락 안 됨.
+    (지원유형 매핑이 매칭 게이트를 좁혀 부당 누락하면 안 된다는 recall 회귀 보존)."""
+    item = {"title": "서울 AI 솔루션 도입 참여기업 모집 신청접수", "description": "신청",
             "deadline": "2099-12-31", "support_field": "멘토링",
-            "region_field": "전국", "business_age_text": "전체"}
-    ev = m.evaluate_notice(item, G["grp_goyang"])
+            "region_field": "전국"}
+    ev = m.evaluate_notice(item, G["grp_prestartup_ai"])
     assert ev["is_relevant"] is True
     assert "그외" not in ev["_types"]   # 표시는 컨설팅·교육으로 정확(그외 숨김)
 

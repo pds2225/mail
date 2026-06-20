@@ -356,7 +356,7 @@ NON_APPLICATION_PERIOD_LABELS = (
     "협약기간", "사업기간", "수행기간", "지원기간", "운영기간", "서비스 완료",
     "사업 추진 기간", "지원 기간",
 )
-DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr")
+DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr")
 MAX_DETAIL_ENRICH = 40
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -595,6 +595,10 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
         if not body:
             body = soup
         result["body"] = body.get_text("\n", strip=True)[:12000]
+    elif "nipa.kr" in url:
+        body = soup.select_one(".detail") or soup.select_one(".tab3.bsnsWrap")
+        if body:
+            result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
         body = soup.select_one("article, .view_cont, #contents, main")
         if body:
@@ -2533,10 +2537,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     src = (item.get("source", "") + " " + item.get("author", "")).lower()
     source_bypass = always_srcs and any(s in src for s in always_srcs)
     req_regions = g.get("required_conditions", {}).get("regions", [])
+    # 지역 미상(unknown)과 '확실한 타지역'(not_eligible)을 구분한다(사용자 정책 2026-06-19):
+    #  확실한 타지역 → REGION_NOT_ELIGIBLE(제외). 지역 단서 전무 → REGION_UNKNOWN(버리지 말고 '지역 미상'으로 surface).
+    region_positively_other = (
+        region_info["region_status"] == "not_eligible"
+        or region_info["district_status"] == "not_eligible"
+    )
     if group is not None and not source_bypass:
         region_ok = (region_info["region_status"] == "eligible") if use_generic_region else region_match(item, req_regions)
         if not region_ok:
-            reason_codes.append("REGION_NOT_ELIGIBLE")
+            reason_codes.append("REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN")
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
     group_excluded = [k for k in excl_kws if _kw_in_text(text, k)]
@@ -2562,7 +2572,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     amount_status = support_amount_status(item, g) if group is not None else "n/a"
     if biz_years_status == "not_eligible":
         reason_codes.append("BUSINESS_YEARS_NOT_ELIGIBLE")
-    if amount_status == "not_eligible":
+    # 지원금 필터: 사용자 정책(2026-06-19) — 당분간 금액으로 거르지 않는다(recall 우선·'참가비' 오추출 위험 회피).
+    # 금액은 표시용으로만 유지(support_amount_status). 재활성화: 그룹에 "enforce_amount_filter": true.
+    if amount_status == "not_eligible" and g.get("enforce_amount_filter", False):
         reason_codes.append("AMOUNT_TOO_LOW")
 
     relevance_score = 0
@@ -2596,6 +2608,17 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
             "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
         })
+    )
+    # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
+    #  버리지 말고 '지역 미상' 버킷으로 보내 보고 메일 하단에 함께 첨부한다(누락 방지).
+    region_unknown_review = (
+        region_status == "unknown"
+        and district_status != "not_eligible"
+        and not is_relevant
+        and deadline_status in {"open", "upcoming"}
+        and application_like
+        and group_keyword_pass
+        and not (hard_reasons - {"REGION_UNKNOWN", "LOW_CONFIDENCE"})
     )
 
     required_conditions = []
@@ -2636,6 +2659,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "required_conditions": required_conditions,
         "notes": notes,
         "review_needed": review_needed,
+        "region_unknown_review": region_unknown_review,
         "business_years_status": biz_years_status,
         "support_amount_status": amount_status,
         # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
@@ -2655,19 +2679,23 @@ def _notice_sort_key(item: dict) -> tuple[int, int, int]:
 def filter_for_group_with_diagnostics(items: list[dict], group: dict, today=None) -> dict:
     included: list[dict] = []
     review: list[dict] = []
+    region_unknown: list[dict] = []
     excluded: list[dict] = []
     for item in items:
         evaluated = evaluate_notice(item, group, today)
         if evaluated.get("is_relevant"):
             included.append(evaluated)
+        elif evaluated.get("region_unknown_review"):
+            region_unknown.append(evaluated)
         elif evaluated.get("review_needed"):
             review.append(evaluated)
         else:
             excluded.append(evaluated)
     included.sort(key=_notice_sort_key)
     review.sort(key=_notice_sort_key)
+    region_unknown.sort(key=_notice_sort_key)
     excluded.sort(key=lambda it: (",".join(it.get("exclude_reason_codes", [])), it.get("title", "")))
-    return {"included": included, "review": review, "excluded": excluded}
+    return {"included": included, "review": review, "region_unknown": region_unknown, "excluded": excluded}
 
 
 def filter_for_group(items: list[dict], group: dict) -> list[dict]:
@@ -2894,6 +2922,29 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
         lines.append(f"| {title} | {codes} | {basis} |")
     if len(items) > limit:
         lines.append(f"| 외 {len(items) - limit}건 | - | 표시 제한 |")
+    return "\n".join(lines)
+
+
+def render_region_unknown(items: list[dict], limit: int = 30) -> str:
+    """지역 단서가 없어 자동분류 못 한 공고를 보고 메일 하단에 '확인 필요'로 첨부(누락 방지)."""
+    if not items:
+        return ""
+    lines = [
+        "\n\n────────────────────────────────",
+        f"📍 지역 미상 — 확인 필요 ({len(items)}건)",
+        "  (지역 단서가 없어 우리 지역인지 자동 판단 못 함 — 놓치지 않도록 함께 첨부)",
+    ]
+    for it in items[:limit]:
+        lines.append(f"\n▸ {it.get('title') or '(제목없음)'}")
+        lines.append(
+            f"  기관: {it.get('author') or '미기재'}"
+            f" | 마감: {resolve_item_deadline(it) or '미기재'}"
+            f" | 등록: {it.get('posted_date') or '날짜불명'}"
+        )
+        if it.get("link"):
+            lines.append(f"  🔗 {it['link']}")
+    if len(items) > limit:
+        lines.append(f"\n외 {len(items) - limit}건")
     return "\n".join(lines)
 
 
@@ -3275,6 +3326,7 @@ def execute_monitor(
         diagnostics = filter_for_group_with_diagnostics(filtered_new, group)
         g_items = diagnostics["included"]
         review_items = diagnostics["review"]
+        ru_items = diagnostics["region_unknown"]
         excluded_items = diagnostics["excluded"]
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
@@ -3287,12 +3339,14 @@ def execute_monitor(
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
                 "matched_items": len(g_items),
                 "review_items": len(review_items),
+                "region_unknown_items": len(ru_items),
                 "excluded_items": len(excluded_items),
                 "sample_titles": [it.get("title") for it in g_items[:5]],
                 "review_titles": [it.get("title") for it in review_items[:5]],
+                "region_unknown_titles": [it.get("title") for it in ru_items[:5]],
                 "excluded_summary": render_excluded_summary(excluded_items),
             })
-        if not g_items:
+        if not g_items and not ru_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
         sent_groups.append({
@@ -3300,10 +3354,11 @@ def execute_monitor(
             "matched_items": len(g_items),
             "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
             "review_items": len(review_items),
+            "region_unknown_items": len(ru_items),
             "excluded_items": len(excluded_items) if not allow_send else 0,
         })
         if allow_send:
-            summary    = claude_summarize(g_items, group)
+            summary    = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
             g_norm     = _normalize_group(group)
             req_rgns   = g_norm.get("required_conditions", {}).get("regions", [])
             _or_kws    = g_norm.get("or_keywords", [])
@@ -3336,9 +3391,12 @@ def execute_monitor(
                 "\n\n────────────────────────────────\n"
                 f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
             )
+            # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
+            region_unknown_block = render_region_unknown(ru_items)
+            subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
             send_to_list(
-                f"[{group.get('name')}] {len(g_items)}건 ({date_str})",
-                header + voucher_block + summary + kw_footer,
+                f"[{group.get('name')}] {subj_count} ({date_str})",
+                header + voucher_block + summary + region_unknown_block + kw_footer,
                 group.get("recipients", []),
             )
             if voucher_items:
@@ -3485,7 +3543,7 @@ def write_review_queue_report(
         for it in queue:
             lines.append(
                 f"- **{it.get('date_unknown_risk', '?')}** | {it.get('title', '')[:100]} | "
-                f"{it.get('source', '')} | {it.get('link', '')[:80]}"
+                f"{it.get('source', '')} | {it.get('link', '')}"
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
