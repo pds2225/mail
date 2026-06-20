@@ -37,8 +37,8 @@ def base(gid):
                         "description": "인천 소재 중소기업 대상 신청접수", "author": "기관"},
         "grp_ai_saas": {"title": "서울특별시 AI 솔루션 도입 지원 신청접수",
                         "description": "서울 소재 기업 신청접수", "author": "기관"},
-        "grp_goyang": {"title": "경기도 제조기업 성장지원 사업 신청접수",
-                       "description": "경기 소재 제조 중소기업 신청접수 지원금", "author": "기관"},
+        "grp_prestartup_ai": {"title": "서울 AI 솔루션 도입 지원사업 신청접수",
+                              "description": "서울 소재 기업 AI 솔루션 신청접수", "author": "기관"},
         "grp_bnco": {"title": "인천광역시 화장품 수출지원 신청접수",
                      "description": "인천 소재 화장품 기업 신청접수", "author": "기관"},
     }[gid]}
@@ -121,36 +121,65 @@ def test_region_unknown_observed_excluded(gid):
 
 
 # ══════════════════════════════════════════════════════════════════
-# [지원금] grp_goyang(min_support_amount=3,000,000) × {초과, 이하, 미상, 비금액}
+# [지원금] 합성 임계 그룹 × {초과, 이하, 미상, 비금액}
+#   현재 active 그룹엔 min_support_amount 임계가 없으므로(grp_goyang 제거됨),
+#   grp_prestartup_ai 를 복제해 임계 3,000,000(exclusive)을 주입한 합성 그룹으로
+#   금액 추출/임계 비교 로직(support_amount_status·AMOUNT_TOO_LOW)을 계속 검증한다.
 # ══════════════════════════════════════════════════════════════════
+def _amount_group():
+    g = dict(G["grp_prestartup_ai"])
+    g["min_support_amount"] = 3_000_000
+    g["min_support_amount_inclusive"] = False
+    return g
+
+
+def _amount_item(**mut):
+    """합성 그룹 키워드 게이트(AI/서울/신청접수)를 통과하는 기준 아이템."""
+    it = {"id": "x", "deadline": "2026-12-31", "application_period": dict(PERIOD),
+          "is_aggregator": False, "posted_date": "2026-06-18",
+          "title": "서울 AI 솔루션 지원 신청접수", "description": "서울 AI 솔루션 신청접수",
+          "author": "기관"}
+    it.update(mut)
+    return it
+
+
+def _amount_bucket(item):
+    g = _amount_group()
+    d = m.filter_for_group_with_diagnostics([item], g, TODAY)
+    for b in ("included", "review", "excluded"):
+        if d[b]:
+            return b, d[b][0]
+    return "none", {}
+
+
 def test_amount_over_threshold_included():
-    b, ev = bucket_of(mk("grp_goyang", description="경기 소재 제조 신청접수 지원금 500만원"), "grp_goyang")
-    record("amount", "over", "grp_goyang")
+    b, ev = _amount_bucket(_amount_item(description="서울 AI 솔루션 신청접수 지원금 500만원"))
+    record("amount", "over", "grp_prestartup_ai")
     assert b == "included" and ev["support_amount_status"] == "eligible"
 
 
 def test_amount_under_threshold_excluded():
-    b, ev = bucket_of(mk("grp_goyang", description="경기 소재 제조 신청접수 지원금 200만원"), "grp_goyang")
-    record("amount", "under", "grp_goyang")
+    b, ev = _amount_bucket(_amount_item(description="서울 AI 솔루션 신청접수 지원금 200만원"))
+    record("amount", "under", "grp_prestartup_ai")
     assert b == "excluded" and "AMOUNT_TOO_LOW" in ev["exclude_reason_codes"]
 
 
 def test_amount_unknown_included():
     """미상 → 통과(recall: unknown→pass)."""
-    b, ev = bucket_of(base("grp_goyang"), "grp_goyang")
-    record("amount", "unknown", "grp_goyang")
+    b, ev = _amount_bucket(_amount_item())
+    record("amount", "unknown", "grp_prestartup_ai")
     assert b == "included" and ev["support_amount_status"] == "unknown"
 
 
 def test_amount_nonmoney_man_not_excluded():
     """★RED 회귀: '100만명' 비금액이 정당 공고를 AMOUNT_TOO_LOW 로 제외하면 안 됨."""
-    b, ev = bucket_of(mk("grp_goyang",
-                         title="경기도 제조기업 성장지원 신청접수 참여 100만명 돌파"), "grp_goyang")
-    record("amount", "nonmoney", "grp_goyang")
+    b, ev = _amount_bucket(_amount_item(
+        title="서울 AI 솔루션 지원 신청접수 참여 100만명 돌파"))
+    record("amount", "nonmoney", "grp_prestartup_ai")
     assert b != "excluded" and ev["support_amount_status"] == "unknown"
 
 
-@pytest.mark.parametrize("gid", ["grp_default", "grp_ai_saas", "grp_bnco"])
+@pytest.mark.parametrize("gid", ["grp_default", "grp_ai_saas", "grp_prestartup_ai", "grp_bnco"])
 def test_amount_na_for_groups_without_threshold(gid):
     """임계 없는 그룹은 amount n/a — 이 축 미적용(통과)."""
     b, ev = bucket_of(base(gid), gid)
@@ -257,23 +286,23 @@ def test_posted_weekend_window_monday():
 # ══════════════════════════════════════════════════════════════════
 # 교차조합(축독립 보강) — 전부 Tier-1 통과(recall-위험 조합)
 # ══════════════════════════════════════════════════════════════════
-def test_cross_own_region_x_unknown_amount_goyang():
-    b, _ = bucket_of(base("grp_goyang"), "grp_goyang")  # 경기 own + 금액 미상
-    record("cross", "own_x_unknown_amount", "grp_goyang")
+def test_cross_own_region_x_unknown_amount():
+    b, _ = bucket_of(base("grp_prestartup_ai"), "grp_prestartup_ai")  # 서울 own + 금액 임계 무(n/a)
+    record("cross", "own_x_unknown_amount", "grp_prestartup_ai")
     assert b == "included"
 
 
-def test_cross_always_open_x_unknown_amount_goyang():
-    b, _ = bucket_of(mk("grp_goyang", application_period=None, deadline="",
-                        title="경기도 제조기업 성장지원 신청접수 상시모집"), "grp_goyang")
-    record("cross", "always_x_unknown_amount", "grp_goyang")
+def test_cross_always_open_x_unknown_amount():
+    b, _ = bucket_of(mk("grp_prestartup_ai", application_period=None, deadline="",
+                        title="서울 AI 솔루션 도입 지원사업 신청접수 상시모집"), "grp_prestartup_ai")
+    record("cross", "always_x_unknown_amount", "grp_prestartup_ai")
     assert b != "excluded"
 
 
-def test_cross_own_region_x_unknown_date_goyang():
-    """경기 own + 게시일 불명(dict 마감 살아있음) → 통과."""
-    b, _ = bucket_of(mk("grp_goyang", posted_date=""), "grp_goyang")
-    record("cross", "own_x_unknown_date", "grp_goyang")
+def test_cross_own_region_x_unknown_date():
+    """서울 own + 게시일 불명(dict 마감 살아있음) → 통과."""
+    b, _ = bucket_of(mk("grp_prestartup_ai", posted_date=""), "grp_prestartup_ai")
+    record("cross", "own_x_unknown_date", "grp_prestartup_ai")
     assert b == "included"
 
 
@@ -289,7 +318,7 @@ def test_coverage_complete():
         required |= {("region", c, g) for g in ACTIVE}
     for c in deadline_cats:
         required |= {("deadline", c, g) for g in ACTIVE}
-    required |= {("amount", c, "grp_goyang") for c in {"over", "under", "unknown", "nonmoney"}}
+    required |= {("amount", c, "grp_prestartup_ai") for c in {"over", "under", "unknown", "nonmoney"}}
     required |= {("baseline", "neutral", g) for g in ACTIVE}
     missing = required - COVERED
     assert not missing, f"미검증 셀: {sorted(missing)}"
