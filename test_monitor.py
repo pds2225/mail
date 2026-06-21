@@ -278,6 +278,84 @@ def test_fetch_html_generic_accepts_top_level_date_selector(monkeypatch):
     assert items[0]["posted_date"] == "2026-05-15"
 
 
+def test_fetch_html_generic_builds_link_from_onclick_args(monkeypatch):
+    """공통 HTML 파서: javascript 링크는 link_template+정규식으로 상세 링크를 합성."""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <table>
+      <tbody>
+        <tr>
+          <td class="title">
+            <a href="javascript:void(0)" onclick="showNotice('export', 42)">수출지원 공고</a>
+          </td>
+          <td class="posted">2026-06-20</td>
+          <td class="deadline">2026-07-10</td>
+        </tr>
+      </tbody>
+    </table>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {
+        "id": "onclick_test",
+        "name": "onclick 테스트",
+        "url": "https://example.com/board/list",
+        "selectors": {
+            "row": "table tbody tr",
+            "link": ".title a",
+            "date": ".posted",
+            "deadline": ".deadline",
+            "link_template": "/board/view?category={0}&id={1}",
+            "link_arg_re": r"showNotice\('([^']+)',\s*(\d+)\)",
+        },
+    }
+
+    items = fetch_html_generic(site)
+
+    assert len(items) == 1
+    assert items[0]["title"] == "수출지원 공고"
+    assert items[0]["link"] == "https://example.com/board/view?category=export&id=42"
+    assert items[0]["posted_date"] == "2026-06-20"
+    assert items[0]["deadline"] == "2026-07-10"
+
+
+def test_fetch_html_generic_builds_link_from_configured_id_attr(monkeypatch):
+    """공통 HTML 파서: href 없는 목록 링크는 지정 속성값으로 상세 링크를 합성."""
+    from bs4 import BeautifulSoup
+    import monitor
+
+    html = """
+    <ul>
+      <li>
+        <a data-notice-id="ABC123">화장품 해외전시회 참가 지원</a>
+        <span class="posted">2026.06.19</span>
+      </li>
+    </ul>
+    """
+    monkeypatch.setattr(monitor, "_soup", lambda url: BeautifulSoup(html, "html.parser"))
+
+    site = {
+        "id": "attr_test",
+        "name": "속성 테스트",
+        "url": "https://example.org/notices/list",
+        "selectors": {
+            "row": "ul li",
+            "date": ".posted",
+            "link_template": "detail?id={0}",
+            "link_id_attr": "data-notice-id",
+        },
+    }
+
+    items = fetch_html_generic(site)
+
+    assert len(items) == 1
+    assert items[0]["title"] == "화장품 해외전시회 참가 지원"
+    assert items[0]["link"] == "https://example.org/notices/detail?id=ABC123"
+    assert items[0]["posted_date"] == "2026-06-19"
+
+
 def test_fetch_mssmiv_extracts_deadline_when_list_has_two_dates(monkeypatch):
     """중소기업혁신바우처: 목록 td에 등록일+마감일 2개면 마지막을 접수마감으로."""
     from bs4 import BeautifulSoup
