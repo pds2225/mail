@@ -884,8 +884,29 @@ def fetch_html_generic(site: dict) -> list[dict]:
         if not title: continue
         href = a.get("href", "") if a else ""
         link = urljoin(site["url"], href) if href else site["url"]
-        if not href or link.split("#")[0] == site["url"].split("#")[0] or href.startswith("javascript:"):
-            continue
+        bad_link = (not href or link.split("#")[0] == site["url"].split("#")[0]
+                    or href.startswith("javascript:"))
+        if bad_link:
+            # 목록 링크가 javascript:/#/onclick(글ID만) 인 사이트: selectors 의 합성 규칙으로 상세 URL 구성.
+            # link_template + (link_id_attr=속성값 | link_arg_re=onclick/href 정규식 그룹). 미설정 사이트는 기존대로 skip(하위호환).
+            tmpl = selectors.get("link_template")
+            if tmpl and a is not None:
+                idattr = selectors.get("link_id_attr")
+                argre = selectors.get("link_arg_re")
+                if idattr:
+                    v = a.get(idattr, "")
+                    grp = [v] if v else []
+                elif argre:
+                    m = re.search(argre, (a.get("onclick", "") or href))
+                    grp = list(m.groups()) if m else []
+                else:
+                    grp = []
+                if grp and all(grp):
+                    link = urljoin(site["url"], tmpl.format(*grp))
+                else:
+                    continue
+            else:
+                continue
         row_text = row.get_text()
         period   = extract_application_period(row_text)
         dates    = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
