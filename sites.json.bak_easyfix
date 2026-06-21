@@ -103,9 +103,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr",
-      "title": "div.board-link a",
-      "link": "div.board-link a"
+      "row": "table tbody tr"
     },
     "note": "산업부"
   },
@@ -210,9 +208,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table.table-response01 tbody tr",
-      "title": "a[onclick*=\"f_detailPage\"]",
-      "link": "a[onclick*=\"f_detailPage\"]"
+      "row": "table tbody tr"
     },
     "note": "KEIT 지원사업공고 [2026-06 URL 갱신: www.keit.re.kr/notice → itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do]"
   },
@@ -327,9 +323,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr",
-      "title": "td.bbs_tit",
-      "link": "a.nttInfoBtn"
+      "row": "table tbody tr"
     },
     "note": "신용보증 공지사항 목록 [홈페이지에서 공지사항 목록 URL로 변경]"
   },
@@ -413,9 +407,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr",
-      "title": "a",
-      "link": "a"
+      "row": "table tbody tr"
     },
     "note": "지역 디자인 지원 [PC 실행 시 정상 접속]"
   },
@@ -550,9 +542,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table.board-list tbody tr",
-      "title": "a",
-      "link": "a"
+      "row": "table tbody tr"
     },
     "note": "서울테크노파크 [PC 실행 시 정상 접속]"
   },
@@ -576,9 +566,7 @@
     "enabled": true,
     "is_aggregator": true,
     "selectors": {
-      "row": "table tbody tr",
-      "title": "a",
-      "link": "a"
+      "row": "table tbody tr"
     },
     "note": "혁신제품 지정/조달 [PC 실행 시 정상 접속]"
   },
@@ -791,9 +779,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "ul.etcList li:has(p.tit a)",
-      "title": "p.tit a",
-      "link": "p.tit a"
+      "row": "table tbody tr"
     },
     "note": "부평구 고시·공고/입법예고 [2026-06 도메인 정정: bpyeong.go.kr(존재X) → icbp.go.kr + 고시공고 게시판 URL 추가]"
   },
@@ -1434,12 +1420,7 @@
     "url": "https://www.gntp.or.kr/board/list",
     "enabled": true,
     "is_aggregator": false,
-    "note": "새소식 / 주기:주 2~3회 / 우선순위:상",
-    "selectors": {
-      "row": "table tbody tr",
-      "title": "td.de-writeless a.color-fix",
-      "link": "a[onclick*=goPage]"
-    }
+    "note": "새소식 / 주기:주 2~3회 / 우선순위:상"
   },
   {
     "id": "imp_899167d1",
