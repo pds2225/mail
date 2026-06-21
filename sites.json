@@ -266,7 +266,7 @@
     "name": "창업진흥원(KISED)",
     "type": "html_table",
     "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
