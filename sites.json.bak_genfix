@@ -105,9 +105,7 @@
     "selectors": {
       "row": "table tbody tr",
       "title": "div.board-link a",
-      "link": "div.board-link a",
-      "link_arg_re": "article\\.view\\('(\\d+)'\\)",
-      "link_template": "/kor/article/ATCL2826a2625/{0}/view"
+      "link": "div.board-link a"
     },
     "note": "산업부"
   },
@@ -213,10 +211,8 @@
     "is_aggregator": false,
     "selectors": {
       "row": "table.table-response01 tbody tr",
-      "title": "a[onclick*='f_detailPage']",
-      "link": "a[onclick*='f_detailPage']",
-      "link_arg_re": "f_detailPage\\('([^']+)','([^']+)'\\)",
-      "link_template": "retrieveSprtBsnsAncmDetail.do?ancmId={0}&bsnsYy={1}"
+      "title": "a[onclick*=\"f_detailPage\"]",
+      "link": "a[onclick*=\"f_detailPage\"]"
     },
     "note": "KEIT 지원사업공고 [2026-06 URL 갱신: www.keit.re.kr/notice → itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do]"
   },
@@ -333,9 +329,7 @@
     "selectors": {
       "row": "table tbody tr",
       "title": "td.bbs_tit",
-      "link": "a[data-id]",
-      "link_id_attr": "data-id",
-      "link_template": "selectNttInfo.do?mi=2638&bbsId=148&nttSn={0}"
+      "link": "a.nttInfoBtn"
     },
     "note": "신용보증 공지사항 목록 [홈페이지에서 공지사항 목록 URL로 변경]"
   },
@@ -1443,10 +1437,8 @@
     "note": "새소식 / 주기:주 2~3회 / 우선순위:상",
     "selectors": {
       "row": "table tbody tr",
-      "title": "a",
-      "link": "a[onclick*='goPage']",
-      "link_arg_re": "goPage\\([^,]*,[^,]*,\\s*'([^']+)'\\)",
-      "link_template": "{0}"
+      "title": "td.de-writeless a.color-fix",
+      "link": "a[onclick*=goPage]"
     }
   },
   {
