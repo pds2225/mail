@@ -5,7 +5,6 @@
 - '확실한 타지역'(부산권 등)은 그대로 제외(REGION_NOT_ELIGIBLE) — 잘못 surface 하지 않는다.
 - 지원금(금액)으로는 당분간 거르지 않는다(필터 비활성, 표시값은 유지).
 """
-import json
 import os
 import sys
 from datetime import date
@@ -21,9 +20,23 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 import monitor as m  # noqa: E402
 
-G = {g["id"]: g for g in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))}
 TODAY = date(2026, 6, 18)
 PERIOD = {"start": "2026-06-01", "end": "2026-12-31", "display": "2026-06-01 ~ 2026-12-31"}
+
+# groups.json 설정 변경에 독립된 단위 테스트용 경기 지역 픽스처.
+# grp_goyang(경기 고양시) 그룹과 동일한 region 속성을 갖고 키워드 필터는 없음.
+_TEST_GROUP_GYEONGGI = {
+    "id": "test_gyeonggi",
+    "name": "테스트 경기 그룹",
+    "applicant_region_city": "경기도 고양시",
+    "applicant_region_label": "경기",
+    "or_keywords": [],
+    "and_keyword_groups": [],
+    "exclude_keywords": [],
+    "required_conditions": {},
+    "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
+    "score_threshold": 1,
+}
 
 
 def _item(**mut):
@@ -35,8 +48,8 @@ def _item(**mut):
     return it
 
 
-def _diag(item, gid="grp_goyang"):
-    return m.filter_for_group_with_diagnostics([item], G[gid], TODAY)
+def _diag(item, group=None):
+    return m.filter_for_group_with_diagnostics([item], group or _TEST_GROUP_GYEONGGI, TODAY)
 
 
 # ── 지역 미상 surface ───────────────────────────────────────────────
