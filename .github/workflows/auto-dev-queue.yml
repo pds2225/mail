@@ -12,10 +12,10 @@ on:
           - 'true'
           - 'false'
 
-  # schedule:
-  #   # 매일 오전 9시 KST (UTC 00:00) — 활성화하려면 주석 해제
-  #   # 주의: 활성화 전 AUTO_DEV_PAT Secret 설정 필수
-  #   - cron: '0 0 * * *'
+  schedule:
+    # 매일 오전 9시 KST (UTC 00:00)
+    # 주의: AUTO_DEV_PAT Secret 미설정 시 github.token 으로 fallback (PR 생성 권한 제한될 수 있음)
+    - cron: '0 0 * * *'
 
 concurrency:
   group: auto-dev-queue
