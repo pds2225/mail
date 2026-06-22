@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import statistics
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -45,9 +46,38 @@ def save_coverage_baseline(data: dict, path: Path = COVERAGE_BASELINE_PATH) -> N
 
 
 # ── 대표값 ──────────────────────────────────────────────────────────────────
+def _history_count(entry: Any) -> int | float | None:
+    """legacy 숫자 이력과 날짜 포함 이력에서 item_count 를 꺼낸다."""
+    if isinstance(entry, (int, float)):
+        return entry
+    if isinstance(entry, dict):
+        count = entry.get("item_count")
+        if isinstance(count, (int, float)):
+            return count
+    return None
+
+
+def _history_date(entry: Any) -> str:
+    """날짜 포함 이력의 수집일(YYYY-MM-DD). legacy 숫자 이력은 날짜 없음."""
+    if isinstance(entry, dict):
+        value = entry.get("date")
+        return value if isinstance(value, str) else ""
+    return ""
+
+
+def _history_entry(item_count: int, day: str) -> dict[str, Any]:
+    return {"date": day, "item_count": item_count}
+
+
 def _representative(history: list) -> float:
-    """과거 이력의 대표값. 일시적 스파이크에 둔감하도록 중앙값(median) 사용."""
-    nums = [n for n in history if isinstance(n, (int, float))]
+    """과거 이력의 대표값. 장애성 0건에 덜 오염되도록 양수 이력을 우선한다."""
+    nums = [
+        count
+        for count in (_history_count(entry) for entry in history)
+        if count is not None
+    ]
+    positives = [n for n in nums if n > 0]
+    nums = positives or nums
     if not nums:
         return 0.0
     return float(statistics.median(nums))
@@ -69,7 +99,7 @@ def detect_coverage_anomalies(
 
     판정(대표값 = median(history)):
       - 대표값>=min_healthy 인데 fetch_success & item_count==0  → high "0건 급락"
-      - 대표값>=min_healthy 인데 수집 실패(not fetch_success/fetch_error) → high "수집실패"
+      - baseline 이력이 있는데 수집 실패(not fetch_success/fetch_error) → high "수집실패"
       - 대표값>=floor 인데 0<item_count<대표값*drop_ratio        → medium "급감"
     """
     anomalies: list[dict] = []
@@ -80,15 +110,13 @@ def detect_coverage_anomalies(
         history = baseline.get(site_id)
         if not isinstance(history, list) or not history:
             continue  # 신규/이력없음 → 알림 안 함
-        rep = _representative(history)
-        if rep <= 0:
-            continue
         item_count = row.get("item_count", 0) or 0
         fetch_success = bool(row.get("fetch_success"))
         fetch_error = row.get("fetch_error") or ""
+        rep = _representative(history)
 
         anomaly: dict[str, Any] | None = None
-        if rep >= min_healthy and (not fetch_success or fetch_error):
+        if not fetch_success or fetch_error:
             anomaly = {"reason": "수집실패", "severity": "high"}
         elif rep >= min_healthy and fetch_success and item_count == 0:
             anomaly = {"reason": "0건 급락", "severity": "high"}
@@ -113,12 +141,20 @@ def update_coverage_baseline(
     rows: list[dict],
     *,
     window: int = 14,
+    today: str | None = None,
 ) -> dict:
-    """fetch_success 인 사이트만 오늘 item_count 를 롤링 리스트에 append(최대 window).
+    """fetch_success 이면서 이상치가 아닌 사이트만 오늘 item_count 를 롤링 이력에 반영한다.
 
-    실패한 날은 추가하지 않아 baseline 오염을 막는다(실패 0건이 정상으로 학습되는 것 방지).
+    실패·급락·급감한 날은 추가하지 않아 baseline 오염을 막고, 같은 날짜 재실행은 append 대신
+    마지막 값을 교체해 window 가 날짜 단위로 유지되게 한다.
     """
     updated = dict(baseline) if isinstance(baseline, dict) else {}
+    anomalous_site_ids = {
+        anomaly.get("site_id")
+        for anomaly in detect_coverage_anomalies(rows, updated)
+        if anomaly.get("site_id")
+    }
+    day = today or date.today().isoformat()
     for row in rows or []:
         if not row.get("enabled", True):
             continue
@@ -127,9 +163,16 @@ def update_coverage_baseline(
         site_id = row.get("site_id", "")
         if not site_id:
             continue
+        if site_id in anomalous_site_ids:
+            continue
         history = updated.get(site_id)
         history = list(history) if isinstance(history, list) else []
-        history.append(int(row.get("item_count", 0) or 0))
+        item_count = int(row.get("item_count", 0) or 0)
+        entry = _history_entry(item_count, day)
+        if history and _history_date(history[-1]) == day:
+            history[-1] = entry
+        else:
+            history.append(entry)
         updated[site_id] = history[-window:]
     return updated
 
