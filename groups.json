@@ -191,65 +191,6 @@
     "llm_call_limit_per_run": 30
   },
   {
-    "id": "grp_goyang",
-    "name": "경기 고양시 (업력 3~7년·300만원 초과)",
-    "active": true,
-    "required_conditions": {
-      "regions": [
-        "경기"
-      ]
-    },
-    "applicant_region_city": "경기도",
-    "applicant_region_label": "경기",
-    "applicant_region_district": "고양시",
-    "applicant_districts": [
-      "고양시",
-      "고양"
-    ],
-    "region_exclude_phrases": [
-      "수도권 제외",
-      "경기 제외",
-      "고양시 제외",
-      "비수도권 기업 대상",
-      "비수도권"
-    ],
-    "or_keywords": [],
-    "and_keyword_groups": [],
-    "exclude_keywords": [
-      "컨설팅 지원사업",
-      "컨설팅지원",
-      "교육생 모집",
-      "교육과정 운영",
-      "교육과정 모집",
-      "역량강화 교육",
-      "직무교육",
-      "양성과정",
-      "아카데미"
-    ],
-    "support_types": [
-      "지원금/바우처",
-      "투자",
-      "그외"
-    ],
-    "business_years": {
-      "min_exclusive": 3,
-      "max_inclusive": 7
-    },
-    "min_support_amount": 3000000,
-    "min_support_amount_inclusive": false,
-    "recipients": [
-      "ekth3691@gmail.com",
-      "khban99@gmail.com"
-    ],
-    "score_threshold": 50,
-    "llm_check_enabled": true,
-    "llm_check_threshold_band": [
-      40,
-      70
-    ],
-    "llm_call_limit_per_run": 30
-  },
-  {
     "id": "grp_bnco",
     "name": "비앤코인터내셔날 (인천 발레·화장품·수출)",
     "active": true,
@@ -386,5 +327,69 @@
       "region_match": 20
     },
     "llm_check_enabled": true
+  },
+  {
+    "id": "grp_prestartup_ai",
+    "name": "예비창업 AI (전국·서울강조)",
+    "active": true,
+    "required_conditions": {},
+    "applicant_region_city": "서울특별시",
+    "applicant_region_label": "서울",
+    "or_keywords": [
+      "AI",
+      "인공지능",
+      "생성형AI",
+      "생성형",
+      "머신러닝",
+      "딥러닝",
+      "LLM",
+      "챗봇",
+      "빅데이터",
+      "데이터",
+      "SaaS",
+      "클라우드",
+      "소프트웨어",
+      "SW",
+      "알고리즘",
+      "컴퓨터비전",
+      "데이터분석"
+    ],
+    "and_keyword_groups": [],
+    "exclude_keywords": [
+      "성료",
+      "지침 안내",
+      "관리지침",
+      "운영지침",
+      "교육일정",
+      "교육 일정",
+      "매뉴얼 안내",
+      "유의사항",
+      "설명회",
+      "결과 발표",
+      "결과발표",
+      "채용",
+      "재직자"
+    ],
+    "support_types": [
+      "지원금/바우처",
+      "컨설팅·교육·상담",
+      "투자",
+      "그외"
+    ],
+    "recipients": [
+      "ekth3691@gmail.com"
+    ],
+    "score_threshold": 1,
+    "llm_check_enabled": true,
+    "llm_check_threshold_band": [
+      40,
+      70
+    ],
+    "llm_call_limit_per_run": 30,
+    "extra_eligible_regions": [
+      "인천",
+      "경기",
+      "수도권"
+    ]
   }
 ]
