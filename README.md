@@ -112,6 +112,7 @@ python -m loan.semas.collector --run-mode dry-run --send-email false
 - 비밀번호·API 키는 화면에 출력하거나 코드에 넣지 않습니다.
 - `main` 브랜치에 바로 올리지 않고, 작업 브랜치 → 검증 → PR 순서로 반영합니다.
 - 현재 Gmail 발송 방식은 소규모용입니다. 안정 운영이 필요하면 Resend·SendGrid·Postmark 같은 이메일 API 전환을 권장합니다.
+- 개발자용 모니터 파이프라인·사이트 수집기·dry-run 점검 절차는 `docs/MONITOR_ENGINEERING_RUNBOOK.md`를 참고하세요.
 
 ---
 
