@@ -25,6 +25,31 @@ flowchart LR
 - **반영:** PR에서 `sites.json` 배열 끝에 1건 추가 (또는 패킷 JSON 스니펫 붙여넣기)
 - **금지:** Vercel API가 운영 브랜치 `sites.json`을 직접 commit/push 하지 않음
 
+### `html_table` / `html_card` selector 메모
+
+`monitor.py`의 `fetch_html_generic()`은 기본적으로 `selectors.row` 안의 링크를
+절대 URL로 바꿔 수집합니다. 목록 링크가 `javascript:`, `#`, 또는 목록 URL과 같은
+비상세 링크라면 다음 합성 규칙을 함께 넣어야 합니다.
+
+```json
+{
+  "type": "html_table",
+  "selectors": {
+    "row": "table tbody tr",
+    "link": "a.detail",
+    "link_template": "/board/view?id={0}",
+    "link_arg_re": "goView\\('(\\d+)'\\)"
+  }
+}
+```
+
+- `link_template`: 추출한 그룹값으로 상세 URL을 만들고 `site.url` 기준으로 보정
+- `link_id_attr`: `data-id`처럼 anchor 속성에 ID가 있을 때 사용
+- `link_arg_re`: `onclick` 또는 `href` 안의 ID를 정규식 그룹으로 추출할 때 사용
+- 합성 규칙이 없는 비상세 링크는 기존 동작처럼 skip
+
+자세한 수집기 계약과 운영 점검은 `docs/MONITOR_ENGINEERING_RUNBOOK.md`를 기준으로 확인합니다.
+
 ## 검증 로직 (`web/lib/site-validation.ts`)
 
 | 검증 | 처리 |
