@@ -660,6 +660,54 @@ def test_filter_allows_application_notices_with_general_keywords_and_scores_them
         assert result["exclude_reason_codes"] == []
 
 
+def test_applicant_target_region_not_organizer():
+    """지역 판정은 지원대상 기준 — 주관 서울이어도 대상 전국이면 통과, 대상 서울이면 제외."""
+    grp = POLICY_GROUP
+
+    nationwide_ok = {
+        "title": "K-뷰티 해외진출 지원사업 참여기업 모집",
+        "description": "전국 소재 중소기업 대상 신청접수",
+        "author": "서울특별시",
+        "region_field": "전국",
+        "deadline": FUTURE_DEADLINE,
+    }
+    assert evaluate_notice(nationwide_ok, grp)["is_relevant"] is True
+
+    seoul_only = {
+        "title": "SBA x LG전자 K-뷰티ㆍ라이프스타일 판로 연계사업(태국) 참여기업 모집 공고",
+        "description": (
+            "서울경제진흥원(SBA)은 LG전자와 협력합니다. "
+            "신청일 기준 서울 소재 사업장을 보유한 중소기업. "
+            "뷰티ㆍ라이프스타일 분야. 태국 쇼피 라자다 판매. 신청접수"
+        ),
+        "author": "서울특별시",
+        "region_field": "전국",
+        "deadline": FUTURE_DEADLINE,
+    }
+    ev = evaluate_notice(seoul_only, grp)
+    assert ev["is_relevant"] is False
+    assert "REGION_NOT_ELIGIBLE" in ev["exclude_reason_codes"]
+
+    beauty_seoul_meta = {
+        "title": "2026년 2차 뷰티트레이드쇼 수출상담회 참가기업 모집 공고",
+        "description": "서울 소재 뷰티기업 대상 수출상담회. 신청접수",
+        "author": "서울특별시",
+        "region_field": "전국",
+        "deadline": FUTURE_DEADLINE,
+    }
+    assert evaluate_notice(beauty_seoul_meta, grp)["is_relevant"] is False
+
+    # 본문 지역 단서 없고 region_field 전국만 — recall 유지(누락 방지)
+    meta_only = {
+        "title": "중소기업 수출 지원사업",
+        "description": "중소기업 대상 신청접수",
+        "author": "서울특별시",
+        "region_field": "전국",
+        "deadline": FUTURE_DEADLINE,
+    }
+    assert classify_region(meta_only)["region_status"] == "eligible"
+
+
 def test_priority_keywords_promote_only_real_open_application_notices():
     priority_cases = [
         "접수 중인 수출바우처 참여기업 모집",

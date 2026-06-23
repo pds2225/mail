@@ -103,7 +103,11 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "div.board-link a",
+      "link": "div.board-link a",
+      "link_arg_re": "article\\.view\\('(\\d+)'\\)",
+      "link_template": "/kor/article/ATCL2826a2625/{0}/view"
     },
     "note": "산업부"
   },
@@ -208,7 +212,11 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table.table-response01 tbody tr",
+      "title": "a[onclick*='f_detailPage']",
+      "link": "a[onclick*='f_detailPage']",
+      "link_arg_re": "f_detailPage\\('([^']+)','([^']+)'\\)",
+      "link_template": "retrieveSprtBsnsAncmDetail.do?ancmId={0}&bsnsYy={1}"
     },
     "note": "KEIT 지원사업공고 [2026-06 URL 갱신: www.keit.re.kr/notice → itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do]"
   },
@@ -266,7 +274,7 @@
     "name": "창업진흥원(KISED)",
     "type": "html_table",
     "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
@@ -323,7 +331,11 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "td.bbs_tit",
+      "link": "a[data-id]",
+      "link_id_attr": "data-id",
+      "link_template": "selectNttInfo.do?mi=2638&bbsId=148&nttSn={0}"
     },
     "note": "신용보증 공지사항 목록 [홈페이지에서 공지사항 목록 URL로 변경]"
   },
@@ -407,7 +419,9 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "a",
+      "link": "a"
     },
     "note": "지역 디자인 지원 [PC 실행 시 정상 접속]"
   },
@@ -542,7 +556,9 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table.board-list tbody tr",
+      "title": "a",
+      "link": "a"
     },
     "note": "서울테크노파크 [PC 실행 시 정상 접속]"
   },
@@ -566,7 +582,9 @@
     "enabled": true,
     "is_aggregator": true,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "a",
+      "link": "a"
     },
     "note": "혁신제품 지정/조달 [PC 실행 시 정상 접속]"
   },
@@ -779,7 +797,9 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "ul.etcList li:has(p.tit a)",
+      "title": "p.tit a",
+      "link": "p.tit a"
     },
     "note": "부평구 고시·공고/입법예고 [2026-06 도메인 정정: bpyeong.go.kr(존재X) → icbp.go.kr + 고시공고 게시판 URL 추가]"
   },
@@ -1420,7 +1440,14 @@
     "url": "https://www.gntp.or.kr/board/list",
     "enabled": true,
     "is_aggregator": false,
-    "note": "새소식 / 주기:주 2~3회 / 우선순위:상"
+    "note": "새소식 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "a",
+      "link": "a[onclick*='goPage']",
+      "link_arg_re": "goPage\\([^,]*,[^,]*,\\s*'([^']+)'\\)",
+      "link_template": "{0}"
+    }
   },
   {
     "id": "imp_899167d1",
