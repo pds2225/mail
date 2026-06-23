@@ -624,7 +624,7 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
     region_title_hints = [
         (r"경기도|경기\s", "경기"),
         (r"부산광역시|부산\s", "부산"),
-        (r"서울특별시|서울\s", "서울"),
+        (r"서울특별시|서울\s*소재|서울\s", "서울"),
         (r"대구광역시|대구\s", "대구"),
         (r"광주광역시|광주\s", "광주"),
         (r"대전광역시|대전\s", "대전"),
@@ -644,6 +644,12 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
         if re.search(pattern, text):
             if label not in regions:
                 regions.append(label)
+    _SOJI_EXCLUDE = frozenset({"수도권", "비수도권"})
+    for label in KNOWN_REGIONS:
+        if label in _SOJI_EXCLUDE:
+            continue
+        if re.search(rf"{re.escape(label)}\s*소재", text) and label not in regions:
+            regions.append(label)
     return {"regions": regions, "nationwide": nationwide}
 
 
@@ -2040,6 +2046,26 @@ def _notice_body_text(item: dict) -> str:
     return f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
 
 
+def _keyword_match_text(item: dict) -> str:
+    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상 필드 포함, 주관기관명 제외."""
+    parts = [
+        item.get("title", ""),
+        item.get("description", ""),
+        item.get("support_field", ""),
+        item.get("target_field", ""),
+    ]
+    return norm(" ".join(p for p in parts if p)).lower()
+
+
+def _application_like(text: str) -> bool:
+    """신청·모집 성격 공고인지(recall 우선 — 목록 stub에 기간 없어도 누락 방지)."""
+    if any(kw in text for kw in APPLICATION_KEYWORDS):
+        return True
+    if any(kw in text for kw in GRANT_SIGNAL_KEYWORDS):
+        return True
+    return any(kw in text for kw in ("모집", "신청", "접수", "공모"))
+
+
 def _notice_text(item: dict) -> str:
     body = _notice_body_text(item)
     deadline = (item.get("deadline") or "").strip().lower()
@@ -2621,7 +2647,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
     factory_condition = bool(factory_keywords)
     service_hits = [kw for kw in GENERAL_SERVICE_EXCLUDE_KEYWORDS if kw in text]
-    application_like = any(kw in text for kw in APPLICATION_KEYWORDS)
+    application_like = _application_like(text)
     smart_info = any(kw in priority_keywords for kw in ["스마트공장", "스마트팩토리", "제조DX", "공정개선", "공정자동화", "자동화", "제조혁신"])
 
     for code, rule_notice_type, rule_target_type, keywords in EXCLUSION_RULES:
@@ -2667,7 +2693,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     deadline_status = classify_deadline_status(item, today)
     if deadline_status == "closed":
         reason_codes.append("CLOSED_DEADLINE")
-    elif deadline_status == "unknown":
+    elif deadline_status == "unknown" and not application_like:
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
     applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
@@ -2703,11 +2729,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.extend(group_excluded)
 
+    kw_text = _keyword_match_text(item)
     or_kws = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
     and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
     group_keyword_pass = True
     if group is not None and not source_bypass and (or_kws or and_groups):
-        group_keyword_pass = any(_kw_in_text(text, k) for k in or_kws) or any(all(_kw_in_text(text, k) for k in ag) for ag in and_groups)
+        group_keyword_pass = (
+            any(_kw_in_text(kw_text, k) for k in or_kws)
+            or any(all(_kw_in_text(kw_text, k) for k in ag) for ag in and_groups)
+        )
         if not group_keyword_pass:
             reason_codes.append("INDUSTRY_NOT_MATCHED")
 
@@ -2741,9 +2771,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     region_status = region_info["region_status"]
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+    # recall: 모집·신청 신호 있는데 기간 미파싱(목록 stub)이면 열린 공고로 간주 — 서울·AI 등 누락 방지
+    deadline_ok = deadline_status in {"open", "upcoming"} or (
+        deadline_status == "unknown" and application_like
+    )
     is_relevant = (
         not hard_reasons
-        and deadline_status in {"open", "upcoming"}
+        and deadline_ok
         and region_status == "eligible"
         and district_status == "eligible"
         and application_like
@@ -2764,7 +2798,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         region_status == "unknown"
         and district_status != "not_eligible"
         and not is_relevant
-        and deadline_status in {"open", "upcoming"}
+        and deadline_ok
         and application_like
         and group_keyword_pass
         and not (hard_reasons - {"REGION_UNKNOWN", "LOW_CONFIDENCE"})

@@ -218,6 +218,9 @@ def _apply_anchor_boost(target: str, title: str, score: float) -> float:
 
 def accept_match(target: str, title: str, score: float, min_score: float = MATCH_MIN_SCORE) -> bool:
     """Decide whether a fuzzy title match is good enough to use."""
+    t = monitor.norm(title or "")
+    if len(t) < 4 or t in {"공고", "공지", "알림", "notice", "[2]", "[1]"}:
+        return False
     if score >= min_score:
         return True
     floor = min(min_score, 0.65)
