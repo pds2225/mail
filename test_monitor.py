@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+REPO_ROOT = Path(__file__).resolve().parent
 
 # 환경변수 mock (실제 키 불필요) — monitor 임포트 전에 설정
 os.environ.setdefault("BIZINFO_API_KEY",    "test_key")
@@ -410,7 +411,7 @@ def test_fetch_mssmiv_leaves_deadline_empty_when_only_one_date(monkeypatch):
 
 def test_semas_loan_ols_site_registered_as_active_dedicated_fetcher():
     """소진공 정책자금 온라인신청은 전용 수집기로 기존 메일링에 합류."""
-    sites = json.loads(Path("sites.json").read_text(encoding="utf-8"))
+    sites = json.loads((REPO_ROOT / "sites.json").read_text(encoding="utf-8"))
     by_id = {site["id"]: site for site in sites}
 
     assert "semas" in by_id, "기존 semas 항목은 유지되어야 함"
