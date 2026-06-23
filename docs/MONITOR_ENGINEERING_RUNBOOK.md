@@ -95,6 +95,12 @@ Detail enrichment appends detail-page body text to `description`, fills applicat
 period/deadline when parsable, and preserves structured K-Startup fields such as
 `support_field`, `target_field`, and `organizer_field` as separate keys.
 
+K-Startup detail labels are intentionally not all flattened into `description`.
+`business_age_text`, `target_age_field`, and similar numeric fields stay separate so
+the matcher does not misread multi-select values such as `1년미만, 5년미만, 10년미만`.
+`support_field` and `target_field` do participate in group keyword matching, which
+lets AI/SaaS groups catch list-stub notices whose title/body omit the decisive keyword.
+
 ## Date And Recall Policy
 
 `settings.json` controls posted-date filtering:
@@ -131,6 +137,28 @@ Important constraints:
 - Support-amount status is still computed for display, but amount filtering is disabled
   unless a group sets `"enforce_amount_filter": true`.
 
+## Seoul/AI Recall Smoke
+
+`grp_ai_saas` has dedicated recall coverage because many Seoul AI notices arrive as
+short list stubs before detail enrichment is complete. The smoke script exercises the
+same `evaluate_notice()` path used by the monitor:
+
+```bash
+python3 scripts/seoul_ai_recall_check.py
+python3 scripts/seoul_ai_recall_check.py --json
+```
+
+Current source-backed expectations:
+
+- `서울소재` without spacing is treated as Seoul-region evidence.
+- `support_field` values such as `AI/데이터` can satisfy AI/SaaS keyword matching.
+- Nationwide AI notices remain eligible for the Seoul group.
+- Confirmed other-region notices, for example 부산-only notices, stay blocked for
+  precision.
+
+Use this smoke check with `test_seoul_ai_recall.py` when changing region parsing,
+structured K-Startup fields, or group keyword matching.
+
 ## Safe Operations
 
 Use dry-run commands for automation and development. They set placeholder environment
@@ -156,7 +184,7 @@ Generated reports:
 For unit-level regression coverage:
 
 ```bash
-python3 -m pytest test_monitor.py test_region_unknown_policy.py test_decision_matrix.py -v
+python3 -m pytest test_monitor.py test_region_unknown_policy.py test_decision_matrix.py test_seoul_ai_recall.py -v
 ```
 
 Do not run `python3 monitor.py` for verification unless an operator explicitly approves
