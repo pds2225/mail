@@ -535,6 +535,72 @@ def resolve_item_deadline(item: dict) -> str:
     return (item.get("deadline") or "").strip()
 
 
+def _applicant_target_text(item: dict) -> str:
+    """지원대상(신청 가능 주체) 판정용 본문. 주관기관(author)은 지역 판정에 쓰지 않는다."""
+    parts = [
+        item.get("title", ""),
+        item.get("description", ""),
+        item.get("target_field", ""),
+        item.get("target_age_field", ""),
+    ]
+    return norm(" ".join(p for p in parts if p))
+
+
+def _region_field_short(region_field: str) -> str:
+    rf = norm(region_field)
+    for r in sorted(KNOWN_REGIONS, key=len, reverse=True):
+        if r in rf:
+            return r
+    return rf
+
+
+def _resolve_applicant_region_scope(item: dict) -> dict[str, Any]:
+    """지원대상 기준 지역 범위. 주관·개최지가 아닌 '누가 신청할 수 있는지'만 본다.
+
+    반환: {regions: [광역약칭...], nationwide: bool}
+    - nationwide: 전국 어디서나 신청 가능
+    - regions 비어있고 nationwide False: 지역 단서 없음
+    - regions에 타 광역만: 해당 지역 소재 등 지원대상 한정
+    """
+    text = _applicant_target_text(item)
+    det = _detect_target_regions(text) if text else {"regions": [], "nationwide": False}
+    regions: list[str] = list(det.get("regions") or [])
+    nationwide = bool(det.get("nationwide"))
+
+    if any(
+        p in text
+        for p in (
+            "전국 소재", "전국 중소", "전국 기업", "전국 제조", "전국 소상공인",
+            "전국 어디", "국내 전체", "국내전체", "지역 제한 없", "지역무관", "지역 무관",
+        )
+    ):
+        nationwide = True
+
+    has_applicant_local = bool(regions) or any(
+        f"{r} 소재" in text or f"{r}특별시" in text or f"{r}광역시" in text
+        for r in KNOWN_REGIONS
+    )
+
+    rf = norm(item.get("region_field") or "")
+    rf_short = _region_field_short(rf) if rf else ""
+    # 메타 region_field='전국'은 본문에 지원대상 지역 단서가 없을 때만 보조(recall).
+    if rf == "전국" and not has_applicant_local:
+        nationwide = True
+    elif rf and rf != "전국" and rf_short and rf_short not in regions and not nationwide:
+        if not has_applicant_local:
+            regions.append(rf_short)
+
+    # 드롭다운/제목 '전국'과 본문 '서울 소재' 등이 충돌하면 지원대상(본문) 우선(precision).
+    if regions and nationwide and has_applicant_local:
+        if any(
+            f"{r} 소재" in text or f"신청일 기준 {r}" in text or f"{r}특별시 소재" in text
+            for r in regions
+        ):
+            nationwide = False
+
+    return {"regions": _unique(regions), "nationwide": nationwide}
+
+
 def _detect_target_regions(text: str) -> dict[str, Any]:
     """지원 대상 지역 힌트 (전국 / 특정 시·도)."""
     if not text:
@@ -2314,14 +2380,15 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     if tags and not title_nationwide and not any(r in tags for r in own_regions):
         return result("not_eligible", "not_eligible", [], tags)
 
-    target = _detect_target_regions(raw_text)
-    detected = [r.lower() for r in (target.get("regions") or [])]
-    nationwide = target.get("nationwide") or "전국" in text
+    app_scope = _resolve_applicant_region_scope(item)
+    app_text = _applicant_target_text(item)
+    detected = [r.lower() for r in (app_scope.get("regions") or [])]
+    nationwide = bool(app_scope.get("nationwide"))
 
     district_hits = []
     for d in districts:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
-        if d.lower() in text or (short_d and short_d.lower() in text):
+        if d.lower() in app_text or (short_d and short_d.lower() in app_text):
             district_hits.append(d)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
@@ -2329,6 +2396,11 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     if _ovr is not None:
         return result("not_eligible", "not_eligible", [],
                       [_ovr] if isinstance(_ovr, str) else list(_ovr))
+
+    other_only = [r for r in detected if r not in own_regions]
+    own_in_app = any(r in app_text for r in own_regions) or any(r in detected for r in own_regions)
+    if other_only and not own_in_app and not nationwide:
+        return result("not_eligible", "not_eligible", [], other_only)
 
     if nationwide:
         return result("eligible", "eligible", [city or label], [])
@@ -2339,7 +2411,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     # _detect_target_regions 힌트는 '광역+공백'을 요구해 region_field='서울' 단독을 놓친다.
     region_field_norm = norm(item.get("region_field", "")).lower()
     region_hit = bool(own_regions) and any(
-        (r in detected) or (r in text) or (r and r in region_field_norm) for r in own_regions)
+        (r in detected) or (r in app_text) or (r and r in region_field_norm) for r in own_regions)
     other_regions = [r for r in detected if r not in own_regions]
     if region_hit:
         # 우리 광역 언급 + 특정 타 시·군 한정 아님 → 적합(시·군 미상이나 포함 우선)
@@ -2348,10 +2420,10 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         return result("not_eligible", "not_eligible", [], other_regions)
     # own 광역이 수도권 family(서울·인천·경기)이면 '수도권' 묶음공고는 신청 가능 — 수도권이 own
     # 광역을 포함하므로 KNOWN_REGIONS 폴백의 타지역 오인을 막는다(recall). '비수도권'은 가드로 배제.
-    if ("수도권" in text and "비수도권" not in text
+    if ("수도권" in app_text and "비수도권" not in app_text
             and (set(own_regions) & {r.lower() for r in _METRO_FAMILY})):
         return result("eligible", "eligible", [city or label], [])
-    if any(r.lower() in text for r in KNOWN_REGIONS):
+    if any(r.lower() in app_text for r in KNOWN_REGIONS):
         return result("not_eligible", "not_eligible", [], [])
     return result("unknown", "unknown", [], [])
 
@@ -2393,10 +2465,10 @@ def classify_region(item: dict) -> dict:
             "excluded_regions": tags,
         }
 
-    target = _detect_target_regions(raw_text)
-    # 전국/지역무관 공고는 행사 개최지 등 타지역명이 본문에 있어도 탈락시키지 않는다.
-    # (classify_region_for_group 은 이미 nationwide 를 우선 처리 — 동일 정책으로 정렬)
-    nationwide = bool(target.get("nationwide")) or "전국" in text
+    app_scope = _resolve_applicant_region_scope(item)
+    app_text = _applicant_target_text(item)
+    explicit_regions = list(app_scope.get("regions") or [])
+    nationwide = bool(app_scope.get("nationwide"))
     # 인천 그룹에도 동일 recall-safe 타지역 override 적용(own=인천, 수도권 family 상호제외).
     # own(인천/INCHEON_DISTRICTS) 또는 사람이 쓴 제목·본문 '전국'이 있으면 미발동(기존 분기 보존).
     _ovr = _other_region_block(item, {"label": "인천", "districts": INCHEON_DISTRICTS})
@@ -2404,15 +2476,11 @@ def classify_region(item: dict) -> dict:
         return {"region_status": "not_eligible", "district_status": "not_eligible",
                 "eligible_regions": [],
                 "excluded_regions": [_ovr] if isinstance(_ovr, str) else list(_ovr)}
-    explicit_regions = list(target.get("regions") or [])
-    if item.get("region_field"):
-        explicit_regions.append(norm(item["region_field"]))
-    explicit_regions = _unique(explicit_regions)
     # own(인천) 광역명이 조사로 붙어('인천과') hint(\s 요구)에 안 잡혀도 본문 substring 으로 재확인 —
     # _other_region_block own_present(substring) 과 기준을 맞춰 표기위치 비대칭 누락 방지(recall).
-    own_in_text = "인천" in text
+    own_in_text = "인천" in app_text
     other_only = [r for r in explicit_regions if "인천" not in r]
-    if other_only and not own_in_text and not any("인천" in r for r in explicit_regions) and not nationwide:
+    if other_only and not own_in_text and not nationwide:
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
@@ -2438,15 +2506,15 @@ def classify_region(item: dict) -> dict:
         excluded_regions.extend(mentioned_districts)
         region_status = "not_eligible"
         district_status = "not_eligible"
-    elif target.get("nationwide") or "전국" in text:
+    elif nationwide:
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
-    elif "인천광역시 소재" in text or "인천 소재" in text or "인천 지역" in text or "인천지역" in text:
+    elif "인천광역시 소재" in app_text or "인천 소재" in app_text or "인천 지역" in app_text or "인천지역" in app_text:
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
-    elif "인천" in text or any("인천" in r for r in explicit_regions):
+    elif "인천" in app_text or any("인천" in r for r in explicit_regions):
         # own 광역(인천)이 본문이 아니라 구조화 region_field('지역' 드롭다운)에만 있어도
         # own 신호로 인정 → eligible. 타지역은 이미 explicit_regions→other_only 로 배제하면서
         # own 만 region_field 를 무시하던 비대칭 누락 해소(recall). explicit_regions 는 2377행에서
@@ -2454,14 +2522,14 @@ def classify_region(item: dict) -> dict:
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
-    elif "수도권" in text and "비수도권" not in text:
+    elif "수도권" in app_text and "비수도권" not in app_text:
         # 인천은 수도권(서울·인천·경기)에 포함 — '수도권 소재 기업' 공고는 인천 기업이 신청 가능.
         # (수도권 제외/소재기업 제외/신청불가·비수도권 …은 REGION_EXCLUDE_PHRASES·가드로 이미 배제됨.)
         # KNOWN_REGIONS 폴백이 '수도권'을 타지역으로 오인해 정당 공고를 누락시키던 갭 해소(recall).
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
-    elif any(region.lower() in text for region in KNOWN_REGIONS):
+    elif any(region.lower() in app_text for region in KNOWN_REGIONS):
         region_status = "not_eligible"
         district_status = "not_eligible"
 
