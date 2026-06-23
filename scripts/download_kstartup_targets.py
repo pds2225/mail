@@ -109,7 +109,7 @@ def collect_kstartup_items() -> list[dict]:
     return monitor.fetch_kstartup(KSTARTUP_SITE)
 
 
-def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float]:
+def match_notice(target: str, items: Iterable[dict], min_score: float = 0.72) -> tuple[dict | None, float]:
     nt = norm_text(target)
     best: tuple[dict | None, float] = (None, 0.0)
     for item in items:
@@ -126,7 +126,7 @@ def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float
             score = SequenceMatcher(None, nt, ni).ratio()
         if score > best[1]:
             best = (item, score)
-    if best[1] >= 0.72:
+    if best[1] >= min_score:
         return best
     return None, best[1]
 
@@ -230,23 +230,41 @@ def unique_path(path: Path) -> Path:
     raise RuntimeError(f"Cannot create unique path for {path}")
 
 
+def get_with_ssl_fallback(url: str, headers: dict, timeout: int) -> httpx.Response:
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify = (
+            True if stage == "strict"
+            else False if stage == "no_verify"
+            else monitor._legacy_ssl_ctx()
+        )
+        try:
+            with httpx.Client(timeout=timeout, follow_redirects=True, headers=headers, verify=verify) as client:
+                r = client.get(url)
+                r.raise_for_status()
+                return r
+        except httpx.HTTPStatusError:
+            raise
+        except Exception as exc:
+            last_err = exc
+            continue
+    if last_err:
+        raise last_err
+    raise RuntimeError(f"Failed to fetch {url}")
+
+
 def fetch_detail_html(url: str) -> str:
     headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
-    with httpx.Client(timeout=60, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(url)
-        r.raise_for_status()
-        return r.text
+    return get_with_ssl_fallback(url, headers, timeout=60).text
 
 
 def download_candidate(candidate: AttachmentCandidate, detail_url: str, notice_dir: Path, idx: int) -> tuple[str, Path]:
     headers = {**monitor.HTTP_HEADERS, "Referer": detail_url}
-    with httpx.Client(timeout=120, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(candidate.url)
-        r.raise_for_status()
-        file_name = guess_filename(candidate, r, idx)
-        save_path = unique_path(notice_dir / file_name)
-        save_path.write_bytes(r.content)
-        return file_name, save_path
+    r = get_with_ssl_fallback(candidate.url, headers, timeout=120)
+    file_name = guess_filename(candidate, r, idx)
+    save_path = unique_path(notice_dir / file_name)
+    save_path.write_bytes(r.content)
+    return file_name, save_path
 
 
 def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float) -> dict:
@@ -256,7 +274,7 @@ def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float) -> di
     results: list[DownloadResult] = []
 
     for target in targets:
-        item, score = match_notice(target, items)
+        item, score = match_notice(target, items, min_score)
         if not item or score < min_score:
             results.append(DownloadResult(
                 target_title=target,
