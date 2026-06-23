@@ -115,13 +115,23 @@ OUTBOUND_SKIP_RE = re.compile(
 )
 SEARCH_STOPWORDS = {
     "참여기업", "참가기업", "참가자", "모집공고", "모집", "공고", "지원사업",
-    "프로그램", "년도", "통합공고", "재공고", "연장", "차",
+    "프로그램", "년도", "통합공고", "재공고", "연장", "차", "참여", "지원", "기업",
+    "모집공고", "공모", "참가", "신청",
 }
+
+# Host-site pools used when K-Startup / bizinfo title pools miss.
+EXTRA_SOURCE_IDS = (
+    "sba", "mss", "kosme", "gsp", "gtp", "ccei_biz", "nipa", "bizok",
+    "imp_46829488", "kotra", "mssmiv", "smtech",
+)
+
+MATCH_MIN_SCORE = 0.72
 
 
 def norm_text(value: str) -> str:
     value = unicodedata.normalize("NFKC", value or "")
     value = value.replace("새로운게시글", "")
+    value = re.sub(r"\([^)]{0,24}\)", "", value)
     value = re.sub(r"\s+", "", value.lower())
     value = re.sub(r"[\[\]【】()（）『』「」<>〈〉·ㆍ,._~\-–—:;/'\"!@#$%^&*+=?]", "", value)
     return value
@@ -183,6 +193,48 @@ def _token_set(value: str) -> set[str]:
     return {t for t in re.findall(r"[\w가-힣·]+", norm_text(value)) if len(t) >= 2}
 
 
+def _anchor_tokens(value: str) -> set[str]:
+    return {t for t in _token_set(value) if len(t) >= 4 and t not in SEARCH_STOPWORDS}
+
+
+def _apply_anchor_boost(target: str, title: str, score: float) -> float:
+    anchors_t = _anchor_tokens(target)
+    if not anchors_t:
+        return score
+    shared = anchors_t & _anchor_tokens(title)
+    if len(shared) >= 2:
+        return max(score, 0.92)
+    if len(shared) == 1:
+        tok = next(iter(shared))
+        if len(tok) >= 8:
+            return max(score, 0.85)
+        if len(tok) >= 5 and score >= 0.45:
+            return max(score, 0.76)
+    ratio = len(shared) / len(anchors_t)
+    if ratio >= 0.45 and score >= 0.40:
+        return max(score, 0.72 + ratio * 0.22)
+    return score
+
+
+def accept_match(target: str, title: str, score: float, min_score: float = MATCH_MIN_SCORE) -> bool:
+    """Decide whether a fuzzy title match is good enough to use."""
+    if score >= min_score:
+        return True
+    floor = min(min_score, 0.65)
+    if score < floor:
+        return False
+    anchors_t = _anchor_tokens(target)
+    shared = anchors_t & _anchor_tokens(title) if anchors_t else set()
+    if shared:
+        if any(len(t) >= 6 for t in shared):
+            return True
+        if len(shared) >= 2:
+            return True
+        if len(shared) / len(anchors_t) >= 0.35 and score >= 0.62:
+            return True
+    return score >= max(0.70, min_score - 0.02)
+
+
 def search_keywords_from_title(title: str) -> list[str]:
     """Derive K-Startup search keywords from a target notice title."""
     title = monitor.norm(title)
@@ -211,6 +263,27 @@ def search_keywords_from_title(title: str) -> list[str]:
 
 def collect_bizinfo_items() -> list[dict]:
     return monitor.fetch_bizinfo(BIZINFO_SITE)
+
+
+def collect_extra_source_items() -> list[dict]:
+    """Fetch high-value host sites (SBA, MSS, KOSME, …) for title matching."""
+    by_id = {s["id"]: s for s in monitor.load_sites()}
+    sites = [by_id[sid] for sid in EXTRA_SOURCE_IDS if sid in by_id and by_id[sid].get("enabled", True)]
+    if not sites:
+        return []
+    items = monitor.fetch_all(sites, max_workers=min(8, len(sites)))
+    deduped = monitor.dedup_items(items)
+    log.info("Extra source pools: %d sites -> %d notices", len(sites), len(deduped))
+    return deduped
+
+
+def collect_full_monitor_items(max_workers: int = 10) -> list[dict]:
+    """Fetch all enabled monitor sites — last-resort pool to avoid title misses."""
+    sites = monitor.load_sites()
+    items = monitor.fetch_all(sites, max_workers=max_workers)
+    deduped = monitor.dedup_items(items)
+    log.info("Full monitor pool: %d sites -> %d notices", len(sites), len(deduped))
+    return deduped
 
 
 def collect_kstartup_items(max_pages: int = 30, client: httpx.Client | None = None) -> list[dict]:
@@ -298,30 +371,93 @@ def search_kstartup_for_target(
     return None, best[1]
 
 
+def search_pool_for_target(
+    target: str,
+    pool: list[dict],
+    *,
+    min_score: float,
+) -> tuple[dict | None, float]:
+    """Match against a pool, then keyword-filtered subsets of the same pool."""
+    item, score = match_notice(target, pool)
+    if item and accept_match(target, str(item.get("title", "")), score, min_score):
+        return item, score
+    best_item, best_score = item, score
+    for kw in search_keywords_from_title(target):
+        nkw = norm_text(kw)
+        if len(nkw) < 3:
+            continue
+        filtered = [
+            it for it in pool
+            if nkw in norm_text(str(it.get("title", "")))
+            or norm_text(str(it.get("title", ""))) in norm_text(target)
+        ]
+        if not filtered:
+            continue
+        item, score = match_notice(target, filtered)
+        if score > best_score:
+            best_item, best_score = item, score
+        if item and accept_match(target, str(item.get("title", "")), score, min_score):
+            return item, score
+    if best_item and accept_match(target, str(best_item.get("title", "")), best_score, min_score):
+        return best_item, best_score
+    return None, best_score
+
+
 def find_notice_for_target(
     target: str,
     kstartup_pool: list[dict],
     client: httpx.Client,
     *,
     bizinfo_pool: list[dict] | None,
+    extra_pool: list[dict] | None,
+    monitor_pool: list[dict] | None,
     min_score: float,
     use_bizinfo: bool = True,
+    use_extra_sources: bool = True,
 ) -> tuple[dict | None, float, str]:
     """Find a notice by target title. Returns (item, score, source)."""
-    item, score = match_notice(target, kstartup_pool)
-    if item and score >= min_score:
-        return item, score, "kstartup"
+    best_item: dict | None = None
+    best_score = 0.0
+    best_source = ""
+
+    def consider(item: dict | None, score: float, source: str) -> tuple[dict | None, float, str] | None:
+        nonlocal best_item, best_score, best_source
+        if score > best_score:
+            best_item, best_score, best_source = item, score, source
+        title = str((item or {}).get("title", ""))
+        if item and accept_match(target, title, score, min_score):
+            return item, score, source
+        return None
+
+    item, score = search_pool_for_target(target, kstartup_pool, min_score=min_score)
+    hit = consider(item, score, "kstartup")
+    if hit:
+        return hit
 
     if use_bizinfo and bizinfo_pool:
-        item, score = match_notice(target, bizinfo_pool)
-        if item and score >= min_score:
-            return item, score, "bizinfo"
+        item, score = search_pool_for_target(target, bizinfo_pool, min_score=min_score)
+        hit = consider(item, score, "bizinfo")
+        if hit:
+            return hit
+
+    if use_extra_sources and extra_pool:
+        item, score = search_pool_for_target(target, extra_pool, min_score=min_score)
+        hit = consider(item, score, "extra")
+        if hit:
+            return hit
+
+    if monitor_pool:
+        item, score = search_pool_for_target(target, monitor_pool, min_score=min_score)
+        hit = consider(item, score, "monitor")
+        if hit:
+            return hit
 
     item, score = search_kstartup_for_target(target, client, min_score=min_score)
-    if item and score >= min_score:
-        return item, score, "kstartup_search"
+    hit = consider(item, score, "kstartup_search")
+    if hit:
+        return hit
 
-    return None, score, ""
+    return None, best_score, ""
 
 
 def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float]:
@@ -345,9 +481,10 @@ def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float
             overlap = len(target_tokens & item_tokens) / len(target_tokens)
             if overlap >= 0.55:
                 score = max(score, 0.72 + overlap * 0.25)
+        score = _apply_anchor_boost(target, title, score)
         if score > best[1]:
             best = (item, score)
-    if best[1] >= 0.72:
+    if best[0] and accept_match(target, str(best[0].get("title", "")), best[1]):
         return best
     return None, best[1]
 
@@ -583,17 +720,31 @@ def run(
     max_pages: int,
     *,
     use_bizinfo: bool = True,
+    use_extra_sources: bool = True,
+    use_full_monitor: bool = True,
 ) -> dict:
     targets = load_targets(target_file)
     out_dir.mkdir(parents=True, exist_ok=True)
     results: list[DownloadResult] = []
     headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
     bizinfo_pool: list[dict] | None = None
+    extra_pool: list[dict] | None = None
+    monitor_pool: list[dict] | None = None
     if use_bizinfo:
         try:
             bizinfo_pool = collect_bizinfo_items()
         except Exception as exc:
             log.warning("bizinfo pool load failed: %s", exc)
+    if use_extra_sources:
+        try:
+            extra_pool = collect_extra_source_items()
+        except Exception as exc:
+            log.warning("extra source pool load failed: %s", exc)
+    if use_full_monitor:
+        try:
+            monitor_pool = collect_full_monitor_items()
+        except Exception as exc:
+            log.warning("full monitor pool load failed: %s", exc)
 
     with httpx.Client(timeout=60, headers=headers, follow_redirects=True, verify=False) as client:
         items = collect_kstartup_items(max_pages=max_pages, client=client)
@@ -604,10 +755,13 @@ def run(
                 items,
                 client,
                 bizinfo_pool=bizinfo_pool,
+                extra_pool=extra_pool,
+                monitor_pool=monitor_pool,
                 min_score=min_score,
                 use_bizinfo=use_bizinfo,
+                use_extra_sources=use_extra_sources,
             )
-            if not item or score < min_score:
+            if not item or not accept_match(target, str(item.get("title", "")), score, min_score):
                 results.append(DownloadResult(
                     target_title=target,
                     matched_title=str(item.get("title", "")) if item else "",
@@ -686,6 +840,9 @@ def run(
         "dry_run": dry_run,
         "max_pages": max_pages,
         "collected_items": len(items),
+        "extra_source_items": len(extra_pool or []),
+        "monitor_items": len(monitor_pool or []),
+        "bizinfo_items": len(bizinfo_pool or []),
         "total_targets": len(targets),
         "total_rows": len(results),
         "status_counts": {},
@@ -707,6 +864,8 @@ def main() -> None:
     parser.add_argument("--min-score", type=float, default=0.72)
     parser.add_argument("--max-pages", type=int, default=30, help="K-Startup pages to scan for each class(PBC010/PBC020).")
     parser.add_argument("--no-bizinfo", action="store_true", help="Do not fall back to bizinfo title search.")
+    parser.add_argument("--no-extra-sources", action="store_true", help="Do not fetch SBA/MSS/KOSME etc. host-site pools.")
+    parser.add_argument("--no-full-monitor", action="store_true", help="Skip fetching all enabled monitor sites (faster, more NOT_FOUND).")
     args = parser.parse_args()
 
     summary = run(
@@ -716,6 +875,8 @@ def main() -> None:
         min_score=args.min_score,
         max_pages=args.max_pages,
         use_bizinfo=not args.no_bizinfo,
+        use_extra_sources=not args.no_extra_sources,
+        use_full_monitor=not args.no_full_monitor,
     )
     print(json.dumps({
         "dry_run": summary["dry_run"],

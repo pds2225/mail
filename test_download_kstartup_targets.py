@@ -10,6 +10,8 @@ os.environ.setdefault("GMAIL_ADDRESS", "test@test.com")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "test_pass")
 
 from scripts.download_kstartup_targets import (  # noqa: E402
+    _apply_anchor_boost,
+    accept_match,
     _looks_like_real_download_url,
     extract_outbound_urls,
     find_notice_for_target,
@@ -49,6 +51,15 @@ def test_extract_outbound_urls_from_fn_open_window():
     assert not any("magicsso" in u for u in urls)
 
 
+def test_anchor_boost_accepts_healthx_on_kstartup_title():
+    score = _apply_anchor_boost(
+        "「2026 헬스엑스챌린지 서울」 참여기업 모집",
+        "「2026 헬스엑스챌린지 서울」 참여기업 모집 새로운게시글",
+        0.58,
+    )
+    assert score >= 0.76
+
+
 def test_reject_empty_orgFileNm_download_url():
     assert not _looks_like_real_download_url("https://www.k-startup.go.kr/web/comm/fileDownHwp.do?orgFileNm=")
 
@@ -78,6 +89,8 @@ def test_find_notice_for_target_prefers_kstartup_then_bizinfo():
         kstartup_pool,
         EmptySearchClient(),
         bizinfo_pool=bizinfo_pool,
+        extra_pool=None,
+        monitor_pool=None,
         min_score=0.72,
     )
     assert source == "kstartup"
@@ -92,6 +105,8 @@ def test_find_notice_for_target_prefers_kstartup_then_bizinfo():
             "title": "2026년 판교허브 투자유치 밸류업 패키지 지원기업 모집 공고",
             "link": "https://www.bizinfo.go.kr/detail/2",
         }],
+        extra_pool=None,
+        monitor_pool=None,
         min_score=0.72,
         use_bizinfo=True,
     )
