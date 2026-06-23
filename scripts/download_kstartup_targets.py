@@ -27,16 +27,23 @@ from pathlib import Path
 from typing import Iterable
 from urllib.parse import unquote, urljoin, urlparse
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(ROOT / ".env")
+except ImportError:
+    pass
+
 # monitor.py requires these env vars at import time although K-Startup collection
 # does not need the real values. Keep local downloader runnable without sending mail.
 os.environ.setdefault("BIZINFO_API_KEY", "dummy")
 os.environ.setdefault("ANTHROPIC_API_KEY", "dummy")
 os.environ.setdefault("GMAIL_ADDRESS", "dummy@example.com")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "dummy")
-
-ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 import httpx  # noqa: E402
 from bs4 import BeautifulSoup  # noqa: E402
@@ -88,6 +95,28 @@ class DownloadResult:
     save_path: str = ""
     file_url: str = ""
     error: str = ""
+    match_source: str = ""
+
+
+BIZINFO_SITE = {
+    "id": "bizinfo",
+    "name": "기업마당",
+    "type": "bizinfo_api",
+    "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
+    "enabled": True,
+    "is_aggregator": True,
+}
+
+OUTBOUND_LABEL_RE = re.compile(r"원본|사업안내|공고\s*보기|접수|공고문|붙임|첨부", re.IGNORECASE)
+OUTBOUND_SKIP_RE = re.compile(
+    r"magicsso|tokenInfoRelay|openNews_letter|applNwsLtr|#container|javascript:void|"
+    r"k-startup\.go\.kr/?$|webPMSBizUnvs|/passni/kstartup",
+    re.IGNORECASE,
+)
+SEARCH_STOPWORDS = {
+    "참여기업", "참가기업", "참가자", "모집공고", "모집", "공고", "지원사업",
+    "프로그램", "년도", "통합공고", "재공고", "연장", "차",
+}
 
 
 def norm_text(value: str) -> str:
@@ -150,7 +179,41 @@ def _parse_kstartup_cards(html: str, clss: str) -> list[dict]:
     return items
 
 
-def collect_kstartup_items(max_pages: int = 30) -> list[dict]:
+def _token_set(value: str) -> set[str]:
+    return {t for t in re.findall(r"[\w가-힣·]+", norm_text(value)) if len(t) >= 2}
+
+
+def search_keywords_from_title(title: str) -> list[str]:
+    """Derive K-Startup search keywords from a target notice title."""
+    title = monitor.norm(title)
+    keywords: list[str] = []
+    seen_kw: set[str] = set()
+
+    def add(kw: str) -> None:
+        kw = kw.strip()
+        if len(kw) < 2 or kw in seen_kw:
+            return
+        seen_kw.add(kw)
+        keywords.append(kw)
+
+    for m in re.finditer(r"[「『\[【]([^\]」』】]+)[」』\]】]", title):
+        add(m.group(1))
+    for tok in re.findall(r"[\w가-힣·@!]+", title):
+        if len(tok) < 3 or tok in SEARCH_STOPWORDS or re.fullmatch(r"20\d{2}", tok):
+            continue
+        add(tok)
+    trimmed = re.sub(r"^20\d{2}년\s*", "", title)
+    trimmed = re.sub(r"(모집|공고|참여).*$", "", trimmed).strip(" ·-")
+    if len(trimmed) >= 6:
+        add(trimmed[:40])
+    return keywords[:8]
+
+
+def collect_bizinfo_items() -> list[dict]:
+    return monitor.fetch_bizinfo(BIZINFO_SITE)
+
+
+def collect_kstartup_items(max_pages: int = 30, client: httpx.Client | None = None) -> list[dict]:
     """Collect K-Startup public/private ongoing notices across multiple pages.
 
     monitor.fetch_kstartup() is intentionally conservative and reads page 1 only.
@@ -160,11 +223,12 @@ def collect_kstartup_items(max_pages: int = 30) -> list[dict]:
     items: list[dict] = []
     seen_ids: set[str] = set()
     headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
-    with httpx.Client(timeout=60, headers=headers, follow_redirects=True, verify=False) as client:
+
+    def _collect_with(http_client: httpx.Client) -> None:
         for clss in ("PBC010", "PBC020"):
             empty_pages = 0
             for page in range(1, max_pages + 1):
-                r = client.get(KSTARTUP_SITE["url"], params={
+                r = http_client.get(KSTARTUP_SITE["url"], params={
                     "schMenuId": "10090",
                     "pageIndex": str(page),
                     "viewCount": "100",
@@ -187,12 +251,82 @@ def collect_kstartup_items(max_pages: int = 30) -> list[dict]:
                     empty_pages = 0
                 if empty_pages >= 2:
                     break
+
+    if client is not None:
+        _collect_with(client)
+    else:
+        with httpx.Client(timeout=60, headers=headers, follow_redirects=True, verify=False) as owned:
+            _collect_with(owned)
     log.info("K-Startup multi-page: %d건", len(items))
     return items
 
 
+def search_kstartup_for_target(
+    target: str,
+    client: httpx.Client,
+    *,
+    min_score: float,
+) -> tuple[dict | None, float]:
+    """Search K-Startup by title keywords and locally re-rank the returned cards."""
+    nt = norm_text(target)
+    best: tuple[dict | None, float] = (None, 0.0)
+    for kw in search_keywords_from_title(target):
+        nkw = norm_text(kw)
+        if len(nkw) < 2:
+            continue
+        for clss in ("PBC010", "PBC020"):
+            r = client.get(KSTARTUP_SITE["url"], params={
+                "schMenuId": "10090",
+                "pageIndex": "1",
+                "viewCount": "100",
+                "schPbancNm": kw,
+                "pbancClssCd": clss,
+            })
+            r.raise_for_status()
+            page_items = _parse_kstartup_cards(r.text, clss)
+            filtered = [
+                it for it in page_items
+                if nkw in norm_text(str(it.get("title", ""))) or norm_text(str(it.get("title", ""))) in nt
+            ]
+            item, score = match_notice(target, filtered or page_items)
+            if score > best[1]:
+                best = (item, score)
+            if item and score >= min_score:
+                return item, score
+    if best[1] >= min_score:
+        return best
+    return None, best[1]
+
+
+def find_notice_for_target(
+    target: str,
+    kstartup_pool: list[dict],
+    client: httpx.Client,
+    *,
+    bizinfo_pool: list[dict] | None,
+    min_score: float,
+    use_bizinfo: bool = True,
+) -> tuple[dict | None, float, str]:
+    """Find a notice by target title. Returns (item, score, source)."""
+    item, score = match_notice(target, kstartup_pool)
+    if item and score >= min_score:
+        return item, score, "kstartup"
+
+    if use_bizinfo and bizinfo_pool:
+        item, score = match_notice(target, bizinfo_pool)
+        if item and score >= min_score:
+            return item, score, "bizinfo"
+
+    item, score = search_kstartup_for_target(target, client, min_score=min_score)
+    if item and score >= min_score:
+        return item, score, "kstartup_search"
+
+    return None, score, ""
+
+
 def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float]:
     nt = norm_text(target)
+    target_tokens = _token_set(target)
     best: tuple[dict | None, float] = (None, 0.0)
     for item in items:
         title = str(item.get("title", ""))
@@ -206,6 +340,11 @@ def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float
             score = max(score, 0.92)
         else:
             score = SequenceMatcher(None, nt, ni).ratio()
+        item_tokens = _token_set(title)
+        if target_tokens and item_tokens:
+            overlap = len(target_tokens & item_tokens) / len(target_tokens)
+            if overlap >= 0.55:
+                score = max(score, 0.72 + overlap * 0.25)
         if score > best[1]:
             best = (item, score)
     if best[1] >= 0.72:
@@ -222,6 +361,8 @@ def extract_quoted_strings(value: str) -> list[str]:
 def _looks_like_real_download_url(raw_url: str) -> bool:
     raw_url = (raw_url or "").strip()
     if not raw_url or raw_url == "#" or len(raw_url) > 500:
+        return False
+    if re.search(r"orgFileNm=$|orgFileNm=\s*['\"]?\s*['\"]?(?:$|[&#])", raw_url, re.IGNORECASE):
         return False
     if SCRIPT_NOISE_RE.search(raw_url):
         return False
@@ -295,6 +436,79 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
     return out
 
 
+def _normalize_outbound_url(raw_url: str, base_url: str) -> str:
+    raw_url = unquote((raw_url or "").strip())
+    if not raw_url or raw_url.startswith("#"):
+        return ""
+    if not raw_url.startswith(("http://", "https://")):
+        if re.match(r"[\w.-]+\.[A-Za-z]{2,}", raw_url):
+            raw_url = "https://" + raw_url.lstrip("/")
+        else:
+            raw_url = urljoin(base_url, raw_url)
+    return raw_url
+
+
+def extract_outbound_urls(html: str, detail_url: str) -> list[str]:
+    """Extract original-site / apply-guide URLs from a K-Startup detail page."""
+    urls: list[str] = []
+    seen: set[str] = set()
+
+    def add(raw: str) -> None:
+        abs_url = _normalize_outbound_url(raw, detail_url)
+        if not abs_url or abs_url in seen:
+            return
+        if OUTBOUND_SKIP_RE.search(abs_url):
+            return
+        if "k-startup.go.kr" in abs_url.lower():
+            return
+        seen.add(abs_url)
+        urls.append(abs_url)
+
+    for m in re.finditer(r"fn_open_window\(\s*['\"]([^'\"]+)['\"]", html, re.IGNORECASE):
+        add(m.group(1))
+
+    soup = BeautifulSoup(html, "html.parser")
+    for el in soup.select("a, button"):
+        label = _nearby_label(el)
+        if not OUTBOUND_LABEL_RE.search(label):
+            continue
+        if re.search(r"뉴스레터", label) and not re.search(r"사업|접수|원본|공고", label):
+            continue
+        href = str(el.get("href", ""))
+        onclick = str(el.get("onclick", ""))
+        if href and not href.lower().startswith("javascript"):
+            add(href)
+        for q in extract_quoted_strings(onclick):
+            if "." in q or q.startswith("http"):
+                add(q)
+    return urls
+
+
+def gather_attachment_candidates(detail_url: str, html: str | None = None) -> list[AttachmentCandidate]:
+    """Collect attachments from the detail page and linked original-site pages."""
+    if html is None:
+        html = fetch_detail_html(detail_url)
+    seen: set[str] = set()
+    out: list[AttachmentCandidate] = []
+
+    def merge(cands: list[AttachmentCandidate]) -> None:
+        for cand in cands:
+            if cand.url in seen:
+                continue
+            seen.add(cand.url)
+            out.append(cand)
+
+    merge(extract_attachment_candidates(html, detail_url))
+    if "k-startup.go.kr" in detail_url.lower():
+        for outbound in extract_outbound_urls(html, detail_url)[:5]:
+            try:
+                outbound_html = fetch_detail_html(outbound)
+                merge(extract_attachment_candidates(outbound_html, outbound))
+            except Exception as exc:
+                log.warning("outbound page fetch failed (%s): %s", outbound, exc)
+    return out
+
+
 def content_disposition_filename(value: str) -> str:
     if not value:
         return ""
@@ -361,76 +575,109 @@ def download_candidate(candidate: AttachmentCandidate, detail_url: str, notice_d
         return file_name, save_path
 
 
-def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float, max_pages: int) -> dict:
+def run(
+    target_file: Path,
+    out_dir: Path,
+    dry_run: bool,
+    min_score: float,
+    max_pages: int,
+    *,
+    use_bizinfo: bool = True,
+) -> dict:
     targets = load_targets(target_file)
-    items = collect_kstartup_items(max_pages=max_pages)
     out_dir.mkdir(parents=True, exist_ok=True)
     results: list[DownloadResult] = []
-
-    for target in targets:
-        item, score = match_notice(target, items)
-        if not item or score < min_score:
-            results.append(DownloadResult(
-                target_title=target,
-                matched_title=str(item.get("title", "")) if item else "",
-                match_score=round(score, 4),
-                detail_url=str(item.get("link", "")) if item else "",
-                status="NOT_FOUND",
-            ))
-            continue
-
-        matched_title = str(item.get("title", ""))
-        detail_url = str(item.get("link", ""))
-        notice_dir = out_dir / safe_filename(matched_title, 120)
-
+    headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
+    bizinfo_pool: list[dict] | None = None
+    if use_bizinfo:
         try:
-            html = fetch_detail_html(detail_url)
-            candidates = extract_attachment_candidates(html, detail_url)
+            bizinfo_pool = collect_bizinfo_items()
         except Exception as exc:
-            results.append(DownloadResult(target, matched_title, round(score, 4), detail_url, "DETAIL_FETCH_FAILED", error=str(exc)))
-            continue
+            log.warning("bizinfo pool load failed: %s", exc)
 
-        if not candidates:
-            results.append(DownloadResult(target, matched_title, round(score, 4), detail_url, "NO_ATTACHMENTS"))
-            continue
+    with httpx.Client(timeout=60, headers=headers, follow_redirects=True, verify=False) as client:
+        items = collect_kstartup_items(max_pages=max_pages, client=client)
 
-        notice_dir.mkdir(parents=True, exist_ok=True)
-        for idx, cand in enumerate(candidates, start=1):
-            if dry_run:
-                predicted = notice_dir / guess_filename(cand, None, idx)
+        for target in targets:
+            item, score, match_source = find_notice_for_target(
+                target,
+                items,
+                client,
+                bizinfo_pool=bizinfo_pool,
+                min_score=min_score,
+                use_bizinfo=use_bizinfo,
+            )
+            if not item or score < min_score:
                 results.append(DownloadResult(
                     target_title=target,
-                    matched_title=matched_title,
+                    matched_title=str(item.get("title", "")) if item else "",
                     match_score=round(score, 4),
-                    detail_url=detail_url,
-                    status="DRY_RUN",
-                    file_name=predicted.name,
-                    save_path=str(predicted),
-                    file_url=cand.url,
+                    detail_url=str(item.get("link", "")) if item else "",
+                    status="NOT_FOUND",
+                    match_source=match_source,
                 ))
                 continue
+
+            matched_title = str(item.get("title", ""))
+            detail_url = str(item.get("link", ""))
+            notice_dir = out_dir / safe_filename(matched_title, 120)
+
             try:
-                file_name, save_path = download_candidate(cand, detail_url, notice_dir, idx)
-                results.append(DownloadResult(
-                    target_title=target,
-                    matched_title=matched_title,
-                    match_score=round(score, 4),
-                    detail_url=detail_url,
-                    status="DOWNLOADED",
-                    file_name=file_name,
-                    save_path=str(save_path),
-                    file_url=cand.url,
-                ))
+                candidates = gather_attachment_candidates(detail_url)
             except Exception as exc:
                 results.append(DownloadResult(
-                    target_title=target,
-                    matched_title=matched_title,
-                    match_score=round(score, 4),
-                    detail_url=detail_url,
-                    status="DOWNLOAD_FAILED",
-                    file_url=cand.url,
-                    error=str(exc),
+                    target, matched_title, round(score, 4), detail_url,
+                    "DETAIL_FETCH_FAILED", error=str(exc), match_source=match_source,
                 ))
+                continue
+
+            if not candidates:
+                results.append(DownloadResult(
+                    target, matched_title, round(score, 4), detail_url,
+                    "NO_ATTACHMENTS", match_source=match_source,
+                ))
+                continue
+
+            notice_dir.mkdir(parents=True, exist_ok=True)
+            for idx, cand in enumerate(candidates, start=1):
+                if dry_run:
+                    predicted = notice_dir / guess_filename(cand, None, idx)
+                    results.append(DownloadResult(
+                        target_title=target,
+                        matched_title=matched_title,
+                        match_score=round(score, 4),
+                        detail_url=detail_url,
+                        status="DRY_RUN",
+                        file_name=predicted.name,
+                        save_path=str(predicted),
+                        file_url=cand.url,
+                        match_source=match_source,
+                    ))
+                    continue
+                try:
+                    file_name, save_path = download_candidate(cand, detail_url, notice_dir, idx)
+                    results.append(DownloadResult(
+                        target_title=target,
+                        matched_title=matched_title,
+                        match_score=round(score, 4),
+                        detail_url=detail_url,
+                        status="DOWNLOADED",
+                        file_name=file_name,
+                        save_path=str(save_path),
+                        file_url=cand.url,
+                        match_source=match_source,
+                    ))
+                except Exception as exc:
+                    results.append(DownloadResult(
+                        target_title=target,
+                        matched_title=matched_title,
+                        match_score=round(score, 4),
+                        detail_url=detail_url,
+                        status="DOWNLOAD_FAILED",
+                        file_url=cand.url,
+                        error=str(exc),
+                        match_source=match_source,
+                    ))
 
     summary = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
@@ -459,6 +706,7 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Do not write attachment files; write planned manifest only.")
     parser.add_argument("--min-score", type=float, default=0.72)
     parser.add_argument("--max-pages", type=int, default=30, help="K-Startup pages to scan for each class(PBC010/PBC020).")
+    parser.add_argument("--no-bizinfo", action="store_true", help="Do not fall back to bizinfo title search.")
     args = parser.parse_args()
 
     summary = run(
@@ -467,6 +715,7 @@ def main() -> None:
         dry_run=args.dry_run,
         min_score=args.min_score,
         max_pages=args.max_pages,
+        use_bizinfo=not args.no_bizinfo,
     )
     print(json.dumps({
         "dry_run": summary["dry_run"],
