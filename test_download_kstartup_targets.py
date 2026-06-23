@@ -95,7 +95,7 @@ def test_collect_kstartup_items_paginates_classes_and_deduplicates(monkeypatch):
         def get(self, url, params):
             calls.append((params["pbancClssCd"], params["pageIndex"]))
             html = pages.get((params["pbancClssCd"], params["pageIndex"]), "")
-            return httpx.Response(200, text=html)
+            return httpx.Response(200, text=html, request=httpx.Request("GET", url))
 
     monkeypatch.setattr(dl.httpx, "Client", FakeClient)
 
