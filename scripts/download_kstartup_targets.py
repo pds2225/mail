@@ -5,15 +5,15 @@ Usage:
     python scripts/download_kstartup_targets.py
     python scripts/download_kstartup_targets.py --target-file targets/kstartup_20260623.txt --out-dir downloads/kstartup/20260623
 
-This script is intentionally separated from monitor.py send mode. It reuses the
-existing K-Startup collector, matches only the target titles listed in the target
-file, opens each detail page, extracts likely attachment/download links, and
-stores files by notice title.
+This script is intentionally separated from monitor.py send mode. It matches only
+the target titles listed in the target file, opens each K-Startup detail page,
+extracts likely attachment/download links, and stores files by notice title.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import logging
 import mimetypes
 import os
 import re
@@ -21,9 +21,9 @@ import sys
 import unicodedata
 from dataclasses import asdict, dataclass
 from datetime import datetime
+from difflib import SequenceMatcher
 from email.message import Message
 from pathlib import Path
-from difflib import SequenceMatcher
 from typing import Iterable
 from urllib.parse import unquote, urljoin, urlparse
 
@@ -43,6 +43,8 @@ from bs4 import BeautifulSoup  # noqa: E402
 
 import monitor  # noqa: E402
 
+log = logging.getLogger(__name__)
+
 KSTARTUP_SITE = {
     "id": "kstartup",
     "name": "K-Startup",
@@ -57,11 +59,15 @@ ATTACHMENT_TEXT_RE = re.compile(
     re.IGNORECASE,
 )
 ATTACHMENT_URL_RE = re.compile(
-    r"download|file|attach|atch|cmm/fms|FileDown|fileDown|\.hwp|\.hwpx|\.pdf|\.docx?|\.xlsx?|\.zip",
+    r"/afile/fileDownload/|download|fileDown|FileDown|attach|atch|cmm/fms|\.hwp|\.hwpx|\.pdf|\.docx?|\.xlsx?|\.zip",
     re.IGNORECASE,
 )
 EXT_RE = re.compile(r"\.(hwp|hwpx|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|7z|rar)(?:$|[?#])", re.IGNORECASE)
 WINDOWS_BAD_CHARS = re.compile(r"[\\/:*?\"<>|\x00-\x1f]")
+SCRIPT_NOISE_RE = re.compile(
+    r"function\s*\(|JSON\.parse|console\.|var\s+|const\s+|let\s+|<script|</|\{\s*|\}\s*|\$\(",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -104,9 +110,85 @@ def load_targets(path: Path) -> list[str]:
     return [line.strip() for line in raw.splitlines() if line.strip() and not line.strip().startswith("#")]
 
 
-def collect_kstartup_items() -> list[dict]:
-    # Existing collector fetches public(PBC010) and private(PBC020) with viewCount=100 each.
-    return monitor.fetch_kstartup(KSTARTUP_SITE)
+def _parse_kstartup_cards(html: str, clss: str) -> list[dict]:
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    for card in soup.select(".notice"):
+        a = card.select_one("a")
+        title = monitor.norm(a.get_text() if a else "")
+        if not title:
+            continue
+        sn = ""
+        for btn in card.select("button[onclick]"):
+            m = re.search(r"\d+", btn.get("onclick", ""))
+            if m:
+                sn = m.group(0)
+                break
+        if not sn and a:
+            m = re.search(r"\d+", a.get("href", ""))
+            if m:
+                sn = m.group(0)
+        link = (f"{KSTARTUP_SITE['url']}?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else KSTARTUP_SITE["url"]
+        spans = card.select("span.list")
+        org = monitor.norm(spans[0].get_text()) if spans else ""
+        dl = next((monitor.norm(sp.get_text().replace("마감일자", "")) for sp in spans if "마감일자" in sp.get_text()), "")
+        pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
+        posted = monitor.extract_date_from_text(pm.group(1)) if pm else ""
+        flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        iid = f"kstartup_{sn}" if sn else f"kstartup_{monitor.stable_id(title + org)}"
+        items.append({
+            "id": iid,
+            "title": title,
+            "link": link,
+            "author": org,
+            "description": monitor.norm(flag.get_text()) if flag else "",
+            "deadline": dl,
+            "source": KSTARTUP_SITE["name"],
+            "posted_date": posted,
+            "is_aggregator": False,
+        })
+    return items
+
+
+def collect_kstartup_items(max_pages: int = 30) -> list[dict]:
+    """Collect K-Startup public/private ongoing notices across multiple pages.
+
+    monitor.fetch_kstartup() is intentionally conservative and reads page 1 only.
+    Bulk title downloads need deeper pagination because user-provided title lists
+    often come from page 2+ or from K-Startup search results.
+    """
+    items: list[dict] = []
+    seen_ids: set[str] = set()
+    headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
+    with httpx.Client(timeout=60, headers=headers, follow_redirects=True, verify=False) as client:
+        for clss in ("PBC010", "PBC020"):
+            empty_pages = 0
+            for page in range(1, max_pages + 1):
+                r = client.get(KSTARTUP_SITE["url"], params={
+                    "schMenuId": "10090",
+                    "pageIndex": str(page),
+                    "viewCount": "100",
+                    "pbancSttus": "ing",
+                    "pbancClssCd": clss,
+                })
+                r.raise_for_status()
+                page_items = _parse_kstartup_cards(r.text, clss)
+                new_count = 0
+                for item in page_items:
+                    iid = str(item.get("id", ""))
+                    if iid in seen_ids:
+                        continue
+                    seen_ids.add(iid)
+                    items.append(item)
+                    new_count += 1
+                if not page_items or new_count == 0:
+                    empty_pages += 1
+                else:
+                    empty_pages = 0
+                if empty_pages >= 2:
+                    break
+    log.info("K-Startup multi-page: %d건", len(items))
+    return items
 
 
 def match_notice(target: str, items: Iterable[dict]) -> tuple[dict | None, float]:
@@ -137,19 +219,45 @@ def extract_quoted_strings(value: str) -> list[str]:
     return re.findall(r"['\"]([^'\"]+)['\"]", value)
 
 
+def _looks_like_real_download_url(raw_url: str) -> bool:
+    raw_url = (raw_url or "").strip()
+    if not raw_url or raw_url == "#" or len(raw_url) > 500:
+        return False
+    if SCRIPT_NOISE_RE.search(raw_url):
+        return False
+    low = raw_url.lower()
+    if low.startswith(("javascript:", "mailto:", "tel:", "data:")):
+        return False
+    if raw_url.startswith(("http://", "https://", "/", "./", "../")):
+        return bool(ATTACHMENT_URL_RE.search(raw_url) or EXT_RE.search(raw_url))
+    if EXT_RE.search(raw_url):
+        return True
+    # Reject bare JS tokens such as downloadBtn, fileName, fileIdx.
+    if "/" not in raw_url and "=" not in raw_url:
+        return False
+    return bool(ATTACHMENT_URL_RE.search(raw_url))
+
+
 def candidate_from_url(raw_url: str, label: str, base_url: str, source: str) -> AttachmentCandidate | None:
     raw_url = (raw_url or "").strip()
-    if not raw_url or raw_url == "#":
-        return None
-    if raw_url.lower().startswith(("javascript:void", "mailto:", "tel:")):
-        return None
-    if raw_url.lower().startswith("javascript:"):
+    raw_url = unquote(raw_url)
+    if not _looks_like_real_download_url(raw_url):
         return None
     abs_url = urljoin(base_url, raw_url)
     haystack = f"{label} {raw_url}"
-    if not (ATTACHMENT_URL_RE.search(haystack) or ATTACHMENT_TEXT_RE.search(haystack)):
+    if not (ATTACHMENT_URL_RE.search(haystack) or EXT_RE.search(haystack)):
         return None
-    return AttachmentCandidate(url=abs_url, label=label.strip(), source=source)
+    return AttachmentCandidate(url=abs_url, label=label.strip() or "첨부파일", source=source)
+
+
+def _nearby_label(el) -> str:
+    label = " ".join(el.get_text(" ", strip=True).split())
+    if label:
+        return label
+    parent = el.find_parent(["li", "tr", "div"])
+    if parent:
+        return " ".join(parent.get_text(" ", strip=True).split())[:180]
+    return "첨부파일"
 
 
 def extract_attachment_candidates(html: str, detail_url: str) -> list[AttachmentCandidate]:
@@ -166,22 +274,23 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
         seen.add(key)
         out.append(c)
 
-    # 1) Direct anchors/buttons with href/data-url/action-like attrs.
+    # 1) Direct anchors/buttons with actual URL attributes.
     for el in soup.select("a, button"):
-        label = " ".join(el.get_text(" ", strip=True).split())
-        raw = " ".join([label, str(el.get("href", "")), str(el.get("onclick", "")), str(el.attrs)])
-        if not (ATTACHMENT_TEXT_RE.search(raw) or ATTACHMENT_URL_RE.search(raw)):
-            continue
+        label = _nearby_label(el)
         for attr in ("href", "data-url", "data-href", "data-download-url", "formaction"):
             add(candidate_from_url(str(el.get(attr, "")), label, detail_url, attr))
         onclick = str(el.get("onclick", ""))
-        for q in extract_quoted_strings(onclick):
-            add(candidate_from_url(q, label, detail_url, "onclick"))
+        if ATTACHMENT_URL_RE.search(onclick):
+            for q in extract_quoted_strings(onclick):
+                add(candidate_from_url(q, label, detail_url, "onclick"))
 
-    # 2) Any quoted URL in scripts or inline HTML.
-    for q in extract_quoted_strings(html):
-        if ATTACHMENT_URL_RE.search(q):
-            add(candidate_from_url(q, "첨부파일", detail_url, "html-quoted"))
+    # 2) K-Startup often renders ax5 uploader data with downloadPath.
+    for m in re.finditer(r"downloadPath\s*[:=]\s*['\"]([^'\"]+)['\"]", html, re.IGNORECASE):
+        add(candidate_from_url(m.group(1), "첨부파일", detail_url, "downloadPath"))
+
+    # 3) Conservative fallback: only real-looking quoted download URLs, not all JS strings.
+    for m in re.finditer(r"['\"]([^'\"]*(?:/afile/fileDownload/|fileDownload|FileDown|cmm/fms)[^'\"]*)['\"]", html, re.IGNORECASE):
+        add(candidate_from_url(m.group(1), "첨부파일", detail_url, "quoted-download-url"))
 
     return out
 
@@ -194,7 +303,6 @@ def content_disposition_filename(value: str) -> str:
     filename = msg.get_filename()
     if filename:
         return unquote(filename)
-    # Common non-RFC fallback: filename=...
     m = re.search(r"filename\*?=(?:UTF-8''|\")?([^\";]+)", value, re.IGNORECASE)
     return unquote(m.group(1).strip()) if m else ""
 
@@ -216,7 +324,7 @@ def guess_filename(candidate: AttachmentCandidate, response: httpx.Response | No
     if not ext:
         m = EXT_RE.search(candidate.url)
         ext = f".{m.group(1).lower()}" if m else ".bin"
-    return f"{label}{ext}"
+    return f"{idx:02d}_{label}{ext}"
 
 
 def unique_path(path: Path) -> Path:
@@ -243,15 +351,19 @@ def download_candidate(candidate: AttachmentCandidate, detail_url: str, notice_d
     with httpx.Client(timeout=120, follow_redirects=True, headers=headers, verify=False) as client:
         r = client.get(candidate.url)
         r.raise_for_status()
+        # Do not save HTML error pages as attachments.
+        ctype = r.headers.get("content-type", "").lower()
+        if "text/html" in ctype and not EXT_RE.search(candidate.url):
+            raise RuntimeError(f"download returned HTML, not a file: {candidate.url}")
         file_name = guess_filename(candidate, r, idx)
         save_path = unique_path(notice_dir / file_name)
         save_path.write_bytes(r.content)
         return file_name, save_path
 
 
-def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float) -> dict:
+def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float, max_pages: int) -> dict:
     targets = load_targets(target_file)
-    items = collect_kstartup_items()
+    items = collect_kstartup_items(max_pages=max_pages)
     out_dir.mkdir(parents=True, exist_ok=True)
     results: list[DownloadResult] = []
 
@@ -325,6 +437,8 @@ def run(target_file: Path, out_dir: Path, dry_run: bool, min_score: float) -> di
         "target_file": str(target_file),
         "out_dir": str(out_dir),
         "dry_run": dry_run,
+        "max_pages": max_pages,
+        "collected_items": len(items),
         "total_targets": len(targets),
         "total_rows": len(results),
         "status_counts": {},
@@ -344,6 +458,7 @@ def main() -> None:
     parser.add_argument("--out-dir", default="downloads/kstartup/20260623")
     parser.add_argument("--dry-run", action="store_true", help="Do not write attachment files; write planned manifest only.")
     parser.add_argument("--min-score", type=float, default=0.72)
+    parser.add_argument("--max-pages", type=int, default=30, help="K-Startup pages to scan for each class(PBC010/PBC020).")
     args = parser.parse_args()
 
     summary = run(
@@ -351,9 +466,12 @@ def main() -> None:
         out_dir=(ROOT / args.out_dir).resolve() if not Path(args.out_dir).is_absolute() else Path(args.out_dir),
         dry_run=args.dry_run,
         min_score=args.min_score,
+        max_pages=args.max_pages,
     )
     print(json.dumps({
         "dry_run": summary["dry_run"],
+        "max_pages": summary["max_pages"],
+        "collected_items": summary["collected_items"],
         "total_targets": summary["total_targets"],
         "total_rows": summary["total_rows"],
         "status_counts": summary["status_counts"],
