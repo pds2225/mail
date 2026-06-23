@@ -345,7 +345,15 @@ REGION_EXCLUDE_PHRASES = [
     "수도권 소재 기업 신청 불가", "인천 제외", "비수도권 기업 대상",
     "지역제조 중 수도권 제외", "인천 소재 기업 신청 불가",
 ]
-OPEN_DEADLINE_TERMS = ["상시접수", "수시접수", "예산 소진 시까지", "예산소진 시까지", "예산 소진시까지", "상시모집", "연중수시"]
+OPEN_DEADLINE_TERMS = [
+    "상시접수", "수시접수", "예산 소진 시까지", "예산소진 시까지", "예산 소진시까지", "상시모집", "연중수시",
+    # ★recall(round7): 한국 공고에 흔한 '마감 없는 모집' 표현 보강 — 이 신호를 놓치면
+    #   과거 시작일('접수 2026.03.01부터 …')만 보고 closed 로 오판해, 아직 열려있는 공고를 누락한다.
+    "선착순", "연중상시",
+    # 접두어(예산/재원/물량/기금)·공백 무관하게 '소진 시'/'소진시' 로 '소진 시 마감/종료/까지' 를 포괄.
+    # '소진으로 종료'(과거형 마감)는 '소진 시'·'소진시' 어디에도 안 걸려 closed 유지(precision).
+    "소진 시", "소진시",
+]
 
 # 신청·모집 기간 라벨 (우선순위 순). 협약/사업기간과 구분한다.
 APPLICATION_PERIOD_LABELS = (
@@ -424,16 +432,17 @@ def normalize_title(title: str) -> str:
     return re.sub(r"[\s\W]+", "", t)
 
 def is_imminent(deadline: str) -> bool:
-    cleaned = deadline.replace(".", "-").replace("/", "-").replace("~", " ").replace("까지", " ")
+    """마감 문자열에 오늘~+7일 이내 날짜가 하나라도 있으면 임박(True).
+
+    기존 구현은 공백 split 후 고정위치 'YYYY-MM-DD'(tok[4]·tok[7]=='-', len>=10)만 인식해
+    '2026.6.30'(한자리 월/일)·'2026년 6월 30일'(한글)·'6.30까지'(연도 생략) 같은 실공고 빈출
+    표기를 통째로 놓쳤다 → 마감이 7일 이내인데도 메일 최상단 '⚠️ 마감 임박' 알림에서 빠져
+    고객이 신청기회를 놓치던 recall 갭. classify_deadline_status 등과 동일한 robust 파서
+    _parse_date_candidates 를 재사용해 한자리·한글·점·범위 표기를 모두 인식하도록 통일한다."""
+    if not deadline:
+        return False
     today = datetime.now(KST).date()
-    for tok in cleaned.split():
-        if len(tok) >= 10 and tok[4:5] == "-" and tok[7:8] == "-":
-            try:
-                if 0 <= (datetime.strptime(tok[:10], "%Y-%m-%d").date() - today).days <= 7:
-                    return True
-            except ValueError:
-                pass
-    return False
+    return any(0 <= (parsed - today).days <= 7 for _pos, parsed in _parse_date_candidates(deadline))
 
 def extract_date_from_text(text: str) -> str:
     """텍스트에서 첫 날짜를 YYYY-MM-DD로 추출."""
@@ -2157,6 +2166,14 @@ def extract_support_amount(text: str) -> int | None:
         return None
     t = unicodedata.normalize("NFKC", text).replace(",", "").replace(" ", "")
     amounts: list[int] = []
+    # ★조·천억 단위(대규모 출연·기금 공고) — '조원'/'천억원' 표기를 정확 추출.
+    #   '제3조'(법 조항)·'3조2교대' 등 비금액 '조'를 금액으로 오추출하지 않도록 '원' 접미를 요구한다.
+    #   기존엔 None→unknown(게이트 비제외)로 surface만 되고 표시 금액이 0/미상이었음 — 이제 정확 금액으로
+    #   추출돼 표시 정확도↑ + 금액 게이트가 unknown 대신 eligible 로 확정(여전히 recall-safe).
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*조\s*원", t):
+        amounts.append(int(float(m.group(1)) * 1_000_000_000_000))
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*천억\s*원", t):
+        amounts.append(int(float(m.group(1)) * 100_000_000_000))
     for m in re.finditer(r"(\d+(?:\.\d+)?)\s*억", t):
         amounts.append(int(float(m.group(1)) * 100_000_000))
     for m in re.finditer(r"(\d+(?:\.\d+)?)\s*천만", t):
@@ -2194,7 +2211,8 @@ def _short_region(city: str) -> str:
     return city
 
 
-_TITLE_TAG_RE = re.compile(r"^\s*\[([^\]\n]{1,40})\]")
+# 제목 맨 앞에 잇따른 [ … ] 태그 1개를 pos 위치에서 매칭(반복 스캔용). 앞쪽 공백 허용.
+_TITLE_TAG_LEAD_RE = re.compile(r"\s*\[([^\]\n]{1,40})\]")
 _KNOWN_REGION_SHORT = (
     "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종",
     "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
@@ -2202,14 +2220,25 @@ _KNOWN_REGION_SHORT = (
 
 
 def _title_region_tags(item: dict) -> list[str]:
-    """제목 맨 앞 [ … ] 태그 안의 광역 약칭을 모두 반환(없으면 []). 한국 정부공고에서
-    제목 앞 [지역] 은 '그 지역 기업 대상'의 강한 신호. 복수지역(예: [서울ㆍ인천ㆍ경기])은
-    포함된 광역을 전부 잡아, 그룹 지역이 그 목록에 있으면 통과시켜 recall 손실을 막는다."""
-    m = _TITLE_TAG_RE.match(str(item.get("title", "")))
-    if not m:
-        return []
-    inner = m.group(1)
-    return [r for r in _KNOWN_REGION_SHORT if r in inner]
+    """제목 맨 앞에 잇따른 [ … ] 태그(복수 가능)의 광역 약칭을 모두 반환(없으면 []).
+    한국 정부공고에서 제목 앞 [지역] 은 '그 지역 기업 대상'의 강한 신호. 복수지역은
+    한 대괄호 묶음(예: [서울ㆍ인천ㆍ경기])이든, 잇따른 분리 대괄호(예: [서울][인천])이든,
+    또는 앞에 문서종류 태그가 붙은 형태(예: [모집공고][인천])이든 포함된 광역을 전부 잡아,
+    그룹 지역이 그 목록에 있으면 통과시켜 표기형태 차이에 따른 recall 손실을 막는다.
+    (기존엔 첫 대괄호만 읽어 own 광역이 둘째 이후 태그에 있으면 누락했음.)"""
+    title = str(item.get("title", ""))
+    tags: list[str] = []
+    pos = 0
+    while True:
+        mt = _TITLE_TAG_LEAD_RE.match(title, pos)
+        if not mt:
+            break
+        inner = mt.group(1)
+        for r in _KNOWN_REGION_SHORT:
+            if r in inner and r not in tags:
+                tags.append(r)
+        pos = mt.end()
+    return tags
 
 
 def _other_region_block(item: dict, own_meta: dict):
@@ -2274,10 +2303,15 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         if f"{d} 제외" in raw_text or (short_d and f"{short_d} 제외" in raw_text):
             return result("not_eligible", "not_eligible", [], [d])
 
-    # 제목 [광역] 태그에 그룹 지역이 없으면 nationwide 여도 차단(타지역 한정 신호).
-    # 복수지역 태그는 포함 광역을 전부 보고, 그룹 지역이 있으면 통과(recall 보존).
+    # 제목 [광역] 태그에 그룹 적격지역(own 광역 + extra_eligible_regions)이 하나도 없으면
+    # nationwide 여도 차단(타지역 한정 신호). 복수지역 태그는 포함 광역을 전부 보고,
+    # own_regions(label+extra) 중 하나라도 있으면 통과 — 본문 신호(2233행 own_present 의 extra)와
+    # 기준을 맞춰 같은 적격지역이 제목태그/본문 표기위치에 따라 비대칭 누락되는 것을 막는다(recall 보존).
+    # 단, 사람이 제목/설명에 '전국'을 명시했으면 _other_region_block 의 explicit_nationwide 면제와
+    # 동일하게 태그 배제를 건너뛴다 — 타지역 태그가 앞에 와도 명시적 전국 공고는 누락 금지(recall).
     tags = _title_region_tags(item)
-    if tags and label not in tags:
+    title_nationwide = "전국" in str(item.get("title", "")) or "전국" in str(item.get("description", ""))
+    if tags and not title_nationwide and not any(r in tags for r in own_regions):
         return result("not_eligible", "not_eligible", [], tags)
 
     target = _detect_target_regions(raw_text)
@@ -2301,13 +2335,22 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     if district_hits:
         return result("eligible", "eligible", district_hits, [])
 
-    region_hit = bool(own_regions) and any((r in detected) or (r in text) for r in own_regions)
+    # own 광역이 구조화 region_field('지역' 드롭다운)에만 있어도 own 신호로 인정(recall) —
+    # _detect_target_regions 힌트는 '광역+공백'을 요구해 region_field='서울' 단독을 놓친다.
+    region_field_norm = norm(item.get("region_field", "")).lower()
+    region_hit = bool(own_regions) and any(
+        (r in detected) or (r in text) or (r and r in region_field_norm) for r in own_regions)
     other_regions = [r for r in detected if r not in own_regions]
     if region_hit:
         # 우리 광역 언급 + 특정 타 시·군 한정 아님 → 적합(시·군 미상이나 포함 우선)
         return result("eligible", "eligible", [city or label], [])
     if other_regions:
         return result("not_eligible", "not_eligible", [], other_regions)
+    # own 광역이 수도권 family(서울·인천·경기)이면 '수도권' 묶음공고는 신청 가능 — 수도권이 own
+    # 광역을 포함하므로 KNOWN_REGIONS 폴백의 타지역 오인을 막는다(recall). '비수도권'은 가드로 배제.
+    if ("수도권" in text and "비수도권" not in text
+            and (set(own_regions) & {r.lower() for r in _METRO_FAMILY})):
+        return result("eligible", "eligible", [city or label], [])
     if any(r.lower() in text for r in KNOWN_REGIONS):
         return result("not_eligible", "not_eligible", [], [])
     return result("unknown", "unknown", [], [])
@@ -2329,17 +2372,20 @@ def classify_region(item: dict) -> dict:
             "excluded_regions": [APPLICANT_REGION_CITY, APPLICANT_REGION_DISTRICT],
         }
 
-    # 제목 [광역] 태그 우선 판정: 인천 미포함이면 nationwide 여도 차단(타지역 한정),
-    # 인천 포함이면(복수지역 [서울ㆍ인천ㆍ경기] 등) eligible 로 확정해 recall 보존.
+    # 제목 [광역] 태그 우선 판정: 인천 포함이면(복수지역 [서울ㆍ인천ㆍ경기] 또는 잇따른
+    # [서울][인천] 등) eligible 로 확정해 recall 보존. 인천 미포함이면 타지역 한정으로 보고
+    # 차단하되, 사람이 제목/설명에 '전국'을 명시했으면 _other_region_block 의 explicit_nationwide
+    # 면제와 동일하게 태그 차단을 건너뛴다 — 타지역 태그가 앞에 와도 명시적 전국 공고는 누락 금지(recall).
     tags = _title_region_tags(item)
-    if tags:
-        if "인천" in tags:
-            return {
-                "region_status": "eligible",
-                "district_status": "eligible",
-                "eligible_regions": [APPLICANT_REGION_CITY],
-                "excluded_regions": [],
-            }
+    if tags and "인천" in tags:
+        return {
+            "region_status": "eligible",
+            "district_status": "eligible",
+            "eligible_regions": [APPLICANT_REGION_CITY],
+            "excluded_regions": [],
+        }
+    title_nationwide = "전국" in str(item.get("title", "")) or "전국" in str(item.get("description", ""))
+    if tags and not title_nationwide:
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
@@ -2362,8 +2408,11 @@ def classify_region(item: dict) -> dict:
     if item.get("region_field"):
         explicit_regions.append(norm(item["region_field"]))
     explicit_regions = _unique(explicit_regions)
+    # own(인천) 광역명이 조사로 붙어('인천과') hint(\s 요구)에 안 잡혀도 본문 substring 으로 재확인 —
+    # _other_region_block own_present(substring) 과 기준을 맞춰 표기위치 비대칭 누락 방지(recall).
+    own_in_text = "인천" in text
     other_only = [r for r in explicit_regions if "인천" not in r]
-    if other_only and not any("인천" in r for r in explicit_regions) and not nationwide:
+    if other_only and not own_in_text and not any("인천" in r for r in explicit_regions) and not nationwide:
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
@@ -2397,7 +2446,18 @@ def classify_region(item: dict) -> dict:
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
-    elif "인천" in text:
+    elif "인천" in text or any("인천" in r for r in explicit_regions):
+        # own 광역(인천)이 본문이 아니라 구조화 region_field('지역' 드롭다운)에만 있어도
+        # own 신호로 인정 → eligible. 타지역은 이미 explicit_regions→other_only 로 배제하면서
+        # own 만 region_field 를 무시하던 비대칭 누락 해소(recall). explicit_regions 는 2377행에서
+        # region_field(norm)를 포함하므로 '인천'/'인천광역시' 단독 드롭다운을 모두 잡는다.
+        eligible_regions.append(APPLICANT_REGION_CITY)
+        region_status = "eligible"
+        district_status = "eligible"
+    elif "수도권" in text and "비수도권" not in text:
+        # 인천은 수도권(서울·인천·경기)에 포함 — '수도권 소재 기업' 공고는 인천 기업이 신청 가능.
+        # (수도권 제외/소재기업 제외/신청불가·비수도권 …은 REGION_EXCLUDE_PHRASES·가드로 이미 배제됨.)
+        # KNOWN_REGIONS 폴백이 '수도권'을 타지역으로 오인해 정당 공고를 누락시키던 갭 해소(recall).
         eligible_regions.append(APPLICANT_REGION_CITY)
         region_status = "eligible"
         district_status = "eligible"
