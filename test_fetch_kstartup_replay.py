@@ -132,3 +132,13 @@ def test_kstartup_seen_sn_dedup():
 
 def by_id_link(items, iid):
     return next(it["link"] for it in items if it["id"] == iid)
+
+
+@respx.mock
+def test_kstartup_fetches_multiple_pages_when_configured():
+    """max_pages>1 이면 pageIndex 2까지 요청(빈 페이지면 종료)."""
+    _route_public_private()
+    site = {**_site(), "max_pages": 2}
+    items = monitor.fetch_kstartup(site)
+    assert len(items) == 4
+    assert len(respx.calls) >= 4  # PBC010 p1+p2 + PBC020 p1+p2 이상

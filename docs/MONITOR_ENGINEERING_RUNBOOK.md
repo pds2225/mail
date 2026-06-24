@@ -11,14 +11,18 @@ site configuration, or matching policy.
 
 1. Load configuration from `sites.json`, `groups.json`, `companies.json`, and `settings.json`.
 2. Fetch enabled sites through the collector registered in `FETCHERS`.
-3. Enrich detail pages for links under `exportvoucher.com`, `k-startup.go.kr`, and `nipa.kr`
-   up to `MAX_DETAIL_ENRICH` items per run.
+3. Enrich detail pages for links under `exportvoucher.com`, `k-startup.go.kr`, `nipa.kr`, and
+   `bizinfo.go.kr` up to `MAX_DETAIL_ENRICH` items per run.
 4. Deduplicate by notice ID and `seen_ids.json`.
 5. Apply posted-date policy from `settings.json`.
 6. Evaluate each active group into `included`, `region_unknown`, `review`, or `excluded`.
 7. In send mode only, summarize included items and send mail. Region-unknown items are
    rendered as a "지역 미상 - 확인 필요" section at the bottom of the same group email.
 8. Persist `seen_ids.json` only when persistence is allowed.
+
+Optional raw notice archive (local PC): when `raw_store_enabled` is true in
+`settings.json`, new notice metadata and enriched detail HTML are saved under
+`data/raw/YYYY-MM-DD/`. See `docs/RAW_STORE.md`.
 
 ## Public Configuration Interfaces
 
@@ -158,6 +162,19 @@ For unit-level regression coverage:
 ```bash
 python3 -m pytest test_monitor.py test_region_unknown_policy.py test_decision_matrix.py -v
 ```
+
+### Core source completion gate (bizinfo · K-Startup · NIPA)
+
+Offline checklist for the three priority collectors (config, detail enrich hosts, replay tests):
+
+```bash
+python3 scripts/core_sources_checklist.py
+python3 scripts/core_sources_checklist.py --json
+python3 scripts/core_sources_checklist.py --live   # optional network fetch
+```
+
+See `docs/CORE_SOURCES_CHECKLIST.md`. Complements `scripts/recall_zero_gate.py` (recall
+pattern regression), which checks matching logic rather than collector completeness.
 
 Do not run `python3 monitor.py` for verification unless an operator explicitly approves
 real email sending.

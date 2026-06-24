@@ -30,6 +30,13 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent
 
+try:
+    from raw_store import RawStore as _RawStore
+except ImportError:
+    _RawStore = None  # type: ignore[misc, assignment]
+
+_RAW_STORE: Any = None  # 실행 중 원문 저장 (execute_monitor 스코프)
+
 # ── .env 자동 로딩 (단독 실행 시 환경변수 주입) ──────────────────────────────
 # monitor.py 를 직접 실행하면 .env / .env.shared 의 키(BIZINFO_API_KEY 등)를
 # 환경변수로 주입한다. load_dotenv 는 override=False 가 기본이라, 이미 설정된
@@ -149,6 +156,16 @@ KSTARTUP_DETAIL_LABELS = {
     "주관기관명": "organizer_field",
     "제외대상": "exclude_target_field",
     "지원분야": "support_field",
+}
+
+# 기업마당 상세(selectSIIA200Detail 등) — span.s_title + div.txt 라벨쌍
+BIZINFO_DETAIL_LABELS = {
+    "지원지역": "region_field",
+    "지역": "region_field",
+    "신청기간": "application_period_text",
+    "사업개요": "body",
+    "지원대상": "target_field",
+    "소관부처·지자체": "organizer_field",
 }
 
 # 비경기 '광역권' 토큰(강원권·충청권·호남권 등). 수도권/경기권/서울권은 경기를
@@ -364,7 +381,7 @@ NON_APPLICATION_PERIOD_LABELS = (
     "협약기간", "사업기간", "수행기간", "지원기간", "운영기간", "서비스 완료",
     "사업 추진 기간", "지원 기간",
 )
-DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr")
+DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr", "bizinfo.go.kr")
 MAX_DETAIL_ENRICH = 40
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -624,7 +641,7 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
     region_title_hints = [
         (r"경기도|경기\s", "경기"),
         (r"부산광역시|부산\s", "부산"),
-        (r"서울특별시|서울\s", "서울"),
+        (r"서울특별시|서울\s*소재|서울\s", "서울"),
         (r"대구광역시|대구\s", "대구"),
         (r"광주광역시|광주\s", "광주"),
         (r"대전광역시|대전\s", "대전"),
@@ -644,6 +661,12 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
         if re.search(pattern, text):
             if label not in regions:
                 regions.append(label)
+    _SOJI_EXCLUDE = frozenset({"수도권", "비수도권"})
+    for label in KNOWN_REGIONS:
+        if label in _SOJI_EXCLUDE:
+            continue
+        if re.search(rf"{re.escape(label)}\s*소재", text) and label not in regions:
+            regions.append(label)
     return {"regions": regions, "nationwide": nationwide}
 
 
@@ -674,6 +697,27 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
         body = soup.select_one(".detail") or soup.select_one(".tab3.bsnsWrap")
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
+    elif "bizinfo.go.kr" in url:
+        for span in soup.select("span.s_title"):
+            label = norm(span.get_text())
+            key = BIZINFO_DETAIL_LABELS.get(label)
+            if not key:
+                for lk, field_key in BIZINFO_DETAIL_LABELS.items():
+                    if lk in label:
+                        key = field_key
+                        break
+            if not key:
+                continue
+            txt_div = span.find_next_sibling("div", class_="txt")
+            if not txt_div:
+                continue
+            val = norm(txt_div.get_text("\n", strip=True))
+            if val and key not in result:
+                result[key] = val[:12000] if key == "body" else val
+        if "body" not in result:
+            body = soup.select_one("article, .view_cont, #contents, main, .content")
+            if body:
+                result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
         body = soup.select_one("article, .view_cont, #contents, main")
         if body:
@@ -688,9 +732,13 @@ def enrich_item_from_detail(item: dict) -> dict:
         return item
     if not any(host in link for host in DETAIL_ENRICH_HOSTS):
         return item
-    soup = _soup(link)
-    if not soup:
+    resp = _http_get(link)
+    if resp is None:
         return item
+    html_text = resp.text
+    soup = BeautifulSoup(html_text, "html.parser")
+    if _RAW_STORE is not None:
+        _RAW_STORE.save_detail_html(item["id"], link, html_text)
     fields = _parse_detail_from_page(soup, link)
     updated = {**item, "detail_enriched": True}
     body = fields.get("body", "")
@@ -709,7 +757,21 @@ def enrich_item_from_detail(item: dict) -> dict:
     if fields.get("organizer_field") and not (updated.get("author") or "").strip():
         updated["author"] = fields["organizer_field"]
     period_src = fields.get("application_period_text") or updated.get("description", "")
-    period = extract_application_period(period_src) or extract_application_period(body)
+    period: dict[str, str] = {}
+    if fields.get("application_period_text"):
+        # 기업마당 상세: 라벨 없이 "2026.06.18 ~ 2026.07.06" 만 오는 경우
+        norm_period = re.sub(r"(\d{4})\.(\d{2})\.(\d{2})", r"\1-\2-\3", fields["application_period_text"])
+        dates = _parse_period_dates(norm_period)
+        if dates:
+            start, end = dates[0].isoformat(), dates[-1].isoformat()
+            display = f"{start} ~ {end}" if start != end else end
+            period = {"start": start, "end": end, "display": display, "label": "신청기간"}
+    if not period.get("display"):
+        if fields.get("application_period_text"):
+            period_src = re.sub(
+                r"(\d{4})\.(\d{2})\.(\d{2})", r"\1-\2-\3", fields["application_period_text"],
+            )
+        period = extract_application_period(period_src) or extract_application_period(body)
     if period.get("display"):
         updated["deadline"] = period["display"]
         updated["application_period"] = period
@@ -730,6 +792,8 @@ def enrich_item_from_detail(item: dict) -> dict:
     posted = extract_date_from_text(body)
     if posted and not (updated.get("posted_date") or "").strip():
         updated["posted_date"] = posted
+    if _RAW_STORE is not None:
+        _RAW_STORE.update_meta_after_enrich(updated)
     return updated
 
 
@@ -814,8 +878,19 @@ def load_settings() -> dict:
         #   strict=제외(검토대기) / recall=신청키워드·마감 살아있는 것만 포함 / all=전부 포함
         #   None이면 legacy include_date_unknown 으로 결정(True→all, False→strict).
         "date_unknown_policy": None,
+        # 원문 저장(PC 로컬): docs/RAW_STORE.md
+        "raw_store_enabled": False,
+        "raw_store_retention_days": 30,
+        "raw_store_max_detail_bytes": 800_000,
+        "raw_store_gzip_detail": True,
     }
     return {**default, **load_json(SETTINGS_PATH, {})}
+
+
+def _with_raw_store_stats(result: dict) -> dict:
+    if _RAW_STORE is not None:
+        result = {**result, **_RAW_STORE.summary()}
+    return result
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -833,6 +908,29 @@ def _legacy_ssl_ctx() -> ssl.SSLContext:
     except AttributeError:
         pass
     return ctx
+
+
+def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **kwargs) -> httpx.Response | None:
+    """GET with 3-stage SSL fallback (bizinfo API·JSON 등 _soup 외 호출용)."""
+    hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify: Any = True if stage == "strict" else (
+            False if stage == "no_verify" else _legacy_ssl_ctx())
+        try:
+            with httpx.Client(timeout=timeout, headers=hdrs, follow_redirects=True,
+                              verify=verify) as c:
+                r = c.get(url, **kwargs)
+                r.raise_for_status()
+                return r
+        except httpx.HTTPStatusError as e:
+            log.error("접속 실패 %s: %s", url, e)
+            return None
+        except Exception as e:
+            last_err = e
+            continue
+    log.error("접속 실패 %s: %s", url, last_err)
+    return None
 
 
 def _soup(url: str, extra_headers: dict | None = None, **kwargs):
@@ -862,35 +960,59 @@ def _item(id_, title, link, author, desc, deadline, source,
 
 
 def fetch_bizinfo(site: dict) -> list[dict]:
-    # 전체 분류·전체 건수 수집(실측 1456건). 분류필터 없음 → 금융·기술·인력·수출·내수·창업·경영 등 전 분류.
-    # (과거엔 수출(04)분류·100건 상한만 받아 1300건+ 누락)
-    try:
-        with httpx.Client(timeout=60, headers=HTTP_HEADERS) as c:
-            r = c.get(site["url"], params={
-                "crtfcKey": BIZINFO_API_KEY, "dataType": "json", "searchCnt": "99999"})
-            r.raise_for_status(); data = r.json()
-    except Exception as e:
-        log.error("기업마당 API 실패: %s", e); return []
-    raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
-    if isinstance(raw, dict): raw = [raw]
-    items = []
+    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
+    # reqErr(인증키 오류 등)는 빈 jsonArray 와 구분해 로그에 명시 — '0건' 원인 추적용.
+    page_unit = int(site.get("api_page_unit", 500))
+    max_pages = int(site.get("api_max_pages", 4))
+    items: list[dict] = []
+    seen_ids: set[str] = set()
     agg = site.get("is_aggregator", True)
-    for it in raw:
-        iid = norm(it.get("pblancId", it.get("seq", "")))
-        ttl = norm(it.get("pblancNm", it.get("title", "")))
-        lnk = norm(it.get("pblancUrl", it.get("link", "")))
-        if not iid: iid = f"bizinfo_{stable_id(ttl + lnk)}"
-        # 등록일 추출 시도 (다양한 키 이름 지원)
-        posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
-        if posted and len(posted) >= 10:
-            posted = posted[:10]  # YYYY-MM-DD HH:MM:SS → YYYY-MM-DD
-        if not posted:
-            posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-        items.append(_item(iid, ttl, lnk,
-            norm(it.get("jrsdInsttNm", it.get("author", ""))),
-            norm(it.get("bsnsSumryCn", it.get("description", ""))),
-            norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
-            site["name"], posted, agg))
+    params_base = {"crtfcKey": BIZINFO_API_KEY, "dataType": "json"}
+
+    for page in range(1, max_pages + 1):
+        r = _http_get(
+            site["url"],
+            params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
+            timeout=90,
+        )
+        if r is None:
+            break
+        try:
+            data = r.json()
+        except Exception as e:
+            log.error("기업마당 API JSON 파싱 실패: %s", e)
+            break
+        if err := data.get("reqErr"):
+            log.error("기업마당 API 오류: %s", err)
+            return items
+        raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
+        if isinstance(raw, dict):
+            raw = [raw]
+        if not raw:
+            break
+        for it in raw:
+            iid = norm(it.get("pblancId", it.get("seq", "")))
+            ttl = norm(it.get("pblancNm", it.get("title", "")))
+            lnk = norm(it.get("pblancUrl", it.get("link", "")))
+            if not iid:
+                iid = f"bizinfo_{stable_id(ttl + lnk)}"
+            if iid in seen_ids:
+                continue
+            seen_ids.add(iid)
+            posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
+            if posted and len(posted) >= 10:
+                posted = posted[:10]
+            if not posted:
+                posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
+            items.append(_item(
+                iid, ttl, lnk,
+                norm(it.get("jrsdInsttNm", it.get("author", ""))),
+                norm(it.get("bsnsSumryCn", it.get("description", ""))),
+                norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
+                site["name"], posted, agg,
+            ))
+        if len(raw) < page_unit:
+            break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -900,43 +1022,70 @@ def fetch_myfair_legacy(site: dict) -> list[dict]:
     return fetch_myfair(site)
 
 
+def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_sn: set[str]) -> list[dict]:
+    """K-Startup 목록 카드 파싱 — fetch_kstartup·다운로더 공통."""
+    items: list[dict] = []
+    agg = site.get("is_aggregator", False)
+    base_url = site["url"]
+    for card in soup.select(".notice"):
+        a = card.select_one("a")
+        title = norm(a.get_text() if a else "")
+        if not title:
+            continue
+        sn = ""
+        for btn in card.select("button[onclick]"):
+            m = re.search(r"\d+", btn.get("onclick", ""))
+            if m:
+                sn = m.group(0)
+                break
+        if not sn and a:
+            m = re.search(r"\d+", a.get("href", ""))
+            if m:
+                sn = m.group(0)
+        if sn and sn in seen_sn:
+            continue
+        if sn:
+            seen_sn.add(sn)
+        link = (f"{base_url}?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else base_url
+        spans = card.select("span.list")
+        org = norm(spans[0].get_text()) if spans else ""
+        dl = next((norm(sp.get_text().replace("마감일자", ""))
+                   for sp in spans if "마감일자" in sp.get_text()), "")
+        pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
+        posted = extract_date_from_text(pm.group(1)) if pm else ""
+        flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title + org)}"
+        items.append(_item(iid, title, link, org,
+                           norm(flag.get_text()) if flag else "", dl,
+                           site["name"], posted, agg))
+    return items
+
+
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 사업공고가 공공(PBC010)·민간(PBC020)으로 분리됨 → 둘 다 수집.
-    # 과거엔 pbancClssCd 미전송 → 서버 기본값 PBC010(공공)만 받아 민간 공고를 전부 누락.
-    items, agg = [], site.get("is_aggregator", False)
-    seen_sn = set()
+    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 5) — 1페이지만 보면 page2+ 공고 누락.
+    max_pages = int(site.get("max_pages", 5))
+    items: list[dict] = []
+    seen_sn: set[str] = set()
+    referer = site.get("referer") or site["url"]
+    extra_hdr = {"Referer": referer}
+
     for clss in ("PBC010", "PBC020"):
-        soup = _soup(site["url"], params={
-            "schMenuId": "10090", "pageIndex": "1", "viewCount": "100",
-            "pbancSttus": "ing", "pbancClssCd": clss})
-        if not soup: continue
-        for card in soup.select(".notice"):
-            a = card.select_one("a")
-            title = norm(a.get_text() if a else "")
-            if not title: continue
-            sn = ""
-            for btn in card.select("button[onclick]"):
-                m = re.search(r"\d+", btn.get("onclick", ""))
-                if m: sn = m.group(0); break
-            if not sn and a:
-                m = re.search(r"\d+", a.get("href", ""))
-                if m: sn = m.group(0)
-            if sn and sn in seen_sn: continue
-            if sn: seen_sn.add(sn)
-            link = (f"https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
-                    f"?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else site["url"]
-            spans = card.select("span.list")
-            org = norm(spans[0].get_text()) if spans else ""
-            dl = next((norm(sp.get_text().replace("마감일자", ""))
-                       for sp in spans if "마감일자" in sp.get_text()), "")
-            # 게시일(등록일자) — 목록 카드에 '등록일자 YYYY-MM-DD'로 존재(기존엔 미추출→날짜불명).
-            pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
-            posted = extract_date_from_text(pm.group(1)) if pm else ""
-            flag = card.select_one(".flag:not(.day):not(.flag_agency)")
-            iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
-            items.append(_item(iid, title, link, org,
-                               norm(flag.get_text()) if flag else "", dl,
-                               site["name"], posted, agg))
+        empty_streak = 0
+        for page in range(1, max_pages + 1):
+            soup = _soup(site["url"], extra_headers=extra_hdr, params={
+                "schMenuId": "10090", "pageIndex": str(page), "viewCount": "100",
+                "pbancSttus": "ing", "pbancClssCd": clss,
+            })
+            if not soup:
+                break
+            page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
+            if not page_items:
+                empty_streak += 1
+            else:
+                empty_streak = 0
+                items.extend(page_items)
+            if empty_streak >= 2:
+                break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -2040,6 +2189,26 @@ def _notice_body_text(item: dict) -> str:
     return f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
 
 
+def _keyword_match_text(item: dict) -> str:
+    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상 필드 포함, 주관기관명 제외."""
+    parts = [
+        item.get("title", ""),
+        item.get("description", ""),
+        item.get("support_field", ""),
+        item.get("target_field", ""),
+    ]
+    return norm(" ".join(p for p in parts if p)).lower()
+
+
+def _application_like(text: str) -> bool:
+    """신청·모집 성격 공고인지(recall 우선 — 목록 stub에 기간 없어도 누락 방지)."""
+    if any(kw in text for kw in APPLICATION_KEYWORDS):
+        return True
+    if any(kw in text for kw in GRANT_SIGNAL_KEYWORDS):
+        return True
+    return any(kw in text for kw in ("모집", "신청", "접수", "공모"))
+
+
 def _notice_text(item: dict) -> str:
     body = _notice_body_text(item)
     deadline = (item.get("deadline") or "").strip().lower()
@@ -2621,7 +2790,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
     factory_condition = bool(factory_keywords)
     service_hits = [kw for kw in GENERAL_SERVICE_EXCLUDE_KEYWORDS if kw in text]
-    application_like = any(kw in text for kw in APPLICATION_KEYWORDS)
+    application_like = _application_like(text)
     smart_info = any(kw in priority_keywords for kw in ["스마트공장", "스마트팩토리", "제조DX", "공정개선", "공정자동화", "자동화", "제조혁신"])
 
     for code, rule_notice_type, rule_target_type, keywords in EXCLUSION_RULES:
@@ -2667,7 +2836,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     deadline_status = classify_deadline_status(item, today)
     if deadline_status == "closed":
         reason_codes.append("CLOSED_DEADLINE")
-    elif deadline_status == "unknown":
+    elif deadline_status == "unknown" and not application_like:
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
     applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
@@ -2703,11 +2872,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.extend(group_excluded)
 
+    kw_text = _keyword_match_text(item)
     or_kws = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
     and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
     group_keyword_pass = True
     if group is not None and not source_bypass and (or_kws or and_groups):
-        group_keyword_pass = any(_kw_in_text(text, k) for k in or_kws) or any(all(_kw_in_text(text, k) for k in ag) for ag in and_groups)
+        group_keyword_pass = (
+            any(_kw_in_text(kw_text, k) for k in or_kws)
+            or any(all(_kw_in_text(kw_text, k) for k in ag) for ag in and_groups)
+        )
         if not group_keyword_pass:
             reason_codes.append("INDUSTRY_NOT_MATCHED")
 
@@ -2741,9 +2914,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     region_status = region_info["region_status"]
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+    # recall: 모집·신청 신호 있는데 기간 미파싱(목록 stub)이면 열린 공고로 간주 — 서울·AI 등 누락 방지
+    deadline_ok = deadline_status in {"open", "upcoming"} or (
+        deadline_status == "unknown" and application_like
+    )
     is_relevant = (
         not hard_reasons
-        and deadline_status in {"open", "upcoming"}
+        and deadline_ok
         and region_status == "eligible"
         and district_status == "eligible"
         and application_like
@@ -2764,7 +2941,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         region_status == "unknown"
         and district_status != "not_eligible"
         and not is_relevant
-        and deadline_status in {"open", "upcoming"}
+        and deadline_ok
         and application_like
         and group_keyword_pass
         and not (hard_reasons - {"REGION_UNKNOWN", "LOW_CONFIDENCE"})
@@ -3312,12 +3489,13 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
 ) -> dict:
-    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
+    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     _ALLOW_SMTP_SEND = allow_send
     _ALLOW_PERSIST_SEEN = persist_seen
     _SEND_OK = 0
     _SEND_FAIL = 0
     _LAST_SEND_ERR = ""
+    _RAW_STORE = None
 
     now = datetime.now(KST)
     mode = "send" if allow_send else "preview"
@@ -3331,16 +3509,19 @@ def execute_monitor(
 
     if not sites:
         log.info("활성 사이트 없음. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_active_sites"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites"})
     if not groups:
         log.info("활성 그룹 없음. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_active_groups"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+
+    if _RawStore is not None:
+        _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
     # ① 전체 수집
     all_items = fetch_all(sites)
     if not all_items:
         log.info("수집 0건. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_items"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
     log.info("수집 완료: %d건", len(all_items))
 
     # ② 중복 제거
@@ -3350,6 +3531,13 @@ def execute_monitor(
     # ③ 신규 필터 (seen_ids)
     new_items = [it for it in deduped if it["id"] and it["id"] not in seen_ids]
     log.info("신규(미발송): %d건 / 전체: %d건", len(new_items), len(deduped))
+
+    if _RAW_STORE is not None:
+        _RAW_STORE.begin_run(
+            collected=len(all_items), deduped=len(deduped), new_items=len(new_items),
+        )
+        for it in new_items:
+            _RAW_STORE.save_item_meta(it)
 
     new_items = enrich_items(new_items)
 
@@ -3443,7 +3631,7 @@ def execute_monitor(
         if persist_seen:
             seen_ids.update(it["id"] for it in deduped)
             save_seen_ids(seen_ids)
-        return {
+        return _with_raw_store_stats({
             "ok": True,
             "mode": mode,
             "collected": len(all_items),
@@ -3457,7 +3645,7 @@ def execute_monitor(
             "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
             "sent_groups": [],
             "preview_groups": [],
-        }
+        })
 
     # ⑥ 그룹별 필터 + 발송
     # 기업 맞춤 정밀 매칭(2차 컷오프)용 기업 프로필 로드 (활성화 시에만)
@@ -3564,7 +3752,7 @@ def execute_monitor(
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
     final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
-    return {
+    return _with_raw_store_stats({
         "ok": True,
         "mode": mode,
         "collected": len(all_items),
@@ -3582,7 +3770,7 @@ def execute_monitor(
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
-    }
+    })
 
 
 def main() -> None:

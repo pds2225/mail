@@ -240,14 +240,23 @@ def test_deadline_always_open_included(gid):
 
 @pytest.mark.parametrize("gid", ACTIVE)
 def test_deadline_missing_observed(gid):
-    """관측앵커: 기간 미상 → grp_default 만 review(priority '스마트공장'), 나머지는 excluded+MISSING."""
-    b, ev = bucket_of(mk(gid, application_period=None, deadline=""), gid)
+    """기간 미상 + 신청·모집 신호 없음 → MISSING_APPLICATION_PERIOD."""
+    b, ev = bucket_of(mk(
+        gid, application_period=None, deadline="",
+        title="제도 안내", description="유의사항 참고",
+    ), gid)
     record("deadline", "missing", gid)
     assert "MISSING_APPLICATION_PERIOD" in ev["exclude_reason_codes"]
-    if gid == "grp_default":
-        assert b == "review" and ev["review_needed"] is True
-    else:
-        assert b == "excluded"
+    assert b == "excluded"
+
+
+@pytest.mark.parametrize("gid", ACTIVE)
+def test_deadline_missing_but_application_signal_recall(gid):
+    """recall: 모집·신청 키워드 있는데 기간 미파싱 → 누락하지 않음(서울·AI 목록 stub)."""
+    b, ev = bucket_of(mk(gid, application_period=None, deadline=""), gid)
+    record("deadline", "missing_recall", gid)
+    assert "MISSING_APPLICATION_PERIOD" not in ev["exclude_reason_codes"]
+    assert b in ("included", "region_unknown", "review")
 
 
 # ══════════════════════════════════════════════════════════════════

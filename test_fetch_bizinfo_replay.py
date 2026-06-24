@@ -124,8 +124,24 @@ def test_bizinfo_empty_json_array_returns_empty():
 
 
 @respx.mock
-def test_bizinfo_missing_key_returns_empty():
-    """구조 깨짐 시나리오 2: jsonArray/channel 키가 모두 없으면 items == [] (빨간불)."""
+def test_bizinfo_req_err_returns_empty():
+    """인증키 오류(reqErr)는 0건 + 빈 배열이 아닌 명시 오류 — 로그 추적 가능."""
     respx.get(BIZINFO_URL).mock(
-        return_value=httpx.Response(200, json={"unexpected": "shape"}))
+        return_value=httpx.Response(200, json={"reqErr": "존재하지 않는 인증키 입니다."}))
     assert monitor.fetch_bizinfo(_site()) == []
+
+
+@respx.mock
+def test_bizinfo_paginated_dedup():
+    """pageIndex 2페이지까지 합치고 pblancId 중복 제거."""
+    page1 = _load("bizinfo_sample.json")
+    page2 = {"jsonArray": [page1["jsonArray"][0]]}  # duplicate id
+    route = respx.get(BIZINFO_URL)
+    route.mock(side_effect=[
+        httpx.Response(200, json=page1),
+        httpx.Response(200, json=page2),
+        httpx.Response(200, json={"jsonArray": []}),
+    ])
+    site = {**_site(), "api_page_unit": 2, "api_max_pages": 3}
+    items = monitor.fetch_bizinfo(site)
+    assert len(items) == 3

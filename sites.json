@@ -6,7 +6,9 @@
     "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
     "enabled": true,
     "is_aggregator": true,
-    "note": "통합포털"
+    "api_page_unit": 500,
+    "api_max_pages": 4,
+    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인"
   },
   {
     "id": "kstartup",
@@ -15,7 +17,8 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "통합포털 - 창업지원"
+    "max_pages": 5,
+    "note": "통합포털 - 창업지원 (공공+민간, 다페이지)"
   },
   {
     "id": "smes24",
@@ -1864,10 +1867,10 @@
     "id": "imp_4f321c10",
     "name": "기업마당",
     "type": "html_table",
-    "url": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do?schPblancDiv=01",
-    "enabled": true,
+    "url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200View.do?schPblancDiv=01",
+    "enabled": false,
     "is_aggregator": false,
-    "note": "지원사업공고 / 주기:매일 / 우선순위:상"
+    "note": "지원사업공고 HTML 15건·API(bizinfo)와 중복 — 비활성화로 수집 실패·노이즈 감소"
   },
   {
     "id": "imp_36182169",
