@@ -841,6 +841,29 @@ def _legacy_ssl_ctx() -> ssl.SSLContext:
     return ctx
 
 
+def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **kwargs) -> httpx.Response | None:
+    """GET with 3-stage SSL fallback (bizinfo API·JSON 등 _soup 외 호출용)."""
+    hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify: Any = True if stage == "strict" else (
+            False if stage == "no_verify" else _legacy_ssl_ctx())
+        try:
+            with httpx.Client(timeout=timeout, headers=hdrs, follow_redirects=True,
+                              verify=verify) as c:
+                r = c.get(url, **kwargs)
+                r.raise_for_status()
+                return r
+        except httpx.HTTPStatusError as e:
+            log.error("접속 실패 %s: %s", url, e)
+            return None
+        except Exception as e:
+            last_err = e
+            continue
+    log.error("접속 실패 %s: %s", url, last_err)
+    return None
+
+
 def _soup(url: str, extra_headers: dict | None = None, **kwargs):
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
@@ -868,35 +891,59 @@ def _item(id_, title, link, author, desc, deadline, source,
 
 
 def fetch_bizinfo(site: dict) -> list[dict]:
-    # 전체 분류·전체 건수 수집(실측 1456건). 분류필터 없음 → 금융·기술·인력·수출·내수·창업·경영 등 전 분류.
-    # (과거엔 수출(04)분류·100건 상한만 받아 1300건+ 누락)
-    try:
-        with httpx.Client(timeout=60, headers=HTTP_HEADERS) as c:
-            r = c.get(site["url"], params={
-                "crtfcKey": BIZINFO_API_KEY, "dataType": "json", "searchCnt": "99999"})
-            r.raise_for_status(); data = r.json()
-    except Exception as e:
-        log.error("기업마당 API 실패: %s", e); return []
-    raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
-    if isinstance(raw, dict): raw = [raw]
-    items = []
+    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
+    # reqErr(인증키 오류 등)는 빈 jsonArray 와 구분해 로그에 명시 — '0건' 원인 추적용.
+    page_unit = int(site.get("api_page_unit", 500))
+    max_pages = int(site.get("api_max_pages", 4))
+    items: list[dict] = []
+    seen_ids: set[str] = set()
     agg = site.get("is_aggregator", True)
-    for it in raw:
-        iid = norm(it.get("pblancId", it.get("seq", "")))
-        ttl = norm(it.get("pblancNm", it.get("title", "")))
-        lnk = norm(it.get("pblancUrl", it.get("link", "")))
-        if not iid: iid = f"bizinfo_{stable_id(ttl + lnk)}"
-        # 등록일 추출 시도 (다양한 키 이름 지원)
-        posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
-        if posted and len(posted) >= 10:
-            posted = posted[:10]  # YYYY-MM-DD HH:MM:SS → YYYY-MM-DD
-        if not posted:
-            posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-        items.append(_item(iid, ttl, lnk,
-            norm(it.get("jrsdInsttNm", it.get("author", ""))),
-            norm(it.get("bsnsSumryCn", it.get("description", ""))),
-            norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
-            site["name"], posted, agg))
+    params_base = {"crtfcKey": BIZINFO_API_KEY, "dataType": "json"}
+
+    for page in range(1, max_pages + 1):
+        r = _http_get(
+            site["url"],
+            params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
+            timeout=90,
+        )
+        if r is None:
+            break
+        try:
+            data = r.json()
+        except Exception as e:
+            log.error("기업마당 API JSON 파싱 실패: %s", e)
+            break
+        if err := data.get("reqErr"):
+            log.error("기업마당 API 오류: %s", err)
+            return items
+        raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
+        if isinstance(raw, dict):
+            raw = [raw]
+        if not raw:
+            break
+        for it in raw:
+            iid = norm(it.get("pblancId", it.get("seq", "")))
+            ttl = norm(it.get("pblancNm", it.get("title", "")))
+            lnk = norm(it.get("pblancUrl", it.get("link", "")))
+            if not iid:
+                iid = f"bizinfo_{stable_id(ttl + lnk)}"
+            if iid in seen_ids:
+                continue
+            seen_ids.add(iid)
+            posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
+            if posted and len(posted) >= 10:
+                posted = posted[:10]
+            if not posted:
+                posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
+            items.append(_item(
+                iid, ttl, lnk,
+                norm(it.get("jrsdInsttNm", it.get("author", ""))),
+                norm(it.get("bsnsSumryCn", it.get("description", ""))),
+                norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
+                site["name"], posted, agg,
+            ))
+        if len(raw) < page_unit:
+            break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -906,43 +953,70 @@ def fetch_myfair_legacy(site: dict) -> list[dict]:
     return fetch_myfair(site)
 
 
+def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_sn: set[str]) -> list[dict]:
+    """K-Startup 목록 카드 파싱 — fetch_kstartup·다운로더 공통."""
+    items: list[dict] = []
+    agg = site.get("is_aggregator", False)
+    base_url = site["url"]
+    for card in soup.select(".notice"):
+        a = card.select_one("a")
+        title = norm(a.get_text() if a else "")
+        if not title:
+            continue
+        sn = ""
+        for btn in card.select("button[onclick]"):
+            m = re.search(r"\d+", btn.get("onclick", ""))
+            if m:
+                sn = m.group(0)
+                break
+        if not sn and a:
+            m = re.search(r"\d+", a.get("href", ""))
+            if m:
+                sn = m.group(0)
+        if sn and sn in seen_sn:
+            continue
+        if sn:
+            seen_sn.add(sn)
+        link = (f"{base_url}?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else base_url
+        spans = card.select("span.list")
+        org = norm(spans[0].get_text()) if spans else ""
+        dl = next((norm(sp.get_text().replace("마감일자", ""))
+                   for sp in spans if "마감일자" in sp.get_text()), "")
+        pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
+        posted = extract_date_from_text(pm.group(1)) if pm else ""
+        flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title + org)}"
+        items.append(_item(iid, title, link, org,
+                           norm(flag.get_text()) if flag else "", dl,
+                           site["name"], posted, agg))
+    return items
+
+
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 사업공고가 공공(PBC010)·민간(PBC020)으로 분리됨 → 둘 다 수집.
-    # 과거엔 pbancClssCd 미전송 → 서버 기본값 PBC010(공공)만 받아 민간 공고를 전부 누락.
-    items, agg = [], site.get("is_aggregator", False)
-    seen_sn = set()
+    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 5) — 1페이지만 보면 page2+ 공고 누락.
+    max_pages = int(site.get("max_pages", 5))
+    items: list[dict] = []
+    seen_sn: set[str] = set()
+    referer = site.get("referer") or site["url"]
+    extra_hdr = {"Referer": referer}
+
     for clss in ("PBC010", "PBC020"):
-        soup = _soup(site["url"], params={
-            "schMenuId": "10090", "pageIndex": "1", "viewCount": "100",
-            "pbancSttus": "ing", "pbancClssCd": clss})
-        if not soup: continue
-        for card in soup.select(".notice"):
-            a = card.select_one("a")
-            title = norm(a.get_text() if a else "")
-            if not title: continue
-            sn = ""
-            for btn in card.select("button[onclick]"):
-                m = re.search(r"\d+", btn.get("onclick", ""))
-                if m: sn = m.group(0); break
-            if not sn and a:
-                m = re.search(r"\d+", a.get("href", ""))
-                if m: sn = m.group(0)
-            if sn and sn in seen_sn: continue
-            if sn: seen_sn.add(sn)
-            link = (f"https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
-                    f"?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else site["url"]
-            spans = card.select("span.list")
-            org = norm(spans[0].get_text()) if spans else ""
-            dl = next((norm(sp.get_text().replace("마감일자", ""))
-                       for sp in spans if "마감일자" in sp.get_text()), "")
-            # 게시일(등록일자) — 목록 카드에 '등록일자 YYYY-MM-DD'로 존재(기존엔 미추출→날짜불명).
-            pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
-            posted = extract_date_from_text(pm.group(1)) if pm else ""
-            flag = card.select_one(".flag:not(.day):not(.flag_agency)")
-            iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title+org)}"
-            items.append(_item(iid, title, link, org,
-                               norm(flag.get_text()) if flag else "", dl,
-                               site["name"], posted, agg))
+        empty_streak = 0
+        for page in range(1, max_pages + 1):
+            soup = _soup(site["url"], extra_headers=extra_hdr, params={
+                "schMenuId": "10090", "pageIndex": str(page), "viewCount": "100",
+                "pbancSttus": "ing", "pbancClssCd": clss,
+            })
+            if not soup:
+                break
+            page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
+            if not page_items:
+                empty_streak += 1
+            else:
+                empty_streak = 0
+                items.extend(page_items)
+            if empty_streak >= 2:
+                break
     log.info("%s: %d건", site["name"], len(items))
     return items
 
