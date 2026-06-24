@@ -3280,6 +3280,14 @@ def _mask_email(email: str) -> str:
 _ONLY_TO: str = ""
 
 def send_email(subject: str, body: str, to: str) -> None:
+    # safe-by-default: _ALLOW_SMTP_SEND 가 False면 직접 호출이라도 SMTP 연결 없이 즉시 종료한다.
+    # (send_to_list 를 거치지 않는 워치리스트 등 직접 호출 경로의 실발송 사고를 원천 차단)
+    if not _ALLOW_SMTP_SEND:
+        log.info(
+            "send_email 생략 (allow_send=False): subject=%s to=%s",
+            subject[:60], _mask_email(to or _ONLY_TO or ""),
+        )
+        return
     if _ONLY_TO:
         to = _ONLY_TO
     msg = MIMEMultipart("alternative")
@@ -3693,9 +3701,20 @@ def execute_monitor(
     }
 
 
-def main() -> None:
-    result = execute_monitor(allow_send=True, include_raw_all=True, persist_seen=True)
+def main(
+    allow_send: bool = False,
+    include_raw_all: bool = False,
+    persist_seen: bool = False,
+) -> dict:
+    # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
+    # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
+    result = execute_monitor(
+        allow_send=allow_send,
+        include_raw_all=include_raw_all,
+        persist_seen=persist_seen,
+    )
     _post_run_alert(result)
+    return result
 
 
 def _write_markdown_table(headers: list[str], rows: list[list[str]]) -> str:
@@ -3941,6 +3960,22 @@ if __name__ == "__main__":
         help="모든 발송 수신자를 이 주소 하나로 강제(테스트 실발송용 안전장치). "
              "그룹·raw_all·watchlist 어떤 경로든 이 주소로만 나간다.",
     )
+    parser.add_argument(
+        "--send",
+        action="store_true",
+        help="실제 이메일을 발송한다. 기본(미지정)은 발송하지 않는 preview-only. "
+             "이 플래그가 있어야만 SMTP 전송이 일어난다.",
+    )
+    parser.add_argument(
+        "--persist-seen",
+        action="store_true",
+        help="이번 run 의 신규 공고 id 를 seen_ids.json 에 저장한다(기본은 저장 안 함).",
+    )
+    parser.add_argument(
+        "--include-raw-all",
+        action="store_true",
+        help="원본전체(raw_all) 보고 메일도 함께 발송 대상에 포함한다(기본은 미포함).",
+    )
     args = parser.parse_args()
     if args.only_to:
         _ONLY_TO = args.only_to
@@ -3960,7 +3995,11 @@ if __name__ == "__main__":
                 summary.get("seen_ids_file_changed"),
             )
         else:
-            main()
+            main(
+                allow_send=args.send,
+                include_raw_all=args.include_raw_all,
+                persist_seen=args.persist_seen,
+            )
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise
