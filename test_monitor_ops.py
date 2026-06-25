@@ -128,6 +128,7 @@ def test_send_email_only_to_overrides_envelope_and_header(monkeypatch):
         def sendmail(self, from_addr, to_addrs, message):
             sent_messages.append((from_addr, to_addrs, message))
 
+    monkeypatch.setattr(monitor, "_ALLOW_SMTP_SEND", True)
     monkeypatch.setattr(monitor, "_ONLY_TO", "safe@example.com")
     monkeypatch.setattr(monitor.smtplib, "SMTP_SSL", lambda host, port: FakeSMTP())
 
@@ -138,6 +139,23 @@ def test_send_email_only_to_overrides_envelope_and_header(monkeypatch):
     assert envelope_to == "safe@example.com"
     assert "To: safe@example.com" in message
     assert "original@example.com" not in message
+
+
+def test_send_email_skips_smtp_when_allow_send_false(monkeypatch):
+    """_ALLOW_SMTP_SEND=False면 send_email() 직접 호출도 SMTP_SSL을 절대 열지 않는다."""
+    import monitor
+
+    smtp_calls = []
+    monkeypatch.setattr(monitor, "_ALLOW_SMTP_SEND", False)
+    monkeypatch.setattr(
+        monitor.smtplib,
+        "SMTP_SSL",
+        lambda *args, **kwargs: smtp_calls.append((args, kwargs)),
+    )
+
+    monitor.send_email("subj", "body", "original@example.com")
+
+    assert smtp_calls == []
 
 
 def test_save_seen_ids_skipped_when_persist_disabled():
