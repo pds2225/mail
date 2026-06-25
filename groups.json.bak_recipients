@@ -52,7 +52,8 @@
       "그외"
     ],
     "recipients": [
-      "ekth3691@gmail.com"
+      "ekth3691@gmail.com",
+      "khban99@gmail.com"
     ],
     "score_threshold": 1,
     "llm_check_enabled": true,
@@ -190,7 +191,8 @@
     ],
     "recipients": [
       "ekth3691@gmail.com",
-      "dvd197001@gmail.com"
+      "dvd197001@gmail.com",
+      "khban99@gmail.com"
     ],
     "score_threshold": 45,
     "weights": {
@@ -250,8 +252,7 @@
       "그외"
     ],
     "recipients": [
-      "ekth3691@gmail.com",
-      "khban99@gmail.com"
+      "ekth3691@gmail.com"
     ],
     "score_threshold": 1,
     "llm_check_enabled": true,
