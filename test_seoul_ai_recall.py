@@ -89,3 +89,70 @@ def test_application_like_from_grant_signal():
 def test_keyword_match_text_includes_support_field():
     text = m._keyword_match_text({"title": "지원", "support_field": "인공지능"})
     assert "인공지능" in text
+
+
+# ── 2026-06-25: 충북 공고 누출 차단 — 타지역 신청자한정인데 서울이 문의/운영 보일러플레이트에만 등장 ──
+def test_chungbuk_applicant_with_seoul_contact_blocked():
+    """'충북지역 중소기업 대상' + '문의: 서울특별시 …' → 서울 그룹 not_eligible.
+    충북이 신청자-한정이고 서울은 문의처 주소뿐 → 적격 오판(누출) 차단."""
+    ev = _ev({
+        "title": "충북 AI 디지털전환 바우처 지원사업",
+        "description": "충북지역 중소기업 대상 인공지능 도입 지원. 문의: 서울특별시 강남구 운영사무국. 신청 2026.07.01~2026.07.31",
+        "author": "충북테크노파크",
+    })
+    assert ev["region_status"] == "not_eligible"
+    assert ev["is_relevant"] is False
+    assert ev["region_unknown_review"] is False
+
+
+def test_chungbuk_soje_with_seoul_operator_blocked():
+    """'충북 소재 중소기업 대상' + '운영기관: 서울' → not_eligible."""
+    ev = _ev({
+        "title": "AI 바우처 모집",
+        "description": "충북 소재 중소기업 대상. 운영기관: 서울 강남 사무국. 모집",
+        "author": "충북TP",
+    })
+    assert ev["region_status"] == "not_eligible"
+
+
+def test_seoul_chungbuk_joint_still_eligible():
+    """서울·충북 공동(서울도 신청자) → eligible(recall 보존)."""
+    ev = _ev({
+        "title": "AI 공동지원 모집",
+        "description": "서울 충북 소재 중소기업 대상. 모집",
+        "author": "TP",
+    })
+    assert ev["region_status"] == "eligible"
+
+
+def test_applicant_restricted_regions_helper():
+    assert m._applicant_restricted_regions("충북지역 중소기업 대상") == {"충북"}
+    assert m._applicant_restricted_regions("충청북도 소재 기업") == {"충북"}
+    assert m._applicant_restricted_regions("문의: 서울특별시 강남구 사무국") == set()
+
+
+# ── 2026-06-25: 4월(과거) 공고 누출 차단 — 게시일 불명 + 본문 날짜 단서가 오래됨 ──
+def test_april_date_unknown_excluded_by_recency():
+    """게시일 불명 + 신청기간 4월(과거) 단서 → recall 정책에서도 제외(검토대기로)."""
+    from datetime import datetime
+    now = datetime(2026, 6, 25, tzinfo=m.KST)
+    items = [{
+        "id": "apr", "title": "2026 AI SaaS 사업화 지원 모집",
+        "description": "서울소재 기업 대상. 신청기간 2026.04.01 ~ 2026.04.30. 모집",
+        "author": "서울TP", "posted_date": "",
+    }]
+    included, remaining = m.split_unknown_by_policy(items, "recall", max_age_days=40, now=now)
+    assert included == []
+    assert len(remaining) == 1
+
+
+def test_dateless_unknown_preserved_for_recall():
+    """날짜 단서가 전혀 없는 게시일 불명 공고는 recall 위해 보존(나이 가드 미발동)."""
+    from datetime import datetime
+    now = datetime(2026, 6, 25, tzinfo=m.KST)
+    items = [{
+        "id": "none", "title": "AI 솔루션 지원 모집공고",
+        "description": "서울소재 스타트업 신청접수", "author": "서울TP", "posted_date": "",
+    }]
+    included, _ = m.split_unknown_by_policy(items, "recall", max_age_days=40, now=now)
+    assert len(included) == 1
