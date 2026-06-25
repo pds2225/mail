@@ -10,6 +10,7 @@
   "company_match_enabled": true,
   "max_posted_age_days": null,
   "date_unknown_policy": "recall",
+  "date_unknown_max_age_days": 40,
   "raw_store_enabled": true,
   "raw_store_retention_days": 30,
   "raw_store_max_detail_bytes": 800000,

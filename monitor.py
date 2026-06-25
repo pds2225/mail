@@ -197,6 +197,48 @@ _NON_GG_LOCALITIES = (
 # 차단 안 함). ★(B) 기초자치 지역명에는 family 를 적용하지 않는다 — 적용하면 경기 그룹이
 # 서울자치구(성북/동대문) 차단을 잃는다(검증으로 확인된 함정).
 _METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
+
+# ── 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 구분 ─────────────
+# 충북공고 누출 원인: '충북지역 중소기업 대상'처럼 신청자를 타지역으로 한정한 공고가
+# 본문 '문의: 서울특별시 …' 한 줄 때문에 서울 그룹에 적격으로 새어든다(2026-06-25).
+# (1) 신청자-지역 한정 패턴: {광역}{소재/지역/도내/관내/내} {기업/소상공인/…}.
+#     단순 지역명 언급(문의처 주소 등)과 달리 '그 지역 기업만 신청 가능'의 강한 신호.
+_APPLICANT_REGION_TOKEN = (
+    "서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주"
+    "|충청북도|충청남도|전라북도|전라남도|경상북도|경상남도|강원특별자치도"
+)
+_APPLICANT_LOCATOR = r"(?:특별시|광역시|특별자치시|특별자치도|도)?\s*(?:지역|소재(?:지)?(?:를?\s*둔)?|관내|도내|시내|내|에\s*소재(?:한)?)"
+_APPLICANT_NOUN = r"(?:중소기업|중견기업|소기업|창업기업|스타트업|소상공인|사업자|기업|업체|법인|소재\s*기업)"
+_APPLICANT_RESTRICT_RE = re.compile(
+    rf"(?P<r>{_APPLICANT_REGION_TOKEN})\s*{_APPLICANT_LOCATOR}\s*{_APPLICANT_NOUN}"
+)
+# 광역 풀네임 → 약칭(restricted set 비교용)
+_REGION_LONG_TO_SHORT = {
+    "충청북도": "충북", "충청남도": "충남", "전라북도": "전북", "전라남도": "전남",
+    "경상북도": "경북", "경상남도": "경남", "강원특별자치도": "강원",
+}
+# (2) 문의·운영 보일러플레이트 구간 — own 지역이 여기에만 있으면 신청자 신호로 보지 않음.
+_CONTACT_SPAN_RE = re.compile(
+    r"(?:문의|연락|접수처|담당자?|전화|이메일|메일|운영\s*사무국|사무국|콜센터|주관기관|운영기관|"
+    r"접수\s*기관|소재지|☎|tel|fax)[^\n]*",
+    flags=re.IGNORECASE,
+)
+
+
+def _applicant_restricted_regions(text: str) -> set[str]:
+    """신청자를 특정 광역으로 한정하는 강신호('{광역}{소재/지역…} {기업…}')의 광역 약칭 집합."""
+    if not text:
+        return set()
+    out: set[str] = set()
+    for mch in _APPLICANT_RESTRICT_RE.finditer(text):
+        r = mch.group("r")
+        out.add(_REGION_LONG_TO_SHORT.get(r, r))
+    return out
+
+
+def _strip_contact_spans(text: str) -> str:
+    """문의·운영 보일러플레이트 구간 제거 — 신청자 지역 신호만 남긴다."""
+    return _CONTACT_SPAN_RE.sub(" ", text or "")
 # 광역권 토큰(명명그룹). 매치된 광역이 own family 가 아니면 타지역 한정으로 본다.
 _KWON_NAMED_RE = re.compile(
     r"(?P<r>강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산|서울|인천|경기|수도)\s*권"
@@ -2144,19 +2186,59 @@ def build_date_review_queue(unknown_items: list[dict]) -> list[dict]:
     return queue
 
 
-def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[list[dict], list[dict]]:
+def _item_body_recency_date(item: dict):
+    """게시일 불명 공고의 '가장 최근 날짜 단서'(신청기간 종료/마감/본문 날짜) — recency 가드용.
+    날짜 단서가 전혀 없으면 None(완전 무단서는 recall 위해 보존)."""
+    dates = []
+    period = item.get("application_period") or {}
+    for key in ("end", "start"):
+        v = period.get(key)
+        if v:
+            try:
+                dates.append(datetime.strptime(v[:10], "%Y-%m-%d").date())
+            except ValueError:
+                pass
+    body = _notice_body_text(item) + " " + (item.get("deadline") or "")
+    dates += [parsed for _, parsed in _parse_date_candidates(body)]
+    return max(dates) if dates else None
+
+
+def _date_unknown_too_old(item: dict, max_age_days: int | None, now: datetime | None = None) -> bool:
+    """게시일 불명이지만 본문 날짜 단서가 max_age_days 보다 오래됐으면 '옛날 공고'로 본다.
+    단서가 전혀 없으면 False(보존). 4월 등 명백한 과거 공고가 recall 정책으로 새는 것을 차단."""
+    if not max_age_days:
+        return False
+    recency = _item_body_recency_date(item)
+    if recency is None:
+        return False
+    today = (now or datetime.now(KST)).date()
+    return (today - recency).days > max_age_days
+
+
+def split_unknown_by_policy(
+    unknown_items: list[dict], policy: str,
+    max_age_days: int | None = None, now: datetime | None = None,
+) -> tuple[list[dict], list[dict]]:
     """재현(recall) 정책으로 날짜불명 공고를 (메일포함, 검토잔여)로 분리.
       - all   : 전부 메일 포함
       - recall: 위험도 '중간'·'높음'(신청키워드 있거나 마감 살아있음)만 포함, '낮음'은 검토대기
       - strict(기본): 전부 검토대기(메일 미포함)
-    '안 놓치기' 목적 — 게시일을 못 읽어도 신청성 신호가 있으면 발송한다."""
+    '안 놓치기' 목적 — 게시일을 못 읽어도 신청성 신호가 있으면 발송한다.
+    max_age_days 지정 시: 본문 날짜 단서가 그보다 오래된 공고는 메일에서 제외(검토잔여로).
+    날짜 단서가 전혀 없는 무단서 공고는 정책대로 유지(recall 보존)."""
+    def _stale(it: dict) -> bool:
+        return _date_unknown_too_old(it, max_age_days, now)
+
     if policy == "all":
-        return list(unknown_items), []
+        included = [it for it in unknown_items if not _stale(it)]
+        remaining = [it for it in unknown_items if _stale(it)]
+        return included, remaining
     if policy == "recall":
         included: list[dict] = []
         remaining: list[dict] = []
         for it in unknown_items:
-            (included if assess_date_unknown_risk(it) in ("높음", "중간") else remaining).append(it)
+            keep = assess_date_unknown_risk(it) in ("높음", "중간") and not _stale(it)
+            (included if keep else remaining).append(it)
         return included, remaining
     return [], list(unknown_items)
 
@@ -2565,6 +2647,21 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     if _ovr is not None:
         return result("not_eligible", "not_eligible", [],
                       [_ovr] if isinstance(_ovr, str) else list(_ovr))
+
+    # ── 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 (충북 누출 차단, 2026-06-25) ──
+    # 타지역에 명시적 신청자-한정('충북지역 중소기업 대상')이 있고, own 광역은 문의·운영
+    # 구간에만 등장(신청자 신호 아님)하면 not_eligible. own 이 신청자 문맥에 있으면 미발동(recall).
+    restricted = _applicant_restricted_regions(app_text)
+    if restricted:
+        other_restricted = sorted(restricted - {r for r in own_regions})
+        applicant_text = _strip_contact_spans(app_text)
+        own_in_applicant = (
+            any(r in restricted for r in own_regions)          # own 도 신청자-한정 신호
+            or any(r in applicant_text for r in own_regions)   # own 이 신청자 문맥에 등장
+            or any(d.lower() in applicant_text for d in districts)
+        )
+        if other_restricted and not own_in_applicant and not nationwide and not title_nationwide:
+            return result("not_eligible", "not_eligible", [], other_restricted)
 
     other_only = [r for r in detected if r not in own_regions]
     own_in_app = any(r in app_text for r in own_regions) or any(r in detected for r in own_regions)
@@ -3565,7 +3662,11 @@ def execute_monitor(
         date_matched, date_unknown, date_excluded = partition_posted_dates(
             new_items, days_back, max_age_days=settings.get("max_posted_age_days"),
         )
-        included_unknown, remaining_unknown = split_unknown_by_policy(date_unknown, unknown_policy)
+        included_unknown, remaining_unknown = split_unknown_by_policy(
+            date_unknown, unknown_policy,
+            max_age_days=settings.get("max_posted_age_days") or settings.get("date_unknown_max_age_days"),
+            now=now,
+        )
         date_review_queue = build_date_review_queue(remaining_unknown)
         filtered_new = date_matched + included_unknown
         log.info(
