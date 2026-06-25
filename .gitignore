@@ -61,3 +61,5 @@ reports/diag_classified.json
 .bkit/
 reports/company_match/
 RESUME.md
+data/raw/
+!data/raw/.gitkeep

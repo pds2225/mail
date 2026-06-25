@@ -30,6 +30,13 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent
 
+try:
+    from raw_store import RawStore as _RawStore
+except ImportError:
+    _RawStore = None  # type: ignore[misc, assignment]
+
+_RAW_STORE: Any = None  # 실행 중 원문 저장 (execute_monitor 스코프)
+
 # ── .env 자동 로딩 (단독 실행 시 환경변수 주입) ──────────────────────────────
 # monitor.py 를 직접 실행하면 .env / .env.shared 의 키(BIZINFO_API_KEY 등)를
 # 환경변수로 주입한다. load_dotenv 는 override=False 가 기본이라, 이미 설정된
@@ -151,6 +158,16 @@ KSTARTUP_DETAIL_LABELS = {
     "지원분야": "support_field",
 }
 
+# 기업마당 상세(selectSIIA200Detail 등) — span.s_title + div.txt 라벨쌍
+BIZINFO_DETAIL_LABELS = {
+    "지원지역": "region_field",
+    "지역": "region_field",
+    "신청기간": "application_period_text",
+    "사업개요": "body",
+    "지원대상": "target_field",
+    "소관부처·지자체": "organizer_field",
+}
+
 # 비경기 '광역권' 토큰(강원권·충청권·호남권 등). 수도권/경기권/서울권은 경기를
 # 포함·인접하므로 차단 대상에서 제외한다(recall 보호).
 _NON_GG_KWON_RE = re.compile(
@@ -180,6 +197,48 @@ _NON_GG_LOCALITIES = (
 # 차단 안 함). ★(B) 기초자치 지역명에는 family 를 적용하지 않는다 — 적용하면 경기 그룹이
 # 서울자치구(성북/동대문) 차단을 잃는다(검증으로 확인된 함정).
 _METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
+
+# ── 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 구분 ─────────────
+# 충북공고 누출 원인: '충북지역 중소기업 대상'처럼 신청자를 타지역으로 한정한 공고가
+# 본문 '문의: 서울특별시 …' 한 줄 때문에 서울 그룹에 적격으로 새어든다(2026-06-25).
+# (1) 신청자-지역 한정 패턴: {광역}{소재/지역/도내/관내/내} {기업/소상공인/…}.
+#     단순 지역명 언급(문의처 주소 등)과 달리 '그 지역 기업만 신청 가능'의 강한 신호.
+_APPLICANT_REGION_TOKEN = (
+    "서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주"
+    "|충청북도|충청남도|전라북도|전라남도|경상북도|경상남도|강원특별자치도"
+)
+_APPLICANT_LOCATOR = r"(?:특별시|광역시|특별자치시|특별자치도|도)?\s*(?:지역|소재(?:지)?(?:를?\s*둔)?|관내|도내|시내|내|에\s*소재(?:한)?)"
+_APPLICANT_NOUN = r"(?:중소기업|중견기업|소기업|창업기업|스타트업|소상공인|사업자|기업|업체|법인|소재\s*기업)"
+_APPLICANT_RESTRICT_RE = re.compile(
+    rf"(?P<r>{_APPLICANT_REGION_TOKEN})\s*{_APPLICANT_LOCATOR}\s*{_APPLICANT_NOUN}"
+)
+# 광역 풀네임 → 약칭(restricted set 비교용)
+_REGION_LONG_TO_SHORT = {
+    "충청북도": "충북", "충청남도": "충남", "전라북도": "전북", "전라남도": "전남",
+    "경상북도": "경북", "경상남도": "경남", "강원특별자치도": "강원",
+}
+# (2) 문의·운영 보일러플레이트 구간 — own 지역이 여기에만 있으면 신청자 신호로 보지 않음.
+_CONTACT_SPAN_RE = re.compile(
+    r"(?:문의|연락|접수처|담당자?|전화|이메일|메일|운영\s*사무국|사무국|콜센터|주관기관|운영기관|"
+    r"접수\s*기관|소재지|☎|tel|fax)[^\n]*",
+    flags=re.IGNORECASE,
+)
+
+
+def _applicant_restricted_regions(text: str) -> set[str]:
+    """신청자를 특정 광역으로 한정하는 강신호('{광역}{소재/지역…} {기업…}')의 광역 약칭 집합."""
+    if not text:
+        return set()
+    out: set[str] = set()
+    for mch in _APPLICANT_RESTRICT_RE.finditer(text):
+        r = mch.group("r")
+        out.add(_REGION_LONG_TO_SHORT.get(r, r))
+    return out
+
+
+def _strip_contact_spans(text: str) -> str:
+    """문의·운영 보일러플레이트 구간 제거 — 신청자 지역 신호만 남긴다."""
+    return _CONTACT_SPAN_RE.sub(" ", text or "")
 # 광역권 토큰(명명그룹). 매치된 광역이 own family 가 아니면 타지역 한정으로 본다.
 _KWON_NAMED_RE = re.compile(
     r"(?P<r>강원|충청|충북|충남|호남|전북|전남|영남|경북|경남|제주|부산|대구|광주|대전|울산|서울|인천|경기|수도)\s*권"
@@ -364,7 +423,7 @@ NON_APPLICATION_PERIOD_LABELS = (
     "협약기간", "사업기간", "수행기간", "지원기간", "운영기간", "서비스 완료",
     "사업 추진 기간", "지원 기간",
 )
-DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr")
+DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr", "bizinfo.go.kr")
 MAX_DETAIL_ENRICH = 40
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -644,6 +703,16 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
         if re.search(pattern, text):
             if label not in regions:
                 regions.append(label)
+    # 공백 없는 지역 접미사 표기('충북지역'·'충북도내'·'충북관내') 보강(2026-06-25).
+    # 기존 hint 는 '충북\\s'(뒤 공백)만 잡아 '충북지역 기업 대상'류 타지역 한정을 통째로 놓쳤다.
+    # '소재'는 아래 KNOWN_REGIONS 패스(\\s*소재)가 이미 커버. '광주'는 경기 광주시 충돌로 제외.
+    # '권'(광역권: 경기권·수도권 등)은 _other_region_block·수도권 family 면제가 따로 처리하므로 제외.
+    for label in (
+        "서울", "부산", "대구", "인천", "대전", "울산", "세종", "경기",
+        "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+    ):
+        if label not in regions and re.search(rf"{label}(?:지역|도내|시내|관내|내)", text):
+            regions.append(label)
     _SOJI_EXCLUDE = frozenset({"수도권", "비수도권"})
     for label in KNOWN_REGIONS:
         if label in _SOJI_EXCLUDE:
@@ -680,6 +749,27 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
         body = soup.select_one(".detail") or soup.select_one(".tab3.bsnsWrap")
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
+    elif "bizinfo.go.kr" in url:
+        for span in soup.select("span.s_title"):
+            label = norm(span.get_text())
+            key = BIZINFO_DETAIL_LABELS.get(label)
+            if not key:
+                for lk, field_key in BIZINFO_DETAIL_LABELS.items():
+                    if lk in label:
+                        key = field_key
+                        break
+            if not key:
+                continue
+            txt_div = span.find_next_sibling("div", class_="txt")
+            if not txt_div:
+                continue
+            val = norm(txt_div.get_text("\n", strip=True))
+            if val and key not in result:
+                result[key] = val[:12000] if key == "body" else val
+        if "body" not in result:
+            body = soup.select_one("article, .view_cont, #contents, main, .content")
+            if body:
+                result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
         body = soup.select_one("article, .view_cont, #contents, main")
         if body:
@@ -694,9 +784,13 @@ def enrich_item_from_detail(item: dict) -> dict:
         return item
     if not any(host in link for host in DETAIL_ENRICH_HOSTS):
         return item
-    soup = _soup(link)
-    if not soup:
+    resp = _http_get(link)
+    if resp is None:
         return item
+    html_text = resp.text
+    soup = BeautifulSoup(html_text, "html.parser")
+    if _RAW_STORE is not None:
+        _RAW_STORE.save_detail_html(item["id"], link, html_text)
     fields = _parse_detail_from_page(soup, link)
     updated = {**item, "detail_enriched": True}
     body = fields.get("body", "")
@@ -715,7 +809,21 @@ def enrich_item_from_detail(item: dict) -> dict:
     if fields.get("organizer_field") and not (updated.get("author") or "").strip():
         updated["author"] = fields["organizer_field"]
     period_src = fields.get("application_period_text") or updated.get("description", "")
-    period = extract_application_period(period_src) or extract_application_period(body)
+    period: dict[str, str] = {}
+    if fields.get("application_period_text"):
+        # 기업마당 상세: 라벨 없이 "2026.06.18 ~ 2026.07.06" 만 오는 경우
+        norm_period = re.sub(r"(\d{4})\.(\d{2})\.(\d{2})", r"\1-\2-\3", fields["application_period_text"])
+        dates = _parse_period_dates(norm_period)
+        if dates:
+            start, end = dates[0].isoformat(), dates[-1].isoformat()
+            display = f"{start} ~ {end}" if start != end else end
+            period = {"start": start, "end": end, "display": display, "label": "신청기간"}
+    if not period.get("display"):
+        if fields.get("application_period_text"):
+            period_src = re.sub(
+                r"(\d{4})\.(\d{2})\.(\d{2})", r"\1-\2-\3", fields["application_period_text"],
+            )
+        period = extract_application_period(period_src) or extract_application_period(body)
     if period.get("display"):
         updated["deadline"] = period["display"]
         updated["application_period"] = period
@@ -736,6 +844,8 @@ def enrich_item_from_detail(item: dict) -> dict:
     posted = extract_date_from_text(body)
     if posted and not (updated.get("posted_date") or "").strip():
         updated["posted_date"] = posted
+    if _RAW_STORE is not None:
+        _RAW_STORE.update_meta_after_enrich(updated)
     return updated
 
 
@@ -820,8 +930,19 @@ def load_settings() -> dict:
         #   strict=제외(검토대기) / recall=신청키워드·마감 살아있는 것만 포함 / all=전부 포함
         #   None이면 legacy include_date_unknown 으로 결정(True→all, False→strict).
         "date_unknown_policy": None,
+        # 원문 저장(PC 로컬): docs/RAW_STORE.md
+        "raw_store_enabled": False,
+        "raw_store_retention_days": 30,
+        "raw_store_max_detail_bytes": 800_000,
+        "raw_store_gzip_detail": True,
     }
     return {**default, **load_json(SETTINGS_PATH, {})}
+
+
+def _with_raw_store_stats(result: dict) -> dict:
+    if _RAW_STORE is not None:
+        result = {**result, **_RAW_STORE.summary()}
+    return result
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -2075,19 +2196,59 @@ def build_date_review_queue(unknown_items: list[dict]) -> list[dict]:
     return queue
 
 
-def split_unknown_by_policy(unknown_items: list[dict], policy: str) -> tuple[list[dict], list[dict]]:
+def _item_body_recency_date(item: dict):
+    """게시일 불명 공고의 '가장 최근 날짜 단서'(신청기간 종료/마감/본문 날짜) — recency 가드용.
+    날짜 단서가 전혀 없으면 None(완전 무단서는 recall 위해 보존)."""
+    dates = []
+    period = item.get("application_period") or {}
+    for key in ("end", "start"):
+        v = period.get(key)
+        if v:
+            try:
+                dates.append(datetime.strptime(v[:10], "%Y-%m-%d").date())
+            except ValueError:
+                pass
+    body = _notice_body_text(item) + " " + (item.get("deadline") or "")
+    dates += [parsed for _, parsed in _parse_date_candidates(body)]
+    return max(dates) if dates else None
+
+
+def _date_unknown_too_old(item: dict, max_age_days: int | None, now: datetime | None = None) -> bool:
+    """게시일 불명이지만 본문 날짜 단서가 max_age_days 보다 오래됐으면 '옛날 공고'로 본다.
+    단서가 전혀 없으면 False(보존). 4월 등 명백한 과거 공고가 recall 정책으로 새는 것을 차단."""
+    if not max_age_days:
+        return False
+    recency = _item_body_recency_date(item)
+    if recency is None:
+        return False
+    today = (now or datetime.now(KST)).date()
+    return (today - recency).days > max_age_days
+
+
+def split_unknown_by_policy(
+    unknown_items: list[dict], policy: str,
+    max_age_days: int | None = None, now: datetime | None = None,
+) -> tuple[list[dict], list[dict]]:
     """재현(recall) 정책으로 날짜불명 공고를 (메일포함, 검토잔여)로 분리.
       - all   : 전부 메일 포함
       - recall: 위험도 '중간'·'높음'(신청키워드 있거나 마감 살아있음)만 포함, '낮음'은 검토대기
       - strict(기본): 전부 검토대기(메일 미포함)
-    '안 놓치기' 목적 — 게시일을 못 읽어도 신청성 신호가 있으면 발송한다."""
+    '안 놓치기' 목적 — 게시일을 못 읽어도 신청성 신호가 있으면 발송한다.
+    max_age_days 지정 시: 본문 날짜 단서가 그보다 오래된 공고는 메일에서 제외(검토잔여로).
+    날짜 단서가 전혀 없는 무단서 공고는 정책대로 유지(recall 보존)."""
+    def _stale(it: dict) -> bool:
+        return _date_unknown_too_old(it, max_age_days, now)
+
     if policy == "all":
-        return list(unknown_items), []
+        included = [it for it in unknown_items if not _stale(it)]
+        remaining = [it for it in unknown_items if _stale(it)]
+        return included, remaining
     if policy == "recall":
         included: list[dict] = []
         remaining: list[dict] = []
         for it in unknown_items:
-            (included if assess_date_unknown_risk(it) in ("높음", "중간") else remaining).append(it)
+            keep = assess_date_unknown_risk(it) in ("높음", "중간") and not _stale(it)
+            (included if keep else remaining).append(it)
         return included, remaining
     return [], list(unknown_items)
 
@@ -2497,6 +2658,21 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         return result("not_eligible", "not_eligible", [],
                       [_ovr] if isinstance(_ovr, str) else list(_ovr))
 
+    # ── 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 (충북 누출 차단, 2026-06-25) ──
+    # 타지역에 명시적 신청자-한정('충북지역 중소기업 대상')이 있고, own 광역은 문의·운영
+    # 구간에만 등장(신청자 신호 아님)하면 not_eligible. own 이 신청자 문맥에 있으면 미발동(recall).
+    restricted = _applicant_restricted_regions(app_text)
+    if restricted:
+        other_restricted = sorted(restricted - {r for r in own_regions})
+        applicant_text = _strip_contact_spans(app_text)
+        own_in_applicant = (
+            any(r in restricted for r in own_regions)          # own 도 신청자-한정 신호
+            or any(r in applicant_text for r in own_regions)   # own 이 신청자 문맥에 등장
+            or any(d.lower() in applicant_text for d in districts)
+        )
+        if other_restricted and not own_in_applicant and not nationwide and not title_nationwide:
+            return result("not_eligible", "not_eligible", [], other_restricted)
+
     other_only = [r for r in detected if r not in own_regions]
     own_in_app = any(r in app_text for r in own_regions) or any(r in detected for r in own_regions)
     if other_only and not own_in_app and not nationwide:
@@ -2576,6 +2752,26 @@ def classify_region(item: dict) -> dict:
         return {"region_status": "not_eligible", "district_status": "not_eligible",
                 "eligible_regions": [],
                 "excluded_regions": [_ovr] if isinstance(_ovr, str) else list(_ovr)}
+    # 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 (충북 누출 차단, 2026-06-25) —
+    # classify_region_for_group 과 동일 규칙. 타지역 신청자-한정인데 '인천'은 문의/운영
+    # 보일러플레이트에만 등장하면 not_eligible. 인천이 신청자 문맥에 있으면 미발동(recall).
+    _restricted = _applicant_restricted_regions(app_text)
+    if _restricted:
+        _other_restricted = sorted(_restricted - {"인천"})
+        _applicant_text = _strip_contact_spans(app_text)
+        _own_in_applicant = (
+            "인천" in _restricted
+            or "인천" in _applicant_text
+            or any(d.lower() in _applicant_text for d in INCHEON_DISTRICTS)
+        )
+        if _other_restricted and not _own_in_applicant and not nationwide and not title_nationwide:
+            return {
+                "region_status": "not_eligible",
+                "district_status": "not_eligible",
+                "eligible_regions": [],
+                "excluded_regions": _other_restricted,
+            }
+
     # own(인천) 광역명이 조사로 붙어('인천과') hint(\s 요구)에 안 잡혀도 본문 substring 으로 재확인 —
     # _other_region_block own_present(substring) 과 기준을 맞춰 표기위치 비대칭 누락 방지(recall).
     own_in_text = "인천" in app_text
@@ -3428,12 +3624,13 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
 ) -> dict:
-    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
+    global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     _ALLOW_SMTP_SEND = allow_send
     _ALLOW_PERSIST_SEEN = persist_seen
     _SEND_OK = 0
     _SEND_FAIL = 0
     _LAST_SEND_ERR = ""
+    _RAW_STORE = None
 
     now = datetime.now(KST)
     mode = "send" if allow_send else "preview"
@@ -3447,16 +3644,19 @@ def execute_monitor(
 
     if not sites:
         log.info("활성 사이트 없음. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_active_sites"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites"})
     if not groups:
         log.info("활성 그룹 없음. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_active_groups"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+
+    if _RawStore is not None:
+        _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
     # ① 전체 수집
     all_items = fetch_all(sites)
     if not all_items:
         log.info("수집 0건. 종료.")
-        return {"ok": True, "mode": mode, "reason": "no_items"}
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
     log.info("수집 완료: %d건", len(all_items))
 
     # ② 중복 제거
@@ -3466,6 +3666,13 @@ def execute_monitor(
     # ③ 신규 필터 (seen_ids)
     new_items = [it for it in deduped if it["id"] and it["id"] not in seen_ids]
     log.info("신규(미발송): %d건 / 전체: %d건", len(new_items), len(deduped))
+
+    if _RAW_STORE is not None:
+        _RAW_STORE.begin_run(
+            collected=len(all_items), deduped=len(deduped), new_items=len(new_items),
+        )
+        for it in new_items:
+            _RAW_STORE.save_item_meta(it)
 
     new_items = enrich_items(new_items)
 
@@ -3493,7 +3700,11 @@ def execute_monitor(
         date_matched, date_unknown, date_excluded = partition_posted_dates(
             new_items, days_back, max_age_days=settings.get("max_posted_age_days"),
         )
-        included_unknown, remaining_unknown = split_unknown_by_policy(date_unknown, unknown_policy)
+        included_unknown, remaining_unknown = split_unknown_by_policy(
+            date_unknown, unknown_policy,
+            max_age_days=settings.get("max_posted_age_days") or settings.get("date_unknown_max_age_days"),
+            now=now,
+        )
         date_review_queue = build_date_review_queue(remaining_unknown)
         filtered_new = date_matched + included_unknown
         log.info(
@@ -3559,7 +3770,7 @@ def execute_monitor(
         if persist_seen:
             seen_ids.update(it["id"] for it in deduped)
             save_seen_ids(seen_ids)
-        return {
+        return _with_raw_store_stats({
             "ok": True,
             "mode": mode,
             "collected": len(all_items),
@@ -3573,7 +3784,7 @@ def execute_monitor(
             "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
             "sent_groups": [],
             "preview_groups": [],
-        }
+        })
 
     # ⑥ 그룹별 필터 + 발송
     # 기업 맞춤 정밀 매칭(2차 컷오프)용 기업 프로필 로드 (활성화 시에만)
@@ -3680,7 +3891,7 @@ def execute_monitor(
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
     final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
-    return {
+    return _with_raw_store_stats({
         "ok": True,
         "mode": mode,
         "collected": len(all_items),
@@ -3698,7 +3909,7 @@ def execute_monitor(
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
-    }
+    })
 
 
 def main(

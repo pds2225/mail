@@ -2,6 +2,7 @@
 """Recall zero gate — 알려진 누락(recall) 테스트가 전부 통과할 때만 OK.
 
 야간 자동개발·CI가 '누락 없음' 종료 조건을 숫자로 판정할 때 쓴다.
+3대 소스(기업마당·K-Startup·NIPA) 수집 완성도는 scripts/core_sources_checklist.py (별도).
 
 Usage (PowerShell, D:\\mail):
   python scripts/recall_zero_gate.py

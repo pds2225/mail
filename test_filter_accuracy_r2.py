@@ -93,6 +93,51 @@ def test_incheon_short_district_no_swallow():
     assert _inc({"title": "중랑 청년 지원", "author": "중랑구청", "region_field": "전국"}) == "not_eligible"
 
 
+# ── 2026-06-25: 충북형 누출(타지역 신청자한정 + own 보일러플레이트) — 인천 그룹(classify_region) ──
+def test_incheon_blocks_chungbuk_applicant_with_incheon_contact():
+    """'충북지역 중소기업 대상' + '문의: 인천 사무국' → 인천 그룹 not_eligible.
+    충북이 신청자-한정, 인천은 문의처뿐 → 누출 차단(P1)."""
+    assert _inc({
+        "title": "충북 화장품 수출 지원사업",
+        "description": "충북지역 중소기업 대상 화장품 수출. 문의: 인천 연수구 운영사무국. 모집",
+        "author": "충북테크노파크",
+    }) == "not_eligible"
+
+
+def test_incheon_chungbuk_soje_with_incheon_operator_blocked():
+    assert _inc({
+        "title": "K-뷰티 수출 모집",
+        "description": "충북 소재 중소기업 대상. 운영기관: 인천 사무국. 모집",
+        "author": "충북TP",
+    }) == "not_eligible"
+
+
+def test_incheon_joint_with_chungbuk_still_eligible():
+    """인천도 신청자(인천·충북 공동) → eligible(recall 보존)."""
+    assert _inc({
+        "title": "화장품 공동수출",
+        "description": "인천 충북 소재 중소기업 대상. 모집",
+        "author": "TP",
+    }) == "eligible"
+
+
+# ── 2026-06-25: 지역 감지 공백 결함(P2) — '충북지역/충북도내/충북관내' 인식, 과탐지 없음 ──
+def test_detect_region_suffix_without_space():
+    assert "충북" in m._detect_target_regions("충북지역 중소기업 대상")["regions"]
+    assert "충북" in m._detect_target_regions("충북도내 기업")["regions"]
+    assert "전남" in m._detect_target_regions("전남관내 소상공인")["regions"]
+
+
+def test_detect_region_no_false_positive_on_economy_word():
+    """'경기침체'(경제용어)는 지역 '경기'로 오탐하지 않음 — 접미사 한정."""
+    assert m._detect_target_regions("경기침체 대응 자금 지원")["regions"] == []
+
+
+def test_detect_region_kwon_not_plain_region():
+    """'경기권'의 '권'은 광역권 별도 처리 — 일반 지역 '경기'로 잡지 않음(수도권 family 면제 보존)."""
+    assert "경기" not in m._detect_target_regions("경기권 제조 지원")["regions"]
+
+
 def test_national_org_ccei_spared_all_groups():
     """창조경제혁신센터 주관 전국공고 — (B) 차단 제외(전국 정당공고 보호)."""
     item = {"title": "2026 KAMCO TechBlaze 모집 공고", "author": "서울창조경제혁신센터",
