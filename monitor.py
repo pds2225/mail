@@ -703,6 +703,16 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
         if re.search(pattern, text):
             if label not in regions:
                 regions.append(label)
+    # 공백 없는 지역 접미사 표기('충북지역'·'충북도내'·'충북관내') 보강(2026-06-25).
+    # 기존 hint 는 '충북\\s'(뒤 공백)만 잡아 '충북지역 기업 대상'류 타지역 한정을 통째로 놓쳤다.
+    # '소재'는 아래 KNOWN_REGIONS 패스(\\s*소재)가 이미 커버. '광주'는 경기 광주시 충돌로 제외.
+    # '권'(광역권: 경기권·수도권 등)은 _other_region_block·수도권 family 면제가 따로 처리하므로 제외.
+    for label in (
+        "서울", "부산", "대구", "인천", "대전", "울산", "세종", "경기",
+        "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주",
+    ):
+        if label not in regions and re.search(rf"{label}(?:지역|도내|시내|관내|내)", text):
+            regions.append(label)
     _SOJI_EXCLUDE = frozenset({"수도권", "비수도권"})
     for label in KNOWN_REGIONS:
         if label in _SOJI_EXCLUDE:
@@ -2742,6 +2752,26 @@ def classify_region(item: dict) -> dict:
         return {"region_status": "not_eligible", "district_status": "not_eligible",
                 "eligible_regions": [],
                 "excluded_regions": [_ovr] if isinstance(_ovr, str) else list(_ovr)}
+    # 신청자 '지역 한정' 강신호 vs 문의·운영 보일러플레이트 (충북 누출 차단, 2026-06-25) —
+    # classify_region_for_group 과 동일 규칙. 타지역 신청자-한정인데 '인천'은 문의/운영
+    # 보일러플레이트에만 등장하면 not_eligible. 인천이 신청자 문맥에 있으면 미발동(recall).
+    _restricted = _applicant_restricted_regions(app_text)
+    if _restricted:
+        _other_restricted = sorted(_restricted - {"인천"})
+        _applicant_text = _strip_contact_spans(app_text)
+        _own_in_applicant = (
+            "인천" in _restricted
+            or "인천" in _applicant_text
+            or any(d.lower() in _applicant_text for d in INCHEON_DISTRICTS)
+        )
+        if _other_restricted and not _own_in_applicant and not nationwide and not title_nationwide:
+            return {
+                "region_status": "not_eligible",
+                "district_status": "not_eligible",
+                "eligible_regions": [],
+                "excluded_regions": _other_restricted,
+            }
+
     # own(인천) 광역명이 조사로 붙어('인천과') hint(\s 요구)에 안 잡혀도 본문 substring 으로 재확인 —
     # _other_region_block own_present(substring) 과 기준을 맞춰 표기위치 비대칭 누락 방지(recall).
     own_in_text = "인천" in app_text
