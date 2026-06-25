@@ -83,7 +83,7 @@ def gyeonggi_group(inclusive=False, enforce=False, business_years=None):
 def test_G001_own_signal_incheon_eligible():
     """인천 그룹: '인천 소재' own 직접신호 → eligible(전국 아님)."""
     assert region_status({"title": "인천 소재 기업 수출지원", "description": "인천 소재 중소기업"},
-                         "grp_default") == "eligible"
+                         "grp_bnco") == "eligible"
 
 
 def test_G001_own_signal_seoul_eligible():
@@ -248,7 +248,7 @@ def test_G002_amount_filter_disabled_by_default_no_exclude():
     assert "AMOUNT_TOO_LOW" in on["exclude_reason_codes"]            # 플래그 켜면 제외
 
 
-@pytest.mark.parametrize("gid", ["grp_default", "grp_ai_saas", "grp_bnco"])
+@pytest.mark.parametrize("gid", ["grp_ai_saas", "grp_bnco"])
 def test_G002_status_na_without_threshold(gid):
     """임계(min_support_amount) 없는 그룹 → n/a(이 축 미적용)."""
     item = {"title": "지원사업", "description": "지원금 100만원", "author": "", "deadline": ""}
@@ -315,8 +315,8 @@ def test_G003_support_match_empty_passes():
 
 
 def test_G003_support_match_etc_included_when_enabled():
-    """'그외'가 enabled_types 에 포함된 그룹(grp_default)에서 그외 공고는 통과(recall 보존)."""
-    enabled = G["grp_default"]["support_types"]
+    """'그외'가 enabled_types 에 포함된 그룹(grp_bnco)에서 그외 공고는 통과(recall 보존)."""
+    enabled = G["grp_bnco"]["support_types"]
     assert "그외" in enabled
     assert m.support_match({"title": "해외진출 네트워크 행사"}, enabled) is True
 

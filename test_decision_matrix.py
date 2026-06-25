@@ -193,7 +193,7 @@ def test_amount_nonmoney_man_not_excluded():
     assert b != "excluded" and ev["support_amount_status"] == "unknown"
 
 
-@pytest.mark.parametrize("gid", ["grp_default", "grp_ai_saas", "grp_prestartup_ai", "grp_bnco"])
+@pytest.mark.parametrize("gid", ["grp_ai_saas", "grp_prestartup_ai", "grp_bnco"])
 def test_amount_na_for_groups_without_threshold(gid):
     """임계 없는 그룹은 amount n/a — 이 축 미적용(통과)."""
     b, ev = bucket_of(base(gid), gid)
