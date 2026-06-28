@@ -118,6 +118,89 @@ def test_score_other_region_only_is_mismatch():
     assert s["score"] < 50
 
 
+def test_score_nationwide_with_other_region_not_boosted():
+    """'전국' 표기가 있어도 타지역(대구)이 명시되면 전국 보너스를 주지 않고 감점·확인필요로 surface.
+
+    회귀: 비앤코(인천)에 '[대구] 식품박람회'가 '전국' 한 단어로 +16점(적합도 76·1위)
+    매칭되던 버그. 타지역 명시를 '전국' 키워드보다 우선 평가해야 한다.
+    """
+    boosted = company_match.compute_match_score(
+        _item("전국 식품제조 박람회 참가 지원",
+              "전국 식품제조업소 대상. 대구 EXCO 개최. 판로 개척 수출."),
+        _incheon_company())
+    assert boosted["breakdown"]["region_status"] == "nationwide_other_region"
+    assert any("확인 필요" in mm for mm in boosted["mismatches"])
+    # 같은 본문에서 '대구'만 뺀(순수 전국) 공고보다 점수가 낮아야 한다
+    pure = company_match.compute_match_score(
+        _item("전국 식품제조 박람회 참가 지원",
+              "전국 식품제조업소 대상. 판로 개척 수출."),
+        _incheon_company())
+    assert boosted["score"] < pure["score"]
+
+
+def test_score_pure_nationwide_still_boosted():
+    """타지역 명시 없는 순수 '전국' 공고는 종전대로 전국 보너스 유지(recall 보존)."""
+    s = company_match.compute_match_score(
+        _item("전국 중소제조기업 수출바우처 지원", "전국 중소기업 대상 수출 지원. 제조업."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "nationwide"
+    assert s["breakdown"]["region_score"] > 0
+
+
+def test_score_other_region_with_nationwide_excluded_from_match():
+    """전국+타지역 동시 공고는 match_for_company 상위 매칭에서 밀려난다(점수 하락)."""
+    item = _item("전국 식품박람회", "전국 식품제조 대상. 대구 개최. 판로 수출 박람회.")
+    out = company_match.match_for_company([item], _incheon_company())
+    # 전국 보너스 대신 감점 → threshold(50) 미만으로 매칭 제외
+    assert all("대구" not in it.get("description", "") for it in out["matched"])
+
+
+def test_score_other_region_with_operator_in_own_region():
+    """★Workflow 확정 빈틈: '대구 전용' 공고에 운영사 주소로 우리 시(인천)가 끼어도
+    신청자격 강신호(대구 소재 기업만)를 보고 타지역 한정으로 제외한다.
+    (city in text 가 운영사/문의처 주소까지 +시일치로 잡던 '거울상' 버그 차단)"""
+    s = company_match.compute_match_score(
+        _item("대구 전용 식품박람회 참가지원",
+              "대구광역시 소재 기업만 신청 가능. 운영사: 인천 소재 OO센터. 박람회 수출."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "other_only"
+    assert any("타지역" in m for m in s["mismatches"])
+
+
+def test_score_region_token_word_boundary_no_false_positive():
+    """광역명 부분매칭 오탐 방지: '서울대 교수'의 '서울'을 지역으로 오인하지 않는다.
+    → 전국 청년 공고는 인천 기업에 nationwide 로 유지(타지역 오탐 감점 없음)."""
+    s = company_match.compute_match_score(
+        _item("청년 창업 지원", "전국 청년 대상. 멘토 서울대 교수 참여."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "nationwide"
+
+
+def test_score_non_metropolitan_only_excludes_incheon():
+    """'비수도권 한정' 공고는 수도권인 인천을 제외한다."""
+    s = company_match.compute_match_score(
+        _item("비수도권 제조기업 지원", "비수도권 소재 중소제조기업 대상."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "other_only"
+
+
+def test_score_sudogwon_family_eligible():
+    """'수도권' 공고는 수도권 family 인 인천 기업에 적격(소재 단서 없어도)."""
+    s = company_match.compute_match_score(
+        _item("수도권 제조기업 수출지원", "수도권 소재 제조기업 대상. 박람회."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "city"
+    assert s["breakdown"]["region_score"] > 0
+
+
+def test_score_fullname_province_other_region_excluded():
+    """광역 풀네임(경상남도) 타지역 한정도 약칭으로 정규화해 제외한다."""
+    s = company_match.compute_match_score(
+        _item("경남 수출", "경상남도 소재 수출기업 대상."),
+        _incheon_company())
+    assert s["breakdown"]["region_status"] == "other_only"
+
+
 def test_score_exclude_keyword_drops_below_threshold():
     s = company_match.compute_match_score(
         _item("스마트공장 설명회 안내", "설명회 일정"), _incheon_company())
