@@ -2636,15 +2636,17 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     # 기준을 맞춰 같은 적격지역이 제목태그/본문 표기위치에 따라 비대칭 누락되는 것을 막는다(recall 보존).
     # 단, 사람이 제목/설명에 '전국'을 명시했으면 _other_region_block 의 explicit_nationwide 면제와
     # 동일하게 태그 배제를 건너뛴다 — 타지역 태그가 앞에 와도 명시적 전국 공고는 누락 금지(recall).
-    tags = _title_region_tags(item)
-    title_nationwide = "전국" in str(item.get("title", "")) or "전국" in str(item.get("description", ""))
-    if tags and not title_nationwide and not any(r in tags for r in own_regions):
-        return result("not_eligible", "not_eligible", [], tags)
-
+    # 신청대상 지역을 먼저 정밀 판정. 제목 [지역]태그/신청한정 면제를 거친 "전국" substring
+    # 대신 _resolve 의 nationwide(신청 전국 vs 개최지만 타지역 구분)로 판정 — '[대구] 전국
+    # 박람회(대구 소재 한정)'가 '전국' 한 단어로 태그차단을 우회하던 빈틈 차단(recall 보존).
     app_scope = _resolve_applicant_region_scope(item)
     app_text = _applicant_target_text(item)
     detected = [r.lower() for r in (app_scope.get("regions") or [])]
     nationwide = bool(app_scope.get("nationwide"))
+
+    tags = _title_region_tags(item)
+    if tags and not nationwide and not any(r in tags for r in own_regions):
+        return result("not_eligible", "not_eligible", [], tags)
 
     district_hits = []
     for d in districts:
@@ -2670,7 +2672,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
             or any(r in applicant_text for r in own_regions)   # own 이 신청자 문맥에 등장
             or any(d.lower() in applicant_text for d in districts)
         )
-        if other_restricted and not own_in_applicant and not nationwide and not title_nationwide:
+        if other_restricted and not own_in_applicant and not nationwide:
             return result("not_eligible", "not_eligible", [], other_restricted)
 
     other_only = [r for r in detected if r not in own_regions]
@@ -2732,19 +2734,18 @@ def classify_region(item: dict) -> dict:
             "eligible_regions": [APPLICANT_REGION_CITY],
             "excluded_regions": [],
         }
-    title_nationwide = "전국" in str(item.get("title", "")) or "전국" in str(item.get("description", ""))
-    if tags and not title_nationwide:
+    app_scope = _resolve_applicant_region_scope(item)
+    app_text = _applicant_target_text(item)
+    explicit_regions = list(app_scope.get("regions") or [])
+    nationwide = bool(app_scope.get("nationwide"))
+    # 거친 "전국" substring 대신 정밀 nationwide 로 태그 면제 판정(빈틈 #13 차단, recall 보존).
+    if tags and not nationwide:
         return {
             "region_status": "not_eligible",
             "district_status": "not_eligible",
             "eligible_regions": [],
             "excluded_regions": tags,
         }
-
-    app_scope = _resolve_applicant_region_scope(item)
-    app_text = _applicant_target_text(item)
-    explicit_regions = list(app_scope.get("regions") or [])
-    nationwide = bool(app_scope.get("nationwide"))
     # 인천 그룹에도 동일 recall-safe 타지역 override 적용(own=인천, 수도권 family 상호제외).
     # own(인천/INCHEON_DISTRICTS) 또는 사람이 쓴 제목·본문 '전국'이 있으면 미발동(기존 분기 보존).
     _ovr = _other_region_block(item, {"label": "인천", "districts": INCHEON_DISTRICTS})
@@ -2764,7 +2765,7 @@ def classify_region(item: dict) -> dict:
             or "인천" in _applicant_text
             or any(d.lower() in _applicant_text for d in INCHEON_DISTRICTS)
         )
-        if _other_restricted and not _own_in_applicant and not nationwide and not title_nationwide:
+        if _other_restricted and not _own_in_applicant and not nationwide:
             return {
                 "region_status": "not_eligible",
                 "district_status": "not_eligible",
