@@ -209,19 +209,22 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
         own_region_in = bool(regions & own)
         other_regions = sorted(regions - own)
         metro_co = city in _METRO_FAMILY
-        nonmetro_only = ("비수도권" in atext) and metro_co
-        sudogwon_co = ("수도권" in atext) and ("비수도권" not in atext) and metro_co
+        sudogwon_notice = ("수도권" in atext) and ("비수도권" not in atext)
+        nonmetro_only = ("비수도권" in atext) and metro_co            # 비수도권 한정 + 우리=수도권 → 차단
+        sudogwon_co = sudogwon_notice and metro_co                    # 수도권 한정 + 우리=수도권 → 적격
+        sudogwon_block = sudogwon_notice and bool(city) and not metro_co  # 수도권 한정 + 우리=비수도권 → 차단
 
         if restricted and not own_restricted:
             # 신청 자격이 타지역으로만 한정됨(강신호) — 운영사/개최지의 우리 시 언급은 무시
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
             mismatches.append(f"타지역 한정({', '.join(other_restricted[:3])})")
-        elif nonmetro_only:
-            # 비수도권 한정 → 수도권(우리 시) 제외
+        elif nonmetro_only or sudogwon_block:
+            # 권역 한정(수도권/비수도권)인데 우리 지역이 그 권역에 속하지 않음 → 차단
+            # (monitor classify_region_for_group 의 KNOWN_REGIONS 권역 폴백과 동일 취지)
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
-            mismatches.append("비수도권 한정(우리 지역 제외)")
+            mismatches.append("권역 한정(우리 지역 제외)")
         elif own_restricted or own_region_in or dist_in or sudogwon_co:
             if dist_in:
                 region_score = weights["region_district"]
