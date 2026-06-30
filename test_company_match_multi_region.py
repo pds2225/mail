@@ -71,3 +71,24 @@ def test_sudogwon_only_metro_family():
     """★빈틈 회귀: '수도권 소재' 공고는 수도권 family(서울·인천·경기)만 통과, 비수도권 차단."""
     item = {"title": "수도권 제조 지원", "description": "수도권 소재 제조기업 대상."}
     _assert_matrix(item, lambda o: "PASS" if o in METRO else "BLOCK", "수도권공동")
+
+
+def test_region_cluster_members_only():
+    """★권역 일반화 회귀(2026-06-29): 수도권만이 아니라 경상/호남/충청/강원권 한정 공고도
+    그 권역 멤버 기업만 통과하고 비멤버는 차단한다."""
+    cluster = {
+        "수도권": {"서울", "인천", "경기"},
+        "경상권": {"부산", "대구"},
+        "호남권": {"광주"},
+        "충청권": {"충북"},
+        "강원권": {"강원"},
+    }
+    owns = dict(OWNS)
+    owns["광주"] = _comp("광주")
+    owns["강원"] = _comp("강원")
+    for kwon, members in cluster.items():
+        item = {"title": f"{kwon} 제조 지원", "description": f"{kwon} 소재 제조기업 대상."}
+        for own, c in owns.items():
+            exp = "PASS" if own in members else "BLOCK"
+            got = _verdict(item, c)
+            assert got == exp, f"[{kwon}] own={own}: 기대 {exp} != 실제 {got}"

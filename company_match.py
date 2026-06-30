@@ -132,6 +132,41 @@ def _count_hits(text_lower: str, keywords: list[str]) -> tuple[int, list[str]]:
 # 수도권 family — '수도권' 공고는 이 광역 기업 모두에게 적격
 _METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
 
+# 권역(클러스터) → 소속 광역. '○○권 소재' 한정 공고를 그 권역 멤버 기업만 적격으로 처리.
+_REGION_CLUSTER = {
+    "수도권": {"서울", "인천", "경기"},
+    "충청권": {"대전", "세종", "충남", "충북"},
+    "호남권": {"광주", "전남", "전북"},
+    "경상권": {"부산", "대구", "울산", "경남", "경북"},
+    "영남권": {"부산", "대구", "울산", "경남", "경북"},
+    "강원권": {"강원"},
+    "제주권": {"제주"},
+}
+
+
+def _region_cluster_verdict(atext: str, city: str) -> tuple[bool, bool]:
+    """공고의 '○○권' 권역 한정 신호로 (적격, 차단) 판정.
+
+    - '○○권' + 우리 시가 그 권역 멤버 → 적격 / 멤버 아님 → 차단
+    - '비○○권'(예: 비수도권) + 우리 시가 그 권역 멤버 → 차단 / 아니면 적격
+    매핑 없는 모호 광역은 건드리지 않는다(누출보다 누락이 더 큰 위반 → 차단을 좁게).
+    """
+    if not city:
+        return False, False
+    elig = blk = False
+    for kwon, members in _REGION_CLUSTER.items():
+        if ("비" + kwon) in atext:
+            if city in members:
+                blk = True
+            else:
+                elig = True
+        elif kwon in atext:
+            if city in members:
+                elig = True
+            else:
+                blk = True
+    return elig, blk
+
 
 def _region_signals(item: dict[str, Any]):
     """monitor 의 검증된 '지원대상 지역' 판정을 재사용한다(지연 import — self-contained 유지).
@@ -208,24 +243,16 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
         other_restricted = sorted(restricted - own)
         own_region_in = bool(regions & own)
         other_regions = sorted(regions - own)
-        metro_co = city in _METRO_FAMILY
-        sudogwon_notice = ("수도권" in atext) and ("비수도권" not in atext)
-        nonmetro_only = ("비수도권" in atext) and metro_co            # 비수도권 한정 + 우리=수도권 → 차단
-        sudogwon_co = sudogwon_notice and metro_co                    # 수도권 한정 + 우리=수도권 → 적격
-        sudogwon_block = sudogwon_notice and bool(city) and not metro_co  # 수도권 한정 + 우리=비수도권 → 차단
+        # 권역(수도권·충청권·호남권·경상권·강원권·제주권) 한정 신호 — own 이 그 권역 멤버면 적격, 아니면 차단
+        kwon_elig, kwon_blk = _region_cluster_verdict(atext, city)
 
         if restricted and not own_restricted:
             # 신청 자격이 타지역으로만 한정됨(강신호) — 운영사/개최지의 우리 시 언급은 무시
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
             mismatches.append(f"타지역 한정({', '.join(other_restricted[:3])})")
-        elif nonmetro_only or sudogwon_block:
-            # 권역 한정(수도권/비수도권)인데 우리 지역이 그 권역에 속하지 않음 → 차단
-            # (monitor classify_region_for_group 의 KNOWN_REGIONS 권역 폴백과 동일 취지)
-            region_score = weights["region_mismatch_penalty"]
-            region_status = "other_only"
-            mismatches.append("권역 한정(우리 지역 제외)")
-        elif own_restricted or own_region_in or dist_in or sudogwon_co:
+        elif own_restricted or own_region_in or dist_in or kwon_elig:
+            # own 적격 신호(소재 일치 / 권역 멤버) — 권역 차단보다 우선(recall 보존)
             if dist_in:
                 region_score = weights["region_district"]
                 region_status = "district"
@@ -234,7 +261,12 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
                 region_score = weights["region_city"]
                 region_status = "city"
                 reasons.append(
-                    f"소재 시 일치({city})" if (own_restricted or own_region_in) else "수도권 대상")
+                    f"소재 시 일치({city})" if (own_restricted or own_region_in) else "권역 대상")
+        elif kwon_blk:
+            # 권역 한정인데 우리 지역이 그 권역에 속하지 않음 → 차단
+            region_score = weights["region_mismatch_penalty"]
+            region_status = "other_only"
+            mismatches.append("권역 한정(우리 지역 제외)")
         elif other_regions:
             # 우리 지역 단서 없이 타지역만 언급(개최지 등)
             if nationwide:
