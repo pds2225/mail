@@ -1265,6 +1265,90 @@ def _is_semas_policy_fund_notice(title: str, category: str) -> bool:
     return any(keyword in title for keyword in ("정책자금", "자금", "대출", "상환", "융자"))
 
 
+def fetch_smart_factory(site: dict) -> list[dict]:
+    """스마트공장 사업관리시스템 '사업공고'(접수중) 수집.
+
+    사이트가 React SPA + WAF(elevisor) 라 html_table 로는 0건(HTML 에 <table> 없음).
+    실제 목록은 POST .../bsnsPbanc/selectBsnsPbancPage.do (JSON, key=list 필수).
+    rcptStts=ING(접수중)만 받아 마감 누수를 줄인다. 상세는 SPA state 라우팅이라
+    딥링크가 불가 → 링크는 목록 페이지로 둔다(클릭 시 공고 목록 화면).
+    """
+    list_url = site["url"].split("#")[0].rstrip("/")
+    api_url = list_url + "/selectBsnsPbancPage.do"
+    headers = {
+        **HTTP_HEADERS,
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Referer": list_url,
+        "Origin": "https://www.smart-factory.kr",
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    try:
+        max_pages = max(1, int(site.get("max_pages", 8)))
+    except (TypeError, ValueError):
+        max_pages = 8
+    page_unit, agg = 10, site.get("is_aggregator", False)
+
+    def _collect(verify: Any) -> list[dict]:
+        out: list[dict] = []
+        seen: set[str] = set()
+        with httpx.Client(timeout=30, headers=headers,
+                          follow_redirects=True, verify=verify) as c:
+            try:
+                c.get("https://www.smart-factory.kr/")  # WAF/elevisor 세션 쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            for page_no in range(1, max_pages + 1):
+                payload = {
+                    "key": "list", "bizYr": "", "bizClsfYrNm": "", "dtlPbancNm": "",
+                    "rcptStts": "ING", "ordrSe": "REG",
+                    "currentPage": page_no, "pageUnit": page_unit,
+                }
+                r = c.post(api_url, content=json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+                r.raise_for_status()
+                data = r.json()
+                rows = data.get("pbancList") or []
+                if not rows:
+                    break
+                for row in rows:
+                    title = norm(row.get("dtlPbancNm", ""))
+                    pbanc_id = norm(row.get("pbancId", ""))
+                    if not title or not pbanc_id or pbanc_id in seen:
+                        continue
+                    seen.add(pbanc_id)
+                    posted = norm(row.get("pbancYmd", ""))
+                    rcpt = norm(row.get("rcptYmdDa2001", "")) or norm(row.get("rcptYmdDa2002", ""))
+                    ymd = re.findall(r"\d{4}-\d{2}-\d{2}", rcpt)
+                    deadline = " ~ ".join(ymd[:2]) if ymd else ""
+                    biz = norm(row.get("bizClsfYrNm", ""))
+                    pbanc_no = norm(row.get("pbancNo", ""))
+                    desc = " / ".join(p for p in [
+                        f"사업: {biz}" if biz else "",
+                        f"공고번호: {pbanc_no}" if pbanc_no else "",
+                    ] if p)
+                    out.append(_item(f"{site['id']}_{pbanc_id}", title, list_url,
+                                     "스마트제조혁신추진단", desc, deadline,
+                                     site["name"], posted, agg))
+                try:
+                    total = int((data.get("paginationInfo") or {}).get("totalCount", 0))
+                except (TypeError, ValueError):
+                    total = 0
+                if total and page_no * page_unit >= total:
+                    break
+        return out
+
+    try:
+        try:
+            items = _collect(True)
+        except httpx.ConnectError:
+            items = _collect(False)   # 정부 사이트 SSL 체인 폴백
+    except Exception as e:
+        log.error("스마트공장 사업공고 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 def fetch_kita(site: dict) -> list[dict]:
     """한국무역협회(KITA) 진행중인 사업 크롤러
     URL: https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do
@@ -1929,6 +2013,7 @@ FETCHERS = {
     "keit_html":          fetch_keit,
     "sba_html":           fetch_sba,
     "semas_loan_ols":     fetch_semas_loan_ols,
+    "smartfactory_api":   fetch_smart_factory,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
