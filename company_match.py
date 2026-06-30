@@ -124,8 +124,22 @@ def _haystack(item: dict[str, Any]) -> str:
     return " ".join(parts)
 
 
+_ASCII_KW_RE = re.compile(r"^[a-zA-Z0-9.+#&-]+$")
+
+
 def _count_hits(text_lower: str, keywords: list[str]) -> tuple[int, list[str]]:
-    hits = [kw for kw in keywords if kw and kw.lower() in text_lower]
+    # 영어/숫자 약어(AI·SaaS·DX·ERP)는 단어경계로 매칭(email·training 등 substring 오매칭 차단),
+    # 한글 등 키워드는 substring 유지. scoring.py 와 동일한 영어약어 경계 기준.
+    hits: list[str] = []
+    for kw in keywords:
+        if not kw:
+            continue
+        k = kw.lower()
+        if _ASCII_KW_RE.match(kw):
+            if re.search(rf"(?<![a-z0-9]){re.escape(k)}(?![a-z0-9])", text_lower):
+                hits.append(kw)
+        elif k in text_lower:
+            hits.append(kw)
     return len(hits), hits
 
 
