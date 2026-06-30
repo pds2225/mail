@@ -146,16 +146,8 @@ def _count_hits(text_lower: str, keywords: list[str]) -> tuple[int, list[str]]:
 # 수도권 family — '수도권' 공고는 이 광역 기업 모두에게 적격
 _METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
 
-# 권역(클러스터) → 소속 광역. '○○권 소재' 한정 공고를 그 권역 멤버 기업만 적격으로 처리.
-_REGION_CLUSTER = {
-    "수도권": {"서울", "인천", "경기"},
-    "충청권": {"대전", "세종", "충남", "충북"},
-    "호남권": {"광주", "전남", "전북"},
-    "경상권": {"부산", "대구", "울산", "경남", "경북"},
-    "영남권": {"부산", "대구", "울산", "경남", "경북"},
-    "강원권": {"강원"},
-    "제주권": {"제주"},
-}
+# 권역(클러스터) → 소속 광역. 단일 정본 region_clusters 모듈 공유(monitor 와 drift 방지).
+from region_clusters import REGION_CLUSTER as _REGION_CLUSTER
 
 
 def _region_cluster_verdict(atext: str, city: str) -> tuple[bool, bool]:
