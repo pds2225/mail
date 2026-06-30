@@ -22,7 +22,9 @@ os.environ.setdefault("GMAIL_APP_PASSWORD", "test_pass")
 
 from scripts.fetch_notice_attachments import (  # noqa: E402
     AttachmentCandidate,
+    _looks_generic,
     _looks_like_html_body,
+    _title_from_label,
     decode_cd_filename,
     download_attachment,
     extract_notice_title,
@@ -87,6 +89,23 @@ def test_extract_title_fallback_to_url_identifier():
     html = "<html><head><title>모집중</title></head><body><h2>마감</h2></body></html>"
     url = "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?pbancClssCd=PBC010&schM=view&pbancSn=178336"
     assert extract_notice_title(html, url) == "공고_178336"
+
+
+def test_looks_generic_detects_menu_and_site_names():
+    assert _looks_generic("주요사업")
+    assert _looks_generic("전체 : 정보통신산업진흥원")
+    assert _looks_generic("공고_16827")
+    assert not _looks_generic("2026년 인천광역시 우수디자인 시제품개발지원사업 모집 공고")
+
+
+def test_title_from_attachment_label_nipa():
+    label = "2026년 SaaS 전환지원센터 SaaS 전환 컨설팅 2차 수요기업 모집 공고.hwp (파일크기: 73 KB)"
+    assert _title_from_label(label) == "2026년 SaaS 전환지원센터 SaaS 전환 컨설팅 2차 수요기업 모집"
+
+
+def test_title_from_label_strips_bunim_prefix():
+    label = "붙임. 하노이IT지원센터 '26년도 하반기 입주기업 모집 공고문.zip"
+    assert _title_from_label(label) == "하노이IT지원센터 '26년도 하반기 입주기업 모집"
 
 
 # ---------- 3) 차단/오류 HTML 판별 ----------

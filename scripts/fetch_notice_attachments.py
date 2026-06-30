@@ -177,12 +177,46 @@ def extract_notice_title(html: str, url: str) -> str:
     # 최후: URL 식별자 기반 이름
     parsed = urlparse(url)
     ident = ""
-    for key in ("pbancSn", "pblancId", "atchFileId", "seq", "idx", "no"):
+    for key in ("nttNo", "pbancSn", "pblancId", "policyno", "atchFileId", "wr_id", "seq", "idx", "no"):
         m = re.search(rf"{key}=([\w\-]+)", parsed.query, re.IGNORECASE)
         if m:
             ident = m.group(1)
             break
     return f"공고_{ident or parsed.netloc}"
+
+
+GENERIC_TITLES = {"주요사업", "사업공고", "공지사항", "공고", "공지", "전체", "알림마당", "notice", "list"}
+_TITLE_SUFFIX_RE = re.compile(
+    r"[\s_]*(공고문|재공고|공고|신청\s*서식|신청서|접수\s*서식|양식|서식|"
+    r"안내문|안내|운영지침|붙임\s*\d*|별첨\s*\d*|첨부\s*\d*)\s*$")
+
+
+def _looks_generic(title: str) -> bool:
+    """제목이 메뉴명/사이트명/URL폴백 등 '진짜 공고명이 아닌' 약한 값인지."""
+    t = " ".join((title or "").split())
+    if not t or t.startswith("공고_") or len(t) < 6:
+        return True
+    if t in GENERIC_TITLES:
+        return True
+    # "○○ : 정보통신산업진흥원" 같은 사이트명 꼬리
+    if re.search(r"진흥원\s*$", t) and len(t) < 25:
+        return True
+    return False
+
+
+def _title_from_label(label: str) -> str:
+    """첨부 링크 라벨/파일명에서 공고 제목을 유추한다(JS 렌더링 사이트 폴백)."""
+    s = " ".join((label or "").split())
+    s = re.sub(r"\([^)]*\)", "", s)          # (파일크기: 73 KB) 등 제거
+    s = re.sub(r"\[[^\]]*다운로드[^\]]*\]", "", s)
+    s = re.sub(r"\.(hwp|hwpx|pdf|docx?|xlsx?|pptx?|zip|7z|rar)\b.*$", "", s, flags=re.IGNORECASE)
+    s = " ".join(s.split())
+    s = re.sub(r"^(붙임|별첨|첨부)\s*\d*\s*[.)\-:]\s*", "", s)   # 앞 '붙임.'·'별첨1)' 류 제거
+    s = _TITLE_SUFFIX_RE.sub("", s)
+    s = " ".join(s.split()).strip(" _-·.")
+    if len(s) >= 6 and re.search(r"[가-힣A-Za-z0-9]", s):
+        return s
+    return ""
 
 
 def _new_client() -> httpx.Client:
@@ -343,6 +377,12 @@ def process_url(url: str, out_dir: Path, dry_run: bool) -> list[FileResult]:
 
         if not candidates:
             return [FileResult(title, url, "NO_ATTACHMENTS")]
+
+        # 제목이 메뉴명/사이트명 등으로 약하면 첫 첨부 파일명에서 보정(NIPA 등 JS 렌더링)
+        if _looks_generic(title):
+            alt = _title_from_label(candidates[0].label)
+            if alt:
+                title = alt
 
         notice_dir = resolve_notice_dir(out_dir, title, number=True)
         if not dry_run:
@@ -539,8 +579,10 @@ def main() -> int:
     if args.interactive:
         print("=" * 52)
         print(" 📥 공고 첨부파일 자동 다운로드")
-        print(" 공고 상세페이지 주소를 붙여넣고 Enter 를 누르세요.")
-        print(" (아무것도 입력하지 않고 Enter = 종료)")
+        print(" 공고 상세페이지 주소를 붙여넣고 Enter.")
+        print(" · 여러 개: 한 줄에 띄어쓰기로 이어 붙이거나")
+        print("           여러 줄(한 줄에 하나씩) 붙여넣어도 됩니다.")
+        print(" · 빈 줄에서 Enter = 종료")
         print(f" 저장 폴더: {out_dir}")
         print("=" * 52)
         while True:
@@ -552,6 +594,8 @@ def main() -> int:
             if not line:
                 break
             targets = re.findall(r"https?://[^\s'\"]+", line) or [line]
+            if len(targets) > 1:
+                print(f"  🔢 링크 {len(targets)}개 감지 — 차례로 받습니다")
             for u in targets:
                 _handle_url(u, out_dir, args.dry_run, True, opened_dirs, all_results)
             _write_manifest(out_dir, args.dry_run, all_results)
