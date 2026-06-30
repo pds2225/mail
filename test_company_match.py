@@ -201,6 +201,17 @@ def test_score_fullname_province_other_region_excluded():
     assert s["breakdown"]["region_status"] == "other_only"
 
 
+def test_count_hits_ascii_word_boundary():
+    """영어약어(AI·MES·SaaS)는 단어경계 — email·training 의 substring 오매칭을 차단하고,
+    진짜 영어약어·한글 키워드는 그대로 매칭한다(2026-06-29 채점엔진 비대칭 수정)."""
+    # email·training 안에 ai/mes 가 substring 으로 들어가도 오매칭 안 함
+    assert company_match._count_hits("이메일 email 안내 training maintenance", ["AI", "MES"]) == (0, [])
+    # 진짜 영어약어는 단어경계로 매칭
+    assert company_match._count_hits("ai 인공지능 saas 사업화 dx", ["AI", "SaaS", "DX"])[0] == 3
+    # 한글 키워드는 substring 유지
+    assert company_match._count_hits("제조업 화장품 뷰티 대상", ["제조", "화장품"])[0] == 2
+
+
 def test_score_exclude_keyword_drops_below_threshold():
     s = company_match.compute_match_score(
         _item("스마트공장 설명회 안내", "설명회 일정"), _incheon_company())
