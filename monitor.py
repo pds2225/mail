@@ -1349,6 +1349,88 @@ def fetch_smart_factory(site: dict) -> list[dict]:
     return items
 
 
+def fetch_ripc(site: dict) -> list[dict]:
+    """지역지식재산센터(RIPC PMS) 지원사업 공고 수집.
+
+    목록 페이지(list.do)는 빈 테이블 껍데기 + AJAX 로딩이라 html_table 로는 0건.
+    실제 목록은 POST .../notice/getNoticeList.do (JSON, 공개·로그인 불요). 최신순 정렬이라
+    앞쪽 몇 페이지만 받아 신규 공고를 잡고, 날짜/마감 필터는 모니터가 처리한다. 상세는 신청자
+    포털(로그인) 라우팅이라 딥링크 불가 → 링크는 목록 페이지. 제목의 [부산] 등 지역태그는
+    그대로 둬 지역 매칭이 활용한다.
+    """
+    list_url = site["url"].split("#")[0].rstrip("/")
+    api_url = list_url.rsplit("/", 1)[0] + "/getNoticeList.do"   # .../notice/getNoticeList.do
+    headers = {
+        **HTTP_HEADERS,
+        "Accept": "application/json, text/plain, */*",
+        "Referer": list_url,
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    try:
+        max_pages = max(1, int(site.get("max_pages", 5)))
+    except (TypeError, ValueError):
+        max_pages = 5
+    agg = site.get("is_aggregator", False)
+
+    def _collect(verify: Any) -> list[dict]:
+        out: list[dict] = []
+        seen: set[str] = set()
+        with httpx.Client(timeout=30, headers=headers,
+                          follow_redirects=True, verify=verify) as c:
+            try:
+                c.get(list_url)   # 세션 쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            for page_no in range(1, max_pages + 1):
+                # ★페이징 파라미터는 currentPageNo (currentPage/pageIndex 는 서버가 무시 → 1페이지 고정)
+                r = c.post(api_url, data={"currentPageNo": str(page_no)})
+                r.raise_for_status()
+                result = (r.json() or {}).get("result") or {}
+                rows = result.get("noticeList") or []
+                if not rows:
+                    break
+                for row in rows:
+                    title = norm(row.get("noticeTitle", ""))
+                    seq = norm(str(row.get("noticeSeq", "")))
+                    if not title or not seq or seq == "0" or seq in seen:
+                        continue
+                    seen.add(seq)
+                    posted = norm(row.get("writeTimeStr", ""))
+                    sd = re.findall(r"\d{4}-\d{2}-\d{2}", norm(row.get("startDateStr", "")))
+                    ed = re.findall(r"\d{4}-\d{2}-\d{2}", norm(row.get("endDateStr", "")))
+                    deadline = " ~ ".join([d for d in [sd[0] if sd else "", ed[0] if ed else ""] if d])
+                    center = norm(row.get("centerName", ""))
+                    cat = " ".join(p for p in [norm(row.get("bizCategory1Name", "")),
+                                               norm(row.get("bizCategory2Name", ""))] if p)
+                    notice_no = norm(row.get("noticeNo", ""))
+                    desc = " / ".join(p for p in [
+                        f"센터: {center}" if center else "",
+                        f"분야: {cat}" if cat else "",
+                        f"공고번호: {notice_no}" if notice_no else "",
+                    ] if p)
+                    out.append(_item(f"{site['id']}_{seq}", title, list_url,
+                                     ("지역지식재산센터" + (f" {center}" if center else "")),
+                                     desc, deadline, site["name"], posted, agg))
+                try:
+                    total_pages = int(result.get("totalPageCount", 0))
+                except (TypeError, ValueError):
+                    total_pages = 0
+                if total_pages and page_no >= total_pages:
+                    break
+        return out
+
+    try:
+        try:
+            items = _collect(True)
+        except httpx.ConnectError:
+            items = _collect(False)   # 정부 사이트 SSL 체인 폴백
+    except Exception as e:
+        log.error("RIPC 공고 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 def fetch_kita(site: dict) -> list[dict]:
     """한국무역협회(KITA) 진행중인 사업 크롤러
     URL: https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do
@@ -2014,6 +2096,7 @@ FETCHERS = {
     "sba_html":           fetch_sba,
     "semas_loan_ols":     fetch_semas_loan_ols,
     "smartfactory_api":   fetch_smart_factory,
+    "ripc_api":           fetch_ripc,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────

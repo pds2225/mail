@@ -3103,6 +3103,16 @@
     "note": "센터 채용소식 / 주기:매일 / 우선순위:상"
   },
   {
+    "id": "ripc_pms_notice",
+    "name": "지역지식재산센터(RIPC) 사업공고",
+    "type": "ripc_api",
+    "url": "https://pms.ripc.org/pms/biz/applicant/notice/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "max_pages": 5,
+    "note": "RIPC PMS 지원사업 공고 / JSON API getNoticeList.do(공개) / 최신순 / 주기:매일 / 우선순위:상"
+  },
+  {
     "id": "imp_f2dc13f2",
     "name": "창업기업 확인시스템",
     "type": "html_table",
