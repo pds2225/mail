@@ -2655,6 +2655,13 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
             district_hits.append(d)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
+    # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
+    # company_match 와 단일 정본 공유). 비멤버는 아래 차단 로직으로.
+    from region_clusters import REGION_CLUSTER as _RC
+    for _kwon, _members in _RC.items():
+        if _kwon in app_text and ("비" + _kwon) not in app_text and any(r in _members for r in own_regions):
+            return result("eligible", "eligible", [city or label], [])
+
     _ovr = _other_region_block(item, {"label": label, "districts": districts, "extra": extra_regions})
     if _ovr is not None:
         return result("not_eligible", "not_eligible", [],
