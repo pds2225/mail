@@ -185,15 +185,25 @@ def extract_notice_title(html: str, url: str) -> str:
     return f"공고_{ident or parsed.netloc}"
 
 
-def fetch_html(url: str) -> str:
-    """공고 상세 페이지 HTML 을 가져온다(요청 사이트 origin 을 Referer 로)."""
+def _new_client() -> httpx.Client:
+    return httpx.Client(timeout=180, follow_redirects=True,
+                        headers={**monitor.HTTP_HEADERS}, verify=False)
+
+
+def fetch_html(url: str, client: httpx.Client | None = None) -> str:
+    """공고 상세 페이지 HTML 을 가져온다(요청 사이트 origin 을 Referer 로).
+
+    client 를 넘기면 그 세션을 재사용한다(쿠키 유지 — 그누보드 등 세션 검증 사이트 대응).
+    """
     parsed = urlparse(url)
     referer = f"{parsed.scheme}://{parsed.netloc}/" if parsed.scheme else ""
-    headers = {**monitor.HTTP_HEADERS}
-    if referer:
-        headers["Referer"] = referer
-    with httpx.Client(timeout=60, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(url)
+    headers = {"Referer": referer} if referer else {}
+    if client is not None:
+        r = client.get(url, headers=headers)
+        r.raise_for_status()
+        return r.text
+    with _new_client() as own:
+        r = own.get(url, headers=headers)
         r.raise_for_status()
         return r.text
 
@@ -203,11 +213,16 @@ def _looks_like_html_body(content: bytes) -> bool:
     return bool(HTML_HEAD_RE.match(head))
 
 
-def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: Path, idx: int) -> tuple[str, Path]:
-    """첨부 후보 하나를 내려받아 저장한다(파일명 인코딩 복원·차단 HTML 거부)."""
-    headers = {**monitor.HTTP_HEADERS, "Referer": detail_url}
-    with httpx.Client(timeout=180, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(cand.url)
+def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: Path, idx: int,
+                        client: httpx.Client | None = None) -> tuple[str, Path]:
+    """첨부 후보 하나를 내려받아 저장한다(파일명 인코딩 복원·차단 HTML 거부).
+
+    client 를 넘기면 상세 페이지를 읽은 세션을 재사용한다(쿠키 유지).
+    """
+    own = client is None
+    cli = client or _new_client()
+    try:
+        r = cli.get(cand.url, headers={"Referer": detail_url})
         r.raise_for_status()
 
         ctype = r.headers.get("content-type", "").lower()
@@ -218,7 +233,7 @@ def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: 
         url_has_doc_ext = bool(EXT_RE.search(cand.url))
 
         # 차단/오류 HTML 을 첨부로 저장하지 않는다.
-        # (정상 첨부는 content-disposition 에 문서 확장자가 있거나 octet-stream 이다)
+        # (정상 첨부는 content-disposition 에 문서 확장자가 있거나 octet-stream/파일 타입이다)
         if not cd_has_doc_ext and not url_has_doc_ext:
             if "text/html" in ctype or _looks_like_html_body(r.content):
                 raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
@@ -233,6 +248,9 @@ def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: 
         save_path = unique_path(notice_dir / file_name)
         save_path.write_bytes(r.content)
         return file_name, save_path
+    finally:
+        if own:
+            cli.close()
 
 
 def _guess_ext(ctype: str, url: str) -> str:
@@ -283,7 +301,7 @@ def _dedup_key(file_name: str, size: int) -> tuple[str, int]:
     return (norm, size)
 
 
-def gather_candidates(url: str, html: str) -> list[AttachmentCandidate]:
+def gather_candidates(url: str, html: str, client: httpx.Client | None = None) -> list[AttachmentCandidate]:
     """상세 페이지에서 첨부 후보를 모은다.
 
     상세 페이지에 직접 첨부가 있으면 그것만 쓴다(K-Startup 원본사이트 중복 방지).
@@ -293,7 +311,7 @@ def gather_candidates(url: str, html: str) -> list[AttachmentCandidate]:
     if not candidates and "k-startup.go.kr" in url.lower():
         for outbound in extract_outbound_urls(html, url)[:5]:
             try:
-                candidates.extend(extract_attachment_candidates(fetch_html(outbound), outbound))
+                candidates.extend(extract_attachment_candidates(fetch_html(outbound, client=client), outbound))
             except Exception as exc:
                 log.warning("외부 페이지 확인 실패(%s): %s", outbound, exc)
     # 사이트 공통 안내서·도움말(매뉴얼 등)은 공고 첨부가 아니므로 제외
@@ -304,68 +322,82 @@ def gather_candidates(url: str, html: str) -> list[AttachmentCandidate]:
 def process_url(url: str, out_dir: Path, dry_run: bool) -> list[FileResult]:
     url = url.strip()
     results: list[FileResult] = []
+    # 상세 읽기~첨부 다운로드를 하나의 세션(쿠키 공유)으로 — 그누보드 등 세션 검증 사이트 대응
+    client = _new_client()
     try:
-        html = fetch_html(url)
-    except Exception as exc:
-        return [FileResult("", url, "PAGE_FETCH_FAILED", error=str(exc))]
-
-    title = extract_notice_title(html, url)
-
-    try:
-        candidates = gather_candidates(url, html)
-    except Exception as exc:
-        return [FileResult(title, url, "EXTRACT_FAILED", error=str(exc))]
-
-    # 중복 URL 제거(순서 유지)
-    seen_urls: set[str] = set()
-    candidates = [c for c in candidates if not (c.url in seen_urls or seen_urls.add(c.url))]
-
-    if not candidates:
-        return [FileResult(title, url, "NO_ATTACHMENTS")]
-
-    notice_dir = resolve_notice_dir(out_dir, title, number=True)
-    if not dry_run:
-        notice_dir.mkdir(parents=True, exist_ok=True)
-
-    seen_files: set[tuple[str, int]] = set()
-    for idx, cand in enumerate(candidates, start=1):
-        if dry_run:
-            results.append(FileResult(
-                notice_title=title, detail_url=url, status="DRY_RUN",
-                file_name=f"(예정) {cand.label[:40]}", file_url=cand.url,
-                save_path=str(notice_dir),
-            ))
-            continue
         try:
-            file_name, save_path = download_attachment(cand, url, notice_dir, idx)
-        except httpx.HTTPStatusError as exc:
-            # 4xx 는 '진짜 첨부가 아닌 후보'(미리보기/깨진 링크) — 조용히 제외
-            code = exc.response.status_code
-            status = "NOT_A_FILE" if 400 <= code < 500 else "DOWNLOAD_FAILED"
-            results.append(FileResult(title, url, status, file_url=cand.url, error=f"HTTP {code}"))
-            continue
-        except RuntimeError as exc:
-            # HTML 차단/오류 페이지 — 첨부 아님으로 조용히 제외
-            results.append(FileResult(title, url, "NOT_A_FILE", file_url=cand.url, error=str(exc)))
-            continue
+            html = fetch_html(url, client=client)
         except Exception as exc:
-            results.append(FileResult(title, url, "DOWNLOAD_FAILED", file_url=cand.url, error=str(exc)))
-            continue
+            return [FileResult("", url, "PAGE_FETCH_FAILED", error=str(exc))]
 
-        key = _dedup_key(file_name, save_path.stat().st_size)
-        if key in seen_files:
+        title = extract_notice_title(html, url)
+
+        try:
+            candidates = gather_candidates(url, html, client=client)
+        except Exception as exc:
+            return [FileResult(title, url, "EXTRACT_FAILED", error=str(exc))]
+
+        # 중복 URL 제거(순서 유지)
+        seen_urls: set[str] = set()
+        candidates = [c for c in candidates if not (c.url in seen_urls or seen_urls.add(c.url))]
+
+        if not candidates:
+            return [FileResult(title, url, "NO_ATTACHMENTS")]
+
+        notice_dir = resolve_notice_dir(out_dir, title, number=True)
+        if not dry_run:
+            notice_dir.mkdir(parents=True, exist_ok=True)
+
+        seen_files: set[tuple[str, int]] = set()
+        for idx, cand in enumerate(candidates, start=1):
+            if dry_run:
+                results.append(FileResult(
+                    notice_title=title, detail_url=url, status="DRY_RUN",
+                    file_name=f"(예정) {cand.label[:40]}", file_url=cand.url,
+                    save_path=str(notice_dir),
+                ))
+                continue
             try:
-                save_path.unlink()
+                file_name, save_path = download_attachment(cand, url, notice_dir, idx, client=client)
+            except httpx.HTTPStatusError as exc:
+                # 4xx 는 '진짜 첨부가 아닌 후보'(미리보기/깨진 링크) — 조용히 제외
+                code = exc.response.status_code
+                status = "NOT_A_FILE" if 400 <= code < 500 else "DOWNLOAD_FAILED"
+                results.append(FileResult(title, url, status, file_url=cand.url, error=f"HTTP {code}"))
+                continue
+            except RuntimeError as exc:
+                # HTML 차단/오류 페이지 — 첨부 아님으로 조용히 제외
+                results.append(FileResult(title, url, "NOT_A_FILE", file_url=cand.url, error=str(exc)))
+                continue
+            except Exception as exc:
+                results.append(FileResult(title, url, "DOWNLOAD_FAILED", file_url=cand.url, error=str(exc)))
+                continue
+
+            key = _dedup_key(file_name, save_path.stat().st_size)
+            if key in seen_files:
+                try:
+                    save_path.unlink()
+                except Exception:
+                    pass
+                results.append(FileResult(title, url, "DUPLICATE", file_name=file_name, file_url=cand.url))
+                continue
+            seen_files.add(key)
+            results.append(FileResult(
+                notice_title=title, detail_url=url, status="DOWNLOADED",
+                file_name=file_name, save_path=str(save_path), file_url=cand.url,
+            ))
+
+        # 받은 파일이 하나도 없으면 빈 공고 폴더를 남기지 않는다
+        if not dry_run and not any(r.status == "DOWNLOADED" for r in results):
+            try:
+                if notice_dir.exists() and not any(notice_dir.iterdir()):
+                    notice_dir.rmdir()
             except Exception:
                 pass
-            results.append(FileResult(title, url, "DUPLICATE", file_name=file_name, file_url=cand.url))
-            continue
-        seen_files.add(key)
-        results.append(FileResult(
-            notice_title=title, detail_url=url, status="DOWNLOADED",
-            file_name=file_name, save_path=str(save_path), file_url=cand.url,
-        ))
-    return results
+
+        return results
+    finally:
+        client.close()
 
 
 CONFIG_PATH = ROOT / "scripts" / "notice_download_config.json"

@@ -115,6 +115,20 @@ def test_download_rejects_blocked_html(tmp_path):
 
 
 @respx.mock
+def test_download_gnuboard_file_unknown_percent_name(tmp_path):
+    """그누보드: content-type 이 file/unknown 이어도 cd 의 .pdf 로 저장, %인코딩 한글 복원."""
+    url = "https://idsc.kr/_NBoard/download.php?bo_table=business&wr_id=937&no=0"
+    cd = 'attachment; filename="%EB%B6%99%EC%9E%841_%EC%84%B8%EB%B6%80%EA%B3%B5%EA%B3%A0%EB%AC%B8.pdf"'
+    respx.get(url).mock(return_value=httpx.Response(
+        200, headers={"content-type": "file/unknown", "content-disposition": cd},
+        content=b"%PDF-1.7\nbody"))
+    cand = AttachmentCandidate(url=url, label="붙임1_세부공고문.pdf", source="href")
+    name, path = download_attachment(cand, "https://idsc.kr/_NBoard/board.php?wr_id=937", tmp_path, 1)
+    assert name == "붙임1_세부공고문.pdf"
+    assert path.read_bytes().startswith(b"%PDF")
+
+
+@respx.mock
 def test_download_saves_real_file_with_recovered_name(tmp_path):
     url = "https://www.k-startup.go.kr/afile/fileDownload/sdbLn"
     real = "1. (공고문) 모집 공고.hwp"
