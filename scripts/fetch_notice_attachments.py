@@ -364,6 +364,17 @@ def process_url(url: str, out_dir: Path, dry_run: bool) -> list[FileResult]:
     return results
 
 
+CONFIG_PATH = ROOT / "scripts" / "notice_download_config.json"
+
+
+def _load_config() -> dict:
+    """저장 폴더 등 기본 설정을 UTF-8 JSON 에서 읽는다(없으면 빈 dict)."""
+    try:
+        return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def load_urls(args: argparse.Namespace) -> list[str]:
     urls: list[str] = []
     for raw in args.urls or []:
@@ -387,14 +398,88 @@ def load_urls(args: argparse.Namespace) -> list[str]:
     return out
 
 
+def _print_results(results: list[FileResult], dry_run: bool, open_flag: bool, opened_dirs: set[str]) -> None:
+    title = results[0].notice_title if results else ""
+    downloaded = [r for r in results if r.status == "DOWNLOADED"]
+    for r in results:
+        if r.status == "DOWNLOADED":
+            print(f"  ✅ {r.file_name}")
+        elif r.status == "DRY_RUN":
+            print(f"  ▶ {r.file_name}")
+        elif r.status == "NO_ATTACHMENTS":
+            print("  ⚠ 첨부파일을 찾지 못했습니다")
+        elif r.status in ("PAGE_FETCH_FAILED", "EXTRACT_FAILED", "DOWNLOAD_FAILED"):
+            print(f"  ❌ {r.status}: {r.error}")
+        # NOT_A_FILE(미리보기·외부링크)·DUPLICATE(중복)는 조용히 제외
+    if title:
+        print(f"  📁 공고: {title}")
+    if downloaded and not dry_run:
+        folder = str(Path(downloaded[0].save_path).parent)
+        print(f"  💾 저장 위치: {folder}")
+        if open_flag and folder not in opened_dirs:
+            opened_dirs.add(folder)
+            try:
+                os.startfile(folder)  # type: ignore[attr-defined]
+            except Exception:
+                pass
+
+
+def _handle_url(url: str, out_dir: Path, dry_run: bool, open_flag: bool,
+                opened_dirs: set[str], all_results: list[FileResult]) -> None:
+    print(f"\n🔗 처리 중: {url}")
+    results = process_url(url, out_dir, dry_run)
+    all_results.extend(results)
+    _print_results(results, dry_run, open_flag, opened_dirs)
+
+
+def _write_manifest(out_dir: Path, dry_run: bool, all_results: list[FileResult]) -> dict:
+    manifest = out_dir / "_download_log.json"
+    counts: dict[str, int] = {}
+    for r in all_results:
+        counts[r.status] = counts.get(r.status, 0) + 1
+    generated_at = datetime.now().isoformat(timespec="seconds")
+    summary = {
+        "generated_at": generated_at,
+        "out_dir": str(out_dir),
+        "dry_run": dry_run,
+        "total_urls": len({r.detail_url for r in all_results}),
+        "status_counts": counts,
+        "results": [asdict(r) for r in all_results],
+    }
+    try:
+        prev = json.loads(manifest.read_text(encoding="utf-8")) if manifest.exists() else None
+        hist = prev["history"][-19:] if isinstance(prev, dict) and isinstance(prev.get("history"), list) else []
+    except Exception:
+        hist = []
+    summary["history"] = hist + [{"at": generated_at, "counts": counts}]
+    manifest.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    return counts
+
+
+def _print_summary(counts: dict, link_count: int) -> None:
+    ok = counts.get("DOWNLOADED", 0)
+    skipped = counts.get("NOT_A_FILE", 0) + counts.get("DUPLICATE", 0)
+    real_fail = (counts.get("DOWNLOAD_FAILED", 0) + counts.get("PAGE_FETCH_FAILED", 0)
+                 + counts.get("EXTRACT_FAILED", 0))
+    print(f"\n{'='*48}")
+    print(f"📊 완료: 받은 파일 {ok}개 / 처리한 링크 {link_count}개")
+    if skipped:
+        print(f"   ℹ 미리보기·중복·외부링크 {skipped}건 자동 제외(첨부 아님)")
+    if counts.get("NO_ATTACHMENTS"):
+        print(f"   ⚠ 첨부를 찾지 못한 링크 {counts['NO_ATTACHMENTS']}건")
+    if real_fail:
+        print(f"   ❌ 실제 실패 {real_fail}건 (자세한 내용은 _download_log.json)")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="공고 상세 페이지 링크의 첨부파일을 모두 다운로드한다.")
     parser.add_argument("urls", nargs="*", help="공고 상세 페이지 URL(여러 개 가능)")
     parser.add_argument("--url-file", help="URL 목록 파일(한 줄에 1개)")
-    parser.add_argument("--out-dir", required=True, help="저장 폴더(공고별 하위 폴더가 생성됨)")
+    parser.add_argument("--out-dir", help="저장 폴더(미지정 시 notice_download_config.json 의 out_dir 사용)")
     parser.add_argument("--dry-run", action="store_true", help="받지 않고 받을 목록만 미리보기")
     parser.add_argument("--open", action="store_true", help="완료 후 저장 폴더 열기(Windows)")
+    parser.add_argument("--interactive", action="store_true", help="링크를 직접 입력받아 반복 처리(더블클릭 런처용)")
     parser.add_argument("--quiet", action="store_true", help="httpx 등 로그 출력 최소화")
     args = parser.parse_args()
 
@@ -405,78 +490,53 @@ def main() -> int:
     if args.quiet:
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
+    out_dir_str = args.out_dir or _load_config().get("out_dir")
+    if not out_dir_str:
+        print("❌ 저장 폴더가 지정되지 않았습니다. --out-dir 또는 notice_download_config.json 을 확인하세요.")
+        return 2
+    out_dir = Path(out_dir_str).expanduser()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    all_results: list[FileResult] = []
+    opened_dirs: set[str] = set()
+
+    if args.interactive:
+        print("=" * 52)
+        print(" 📥 공고 첨부파일 자동 다운로드")
+        print(" 공고 상세페이지 주소를 붙여넣고 Enter 를 누르세요.")
+        print(" (아무것도 입력하지 않고 Enter = 종료)")
+        print(f" 저장 폴더: {out_dir}")
+        print("=" * 52)
+        while True:
+            try:
+                line = input("\n🔗 공고 링크 붙여넣기: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print()
+                break
+            if not line:
+                break
+            targets = re.findall(r"https?://[^\s'\"]+", line) or [line]
+            for u in targets:
+                _handle_url(u, out_dir, args.dry_run, True, opened_dirs, all_results)
+            _write_manifest(out_dir, args.dry_run, all_results)
+        if all_results:
+            counts: dict[str, int] = {}
+            for r in all_results:
+                counts[r.status] = counts.get(r.status, 0) + 1
+            _print_summary(counts, len({r.detail_url for r in all_results}))
+        else:
+            print("받은 파일이 없습니다.")
+        return 0
+
     urls = load_urls(args)
     if not urls:
         print("❌ 받을 링크가 없습니다. 공고 상세 페이지 URL 을 입력하세요.")
         return 2
 
-    out_dir = Path(args.out_dir).expanduser()
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    all_results: list[FileResult] = []
-    opened_dirs: set[str] = set()
     for url in urls:
-        print(f"\n🔗 처리 중: {url}")
-        results = process_url(url, out_dir, args.dry_run)
-        all_results.extend(results)
-        title = results[0].notice_title if results else ""
-        downloaded = [r for r in results if r.status == "DOWNLOADED"]
-        for r in results:
-            if r.status == "DOWNLOADED":
-                print(f"  ✅ {r.file_name}")
-            elif r.status == "DRY_RUN":
-                print(f"  ▶ {r.file_name}")
-            elif r.status == "NO_ATTACHMENTS":
-                print("  ⚠ 첨부파일을 찾지 못했습니다")
-            elif r.status in ("PAGE_FETCH_FAILED", "EXTRACT_FAILED", "DOWNLOAD_FAILED"):
-                print(f"  ❌ {r.status}: {r.error}")
-            # NOT_A_FILE(미리보기·외부링크)·DUPLICATE(중복)는 조용히 제외
-        if title:
-            print(f"  📁 공고: {title}")
-        if downloaded and not args.dry_run:
-            folder = str(Path(downloaded[0].save_path).parent)
-            print(f"  💾 저장 위치: {folder}")
-            if args.open and folder not in opened_dirs:
-                opened_dirs.add(folder)
-                try:
-                    os.startfile(folder)  # type: ignore[attr-defined]
-                except Exception:
-                    pass
-
-    # manifest 기록
-    manifest = out_dir / "_download_log.json"
-    summary = {
-        "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "out_dir": str(out_dir),
-        "dry_run": args.dry_run,
-        "total_urls": len(urls),
-        "status_counts": {},
-        "results": [asdict(r) for r in all_results],
-    }
-    for r in all_results:
-        summary["status_counts"][r.status] = summary["status_counts"].get(r.status, 0) + 1
-    try:
-        prev = json.loads(manifest.read_text(encoding="utf-8")) if manifest.exists() else None
-        if isinstance(prev, dict) and isinstance(prev.get("history"), list):
-            summary["history"] = prev["history"][-19:] + [{"at": summary["generated_at"], "counts": summary["status_counts"]}]
-        else:
-            summary["history"] = [{"at": summary["generated_at"], "counts": summary["status_counts"]}]
-    except Exception:
-        summary["history"] = [{"at": summary["generated_at"], "counts": summary["status_counts"]}]
-    manifest.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    counts = summary["status_counts"]
-    ok = counts.get("DOWNLOADED", 0)
-    skipped = counts.get("NOT_A_FILE", 0) + counts.get("DUPLICATE", 0)
-    real_fail = counts.get("DOWNLOAD_FAILED", 0) + counts.get("PAGE_FETCH_FAILED", 0) + counts.get("EXTRACT_FAILED", 0)
-    print(f"\n{'='*48}")
-    print(f"📊 완료: 받은 파일 {ok}개 / 처리한 링크 {len(urls)}개")
-    if skipped:
-        print(f"   ℹ 미리보기·중복·외부링크 {skipped}건 자동 제외(첨부 아님)")
-    if counts.get("NO_ATTACHMENTS"):
-        print(f"   ⚠ 첨부를 찾지 못한 링크 {counts['NO_ATTACHMENTS']}건")
-    if real_fail:
-        print(f"   ❌ 실제 실패 {real_fail}건 (자세한 내용은 _download_log.json)")
+        _handle_url(url, out_dir, args.dry_run, args.open, opened_dirs, all_results)
+    counts = _write_manifest(out_dir, args.dry_run, all_results)
+    _print_summary(counts, len(urls))
     return 0
 
 
