@@ -2385,11 +2385,11 @@
   {
     "id": "imp_94acb0b7",
     "name": "스마트공장 사업관리시스템",
-    "type": "html_table",
-    "url": "https://www.smart-factory.kr/usr/np/mn/ma/noticeMatter",
-    "enabled": false,
+    "type": "smartfactory_api",
+    "url": "https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc",
+    "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고(접수중) / SPA→JSON API / 주기:주 2~3회 / 우선순위:상"
   },
   {
     "id": "imp_e02ba1cb",

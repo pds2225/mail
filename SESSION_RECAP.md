@@ -1,3 +1,36 @@
+## 🧾 세션 회고 — 2026-06-30 새벽
+**주제:** mail 추천 정확도 대폭 개선(지역·권역·채점·측정) + 사업계획서 내적 모순 검사
+
+### ✅ 한 일
+- 전에는 인천 비앤코한테 대구·부산 같은 타지역 공고가 추천됐는데(1등으로도), 이제 딴 동네 공고는 자동으로 걸러진다 — 기업추천(company_match)·그룹메일(monitor) 양쪽 다.
+- 전에는 서울 등 비인천 기업 추천이 "인천 기준"으로 잘못 계산됐는데(인천고정 버그), 이제 각 기업 지역 기준으로 매칭된다.
+- 전에는 수도권 공고만 거르고 경상·호남·충청권은 안 걸러졌는데, 이제 모든 권역이 멤버 지역만 정확히 받는다(권역 단일 정본 공유).
+- 전에는 영어약어 "AI"가 "email"에 잘못 걸려 무관 공고가 추천됐는데, 이제 단어경계로 오매칭이 차단된다.
+- 전에는 정확도를 사람이 매번 확인했는데, 이제 숫자로 자동 측정(region_FP)하고 다시 나빠지면 PR에서 자동 차단(회귀 가드)된다.
+- 전에는 밤 자동개발(mail·marketgate)이 왜 실패하는지 몰랐는데, 새벽 1~2시 시각 문제(토큰 정상)로 진단하고 잘 되는 시간(0:45·1:00)으로 예약을 옮겼다.
+- 전에는 사업계획서 안에서 앞뒤 숫자·이름·주장이 어긋나도 사람이 대조해야 했는데, 이제 검수 시 자동 적발해 위치를 짚고 점수에 반영한다.
+
+### 🧭 정한 것
+- night-autodev 401은 토큰이 아니라 시각대 문제 → 토큰 갱신 불필요, 예약 시각 이동으로 회피.
+- mail 자동 개선 시스템(오케스트레이터 하네스)은 큰 작업이라 낮에. 오늘은 계획서 + 측정·대칭 토대까지.
+- 문서 내적 모순 검사는 사업계획서 검수(bizplan-reviewer)에 먼저 보강. 완성 워드문서는 선택 보류.
+- 빈틈은 매트릭스·대칭(parity) 테스트로 색출, 한 빈틈=한 PR, recall 게이트 매 단계 green(누출<누락).
+
+### 📂 손댄 파일
+- D:\mail: company_match.py, monitor.py, scripts\run_company_match.py, scripts\accuracy_eval.py, region_clusters.py + 회귀테스트(test_region_multi_group·company_match_multi_region·run_company_match_region·accuracy_eval·accuracy_regression·region_parity). 전체 566 통과, region_FP=0.
+- D:\mail\docs\mail_accuracy_orchestrator_plan.md — 자동 개선 시스템(에이전트7+스킬1) 설계 계획서.
+- ~\.claude\agents\bizplan-reviewer.md — 내적 일관성(상충) 검사 강화(숫자·고유명사·주장·논리 4종 전수대조 + 대조표 + 자기검증).
+- ~\.claude\skills\omc-learned\mail-monitor-accuracy-debug.md — 지역 매칭 빈틈 색출 절차 갱신.
+- D:\mail\.omc\wiki\mail-monitor-2026-06-29.md — 이번 세션 후속 지식 누적.
+
+### ⏭️ 다음 할 일
+- (낮에) mail 자동 개선 하네스 실제 구축 — D:\mail 안에(.omc\skills + agents).
+- (선택) 완성 워드/한글 문서 검수(document-quality)에도 상충 검사 추가.
+- 내일 새벽 night-autodev mail·marketgate 결과 확인(예약 시각 이동 효과).
+- (계획서 P1-3~4) exclude 과민·마감 누수는 전수측정 후 우선순위.
+
+---
+
 ## 🧾 세션 회고 — 2026-06-25 17:51
 **주제:** 메일에 엉뚱한 공고 섞이던 문제 해결 + 그룹·수신자 정리 + 운영 점검
 
