@@ -113,7 +113,7 @@ def _load_items(args: argparse.Namespace) -> list[dict[str, Any]]:
             from monitor import fetch_all, load_sites  # type: ignore
             items = fetch_all(load_sites())
             print(f"수집 완료: {len(items)}건")
-            return _enrich_with_evaluate(items)
+            return items  # enrich 는 main 의 기업 루프에서 기업별 합성그룹으로 수행(인천고정 버그 차단)
         except Exception as exc:  # noqa: BLE001
             print(f"[ERR] 수집 실패: {exc}", file=sys.stderr)
             print("  -> --sample 로 샘플 데이터 사용 가능", file=sys.stderr)
@@ -121,16 +121,37 @@ def _load_items(args: argparse.Namespace) -> list[dict[str, Any]]:
     return []
 
 
-def _enrich_with_evaluate(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """monitor.evaluate_notice 가 가능하면 하드 제외 판정 필드를 부여(있으면 재사용)."""
+def _synth_group(company: dict[str, Any]) -> dict[str, Any] | None:
+    """기업 region(city/district)로 evaluate_notice 의 지역판정용 '합성 그룹'을 만든다.
+    키워드/조건은 넣지 않는다 — 지역 적격성 판정만 그 기업 기준으로 빌린다."""
+    region = company.get("region") or {}
+    city = (region.get("city") or "").strip()
+    if not city:
+        return None
+    dist = (region.get("district") or "").strip()
+    return {
+        "applicant_region_city": city,
+        "applicant_region_label": city,
+        "applicant_districts": [dist] if dist else [],
+    }
+
+
+def _enrich_for_company(items: list[dict[str, Any]], company: dict[str, Any]) -> list[dict[str, Any]]:
+    """기업별 합성 그룹으로 monitor.evaluate_notice 지역판정을 부여(있으면 재사용).
+
+    evaluate_notice 를 group 없이 호출하면 monitor 가 '인천 고정'으로 지역을 판정해
+    비인천 기업(서울 등)의 추천이 인천 기준으로 오염된다(인천고정 버그). 기업 city 로
+    합성 그룹을 만들어 전달해 각 기업 기준으로 지역 적격성을 판정한다.
+    """
     try:
         from monitor import evaluate_notice  # type: ignore
     except Exception:  # noqa: BLE001
         return items
+    sg = _synth_group(company)
     enriched = []
     for it in items:
         try:
-            enriched.append(evaluate_notice(it))
+            enriched.append(evaluate_notice(it, sg))
         except Exception:  # noqa: BLE001
             enriched.append(it)
     return enriched
@@ -218,7 +239,8 @@ def main(argv: list[str] | None = None) -> int:
     summary: dict[str, Any] = {"ok": True, "input_items": len(items), "companies": {}}
     print("\n[기업별 매칭 결과]")
     for company in companies:
-        result = company_match.match_for_company(items, company)
+        company_items = _enrich_for_company(items, company)  # 기업별 지역판정(인천고정 버그 차단)
+        result = company_match.match_for_company(company_items, company)
         paths = _write_company_report(company, result, output_dir)
         n_match = len(result["matched"])
         print(f"  - {company.get('name'):20s}: 맞춤 {n_match}건 / 제외 {len(result['rejected'])}건"
