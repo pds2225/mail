@@ -71,6 +71,8 @@ TITLE_NOISE = {
 TITLE_TAIL_RE = re.compile(r"\s*[>《<]\s*상세화면\s*$")
 HTML_HEAD_RE = re.compile(rb"^\s*<(?:!doctype|html|head|body|center|br|table)\b", re.IGNORECASE)
 DOC_EXT_RE = re.compile(r"\.(hwp|hwpx|pdf|docx?|xlsx?|pptx?|zip|7z|rar|txt|jpe?g|png|gif)$", re.IGNORECASE)
+# 사이트 공통 안내서·도움말(공고 첨부가 아닌 네비게이션 파일) — 후보에서 제외
+SITE_GUIDE_RE = re.compile(r"/guide/|/help/|/manual/|manual\.pdf|user_?guide|/common/.*manual", re.IGNORECASE)
 
 
 @dataclass
@@ -294,6 +296,8 @@ def gather_candidates(url: str, html: str) -> list[AttachmentCandidate]:
                 candidates.extend(extract_attachment_candidates(fetch_html(outbound), outbound))
             except Exception as exc:
                 log.warning("외부 페이지 확인 실패(%s): %s", outbound, exc)
+    # 사이트 공통 안내서·도움말(매뉴얼 등)은 공고 첨부가 아니므로 제외
+    candidates = [c for c in candidates if not SITE_GUIDE_RE.search(c.url)]
     return candidates
 
 

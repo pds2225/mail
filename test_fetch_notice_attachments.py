@@ -26,6 +26,7 @@ from scripts.fetch_notice_attachments import (  # noqa: E402
     decode_cd_filename,
     download_attachment,
     extract_notice_title,
+    gather_candidates,
     resolve_notice_dir,
 )
 
@@ -149,3 +150,17 @@ def test_resolve_notice_dir_reuses_same_title(tmp_path):
 def test_resolve_notice_dir_empty_dir_starts_at_one(tmp_path):
     d = resolve_notice_dir(tmp_path, "첫 공고", number=True)
     assert d.name == "01_첫 공고"
+
+
+# ---------- 5) 사이트 공통 매뉴얼 제외 (bizok 회귀) ----------
+
+def test_gather_excludes_site_manual():
+    html = (
+        '<a href="/open_content/guide/manual.pdf">이용자 매뉴얼</a>'
+        '<a href="/open_content/support.do?act=down&gb=online&fn=x.hwp&ofn=모집공고.hwp">모집공고</a>'
+    )
+    cands = gather_candidates(
+        "https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=7073", html)
+    urls = [c.url for c in cands]
+    assert not any("manual.pdf" in u for u in urls)   # 사이트 매뉴얼 제외
+    assert any("act=down" in u for u in urls)          # 진짜 첨부는 유지
