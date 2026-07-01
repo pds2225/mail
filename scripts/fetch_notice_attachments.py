@@ -24,6 +24,7 @@ import logging
 import mimetypes
 import os
 import re
+import subprocess
 import sys
 import unicodedata
 from dataclasses import asdict, dataclass
@@ -547,6 +548,32 @@ def _print_summary(counts: dict, link_count: int) -> None:
         print(f"   ❌ 실제 실패 {real_fail}건 (자세한 내용은 _download_log.json)")
 
 
+def _try_notify_popup(message: str) -> None:
+    """Windows 토스트/팝업(있으면). 실패해도 CLI 는 계속."""
+    script = Path.home() / ".claude" / "scripts" / "notify_popup.ps1"
+    if not script.is_file():
+        return
+    try:
+        subprocess.run(
+            [
+                "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", str(script), "-Kind", "batch",
+            ],
+            input=message,
+            text=True,
+            encoding="utf-8",
+            timeout=15,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+
+
+def _notify_download_done(ok: int, link_count: int, out_dir: Path) -> None:
+    line = f"첨부 {ok}개 저장됨 — {out_dir}"
+    _try_notify_popup(line)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="공고 상세 페이지 링크의 첨부파일을 모두 다운로드한다.")
@@ -555,6 +582,8 @@ def main() -> int:
     parser.add_argument("--out-dir", help="저장 폴더(미지정 시 notice_download_config.json 의 out_dir 사용)")
     parser.add_argument("--dry-run", action="store_true", help="받지 않고 받을 목록만 미리보기")
     parser.add_argument("--open", action="store_true", help="완료 후 저장 폴더 열기(Windows)")
+    parser.add_argument("--notify", action="store_true",
+                        help="완료 시 Windows 팝업(가능할 때만)")
     parser.add_argument("--interactive", action="store_true", help="링크를 직접 입력받아 반복 처리(더블클릭 런처용)")
     parser.add_argument("--quiet", action="store_true", help="httpx 등 로그 출력 최소화")
     args = parser.parse_args()
@@ -604,6 +633,10 @@ def main() -> int:
             for r in all_results:
                 counts[r.status] = counts.get(r.status, 0) + 1
             _print_summary(counts, len({r.detail_url for r in all_results}))
+            if args.notify and not args.dry_run:
+                ok = counts.get("OK", 0)
+                if ok:
+                    _notify_download_done(ok, len({r.detail_url for r in all_results}), out_dir)
         else:
             print("받은 파일이 없습니다.")
         return 0
@@ -617,6 +650,8 @@ def main() -> int:
         _handle_url(url, out_dir, args.dry_run, args.open, opened_dirs, all_results)
     counts = _write_manifest(out_dir, args.dry_run, all_results)
     _print_summary(counts, len(urls))
+    if args.notify and not args.dry_run and counts.get("OK", 0):
+        _notify_download_done(counts["OK"], len(urls), out_dir)
     return 0
 
 

@@ -197,3 +197,27 @@ def test_gather_excludes_site_manual():
     urls = [c.url for c in cands]
     assert not any("manual.pdf" in u for u in urls)   # 사이트 매뉴얼 제외
     assert any("act=down" in u for u in urls)          # 진짜 첨부는 유지
+
+
+# ---------- 6) --notify 팝업(실패해도 CLI 계속) ----------
+
+def test_try_notify_popup_no_crash(monkeypatch):
+    from scripts.fetch_notice_attachments import _try_notify_popup
+
+    monkeypatch.setattr(
+        "scripts.fetch_notice_attachments.Path.home",
+        lambda: Path("/nonexistent"),
+    )
+    _try_notify_popup("테스트")  # 스크립트 없으면 조용히 return
+
+
+def test_notify_download_done_calls_popup(monkeypatch, tmp_path):
+    from scripts.fetch_notice_attachments import _notify_download_done
+
+    calls: list[str] = []
+    monkeypatch.setattr(
+        "scripts.fetch_notice_attachments._try_notify_popup",
+        lambda m: calls.append(m),
+    )
+    _notify_download_done(3, 1, tmp_path)
+    assert calls and "3개" in calls[0]
