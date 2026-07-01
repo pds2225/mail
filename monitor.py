@@ -3709,6 +3709,32 @@ def _is_voucher(it: dict) -> bool:
     return any(v in text for v in VOUCHER_KEYWORDS)
 
 
+def alert_email(subject: str, body: str) -> None:
+    """PC용 알림 이메일 — 커버리지 이상 등 '헬스 알림'을 메일로 발송(PC에서 확인).
+    announcement 발송 게이트(_ALLOW_SMTP_SEND)와 무관하게 항상 시도한다(alert_ntfy 와
+    동일 정책 — dry-run 스케줄에서도 헬스 알림은 나가야 함). 수신=자기 자신(GMAIL_ADDRESS,
+    안전 수신자 규칙). 실패해도 본 작업엔 영향 없음."""
+    if not (GMAIL_ADDRESS and GMAIL_APP_PASSWORD):
+        log.info("GMAIL 미설정 — PC 알림 이메일 생략")
+        return
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"[mail-monitor] {subject}"
+        msg["From"] = GMAIL_ADDRESS
+        msg["To"] = GMAIL_ADDRESS
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg.attach(MIMEText(
+            f"<html><body style='font-family:Arial;line-height:1.7'>"
+            f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
+            f"</body></html>", "html", "utf-8"))
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
+            srv.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            srv.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
+        log.info("PC 알림 이메일 발송: %s", subject)
+    except Exception as e:  # 알림 실패는 본 작업을 막지 않는다
+        log.warning("PC 알림 이메일 실패(무시): %s", e)
+
+
 def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "warning") -> None:
     """폰 푸시(ntfy) 발송. NTFY_TOPIC 환경변수가 있을 때만. 실패해도 본 작업엔 영향 없음."""
     topic = os.environ.get("NTFY_TOPIC", "").strip()
@@ -4265,11 +4291,12 @@ def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) ->
         anomalies = _ca.detect_coverage_anomalies(rows, baseline)
         highs = [a for a in anomalies if a.get("severity") == "high"]
         if highs and allow_alert:
-            alert_ntfy(
-                "Coverage drop",
-                _ca.format_anomaly_message(anomalies),
-                priority="high",
-                tags="warning",
+            # PC(이메일)로 알림 — 평소 수집되던 사이트가 0건/급감/실패 시 확인 요청.
+            alert_email(
+                "커버리지 이상(수집 0건/급감/실패) — 확인 필요",
+                _ca.format_anomaly_message(anomalies)
+                + "\n\n(평소 수집되던 사이트가 조용히 바뀌어 공고를 놓치는 사고 감지 — "
+                  "GitHub Actions 로그/사이트를 확인하세요.)",
             )
         new_baseline = _ca.update_coverage_baseline(baseline, rows)
         _ca.save_coverage_baseline(new_baseline)
