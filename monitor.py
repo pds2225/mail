@@ -1436,6 +1436,113 @@ def fetch_ripc(site: dict) -> list[dict]:
     return items
 
 
+_KOTRA_LINK_RE = re.compile(r"\('([^']+selectBizMntInfoDetail\.do[^']+)'\)")
+
+
+def fetch_kotra_biz(site: dict) -> list[dict]:
+    """KOTRA 사업신청(subList/20000020753) 공고 수집.
+
+    목록이 정적 <table> 이 아니라 POST-AJAX(selectBmBizAllListAjax.do)로 HTML 조각을
+    렌더 → html_table 로는 0건. 세션쿠키 선확보 후 POST, div.card 파싱. 링크는
+    javascript onclick 의 selectBizMntInfoDetail.do 상대경로를 합성(딥링크)."""
+    base = "https://www.kotra.or.kr"
+    list_url = site["url"].split("#")[0]
+    api_url = base + "/module/subhome/bizAply/selectBmBizAllListAjax.do"
+    headers = {**HTTP_HEADERS, "X-Requested-With": "XMLHttpRequest", "Referer": list_url,
+               "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    try:
+        max_pages = max(1, int(site.get("max_pages", 5)))
+    except (TypeError, ValueError):
+        max_pages = 5
+    agg = site.get("is_aggregator", False)
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True, verify=False) as c:
+            try:
+                c.get(list_url)   # 세션쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            for page_no in range(1, max_pages + 1):
+                r = c.post(api_url, data={"pageNo": str(page_no), "pageSize": "10",
+                                          "collection": "business_application", "sch_nation_cd": "Y"})
+                r.raise_for_status()
+                soup = BeautifulSoup(r.content.decode("utf-8", "replace"), "html.parser")
+                cards = soup.select("div.card")
+                if not cards:
+                    break
+                for card in cards:
+                    a = card.select_one("a.card-tit")
+                    title = norm(a.get_text() if a else "")
+                    href = a.get("href", "") if a else ""
+                    mm = _KOTRA_LINK_RE.search(href)
+                    if not title or not mm:
+                        continue
+                    rel = mm.group(1)
+                    idm = re.search(r"dtlBizMntNo=([A-Za-z0-9]+)", rel)
+                    bid = idm.group(1) if idm else stable_id(title)
+                    if bid in seen:
+                        continue
+                    seen.add(bid)
+                    deadline = ""
+                    for dt in card.select("dl.card-meta-data dt"):
+                        if "신청기간" in dt.get_text():
+                            dd = dt.find_next("dd")
+                            ymd = re.findall(r"\d{4}-\d{2}-\d{2}", norm(dd.get_text())) if dd else []
+                            deadline = " ~ ".join(ymd[:2]) if ymd else ""
+                            break
+                    items.append(_item(f"{site['id']}_{bid}", title, urljoin(base, rel),
+                                       "KOTRA", "", deadline, site["name"], "", agg))
+    except Exception as e:
+        log.error("KOTRA 사업신청 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def fetch_kosme(site: dict) -> list[dict]:
+    """중소벤처기업진흥공단(KOSME) 사업공고 수집.
+
+    목록이 POST JSON(notice_list.json, activatedTab=01=사업공고 탭). 세션쿠키 선확보 후
+    POST, ds_infoList 파싱. TITL_NM=제목/REG_DTM=게시일/VALI_DT=마감/SLNO=상세id."""
+    base = "https://www.kosmes.or.kr"
+    api_url = base + "/sh/nts/notice_list.json"
+    headers = {**HTTP_HEADERS, "Referer": site["url"], "X-Requested-With": "XMLHttpRequest",
+               "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}
+    agg = site.get("is_aggregator", False)
+    try:
+        row_count = max(10, int(site.get("row_count", 50)))
+    except (TypeError, ValueError):
+        row_count = 50
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True, verify=False) as c:
+            try:
+                c.get(site["url"])   # 세션쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            r = c.post(api_url, data={"nowPage": "1", "pageCount": "10", "rowCount": str(row_count),
+                                      "param": "proc=List", "bKind": "popluar", "activatedTab": "01"})
+            r.raise_for_status()
+            for row in (r.json().get("ds_infoList") or []):
+                title = norm(row.get("TITL_NM", ""))
+                slno = norm(str(row.get("SLNO", "")))
+                if not title or not slno or slno in seen:
+                    continue
+                seen.add(slno)
+                posted = extract_date_from_text(norm(row.get("REG_DTM", "")) or norm(row.get("UPDT_DTM", "")))
+                deadline = extract_date_from_text(norm(row.get("VALI_DT", "")))
+                link = f"{base}/nsh/SH/NTS/SHNTS001F0.do?seqNo={slno}&tabPage=01"
+                items.append(_item(f"{site['id']}_{slno}", title, link, "중소벤처기업진흥공단",
+                                   "", deadline, site["name"], posted, agg))
+    except Exception as e:
+        log.error("KOSME 공고 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 def fetch_kita(site: dict) -> list[dict]:
     """한국무역협회(KITA) 진행중인 사업 크롤러
     URL: https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do
@@ -2102,6 +2209,8 @@ FETCHERS = {
     "semas_loan_ols":     fetch_semas_loan_ols,
     "smartfactory_api":   fetch_smart_factory,
     "ripc_api":           fetch_ripc,
+    "kotra_biz_api":      fetch_kotra_biz,
+    "kosme_api":          fetch_kosme,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────

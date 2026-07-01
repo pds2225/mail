@@ -199,13 +199,18 @@
     "id": "kiat",
     "name": "한국산업기술진흥원(KIAT)",
     "type": "html_table",
-    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListAjax.do?board_id=90&che1=all&miv_pageSize=15",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table.list tbody tr",
+      "title": "a",
+      "link": "a",
+      "link_template": "/front/board/boardContentsView.do?board_id=90&contents_id={0}",
+      "link_arg_re": "contentsView\\('([0-9a-f]+)'\\)"
     },
-    "note": "KIAT 사업공고 [2026-06 URL 갱신: /front/user/board → /front/board/boardContentsListPage.do?board_id=90]"
+    "note": "KIAT 사업공고 [2026-06 URL 갱신: /front/user/board → /front/board/boardContentsListPage.do?board_id=90]",
+    "date_selector": ".td_reg_date"
   },
   {
     "id": "keit",
@@ -228,17 +233,17 @@
     "name": "KOTRA(대한무역투자진흥공사)",
     "type": "html_table",
     "url": "https://www.kotra.or.kr/kp/biz/notificationList.do",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "해외진출/수출 [PC 실행 시 정상 접속]"
+    "note": "중복(kotra_trade24=subList/20000020753 와 동일 KOTRA 사업신청) → 비활성"
   },
   {
     "id": "kosme",
     "name": "중소벤처기업진흥공단(KOSME)",
-    "type": "html_table",
+    "type": "kosme_api",
     "url": "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
     "enabled": true,
     "is_aggregator": false,
@@ -306,13 +311,18 @@
     "id": "ksure",
     "name": "한국무역보험공사(K-SURE)",
     "type": "html_table",
-    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "div.board_list div.board_box",
+      "title": "a.subject",
+      "link": "a.subject",
+      "link_template": "detail.do?ntt_sn={}",
+      "link_id_attr": "data-ntt-sn"
     },
-    "note": "수출보험/보증 공고 목록 [홈페이지에서 공고 목록 URL로 변경]"
+    "note": "수출보험/보증 공고 목록 [홈페이지에서 공고 목록 URL로 변경]",
+    "date_selector": "ul.board_info_list li"
   },
   {
     "id": "kibo",
@@ -374,9 +384,13 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "ul.list.col5 > li",
+      "title": "span.subject",
+      "link": "a",
+      "description": "span.text"
     },
-    "note": "환경산업 공지/공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
+    "note": "환경산업 공지/공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]",
+    "date_selector": "span.date"
   },
   {
     "id": "ketep",
@@ -410,9 +424,14 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table.board01-list tbody tr",
+      "title": "td.left a",
+      "link": "td.left a",
+      "link_arg_re": "submitForm\\([^,]+,'view',(\\d+)\\)",
+      "link_template": "/?menuno=918&act=view&bbsno={0}"
     },
-    "note": "디자인산업 공고 목록 [홈페이지에서 공고 목록 URL로 변경, XpressEngine CMS]"
+    "note": "디자인산업 공고 목록 [홈페이지에서 공고 목록 URL로 변경, XpressEngine CMS]",
+    "date_selector": "td:nth-of-type(3)"
   },
   {
     "id": "rdcdp",
@@ -432,25 +451,31 @@
     "id": "sba",
     "name": "서울산업진흥원(SBA)",
     "type": "html_table",
-    "url": "https://www.sba.seoul.kr/kr/sbcu31l1",
+    "url": "https://www.sba.seoul.kr/Pages/BusinessApply/Posting.aspx",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "tr.grid_list.tbody",
+      "title": "td.title a",
+      "link": "td[onclick]",
+      "link_template": "/Pages/BusinessApply/{0}",
+      "link_arg_re": "location\\.href='(PostingDetail\\.aspx\\?[^']+)'"
     },
-    "note": "서울시 중소기업 사업공고 목록 [구 URL에서 신 URL(/kr/)로 변경]"
+    "note": "서울시 중소기업 사업공고 목록 [구 URL에서 신 URL(/kr/)로 변경]",
+    "date_selector": "td.date",
+    "deadline_selector": "td.date"
   },
   {
     "id": "gbsa",
     "name": "경기도경제과학진흥원(GBSA)",
     "type": "html_table",
     "url": "https://pms.gbsa.or.kr/info/pblanc/pblancList.do",
-    "enabled": true,
+    "enabled": false,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "경기도 기업 지원 사업공고 목록 [홈페이지→G-PMS 사업공고 서브도메인(pms.gbsa.or.kr)으로 변경]"
+    "note": "pblancList AES 암호화(QCELL) — playwright 필요, 현재 CI 미설치. CI에 playwright 추가 시 pw_table 로 활성화"
   },
   {
     "id": "itp",
@@ -561,7 +586,9 @@
     "selectors": {
       "row": "table.board-list tbody tr",
       "title": "a",
-      "link": "a"
+      "link": "a",
+      "link_arg_re": "goBoardView\\([^,]*,[^,]*,'([0-9]+)'\\)",
+      "link_template": "https://www.seoultp.or.kr/user/nd19746.do?dmlType=View&boardNo={0}"
     },
     "note": "서울테크노파크 [PC 실행 시 정상 접속]"
   },
@@ -857,8 +884,8 @@
   {
     "id": "kotra_trade24",
     "name": "KOTRA 무역투자24 - 사업공고",
-    "type": "html_table",
-    "url": "https://www.kotra.or.kr/bigList/20000020753",
+    "type": "kotra_biz_api",
+    "url": "https://www.kotra.or.kr/subList/20000020753",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
@@ -870,11 +897,15 @@
     "id": "semas_announce",
     "name": "소상공인시장진흥공단 - 사업공고",
     "type": "html_table",
-    "url": "https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1&pNm=BOA0101",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "td.title",
+      "link": "a",
+      "link_template": "/web/board/webBoardView.kmdc?b_idx={0}&bCd=1&pNm=BOA0101",
+      "link_arg_re": "fncGoDetail\\('(\\d+)'\\)"
     },
     "note": "소공인 지원사업 공고 [PC 실행 시 정상 접속]"
   },
