@@ -25,7 +25,18 @@ jobs:
       - name: 패키지 설치
         run: pip install -r requirements.txt
 
-      - name: 모니터링 실행
+      # 커버리지 baseline(사이트별 평소 수집건수 이력)을 실행 간에 유지한다.
+      # GitHub Actions 는 매번 새 환경이라 캐시로 넘겨주지 않으면 이력이 사라져
+      # 이상탐지가 영원히 발동하지 못한다(restore-keys 로 가장 최근 것을 복원).
+      - name: 커버리지 baseline 복원(전날까지 이력)
+        uses: actions/cache/restore@v4
+        with:
+          path: coverage_baseline.json
+          key: coverage-baseline-${{ github.run_id }}
+          restore-keys: |
+            coverage-baseline-
+
+      - name: 모니터링 실행 (+커버리지 이상탐지·폰 알림)
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
@@ -34,7 +45,16 @@ jobs:
           NTFY_TOPIC:         ${{ secrets.NTFY_TOPIC }}
         # safe-by-default: 자동 스케줄은 미리보기(dry-run)만 — 실제 메일 발송은
         # 사람이 명시적으로(--send / API confirm_send="SEND") 트리거할 때만 한다.
-        run: python monitor.py --dry-run --skip-coverage-fetch
+        # --coverage-alert: 평소 N건 수집되던 사이트가 오늘 0건/급감/실패하면 폰(ntfy)
+        #   알림 — 라이브 사이트가 조용히 바뀌어 공고를 놓치는 사고를 매일 감지(누락 방지).
+        run: python monitor.py --dry-run --coverage-alert
+
+      - name: 커버리지 baseline 저장(다음 실행 비교용)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: coverage_baseline.json
+          key: coverage-baseline-${{ github.run_id }}
 
       - name: 실패(크래시) 시 폰 알림
         if: failure()
