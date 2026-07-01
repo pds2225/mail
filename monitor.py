@@ -1247,10 +1247,15 @@ def fetch_semas_loan_ols(site: dict) -> list[dict]:
                         ] if part
                     ]
                     iid = f"{site['id']}_{seq}_{bbs_type}" if seq else f"{site['id']}_{stable_id(title)}"
-                    items.append(_item(
+                    it = _item(
                         iid, title, site["url"], "소상공인시장진흥공단",
                         " / ".join(desc_parts), "", site["name"], posted, agg,
-                    ))
+                    )
+                    # 소진공 정책자금은 전국 소상공인 대상 → 지역 단서가 없어 '지역 미상'으로
+                    #  하드컷 되어 발송 0건이던 문제 수정. region_field='전국'으로 명시(사실 정확)해
+                    #  전국 공고로 인정 → 정책자금 키워드 보유 그룹에 정상 전달(누락 방지·recall).
+                    it["region_field"] = "전국"
+                    items.append(it)
     except Exception as e:
         log.error("소진공 정책자금 공지 API 실패: %s", e)
         return []
