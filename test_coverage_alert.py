@@ -174,9 +174,9 @@ def test_run_coverage_anomaly_check_no_network_no_real_file(monkeypatch, tmp_pat
     monkeypatch.setattr(ca, "load_coverage_baseline", _load)
     monkeypatch.setattr(ca, "save_coverage_baseline", _save)
 
-    # 실제 ntfy 발송 차단 + 호출 캡처
+    # 실제 이메일 발송 차단 + 호출 캡처 (알림은 폰 ntfy → PC 이메일로 전환됨)
     calls = []
-    monkeypatch.setattr(m, "alert_ntfy", lambda *a, **k: calls.append((a, k)))
+    monkeypatch.setattr(m, "alert_email", lambda *a, **k: calls.append((a, k)))
 
     # 사전 baseline: a 는 평소 5~7건
     _save({"a": [5, 6, 5, 7]})
@@ -185,8 +185,7 @@ def test_run_coverage_anomaly_check_no_network_no_real_file(monkeypatch, tmp_pat
     anomalies = m.run_coverage_anomaly_check(rows, allow_alert=True)
 
     assert len(anomalies) == 1 and anomalies[0]["severity"] == "high"
-    assert len(calls) == 1  # high 1건 → 알림 1회
-    assert calls[0][1].get("priority") == "high"
+    assert len(calls) == 1  # high 1건 → PC(이메일) 알림 1회
     # baseline 갱신: 0건은 fetch_success=True 이므로 append 됨(성공일)
     assert _load()["a"][-1] == 0
     # 실제 파일은 건드리지 않음
@@ -204,7 +203,7 @@ def test_run_coverage_anomaly_check_no_alert_when_allow_false(monkeypatch, tmp_p
     monkeypatch.setattr(ca, "save_coverage_baseline",
                         lambda data, *a, **k: bpath.write_text(_json.dumps(data), encoding="utf-8"))
     calls = []
-    monkeypatch.setattr(m, "alert_ntfy", lambda *a, **k: calls.append(1))
+    monkeypatch.setattr(m, "alert_email", lambda *a, **k: calls.append(1))
 
     bpath.write_text(_json.dumps({"a": [5, 6, 5]}), encoding="utf-8")
     rows = [_row("a", item_count=0)]
@@ -224,7 +223,7 @@ def test_run_coverage_anomaly_check_no_alert_when_healthy(monkeypatch, tmp_path)
     monkeypatch.setattr(ca, "save_coverage_baseline",
                         lambda data, *a, **k: bpath.write_text(_json.dumps(data), encoding="utf-8"))
     calls = []
-    monkeypatch.setattr(m, "alert_ntfy", lambda *a, **k: calls.append(1))
+    monkeypatch.setattr(m, "alert_email", lambda *a, **k: calls.append(1))
 
     bpath.write_text(_json.dumps({"a": [5, 6, 5]}), encoding="utf-8")
     anomalies = m.run_coverage_anomaly_check([_row("a", item_count=6)], allow_alert=True)
