@@ -1,0 +1,4027 @@
+[
+  {
+    "id": "bizinfo",
+    "name": "기업마당(Bizinfo)",
+    "type": "bizinfo_api",
+    "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
+    "enabled": true,
+    "is_aggregator": true,
+    "note": "통합포털"
+  },
+  {
+    "id": "kstartup",
+    "name": "K-Startup",
+    "type": "kstartup_html",
+    "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "통합포털 - 창업지원"
+  },
+  {
+    "id": "smes24",
+    "name": "중소벤처24(SMEs24)",
+    "type": "html_table",
+    "url": "https://www.smes.go.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 [비활성화: SPA/JS 렌더링 필요, 정적 크롤링 불가]"
+  },
+  {
+    "id": "subsidy24",
+    "name": "보조금24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/subsidy",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 [비활성화: 홈페이지, 공고목록 직접접근 불가]"
+  },
+  {
+    "id": "ntis",
+    "name": "NTIS(과학기술지식정보)",
+    "type": "html_table",
+    "url": "https://www.ntis.go.kr/rndgate/eg/un/ra/mng.do",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "국가R&D통합공고 [비활성화: JS 렌더링 필요 - 공고목록 URL 확인됨, 향후 Selenium/API 전환 시 활성화]"
+  },
+  {
+    "id": "iris",
+    "name": "IRIS(범부처통합연구지원)",
+    "type": "iris_api",
+    "url": "https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituListView.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "전용 API"
+  },
+  {
+    "id": "g2b",
+    "name": "나라장터(G2B)",
+    "type": "html_table",
+    "url": "https://www.g2b.go.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "통합포털 - 조달 [비활성화: JS 렌더링 필요, 차세대 나라장터 전환 후 정적 크롤링 불가]"
+  },
+  {
+    "id": "mss",
+    "name": "중소벤처기업부",
+    "type": "mss_html",
+    "url": "https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중기부 직접 게시 [PC 실행 시 정상]"
+  },
+  {
+    "id": "msit",
+    "name": "과학기술정보통신부",
+    "type": "html_table",
+    "url": "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "과기부 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "motie",
+    "name": "산업통상자원부",
+    "type": "html_table",
+    "url": "https://www.motie.go.kr/kor/article/ATCL2826a2625",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "div.board-link a",
+      "link": "div.board-link a"
+    },
+    "note": "산업부"
+  },
+  {
+    "id": "moel",
+    "name": "고용노동부",
+    "type": "html_table",
+    "url": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "고용부 국고보조사업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "mafra",
+    "name": "농림축산식품부",
+    "type": "html_table",
+    "url": "https://www.mafra.go.kr/bbs/mafra/68/artclList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "농식품부 [PC 실행 시 정상]"
+  },
+  {
+    "id": "mof",
+    "name": "해양수산부",
+    "type": "html_table",
+    "url": "https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "해수부 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "mcst",
+    "name": "문화체육관광부",
+    "type": "html_table",
+    "url": "https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "문체부 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "moef",
+    "name": "기획재정부",
+    "type": "html_table",
+    "url": "https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "기재부 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "molit",
+    "name": "국토교통부",
+    "type": "html_table",
+    "url": "https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "국토부"
+  },
+  {
+    "id": "nipa",
+    "name": "정보통신산업진흥원(NIPA)",
+    "type": "nipa_html",
+    "url": "https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "ICT/SW/AI/콘텐츠 [PC 실행 시 정상]"
+  },
+  {
+    "id": "kiat",
+    "name": "한국산업기술진흥원(KIAT)",
+    "type": "html_table",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "KIAT 사업공고 [2026-06 URL 갱신: /front/user/board → /front/board/boardContentsListPage.do?board_id=90]"
+  },
+  {
+    "id": "keit",
+    "name": "한국산업기술평가관리원(KEIT)",
+    "type": "html_table",
+    "url": "https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table.table-response01 tbody tr",
+      "title": "a[onclick*=\"f_detailPage\"]",
+      "link": "a[onclick*=\"f_detailPage\"]"
+    },
+    "note": "KEIT 지원사업공고 [2026-06 URL 갱신: www.keit.re.kr/notice → itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do]"
+  },
+  {
+    "id": "kotra",
+    "name": "KOTRA(대한무역투자진흥공사)",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/kp/biz/notificationList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "해외진출/수출 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kosme",
+    "name": "중소벤처기업진흥공단(KOSME)",
+    "type": "html_table",
+    "url": "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "정책자금/수출바우처 공지사항 목록 [홈페이지에서 공고 목록 URL로 변경]"
+  },
+  {
+    "id": "semas",
+    "name": "소상공인시장진흥공단(SEMAS)",
+    "type": "html_table",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=BBS_0000009",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소상공인 지원사업 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+  },
+  {
+    "id": "semas_loan_ols",
+    "name": "소진공 정책자금 온라인신청",
+    "type": "semas_loan_ols",
+    "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "max_pages": 3,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소상공인 정책자금 온라인신청/공지 확인용 [비로그인 확인 범위] [AJAX POST /ols/man/SMAN051M/search.do 전용 수집]"
+  },
+  {
+    "id": "kised",
+    "name": "창업진흥원(KISED)",
+    "type": "html_table",
+    "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "창업 패키지/사관학교 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kocca_pims",
+    "name": "한국콘텐츠진흥원(사업공고)",
+    "type": "kocca_pims",
+    "url": "https://www.kocca.kr/kocca/pims/list.do?menuNo=204104",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 사업공고"
+  },
+  {
+    "id": "kocca_bbs",
+    "name": "한국콘텐츠진흥원(금융)",
+    "type": "kocca_bbs",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 금융지원"
+  },
+  {
+    "id": "ksure",
+    "name": "한국무역보험공사(K-SURE)",
+    "type": "html_table",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "수출보험/보증 공고 목록 [홈페이지에서 공고 목록 URL로 변경]"
+  },
+  {
+    "id": "kibo",
+    "name": "기술보증기금(KIBO)",
+    "type": "html_table",
+    "url": "https://www.kibo.or.kr/main/board/boardType38.do?mode=list&article.offset=0",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "기술보증기금 공지사항 [2026-06 URL 갱신: kor/bbs/bbs.do?bbsId=BBSMSTR → main/board/boardType38.do] [비활성화 유지: JS렌더링 필요]"
+  },
+  {
+    "id": "kodit",
+    "name": "신용보증기금(KODIT)",
+    "type": "html_table",
+    "url": "https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "td.bbs_tit",
+      "link": "a.nttInfoBtn"
+    },
+    "note": "신용보증 공지사항 목록 [홈페이지에서 공지사항 목록 URL로 변경]"
+  },
+  {
+    "id": "kvic",
+    "name": "한국벤처투자(KVIC)",
+    "type": "html_table",
+    "url": "https://www.kvic.or.kr/vcms/contents/view.do?contentsNo=5050101",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "벤처펀드/모태펀드 [비활성화: JS 렌더링 가능성 높음 - 공고 목록 URL 재확인 필요]"
+  },
+  {
+    "id": "khidi",
+    "name": "한국보건산업진흥원(KHIDI)",
+    "type": "html_table",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU02096",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "보건/의료/바이오 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "keiti",
+    "name": "한국환경산업기술원(KEITI)",
+    "type": "html_table",
+    "url": "https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "환경산업 공지/공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
+  },
+  {
+    "id": "ketep",
+    "name": "한국에너지기술평가원(KETEP)",
+    "type": "html_table",
+    "url": "https://www.ketep.re.kr/businessAcment?menuId=MENU002080200000000",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "에너지기술 R&D 사업공고 [2026-06 URL 갱신: businessAcment/list?menuId → businessAcment?menuId, 전체 491건 테이블 형식]"
+  },
+  {
+    "id": "foodpolis",
+    "name": "한국식품산업클러스터진흥원",
+    "type": "html_table",
+    "url": "https://www.foodpolis.kr/foodpolis/bbs/list.do?bbsId=FS_02",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "식품산업클러스터 지원사업 공고 [PC 실행 시 정상 접속] [비활성화: JS렌더링 필요]"
+  },
+  {
+    "id": "kidp",
+    "name": "한국디자인진흥원(KIDP)",
+    "type": "html_table",
+    "url": "https://www.kidp.or.kr/?menuno=918&act=list",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "디자인산업 공고 목록 [홈페이지에서 공고 목록 URL로 변경, XpressEngine CMS]"
+  },
+  {
+    "id": "rdcdp",
+    "name": "지역디자인통합플랫폼",
+    "type": "html_table",
+    "url": "https://www.rdcdp.or.kr/index.do?menu_id=00000746",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "a",
+      "link": "a"
+    },
+    "note": "지역 디자인 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "sba",
+    "name": "서울산업진흥원(SBA)",
+    "type": "html_table",
+    "url": "https://www.sba.seoul.kr/kr/sbcu31l1",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "서울시 중소기업 사업공고 목록 [구 URL에서 신 URL(/kr/)로 변경]"
+  },
+  {
+    "id": "gbsa",
+    "name": "경기도경제과학진흥원(GBSA)",
+    "type": "html_table",
+    "url": "https://pms.gbsa.or.kr/info/pblanc/pblancList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "경기도 기업 지원 사업공고 목록 [홈페이지→G-PMS 사업공고 서브도메인(pms.gbsa.or.kr)으로 변경]"
+  },
+  {
+    "id": "itp",
+    "name": "인천테크노파크",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=13",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 지원사업 공지사항 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "bepa",
+    "name": "부산경제진흥원(BEP)",
+    "type": "html_table",
+    "url": "https://www.bepa.kr/kor/view.do?no=1508",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "부산 기업 지원 공고/공지사항 목록 [홈페이지에서 공고 목록 URL로 변경]"
+  },
+  {
+    "id": "djtp",
+    "name": "대전테크노파크",
+    "type": "html_table",
+    "url": "https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "대전 기업 지원 일반사업공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
+  },
+  {
+    "id": "myfair",
+    "name": "마이페어",
+    "type": "myfair_html",
+    "url": "https://myfair.co/support-program-list",
+    "enabled": true,
+    "is_aggregator": true,
+    "note": "통합포털 - 해외전시회 [PC 실행 시 정상]"
+  },
+  {
+    "id": "kita",
+    "name": "한국무역협회(KITA)",
+    "type": "kita_html",
+    "url": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "무역협회"
+  },
+  {
+    "id": "smtech",
+    "name": "SMTECH(중소기업기술개발)",
+    "type": "smtech_html",
+    "url": "https://www.smtech.go.kr/front/ifg/no/notice02_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소기업 기술개발"
+  },
+  {
+    "id": "gtp",
+    "name": "경기TP",
+    "type": "gtp_html",
+    "url": "https://pms.gtp.or.kr/web/business/webBusinessList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "경기테크노파크"
+  },
+  {
+    "id": "gsp",
+    "name": "경기스타트업플랫폼",
+    "type": "gsp_html",
+    "url": "https://www.gsp.or.kr/supportProject/UVSL0001.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "경기 스타트업"
+  },
+  {
+    "id": "ccei_biz",
+    "name": "창조경제혁신센터(공고)",
+    "type": "ccei_html",
+    "url": "https://ccei.creativekorea.or.kr/service/business_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "창조경제 지원사업"
+  },
+  {
+    "id": "ccei_evt",
+    "name": "창조경제혁신센터(행사)",
+    "type": "ccei_html",
+    "url": "https://ccei.creativekorea.or.kr/service/event_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "창조경제 행사"
+  },
+  {
+    "id": "seoultp",
+    "name": "서울TP",
+    "type": "html_table",
+    "url": "https://www.seoultp.or.kr/user/nd19746.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table.board-list tbody tr",
+      "title": "a",
+      "link": "a"
+    },
+    "note": "서울테크노파크 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kovwa",
+    "name": "한국여성벤처협회",
+    "type": "html_table",
+    "url": "https://kovwa.or.kr/94",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "여성벤처 지원사업 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ppi",
+    "name": "혁신제품지정공고(나라장터)",
+    "type": "html_table",
+    "url": "https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do",
+    "enabled": true,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "a",
+      "link": "a"
+    },
+    "note": "혁신제품 지정/조달 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "kocca_general",
+    "name": "한국콘텐츠진흥원(일반공고)",
+    "type": "kocca_bbs",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOCCA 일반 지원사업 공고"
+  },
+  {
+    "id": "data_go",
+    "name": "공공데이터포털",
+    "type": "html_table",
+    "url": "https://www.data.go.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "공공데이터 개방/API [비활성화: 지원사업 공고 사이트 아님, 데이터셋 목록 SPA]"
+  },
+  {
+    "id": "gov24",
+    "name": "정부24(Gov.kr)",
+    "type": "html_table",
+    "url": "https://www.gov.kr/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "정부 서비스 통합 포털 [비활성화: 홈페이지, 공고목록 직접접근 불가]"
+  },
+  {
+    "id": "bizok",
+    "name": "비즈오케이(BizOK) - 인천기업지원",
+    "type": "bizok_html",
+    "url": "https://bizok.incheon.go.kr/open_content/support.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 기업지원 통합플랫폼 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "bizok_plan",
+    "name": "비즈오케이 - 인천 연간사업공고계획",
+    "type": "html_table",
+    "url": "https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 연간 공고 일정표 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "incheon_city",
+    "name": "인천광역시청 - 공고/고시",
+    "type": "incheon_city_html",
+    "url": "https://www.incheon.go.kr/IC010205",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천시 공식 공고 페이지 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "itp_notice",
+    "name": "인천테크노파크(ITP) - 공지사항",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=15",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 공지/보도자료 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ifez",
+    "name": "인천경제자유구역청(IFEZ)",
+    "type": "html_table",
+    "url": "https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "송도/영종/청라 입주기업 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "incheoncci",
+    "name": "인천상공회의소",
+    "type": "html_table",
+    "url": "https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "수출상담회/바이어매칭 새소식 목록 [URL 오류 수정: incheoncci.or.kr→incheon.korcham.net(대한상공회의소 통합 플랫폼)]"
+  },
+  {
+    "id": "ema",
+    "name": "인천수출경영자협의회",
+    "type": "html_table",
+    "url": "https://www.ema.or.kr/bbs/support",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 뷰티기업 인프라구축 지원 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "insupport",
+    "name": "인천소상공인종합지원센터",
+    "type": "html_table",
+    "url": "http://www.insupport.or.kr/sub/?mcode=0404010000",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소공인 클린제조환경 조성 등 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "icgf",
+    "name": "인천신용보증재단",
+    "type": "html_table",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소상공인/제조업 보증 공고 목록 [URL 오류 수정: icgf.or.kr→icsinbo.or.kr(실제 운영 도메인)]"
+  },
+  {
+    "id": "ic_junggu",
+    "name": "인천 중구청",
+    "type": "html_table",
+    "url": "https://www.icjg.go.kr/krcm01b",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업육성자금 등 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "ic_donggu",
+    "name": "인천 동구청",
+    "type": "html_table",
+    "url": "https://www.icdonggu.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_michuhol",
+    "name": "인천 미추홀구청",
+    "type": "html_table",
+    "url": "https://www.michuhol.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_yeonsu",
+    "name": "인천 연수구청",
+    "type": "html_table",
+    "url": "https://www.yeonsu.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [비활성화: 리다이렉트 루프]"
+  },
+  {
+    "id": "ic_namdong",
+    "name": "인천 남동구청",
+    "type": "html_table",
+    "url": "https://www.namdong.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "남동공단 기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_bupyeong",
+    "name": "인천 부평구청",
+    "type": "html_table",
+    "url": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "ul.etcList li:has(p.tit a)",
+      "title": "p.tit a",
+      "link": "p.tit a"
+    },
+    "note": "부평구 고시·공고/입법예고 [2026-06 도메인 정정: bpyeong.go.kr(존재X) → icbp.go.kr + 고시공고 게시판 URL 추가]"
+  },
+  {
+    "id": "ic_gyeyang",
+    "name": "인천 계양구청",
+    "type": "html_table",
+    "url": "https://www.gyeyang.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_seo",
+    "name": "인천 서구청",
+    "type": "html_table",
+    "url": "https://www.seo.incheon.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업육성기금/전시회 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_ganghwa",
+    "name": "인천 강화군청",
+    "type": "html_table",
+    "url": "https://www.ganghwa.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "ic_ongjin",
+    "name": "인천 옹진군청",
+    "type": "html_table",
+    "url": "https://www.ongjin.go.kr/",
+    "enabled": false,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+  },
+  {
+    "id": "kotra_trade24",
+    "name": "KOTRA 무역투자24 - 사업공고",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/bigList/20000020753",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "수출바우처/해외전시회/시장개척단 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "semas_announce",
+    "name": "소상공인시장진흥공단 - 사업공고",
+    "type": "html_table",
+    "url": "https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "소공인 지원사업 공고 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "khidi_kbeauty",
+    "name": "한국보건산업진흥원(K-뷰티공고)",
+    "type": "html_table",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU01108",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "K-뷰티 해외판매장/플래그십허브 [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "connectworks",
+    "name": "커넥트웍스(인천TP공고)",
+    "type": "html_card",
+    "url": "https://works.connect24.kr/search_result.php?org=인천테크노파크",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": ".card,.item,li"
+    },
+    "note": "인천TP 공고 모아보기 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "rndcircle",
+    "name": "디써클(RnD Circle) - 지원사업",
+    "type": "html_table",
+    "url": "https://app.rndcircle.io/gov-grant",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "K-뷰티 관련 공고 수집 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "thevc",
+    "name": "더브이씨(THE VC) - 지원사업",
+    "type": "html_table",
+    "url": "https://thevc.kr/grants",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천 지원사업 공고 수집 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "bizcube",
+    "name": "비즈큐브(BizCube)",
+    "type": "html_table",
+    "url": "https://bizcube-sol.com/",
+    "enabled": false,
+    "is_aggregator": true,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "해외바이어 초청 수출상담회 [비활성화: JS렌더링 필요, 일반 크롤링 불가]"
+  },
+  {
+    "id": "itp_marketing",
+    "name": "인천TP 마케팅센터(뷰티산업육성)",
+    "type": "itp_html",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=36",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "table tbody tr"
+    },
+    "note": "인천TP 마케팅센터(뷰티산업육성) [PC 실행 시 정상 접속]"
+  },
+  {
+    "id": "exportvoucher",
+    "name": "수출바우처(수출지원기반활용)",
+    "type": "exportvoucher_html",
+    "url": "https://www.exportvoucher.com/portal/board/boardList?bbs_id=1&active_menu_cd=EZ005004000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "KOTRA/중진공 수출바우처 공지 — 상세에서 신청기간·지역 추출"
+  },
+  {
+    "id": "mssmiv",
+    "name": "중소기업 혁신바우처(MSSMIV)",
+    "type": "mssmiv_html",
+    "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소벤처기업부 혁신바우처 공지사항(사업공고 포함) — goDetail(seq)→BoardView?seq"
+  },
+  {
+    "id": "custom_f4574ebb",
+    "name": "예술경영지원센터",
+    "type": "html_card",
+    "url": "https://www.gokams.or.kr/01_news/notice_list.aspx",
+    "note": "예술분야 기초창업 지원사업",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "ul li"
+    }
+  },
+  {
+    "id": "imp_a87b0395",
+    "name": "(재)헬스케어스파산업진흥원",
+    "type": "html_table",
+    "url": "https://hespa.or.kr/main/index.php?m_cd=23",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ca1396ea",
+    "name": "AI·SW 마에스트로 서울",
+    "type": "html_table",
+    "url": "https://www.swmaestro.ai/sw/bbs/B0000002/list.do?menuNo=200019",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "AI·SW 마에스트로 소식 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "li.item"
+    }
+  },
+  {
+    "id": "imp_33c1ed03",
+    "name": "ALIO 공공기관 경영정보 공개시스템",
+    "type": "html_table",
+    "url": "https://www.alio.go.kr/notice/noticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_42bbef97",
+    "name": "K-Startup 창업지원포털",
+    "type": "html_table",
+    "url": "https://www.k-startup.go.kr/web/contents/webNOTICE_MATR.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.board_list li"
+    }
+  },
+  {
+    "id": "imp_94d615de",
+    "name": "KBIZ 중소기업중앙회",
+    "type": "html_table",
+    "url": "https://www.kbiz.or.kr/ko/contents/bbs/list.do?mnSeq=209",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "중앙회 공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_6b76eccc",
+    "name": "KOTRA 무역투자24",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/subList/41000022001",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_81066215",
+    "name": "KOTRA 무역투자24",
+    "type": "html_table",
+    "url": "https://www.kotra.or.kr/subList/20000005958?tabid=1092",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "입찰공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_ebd3a2d1",
+    "name": "MainBiz 메인 / 경영혁신형 중소기업",
+    "type": "html_table",
+    "url": "https://www.smes.go.kr/mainbiz/usr/board/comNotice.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_f17757c4",
+    "name": "Wbiz 여성기업 종합정보 포털",
+    "type": "html_table",
+    "url": "https://www.wbiz.or.kr/notice/notice.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_e364c052",
+    "name": "Wbiz 여성기업 종합정보 포털",
+    "type": "html_table",
+    "url": "https://wbiz.or.kr/notice/bizNew.do?searchOp8=recruiting",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_d3574882",
+    "name": "가족친화지원사업",
+    "type": "html_table",
+    "url": "https://www.ffsb.kr/ffsb/bs/boardList.do?boardSeq=1&menuSeq=5190",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b477693f",
+    "name": "강남취·창업허브센터",
+    "type": "html_table",
+    "url": "https://www.gangnam-jobnstartup.com/program/list",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "프로그램 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_bdd0effb",
+    "name": "강릉과학산업진흥원",
+    "type": "html_table",
+    "url": "https://gsipa.or.kr/board/bbs/board.php?bo_table=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_e166f3aa",
+    "name": "강원경영자총협회",
+    "type": "html_table",
+    "url": "http://www.gwef.or.kr/bbs/board.php?bo_table=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_0ebda26e",
+    "name": "강원농촌융복합산업지원센터",
+    "type": "html_table",
+    "url": "https://gangwon6.co.kr/information/notices",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0666c4ff",
+    "name": "강원바이오통합솔루션센터",
+    "type": "html_table",
+    "url": "https://sc.cbfo.kr/index.php?mp=2",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업 안내 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_51725ee1",
+    "name": "강원신용보증재단",
+    "type": "html_table",
+    "url": "https://www.gwsinbo.or.kr/board/board_list.php?board_name=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_86d69e8d",
+    "name": "강원지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/gangwon/ex/bbs/List.do?cbIdx=252",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3415e827",
+    "name": "강원지속가능경제지원센터",
+    "type": "html_table",
+    "url": "https://gwse.or.kr/bbs/board.php?bo_table=sub41",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_f3657c5d",
+    "name": "강원지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_1c0b71a2",
+    "name": "강원창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gangwon/custom/notice_list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b3794638",
+    "name": "강원테크노파크",
+    "type": "html_table",
+    "url": "https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01a&keyvalue=sub01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_7505182c",
+    "name": "강원테크노파크",
+    "type": "html_table",
+    "url": "https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01b&keyvalue=sub01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "모집공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_8f096b7e",
+    "name": "강원특별자치도경제진흥원",
+    "type": "html_table",
+    "url": "https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub61",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1aa12a6d",
+    "name": "강원특별자치도경제진흥원",
+    "type": "html_table",
+    "url": "https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_d74b67ee",
+    "name": "경기경영자총협회",
+    "type": "html_table",
+    "url": "http://gyef.or.kr/bbs/board.php?bo_table=notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_94977779",
+    "name": "경기농촌융복합산업 활성화 지원센터",
+    "type": "html_table",
+    "url": "https://www.xn--6-v85el2bkz7b4zfiuk.com/board/?mode=list&page=1&menucode=70100",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3f404c75",
+    "name": "경기대진테크노파크",
+    "type": "html_table",
+    "url": "https://gdtp.or.kr/board/notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1f9950ff",
+    "name": "경기대진테크노파크",
+    "type": "html_table",
+    "url": "https://gdtp.or.kr/board/announcement",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_c3c772d6",
+    "name": "경기대진테크노파크",
+    "type": "html_table",
+    "url": "https://gdtp.or.kr/document/experti",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "전문위원 등록안내 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_3293ef77",
+    "name": "경기도경제과학진흥원",
+    "type": "html_table",
+    "url": "https://www.gbsa.or.kr/board/notice.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_26bc5408",
+    "name": "경기도시장상권진흥원",
+    "type": "html_table",
+    "url": "https://www.gmr.or.kr/base/board/list?boardManagementNo=1&menuLevel=2&menuNo=14",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ac08023d",
+    "name": "경기도여성가족재단",
+    "type": "html_table",
+    "url": "https://www.gwff.kr/base/board/list?boardManagementNo=21&menuLevel=2&menuNo=23",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "모집/행사 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_fcc1b8b9",
+    "name": "경기도 일자리포털 잡아바",
+    "type": "html_table",
+    "url": "https://apply.jobaba.net/bsns/bsnsListView.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_af31523b",
+    "name": "경기도청",
+    "type": "html_table",
+    "url": "https://www.gg.go.kr/bbs/board.do?bsIdx=469&menuId=1547&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "고시/공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_659f449d",
+    "name": "경기신용보증재단",
+    "type": "html_table",
+    "url": "https://www.gcgf.or.kr/gcgf/pt/pst/selectPstList.do?mi=1024&bbsId=1002",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8966bc33",
+    "name": "경기신용보증재단",
+    "type": "html_table",
+    "url": "https://www.gcgf.or.kr/gcgf/cm/conts/contsView.do?mi=1044&contsId=1017",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "외부 평가위원 상시신청 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_7ebb07c1",
+    "name": "경기지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/gyeonggi/ex/bbs/List.do?cbIdx=247",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_e947a8cf",
+    "name": "경기지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.gghrd.or.kr/board/notice.php",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5d6f7946",
+    "name": "경기창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gyeonggi/custom/notice_list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_99ac184f",
+    "name": "경기콘텐츠진흥원",
+    "type": "html_table",
+    "url": "https://www.gcon.or.kr/gcon/bbs/B0000001/list.do?menuNo=200057",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_60bf007e",
+    "name": "경기테크노파크",
+    "type": "html_table",
+    "url": "https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=anno",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_75a17868",
+    "name": "경기테크노파크",
+    "type": "html_table",
+    "url": "https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=expert",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "모집공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_9d8f040b",
+    "name": "경남6차산업지원센터",
+    "type": "html_table",
+    "url": "https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/list/sub4_1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5ecddf16",
+    "name": "경남경영자총협회",
+    "type": "html_table",
+    "url": "https://www.gef.or.kr/core_board2007/board/coreboard.php?i_board=notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_92878003",
+    "name": "경남신용보증재단",
+    "type": "html_table",
+    "url": "https://www.gnsinbo.or.kr/bbs/board.php?bo_table=01_03_01_01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_58477755",
+    "name": "경남지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/gyeongnam/ex/bbs/List.do?cbIdx=255",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_e59cefa8",
+    "name": "경남지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://gnhrd.or.kr/bbs/board.php?bo_table=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_787c2fcf",
+    "name": "경남창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gyeongnam/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_fab2880b",
+    "name": "경남창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gyeongnam/allim/allim_list.do?div_code=2",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "입찰공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_54ff535f",
+    "name": "경남테크노파크",
+    "type": "html_table",
+    "url": "https://www.gntp.or.kr/board/list",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "새소식 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "table tbody tr",
+      "title": "td.de-writeless a.color-fix",
+      "link": "a[onclick*=goPage]"
+    }
+  },
+  {
+    "id": "imp_899167d1",
+    "name": "경남테크노파크",
+    "type": "html_table",
+    "url": "https://www.gntp.or.kr/biz/apply",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업신청 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_fdbe9346",
+    "name": "경남투자경제진흥원",
+    "type": "html_table",
+    "url": "https://giba.or.kr/fe/bbs/NR_list.do?bbsCd=30",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8f79808a",
+    "name": "경남투자경제진흥원",
+    "type": "html_table",
+    "url": "https://giba.or.kr/fe/bizinfo/bizannounce/NR_list.do?bbsCd=11",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_9205bbcd",
+    "name": "경북경영자총협회",
+    "type": "html_table",
+    "url": "http://kbef.or.kr/zbxe/support1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9f6637bd",
+    "name": "경북광역자활센터",
+    "type": "html_table",
+    "url": "https://gbssc.or.kr/notice/",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_147523ab",
+    "name": "경북농촌융복합산업지원센터",
+    "type": "html_table",
+    "url": "https://www.xn--6-v85e375bg5c4riuk.com/community/01.htm",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_cb5494de",
+    "name": "경북북부경영자협회",
+    "type": "html_table",
+    "url": "http://www.geea.or.kr/bbs/notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "경총 공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_bc1a66bd",
+    "name": "경북신용보증재단",
+    "type": "html_table",
+    "url": "https://gbsinbo.co.kr/page/10052/10005.tc",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_dbb1da21",
+    "name": "경북여성정책개발원",
+    "type": "html_table",
+    "url": "https://forwoman.or.kr/main/contents.do?a_num=59464232",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "개발원소식 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2e509c9a",
+    "name": "경북지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "http://gbhrd.or.kr/zbxe/?mid=support1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ac859502",
+    "name": "경북창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gyeongbuk/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업안내 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c0462323",
+    "name": "경북창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gyeongbuk/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_aed1d3f2",
+    "name": "경북테크노파크",
+    "type": "html_table",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000021&searchTerm=ing",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고-내부 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_9f7a0251",
+    "name": "경북테크노파크",
+    "type": "html_table",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000022",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고-타기관 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9b66b0e9",
+    "name": "경북테크노파크",
+    "type": "html_table",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000023",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "일반공고 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_a68681ac",
+    "name": "경상북도 중소기업육성자금 GFund",
+    "type": "html_table",
+    "url": "https://www.gfund.kr/hp/info/M04_L01.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_8eb716dc",
+    "name": "경상북도경제진흥원",
+    "type": "html_table",
+    "url": "https://www.gepa.kr/?page_id=51",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_73c06471",
+    "name": "경상북도사회적경제지원센터",
+    "type": "html_table",
+    "url": "http://gbse.or.kr/HOME/gbse/sub.htm?nav_code=gbs1566979318",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_78241651",
+    "name": "고양산업진흥원",
+    "type": "html_table",
+    "url": "https://www.gipa.or.kr/community/01_1.php",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "일반공지 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_758648a9",
+    "name": "공공구매종합정보망",
+    "type": "html_table",
+    "url": "https://www.smpp.go.kr/cst/notice/selectNoticeListVw.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_24f53098",
+    "name": "광주전남지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/gwangju/ex/bbs/List.do?cbIdx=251",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c5c8a218",
+    "name": "광주경영자총협회",
+    "type": "html_table",
+    "url": "http://www.gjef.or.kr/ko/28",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_faa858b5",
+    "name": "광주경제진흥상생일자리재단",
+    "type": "html_table",
+    "url": "https://www.gjep.or.kr/cms/bbs/cms.php?dk_cms=comm_01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8998eef2",
+    "name": "광주광역자활센터",
+    "type": "html_table",
+    "url": "http://www.gjjahwal.or.kr/ko/36",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "센터소식 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_761f4e5f",
+    "name": "광주사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&sca=%EC%84%BC%ED%84%B0",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_d6c628c3",
+    "name": "광주상공회의소",
+    "type": "html_table",
+    "url": "https://www.gjcci.or.kr/user/board/lists/board_cd/3010",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9eb90e90",
+    "name": "광주신용보증재단",
+    "type": "html_table",
+    "url": "https://untact.koreg.or.kr/web/lay1/bbs/S1T19C20/J/25/list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_5b68b879",
+    "name": "광주여성가족재단",
+    "type": "html_table",
+    "url": "https://www.gjwf.or.kr/open/01",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_3ca8e0e6",
+    "name": "광주정보문화산업진흥원",
+    "type": "html_table",
+    "url": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_2b5aeab3",
+    "name": "광주지역산업진흥원",
+    "type": "html_table",
+    "url": "https://gj.riia.or.kr/board/businessAnnouncement",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_234a9f58",
+    "name": "광주지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.gwangjuhrd.or.kr/user2/board/lists/board_cd/5010",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_f5612142",
+    "name": "광주창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gwangju/custom/notice_list.do?&page=4",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ddb58721",
+    "name": "광주창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/gwangju/service/program_list.do?&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "현재 프로그램 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_803b04b9",
+    "name": "광주테크노파크",
+    "type": "html_table",
+    "url": "https://www.gjtp.or.kr/home/business.cs?m=8",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_908d11bd",
+    "name": "광주테크노파크",
+    "type": "html_table",
+    "url": "https://www.gjtp.or.kr/home/board/0008.cs?m=14",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "일반공지 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_40d34d16",
+    "name": "구미전자정보기술원",
+    "type": "html_table",
+    "url": "https://geri.re.kr/html/board/list.asp?board_id=business",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_bf797423",
+    "name": "구조혁신지원사업 통합 플랫폼",
+    "type": "html_table",
+    "url": "https://www.kosmes.or.kr/s3/portal/board/BoardList/10",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_d7b33532",
+    "name": "국가교육위원회",
+    "type": "html_table",
+    "url": "https://www.ne.go.kr/user/bbs/BD_selectBbsList.do?q_bbsSn=1003",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3b8ac4af",
+    "name": "국가직무능력표준(NCS)",
+    "type": "html_table",
+    "url": "https://m.ncs.go.kr/th07/bbs_ntc_list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_f7e6bb0a",
+    "name": "국가직무능력표준(NCS)",
+    "type": "html_table",
+    "url": "https://www.ncs.go.kr/company/ch07/bbs_lib_list.do?libDstinCd=42",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "컨설팅자료실 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_1156e88a",
+    "name": "국토교통과학기술진흥원",
+    "type": "html_table",
+    "url": "https://www.kaia.re.kr/portal/bbs/list/B0000006.do?menuNo=200547",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0716c015",
+    "name": "군포산업진흥원",
+    "type": "html_table",
+    "url": "https://gpipa.or.kr/sub05/sub05_01.html",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_93b91306",
+    "name": "군포산업진흥원",
+    "type": "html_table",
+    "url": "https://gpipa.or.kr/sub05/sub05_02.html",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_e0b8d791",
+    "name": "기술보증기금(기보)",
+    "type": "html_table",
+    "url": "https://www.kibo.or.kr/main/board/boardType01.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ed9e0571",
+    "name": "기업 SOS",
+    "type": "html_table",
+    "url": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_4f321c10",
+    "name": "기업마당",
+    "type": "html_table",
+    "url": "https://www.bizinfo.go.kr/web/lay1/bbs/S1T122C128/AS/74/list.do?schPblancDiv=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_36182169",
+    "name": "기업직업훈련지원시스템",
+    "type": "html_table",
+    "url": "https://www.hrd4u.or.kr/hrddoctor/web/board/list.do?mId=34",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c7fa8056",
+    "name": "김포시청",
+    "type": "html_table",
+    "url": "https://www.gimpo.go.kr/portal/ntfcPblancList.do?key=1004&cate_cd=1&searchCnd=40900000000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "고시/공고 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5200845a",
+    "name": "김포시청",
+    "type": "html_table",
+    "url": "https://www.gimpo.go.kr/portal/selectBbsNttList.do?bbsNo=292&key=999",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "알림사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_f0bf6765",
+    "name": "나라장터",
+    "type": "html_table",
+    "url": "https://www.g2b.go.kr/ehelpdesk/R23AB00000134L_01/",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "운영자 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_e855ce87",
+    "name": "남북하나재단",
+    "type": "html_table",
+    "url": "https://www.koreahana.or.kr/home/kor/board.do?ptSignature=QnrvtOekzKclpksn74dfsVKJGpwSxgFZ4viFnbbXAD0%3D&menuPos=51",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "모집공고 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_0b8206bd",
+    "name": "남양주시청",
+    "type": "html_table",
+    "url": "https://www.nyj.go.kr/www/selectEminwonWebList.do?key=2492&sa1=01&sa1=02&sa1=04&sa1=05&sc4=2024",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "고시/공고 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8c8821fd",
+    "name": "노란우산 경영지원단",
+    "type": "html_table",
+    "url": "https://9976.kbiz.or.kr/cnst/information.do?mnSeq=271",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "자문위원 등록안내 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_83d942ef",
+    "name": "노사발전재단",
+    "type": "html_table",
+    "url": "https://www.nosa.or.kr/portal/nosa/FoundNews/bizNotice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고/모집 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_81773f83",
+    "name": "노사발전재단",
+    "type": "html_table",
+    "url": "https://www.nosa.or.kr/portal",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "메인 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ca172b8b",
+    "name": "노사발전재단 일터혁신플랫폼",
+    "type": "html_table",
+    "url": "https://www.kwpi.or.kr/home/sub?menukey=7311",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0ba961db",
+    "name": "농림수산업자신용보증기금(농신보)",
+    "type": "html_table",
+    "url": "https://nongshinbo.nonghyup.com/user/indexSub.do?codyMenuSeq=258789404&siteId=nongshinbo",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_10f37b10",
+    "name": "농수산식품유통교육원",
+    "type": "html_table",
+    "url": "https://edu.at.or.kr/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000053&baseMenuNo=401000000",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ee467cf5",
+    "name": "능력개발교육원",
+    "type": "html_table",
+    "url": "https://hrdi.koreatech.ac.kr/?m1=page&menu_id=11",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_6f750741",
+    "name": "대·중소기업·농어업협력재단",
+    "type": "html_table",
+    "url": "https://www.win-win.or.kr/kr/board/notice/boardList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2c00cdbd",
+    "name": "대·중소기업·농어업협력재단",
+    "type": "html_table",
+    "url": "https://www.win-win.or.kr/kr/board/notice_enter/boardList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_b537d1d4",
+    "name": "대구·경북지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/daegu/ex/bbs/List.do?cbIdx=253",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0533ff15",
+    "name": "대구경북경제자유구역청",
+    "type": "html_table",
+    "url": "https://www.dgfez.go.kr/page.php?mnu_uid=319&",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_1a8d8b8d",
+    "name": "대구경북경제자유구역청",
+    "type": "html_table",
+    "url": "https://www.dgfez.go.kr/page.php?mnu_uid=321&",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "고시/공고 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0c3b8e1f",
+    "name": "대구경영자총협회",
+    "type": "html_table",
+    "url": "http://www.dgef.or.kr/Home/board/default.asp?v=1&s_no=1&m=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_a10ceb9e",
+    "name": "대구사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://dgse.kr/page/cop/bbs/articleList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_5b74bc1b",
+    "name": "대구신용보증재단",
+    "type": "html_table",
+    "url": "https://www.dgsinbo.or.kr/page/10065/10006.tc",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3d4945de",
+    "name": "대구신용보증재단",
+    "type": "html_table",
+    "url": "https://www.dgsinbo.or.kr/page/10066/10160.tc",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고-타기관 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8ca308f6",
+    "name": "대구지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.dghrd.or.kr/homeBoard/hpBoardList?tn=hp_notice&boardType=1&crsId=0&instId=0&menuCtgr=&bbsId=0",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_ba6b87b2",
+    "name": "대구창업허브 DASH",
+    "type": "html_table",
+    "url": "https://startup.daegu.go.kr/index.do?menu_id=00002552",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": ".lst li"
+    }
+  },
+  {
+    "id": "imp_9a91c6ff",
+    "name": "대구창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/daegu/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0b941589",
+    "name": "대구창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/daegu/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_aa580dba",
+    "name": "대구테크노파크",
+    "type": "html_table",
+    "url": "https://ttp.org/bbs/BoardControl.do?bbsId=BBSMSTR_000000000003",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_e9ed440c",
+    "name": "대전·세종지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/daejeon/ex/bbs/List.do?cbIdx=248",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_abc65c00",
+    "name": "대전사회혁신센터",
+    "type": "html_table",
+    "url": "https://www.commonz042.kr/bbs/board.php?bo_table=contest",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공모사업 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_57f22dee",
+    "name": "대전신용보증재단",
+    "type": "html_table",
+    "url": "https://www.sinbo.or.kr/sub04_01_01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d8f131f3",
+    "name": "대전일자리경제진흥원",
+    "type": "html_table",
+    "url": "https://www.djbea.or.kr/board?menuId=MENU00310&siteId=null",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_a8d7ddda",
+    "name": "대전지방국세청",
+    "type": "html_table",
+    "url": "https://d.nts.go.kr/daejeonnts/na/ntt/selectNttList.do?mi=5114&bbsId=6032",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": ".lst li"
+    }
+  },
+  {
+    "id": "imp_31fe9bec",
+    "name": "대전지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://djhrd.or.kr/sub0101",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_91d277b0",
+    "name": "대전창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/daejeon/custom/notice_list.do?&sPtime=all&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5f1acc1e",
+    "name": "대전창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/daejeon/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_85ab7b78",
+    "name": "대전충남경영자총협회",
+    "type": "html_table",
+    "url": "http://tjcnf.inctcokr.gethompy.com/bbs/board.php?bo_table=notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_28ff1a60",
+    "name": "대전테크노파크",
+    "type": "html_table",
+    "url": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2418665a",
+    "name": "대전테크노파크",
+    "type": "html_table",
+    "url": "https://djtp.or.kr/pbanc?mid=a20101000000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_72039c8a",
+    "name": "데이터바우처",
+    "type": "html_table",
+    "url": "https://kdata.or.kr/datavoucher/log/ntt/ptNoticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ac1e6305",
+    "name": "범부처통합연구지원시스템(IRIS)",
+    "type": "html_table",
+    "url": "https://www.iris.go.kr/contents/retrieveNoticeListView.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8e7c6a5f",
+    "name": "부산경영자총협회",
+    "type": "html_table",
+    "url": "http://www.bsef.or.kr/03_news/news01.php",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_05ecda5b",
+    "name": "서울특별시 사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://sehub.net/archives/category/alarm/opencat",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사회적경제 공시 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_5c3d8f3c",
+    "name": "성남산업진흥원 성남기업지원포털",
+    "type": "html_table",
+    "url": "https://portal.snip.or.kr:8443/portal/snip/MainMenu/businessManagement/application.page",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업신청 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_30f7fd91",
+    "name": "세종농촌융복합산업지원센터",
+    "type": "html_table",
+    "url": "https://www.xn--6-el4fgqn4mr2dw1q.com/announcement",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3d9bf912",
+    "name": "세종일자리경제진흥원",
+    "type": "html_table",
+    "url": "https://www.sjepa.or.kr/news-announcement",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_044eae95",
+    "name": "세종창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/sejong/custom/notice_list.do?&sPtime=all&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_98adda67",
+    "name": "세종테크노파크",
+    "type": "html_table",
+    "url": "https://sjtp.or.kr/bbs/board.php?bo_table=notice01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_43aebb10",
+    "name": "세종테크노파크",
+    "type": "html_table",
+    "url": "https://sjtp.or.kr/bbs/board.php?bo_table=business01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_31a18e66",
+    "name": "소상공인24",
+    "type": "html_table",
+    "url": "https://www.sbiz24.kr/#/pbanc",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "소진공 공고조회 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_53a1cc1e",
+    "name": "소상공인365",
+    "type": "html_table",
+    "url": "https://bigdata.sbiz.or.kr/#/sprtBiz",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업 안내 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_7e7361f3",
+    "name": "소상공인스마트상점",
+    "type": "html_table",
+    "url": "https://www.sbiz.or.kr/smst/bbs/list.do?key=2111306039167",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_131b6d49",
+    "name": "소상공인시장진흥공단(소진공)",
+    "type": "html_table",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1&pNm=BOA0101",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d51d2609",
+    "name": "소상공인연합회",
+    "type": "html_table",
+    "url": "https://www.kfme.or.kr/kf/board/notice.php",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_335e0e28",
+    "name": "수원창업지원포털",
+    "type": "html_table",
+    "url": "https://s-startup.or.kr/menu-1-1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_8a238134",
+    "name": "수출지원기반활용사업",
+    "type": "html_table",
+    "url": "https://www.exportvoucher.com/portal/board/boardList?bbs_id=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_94acb0b7",
+    "name": "스마트공장 사업관리시스템",
+    "type": "html_table",
+    "url": "https://www.smart-factory.kr/usr/np/mn/ma/noticeMatter",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_e02ba1cb",
+    "name": "시흥산업진흥원",
+    "type": "html_table",
+    "url": "https://www.sida.kr/notification/news.html",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "새소식 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_aabdbb3c",
+    "name": "신용보증재단중앙회",
+    "type": "html_table",
+    "url": "https://www.koreg.or.kr/koreg/na/ntt/selectNttList.do?mi=1026&bbsId=1031",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": ".lst li"
+    }
+  },
+  {
+    "id": "imp_affb7646",
+    "name": "신용회복위원회",
+    "type": "html_table",
+    "url": "https://www.ccrs.or.kr/cms/com/index.do?MENU_ID=840",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d0ad1db1",
+    "name": "안양산업진흥원",
+    "type": "html_table",
+    "url": "https://www.aba.or.kr/bbs/board.do?id=382&menuId=855#1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_7381d7a0",
+    "name": "안양시상권활성화센터",
+    "type": "html_table",
+    "url": "https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=3887",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_271bf547",
+    "name": "여성기업 일자리허브",
+    "type": "html_table",
+    "url": "https://www.wljarihub.or.kr/wesc/bbs/B0000001/list.do?menuNo=200141",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_695dd267",
+    "name": "용인시산업진흥원",
+    "type": "html_table",
+    "url": "https://ypa.or.kr/information/businessnotice/",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공지 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_d63606f4",
+    "name": "울산신용보증재단",
+    "type": "html_table",
+    "url": "https://www.ulsansinbo.co.kr/04_notice/?mcode=0404010000&mode=1&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8aec2600",
+    "name": "울산양산경영자총협회",
+    "type": "html_table",
+    "url": "http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_7eab860d",
+    "name": "울산일자리경제진흥원",
+    "type": "html_table",
+    "url": "https://www.ubpi.or.kr/sub/?mcode=0403010000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_50b8c911",
+    "name": "울산지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/ulsan/ex/bbs/List.do?cbIdx=254",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5ea2b09e",
+    "name": "울산지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.ulsanhrd.or.kr/bbs/list.php?board_id=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_4d844748",
+    "name": "울산창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/ulsan/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_826782fd",
+    "name": "울산테크노파크",
+    "type": "html_table",
+    "url": "https://www.utp.or.kr/board/board.php?bo_table=sub0501&menu_group=4&sno=0401",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_7577759c",
+    "name": "울산테크노파크",
+    "type": "html_table",
+    "url": "https://platform.utp.or.kr/com/biz_gonggo_all.php",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업검색 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_45597f3c",
+    "name": "원주의료기기산업진흥원",
+    "type": "html_table",
+    "url": "https://www.wmit.or.kr/bbs/board.do?bsIdx=710&menuId=2848",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_1cc848c7",
+    "name": "원주의료기기산업진흥원",
+    "type": "html_table",
+    "url": "https://www.wmit.or.kr/announce/businessAnnounceList.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_f649520f",
+    "name": "은평구청",
+    "type": "html_table",
+    "url": "https://www.ep.go.kr/www/selectBbsNttList.do?bbsNo=42&key=744",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3c273d70",
+    "name": "이노비즈협회(사)중소기업기술혁신",
+    "type": "html_table",
+    "url": "https://www.innobiz.net/company/company1_list.asp",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_4456e24e",
+    "name": "인천경영자총협회",
+    "type": "html_table",
+    "url": "https://www.inef.or.kr/news/notice.php",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_344ddf55",
+    "name": "인천광역시사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "센터공지 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": ".board-list li"
+    }
+  },
+  {
+    "id": "imp_00dbe351",
+    "name": "인천디자인지원센터",
+    "type": "html_table",
+    "url": "https://idsc.kr/_NBoard/board.php?bo_table=business",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업고시/공고 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": ".board-list li"
+    }
+  },
+  {
+    "id": "imp_13a8e6d1",
+    "name": "인천디자인지원센터",
+    "type": "html_table",
+    "url": "https://idsc.kr/_NBoard/board.php?bo_table=business2",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "유관사업 고시/공고 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": ".board-list li"
+    }
+  },
+  {
+    "id": "imp_89def0d1",
+    "name": "인천소상공인종합지원센터",
+    "type": "html_table",
+    "url": "https://www.insupport.or.kr/sub/?mcode=0404010000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_fd8af24e",
+    "name": "인천신용보증재단",
+    "type": "html_table",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000096",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5ee6803c",
+    "name": "인천지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/incheon/ex/bbs/List.do?cbIdx=246",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_40b571ae",
+    "name": "인천지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.incheonhrd.or.kr/community/notice.asp",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_b267ffcf",
+    "name": "인천창업플랫폼",
+    "type": "html_table",
+    "url": "http://i-startup.or.kr/04_support/support_1_1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_ecacad7f",
+    "name": "인천창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/incheon/custom/notice_list.do?&sPtime=my&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 2~3회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c8108805",
+    "name": "전북창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://event.jbci.or.kr/sub/s1_1.html",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공모 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_02740064",
+    "name": "전북테크노파크",
+    "type": "html_table",
+    "url": "https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000002&menuCd=DOM_000000101002000000&contentsSid=4&cpath=",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c7e267eb",
+    "name": "전북테크노파크",
+    "type": "html_table",
+    "url": "https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000006&menuCd=DOM_000000102001000000&paging=ok&gbun=&searchType=&keyword=&pageNo=1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_91c0dbbd",
+    "name": "전북특별자치도 기업관리시스템",
+    "type": "html_table",
+    "url": "https://jbcis.jbtp.or.kr/main/menu?qc=935MSRF",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "기술닥터 전문인력 신청 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_c9360c36",
+    "name": "전북특별자치도 농촌융복합산업 지원",
+    "type": "html_table",
+    "url": "https://www.xn--6-482fg5fy8gb6c1vi.com/board/notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9ed90ca2",
+    "name": "전북특별자치도경제통상진흥원",
+    "type": "html_table",
+    "url": "https://www.jbba.kr/bbs/board.php?bo_table=sub01_09",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_dd6f387d",
+    "name": "전북특별자치도경제통상진흥원",
+    "type": "html_table",
+    "url": "https://www.jbba.kr/bbs/board.php?bo_table=sub02_07_01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "유관기관 사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_66ba5322",
+    "name": "전주정보문화산업진흥원",
+    "type": "html_table",
+    "url": "https://www.jica.or.kr/2025/inner.php?sMenu=A1000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_c5af25a7",
+    "name": "전주정보문화산업진흥원",
+    "type": "html_table",
+    "url": "https://www.jica.or.kr/2025/inner.php?sMenu=A2000",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "일반공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d392e0ff",
+    "name": "전통시장육성재단",
+    "type": "html_table",
+    "url": "https://tmdf.or.kr/sub/sub03_01.php",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_fbb5ecd1",
+    "name": "정보통신산업진흥원",
+    "type": "html_table",
+    "url": "https://www.nipa.kr/home/2-1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c09f57a5",
+    "name": "정보통신산업진흥원",
+    "type": "html_table",
+    "url": "https://www.nipa.kr/home/2-2",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_0671c689",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?Mcode=11182",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_73a18059",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EC%A0%84%EB%AC%B8%EA%B0%80&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-전문가 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_410e209d",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EC%9E%90%EB%AC%B8%EB%8B%A8&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-자문단 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_cc0f90df",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EB%A9%98%ED%86%A0&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-멘토 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_414777b1",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EA%B0%95%EC%82%AC&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-강사 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_ac403d60",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%ED%8F%89%EA%B0%80%EC%9C%84%EC%9B%90&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-평가위원 / 주기:주 2~3회 / 우선순위:상 / 화면 우측 URL 일부 말줄임 처리되어 검색어 기준으로 정리",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_82068114",
+    "name": "제주경영자총협회",
+    "type": "html_table",
+    "url": "http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_822232e0",
+    "name": "제주농촌융복합산업지원센터",
+    "type": "html_table",
+    "url": "http://www.xn--6-ql4r7skmwc95ai5j.com/skyBoard/list/notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_beecfe83",
+    "name": "제주사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://jejuhub.org/user/news/support",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원센터 소식 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_a75a9780",
+    "name": "제주산업정보서비스",
+    "type": "html_table",
+    "url": "https://jeis.or.kr/suppis/suppbis.ac",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_24f26b50",
+    "name": "제주신용보증재단",
+    "type": "html_table",
+    "url": "https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b2694be5",
+    "name": "제주지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "http://www.jejuhrd.or.kr/index.php/contents/community/notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_c54d32c7",
+    "name": "제주창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/jeju/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5d5bf933",
+    "name": "제주테크노파크",
+    "type": "html_table",
+    "url": "https://jejutp.or.kr/board/notice?searchType=subject&keyword=&pageNumber=0&size=30",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c998c4dd",
+    "name": "제주특별자치도 경제통상진흥원",
+    "type": "html_table",
+    "url": "https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_cc5ad182",
+    "name": "제주특별자치도 경제통상진흥원",
+    "type": "html_table",
+    "url": "https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "유관기관 소식 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_fb29d5bb",
+    "name": "제주특별자치도사회서비스원",
+    "type": "html_table",
+    "url": "https://jeju.pass.or.kr/notice-board",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_bbc3cb31",
+    "name": "중소기업 기술개발사업 종합관리시스템",
+    "type": "html_table",
+    "url": "https://www.smtech.go.kr/front/ifg/no/notice01_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "R&D사업 관련 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_cdcaa04f",
+    "name": "중소기업 기술개발사업 종합관리시스템",
+    "type": "html_table",
+    "url": "https://www.smtech.go.kr/front/ifg/no/notice03_list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "기타 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_22960005",
+    "name": "중소기업 기술보호울타리",
+    "type": "html_table",
+    "url": "https://www.ultari.go.kr/site/board/biz/nv_bizNoticeList.do?menuId=14",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_63a14c42",
+    "name": "중소기업 기술보호울타리",
+    "type": "html_table",
+    "url": "https://www.ultari.go.kr/site/board/expert/recruitment/nv_expertRecruitmentList.do?menuId=148",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "전문가 모집공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_33c20dd9",
+    "name": "중소기업 혁신플랫폼",
+    "type": "html_table",
+    "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9448dbce",
+    "name": "중소기업기술마켓",
+    "type": "html_table",
+    "url": "https://techmarket.kr/noticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_fae5a127",
+    "name": "중소기업기술정보진흥원(TIPA)",
+    "type": "html_table",
+    "url": "https://www.tipa.or.kr/s040101/index/page/1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_e68206ee",
+    "name": "중소벤처24",
+    "type": "html_table",
+    "url": "https://www.smes.go.kr/main/sportsBsnsPolicy",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_6cc769a1",
+    "name": "중소벤처기업부 비즈니스지원단",
+    "type": "html_table",
+    "url": "https://www.smes.go.kr/bizlink/board/noticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_de71311b",
+    "name": "중소벤처기업연구원",
+    "type": "html_table",
+    "url": "https://www.kosi.re.kr/kosbiWar/front/functionDisplay?menuFrontNo=239693504401196147746371791605890541073&menuFrontURL=front/announceList",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "일반공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_a7cddcb1",
+    "name": "중소벤처기업연수원",
+    "type": "html_table",
+    "url": "https://ssup.kosmes.or.kr/support/notice/0",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ce1c6579",
+    "name": "중소상공인희망재단",
+    "type": "html_table",
+    "url": "https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_20b69b2b",
+    "name": "중소상공인희망재단",
+    "type": "html_table",
+    "url": "https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=3",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "유관공고 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_f5a92d2c",
+    "name": "지역지식재산센터",
+    "type": "html_table",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40000",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "통합 공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_865e5bd5",
+    "name": "지역지식재산센터",
+    "type": "html_table",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40002",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 사업공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b435b560",
+    "name": "지역지식재산센터",
+    "type": "html_table",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40003",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 채용소식 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_f2dc13f2",
+    "name": "창업기업 확인시스템",
+    "type": "html_table",
+    "url": "https://cert.k-startup.go.kr/usr/bbs/selectArticleList.do?bbsId=BBSMSTR_000000000031&tempValue=0502",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_6e8c8360",
+    "name": "창업진흥원(창진원)",
+    "type": "html_table",
+    "url": "https://www.kised.or.kr/misAnnouncement/index.es?mid=a10302000000",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_1fd1e6dd",
+    "name": "창원산업진흥원",
+    "type": "html_table",
+    "url": "https://www.cwip.or.kr/bbs/board.php?bo_table=b0501",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_312f326e",
+    "name": "창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/custom/notice_list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d5ab266e",
+    "name": "천안과학산업진흥원",
+    "type": "html_table",
+    "url": "https://www.cistep.re.kr/zboard/list.do?lmCode=notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0e49d754",
+    "name": "첨단정보통신융합산업기술원",
+    "type": "html_table",
+    "url": "https://iact.or.kr/module/board/board.php?bo_id=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_b3d682a9",
+    "name": "첨단정보통신융합산업기술원",
+    "type": "html_table",
+    "url": "https://iact.or.kr/module/board/board.php?bo_id=business",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업접수 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": "table tr"
+    }
+  },
+  {
+    "id": "imp_f4ce3dda",
+    "name": "청년인재DB",
+    "type": "html_table",
+    "url": "https://www.2030db.go.kr/user/ntt/BBS_0000000000000001/nttList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_53572b95",
+    "name": "청년인재DB",
+    "type": "html_table",
+    "url": "https://www.2030db.go.kr/user/ntt/BBS_0000000000000005/nttList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "청년을 찾습니다 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_46829488",
+    "name": "청년창업사관학교",
+    "type": "html_table",
+    "url": "https://start.kosmes.or.kr/yh_bsm080_001.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_a3a20657",
+    "name": "청년창업사관학교",
+    "type": "html_table",
+    "url": "https://start.kosmes.or.kr/yh_not002_001.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "연계지원사업 공고 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_f1460665",
+    "name": "축산물품질평가원",
+    "type": "html_table",
+    "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208&nextUrl=",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_6058ee33",
+    "name": "춘천바이오산업진흥원",
+    "type": "html_table",
+    "url": "https://www.cbfo.kr/twb_bbs/bbs_list.php?bcd=01_05_01_00_00",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중 / 동일 URL·게시판명 상이"
+  },
+  {
+    "id": "imp_45649f60",
+    "name": "충남경제진흥원",
+    "type": "html_table",
+    "url": "https://www.cepa.or.kr/notice/notice.do?pm=6&ms=32",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_a11ba09c",
+    "name": "충남농업6차산업센터",
+    "type": "html_table",
+    "url": "https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2e771ea3",
+    "name": "충남사회적경제지원센터",
+    "type": "html_table",
+    "url": "https://www.cnse.kr/app/board/index?md_id=center_news",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "센터소식 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_46549125",
+    "name": "충남신용보증재단",
+    "type": "html_table",
+    "url": "https://www.cnsinbo.co.kr/boardCnts/list.do?boardID=134&m=030101&s=cnsinbo",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_fbb8c842",
+    "name": "충남지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/chungnam/ex/bbs/List.do?cbIdx=315",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0b9ba484",
+    "name": "충남창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/chungnam/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_f82e70cf",
+    "name": "충남창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/chungnam/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1dc4eab7",
+    "name": "충남테크노파크",
+    "type": "html_table",
+    "url": "https://www.ctp.or.kr/business/data.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_d13e4f7f",
+    "name": "충북경영자총협회",
+    "type": "html_table",
+    "url": "http://www.cbef.or.kr/www/brd/list/1615956709737934",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_25c0604c",
+    "name": "충북농촌융복합산업지원센터",
+    "type": "html_table",
+    "url": "http://xn--6-482fq5fy8gs7i6jc.com/bbs/board.php?bo_table=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_9d1176d0",
+    "name": "충북사회적경제센터",
+    "type": "html_table",
+    "url": "http://www.cbse.co/board/blist/notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "마을기업 / 주기:월 1~2회 / 우선순위:하"
+  },
+  {
+    "id": "imp_da625cd5",
+    "name": "충북신용보증재단",
+    "type": "html_table",
+    "url": "https://www.cbsinbo.or.kr/sub.php?code=123",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ece9a84d",
+    "name": "충북지방중소벤처기업청",
+    "type": "html_table",
+    "url": "https://www.mss.go.kr/site/chungbuk/ex/bbs/List.do?cbIdx=249",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_4b1ba2a5",
+    "name": "충북지역인적자원개발위원회",
+    "type": "html_table",
+    "url": "https://www.cjrhrdc.org/board/notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5f7815d8",
+    "name": "충북창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/chungbuk/custom/notice_list.do?&page=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_97b9be2b",
+    "name": "충북테크노파크",
+    "type": "html_table",
+    "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_6dd08ea4",
+    "name": "충북테크노파크",
+    "type": "html_table",
+    "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고-타기관 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_51e6cfcf",
+    "name": "충북테크노파크 컨택센터",
+    "type": "html_table",
+    "url": "https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_a0e736b6",
+    "name": "충청남도 소상공인 지원센터",
+    "type": "html_table",
+    "url": "https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=65",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ddbef9d3",
+    "name": "충청남도 소상공인 지원센터",
+    "type": "html_table",
+    "url": "https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=66",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_7c82b549",
+    "name": "충청북도기업진흥원",
+    "type": "html_table",
+    "url": "https://www.cba.ne.kr/home/sub.php?menukey=140",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c4eac5de",
+    "name": "충청북도소상공인지원센터",
+    "type": "html_table",
+    "url": "https://www.cbsb.kr/home/sub.php?menukey=288",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_8f9353fc",
+    "name": "카페: 경북도(경영 기술 지도사 컨설…)",
+    "type": "html_table",
+    "url": "https://cafe.naver.com/f-e/cafes/30454029/menus/4?tc=1766819487648",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "모집공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_4212f2de",
+    "name": "카페: 고을스페이스",
+    "type": "html_table",
+    "url": "https://cafe.naver.com/f-e/cafes/30864795/menus/16?viewType=L",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "컨설턴트/멘토/강사 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_4cdbea37",
+    "name": "카페: 지도사랑(한국경영기술지도사)",
+    "type": "html_table",
+    "url": "https://cafe.naver.com/f-e/cafes/30044569/menus/26?viewType=L",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "위원/비상근 모집 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_69798de3",
+    "name": "카페: 키노프 경영지도사",
+    "type": "html_table",
+    "url": "https://cafe.naver.com/f-e/cafes/23509311/menus/407?viewType=L",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "인력채용&전망 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_d6d9c590",
+    "name": "클린아이 지방공공기관통합공시",
+    "type": "html_table",
+    "url": "https://www.cleaneye.go.kr/user/noticeBoardList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ad603912",
+    "name": "파주시청",
+    "type": "html_table",
+    "url": "https://www.paju.go.kr/user/board/BD_board.list.do?bbsCd=1022&q_ctgCd=4063",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "고시/공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_9ba65963",
+    "name": "판판대로",
+    "type": "html_table",
+    "url": "https://fanfandaero.kr/portal/readUcenterNtcBbs.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_ae45e505",
+    "name": "판판대로",
+    "type": "html_table",
+    "url": "https://fanfandaero.kr/portal/preSprtBizPbanc.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_4444c429",
+    "name": "평택산업진흥원",
+    "type": "html_table",
+    "url": "https://www.pipabiz.or.kr/web/contents/notice.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2c606051",
+    "name": "포항창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/pohang/allim/allim_list.do?div_code=1",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_1538409c",
+    "name": "포항창조경제혁신센터",
+    "type": "html_table",
+    "url": "https://ccei.creativekorea.or.kr/pohang/custom/notice_list.do?",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "센터 공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b127b15f",
+    "name": "포항테크노파크",
+    "type": "html_table",
+    "url": "https://www.ptp.or.kr/main/board/index.do?menu_idx=113&manage_idx=2",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_4934a7f6",
+    "name": "포항테크노파크",
+    "type": "html_table",
+    "url": "https://www.ptp.or.kr/main/board/index.do?menu_idx=116&manage_idx=15",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_4046605c",
+    "name": "핀테크 포털 - 한국핀테크지원센터",
+    "type": "html_table",
+    "url": "https://fintech.or.kr/web/board/boardContentsListPage.do?board_id=3&menu_id=6300&miv_pageNo=",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_a7794c85",
+    "name": "하이브레인넷",
+    "type": "html_table",
+    "url": "https://www.hibrain.net/research/researches/34/recruitments/425/recruits?listType=ING",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "평가심사 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_a5ccdcff",
+    "name": "한국건강가정진흥원",
+    "type": "html_table",
+    "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_460e3b32",
+    "name": "한국경영기술지도사회",
+    "type": "html_table",
+    "url": "https://www.kmtca.or.kr/?p=23",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "컨설팅 공지 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_343a2ada",
+    "name": "한국경영기술지도사회",
+    "type": "html_table",
+    "url": "https://www.kmtca.or.kr/?p=28",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "교육공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_f046a0cc",
+    "name": "한국경영기술지도사회",
+    "type": "html_table",
+    "url": "https://www.kmtca.or.kr/?p=128",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "협회공지 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_40bd609e",
+    "name": "한국경영자총협회",
+    "type": "html_table",
+    "url": "https://www.kefplaza.com/web/pages/gc75749b.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2a9dd982",
+    "name": "한국경영혁신중소기업협회",
+    "type": "html_table",
+    "url": "https://mainbiz.or.kr/notice/notice.asp?smen=1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_47dc766c",
+    "name": "한국경영혁신중소기업협회",
+    "type": "html_table",
+    "url": "https://mainbiz.or.kr/notice/company.asp?smen=2",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "중소기업지원정보 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_7b9a6ef1",
+    "name": "한국경영혁신중소기업협회",
+    "type": "html_table",
+    "url": "https://mainbiz.or.kr/notice/library.asp?smen=8",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "입찰/채용공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_7b9f8f65",
+    "name": "한국고용노동교육원",
+    "type": "html_table",
+    "url": "https://www.keli.kr/home/cmmn/bbs/228/list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_81d4ab9d",
+    "name": "한국농업기술진흥원",
+    "type": "html_table",
+    "url": "https://www.koat.or.kr/board/business/list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_68531fc2",
+    "name": "한국능률협회(KMA)",
+    "type": "html_table",
+    "url": "https://www.kma.or.kr/usrs/tutor/tutorForm.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "강사모집 / 주기:주 1회 / 우선순위:상",
+    "selectors": {
+      "row": ".list li"
+    }
+  },
+  {
+    "id": "imp_ea330827",
+    "name": "한국능률협회(KMA)",
+    "type": "html_table",
+    "url": "https://kma.or.kr/kr/usrs/eduRegMgmt/eduRegMgmtForm.do?mkey=24&cateNm=abtNews",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "새소식 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_0e132ffc",
+    "name": "한국능률협회컨설팅(KMAC)",
+    "type": "html_table",
+    "url": "https://kmac.recruiter.co.kr/career/Notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "진행중 공고 / 주기:매일 / 우선순위:상"
+  },
+  {
+    "id": "imp_6ec722f0",
+    "name": "한국데이터산업진흥원",
+    "type": "html_table",
+    "url": "https://www.kdata.or.kr/kr/board/notice_01/boardList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_93aef53b",
+    "name": "한국무역보험공사",
+    "type": "html_table",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "imp_caa452db",
+    "name": "한국무역협회",
+    "type": "html_table",
+    "url": "https://www.kita.net/board/notice/noticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2ac217ad",
+    "name": "한국문화산업협회",
+    "type": "html_table",
+    "url": "http://www.kcia.or.kr/bbs/board.php?bo_table=notice",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_b7590c9e",
+    "name": "한국발명진흥회",
+    "type": "html_table",
+    "url": "https://www.kipa.org/kipa/notice/kw_0403_01.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5b690335",
+    "name": "한국발명진흥회",
+    "type": "html_table",
+    "url": "https://www.kipa.org/kipa/ip004/kw_apquestion_0501.jsp",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_e07351a0",
+    "name": "한국보건산업진흥원",
+    "type": "html_table",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU00099",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_dc80d32f",
+    "name": "한국사회적기업진흥원",
+    "type": "html_table",
+    "url": "https://www.socialenterprise.or.kr/homepage/bbs/board.do?bsIdx=10002&menuId=822",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1fe47afc",
+    "name": "한국산업기술기획평가원(KEIT)",
+    "type": "html_table",
+    "url": "https://www.keit.re.kr/board.es?mid=a10301010000&bid=0009",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공고·공시 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_b8655082",
+    "name": "한국산업기술진흥원(KIAT)",
+    "type": "html_table",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=5&MenuId=212472&cc8cc4b74a31bbe97d7977c6d",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_806ba8cc",
+    "name": "한국산업기술진흥원(KIAT)",
+    "type": "html_table",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90&MenuId=b159c9dac684471b87256f1e25404f5e",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_bc8abad5",
+    "name": "한국산업기술진흥협회",
+    "type": "html_table",
+    "url": "https://www.koita.or.kr/board/commBoardNoticeList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_faea1548",
+    "name": "한국산업단지공단",
+    "type": "html_table",
+    "url": "https://www.kicox.or.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1016",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중 / 동일 URL·게시판명 상이"
+  },
+  {
+    "id": "imp_6cb1b312",
+    "name": "한국산업인력공단(HRDK)",
+    "type": "html_table",
+    "url": "https://www.hrdkorea.or.kr/3/1/1",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5748a319",
+    "name": "한국산업인력공단(HRDK)",
+    "type": "html_table",
+    "url": "https://hrms.hrdkorea.or.kr/hrpRcrt/hrpRcrtPbanc.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "인력풀 모집 공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_2865f624",
+    "name": "한국상생지원협회",
+    "type": "html_table",
+    "url": "https://www.lmca.or.kr/22",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": ".board li"
+    }
+  },
+  {
+    "id": "imp_5ff55ef2",
+    "name": "한국생산성본부",
+    "type": "html_table",
+    "url": "https://www.kpc.or.kr/PTWCC002_board.index.do?nbno=8&lseldumm1=",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_2167e4d4",
+    "name": "한국생산성본부",
+    "type": "html_table",
+    "url": "https://www.kpc.or.kr/PTWCC002_board.index2.do?type_cd=02",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "지원사업/이벤트 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_c8a4d252",
+    "name": "한국엔젤투자협회",
+    "type": "html_table",
+    "url": "https://home.kban.or.kr/assoc/intrcn/noticeList",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_c4e5b92e",
+    "name": "한국양성평등교육진흥원",
+    "type": "html_table",
+    "url": "https://www.kigepe.or.kr/user/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000001&menuNo=13100",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_03def1ad",
+    "name": "한국어촌어항공단",
+    "type": "html_table",
+    "url": "https://www.fipa.or.kr/fipa/bbs/i-167/list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_117a23cf",
+    "name": "한국어촌어항공단",
+    "type": "html_table",
+    "url": "https://www.fipa.or.kr/fipa/bbs/i-326/list.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공고/공모 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_19103cb3",
+    "name": "한국에너지공단",
+    "type": "html_table",
+    "url": "https://www.energy.or.kr/front/board/List2.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_fb17f921",
+    "name": "한국에너지공단 신재생에너지센터",
+    "type": "html_table",
+    "url": "https://www.knrec.or.kr/biz/pds/notice/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1298d9a4",
+    "name": "한국여성발명협회",
+    "type": "html_table",
+    "url": "https://www.inventor.or.kr/bbs/board.php?bo_table=notice",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_5f64ee0e",
+    "name": "한국인터넷진흥원(KISA)",
+    "type": "html_table",
+    "url": "https://www.kisa.or.kr/401",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_4d96088d",
+    "name": "한국중소벤처기업유통원",
+    "type": "html_table",
+    "url": "https://www.kodma.or.kr/bbs/list.do?key=2409240028",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_dc78e250",
+    "name": "한국콘텐츠진흥원",
+    "type": "html_table",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0000137.do?menuNo=204802",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_1d5e2827",
+    "name": "한국콘텐츠진흥원",
+    "type": "html_table",
+    "url": "https://www.kocca.kr/kocca/pims/list.do?menuNo=204104&recptSt=",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지원공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_894bbfc5",
+    "name": "한국테크노파크진흥회",
+    "type": "html_table",
+    "url": "https://www.technopark.kr/businessboard",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+  },
+  {
+    "id": "imp_df493cfd",
+    "name": "한국표준협회(KSA)",
+    "type": "html_table",
+    "url": "https://www.ksa.or.kr/ksa_kr/5217/subview.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_04fc5a4a",
+    "name": "한국표준협회(KSA)",
+    "type": "html_table",
+    "url": "https://ksa.or.kr/bbs/ksa_kr/1021/artclList.do?layout=unknown",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "정부지원사업 / 주기:주 2~3회 / 우선순위:상"
+  },
+  {
+    "id": "imp_ddb562b7",
+    "name": "한국환경공단",
+    "type": "html_table",
+    "url": "https://www.keco.or.kr/web/lay1/bbs/S1T10C108/A/18/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": ".list_wrap li"
+    }
+  },
+  {
+    "id": "imp_4b9f2d12",
+    "name": "한성대학교",
+    "type": "html_table",
+    "url": "https://hansung.ac.kr/kscon/6279/subview.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_3f658d3a",
+    "name": "홍천군청",
+    "type": "html_table",
+    "url": "https://www.hongcheon.go.kr/www/selectBbsNttList.do?bbsNo=1&key=255",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_7c2e01d7",
+    "name": "화성산업진흥원",
+    "type": "html_table",
+    "url": "https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_d9e51ba5",
+    "name": "화성시인재육성재단",
+    "type": "html_table",
+    "url": "https://www.hstree.org/news/notice.do",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+  },
+  {
+    "id": "imp_20197f39",
+    "name": "희망리턴패키지",
+    "type": "html_table",
+    "url": "https://www.sbiz.or.kr/nhrp/pblanc/pblancList.do",
+    "enabled": false,
+    "is_aggregator": false,
+    "note": "사업공고(통합공고) / 주기:주 2~3회 / 우선순위:상"
+  }
+]
