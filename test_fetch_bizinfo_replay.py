@@ -124,11 +124,17 @@ def test_bizinfo_empty_json_array_returns_empty():
 
 
 @respx.mock
-def test_bizinfo_req_err_returns_empty():
-    """인증키 오류(reqErr)는 0건 + 빈 배열이 아닌 명시 오류 — 로그 추적 가능."""
+def test_bizinfo_req_err_raises():
+    """인증키 오류(reqErr)는 '진짜 0건'이 아니라 하드 실패 → RuntimeError 로 올린다.
+
+    이래야 fetch_site_coverage 가 fetch_success=False='수집실패'로 분류하고
+    (커버리지 알림이 '0건 급락'이 아닌 '수집실패'로 정확 표기),
+    update_coverage_baseline 이 그날을 평소값에 넣지 않아 baseline 오염을 막는다.
+    """
     respx.get(BIZINFO_URL).mock(
         return_value=httpx.Response(200, json={"reqErr": "존재하지 않는 인증키 입니다."}))
-    assert monitor.fetch_bizinfo(_site()) == []
+    with pytest.raises(RuntimeError, match="기업마당 API 오류"):
+        monitor.fetch_bizinfo(_site())
 
 
 @respx.mock
@@ -145,3 +151,73 @@ def test_bizinfo_paginated_dedup():
     site = {**_site(), "api_page_unit": 2, "api_max_pages": 3}
     items = monitor.fetch_bizinfo(site)
     assert len(items) == 3
+
+
+# ── 실패 신호 규약 회귀 (커버리지 '0건 급락' 오탐 방지) ────────────────────────
+def test_bizinfo_http_failure_page1_raises(monkeypatch):
+    """1페이지 HTTP 접속 실패(재시도 소진) → 빈 리스트가 아니라 RuntimeError.
+
+    과거엔 조용히 [] 를 반환해 fetch_success=True·item_count=0 →
+    커버리지가 '0건 급락'(정상 응답인데 0건)으로 오분류했다. 이제 '수집실패'로 잡힌다.
+    """
+    monkeypatch.setattr(monitor, "_HTTP_RETRY_BACKOFF", 0)
+    with respx.mock:
+        respx.get(BIZINFO_URL).mock(return_value=httpx.Response(500))
+        with pytest.raises(RuntimeError, match="접속 실패"):
+            monitor.fetch_bizinfo({**_site(), "api_retries": 1})
+
+
+def test_bizinfo_retry_recovers_transient_failure(monkeypatch):
+    """일시적 5xx 블립은 api_retries 로 흡수 — 재시도 후 성공하면 정상 수집."""
+    monkeypatch.setattr(monitor, "_HTTP_RETRY_BACKOFF", 0)
+    payload = _load("bizinfo_sample.json")
+    with respx.mock:
+        route = respx.get(BIZINFO_URL)
+        route.side_effect = [
+            httpx.Response(500),                # page1 1차 시도 실패
+            httpx.Response(200, json=payload),  # page1 재시도 성공(3건 < pageUnit → 종료)
+        ]
+        items = monitor.fetch_bizinfo({**_site(), "api_retries": 2})
+    assert len(items) == 3
+
+
+def test_bizinfo_partial_collection_preserved_no_raise(monkeypatch):
+    """1페이지 수집 성공 후 2페이지 실패면 예외 대신 모은 만큼 부분 반환(가용 데이터 보존)."""
+    monkeypatch.setattr(monitor, "_HTTP_RETRY_BACKOFF", 0)
+    payload = _load("bizinfo_sample.json")  # 3건
+    with respx.mock:
+        route = respx.get(BIZINFO_URL)
+        route.side_effect = [
+            httpx.Response(200, json=payload),  # page1 성공(3건 ≥ pageUnit=2 → 다음 페이지로)
+            httpx.Response(500),                # page2 실패 → 부분 반환
+        ]
+        site = {**_site(), "api_page_unit": 2, "api_max_pages": 3, "api_retries": 0}
+        items = monitor.fetch_bizinfo(site)  # 예외 없이
+    assert len(items) == 3  # page1 부분 수집분 보존
+
+
+def test_bizinfo_hard_failure_classified_as_collect_fail(monkeypatch):
+    """★ 사용자 버그 직결 회귀: 하드 실패가 커버리지에서 '수집실패'로 분류되고
+    baseline(평소값)을 오염시키지 않는지 end-to-end 확인."""
+    import coverage_alert
+
+    def _raiser(_site_arg):
+        raise RuntimeError("기업마당 API 오류: 인증키")
+
+    monkeypatch.setitem(monitor.FETCHERS, "bizinfo_api", _raiser)
+    site = {"id": "bizinfo", "name": "기업마당(Bizinfo)", "type": "bizinfo_api",
+            "url": BIZINFO_URL, "enabled": True}
+    rows = monitor.fetch_site_coverage([site], days_back=1)
+    row = rows[0]
+    assert row["fetch_success"] is False
+    assert row["item_count"] == 0
+    assert row["fetch_error"]  # 오류 메시지 존재
+
+    baseline = {"bizinfo": [1443, 1440, 1445]}
+    anomalies = coverage_alert.detect_coverage_anomalies(rows, baseline)
+    assert len(anomalies) == 1
+    assert anomalies[0]["reason"] == "수집실패"  # '0건 급락' 아님
+
+    # baseline 미오염: 실패한 날은 append 되지 않아 median 이 0 으로 끌려가지 않는다
+    updated = coverage_alert.update_coverage_baseline(baseline, rows)
+    assert updated["bizinfo"] == [1443, 1440, 1445]
