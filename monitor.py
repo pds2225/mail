@@ -1027,7 +1027,7 @@ def fetch_bizinfo(site: dict) -> list[dict]:
     #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
     #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
     #   fetch_success=False='수집실패'로 분류한다 →
-    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확히 표기
+    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확 표기
     #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
     #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
     #   이미 일부 페이지를 모은 뒤(page 2+) 실패하면 예외 대신 모은 만큼 부분 반환(가용 데이터 보존).
@@ -1283,10 +1283,15 @@ def fetch_semas_loan_ols(site: dict) -> list[dict]:
                         ] if part
                     ]
                     iid = f"{site['id']}_{seq}_{bbs_type}" if seq else f"{site['id']}_{stable_id(title)}"
-                    items.append(_item(
+                    it = _item(
                         iid, title, site["url"], "소상공인시장진흥공단",
                         " / ".join(desc_parts), "", site["name"], posted, agg,
-                    ))
+                    )
+                    # 소진공 정책자금은 전국 소상공인 대상 → 지역 단서가 없어 '지역 미상'으로
+                    #  하드컷 되어 발송 0건이던 문제 수정. region_field='전국'으로 명시(사실 정확)해
+                    #  전국 공고로 인정 → 정책자금 키워드 보유 그룹에 정상 전달(누락 방지·recall).
+                    it["region_field"] = "전국"
+                    items.append(it)
     except Exception as e:
         log.error("소진공 정책자금 공지 API 실패: %s", e)
         return []
@@ -1380,6 +1385,195 @@ def fetch_smart_factory(site: dict) -> list[dict]:
             items = _collect(False)   # 정부 사이트 SSL 체인 폴백
     except Exception as e:
         log.error("스마트공장 사업공고 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def fetch_ripc(site: dict) -> list[dict]:
+    """지역지식재산센터(RIPC PMS) 지원사업 공고 수집.
+
+    목록 페이지(list.do)는 빈 테이블 껍데기 + AJAX 로딩이라 html_table 로는 0건.
+    실제 목록은 POST .../notice/getNoticeList.do (JSON, 공개·로그인 불요). 최신순 정렬이라
+    앞쪽 몇 페이지만 받아 신규 공고를 잡고, 날짜/마감 필터는 모니터가 처리한다. 상세는 신청자
+    포털(로그인) 라우팅이라 딥링크 불가 → 링크는 목록 페이지. 제목의 [부산] 등 지역태그는
+    그대로 둬 지역 매칭이 활용한다.
+    """
+    list_url = site["url"].split("#")[0].rstrip("/")
+    api_url = list_url.rsplit("/", 1)[0] + "/getNoticeList.do"   # .../notice/getNoticeList.do
+    headers = {
+        **HTTP_HEADERS,
+        "Accept": "application/json, text/plain, */*",
+        "Referer": list_url,
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    try:
+        max_pages = max(1, int(site.get("max_pages", 5)))
+    except (TypeError, ValueError):
+        max_pages = 5
+    agg = site.get("is_aggregator", False)
+
+    def _collect(verify: Any) -> list[dict]:
+        out: list[dict] = []
+        seen: set[str] = set()
+        with httpx.Client(timeout=30, headers=headers,
+                          follow_redirects=True, verify=verify) as c:
+            try:
+                c.get(list_url)   # 세션 쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            for page_no in range(1, max_pages + 1):
+                # ★페이징 파라미터는 currentPageNo (currentPage/pageIndex 는 서버가 무시 → 1페이지 고정)
+                r = c.post(api_url, data={"currentPageNo": str(page_no)})
+                r.raise_for_status()
+                result = (r.json() or {}).get("result") or {}
+                rows = result.get("noticeList") or []
+                if not rows:
+                    break
+                for row in rows:
+                    title = norm(row.get("noticeTitle", ""))
+                    seq = norm(str(row.get("noticeSeq", "")))
+                    if not title or not seq or seq == "0" or seq in seen:
+                        continue
+                    seen.add(seq)
+                    posted = norm(row.get("writeTimeStr", ""))
+                    sd = re.findall(r"\d{4}-\d{2}-\d{2}", norm(row.get("startDateStr", "")))
+                    ed = re.findall(r"\d{4}-\d{2}-\d{2}", norm(row.get("endDateStr", "")))
+                    deadline = " ~ ".join([d for d in [sd[0] if sd else "", ed[0] if ed else ""] if d])
+                    center = norm(row.get("centerName", ""))
+                    cat = " ".join(p for p in [norm(row.get("bizCategory1Name", "")),
+                                               norm(row.get("bizCategory2Name", ""))] if p)
+                    notice_no = norm(row.get("noticeNo", ""))
+                    desc = " / ".join(p for p in [
+                        f"센터: {center}" if center else "",
+                        f"분야: {cat}" if cat else "",
+                        f"공고번호: {notice_no}" if notice_no else "",
+                    ] if p)
+                    out.append(_item(f"{site['id']}_{seq}", title, list_url,
+                                     ("지역지식재산센터" + (f" {center}" if center else "")),
+                                     desc, deadline, site["name"], posted, agg))
+                try:
+                    total_pages = int(result.get("totalPageCount", 0))
+                except (TypeError, ValueError):
+                    total_pages = 0
+                if total_pages and page_no >= total_pages:
+                    break
+        return out
+
+    try:
+        try:
+            items = _collect(True)
+        except httpx.ConnectError:
+            items = _collect(False)   # 정부 사이트 SSL 체인 폴백
+    except Exception as e:
+        log.error("RIPC 공고 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+_KOTRA_LINK_RE = re.compile(r"\('([^']+selectBizMntInfoDetail\.do[^']+)'\)")
+
+
+def fetch_kotra_biz(site: dict) -> list[dict]:
+    """KOTRA 사업신청(subList/20000020753) 공고 수집.
+
+    목록이 정적 <table> 이 아니라 POST-AJAX(selectBmBizAllListAjax.do)로 HTML 조각을
+    렌더 → html_table 로는 0건. 세션쿠키 선확보 후 POST, div.card 파싱. 링크는
+    javascript onclick 의 selectBizMntInfoDetail.do 상대경로를 합성(딥링크)."""
+    base = "https://www.kotra.or.kr"
+    list_url = site["url"].split("#")[0]
+    api_url = base + "/module/subhome/bizAply/selectBmBizAllListAjax.do"
+    headers = {**HTTP_HEADERS, "X-Requested-With": "XMLHttpRequest", "Referer": list_url,
+               "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"}
+    try:
+        max_pages = max(1, int(site.get("max_pages", 5)))
+    except (TypeError, ValueError):
+        max_pages = 5
+    agg = site.get("is_aggregator", False)
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True, verify=False) as c:
+            try:
+                c.get(list_url)   # 세션쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            for page_no in range(1, max_pages + 1):
+                r = c.post(api_url, data={"pageNo": str(page_no), "pageSize": "10",
+                                          "collection": "business_application", "sch_nation_cd": "Y"})
+                r.raise_for_status()
+                soup = BeautifulSoup(r.content.decode("utf-8", "replace"), "html.parser")
+                cards = soup.select("div.card")
+                if not cards:
+                    break
+                for card in cards:
+                    a = card.select_one("a.card-tit")
+                    title = norm(a.get_text() if a else "")
+                    href = a.get("href", "") if a else ""
+                    mm = _KOTRA_LINK_RE.search(href)
+                    if not title or not mm:
+                        continue
+                    rel = mm.group(1)
+                    idm = re.search(r"dtlBizMntNo=([A-Za-z0-9]+)", rel)
+                    bid = idm.group(1) if idm else stable_id(title)
+                    if bid in seen:
+                        continue
+                    seen.add(bid)
+                    deadline = ""
+                    for dt in card.select("dl.card-meta-data dt"):
+                        if "신청기간" in dt.get_text():
+                            dd = dt.find_next("dd")
+                            ymd = re.findall(r"\d{4}-\d{2}-\d{2}", norm(dd.get_text())) if dd else []
+                            deadline = " ~ ".join(ymd[:2]) if ymd else ""
+                            break
+                    items.append(_item(f"{site['id']}_{bid}", title, urljoin(base, rel),
+                                       "KOTRA", "", deadline, site["name"], "", agg))
+    except Exception as e:
+        log.error("KOTRA 사업신청 API 실패: %s", e)
+        return []
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def fetch_kosme(site: dict) -> list[dict]:
+    """중소벤처기업진흥공단(KOSME) 사업공고 수집.
+
+    목록이 POST JSON(notice_list.json, activatedTab=01=사업공고 탭). 세션쿠키 선확보 후
+    POST, ds_infoList 파싱. TITL_NM=제목/REG_DTM=게시일/VALI_DT=마감/SLNO=상세id."""
+    base = "https://www.kosmes.or.kr"
+    api_url = base + "/sh/nts/notice_list.json"
+    headers = {**HTTP_HEADERS, "Referer": site["url"], "X-Requested-With": "XMLHttpRequest",
+               "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}
+    agg = site.get("is_aggregator", False)
+    try:
+        row_count = max(10, int(site.get("row_count", 50)))
+    except (TypeError, ValueError):
+        row_count = 50
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True, verify=False) as c:
+            try:
+                c.get(site["url"])   # 세션쿠키 선확보
+            except httpx.HTTPError:
+                pass
+            r = c.post(api_url, data={"nowPage": "1", "pageCount": "10", "rowCount": str(row_count),
+                                      "param": "proc=List", "bKind": "popluar", "activatedTab": "01"})
+            r.raise_for_status()
+            for row in (r.json().get("ds_infoList") or []):
+                title = norm(row.get("TITL_NM", ""))
+                slno = norm(str(row.get("SLNO", "")))
+                if not title or not slno or slno in seen:
+                    continue
+                seen.add(slno)
+                posted = extract_date_from_text(norm(row.get("REG_DTM", "")) or norm(row.get("UPDT_DTM", "")))
+                deadline = extract_date_from_text(norm(row.get("VALI_DT", "")))
+                link = f"{base}/nsh/SH/NTS/SHNTS001F0.do?seqNo={slno}&tabPage=01"
+                items.append(_item(f"{site['id']}_{slno}", title, link, "중소벤처기업진흥공단",
+                                   "", deadline, site["name"], posted, agg))
+    except Exception as e:
+        log.error("KOSME 공고 API 실패: %s", e)
         return []
     log.info("%s: %d건", site["name"], len(items))
     return items
@@ -2052,6 +2246,9 @@ FETCHERS = {
     "sba_html":           fetch_sba,
     "semas_loan_ols":     fetch_semas_loan_ols,
     "smartfactory_api":   fetch_smart_factory,
+    "ripc_api":           fetch_ripc,
+    "kotra_biz_api":      fetch_kotra_biz,
+    "kosme_api":          fetch_kosme,
     "html_table":         fetch_html_generic,
     "html_card":          fetch_html_generic,
     # ── Playwright (JS 렌더링) ─────────────────────────────────────────────────
@@ -3659,6 +3856,32 @@ def _is_voucher(it: dict) -> bool:
     return any(v in text for v in VOUCHER_KEYWORDS)
 
 
+def alert_email(subject: str, body: str) -> None:
+    """PC용 알림 이메일 — 커버리지 이상 등 '헬스 알림'을 메일로 발송(PC에서 확인).
+    announcement 발송 게이트(_ALLOW_SMTP_SEND)와 무관하게 항상 시도한다(alert_ntfy 와
+    동일 정책 — dry-run 스케줄에서도 헬스 알림은 나가야 함). 수신=자기 자신(GMAIL_ADDRESS,
+    안전 수신자 규칙). 실패해도 본 작업엔 영향 없음."""
+    if not (GMAIL_ADDRESS and GMAIL_APP_PASSWORD):
+        log.info("GMAIL 미설정 — PC 알림 이메일 생략")
+        return
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"[mail-monitor] {subject}"
+        msg["From"] = GMAIL_ADDRESS
+        msg["To"] = GMAIL_ADDRESS
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg.attach(MIMEText(
+            f"<html><body style='font-family:Arial;line-height:1.7'>"
+            f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
+            f"</body></html>", "html", "utf-8"))
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
+            srv.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            srv.sendmail(GMAIL_ADDRESS, GMAIL_ADDRESS, msg.as_string())
+        log.info("PC 알림 이메일 발송: %s", subject)
+    except Exception as e:  # 알림 실패는 본 작업을 막지 않는다
+        log.warning("PC 알림 이메일 실패(무시): %s", e)
+
+
 def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "warning") -> None:
     """폰 푸시(ntfy) 발송. NTFY_TOPIC 환경변수가 있을 때만. 실패해도 본 작업엔 영향 없음."""
     topic = os.environ.get("NTFY_TOPIC", "").strip()
@@ -4215,11 +4438,12 @@ def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) ->
         anomalies = _ca.detect_coverage_anomalies(rows, baseline)
         highs = [a for a in anomalies if a.get("severity") == "high"]
         if highs and allow_alert:
-            alert_ntfy(
-                "Coverage drop",
-                _ca.format_anomaly_message(anomalies),
-                priority="high",
-                tags="warning",
+            # PC(이메일)로 알림 — 평소 수집되던 사이트가 0건/급감/실패 시 확인 요청.
+            alert_email(
+                "커버리지 이상(수집 0건/급감/실패) — 확인 필요",
+                _ca.format_anomaly_message(anomalies)
+                + "\n\n(평소 수집되던 사이트가 조용히 바뀌어 공고를 놓치는 사고 감지 — "
+                  "GitHub Actions 로그/사이트를 확인하세요.)",
             )
         new_baseline = _ca.update_coverage_baseline(baseline, rows)
         _ca.save_coverage_baseline(new_baseline)

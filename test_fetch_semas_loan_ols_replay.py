@@ -68,7 +68,9 @@ def test_semas_extracts_policy_fund_notices_only():
     assert len(items) == 3
 
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        # 9키 + region_field(전국 소상공인 대상이라 nationwide 명시 — 발송 누락 방지 수정)
+        assert set(it.keys()) == SCHEMA_KEYS | {"region_field"}
+        assert it["region_field"] == "전국"
         assert it["is_aggregator"] is False
         assert it["source"] == "소진공 정책자금 온라인신청"
         assert it["author"] == "소상공인시장진흥공단"
