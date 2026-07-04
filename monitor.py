@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-import hashlib, html, json, logging, os, re, smtplib, ssl, unicodedata
+import hashlib, html, json, logging, os, re, smtplib, ssl, time, unicodedata
 from datetime import datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -93,6 +93,8 @@ KST            = timezone(timedelta(hours=9))
 MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
+_HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
+_HTTP_RETRIES = 1          # _soup 네트워크/타임아웃 일시적 실패 재시도 횟수(4xx/5xx는 재시도 안 함).
 EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
 _ALLOW_SMTP_SEND = False
 _ALLOW_PERSIST_SEEN = True
@@ -989,19 +991,26 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
     # 정상 사이트는 (1)에서 즉시 성공 → 기존 동작·속도 보존. SSL 실패만 폴백.
+    # 네트워크/타임아웃 등 일시적 실패는 _HTTP_RETRIES 만큼 재시도한다 — 여러 소스가
+    # 동시에 순간 실패(스케줄 실행 중 네트워크 블립)해 '0건 급락'/'수집실패' 알림이
+    # 무더기로 뜨는 것을 줄인다. 4xx/5xx(HTTPStatusError)는 페이지 수준 오류라
+    # 재시도가 무의미 → 즉시 None(폴백·재시도 안 함).
     last_err: Exception | None = None
-    for stage in ("strict", "no_verify", "legacy"):
-        verify: Any = True if stage == "strict" else (
-            False if stage == "no_verify" else _legacy_ssl_ctx())
-        try:
-            with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
-                              verify=verify) as c:
-                r = c.get(url, **kwargs); r.raise_for_status()
-                return BeautifulSoup(r.text, "html.parser")
-        except httpx.HTTPStatusError as e:
-            log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
-        except Exception as e:
-            last_err = e; continue
+    for attempt in range(_HTTP_RETRIES + 1):
+        for stage in ("strict", "no_verify", "legacy"):
+            verify: Any = True if stage == "strict" else (
+                False if stage == "no_verify" else _legacy_ssl_ctx())
+            try:
+                with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
+                                  verify=verify) as c:
+                    r = c.get(url, **kwargs); r.raise_for_status()
+                    return BeautifulSoup(r.text, "html.parser")
+            except httpx.HTTPStatusError as e:
+                log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
+            except Exception as e:
+                last_err = e; continue
+        if attempt < _HTTP_RETRIES:
+            time.sleep(_HTTP_RETRY_BACKOFF * (attempt + 1))
     log.error("접속 실패 %s: %s", url, last_err); return None
 
 def _item(id_, title, link, author, desc, deadline, source,
@@ -1013,30 +1022,53 @@ def _item(id_, title, link, author, desc, deadline, source,
 
 def fetch_bizinfo(site: dict) -> list[dict]:
     # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
-    # reqErr(인증키 오류 등)는 빈 jsonArray 와 구분해 로그에 명시 — '0건' 원인 추적용.
+    #
+    # ★ 실패 신호 규약(커버리지 오탐 방지):
+    #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
+    #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
+    #   fetch_success=False='수집실패'로 분류한다 →
+    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확히 표기
+    #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
+    #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
+    #   이미 일부 페이지를 모은 뒤(page 2+) 실패하면 예외 대신 모은 만큼 부분 반환(가용 데이터 보존).
+    #   일시적 5xx/네트워크 블립은 api_retries 만큼 재시도해 흡수(단발 장애로 0건 알림 폭주 차단).
     page_unit = int(site.get("api_page_unit", 500))
     max_pages = int(site.get("api_max_pages", 4))
+    retries = max(0, int(site.get("api_retries", 2)))
     items: list[dict] = []
     seen_ids: set[str] = set()
     agg = site.get("is_aggregator", True)
     params_base = {"crtfcKey": BIZINFO_API_KEY, "dataType": "json"}
 
     for page in range(1, max_pages + 1):
-        r = _http_get(
-            site["url"],
-            params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
-            timeout=90,
-        )
+        r = None
+        for attempt in range(retries + 1):
+            r = _http_get(
+                site["url"],
+                params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
+                timeout=90,
+            )
+            if r is not None:
+                break
+            if attempt < retries:
+                time.sleep(_HTTP_RETRY_BACKOFF * (attempt + 1))
         if r is None:
-            break
+            if items:  # 부분 수집분은 보존
+                log.error("기업마당 API 접속 실패(page %d) — 부분 수집 %d건 반환", page, len(items))
+                break
+            raise RuntimeError(f"기업마당 API 접속 실패 (page {page}, {retries + 1}회 시도)")
         try:
             data = r.json()
         except Exception as e:
-            log.error("기업마당 API JSON 파싱 실패: %s", e)
-            break
+            if items:
+                log.error("기업마당 API JSON 파싱 실패(page %d): %s — 부분 수집 %d건 반환", page, e, len(items))
+                break
+            raise RuntimeError(f"기업마당 API JSON 파싱 실패 (page {page}): {e}") from e
         if err := data.get("reqErr"):
-            log.error("기업마당 API 오류: %s", err)
-            return items
+            if items:
+                log.error("기업마당 API 오류(page %d): %s — 부분 수집 %d건 반환", page, err, len(items))
+                break
+            raise RuntimeError(f"기업마당 API 오류: {err}")
         raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
         if isinstance(raw, dict):
             raw = [raw]
@@ -1148,7 +1180,11 @@ def fetch_html_generic(site: dict) -> list[dict]:
     date_selector = site.get("date_selector") or selectors.get("date", "")
     deadline_selector = site.get("deadline_selector") or selectors.get("deadline", "")
     soup   = _soup(site["url"])
-    if not soup: return []
+    if not soup:
+        # 접속/파싱 실패(soup=None)는 '진짜 0건'과 다르다 → 예외로 올려 상위가
+        # fetch_success=False='수집실패'로 분류(커버리지 '0건 급락' 오탐·baseline 오염 방지).
+        # 정상 응답인데 행이 0개면 soup 는 truthy → 아래에서 [] 반환(진짜 0건은 그대로).
+        raise RuntimeError(f"{site.get('name', site.get('id', ''))} 접속 실패 (HTML 수집)")
     items, agg = [], site.get("is_aggregator", False)
     for row in soup.select(sel):
         title_selector = selectors.get("title", "")
@@ -1727,7 +1763,9 @@ def fetch_mss(site: dict) -> list[dict]:
     BASE   = "https://www.mss.go.kr"
     DETAIL = BASE + "/site/smba/ex/bbs/View.do?cbIdx=310&bcIdx="
     soup   = _soup(site["url"])
-    if not soup: return []
+    if not soup:
+        # 접속 실패는 '진짜 0건'과 다르다 → 예외로 올려 '수집실패'로 분류(0건 급락 오탐 방지).
+        raise RuntimeError(f"{site['name']} 접속 실패 (중기부 HTML 수집)")
     items, agg = [], site.get("is_aggregator", False)
     for tr in soup.select("table tbody tr"):
         a = tr.select_one("a")
