@@ -33,6 +33,10 @@ def _row(site_id, *, item_count, fetch_success=True, fetch_error="", enabled=Tru
     }
 
 
+def _entry(day, item_count):
+    return {"date": day, "item_count": item_count}
+
+
 # ── detect ───────────────────────────────────────────────────────────────────
 def test_detect_healthy_drop_to_zero_is_high():
     """(a) 평소 충분(>=min_healthy)했는데 오늘 0건 → high 1건."""
@@ -71,6 +75,16 @@ def test_detect_fetch_fail_is_high():
     assert anomalies[0]["reason"] == "수집실패"
 
 
+def test_detect_fetch_fail_even_when_history_was_zero_polluted():
+    """과거 0건 학습으로 대표값이 0이어도 수집실패는 high 로 감지."""
+    rows = [_row("a", item_count=0, fetch_success=False, fetch_error="timeout")]
+    baseline = {"a": [0] * 14}
+    anomalies = ca.detect_coverage_anomalies(rows, baseline)
+    assert len(anomalies) == 1
+    assert anomalies[0]["severity"] == "high"
+    assert anomalies[0]["reason"] == "수집실패"
+
+
 def test_detect_sharp_drop_is_medium():
     """(e) floor 이상 baseline 인데 current>0 이고 ratio 미만 → medium '급감'."""
     rows = [_row("a", item_count=3)]  # baseline median 10, 10*0.5=5 > 3
@@ -98,6 +112,15 @@ def test_detect_low_baseline_does_not_trip_medium():
     assert anomalies[0]["severity"] == "high"
 
 
+def test_detect_zero_polluted_history_still_uses_healthy_counts():
+    """이미 0건 이력이 섞여 있어도 남은 정상 양수 이력으로 급락을 감지."""
+    rows = [_row("a", item_count=0)]
+    baseline = {"a": [5, 6] + [0] * 12}
+    anomalies = ca.detect_coverage_anomalies(rows, baseline)
+    assert len(anomalies) == 1
+    assert anomalies[0]["reason"] == "0건 급락"
+
+
 # ── update ───────────────────────────────────────────────────────────────────
 def test_update_appends_only_success_days():
     """성공일만 append, 실패일은 baseline 미오염."""
@@ -107,10 +130,10 @@ def test_update_appends_only_success_days():
         _row("a", item_count=0, fetch_success=False, fetch_error="x"),  # 실패 → 무시
     ]
     # 같은 site_id 가 둘이면 마지막 성공만 의미 있지만, 여기선 성공 1건만 반영되는지 확인
-    updated = ca.update_coverage_baseline({"a": [5]}, [rows[0]])
-    assert updated["a"] == [5, 6]
+    updated = ca.update_coverage_baseline({"a": [5]}, [rows[0]], today="2026-06-22")
+    assert updated["a"] == [5, _entry("2026-06-22", 6)]
     # 실패 row 만 주면 baseline 변화 없음
-    updated_fail = ca.update_coverage_baseline({"a": [5]}, [rows[1]])
+    updated_fail = ca.update_coverage_baseline({"a": [5]}, [rows[1]], today="2026-06-22")
     assert updated_fail["a"] == [5]
 
 
@@ -118,14 +141,14 @@ def test_update_window_drops_oldest():
     """window 초과 시 가장 오래된 값 drop."""
     baseline = {"a": [1, 2, 3]}
     rows = [_row("a", item_count=4)]
-    updated = ca.update_coverage_baseline(baseline, rows, window=3)
-    assert updated["a"] == [2, 3, 4]  # 1 drop, 4 append
+    updated = ca.update_coverage_baseline(baseline, rows, window=3, today="2026-06-22")
+    assert updated["a"] == [2, 3, _entry("2026-06-22", 4)]  # 1 drop, 4 append
 
 
 def test_update_new_site_starts_history():
     """이력 없던 사이트도 성공일이면 새 리스트로 시작."""
-    updated = ca.update_coverage_baseline({}, [_row("z", item_count=9)])
-    assert updated["z"] == [9]
+    updated = ca.update_coverage_baseline({}, [_row("z", item_count=9)], today="2026-06-22")
+    assert updated["z"] == [_entry("2026-06-22", 9)]
 
 
 def test_update_does_not_mutate_input():
@@ -133,6 +156,22 @@ def test_update_does_not_mutate_input():
     baseline = {"a": [5]}
     ca.update_coverage_baseline(baseline, [_row("a", item_count=6)])
     assert baseline == {"a": [5]}
+
+
+def test_update_skips_anomalous_zero_to_preserve_baseline():
+    """성공 응답 0건 급락은 baseline 에 학습하지 않아 반복 알림 가능성을 유지."""
+    baseline = {"a": [5, 6, 5, 7]}
+    rows = [_row("a", item_count=0)]
+    updated = ca.update_coverage_baseline(baseline, rows, today="2026-06-22")
+    assert updated["a"] == [5, 6, 5, 7]
+
+
+def test_update_replaces_same_day_entry():
+    """같은 날짜 재실행은 window 슬롯을 추가로 쓰지 않고 마지막 값을 교체."""
+    baseline = {"a": [5, _entry("2026-06-22", 6)]}
+    rows = [_row("a", item_count=7)]
+    updated = ca.update_coverage_baseline(baseline, rows, today="2026-06-22")
+    assert updated["a"] == [5, _entry("2026-06-22", 7)]
 
 
 # ── format ───────────────────────────────────────────────────────────────────
@@ -186,8 +225,8 @@ def test_run_coverage_anomaly_check_no_network_no_real_file(monkeypatch, tmp_pat
 
     assert len(anomalies) == 1 and anomalies[0]["severity"] == "high"
     assert len(calls) == 1  # high 1건 → PC(이메일) 알림 1회
-    # baseline 갱신: 0건은 fetch_success=True 이므로 append 됨(성공일)
-    assert _load()["a"][-1] == 0
+    # baseline 갱신: 0건 급락은 fetch_success=True 여도 정상으로 학습하지 않음(오염 방지)
+    assert _load()["a"] == [5, 6, 5, 7]
     # 실제 파일은 건드리지 않음
     assert not (m.BASE_DIR / "coverage_baseline.json").exists()
 
