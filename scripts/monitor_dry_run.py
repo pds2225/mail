@@ -26,9 +26,39 @@ os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 from monitor import run_dry_run  # noqa: E402
 
 
+def _ensure_utf8_stdout() -> None:
+    """cp949 콘솔/파이프에서 em-dash(—) 등 출력이 UnicodeEncodeError 로 죽지 않게.
+
+    fetch_notice_attachments.py 관례 재사용 — 출력은 UTF-8(errors=replace) 고정,
+    reconfigure 불가 스트림(StringIO 등)은 조용히 통과.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+def _print_summary(public: dict, ru_groups: list[dict]) -> None:
+    """사람용 요약 출력(테스트 가능하도록 main 에서 분리)."""
+    print("=== monitor dry-run summary ===")
+    for key, val in public.items():
+        print(f"  {key}: {val}")
+    if ru_groups:
+        print("\n=== 지역 미상(확인 필요) — 보고 메일 하단에 함께 발송 ===")
+        for g in ru_groups:
+            print(f"  [{g.get('name')}] {g.get('region_unknown_items')}건")
+            for t in g.get("region_unknown_titles", []):
+                print(f"     - {t}")
+    print("Reports: logs/site_collection_coverage_report.md")
+    print("         logs/today_notice_missing_risk_report.md")
+    print("         logs/review_queue_YYYYMMDD.md")
+
+
 def main() -> int:
     import argparse
 
+    _ensure_utf8_stdout()
     parser = argparse.ArgumentParser()
     parser.add_argument("--skip-coverage-fetch", action="store_true")
     parser.add_argument("--json", action="store_true", help="요약 JSON stdout")

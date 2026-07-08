@@ -24,6 +24,9 @@ def test_core_sources_checklist_runs_offline():
         cwd=ROOT,
         capture_output=True,
         text=True,
+        # 자식은 PYTHONUTF8=1 로 UTF-8 출력 — 부모도 UTF-8 로 디코드해야
+        # cp949 콘솔에서 reader thread UnicodeDecodeError(stdout=None)가 안 난다.
+        encoding="utf-8",
         env={**os.environ, "PYTHONUTF8": "1"},
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
@@ -39,6 +42,7 @@ def test_three_sources_in_output():
         cwd=ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",  # 자식 UTF-8 출력 고정(PYTHONUTF8=1) — cp949 콘솔 디코드 크래시 방지
         env={**os.environ, "PYTHONUTF8": "1"},
     )
     data = __import__("json").loads(proc.stdout)
