@@ -68,6 +68,7 @@ log = logging.getLogger(__name__)
 TITLE_NOISE = {
     "모집중", "마감", "공고", "공지", "알림", "상세화면", "상세", "notice",
     "중소벤처24 통합로그인 사이트", "통합로그인", "로그인", "k-startup 창업지원포털",
+    "공지사항", "공지사항 상세", "공고 상세", "보도자료",
 }
 TITLE_TAIL_RE = re.compile(r"\s*[>《<]\s*상세화면\s*$")
 HTML_HEAD_RE = re.compile(rb"^\s*<(?:!doctype|html|head|body|center|br|table)\b", re.IGNORECASE)
@@ -152,6 +153,26 @@ def _good_title(text: str) -> str | None:
     return text
 
 
+def _title_from_view_table(soup: BeautifulSoup) -> str | None:
+    """게시판 상세 '표'의 제목 행에서 제목을 뽑는다(캠코 등 eGov 게시판 공통).
+
+    <th>제목</th><td>…</td> 또는 <td data-label="제목">…</td> 패턴.
+    h2/h3 같은 일반 셀렉터보다 먼저 봐야 메뉴명('공지사항')을 제목으로 오인하지 않는다.
+    """
+    for td in soup.select('td[data-label="제목"], td[date-label="제목"]'):
+        good = _good_title(td.get_text(" ", strip=True))
+        if good:
+            return good
+    for th in soup.find_all("th"):
+        if th.get_text(strip=True) in {"제목", "공고명", "공고제목"}:
+            td = th.find_next_sibling("td")
+            if td is not None:
+                good = _good_title(td.get_text(" ", strip=True))
+                if good:
+                    return good
+    return None
+
+
 def extract_notice_title(html: str, url: str) -> str:
     """공고 상세 페이지에서 폴더명으로 쓸 제목을 추출한다."""
     soup = BeautifulSoup(html, "html.parser")
@@ -161,6 +182,10 @@ def extract_notice_title(html: str, url: str) -> str:
         good = _good_title(og.get("content", ""))
         if good:
             return good
+
+    from_table = _title_from_view_table(soup)
+    if from_table:
+        return from_table
 
     for sel in (".title", "h3.tit", ".view_title", ".board_view .tit",
                 ".tbl_view .tit", ".bbsV_tit", "h3", "h2.tit", ".pbanc_tit"):
@@ -634,7 +659,7 @@ def main() -> int:
                 counts[r.status] = counts.get(r.status, 0) + 1
             _print_summary(counts, len({r.detail_url for r in all_results}))
             if args.notify and not args.dry_run:
-                ok = counts.get("OK", 0)
+                ok = counts.get("DOWNLOADED", 0)
                 if ok:
                     _notify_download_done(ok, len({r.detail_url for r in all_results}), out_dir)
         else:
@@ -650,8 +675,8 @@ def main() -> int:
         _handle_url(url, out_dir, args.dry_run, args.open, opened_dirs, all_results)
     counts = _write_manifest(out_dir, args.dry_run, all_results)
     _print_summary(counts, len(urls))
-    if args.notify and not args.dry_run and counts.get("OK", 0):
-        _notify_download_done(counts["OK"], len(urls), out_dir)
+    if args.notify and not args.dry_run and counts.get("DOWNLOADED", 0):
+        _notify_download_done(counts["DOWNLOADED"], len(urls), out_dir)
     return 0
 
 

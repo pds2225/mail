@@ -25,7 +25,7 @@ from difflib import SequenceMatcher
 from email.message import Message
 from pathlib import Path
 from typing import Iterable
-from urllib.parse import unquote, urljoin, urlparse
+from urllib.parse import quote, unquote, urljoin, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -70,6 +70,19 @@ ATTACHMENT_URL_RE = re.compile(
     re.IGNORECASE,
 )
 EXT_RE = re.compile(r"\.(hwp|hwpx|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|7z|rar)(?:$|[?#])", re.IGNORECASE)
+# eGovFrame 표준 첨부 다운로드 JS: fn_egov_downFile('FILE_000000000013068','0')
+# (캠코 등 전자정부 표준프레임워크 사이트 — href 없이 onclick 만 있어 URL 합성 필요)
+EGOV_DOWNFILE_RE = re.compile(
+    r"fn_egov_downFile(?:_cs)?\s*\(\s*['\"]([^'\"]+)['\"]\s*,\s*['\"]?(\w+)['\"]?",
+    re.IGNORECASE,
+)
+EGOV_FILEDOWN_PATH = "/cmm/fms/FileDown.do"
+# 사이트 공통 영역(footer·GNB·배너 등) — 인증서 PDF 같은 '게시물 첨부 아님' 링크의 서식지
+CHROME_TAGS = {"footer", "nav", "aside"}
+CHROME_TOKEN_RE = re.compile(
+    r"^(footer|foot|gnb|lnb|snb|quick|banner|bnr|copyright|sitemap|breadcrumb|util|skipnav)([-_].*)?$",
+    re.IGNORECASE,
+)
 WINDOWS_BAD_CHARS = re.compile(r"[\\/:*?\"<>|\x00-\x1f]")
 SCRIPT_NOISE_RE = re.compile(
     r"function\s*\(|JSON\.parse|console\.|var\s+|const\s+|let\s+|<script|</|\{\s*|\}\s*|\$\(",
@@ -531,6 +544,27 @@ def candidate_from_url(raw_url: str, label: str, base_url: str, source: str) -> 
     return AttachmentCandidate(url=abs_url, label=label.strip() or "첨부파일", source=source)
 
 
+def _in_site_chrome(el) -> bool:
+    """링크가 사이트 공통 영역(footer·네비게이션 등) 안에 있는지 판별.
+
+    캠코 회귀: footer 의 KSQI·웹접근성 인증 PDF 직링크가 공고 첨부로 오탐됐다.
+    게시물 본문/첨부 영역 밖(사이트 chrome)의 문서 링크는 첨부 후보에서 제외한다.
+    """
+    for parent in el.parents:
+        name = getattr(parent, "name", None)
+        if not name:
+            continue
+        if name in CHROME_TAGS:
+            return True
+        tokens = list(parent.get("class") or [])
+        pid = parent.get("id")
+        if pid:
+            tokens.append(pid)
+        if any(CHROME_TOKEN_RE.match(t) for t in tokens):
+            return True
+    return False
+
+
 def _nearby_label(el) -> str:
     label = " ".join(el.get_text(" ", strip=True).split())
     if label:
@@ -557,10 +591,22 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
 
     # 1) Direct anchors/buttons with actual URL attributes.
     for el in soup.select("a, button"):
+        if _in_site_chrome(el):
+            continue
         label = _nearby_label(el)
         for attr in ("href", "data-url", "data-href", "data-download-url", "formaction"):
             add(candidate_from_url(str(el.get(attr, "")), label, detail_url, attr))
         onclick = str(el.get("onclick", ""))
+        m = EGOV_DOWNFILE_RE.search(onclick)
+        if m:
+            # eGovFrame 표준: onclick 인자 → /cmm/fms/FileDown.do URL 합성
+            # (엔드포인트가 다른 사이트면 4xx → 다운로드 단계에서 NOT_A_FILE 로 조용히 제외)
+            synthesized = urljoin(
+                detail_url,
+                f"{EGOV_FILEDOWN_PATH}?atchFileId={quote(m.group(1))}&fileSn={quote(m.group(2))}",
+            )
+            add(AttachmentCandidate(url=synthesized, label=label.strip() or "첨부파일",
+                                    source="egov-downfile"))
         if ATTACHMENT_URL_RE.search(onclick):
             for q in extract_quoted_strings(onclick):
                 add(candidate_from_url(q, label, detail_url, "onclick"))
