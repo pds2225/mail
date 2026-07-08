@@ -277,6 +277,39 @@ def test_non_egov_onclick_not_synthesized():
     assert not any("FileDown.do" in c.url for c in cands)
 
 
+def test_malformed_unclosed_nav_does_not_swallow_attachments():
+    """미닫힘 <nav>(malformed HTML)가 본문을 삼켜도 첨부를 잃지 않는다(TASK-009 가드).
+
+    파서가 본문 전체를 nav 자손으로 넣는 경우 — 매치 조상이 body 텍스트의
+    절반 이상이면 chrome 으로 보지 않아야 한다.
+    """
+    html = (
+        '<body><nav class="gnb"><ul><li>메뉴1</li><li>메뉴2</li></ul>'   # </nav> 누락
+        '<div id="contents"><table class="bbs_view"><tr><th>첨부파일</th><td>'
+        '<a href="#" onclick="fn_egov_downFile(\'FILE_1\',\'0\')">공고문 및 신청 안내 문서.hwp</a> '
+        '<a href="/board/download.do?f=1">신청서식 첨부 파일.hwp</a>'
+        '</td></tr></table></div></body>'
+    )
+    cands = gather_candidates("https://example.go.kr/view.do?idx=7", html)
+    urls = [c.url for c in cands]
+    assert any("FileDown.do" in u for u in urls)       # eGov 합성 유지
+    assert any("download.do" in u for u in urls)       # 직링크 유지
+
+
+def test_normal_footer_still_excluded_despite_guard():
+    """가드가 있어도 정상(소분율) footer 의 인증 PDF 는 계속 제외된다."""
+    html = (
+        '<body><div id="contents"><h4>사업 안내 본문이 충분히 긴 페이지입니다. '
+        '지원 대상과 신청 방법, 제출 서류 안내가 이어집니다.</h4>'
+        '<a href="/files/공고문.pdf">공고문.pdf</a></div>'
+        '<footer><a href="/portal/Downfiles/KSQI.pdf">인증</a></footer></body>'
+    )
+    cands = gather_candidates("https://example.go.kr/view.do?idx=8", html)
+    urls = [c.url for c in cands]
+    assert any("공고문.pdf" in u for u in urls)
+    assert not any("KSQI" in u for u in urls)
+
+
 def test_egov_3arg_variant_no_fake_filename_candidate():
     """3인자 eGov 변형: 합성 URL 1개만 — 파일명 인자로 가짜 상대경로 후보를 만들지 않는다."""
     html = ('<a href="#" onclick="fn_egov_downFile(\'FILE_9\',\'0\',\'1.공고문.hwp\')">'
