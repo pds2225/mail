@@ -782,27 +782,54 @@ def unique_path(path: Path) -> Path:
     raise RuntimeError(f"Cannot create unique path for {path}")
 
 
+def get_with_ssl_fallback(url: str, headers: dict, timeout: int) -> httpx.Response:
+    """SSL 3단 폴백 GET: strict → no_verify → legacy(구식 TLS 컨텍스트).
+
+    일부 정부기관 사이트는 인증서 체인 불량(no_verify 로 해소)이나 구식 TLS
+    스택(renegotiation·약한 cipher — monitor._legacy_ssl_ctx 로 해소)으로
+    핸드셰이크 자체가 실패한다. 폴백은 연결/SSL 예외일 때만 다음 단계로
+    넘어가고, HTTP 상태 오류(4xx/5xx)는 SSL 문제가 아니므로 즉시 올린다
+    (기존 요청 경로의 동작 보존 — 응답이 오는 사이트는 결과 동일).
+    """
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify = (
+            True if stage == "strict"
+            else False if stage == "no_verify"
+            else monitor._legacy_ssl_ctx()
+        )
+        try:
+            with httpx.Client(timeout=timeout, follow_redirects=True, headers=headers,
+                              verify=verify) as client:
+                r = client.get(url)
+                r.raise_for_status()
+                return r
+        except httpx.HTTPStatusError:
+            raise  # 서버가 응답한 오류 — SSL 폴백 대상 아님
+        except Exception as exc:  # SSL/연결 계열 → 다음 단계로 폴백
+            last_err = exc
+            continue
+    if last_err:
+        raise last_err
+    raise RuntimeError(f"Failed to fetch {url}")
+
+
 def fetch_detail_html(url: str) -> str:
     headers = {**monitor.HTTP_HEADERS, "Referer": KSTARTUP_SITE["url"]}
-    with httpx.Client(timeout=60, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(url)
-        r.raise_for_status()
-        return r.text
+    return get_with_ssl_fallback(url, headers, timeout=60).text
 
 
 def download_candidate(candidate: AttachmentCandidate, detail_url: str, notice_dir: Path, idx: int) -> tuple[str, Path]:
     headers = {**monitor.HTTP_HEADERS, "Referer": detail_url}
-    with httpx.Client(timeout=120, follow_redirects=True, headers=headers, verify=False) as client:
-        r = client.get(candidate.url)
-        r.raise_for_status()
-        # Do not save HTML error pages as attachments.
-        ctype = r.headers.get("content-type", "").lower()
-        if "text/html" in ctype and not EXT_RE.search(candidate.url):
-            raise RuntimeError(f"download returned HTML, not a file: {candidate.url}")
-        file_name = guess_filename(candidate, r, idx)
-        save_path = unique_path(notice_dir / file_name)
-        save_path.write_bytes(r.content)
-        return file_name, save_path
+    r = get_with_ssl_fallback(candidate.url, headers, timeout=120)
+    # Do not save HTML error pages as attachments.
+    ctype = r.headers.get("content-type", "").lower()
+    if "text/html" in ctype and not EXT_RE.search(candidate.url):
+        raise RuntimeError(f"download returned HTML, not a file: {candidate.url}")
+    file_name = guess_filename(candidate, r, idx)
+    save_path = unique_path(notice_dir / file_name)
+    save_path.write_bytes(r.content)
+    return file_name, save_path
 
 
 def run(
