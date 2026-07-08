@@ -231,3 +231,51 @@ def test_collect_kstartup_items_paginates_classes_and_deduplicates(monkeypatch):
     assert next(item for item in items if item["id"] == "kstartup_1002")["link"].endswith(
         "pbancClssCd=PBC010&schM=view&pbancSn=1002"
     )
+
+
+def test_get_with_ssl_fallback_order_and_status_error_no_fallback(monkeypatch):
+    """SSL 폴백 순서(strict→no_verify→legacy) 검증 + 4xx/5xx 는 폴백 없이 즉시 전파."""
+    import ssl
+
+    url = "https://legacy-tls.example.go.kr/notice/file.hwp"
+    seen_verify: list = []
+
+    class FakeClient:
+        def __init__(self, *args, **kwargs):
+            self.verify = kwargs.get("verify")
+            seen_verify.append(self.verify)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def get(self, got_url):
+            # strict(True)·no_verify(False) 단계는 핸드셰이크 실패를 재현
+            if self.verify is True or self.verify is False:
+                raise httpx.ConnectError("ssl handshake failure", request=httpx.Request("GET", got_url))
+            return httpx.Response(200, text="ok", request=httpx.Request("GET", got_url))
+
+    monkeypatch.setattr(dl.httpx, "Client", FakeClient)
+    r = dl.get_with_ssl_fallback(url, headers={}, timeout=5)
+    assert r.status_code == 200 and r.text == "ok"
+    assert seen_verify[0] is True and seen_verify[1] is False
+    assert isinstance(seen_verify[2], ssl.SSLContext)  # legacy 단계 = 구식 TLS 컨텍스트
+    assert len(seen_verify) == 3
+
+    # 서버가 응답한 HTTP 오류는 SSL 문제가 아니므로 다음 단계로 넘어가지 않는다.
+    seen_verify.clear()
+
+    class FakeClient404(FakeClient):
+        def get(self, got_url):
+            req = httpx.Request("GET", got_url)
+            return httpx.Response(404, request=req)
+
+    monkeypatch.setattr(dl.httpx, "Client", FakeClient404)
+    try:
+        dl.get_with_ssl_fallback(url, headers={}, timeout=5)
+        raise AssertionError("HTTPStatusError expected")
+    except httpx.HTTPStatusError:
+        pass
+    assert seen_verify == [True]  # strict 1회 시도 후 즉시 전파(폴백 미발동)
