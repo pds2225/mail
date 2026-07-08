@@ -56,6 +56,7 @@ import monitor  # noqa: E402
 from scripts.download_kstartup_targets import (  # noqa: E402
     AttachmentCandidate,
     EXT_RE,
+    egov_context_fallback_url,
     extract_attachment_candidates,
     extract_outbound_urls,
     safe_filename,
@@ -317,6 +318,39 @@ def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: 
             cli.close()
 
 
+def _egov_ctx_variant(cand: AttachmentCandidate, detail_url: str) -> AttachmentCandidate | None:
+    """루트 eGov 합성 URL 실패 시 시도할 컨텍스트 패스 변형(없으면 None)."""
+    if cand.source != "egov-downfile":
+        return None
+    ctx_url = egov_context_fallback_url(cand.url, detail_url)
+    if not ctx_url or ctx_url == cand.url:
+        return None
+    return AttachmentCandidate(url=ctx_url, label=cand.label, source="egov-downfile-ctx")
+
+
+def _download_with_egov_fallback(cand: AttachmentCandidate, detail_url: str, notice_dir: Path,
+                                 idx: int, client: httpx.Client | None):
+    """다운로드 시도 + eGov 컨텍스트 패스 1회 폴백(TASK-010).
+
+    루트 /cmm/fms/FileDown.do 합성이 4xx 또는 HTML(soft-404)이면 상세 URL 의
+    첫 세그먼트(/portal 등)를 붙인 변형으로 한 번 더 시도한다.
+    성공 시 (실제 사용한 후보, 파일명, 경로), 실패 시 원래 오류를 그대로 던진다.
+    """
+    try:
+        file_name, save_path = download_attachment(cand, detail_url, notice_dir, idx, client=client)
+        return cand, file_name, save_path
+    except (httpx.HTTPStatusError, RuntimeError) as exc:
+        retryable = isinstance(exc, RuntimeError) or 400 <= exc.response.status_code < 500
+        var = _egov_ctx_variant(cand, detail_url) if retryable else None
+        if var is None:
+            raise
+        try:
+            file_name, save_path = download_attachment(var, detail_url, notice_dir, idx, client=client)
+        except Exception:
+            raise exc  # 폴백도 실패 — 원 오류 기준으로 보고
+        return var, file_name, save_path
+
+
 def _guess_ext(ctype: str, url: str) -> str:
     m = EXT_RE.search(url)
     if m:
@@ -428,7 +462,8 @@ def process_url(url: str, out_dir: Path, dry_run: bool) -> list[FileResult]:
                 ))
                 continue
             try:
-                file_name, save_path = download_attachment(cand, url, notice_dir, idx, client=client)
+                cand, file_name, save_path = _download_with_egov_fallback(
+                    cand, url, notice_dir, idx, client)
             except httpx.HTTPStatusError as exc:
                 # 4xx 는 '진짜 첨부가 아닌 후보'(미리보기/깨진 링크) — 조용히 제외
                 code = exc.response.status_code
