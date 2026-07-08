@@ -590,8 +590,14 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
         out.append(c)
 
     # 1) Direct anchors/buttons with actual URL attributes.
+    chrome_skipped = 0
     for el in soup.select("a, button"):
         if _in_site_chrome(el):
+            blob = " ".join(
+                str(el.get(a, "")) for a in
+                ("href", "data-url", "data-href", "data-download-url", "formaction", "onclick"))
+            if ATTACHMENT_URL_RE.search(blob) or EXT_RE.search(blob) or EGOV_DOWNFILE_RE.search(blob):
+                chrome_skipped += 1
             continue
         label = _nearby_label(el)
         for attr in ("href", "data-url", "data-href", "data-download-url", "formaction"):
@@ -607,7 +613,8 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
             )
             add(AttachmentCandidate(url=synthesized, label=label.strip() or "첨부파일",
                                     source="egov-downfile"))
-        if ATTACHMENT_URL_RE.search(onclick):
+        elif ATTACHMENT_URL_RE.search(onclick):
+            # egov 매치 시 인자('FILE_x'·파일명)는 URL 이 아니므로 generic 추출을 건너뛴다
             for q in extract_quoted_strings(onclick):
                 add(candidate_from_url(q, label, detail_url, "onclick"))
 
@@ -618,6 +625,12 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
     # 3) Conservative fallback: only real-looking quoted download URLs, not all JS strings.
     for m in re.finditer(r"['\"]([^'\"]*(?:/afile/fileDownload/|fileDownload|FileDown|cmm/fms)[^'\"]*)['\"]", html, re.IGNORECASE):
         add(candidate_from_url(m.group(1), "첨부파일", detail_url, "quoted-download-url"))
+
+    # 관측성: 최종 0건인데 chrome 필터가 첨부 모양 링크를 제외했다면 경고
+    # (미닫힘 footer/nav 등 malformed HTML 이 본문을 삼킨 경우 NO_ATTACHMENTS 와 구분용)
+    if not out and chrome_skipped:
+        log.warning("첨부 후보 %d건이 사이트 공통영역(chrome) 필터로 제외됨: %s",
+                    chrome_skipped, detail_url)
 
     return out
 

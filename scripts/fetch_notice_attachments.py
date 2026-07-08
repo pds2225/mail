@@ -116,8 +116,9 @@ def decode_cd_filename(cd: str) -> str:
     if not m:
         return ""
     name = m.group(1).strip().strip('"').strip()
-    # 퍼센트 인코딩이면 먼저 푼다. 이때의 '+' 는 Java URLEncoder 식 공백(캠코 등).
-    if "%" in name:
+    # 진짜 퍼센트 인코딩(%XX)일 때만 푼다. 이때의 '+' 는 Java URLEncoder 식 공백(캠코 등).
+    # ('%' 문자만 있는 raw 파일명에서 리터럴 '+' 를 공백으로 오손상하지 않도록 %XX 로 한정)
+    if re.search(r"%[0-9A-Fa-f]{2}", name):
         try:
             decoded = unquote_plus(name)
             if decoded:
@@ -293,10 +294,13 @@ def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: 
         url_has_doc_ext = bool(EXT_RE.search(cand.url))
 
         # 차단/오류 HTML 을 첨부로 저장하지 않는다.
-        # (정상 첨부는 content-disposition 에 문서 확장자가 있거나 octet-stream/파일 타입이다)
-        if not cd_has_doc_ext and not url_has_doc_ext:
-            if "text/html" in ctype or _looks_like_html_body(r.content):
-                raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
+        # 본문 스니핑은 확장자 힌트와 무관하게 항상 — 죽은 .hwp 직링크가 200 에러페이지를
+        # 반환해도 저장 금지(진짜 HWP/PDF/ZIP 바이너리는 HTML 마커로 시작하지 않는다).
+        if _looks_like_html_body(r.content):
+            raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
+        # content-type 단독 검사는 확장자 힌트가 있으면 면제(구형 서버의 타입 오설정 대응)
+        if not cd_has_doc_ext and not url_has_doc_ext and "text/html" in ctype:
+            raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
 
         file_name = name_from_cd or _filename_from_url_or_label(cand, r, idx)
         file_name = safe_filename(file_name, 180)

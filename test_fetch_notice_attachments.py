@@ -75,6 +75,12 @@ def test_decode_cd_plain_plus_untouched():
     assert decode_cd_filename(cd) == "C++ programming guide.pdf"
 
 
+def test_decode_cd_raw_percent_with_plus_untouched():
+    """%XX 시퀀스가 없는 raw '%' 파일명에서는 리터럴 '+' 를 보존한다."""
+    cd = 'attachment; filename="할인10%+쿠폰안내.hwp"'
+    assert decode_cd_filename(cd) == "할인10%+쿠폰안내.hwp"
+
+
 # ---------- 2) 제목 추출 ----------
 
 def test_extract_title_prefers_og_title():
@@ -271,6 +277,28 @@ def test_non_egov_onclick_not_synthesized():
     assert not any("FileDown.do" in c.url for c in cands)
 
 
+def test_egov_3arg_variant_no_fake_filename_candidate():
+    """3인자 eGov 변형: 합성 URL 1개만 — 파일명 인자로 가짜 상대경로 후보를 만들지 않는다."""
+    html = ('<a href="#" onclick="fn_egov_downFile(\'FILE_9\',\'0\',\'1.공고문.hwp\')">'
+            '1.공고문.hwp</a>')
+    cands = gather_candidates("https://example.go.kr/board/view.do?idx=3", html)
+    urls = [c.url for c in cands]
+    assert "https://example.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_9&fileSn=0" in urls
+    assert not any(u.endswith("공고문.hwp") for u in urls)   # onclick 인자 → URL 날조 금지
+
+
+@respx.mock
+def test_download_rejects_html_even_with_doc_ext_url(tmp_path):
+    """죽은 .hwp 직링크가 200 HTML(soft-404)을 줘도 파일로 저장하지 않는다."""
+    url = "https://example.go.kr/files/old_notice.hwp"
+    respx.get(url).mock(return_value=httpx.Response(
+        200, headers={"content-type": "application/octet-stream"},
+        content=b"<!DOCTYPE html><html><body>404 not found</body></html>"))
+    cand = AttachmentCandidate(url=url, label="공고문.hwp", source="href")
+    with pytest.raises(RuntimeError):
+        download_attachment(cand, "https://example.go.kr/view.do", tmp_path, 1)
+
+
 @respx.mock
 def test_kamco_process_url_end_to_end(tmp_path):
     """캠코 상세 → 첨부 3개 다운로드·제목 폴더·오탐 0 의 전 구간 회귀."""
@@ -294,11 +322,12 @@ def test_kamco_process_url_end_to_end(tmp_path):
             content=b"\xd0\xcf\x11\xe0HWP" + str(sn).encode()))
 
     results = process_url(KAMCO_URL, tmp_path, dry_run=False)
-    downloaded = [r for r in results if r.status == "DOWNLOADED"]
-    assert len(downloaded) == 3
+    # footer 인증 PDF 가 후보로 부활하면 respx 미등록 요청이 except 에 삼켜져
+    # DOWNLOAD_FAILED 로 results 에 남는다 — 상태 전수 단언으로 오탐 0 을 고정한다.
+    assert [r.status for r in results] == ["DOWNLOADED"] * 3
+    downloaded = results
     assert {r.file_name for r in downloaded} == set(names)
     assert all(r.notice_title == "「2026 KAMCO Startup TechBlaze」 개최 안내" for r in results)
-    # footer 인증 PDF 는 요청조차 하지 않아야 한다(respx 미등록 → 요청 시 에러났을 것)
     folder = Path(downloaded[0].save_path).parent
     assert folder.name.endswith("「2026 KAMCO Startup TechBlaze」 개최 안내")
     assert len(list(folder.iterdir())) == 3
@@ -326,3 +355,22 @@ def test_notify_download_done_calls_popup(monkeypatch, tmp_path):
     )
     _notify_download_done(3, 1, tmp_path)
     assert calls and "3개" in calls[0]
+
+
+def test_main_notify_gate_uses_downloaded_status(monkeypatch, tmp_path):
+    """--notify 게이트는 counts['DOWNLOADED'] 를 본다 — 'OK' 로 회귀하면 팝업 영구 미발동."""
+    import scripts.fetch_notice_attachments as fna
+
+    def fake_handle(url, out_dir, dry_run, open_flag, opened_dirs, all_results):
+        all_results.append(fna.FileResult(
+            notice_title="티", detail_url=url, status="DOWNLOADED",
+            file_name="a.hwp", save_path=str(out_dir / "01_티" / "a.hwp")))
+
+    notified: list[int] = []
+    monkeypatch.setattr(fna, "_handle_url", fake_handle)
+    monkeypatch.setattr(fna, "_notify_download_done", lambda ok, n, d: notified.append(ok))
+    monkeypatch.setattr(sys, "argv", [
+        "prog", "https://example.go.kr/view.do?idx=9",
+        "--out-dir", str(tmp_path), "--notify", "--quiet"])
+    assert fna.main() == 0
+    assert notified == [1]
