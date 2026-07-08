@@ -62,6 +62,19 @@ def test_decode_cd_empty_returns_empty():
     assert decode_cd_filename("inline") == ""
 
 
+def test_decode_cd_java_urlencoder_plus_is_space():
+    """캠코 실측: 퍼센트 인코딩 파일명의 '+' 는 공백(Java URLEncoder)."""
+    cd = ('attachment; filename="1.%28%EA%B3%B5%EA%B3%A0%EB%AC%B8%292026%EB%85%84'
+          '+KAMCO+Startup+TechBlaze+%EB%AA%A8%EC%A7%91%EA%B3%B5%EA%B3%A0.hwp"')
+    assert decode_cd_filename(cd) == "1.(공고문)2026년 KAMCO Startup TechBlaze 모집공고.hwp"
+
+
+def test_decode_cd_plain_plus_untouched():
+    """퍼센트 인코딩이 아니면 '+' 를 건드리지 않는다(C++ 등 실제 파일명 보호)."""
+    cd = 'attachment; filename="C++ programming guide.pdf"'
+    assert decode_cd_filename(cd) == "C++ programming guide.pdf"
+
+
 # ---------- 2) 제목 추출 ----------
 
 def test_extract_title_prefers_og_title():
@@ -197,6 +210,98 @@ def test_gather_excludes_site_manual():
     urls = [c.url for c in cands]
     assert not any("manual.pdf" in u for u in urls)   # 사이트 매뉴얼 제외
     assert any("act=down" in u for u in urls)          # 진짜 첨부는 유지
+
+
+# ---------- 6.5) 캠코(eGovFrame) 회귀 — JS 첨부 인식·footer 오탐·제목 ----------
+# 실측 버그(2026-07-08): 캠코 공고에서 진짜 첨부(HWP 3개, fn_egov_downFile JS)는 못 받고
+# footer 의 사이트 공통 인증 PDF(KSQI·웹접근성) 2개를 받았으며, 제목도 footer 라벨
+# "한국산업의 서비스 품질우수 기업" 으로 오인했다.
+
+KAMCO_FX = Path(__file__).parent / "fixtures" / "notice_attachments" / "kamco_view.html"
+KAMCO_URL = "https://www.kamco.or.kr/portal/bbs/view.do?mId=0701010000&ptIdx=380&bIdx=27606"
+
+
+def _kamco_html() -> str:
+    return KAMCO_FX.read_text(encoding="utf-8")
+
+
+def test_kamco_egov_downfile_urls_synthesized():
+    """fn_egov_downFile('FILE_x','n') → /cmm/fms/FileDown.do URL 합성으로 첨부 3개 검출."""
+    cands = gather_candidates(KAMCO_URL, _kamco_html())
+    filedown = [c for c in cands if "/cmm/fms/FileDown.do" in c.url]
+    assert len(filedown) == 3
+    assert filedown[0].url == (
+        "https://www.kamco.or.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000013068&fileSn=0")
+    assert {c.url.rsplit("fileSn=", 1)[1] for c in filedown} == {"0", "1", "2"}
+    assert "모집공고" in filedown[0].label
+
+
+def test_kamco_footer_cert_pdfs_excluded():
+    """footer 의 KSQI·웹접근성 인증 PDF 는 게시물 첨부가 아니다 — 오탐 차단."""
+    cands = gather_candidates(KAMCO_URL, _kamco_html())
+    urls = [c.url for c in cands]
+    assert not any("KSQI" in u or "WA_kamco" in u for u in urls)
+
+
+def test_kamco_title_from_view_table():
+    """제목은 상세 표의 '제목' 행에서 — 메뉴명(공지사항)·footer 라벨 오인 금지."""
+    assert extract_notice_title(_kamco_html(), KAMCO_URL) == "「2026 KAMCO Startup TechBlaze」 개최 안내"
+
+
+def test_body_doc_link_kept_footer_dropped():
+    """chrome 필터는 footer 만 제외하고 본문 영역의 직링크 첨부는 유지해야 한다."""
+    html = (
+        '<html><body>'
+        '<div class="board-view"><a href="/files/2026_모집공고문.pdf">2026_모집공고문.pdf</a></div>'
+        '<footer><a href="/portal/Downfiles/KSQI.pdf">인증서</a></footer>'
+        '<div class="footer-mark-group"><a href="/wa/cert.pdf">웹접근성</a></div>'
+        '</body></html>'
+    )
+    cands = gather_candidates("https://example.go.kr/view.do?idx=1", html)
+    urls = [c.url for c in cands]
+    assert any("모집공고문" in u for u in urls)          # 본문 첨부 유지
+    assert not any("KSQI" in u for u in urls)            # <footer> 제외
+    assert not any("/wa/cert" in u for u in urls)        # footer-* 클래스 제외
+
+
+def test_non_egov_onclick_not_synthesized():
+    """표준 함수명이 아니면 URL 을 지어내지 않는다(날조 금지)."""
+    html = '<a href="#" onclick="fn_custom_down(\'FILE_1\',\'0\')">첨부.hwp</a>'
+    cands = gather_candidates("https://example.go.kr/view.do?idx=2", html)
+    assert not any("FileDown.do" in c.url for c in cands)
+
+
+@respx.mock
+def test_kamco_process_url_end_to_end(tmp_path):
+    """캠코 상세 → 첨부 3개 다운로드·제목 폴더·오탐 0 의 전 구간 회귀."""
+    from scripts.fetch_notice_attachments import process_url
+
+    respx.get(KAMCO_URL).mock(return_value=httpx.Response(200, html=_kamco_html()))
+    names = [
+        "1.(공고문)2026년 KAMCO Startup TechBlaze 모집공고.hwp",
+        "2.(제출서류 양식1)2026년 KAMCO Startup TechBlaze 신청서_모집부문1_(예비)창업가.hwp",
+        "3.(제출서류 양식2)2026년 KAMCO Startup TechBlaze 신청서_모집부문2_전국민 아이디어 제안.hwp",
+    ]
+    for sn, real in enumerate(names):
+        cd_bytes = b'attachment; filename="' + real.encode("cp949") + b'"'
+        respx.get(
+            "https://www.kamco.or.kr/cmm/fms/FileDown.do"
+            f"?atchFileId=FILE_000000000013068&fileSn={sn}"
+        ).mock(return_value=httpx.Response(
+            200,
+            headers=[(b"content-type", b"application/x-msdownload;charset=UTF-8"),
+                     (b"content-disposition", cd_bytes)],
+            content=b"\xd0\xcf\x11\xe0HWP" + str(sn).encode()))
+
+    results = process_url(KAMCO_URL, tmp_path, dry_run=False)
+    downloaded = [r for r in results if r.status == "DOWNLOADED"]
+    assert len(downloaded) == 3
+    assert {r.file_name for r in downloaded} == set(names)
+    assert all(r.notice_title == "「2026 KAMCO Startup TechBlaze」 개최 안내" for r in results)
+    # footer 인증 PDF 는 요청조차 하지 않아야 한다(respx 미등록 → 요청 시 에러났을 것)
+    folder = Path(downloaded[0].save_path).parent
+    assert folder.name.endswith("「2026 KAMCO Startup TechBlaze」 개최 안내")
+    assert len(list(folder.iterdir())) == 3
 
 
 # ---------- 6) --notify 팝업(실패해도 CLI 계속) ----------

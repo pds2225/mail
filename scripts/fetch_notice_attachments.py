@@ -30,7 +30,7 @@ import unicodedata
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote, unquote_plus, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -116,10 +116,10 @@ def decode_cd_filename(cd: str) -> str:
     if not m:
         return ""
     name = m.group(1).strip().strip('"').strip()
-    # 퍼센트 인코딩이면 먼저 푼다
+    # 퍼센트 인코딩이면 먼저 푼다. 이때의 '+' 는 Java URLEncoder 식 공백(캠코 등).
     if "%" in name:
         try:
-            decoded = unquote(name)
+            decoded = unquote_plus(name)
             if decoded:
                 name = decoded
         except Exception:
@@ -600,6 +600,12 @@ def _notify_download_done(ok: int, link_count: int, out_dir: Path) -> None:
 
 
 def main() -> int:
+    # cp949 콘솔/파이프에서 이모지 출력이 UnicodeEncodeError 로 죽지 않게(출력은 UTF-8 고정)
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     parser = argparse.ArgumentParser(
         description="공고 상세 페이지 링크의 첨부파일을 모두 다운로드한다.")
     parser.add_argument("urls", nargs="*", help="공고 상세 페이지 URL(여러 개 가능)")
