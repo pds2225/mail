@@ -25,7 +25,7 @@ from difflib import SequenceMatcher
 from email.message import Message
 from pathlib import Path
 from typing import Iterable
-from urllib.parse import unquote, urljoin, urlparse
+from urllib.parse import quote, unquote, urljoin, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -70,6 +70,19 @@ ATTACHMENT_URL_RE = re.compile(
     re.IGNORECASE,
 )
 EXT_RE = re.compile(r"\.(hwp|hwpx|pdf|doc|docx|xls|xlsx|ppt|pptx|zip|7z|rar)(?:$|[?#])", re.IGNORECASE)
+# eGovFrame 표준 첨부 다운로드 JS: fn_egov_downFile('FILE_000000000013068','0')
+# (캠코 등 전자정부 표준프레임워크 사이트 — href 없이 onclick 만 있어 URL 합성 필요)
+EGOV_DOWNFILE_RE = re.compile(
+    r"fn_egov_downFile(?:_cs)?\s*\(\s*['\"]([^'\"]+)['\"]\s*,\s*['\"]?(\w+)['\"]?",
+    re.IGNORECASE,
+)
+EGOV_FILEDOWN_PATH = "/cmm/fms/FileDown.do"
+# 사이트 공통 영역(footer·GNB·배너 등) — 인증서 PDF 같은 '게시물 첨부 아님' 링크의 서식지
+CHROME_TAGS = {"footer", "nav", "aside"}
+CHROME_TOKEN_RE = re.compile(
+    r"^(footer|foot|gnb|lnb|snb|quick|banner|bnr|copyright|sitemap|breadcrumb|util|skipnav)([-_].*)?$",
+    re.IGNORECASE,
+)
 WINDOWS_BAD_CHARS = re.compile(r"[\\/:*?\"<>|\x00-\x1f]")
 SCRIPT_NOISE_RE = re.compile(
     r"function\s*\(|JSON\.parse|console\.|var\s+|const\s+|let\s+|<script|</|\{\s*|\}\s*|\$\(",
@@ -531,6 +544,27 @@ def candidate_from_url(raw_url: str, label: str, base_url: str, source: str) -> 
     return AttachmentCandidate(url=abs_url, label=label.strip() or "첨부파일", source=source)
 
 
+def _in_site_chrome(el) -> bool:
+    """링크가 사이트 공통 영역(footer·네비게이션 등) 안에 있는지 판별.
+
+    캠코 회귀: footer 의 KSQI·웹접근성 인증 PDF 직링크가 공고 첨부로 오탐됐다.
+    게시물 본문/첨부 영역 밖(사이트 chrome)의 문서 링크는 첨부 후보에서 제외한다.
+    """
+    for parent in el.parents:
+        name = getattr(parent, "name", None)
+        if not name:
+            continue
+        if name in CHROME_TAGS:
+            return True
+        tokens = list(parent.get("class") or [])
+        pid = parent.get("id")
+        if pid:
+            tokens.append(pid)
+        if any(CHROME_TOKEN_RE.match(t) for t in tokens):
+            return True
+    return False
+
+
 def _nearby_label(el) -> str:
     label = " ".join(el.get_text(" ", strip=True).split())
     if label:
@@ -556,12 +590,31 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
         out.append(c)
 
     # 1) Direct anchors/buttons with actual URL attributes.
+    chrome_skipped = 0
     for el in soup.select("a, button"):
+        if _in_site_chrome(el):
+            blob = " ".join(
+                str(el.get(a, "")) for a in
+                ("href", "data-url", "data-href", "data-download-url", "formaction", "onclick"))
+            if ATTACHMENT_URL_RE.search(blob) or EXT_RE.search(blob) or EGOV_DOWNFILE_RE.search(blob):
+                chrome_skipped += 1
+            continue
         label = _nearby_label(el)
         for attr in ("href", "data-url", "data-href", "data-download-url", "formaction"):
             add(candidate_from_url(str(el.get(attr, "")), label, detail_url, attr))
         onclick = str(el.get("onclick", ""))
-        if ATTACHMENT_URL_RE.search(onclick):
+        m = EGOV_DOWNFILE_RE.search(onclick)
+        if m:
+            # eGovFrame 표준: onclick 인자 → /cmm/fms/FileDown.do URL 합성
+            # (엔드포인트가 다른 사이트면 4xx → 다운로드 단계에서 NOT_A_FILE 로 조용히 제외)
+            synthesized = urljoin(
+                detail_url,
+                f"{EGOV_FILEDOWN_PATH}?atchFileId={quote(m.group(1))}&fileSn={quote(m.group(2))}",
+            )
+            add(AttachmentCandidate(url=synthesized, label=label.strip() or "첨부파일",
+                                    source="egov-downfile"))
+        elif ATTACHMENT_URL_RE.search(onclick):
+            # egov 매치 시 인자('FILE_x'·파일명)는 URL 이 아니므로 generic 추출을 건너뛴다
             for q in extract_quoted_strings(onclick):
                 add(candidate_from_url(q, label, detail_url, "onclick"))
 
@@ -572,6 +625,12 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
     # 3) Conservative fallback: only real-looking quoted download URLs, not all JS strings.
     for m in re.finditer(r"['\"]([^'\"]*(?:/afile/fileDownload/|fileDownload|FileDown|cmm/fms)[^'\"]*)['\"]", html, re.IGNORECASE):
         add(candidate_from_url(m.group(1), "첨부파일", detail_url, "quoted-download-url"))
+
+    # 관측성: 최종 0건인데 chrome 필터가 첨부 모양 링크를 제외했다면 경고
+    # (미닫힘 footer/nav 등 malformed HTML 이 본문을 삼킨 경우 NO_ATTACHMENTS 와 구분용)
+    if not out and chrome_skipped:
+        log.warning("첨부 후보 %d건이 사이트 공통영역(chrome) 필터로 제외됨: %s",
+                    chrome_skipped, detail_url)
 
     return out
 
