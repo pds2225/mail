@@ -277,6 +277,44 @@ def test_non_egov_onclick_not_synthesized():
     assert not any("FileDown.do" in c.url for c in cands)
 
 
+def test_egov_context_fallback_url_derivation():
+    """컨텍스트 패스 폴백 URL 유도(TASK-010): 상세 URL 첫 디렉터리 세그먼트 접두."""
+    from scripts.download_kstartup_targets import egov_context_fallback_url
+
+    root = "https://x.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_1&fileSn=0"
+    assert egov_context_fallback_url(
+        root, "https://x.go.kr/portal/bbs/view.do?id=2"
+    ) == "https://x.go.kr/portal/cmm/fms/FileDown.do?atchFileId=FILE_1&fileSn=0"
+    # 상세가 루트 바로 아래면(디렉터리 세그먼트 없음) 폴백 없음
+    assert egov_context_fallback_url(root, "https://x.go.kr/view.do?id=2") == ""
+    # eGov 합성 URL 이 아니면 폴백 없음
+    assert egov_context_fallback_url(
+        "https://x.go.kr/board/download.do?f=1", "https://x.go.kr/portal/bbs/view.do") == ""
+
+
+@respx.mock
+def test_egov_root_404_falls_back_to_context_path(tmp_path):
+    """루트 FileDown.do 가 404 인 컨텍스트 패스 배포 사이트 — 폴백으로 받는다(TASK-010)."""
+    detail = "https://ctx.go.kr/portal/bbs/view.do?bIdx=1"
+    html = ('<div class="bbs_view"><a href="#" '
+            'onclick="fn_egov_downFile(\'FILE_7\',\'0\'); return false;">공고문.hwp</a></div>')
+    respx.get(detail).mock(return_value=httpx.Response(200, html=html))
+    respx.get("https://ctx.go.kr/cmm/fms/FileDown.do?atchFileId=FILE_7&fileSn=0").mock(
+        return_value=httpx.Response(404))
+    respx.get("https://ctx.go.kr/portal/cmm/fms/FileDown.do?atchFileId=FILE_7&fileSn=0").mock(
+        return_value=httpx.Response(
+            200,
+            headers=[(b"content-type", b"application/x-msdownload"),
+                     (b"content-disposition",
+                      b'attachment; filename="' + "공고문.hwp".encode("cp949") + b'"')],
+            content=b"\xd0\xcf\x11\xe0HWPDATA"))
+    from scripts.fetch_notice_attachments import process_url
+    results = process_url(detail, tmp_path, dry_run=False)
+    assert [r.status for r in results] == ["DOWNLOADED"]
+    assert results[0].file_name == "공고문.hwp"
+    assert "portal/cmm/fms" in results[0].file_url   # 실제 사용한 URL = 폴백
+
+
 def test_malformed_unclosed_nav_does_not_swallow_attachments():
     """미닫힘 <nav>(malformed HTML)가 본문을 삼켜도 첨부를 잃지 않는다(TASK-009 가드).
 

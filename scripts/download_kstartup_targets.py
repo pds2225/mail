@@ -544,6 +544,24 @@ def candidate_from_url(raw_url: str, label: str, base_url: str, source: str) -> 
     return AttachmentCandidate(url=abs_url, label=label.strip() or "첨부파일", source=source)
 
 
+def egov_context_fallback_url(file_url: str, detail_url: str) -> str:
+    """루트 `/cmm/fms/FileDown.do` 합성 URL 의 컨텍스트 패스 폴백 변형을 만든다.
+
+    eGovFrame 이 컨텍스트 패스 하위에 배포된 사이트(예: /portal/cmm/fms/FileDown.do)
+    에서는 루트 합성이 404 라 — 상세 URL 의 첫 디렉터리 세그먼트(/portal 등)를
+    접두로 붙인 변형을 반환한다. 폴백이 불가능하면 ""(TASK-010).
+    """
+    parsed = urlparse(file_url)
+    if not parsed.path.startswith(EGOV_FILEDOWN_PATH):
+        return ""
+    # 마지막 세그먼트(view.do 등 리소스)는 제외하고 디렉터리만 본다
+    segs = [s for s in urlparse(detail_url).path.split("/") if s][:-1]
+    if not segs or segs[0].lower() == "cmm":
+        return ""
+    query = f"?{parsed.query}" if parsed.query else ""
+    return f"{parsed.scheme}://{parsed.netloc}/{segs[0]}{parsed.path}{query}"
+
+
 def _in_site_chrome(el, body_text_len: int | None = None) -> bool:
     """링크가 사이트 공통 영역(footer·네비게이션 등) 안에 있는지 판별.
 
