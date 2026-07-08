@@ -544,23 +544,34 @@ def candidate_from_url(raw_url: str, label: str, base_url: str, source: str) -> 
     return AttachmentCandidate(url=abs_url, label=label.strip() or "첨부파일", source=source)
 
 
-def _in_site_chrome(el) -> bool:
+def _in_site_chrome(el, body_text_len: int | None = None) -> bool:
     """링크가 사이트 공통 영역(footer·네비게이션 등) 안에 있는지 판별.
 
     캠코 회귀: footer 의 KSQI·웹접근성 인증 PDF 직링크가 공고 첨부로 오탐됐다.
     게시물 본문/첨부 영역 밖(사이트 chrome)의 문서 링크는 첨부 후보에서 제외한다.
+
+    가드(TASK-009): 미닫힘 <nav>/<footer> 같은 malformed HTML 에서는 파서가 본문
+    전체를 chrome 자손으로 삼킨다 — 매치된 조상이 body 텍스트의 절반 이상을
+    담고 있으면 chrome 이 아니라 '본문을 삼킨 컨테이너'로 보고 계속 위로 탐색한다.
+    (정상 footer/gnb 는 페이지의 소분율이라 무영향)
     """
+    if body_text_len is None:
+        body = el.find_parent("body")
+        body_text_len = len(body.get_text()) if body is not None else 0
     for parent in el.parents:
         name = getattr(parent, "name", None)
         if not name:
             continue
-        if name in CHROME_TAGS:
-            return True
-        tokens = list(parent.get("class") or [])
-        pid = parent.get("id")
-        if pid:
-            tokens.append(pid)
-        if any(CHROME_TOKEN_RE.match(t) for t in tokens):
+        matched = name in CHROME_TAGS
+        if not matched:
+            tokens = list(parent.get("class") or [])
+            pid = parent.get("id")
+            if pid:
+                tokens.append(pid)
+            matched = any(CHROME_TOKEN_RE.match(t) for t in tokens)
+        if matched:
+            if body_text_len and len(parent.get_text()) >= 0.5 * body_text_len:
+                continue
             return True
     return False
 
@@ -591,8 +602,10 @@ def extract_attachment_candidates(html: str, detail_url: str) -> list[Attachment
 
     # 1) Direct anchors/buttons with actual URL attributes.
     chrome_skipped = 0
+    body_el = soup.body if soup.body is not None else soup
+    body_text_len = len(body_el.get_text())
     for el in soup.select("a, button"):
-        if _in_site_chrome(el):
+        if _in_site_chrome(el, body_text_len):
             blob = " ".join(
                 str(el.get(a, "")) for a in
                 ("href", "data-url", "data-href", "data-download-url", "formaction", "onclick"))
