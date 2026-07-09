@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-import hashlib, html, json, logging, os, re, smtplib, ssl, time, unicodedata
+import hashlib, html, imaplib, json, logging, os, re, smtplib, ssl, time, unicodedata
 from datetime import datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -102,6 +102,12 @@ _ALLOW_PERSIST_SEEN = True
 _SEND_OK = 0
 _SEND_FAIL = 0
 _LAST_SEND_ERR = ""
+# 초안(Gmail Drafts) 모드 — True 면 실제 발송(SMTP) 대신 IMAP APPEND 로 초안만 만든다.
+# safe-by-default 유지: 사람이 Gmail 초안함에서 확인 후 직접 보낸다(자동 발송 아님).
+_DRAFT_MODE = False
+_DRAFT_OK = 0
+_DRAFT_FAIL = 0
+_LAST_DRAFT_ERR = ""
 SEMAS_LOAN_SOURCE = "소진공 정책자금 온라인신청"
 SEMAS_LOAN_TITLE = "소상공인 정책자금 공고"
 HTTP_HEADERS   = {
@@ -3803,7 +3809,24 @@ def _mask_email(email: str) -> str:
 # (그룹·raw_all·watchlist 등 모든 발송 경로가 send_email/send_to_list 를 거치므로 여기서 일괄 차단)
 _ONLY_TO: str = ""
 
+def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
+    """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
+    msg = MIMEMultipart("alternative")
+    msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
+    msg.attach(MIMEText(body, "plain", "utf-8"))
+    msg.attach(MIMEText(
+        f"<html><body style='font-family:Arial;line-height:1.7'>"
+        f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
+        f"</body></html>", "html", "utf-8"))
+    return msg
+
+
 def send_email(subject: str, body: str, to: str) -> None:
+    # 초안 모드: 실제 발송(SMTP) 대신 Gmail Drafts 에 초안만 생성한다(safe-by-default).
+    # (send_to_list 를 거치지 않는 직접 호출 경로도 초안 모드에선 발송이 아닌 초안으로 우회)
+    if _DRAFT_MODE:
+        save_draft_to_gmail(subject, body, to)
+        return
     # safe-by-default: _ALLOW_SMTP_SEND 가 False면 직접 호출이라도 SMTP 연결 없이 즉시 종료한다.
     # (send_to_list 를 거치지 않는 워치리스트 등 직접 호출 경로의 실발송 사고를 원천 차단)
     if not _ALLOW_SMTP_SEND:
@@ -3814,21 +3837,103 @@ def send_email(subject: str, body: str, to: str) -> None:
         return
     if _ONLY_TO:
         to = _ONLY_TO
-    msg = MIMEMultipart("alternative")
-    msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
-    msg.attach(MIMEText(body, "plain", "utf-8"))
-    msg.attach(MIMEText(
-        f"<html><body style='font-family:Arial;line-height:1.7'>"
-        f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
-        f"</body></html>", "html", "utf-8"))
+    msg = _build_mime_message(subject, body, to)
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
         srv.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
         srv.sendmail(GMAIL_ADDRESS, to, msg.as_string())
     log.info("발송 완료 → %s", _mask_email(to))
 
+
+def _find_drafts_folder(imap: imaplib.IMAP4) -> str:
+    """Gmail Drafts 특수폴더명을 로케일 무관하게 탐색한다.
+
+    LIST 응답에서 폴더 속성에 `\\Drafts` 플래그가 붙은 폴더를 찾아 그(인코딩된) 폴더명을
+    돌려준다. 한국어 계정(`[Gmail]/임시보관함` 등)은 modified-UTF-7 로 인코딩돼 오지만,
+    APPEND 에는 그 원문(wire) 폴더명을 그대로 써야 하므로 디코딩하지 않는다.
+    탐색 실패 시 표준 폴백 `[Gmail]/Drafts`.
+    """
+    try:
+        typ, data = imap.list('""', "*")
+        if typ == "OK":
+            for raw in data or []:
+                line = (
+                    raw.decode("utf-8", "ignore")
+                    if isinstance(raw, (bytes, bytearray))
+                    else str(raw)
+                )
+                if "\\Drafts" not in line:
+                    continue
+                # 예: (\HasNoChildren \Drafts) "/" "[Gmail]/&vPSw3ITW...-"
+                m = re.search(r'"([^"]*)"\s*$', line)
+                if m:
+                    return m.group(1)
+                return line.rsplit(" ", 1)[-1].strip().strip('"')
+    except Exception as e:  # 탐색 실패는 폴백으로 흡수(본 작업 비차단)
+        log.warning("Drafts 폴더 탐색 실패 — 폴백([Gmail]/Drafts) 사용: %s", e)
+    return "[Gmail]/Drafts"
+
+
+def save_draft_to_gmail(subject: str, body: str, to: str) -> bool:
+    """Gmail Drafts 특수폴더에 RFC822 메시지를 IMAP APPEND 해 '초안'으로 저장한다(발송 아님).
+
+    safe-by-default: SMTP 발송을 전혀 하지 않고, 사람이 Gmail 초안함에서 확인 후 직접
+    보내도록 초안만 만든다. 자격증명(GMAIL_ADDRESS/GMAIL_APP_PASSWORD)이 없으면 예외 없이
+    False 를 돌려준다(본 작업 비차단). 성공 시 True.
+    """
+    target = _ONLY_TO or to
+    if not (GMAIL_ADDRESS and GMAIL_APP_PASSWORD):
+        log.info("GMAIL 미설정 — 초안 생성 생략: to=%s", _mask_email(target))
+        return False
+    msg = _build_mime_message(subject, body, target)
+    raw = msg.as_bytes()
+    imap = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+    try:
+        imap.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+        folder = _find_drafts_folder(imap)
+        typ, resp = imap.append(
+            folder, r"(\Draft)", imaplib.Time2Internaldate(time.time()), raw,
+        )
+        if typ != "OK":
+            raise RuntimeError(f"IMAP APPEND 실패({folder}): {typ} {resp!r}")
+        log.info("초안 생성 완료 → %s (folder=%s)", _mask_email(target), folder)
+        return True
+    finally:
+        try:
+            imap.logout()
+        except Exception:  # 로그아웃 실패는 무시(초안은 이미 저장됨)
+            pass
+
+
+def draft_to_list(subject: str, body: str, recipients: list[str]) -> None:
+    """다수 수신자용 초안 생성 — 유효 수신자별로 Gmail 초안 1건씩 APPEND(발송의 초안 버전).
+
+    _DRAFT_OK/_DRAFT_FAIL 카운트. 개별 실패는 전체를 막지 않고 로깅만 한다(RULES 8: 자동
+    재발송 금지 — 여기선 애초에 발송이 아니라 초안이라 무관).
+    """
+    global _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
+    targets = [_ONLY_TO] if _ONLY_TO else validate_recipients(recipients)["valid"]
+    if not targets:
+        log.info("초안 생성 대상 없음: subject=%s", subject[:60])
+        return
+    for to in targets:
+        try:
+            if save_draft_to_gmail(subject, body, to):
+                _DRAFT_OK += 1
+            else:
+                _DRAFT_FAIL += 1
+        except Exception as e:
+            _DRAFT_FAIL += 1
+            _LAST_DRAFT_ERR = str(e)
+            log.error("초안 생성 실패 (%s): %s", _mask_email(to), e)
+
+
 def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
     if _ONLY_TO:
         recipients = [_ONLY_TO]
+    # 초안 모드: 발송 대신 각 수신자별 Gmail 초안 생성(allow_send 게이트와 무관하게 초안만).
+    if _DRAFT_MODE:
+        draft_to_list(subject, body, recipients)
+        return
     if not _ALLOW_SMTP_SEND:
         checked = validate_recipients(recipients)
         log.info(
@@ -3951,6 +4056,20 @@ def _post_run_alert(result: dict) -> None:
         f"수집 {result.get('collected', 0)}→신규 {result.get('new_items', 0)}"
         f"→대상 {result.get('filtered_items', 0)}건"
     )
+    if _DRAFT_MODE:
+        # 초안 모드: 실발송 없음 — 초안 생성 실패 시에만 폰 알림, 정상은 로깅만(0통 노이즈 방지).
+        d_ok = result.get("drafts_created", _DRAFT_OK)
+        d_fail = result.get("draft_failed", _DRAFT_FAIL)
+        if d_fail > 0:
+            alert_ntfy(
+                "draft FAILED",
+                f"⚠️ Gmail 초안 생성 실패 {d_fail}건 (성공 {d_ok}건).\n"
+                f"마지막 오류: {_LAST_DRAFT_ERR[:200]}\n{stat}",
+                priority="high", tags="rotating_light",
+            )
+        else:
+            log.info("초안 생성 완료: %d건 — 폰 알림 생략", d_ok)
+        return
     if _SEND_FAIL > 0:
         alert_ntfy(
             "mail send FAILED",
@@ -3977,17 +4096,26 @@ def execute_monitor(
     allow_send: bool = False,
     include_raw_all: bool = False,
     persist_seen: bool = False,
+    draft_mode: bool = False,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
+    global _DRAFT_MODE, _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
     _ALLOW_SMTP_SEND = allow_send
     _ALLOW_PERSIST_SEEN = persist_seen
+    _DRAFT_MODE = draft_mode
+    _DRAFT_OK = 0
+    _DRAFT_FAIL = 0
+    _LAST_DRAFT_ERR = ""
     _SEND_OK = 0
     _SEND_FAIL = 0
     _LAST_SEND_ERR = ""
     _RAW_STORE = None
 
+    # deliver: 실제 발송(allow_send) 또는 초안 생성(draft_mode)이면 디제스트 본문을 실제로
+    # 만들어 전달한다. draft_mode 는 _DRAFT_MODE 를 통해 send_to_list 가 초안으로 우회한다.
+    deliver = allow_send or draft_mode
     now = datetime.now(KST)
-    mode = "send" if allow_send else "preview"
+    mode = "send" if allow_send else ("draft" if draft_mode else "preview")
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
     sites    = load_sites()
@@ -4079,7 +4207,7 @@ def execute_monitor(
                 filtered_new.append(it)
                 _wl_seen.add(it["id"])
         # 집중 모니터링 전용 메일 + 폰 푸시 (raw_all 설정과 무관하게 보장)
-        if allow_send:
+        if deliver:
             wl_recipients = watchlist["recipients"] or settings.get("raw_all_recipients") or []
             if wl_recipients:
                 wl_body = "🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n" + "".join(
@@ -4102,7 +4230,7 @@ def execute_monitor(
     if raw_dropped:
         log.info("원본전체 행정고지·잡공고 제외: %d건", raw_dropped)
     if (
-        allow_send
+        deliver
         and include_raw_all
         and settings.get("raw_all_enabled", True)
         and settings.get("raw_all_recipients")
@@ -4135,6 +4263,8 @@ def execute_monitor(
             "date_review_queue": date_review_queue,
             "date_excluded_count": len(date_excluded),
             "mail_sent": False,
+            "drafts_created": _DRAFT_OK,
+            "draft_failed": _DRAFT_FAIL,
             "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
             "sent_groups": [],
             "preview_groups": [],
@@ -4185,9 +4315,9 @@ def execute_monitor(
             "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
             "review_items": len(review_items),
             "region_unknown_items": len(ru_items),
-            "excluded_items": len(excluded_items) if not allow_send else 0,
+            "excluded_items": len(excluded_items) if not deliver else 0,
         })
-        if allow_send:
+        if deliver:
             summary    = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
             g_norm     = _normalize_group(group)
             req_rgns   = g_norm.get("required_conditions", {}).get("regions", [])
@@ -4260,6 +4390,8 @@ def execute_monitor(
         "date_excluded_count": len(date_excluded),
         "final_mail_target_count": final_mail_count,
         "mail_sent": bool(allow_send and _ALLOW_SMTP_SEND),
+        "drafts_created": _DRAFT_OK,
+        "draft_failed": _DRAFT_FAIL,
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
@@ -4458,11 +4590,14 @@ def run_dry_run(
     write_reports: bool = True,
     fetch_coverage: bool = True,
     allow_coverage_alert: bool = False,
+    draft_mode: bool = False,
 ) -> dict:
     """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증.
 
     allow_coverage_alert: 커버리지 이상탐지에서 high 발견 시 실제 ntfy 알림 발송 여부.
     기본 False(수동 dry-run 노이즈 방지). 스케줄에서 활성화하려면 True 로 호출.
+    draft_mode: True 면 실발송(SMTP) 없이 공고 digest 를 Gmail 초안(Drafts)으로 생성한다.
+    seen_ids 는 여전히 저장하지 않으며, 커버리지 등 dry-run 검증 산출물은 그대로 유지한다.
     """
     os.environ["MONITOR_NO_PERSIST_SEEN"] = "1"
     seen_before = SEEN_IDS_PATH.stat().st_mtime if SEEN_IDS_PATH.exists() else None
@@ -4476,7 +4611,9 @@ def run_dry_run(
             coverage_rows, allow_alert=allow_coverage_alert,
         )
 
-    result = execute_monitor(allow_send=False, include_raw_all=False, persist_seen=False)
+    result = execute_monitor(
+        allow_send=False, include_raw_all=False, persist_seen=False, draft_mode=draft_mode,
+    )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
     result["recipient_audit"] = {
@@ -4520,6 +4657,13 @@ if __name__ == "__main__":
         help="dry-run 커버리지 이상탐지에서 high 발견 시 실제 폰 알림(ntfy) 발송",
     )
     parser.add_argument(
+        "--draft",
+        action="store_true",
+        help="실발송(SMTP) 대신 공고 digest 를 Gmail 초안(Drafts)으로 생성한다(safe-by-default). "
+             "dry-run 파이프라인(커버리지·보고서)을 그대로 돌리되 preview 대신 초안을 만든다. "
+             "--dry-run 과 함께 줘도 동일하게 동작(미리보기 산출물 + 초안 생성).",
+    )
+    parser.add_argument(
         "--only-to",
         default="",
         metavar="EMAIL",
@@ -4547,7 +4691,25 @@ if __name__ == "__main__":
         _ONLY_TO = args.only_to
         log.info("only-to 모드: 모든 발송 수신자를 %s 로 강제합니다(테스트)", _mask_email(args.only_to))
     try:
-        if args.dry_run:
+        if args.draft:
+            # 초안 모드: 실발송 없이 공고 digest 를 Gmail 초안으로 생성.
+            # dry-run 파이프라인을 재사용해 커버리지 이상탐지·보고서를 그대로 유지하고,
+            # preview 대신 초안을 만든다(--dry-run 동시 지정도 동일 동작).
+            summary = run_dry_run(
+                fetch_coverage=not args.skip_coverage_fetch,
+                allow_coverage_alert=args.coverage_alert,
+                draft_mode=True,
+            )
+            _post_run_alert(summary)
+            log.info(
+                "draft 완료: 수집=%s 신규=%s 초안생성=%s 초안실패=%s mail_sent=%s",
+                summary.get("collected"),
+                summary.get("new_items"),
+                summary.get("drafts_created"),
+                summary.get("draft_failed"),
+                summary.get("mail_sent"),
+            )
+        elif args.dry_run:
             summary = run_dry_run(
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,

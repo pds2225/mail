@@ -36,18 +36,19 @@ jobs:
           restore-keys: |
             coverage-baseline-
 
-      - name: 모니터링 실행 (+커버리지 이상탐지·폰 알림)
+      - name: 모니터링 실행 (+공고 digest 초안 생성·커버리지 이상탐지·폰 알림)
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NTFY_TOPIC:         ${{ secrets.NTFY_TOPIC }}
-        # safe-by-default: 자동 스케줄은 미리보기(dry-run)만 — 실제 메일 발송은
-        # 사람이 명시적으로(--send / API confirm_send="SEND") 트리거할 때만 한다.
+        # safe-by-default: 자동 스케줄은 실발송(SMTP) 없이 --draft 로 공고 digest 를
+        #   Gmail '초안함(Drafts)'에만 만든다. 사람이 초안을 확인 후 직접 보낸다(자동 발송 아님).
+        #   실제 메일 발송은 사람이 명시적으로(--send / API confirm_send="SEND") 할 때만.
         # --coverage-alert: 평소 N건 수집되던 사이트가 오늘 0건/급감/실패하면 폰(ntfy)
         #   알림 — 라이브 사이트가 조용히 바뀌어 공고를 놓치는 사고를 매일 감지(누락 방지).
-        run: python monitor.py --dry-run --coverage-alert
+        run: python monitor.py --draft --coverage-alert
 
       - name: 커버리지 baseline 저장(다음 실행 비교용)
         if: always()
