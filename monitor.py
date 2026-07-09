@@ -4585,6 +4585,184 @@ def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) ->
         return []
 
 
+# ══════════════════════════════════════════════════════════════════
+# 디제스트 품질 측정 — "빠짐없이(recall)·적합만(precision)" 자동 계측
+# ══════════════════════════════════════════════════════════════════
+# 새 수집·새 분류를 만들지 않고, run_dry_run/execute_monitor 가 이미 산출한
+# 신호(date_review_queue·coverage_anomalies·coverage·sent/preview_groups)를
+# 재사용해 매일 digest(초안)가 적합공고를 놓쳤는지/무관공고를 섞었는지만 통합 계측한다.
+# 임계는 보수적: 근거 있는 위험이 0 이면 OK.
+
+_DIGEST_RECALL_RISK_LEVELS = ("중간", "높음")
+_DIGEST_WEEKEND_EDGE_DAYS = 3  # too_old 제외됐어도 최근 며칠 내 주말 게시면 '주말 엣지'로 본다
+
+
+def _digest_delivered_groups(run_result: dict) -> list[dict]:
+    """digest 로 실제 전달된 그룹 목록. 실발송이면 sent_groups, 아니면(초안/미리보기)
+    preview_groups 를 쓴다. 둘 다 그룹당 region_unknown_items 카운트를 담는다
+    (execute_monitor 반환 계약)."""
+    sent = run_result.get("sent_groups") or []
+    if sent:
+        return sent
+    return run_result.get("preview_groups") or []
+
+
+def _digest_delivered_count(run_result: dict) -> int:
+    """digest 에 실제 전달된(발송/초안) 공고 수 K. 반환 계약의 집계값 우선."""
+    for key in ("final_mail_target_count", "filtered_items"):
+        v = run_result.get(key)
+        if isinstance(v, int) and v >= 0:
+            return v
+    return sum(int(g.get("matched_items", 0) or 0) for g in _digest_delivered_groups(run_result))
+
+
+def _measure_recall_risk(run_result: dict, now: datetime | None = None) -> tuple[int, dict]:
+    """빠질 뻔한 적합공고 계측 — 세 신호의 (건수, 근거)."""
+    now = now or datetime.now(KST)
+    today = now.date()
+
+    # ① date_unknown 인데 신청신호가 있어 검토큐로 남은 것(메일 미포함) = 빠질 뻔
+    queue = run_result.get("date_review_queue") or []
+    risky = [it for it in queue if it.get("date_unknown_risk") in _DIGEST_RECALL_RISK_LEVELS]
+
+    # ② too_old 로 제외됐지만 최근·주말 게시(주말 recall 엣지). run_result 에 항목 리스트
+    #    date_excluded 가 있을 때만 계측(계약상 count 만 있을 수 있음 → 그땐 근거부족).
+    excluded_items = run_result.get("date_excluded")
+    excluded_available = isinstance(excluded_items, list)
+    weekend_edge: list[dict] = []
+    if excluded_available:
+        for it in excluded_items:
+            if it.get("_excluded_reason") != "too_old":
+                continue
+            pd = (it.get("_excluded_posted_date") or it.get("posted_date") or "")[:10]
+            try:
+                d = datetime.strptime(pd, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if 0 <= (today - d).days <= _DIGEST_WEEKEND_EDGE_DAYS and d.weekday() >= 5:
+                weekend_edge.append(it)
+
+    # ③ 커버리지 이상(0건 급락·수집실패·급감) 소스 수 + baseline 이력 없이도 수집 실패한 소스.
+    #    date parsing 실패(high missing_risk)는 ①의 review queue 로 이미 잡히므로 중복 제외.
+    anomalies = run_result.get("coverage_anomalies") or []
+    alert_sites: set[str] = {
+        (a.get("site_id") or a.get("site_name") or "")
+        for a in anomalies if a.get("severity") in ("high", "medium")
+    }
+    for row in run_result.get("coverage") or []:
+        if not row.get("enabled", True):
+            continue
+        if not row.get("fetch_success") or row.get("fetch_error"):
+            alert_sites.add(row.get("site_id") or row.get("site_name") or "")
+    alert_sites.discard("")
+
+    total = len(risky) + len(weekend_edge) + len(alert_sites)
+    detail = {
+        "date_unknown_risky": {
+            "count": len(risky),
+            "titles": [it.get("title", "")[:80] for it in risky[:10]],
+            "note": "게시일 불명이나 신청 신호가 있어 검토큐에 남은 공고(메일 미포함)",
+        },
+        "excluded_recent_weekend": {
+            "count": len(weekend_edge),
+            "titles": [it.get("title", "")[:80] for it in weekend_edge[:10]],
+            "note": ("too_old 로 제외됐지만 최근 주말 게시 — 주말 누락 엣지"
+                     if excluded_available
+                     else "측정 근거 부족 — run_result 에 date_excluded 항목 리스트 없음(count 만 존재)"),
+        },
+        "coverage_alert_sources": {
+            "count": len(alert_sites),
+            "sources": sorted(alert_sites)[:20],
+            "note": "평소 수집되던 소스가 0건/급감/수집실패 — 조용한 누락 위험",
+        },
+    }
+    return total, detail
+
+
+def _measure_precision_risk(run_result: dict) -> tuple[int, dict]:
+    """digest 에 섞인 무관공고 계측 — 근거 있는 것만, 없으면 0+근거부족 note."""
+    groups = _digest_delivered_groups(run_result)
+    region_unknown = 0
+    breakdown: list[dict] = []
+    for g in groups:
+        n = int(g.get("region_unknown_items", 0) or 0)
+        if n:
+            region_unknown += n
+            breakdown.append({"group": g.get("name"), "region_unknown_items": n})
+    detail = {
+        # 지역 미확정으로 그룹 지역과 불일치할 수 있는데 digest '확인 필요' 섹션에 첨부된 건
+        "region_unknown_in_digest": {
+            "count": region_unknown,
+            "groups": breakdown,
+            "note": "지역 미확정이라 그룹 지역과 불일치 가능 — digest 에 확인필요로 포함됨",
+        },
+        # 항목별 매칭점수/지역판정은 run_result 집계에 없어 약한매칭은 계측 불가
+        "weak_match": {
+            "count": 0,
+            "note": "측정 근거 부족 — run_result 집계에 항목별 매칭점수·지역판정 없음",
+        },
+    }
+    if not groups:
+        detail["note"] = "측정 근거 부족 — 전달 그룹 정보 없음"
+    return region_unknown, detail
+
+
+def measure_digest_quality(run_result: dict, *, now: datetime | None = None) -> dict:
+    """매일 digest(초안)가 '빠짐없이·적합만' 왔는지 계측한다(읽기 전용·재사용).
+
+    입력: run_dry_run/execute_monitor 가 반환한 dict(그리고 run_dry_run 이 덧붙인
+          coverage·coverage_anomalies). 새 수집/분류 없이 기존 신호만 통합한다.
+    반환 verdict:
+      {"recall_ok":bool,"precision_ok":bool,"recall_risk":N,"precision_risk":M,
+       "delivered":K,"detail":{...},"generated_at":iso}
+    임계 보수적: 근거 있는 위험이 0 이면 OK.
+    """
+    now = now or datetime.now(KST)
+    recall_risk, recall_detail = _measure_recall_risk(run_result, now=now)
+    precision_risk, precision_detail = _measure_precision_risk(run_result)
+    delivered = _digest_delivered_count(run_result)
+    return {
+        "recall_ok": recall_risk == 0,
+        "precision_ok": precision_risk == 0,
+        "recall_risk": recall_risk,
+        "precision_risk": precision_risk,
+        "delivered": delivered,
+        "detail": {
+            "recall": recall_detail,
+            "precision": precision_detail,
+            "mode": run_result.get("mode", ""),
+            "drafts_created": run_result.get("drafts_created", 0),
+        },
+        "generated_at": now.strftime("%Y-%m-%d %H:%M KST"),
+    }
+
+
+def format_digest_quality_line(verdict: dict) -> str:
+    """사람용 1줄 요약."""
+    recall = "OK" if verdict.get("recall_ok") else "위험!"
+    precision = "OK" if verdict.get("precision_ok") else "위험!"
+    return (
+        f"📊 오늘 품질: 빠짐없이 {recall}(위험 {verdict.get('recall_risk', 0)})"
+        f"·적합만 {precision}(위험 {verdict.get('precision_risk', 0)})"
+        f"·전달 {verdict.get('delivered', 0)}건"
+    )
+
+
+def write_digest_quality_report(
+    verdict: dict,
+    path: Path | None = None,
+    *,
+    run_at: datetime | None = None,
+) -> Path:
+    """계측 결과를 workspace/digest_quality_YYYYMMDD.json 으로 저장(gitignore 관례)."""
+    run_at = run_at or datetime.now(KST)
+    stamp = run_at.strftime("%Y%m%d")
+    path = path or (BASE_DIR / "workspace" / f"digest_quality_{stamp}.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(verdict, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
 def run_dry_run(
     *,
     write_reports: bool = True,
@@ -4628,11 +4806,30 @@ def run_dry_run(
     seen_after = SEEN_IDS_PATH.stat().st_mtime if SEEN_IDS_PATH.exists() else None
     result["seen_ids_file_changed"] = seen_before != seen_after
 
+    # 디제스트 품질 측정 (빠짐없이·적합만) — 매일 자동. 실패해도 본 파이프라인엔 영향 0.
+    quality_line = ""
+    try:
+        verdict = measure_digest_quality(result)
+        result["digest_quality"] = verdict
+        quality_line = format_digest_quality_line(verdict)
+        log.info(quality_line)
+        if write_reports:
+            write_digest_quality_report(verdict)
+    except Exception as e:
+        log.warning("digest 품질 측정 실패(무시): %s", e)
+
     if write_reports:
         write_coverage_report(coverage_rows)
-        write_coverage_anomaly_report(coverage_anomalies)
+        anomaly_path = write_coverage_anomaly_report(coverage_anomalies)
         write_today_missing_risk_report(result)
         write_review_queue_report(result.get("date_review_queue") or [])
+        # 사람용 품질 1줄을 커버리지 이상탐지 리포트 말미에 첨부
+        if quality_line:
+            try:
+                with anomaly_path.open("a", encoding="utf-8") as fh:
+                    fh.write(f"\n{quality_line}\n")
+            except OSError:
+                pass
 
     return result
 
