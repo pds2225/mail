@@ -2010,8 +2010,16 @@ def fetch_nipa(site: dict) -> list[dict]:
             dates    = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
             posted   = dates[0].replace(".", "-") if dates else ""
             deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
-            items.append(_item(iid, title, link, "정보통신산업진흥원(NIPA)",
-                               "", deadline, site["name"], posted, agg))
+            it = _item(iid, title, link, "정보통신산업진흥원(NIPA)",
+                       "", deadline, site["name"], posted, agg)
+            # NIPA(정보통신산업진흥원)는 전국 대상 국가기관 ICT/SW/AI 사업 → 목록에 지역
+            #  단서가 없어 지역 미상('확인 필요' 하단)으로 강등돼 AI 공고가 상단에 0건이던
+            #  문제 수정. region_field='전국'으로 명시(사실 정확)해 전국 공고로 인정 →
+            #  AI 키워드 보유 그룹(서울/전국 AI팀 등) 본문 상단에 정상 노출(누락 방지·recall).
+            #  본문에 타지역 신청자-한정 단서가 있으면 _resolve_applicant_region_scope 가
+            #  전국을 무시(precision) → 특정 지역 공고 오포함은 방지된다.
+            it["region_field"] = "전국"
+            items.append(it)
         if page_new == 0:  # 새 공고 없음(끝 도달 또는 전부 중복) → 종료
             break
     log.info("%s: %d건", site["name"], len(items))
