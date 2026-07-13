@@ -1,0 +1,529 @@
+{
+ "response": "success",
+ "message": null,
+ "data": {
+  "cate": [
+   {
+    "categoryCodeId": 1,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Learn",
+    "categoryCodeDesc": "예비창업자 창업기본교육\r\n",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 2,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Make",
+    "categoryCodeDesc": "아이디어를 구현하는 방법",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 3,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Launch",
+    "categoryCodeDesc": "스타트업 창업 및 성장 지원",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 4,
+    "categoryId": 2,
+    "categoryCodeName": "경진대회",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 5,
+    "categoryId": 2,
+    "categoryCodeName": "교육",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 6,
+    "categoryId": 2,
+    "categoryCodeName": "IR",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 7,
+    "categoryId": 2,
+    "categoryCodeName": "창업과제",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 8,
+    "categoryId": 2,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 9,
+    "categoryId": 3,
+    "categoryCodeName": "일반양식",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 18,
+    "categoryId": 4,
+    "categoryCodeName": "기업가정신",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 19,
+    "categoryId": 4,
+    "categoryCodeName": "비즈니스모델",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 20,
+    "categoryId": 4,
+    "categoryCodeName": "사업계획서",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 21,
+    "categoryId": 4,
+    "categoryCodeName": "지식재산권",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 22,
+    "categoryId": 4,
+    "categoryCodeName": "세무·회계",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 23,
+    "categoryId": 4,
+    "categoryCodeName": "마케팅·판로",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 24,
+    "categoryId": 4,
+    "categoryCodeName": "자금·투자",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 25,
+    "categoryId": 4,
+    "categoryCodeName": "글로벌",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 26,
+    "categoryId": 4,
+    "categoryCodeName": "정부지원사업",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 27,
+    "categoryId": 4,
+    "categoryCodeName": "기업운영·관리",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 28,
+    "categoryId": 5,
+    "categoryCodeName": "교육",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 29,
+    "categoryId": 5,
+    "categoryCodeName": "행사/네트워크",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 30,
+    "categoryId": 5,
+    "categoryCodeName": "사업화",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 31,
+    "categoryId": 5,
+    "categoryCodeName": "R&D",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 32,
+    "categoryId": 5,
+    "categoryCodeName": "시설/공간/보육",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 33,
+    "categoryId": 5,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 34,
+    "categoryId": 6,
+    "categoryCodeName": "팀원구인",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 35,
+    "categoryId": 6,
+    "categoryCodeName": "협력/제안",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 36,
+    "categoryId": 6,
+    "categoryCodeName": "홍보",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 37,
+    "categoryId": 6,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 38,
+    "categoryId": 3,
+    "categoryCodeName": "창업강의",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 39,
+    "categoryId": 3,
+    "categoryCodeName": "창업실무",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 40,
+    "categoryId": 3,
+    "categoryCodeName": "창업통계",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 41,
+    "categoryId": 3,
+    "categoryCodeName": "국내외 창업동향",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   }
+  ],
+  "page": {
+   "rownum": 0,
+   "pageSize": 10,
+   "pageBlock": 10,
+   "pageNo": 1,
+   "startRowNo": 0,
+   "endRowNo": 10,
+   "firstPageNo": 1,
+   "finalPageNo": 108,
+   "prevPageNo": 1,
+   "nextPageNo": 2,
+   "startPageNo": 1,
+   "endPageNo": 10,
+   "totalCount": 1079,
+   "searchField": null,
+   "searchValue": null,
+   "startDate": null,
+   "endDate": null,
+   "boardId": 0,
+   "regDate": null,
+   "boardEnName": "startup_info",
+   "boardKrName": null,
+   "boardDesc": null,
+   "useFile": null,
+   "useComment": null,
+   "writeRole": null,
+   "viewRole": null,
+   "isPrivacy": null,
+   "subName01": null,
+   "subName02": null,
+   "subName03": null,
+   "subName04": null,
+   "subName05": null,
+   "subName06": null,
+   "subName07": null,
+   "subDValue01": null,
+   "subDValue02": null,
+   "subDValue03": null,
+   "subDValue04": null,
+   "subDValue05": null,
+   "subDValue06": null,
+   "subDValue07": null,
+   "categoryId": null,
+   "categoryCodeId": null
+  },
+  "list": [
+   {
+    "rownum": 1079,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4336,
+    "title": "「2026 지역창업 페스티벌 연계 제105회 대전창업포럼」참가자 모집 (7/21)",
+    "content": "<figure class=\"image\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/234dd639-cdd1-47dd-bca7-73439b11f6f1.png\"></figure><p>&nbsp;</p><p>대전창조경제혁신센터에서는 바이오 산업 트렌드 공유 및 투자·협업 네트워크 구축을 위한 「2026 지역창업 페스티벌 연계 제105회 대전창업포럼」을 다음과 같이 개최하오니 많은 관심 바랍니다.</p><p>&nbsp;</p><ol style=\"list-style-type:decimal-leading-zero;\"><li>■ 행사개요</li><li>- 행 사 명 : 2026 지역창업 페스티벌 연계 제105회 대전창업포럼</li><li>-&nbsp;주 제 : Bio code: 바이오 혁신의 문법을 다시 쓰다</li><li>- 일 시 : 2026년 7월 21일(화) 14:00 ~ 18:30</li><li>- 장 소 : 대전 스타트업파크(대전 유성구 궁동로2번길 81)</li><li>- 주요내용</li></ol><figure class=\"table\"><table><tbody><tr><td><p style=\"text-align:center;\"><strong>구분</strong></p></td><td><p style=\"text-align:center;\"><strong>시간</strong></p></td><td><p style=\"text-align:center;\"><strong>세 부 내 용</strong></p></td></tr><tr><td>개회</td><td>14:00 ~ 14:05</td><td>개회 및 프로그램 안내</td></tr><tr><td>바이오 스타트업 투자유치 IR</td><td>14:05 ~ 15:20</td><td>출연(연) 보육기업 5社 투자유치 IR</td></tr><tr><td>바이오 딥테크 포럼</td><td>15:30 ~ 17:00</td><td>바이오 산업 출연(연)·선배 기업·투자사 초청 산업 인사이트 공유</td></tr><tr><td>1:1 투자·비즈니스 밋업</td><td>15:30 ~ 17:30</td><td>바이오 스타트업·투자사 1:1 밋업</td></tr><tr><td>네트워킹</td><td>17:30 ~ 18:30</td><td>행사 참여자간 자유 네트워킹</td></tr></tbody></table></figure><p>&nbsp;</p><p>- 모집기간 : ~ 2026년 7월 20일(월) 24:00</p><p>- 신청방법 : 구글폼 신청</p><p>&nbsp; &nbsp; &nbsp;※URL : <a href=\"https://forms.gle/6DVHusSPBgxvMhTU6\">https://forms.gle/6DVHusSPBgxvMhTU6</a></p><p>- 문 의 : 042‑385‑0765 (대전창조경제혁신센터 글로벌상생협력실 민주원 PM)</p><p>&nbsp;</p>",
+    "regDate": "2026-07-13T13:36:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 29,
+    "fileExtension": null,
+    "viewCnt": 9,
+    "isNotice": false,
+    "sub01": "「2026 지역창업 페스티벌 연계 제105회 대전창업포럼」참가 모집 (7/21)",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [],
+    "thumbList": [
+     {
+      "fileId": 9878,
+      "contentId": 4336,
+      "status": "A",
+      "fileSize": 3805960,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "2d4f91a6-c1cb-4aaa-8439-f1ef9e4f6fd5",
+      "fileOriginName": "제105회 대전창업포럼(바이오) 썸네일.png",
+      "fileExtension": ".png"
+     }
+    ],
+    "categoryCodeName": "행사/네트워크",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   },
+   {
+    "rownum": 1078,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4335,
+    "title": "「2026 한난 온랩(On-Lab)」참가팀 모집(~7. 24.(금) 17:00까지)",
+    "content": "<figure class=\"image\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/2f0f4f6f-a501-4235-a998-1bdff4c3ca6a.png\"></figure><p>&nbsp;</p><p>에너지 산업 기술 혁신 필요성에 발맞춰 AI 및 디지털 전환, 탄소중립 및 에너지 전환 확대에 따른 에너지·환경 분야 예비 창업가를 지원하기 위한 「2026 한난 온랩(On-Lab)」 참가팀을 모집하오니 많은 관심과 참여 바랍니다.</p><p>&nbsp;</p><p>&nbsp;</p><p>□ 프로그램 개요<br>ㅇ (프로그램명) 2026 한난 온랩(On-Lab)</p><p>ㅇ (수행체계) (주최) 한국지역난방공사 / (주관) 한국청년기업가정신재단</p><p>ㅇ (운영목적) 미래 에너지·친환경 예비 창업팀 발굴 및 성장 지원</p><p>ㅇ (운영기간) 2026년 7 ~ 12월</p><p>ㅇ (참가대상) 예비 창업팀(개인 또는 팀, 대표자 만 19세 이상 39세 이하)</p><p>&nbsp; &nbsp; &nbsp; ※ 개인은 1인 팀으로 지원 가능, 참가대상 상세기준 &lt;2.참가자격 및 우대사항&gt; 참고<br>ㅇ (참가분야) 미래기술(AX, GX 등), 친환경, 에너지 등</p><p>ㅇ&nbsp;(모집기간) ~ 2026. 7. 24.(금) 17:00까지</p><p>ㅇ&nbsp;신청방법 : 구글폼 신청페이지를 통한 온라인 신청</p><p>ㅇ 신청 페이지 주소(URL) : <a href=\"https://forms.gle/d8Puy9p2bUETYtFG6\">https://forms.gle/d8Puy9p2bUETYtFG6</a></p><p>&nbsp; &nbsp; &nbsp;※ 신청 페이지는 반드시 구글 로그인 후 접속 가능</p><p>ㅇ&nbsp;문의처: 한국청년기업가정신재단 기술창업팀( <a href=\"mailto:hn_onlab@koef.or.kr\">hn_onlab@koef.or.kr</a> / 02-6953-1747)</p><p>&nbsp;</p><p>&nbsp;</p><ol><li><span style=\"background-color:rgb(255,255,255);color:rgb(77,77,77);font-size:14px;\">📍&nbsp;기타&nbsp;자세한&nbsp;사항은&nbsp;붙임의 공고문을&nbsp;반드시&nbsp;확인하여&nbsp;주시기&nbsp;바랍니다.</span></li></ol>",
+    "regDate": "2026-07-13T13:18:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 29,
+    "fileExtension": null,
+    "viewCnt": 11,
+    "isNotice": false,
+    "sub01": "「2026 한난 온랩(On-Lab)」참가팀 모집(~7. 24.(금) 17:00까지)",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [
+     {
+      "fileId": 9874,
+      "contentId": 4335,
+      "status": "A",
+      "fileSize": 208119,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "cdf673ce-ced6-4bfb-828e-1818ce4bed2a",
+      "fileOriginName": "붙임1. 2026 한난 온랩(On-Lab) 모집 공고문.pdf",
+      "fileExtension": ".pdf"
+     },
+     {
+      "fileId": 9875,
+      "contentId": 4335,
+      "status": "A",
+      "fileSize": 72192,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "b810119c-4bf0-4ff9-aae7-43b5e6135f06",
+      "fileOriginName": "붙임2. 2026 한난 온랩(On-Lab) 참가 신청서.hwp",
+      "fileExtension": ".hwp"
+     }
+    ],
+    "thumbList": [
+     {
+      "fileId": 9876,
+      "contentId": 4335,
+      "status": "A",
+      "fileSize": 693188,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "a97b96f0-1673-4a69-8935-301b6b314357",
+      "fileOriginName": "2026 한난 온랩(On-Lab) 홍보 썸네일.png",
+      "fileExtension": ".png"
+     }
+    ],
+    "categoryCodeName": "행사/네트워크",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   },
+   {
+    "rownum": 1077,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4326,
+    "title": "2026년 경기도「반려동물 창업공모전」참가자 모집(~8.24(월 ) 17:00까지)",
+    "content": "<figure class=\"image\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/9a27e535-0a0d-4527-b000-1aa9115491aa.jpg\"></figure><p>&nbsp;</p><p><span style=\"color:hsl(0,0%,30%);\">경기도와 경기도경제과학진흥원에서는 반려동물산업 분야의 유망 창업 아이디어를 보유한 예비 · 초기 창업자를 발굴하고자 경기도「반려동물 창업 공모전」의 참가자를 모집합니다.</span></p><p style=\"margin-left:0px;\"><span style=\"color:hsl(0,0%,30%);\">관심 있는 예비 · 초기 창업자 여러분의 많은 관심과 참여 바랍니다.</span></p><p>&nbsp;</p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp;□&nbsp;공 고 명&nbsp;: 2026년&nbsp;「경기도 반려동물 창업 공모전」&nbsp;참가자 모집</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\"><strong>&nbsp;□&nbsp;접수기간&nbsp;:&nbsp;&nbsp;2026. 7. 6.(월) ~ 8. 24.(월) 17:00까지</strong></span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp;□&nbsp;참가자격&nbsp;:&nbsp;경기도 거주 예비창업자 및 도내 &nbsp;3년 이내 초기창업자</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp;□&nbsp;참가대상&nbsp;:&nbsp;도내&nbsp;<u>사회적경제조직*</u>&nbsp;의&nbsp;제품 및 기술을 활용한&nbsp;반려동물산업 관련&nbsp;기술·지식산업형 사업화 아이템&nbsp;보유자</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;*&nbsp;사회적경제조직&nbsp;: (예비)사회적기업,&nbsp;마을기업,&nbsp;협동조합,&nbsp;소셜벤처 등</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ※&nbsp;기술분야&nbsp;: &nbsp;푸드, &nbsp;헬스·케어,&nbsp;미용/패션,&nbsp;가구, ICT&nbsp;결합상품,&nbsp;기타 분야 중 택&nbsp;1</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; □&nbsp;우대사항&nbsp;:&nbsp;여성(1점),&nbsp;사회적경제조직(각&nbsp;1점.&nbsp;최대&nbsp;2점)&nbsp;가점부여&nbsp;※&nbsp;증빙자료 제출시&nbsp;</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; □&nbsp;시상내역 : 10팀, 총 상금 3천만원경기도경제과학진흥원장상수여 (예비창업 5팀, 초기창업 5팀 )</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; □&nbsp;선정절차 : 예선 (서류 ) ‑ 본선 (발표 ) ‑ 결선 (순위결정 )</span></p><p style=\"text-align:justify;\"><span style=\"color:hsl(0,0%,30%);\">&nbsp; □&nbsp;접수방법&nbsp;:&nbsp;<u>경기스타트업플랫폼(</u></span><a href=\"https://www.gsp.or.kr/supportProject/UVSD0001.do?sportSeq=6280\"><span style=\"color:hsl(0,0%,30%);\"><u>www.gsp.or.kr</u></span></a><span style=\"color:hsl(0,0%,30%);\"><u>)온라인&nbsp;신청 및 첨부서류 업로드</u></span></p><p style=\"text-align:justify;\"><span style=\"background-color:rgb(255,255,255);color:hsl(0,0%,30%);\">&nbsp; □&nbsp;문의 : 경기도경제과학진흥원 스타트업지원팀 031-8039-7108, </span><span style=\"color:hsl(0,0%,30%);\">gpet@gbsa.or.kr</span></p><p style=\"text-align:justify;\">&nbsp;</p><ol><li><span style=\"background-color:rgb(255,255,255);color:hsl(0,0%,30%);font-size:14px;\">📍&nbsp;기타&nbsp;자세한&nbsp;사항은&nbsp;경기스타트업플랫 홈페이지(www.gsp.or.kr)&nbsp;및&nbsp;공고문을&nbsp;반드시&nbsp;확인하여&nbsp;주시기&nbsp;바랍니다.</span></li></ol><p style=\"text-align:justify;\">&nbsp;</p>",
+    "regDate": "2026-07-10T15:20:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 29,
+    "fileExtension": null,
+    "viewCnt": 32,
+    "isNotice": false,
+    "sub01": "2026년 경기도「반려동물 창업공모전」참가자 모집(~8.24(월 ) 17:00까지)",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [
+     {
+      "fileId": 9861,
+      "contentId": 4326,
+      "status": "A",
+      "fileSize": 189952,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "dee954ad-6f63-4e1f-bb7c-6b98907bd3a1",
+      "fileOriginName": "붙임1. (공고문) 2026년 「경기도 반려동물 창업 공모전」 참가자 모집(v1.0)).hwp",
+      "fileExtension": ".hwp"
+     },
+     {
+      "fileId": 9862,
+      "contentId": 4326,
+      "status": "A",
+      "fileSize": 147968,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "042f558e-320a-4a05-9302-332ff8ed3d69",
+      "fileOriginName": "붙임2. 참가 신청서식(v1.0).hwp",
+      "fileExtension": ".hwp"
+     },
+     {
+      "fileId": 9863,
+      "contentId": 4326,
+      "status": "A",
+      "fileSize": 75264,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "dd114706-222a-44c3-8ba2-26af33bd7351",
+      "fileOriginName": "붙임3. 단계별 심사평가표(v1.0).hwp",
+      "fileExtension": ".hwp"
+     },
+     {
+      "fileId": 9865,
+      "contentId": 4326,
+      "status": "A",
+      "fileSize": 733266,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "c5a0afd4-2cfa-4324-9985-8e935066cd93",
+      "fileOriginName": "붙임4. 경기도 사회적경제조직 현황표(2607)xlsx.xlsx",
+      "fileExtension": ".xlsx"
+     }
+    ],
+    "thumbList": [
+     {
+      "fileId": 9864,
+      "contentId": 4326,
+      "status": "A",
+      "fileSize": 327512,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "78218af3-916c-4815-bd6f-b90415077721",
+      "fileOriginName": "반려동물 창업 공모전 참가자 모집.jpg",
+      "fileExtension": ".jpg"
+     }
+    ],
+    "categoryCodeName": "행사/네트워크",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   }
+  ]
+ },
+ "code": 200
+}

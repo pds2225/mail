@@ -2298,6 +2298,61 @@ def fetch_myfair(site: dict) -> list[dict]:
     return items
 
 
+# ── 한양대학교 창업지원단 신규사업공고 ────────────────────────────────────────
+def fetch_hanyang_startup(site: dict) -> list[dict]:
+    """한양대 창업지원단 게시판(Next.js SPA) 공고 수집.
+
+    startup.hanyang.ac.kr 은 React/Next.js SPA 라 정적 HTML 에 목록이 없다(html_table
+    로는 0건). 목록은 JSON API `/api/board/content?boardEnName={보드}&pageNo=N` 이
+    {data:{list:[{contentId,title,regDate,categoryCodeName,...}]}} 로 응답한다(페이지는
+    `page` 파라미터로 이동 — pageNo 는 서버가 무시하고 1페이지만 반환한다).
+    상세(사용자용) 링크는 `/board/{보드}/view/{contentId}` 로 합성한다.
+    보드명은 URL(/board/<name>/list)에서 추출하며 기본값은 startup_info(신규사업공고).
+    """
+    base = "https://startup.hanyang.ac.kr"
+    m = re.search(r"/board/([a-zA-Z0-9_]+)", site.get("url", ""))
+    board = m.group(1) if m else "startup_info"
+    api = f"{base}/api/board/content"
+    headers = {**HTTP_HEADERS, "Referer": site.get("url", base),
+               "Accept": "application/json,*/*"}
+    agg = site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True,
+                          verify=False) as c:
+            for page_no in range(1, max_pages + 1):
+                r = c.get(api, params={"boardEnName": board, "page": page_no})
+                r.raise_for_status()
+                rows = (r.json().get("data") or {}).get("list") or []
+                if not rows:
+                    break
+                for row in rows:
+                    cid = row.get("contentId")
+                    title = norm(row.get("title", ""))
+                    if not cid or not title or cid in seen:
+                        continue
+                    seen.add(cid)
+                    link = f"{base}/board/{board}/view/{cid}"
+                    posted = (row.get("regDate") or "")[:10]
+                    # 카테고리(교육/행사·네트워크/사업화/R&D/시설/기타)를 지원내용 힌트로 보존.
+                    cat = norm(row.get("categoryCodeName", ""))
+                    desc = f"[{cat}]" if cat else ""
+                    items.append(_item(f"{site['id']}_{cid}", title, link,
+                                       "한양대학교 창업지원단", desc, "",
+                                       site["name"], posted, agg))
+    except Exception as e:
+        # 하드 실패(접속/JSON 파싱)는 '진짜 0건'과 구분해 예외로 올려 '수집실패'로 분류.
+        log.error("%s API 실패: %s", site.get("name", "한양대 창업"), e)
+        raise RuntimeError(f"{site.get('name', '한양대 창업')} 수집 실패 (API)")
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 FETCHERS = {
     "bizinfo_api":        fetch_bizinfo,
     "myfair_html":        fetch_myfair,
@@ -2306,6 +2361,7 @@ FETCHERS = {
     "iris_api":           fetch_iris,
     "smtech_html":        fetch_smtech,
     "tipa_html":          fetch_tipa,
+    "hanyang_startup_api": fetch_hanyang_startup,
     "kocca_pims":         fetch_kocca_pims,
     "kocca_bbs":          fetch_kocca_bbs,
     "gtp_html":           fetch_gtp,
