@@ -1709,6 +1709,67 @@ def fetch_smtech(site: dict) -> list[dict]:
     return items
 
 
+# ── TIPA (중소기업기술정보진흥원 · 기정원소식) ────────────────────────────────
+def fetch_tipa(site: dict) -> list[dict]:
+    """TIPA 알림마당 공고 목록 수집.
+
+    tipa.or.kr(CodeIgniter)은 세션쿠키(ci_session)·Referer 없이 목록을 직접 GET 하면
+    "The action you have requested is not allowed." 차단 페이지(HTTP 200, 테이블 0개)로
+    응답하고 /eng 로 돌려보낸다. 그래서 세션·Referer 없는 html_table 로는 조용히 0건이
+    되어 '진짜 0건'으로 오분류(수집 실패가 감지되지 않음)됐다.
+    → 홈으로 세션쿠키를 선확보한 뒤 Referer 를 붙여 목록을 GET 한다.
+    링크는 td.subject a 의 상대경로(/s040101/view/...)를 절대경로로 합성한다.
+    """
+    base = "https://www.tipa.or.kr"
+    list_url = site["url"]
+    headers = {**HTTP_HEADERS, "Referer": base + "/"}
+    agg = site.get("is_aggregator", False)
+    soup = None
+    last_err: Exception | None = None
+    for stage in ("strict", "no_verify", "legacy"):
+        verify: Any = True if stage == "strict" else (
+            False if stage == "no_verify" else _legacy_ssl_ctx())
+        try:
+            with httpx.Client(timeout=30, headers=headers, follow_redirects=True,
+                              verify=verify) as c:
+                c.get(base + "/")   # ci_session/csrf 쿠키 선확보(WAF 통과)
+                r = c.get(list_url)
+                r.raise_for_status()
+                soup = BeautifulSoup(r.text, "html.parser")
+                break
+        except httpx.HTTPStatusError as e:
+            log.error("TIPA 접속 실패 %s: %s", list_url, e)
+            raise RuntimeError(f"{site.get('name', 'TIPA')} 접속 실패 (HTML 수집)")
+        except Exception as e:
+            last_err = e
+            continue
+    if soup is None:
+        raise RuntimeError(f"{site.get('name', 'TIPA')} 접속 실패: {last_err}")
+
+    rows = soup.select("table tbody tr")
+    if not rows:
+        # 목록 테이블이 없다 = 차단 페이지(로/eng 리다이렉트)·구조 변경 → '진짜 0건'이 아니라
+        # 수집 실패로 올려 커버리지 알림이 '수집실패'로 정확히 표기되게 한다(조용한 0건 방지).
+        raise RuntimeError(f"{site.get('name', 'TIPA')} 목록 파싱 실패(행 0) — 차단/구조변경 의심")
+    items: list[dict] = []
+    for tr in rows:
+        a = tr.select_one("td.subject a") or tr.select_one("a")
+        if not a:
+            continue
+        title = norm(a.get("title") or a.get_text())
+        if not title or len(title) < 5:
+            continue
+        href = a.get("href", "")
+        link = urljoin(list_url, href) if href else list_url
+        td_text = " ".join(td.get_text(" ", strip=True) for td in tr.select("td"))
+        posted = extract_date_from_text(td_text)
+        iid = f"{site['id']}_{stable_id(title + link)}"
+        items.append(_item(iid, title, link, site["name"], "", "",
+                           site["name"], posted, agg))
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 # ── KOCCA 공고 ───────────────────────────────────────────────────────────────
 def fetch_kocca_pims(site: dict) -> list[dict]:
     """/kocca/pims/view.do?intcNo=... 패턴"""
@@ -1949,8 +2010,16 @@ def fetch_nipa(site: dict) -> list[dict]:
             dates    = re.findall(r"\d{4}[.\-]\d{2}[.\-]\d{2}", card.get_text())
             posted   = dates[0].replace(".", "-") if dates else ""
             deadline = dates[-1].replace(".", "-") if len(dates) >= 2 else ""
-            items.append(_item(iid, title, link, "정보통신산업진흥원(NIPA)",
-                               "", deadline, site["name"], posted, agg))
+            it = _item(iid, title, link, "정보통신산업진흥원(NIPA)",
+                       "", deadline, site["name"], posted, agg)
+            # NIPA(정보통신산업진흥원)는 전국 대상 국가기관 ICT/SW/AI 사업 → 목록에 지역
+            #  단서가 없어 지역 미상('확인 필요' 하단)으로 강등돼 AI 공고가 상단에 0건이던
+            #  문제 수정. region_field='전국'으로 명시(사실 정확)해 전국 공고로 인정 →
+            #  AI 키워드 보유 그룹(서울/전국 AI팀 등) 본문 상단에 정상 노출(누락 방지·recall).
+            #  본문에 타지역 신청자-한정 단서가 있으면 _resolve_applicant_region_scope 가
+            #  전국을 무시(precision) → 특정 지역 공고 오포함은 방지된다.
+            it["region_field"] = "전국"
+            items.append(it)
         if page_new == 0:  # 새 공고 없음(끝 도달 또는 전부 중복) → 종료
             break
     log.info("%s: %d건", site["name"], len(items))
@@ -2229,6 +2298,61 @@ def fetch_myfair(site: dict) -> list[dict]:
     return items
 
 
+# ── 한양대학교 창업지원단 신규사업공고 ────────────────────────────────────────
+def fetch_hanyang_startup(site: dict) -> list[dict]:
+    """한양대 창업지원단 게시판(Next.js SPA) 공고 수집.
+
+    startup.hanyang.ac.kr 은 React/Next.js SPA 라 정적 HTML 에 목록이 없다(html_table
+    로는 0건). 목록은 JSON API `/api/board/content?boardEnName={보드}&pageNo=N` 이
+    {data:{list:[{contentId,title,regDate,categoryCodeName,...}]}} 로 응답한다(페이지는
+    `page` 파라미터로 이동 — pageNo 는 서버가 무시하고 1페이지만 반환한다).
+    상세(사용자용) 링크는 `/board/{보드}/view/{contentId}` 로 합성한다.
+    보드명은 URL(/board/<name>/list)에서 추출하며 기본값은 startup_info(신규사업공고).
+    """
+    base = "https://startup.hanyang.ac.kr"
+    m = re.search(r"/board/([a-zA-Z0-9_]+)", site.get("url", ""))
+    board = m.group(1) if m else "startup_info"
+    api = f"{base}/api/board/content"
+    headers = {**HTTP_HEADERS, "Referer": site.get("url", base),
+               "Accept": "application/json,*/*"}
+    agg = site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True,
+                          verify=False) as c:
+            for page_no in range(1, max_pages + 1):
+                r = c.get(api, params={"boardEnName": board, "page": page_no})
+                r.raise_for_status()
+                rows = (r.json().get("data") or {}).get("list") or []
+                if not rows:
+                    break
+                for row in rows:
+                    cid = row.get("contentId")
+                    title = norm(row.get("title", ""))
+                    if not cid or not title or cid in seen:
+                        continue
+                    seen.add(cid)
+                    link = f"{base}/board/{board}/view/{cid}"
+                    posted = (row.get("regDate") or "")[:10]
+                    # 카테고리(교육/행사·네트워크/사업화/R&D/시설/기타)를 지원내용 힌트로 보존.
+                    cat = norm(row.get("categoryCodeName", ""))
+                    desc = f"[{cat}]" if cat else ""
+                    items.append(_item(f"{site['id']}_{cid}", title, link,
+                                       "한양대학교 창업지원단", desc, "",
+                                       site["name"], posted, agg))
+    except Exception as e:
+        # 하드 실패(접속/JSON 파싱)는 '진짜 0건'과 구분해 예외로 올려 '수집실패'로 분류.
+        log.error("%s API 실패: %s", site.get("name", "한양대 창업"), e)
+        raise RuntimeError(f"{site.get('name', '한양대 창업')} 수집 실패 (API)")
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 FETCHERS = {
     "bizinfo_api":        fetch_bizinfo,
     "myfair_html":        fetch_myfair,
@@ -2236,6 +2360,8 @@ FETCHERS = {
     "kita_html":          fetch_kita,
     "iris_api":           fetch_iris,
     "smtech_html":        fetch_smtech,
+    "tipa_html":          fetch_tipa,
+    "hanyang_startup_api": fetch_hanyang_startup,
     "kocca_pims":         fetch_kocca_pims,
     "kocca_bbs":          fetch_kocca_bbs,
     "gtp_html":           fetch_gtp,
@@ -3595,8 +3721,9 @@ def mail_topic(items: list[dict]) -> str:
     return "지원사업 공고"
 
 
-def _plain_text(s: str, limit: int = 600) -> str:
-    """HTML 태그·엔티티 제거 → 사용자용 평문(메일 본문에 코드/태그 노출 방지). 길면 자른다."""
+def _plain_text(s: str, limit: int = 1500) -> str:
+    """HTML 태그·엔티티 제거 → 사용자용 평문(메일 본문에 코드/태그 노출 방지). 길면 자른다.
+    한도(limit)는 지원내용 본문이 조기에 잘리지 않도록 넉넉히 둔다."""
     if not s:
         return ""
     if "<" in s:
@@ -3783,9 +3910,16 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 {items_txt}"""
     try:
         resp = client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=4000,
+            model="claude-haiku-4-5-20251001", max_tokens=8000,
             messages=[{"role": "user", "content": prompt}])
-        return resp.content[0].text.strip()
+        # 출력 토큰 상한(max_tokens)에 걸려 응답이 중간에 끊기면 뒤쪽 공고 본문이 통째로
+        # 사라진다(메일 '본문 잘림'). 이때는 요약본 대신 전 공고를 빠짐없이 담는
+        # fallback_body 로 대체해 누락을 막는다.
+        if getattr(resp, "stop_reason", None) == "max_tokens":
+            log.warning("Claude 요약이 토큰 상한에 걸려 잘림 — fallback_body 로 대체(본문 보존)")
+            return fallback_body(limited)
+        text = resp.content[0].text.strip()
+        return text or fallback_body(limited)
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)

@@ -76,6 +76,40 @@ def test_nationwide_ai_still_eligible_for_seoul_group():
     assert ev["is_relevant"] is True
 
 
+def test_nipa_regionless_ai_promoted_to_main_list():
+    """NIPA(국가기관 전국사업)의 지역 단서 없는 AI 공고: region_field='전국' 보강으로
+    '지역 미상' 하단 강등이 아니라 본문 상단(is_relevant) 노출 — 'AI 공고 안 옴' 근본수정.
+    fetch_nipa 가 실제로 붙이는 region_field='전국' 을 그대로 재현한다."""
+    from datetime import datetime, timedelta
+    future = (datetime.now(m.KST) + timedelta(days=30)).strftime("%Y.%m.%d")
+    item = {
+        "title": "2026년 소형 데이터센터 기반 AI산업 성장 지원 사업 공고",
+        "description": f"수요기업 모집 신청기간 {future}~",   # 지역 단서 없음
+        "author": "정보통신산업진흥원(NIPA)",
+        "region_field": "전국",                              # fetch_nipa 보강값
+    }
+    ev = _ev(item)
+    assert ev["region_status"] == "eligible"
+    assert ev["is_relevant"] is True
+    assert not ev.get("region_unknown_review")   # 하단 '지역 미상'으로 강등되면 안 됨
+
+
+def test_nipa_regionless_without_nationwide_would_demote():
+    """대조군: region_field 없으면 동일 공고가 지역 미상('확인 필요')으로 강등된다
+    (= 이번 수정 전의 버그 상태). region_field='전국' 보강이 유일한 차이임을 고정한다."""
+    from datetime import datetime, timedelta
+    future = (datetime.now(m.KST) + timedelta(days=30)).strftime("%Y.%m.%d")
+    item = {
+        "title": "2026년 소형 데이터센터 기반 AI산업 성장 지원 사업 공고",
+        "description": f"수요기업 모집 신청기간 {future}~",
+        "author": "정보통신산업진흥원(NIPA)",
+    }
+    ev = _ev(item)
+    assert ev["region_status"] == "unknown"
+    assert ev["is_relevant"] is False
+    assert ev.get("region_unknown_review") is True
+
+
 def test_busan_only_still_blocked():
     """부산 한정은 서울 그룹에서 제외(precision)."""
     ev = _ev({

@@ -69,9 +69,12 @@ def test_nipa_collects_all_cards_across_pages():
     # 1) 유효 카드 4건. (제목 5자 미만 '공고' 카드는 스킵, nttDetail 아닌 링크는 무시)
     assert len(items) == 4
 
-    # 스키마 불변 + 고정 메타 필드(author/description/source/is_aggregator)
+    # 스키마 불변(9키) + NIPA 전용 region_field='전국' 보강 + 고정 메타 필드.
+    # region_field='전국': NIPA(국가기관 전국 ICT/SW/AI 사업)의 지역 미상 하드컷을 막아
+    #  AI 키워드 그룹 본문 상단에 정상 노출되게 하는 recall 보정(전국 공고로 인정).
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        assert set(it.keys()) == SCHEMA_KEYS | {"region_field"}
+        assert it["region_field"] == "전국"
         assert it["author"] == "정보통신산업진흥원(NIPA)"
         assert it["description"] == ""
         assert it["source"] == "정보통신산업진흥원(NIPA)"
