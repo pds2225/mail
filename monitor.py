@@ -4205,11 +4205,11 @@ def _post_run_alert(result: dict) -> None:
             log.info("초안 생성 완료: %d건 — 폰 알림 생략", d_ok)
         return
     if _SEND_FAIL > 0:
-        alert_ntfy(
-            "mail send FAILED",
+        # PC(이메일)로 알림 — 자동발송이 실패로 조용히 멈추는 사고를 즉시 확인(사용자 PC 선호).
+        alert_email(
+            "공고 메일 발송 실패 — 확인 필요",
             f"⚠️ 공고 메일 발송 실패 {_SEND_FAIL}건 (성공 {_SEND_OK}건).\n"
             f"마지막 오류: {_LAST_SEND_ERR[:200]}\n{stat}",
-            priority="high", tags="rotating_light",
         )
     elif _SEND_OK == 0 and os.environ.get("ALERT_ON_ZERO", "1") == "1":
         alert_ntfy(
