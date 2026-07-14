@@ -5054,6 +5054,14 @@ if __name__ == "__main__":
                 summary.get("seen_ids_file_changed"),
             )
         else:
+            # 실발송 경로에서도 커버리지 이상탐지(모니터링) 유지 — 평소 수집되던 사이트가
+            # 0건/급감/실패 시 PC 이메일 알림(누락 방지, PR #123). --coverage-alert 일 때만.
+            if args.coverage_alert and not args.skip_coverage_fetch:
+                try:
+                    run_coverage_anomaly_check(
+                        fetch_site_coverage(load_json(SITES_PATH, [])), allow_alert=True)
+                except Exception as e:
+                    log.warning("커버리지 점검 실패(무시): %s", e)
             main(
                 allow_send=args.send,
                 include_raw_all=args.include_raw_all,
