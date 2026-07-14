@@ -1,0 +1,337 @@
+r"""accuracy_matrix — 전수 채점 매트릭스 + FP/FN 후보 + 자기모순 탐지 (읽기전용).
+
+정확도 오케스트레이터(mail-accuracy-orchestrator)의 S2(match-runner) 실행 엔진.
+raw store 의 전수 공고를 두 경로(기업단위 company_match · 그룹단위 monitor.evaluate_notice)로
+동시 채점하고, 결정론적 규칙으로 FP/FN 후보와 경로 자기모순을 surface 한다.
+판정 로직은 절대 수정하지 않고 **호출만** 한다(코드 미수정 원칙).
+
+산출물 (D:\mail\.omc\accuracy\runs\{date}\):
+  matrix.json         전수 (공고 × 기업3 × 그룹3) 결정·점수·지역상태·약라벨·모순플래그
+  fp_candidates.json  오탐 후보(사유코드별, 상한 캡) — fp-hunter 입력
+  fn_candidates.json  누락 후보(사유코드별, 상한 캡) — fn-hunter 입력
+  contradictions.json 두 경로 지역 verdict 불일치(#15 류 신호)
+  summary.json        KPI(region_FP·FN후보·recall@labeled·매칭수·drift)
+
+실행 (PowerShell, D:\mail 에서):
+  python scripts\accuracy_matrix.py            # 전수(모든 날짜)
+  python scripts\accuracy_matrix.py --date 2026-07-07   # 특정 날짜만
+  python scripts\accuracy_matrix.py --max 500  # 빠른 스모크(앞 N건)
+종료코드: region_FP==0 이면 0, 아니면 1 (CI 게이트 가능).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+for p in (BASE_DIR, BASE_DIR / "scripts"):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
+
+import company_match  # noqa: E402
+import monitor  # noqa: E402
+from run_company_match import _enrich_for_company  # noqa: E402 (#15 인천고정 버그 수정 반영)
+
+# region_field 가 이 값이면 기업 지역 무관하게 적격(타지역 아님)
+_REGION_OK_TOKENS = ("전국", "수도권", "전국(지역무관)", "지역무관", "")
+_CANDIDATE_CAP = 300  # 후보 파일당 상한(전체 건수는 summary 에 별도 기록)
+
+
+def _fix_console() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:  # noqa: BLE001
+                pass
+
+
+def _notice_key(it: dict) -> str:
+    for f in ("id", "notice_id", "url", "link", "detail_url"):
+        v = it.get(f)
+        if v:
+            return str(v)
+    return "t:" + str(it.get("title", ""))[:90]
+
+
+def _load_items(data_root: Path, date: str | None, cap: int | None) -> list[dict]:
+    items: list[dict] = []
+    if date:
+        globs = [f"{date}/notices/*/meta.json"]
+    else:
+        globs = ["*/notices/*/meta.json"]
+    seen: set[str] = set()
+    for g in globs:
+        for mp in sorted(data_root.glob(g)):
+            try:
+                d = json.loads(mp.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                continue
+            if not (isinstance(d, dict) and (d.get("title") or d.get("description"))):
+                continue
+            k = _notice_key(d)
+            if k in seen:  # 날짜 교차 중복 제거(최초 유지)
+                continue
+            seen.add(k)
+            items.append(d)
+            if cap and len(items) >= cap:
+                return items
+    return items
+
+
+def _is_region_fp(region_field: str, city: str) -> bool:
+    """matched 공고의 region_field 가 기업 지역이 아닌 명백한 타지역인가(하드 KPI)."""
+    rf = (region_field or "").strip()
+    if not rf or rf in _REGION_OK_TOKENS:
+        return False
+    if "전국" in rf or "수도권" in rf:
+        return False
+    return bool(city) and (city not in rf)
+
+
+def _rf_is_own(region_field: str, city: str) -> bool:
+    rf = (region_field or "").strip()
+    return bool(rf) and bool(city) and (city in rf)
+
+
+def _rf_is_nationwide(region_field: str) -> bool:
+    rf = (region_field or "").strip()
+    return ("전국" in rf) or ("수도권" in rf)
+
+
+def build(date: str | None, cap: int | None) -> dict:
+    data_root = BASE_DIR / "data" / "raw"
+    if not data_root.exists():
+        return {"error": f"raw store 없음: {data_root}"}
+    items = _load_items(data_root, date, cap)
+    companies = company_match.load_companies()
+    try:
+        groups = monitor.load_groups()
+    except Exception as e:  # noqa: BLE001
+        groups = []
+        print(f"[warn] load_groups 실패: {e}", file=sys.stderr)
+    if not items or not companies:
+        return {"error": f"공고 {len(items)} / 기업 {len(companies)} — 측정 불가"}
+
+    # 공고 인덱스 (키 기준)
+    notices: dict[str, dict] = {}
+    order: list[str] = []
+    for it in items:
+        k = _notice_key(it)
+        if k in notices:
+            continue
+        order.append(k)
+        notices[k] = {
+            "id": k,
+            "title": str(it.get("title", ""))[:110],
+            "source": str(it.get("source") or it.get("site") or it.get("agency") or ""),
+            "region_field": str(it.get("region_field") or "").strip(),
+            "companies": {},
+            "groups": {},
+        }
+
+    company_city = {c.get("id"): (c.get("region") or {}).get("city", "") or "" for c in companies}
+
+    # ── 기업 경로 (기업별 enrich = #15 회피) ──
+    for c in companies:
+        cid = c.get("id")
+        enriched = _enrich_for_company(items, c)
+        res = company_match.match_for_company(enriched, c)
+        for it in res["matched"]:
+            bd = it.get("_match_breakdown", {}) or {}
+            notices[_notice_key(it)]["companies"][cid] = {
+                "decision": "matched",
+                "score": int(it.get("_match_score", 0)),
+                "region_status": bd.get("region_status"),
+                "exclude_hits": bd.get("exclude_hits", 0),
+                "mismatches": (it.get("_match_mismatches") or [])[:2],
+            }
+        for it in res["rejected"]:
+            bd = it.get("_match_breakdown", {}) or {}
+            reason = it.get("_match_reason")
+            notices[_notice_key(it)]["companies"][cid] = {
+                "decision": "rejected_hard" if reason else "rejected_score",
+                "score": int(it.get("_match_score", 0)),
+                "region_status": bd.get("region_status"),
+                "exclude_hits": bd.get("exclude_hits", 0),
+                "reason": reason,
+                "mismatches": (it.get("_match_mismatches") or [])[:2],
+            }
+
+    # ── 그룹 경로 ──
+    group_city: dict[str, str] = {}
+    for g in groups:
+        gid = g.get("id") or g.get("name") or "grp"
+        group_city[gid] = (g.get("applicant_region_city") or "").strip()
+        for it in items:
+            try:
+                ev = monitor.evaluate_notice(it, g)
+            except Exception:  # noqa: BLE001
+                continue
+            notices[_notice_key(it)]["groups"][gid] = {
+                "is_relevant": bool(ev.get("is_relevant")),
+                "region_status": ev.get("region_status"),
+                "region_unknown_review": bool(ev.get("region_unknown_review")),
+                "reason_codes": (ev.get("exclude_reason_codes") or [])[:3],
+            }
+
+    # ── 후보·모순·KPI 산출 ──
+    fp: dict[str, list] = defaultdict(list)
+    fn: dict[str, list] = defaultdict(list)
+    contradictions: list[dict] = []
+    region_fp_hits: list[dict] = []
+    labeled_own_or_nw = 0
+    labeled_own_or_nw_fn = 0
+
+    _REGION_BLOCKED = {"other_only", "nationwide_other_region"}
+
+    for k in order:
+        n = notices[k]
+        rf = n["region_field"]
+        for cid, cv in n["companies"].items():
+            city = company_city.get(cid, "")
+            dec = cv["decision"]
+            rstat = cv.get("region_status")
+            matched = dec == "matched"
+            # region_FP (하드 KPI, 약라벨 기반)
+            if matched and _is_region_fp(rf, city):
+                region_fp_hits.append({"id": k, "cid": cid, "city": city, "rf": rf, "title": n["title"][:60]})
+            # ── FP 후보 (matched-but-suspect) ──
+            if matched:
+                if _is_region_fp(rf, city):
+                    fp["fp_weaklabel_otherregion"].append({"id": k, "cid": cid, "city": city, "rf": rf, "title": n["title"]})
+                if rstat in _REGION_BLOCKED:
+                    fp["fp_region_leak"].append({"id": k, "cid": cid, "city": city, "region_status": rstat, "title": n["title"]})
+                if cv.get("exclude_hits", 0):
+                    fp["fp_exclude_leak"].append({"id": k, "cid": cid, "exclude_hits": cv["exclude_hits"], "score": cv["score"], "title": n["title"]})
+            # ── FN 후보 (rejected-but-suspect) ──
+            if dec == "rejected_score":
+                if _rf_is_own(rf, city):
+                    fn["fn_weaklabel_own"].append({"id": k, "cid": cid, "city": city, "rf": rf, "score": cv["score"], "title": n["title"]})
+                if _rf_is_nationwide(rf) and rstat in _REGION_BLOCKED:
+                    fn["fn_nationwide_blocked"].append({"id": k, "cid": cid, "rf": rf, "region_status": rstat, "title": n["title"]})
+                # 제목 [own-city] 태그인데 지역차단
+                if city and (f"[{city}]" in n["title"] or f"[{city}" in n["title"]) and rstat in _REGION_BLOCKED:
+                    fn["fn_titletag_own"].append({"id": k, "cid": cid, "city": city, "region_status": rstat, "title": n["title"]})
+
+        # 지역 recall@labeled 분모: own/전국 약라벨이 있는 (공고,기업) 쌍.
+        # 누락(FN)은 '지역 사유로 차단'(region_status ∈ blocked)한 경우만 카운트한다.
+        # 산업·점수 미달로 인한 미매칭은 지역 누락이 아니므로 제외(recall 왜곡 방지).
+        for cid, cv in n["companies"].items():
+            city = company_city.get(cid, "")
+            if _rf_is_own(rf, city) or (_rf_is_nationwide(rf) and city):
+                labeled_own_or_nw += 1
+                if cv.get("region_status") in _REGION_BLOCKED:
+                    labeled_own_or_nw_fn += 1
+
+        # ── 자기모순(경로 지역 verdict 불일치, #15 신호) ──
+        # 같은 지역(city)을 신청자로 갖는 그룹과 그 지역 기업의 지역판정이 반대 방향인가
+        for cid, cv in n["companies"].items():
+            city = company_city.get(cid, "")
+            if not city:
+                continue
+            comp_region_blocked = cv.get("region_status") in _REGION_BLOCKED
+            comp_region_ok = cv.get("region_status") in {"city", "district", "nationwide"}
+            for gid, gv in n["groups"].items():
+                if group_city.get(gid, "") != city:
+                    continue
+                grp_region_blocked = "REGION_NOT_ELIGIBLE" in gv.get("reason_codes", []) or gv.get("region_status") == "not_eligible"
+                grp_region_ok = gv.get("region_status") == "eligible"
+                if (comp_region_blocked and grp_region_ok) or (comp_region_ok and grp_region_blocked):
+                    contradictions.append({
+                        "id": k, "city": city, "cid": cid, "gid": gid,
+                        "company_region_status": cv.get("region_status"),
+                        "group_region_status": gv.get("region_status"),
+                        "group_reason_codes": gv.get("reason_codes", []),
+                        "title": n["title"][:70],
+                    })
+
+    # 매칭 총량(그룹/기업)
+    matched_by_company = Counter()
+    for k in order:
+        for cid, cv in notices[k]["companies"].items():
+            if cv["decision"] == "matched":
+                matched_by_company[cid] += 1
+    relevant_by_group = Counter()
+    for k in order:
+        for gid, gv in notices[k]["groups"].items():
+            if gv.get("is_relevant"):
+                relevant_by_group[gid] += 1
+
+    region_fp_total = len(region_fp_hits)
+    fp_counts = {code: len(v) for code, v in fp.items()}
+    fn_counts = {code: len(v) for code, v in fn.items()}
+    region_recall_at_labeled = None
+    if labeled_own_or_nw:
+        region_recall_at_labeled = round(1 - labeled_own_or_nw_fn / labeled_own_or_nw, 4)
+
+    summary = {
+        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "date_filter": date or "ALL",
+        "n_notices": len(order),
+        "n_companies": len(companies),
+        "n_groups": len(groups),
+        "region_field_labeled": sum(1 for k in order if notices[k]["region_field"]),
+        "kpi": {
+            "region_FP": region_fp_total,
+            "region_recall_at_labeled": region_recall_at_labeled,
+            "region_recall_denom": labeled_own_or_nw,
+            "region_recall_fn": labeled_own_or_nw_fn,
+        },
+        "matched_by_company": dict(matched_by_company),
+        "relevant_by_group": dict(relevant_by_group),
+        "fp_candidate_counts": fp_counts,
+        "fn_candidate_counts": fn_counts,
+        "contradiction_count": len(contradictions),
+    }
+
+    return {
+        "summary": summary,
+        "matrix": {"meta": {k: summary[k] for k in ("generated_utc", "date_filter", "n_notices", "n_companies", "n_groups")},
+                   "notices": [notices[k] for k in order]},
+        "fp": {"counts": fp_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in fp.items()}},
+        "fn": {"counts": fn_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in fn.items()}},
+        "contradictions": contradictions[: _CANDIDATE_CAP * 2],
+        "region_fp_hits": region_fp_hits,
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    _fix_console()
+    ap = argparse.ArgumentParser(description="전수 채점 매트릭스 (읽기전용)")
+    ap.add_argument("--date", default=None, help="특정 날짜만(예: 2026-07-07). 생략=전수")
+    ap.add_argument("--max", type=int, default=None, help="앞 N건만(스모크)")
+    ap.add_argument("--out", default=None, help="산출 디렉터리(기본 .omc/accuracy/runs/{today})")
+    args = ap.parse_args(argv)
+
+    res = build(args.date, args.max)
+    if res.get("error"):
+        print(f"[SKIP] {res['error']}")
+        return 0
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    out_dir = Path(args.out) if args.out else (BASE_DIR / ".omc" / "accuracy" / "runs" / today)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    (out_dir / "matrix.json").write_text(json.dumps(res["matrix"], ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "fp_candidates.json").write_text(json.dumps(res["fp"], ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "fn_candidates.json").write_text(json.dumps(res["fn"], ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "contradictions.json").write_text(json.dumps(res["contradictions"], ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "summary.json").write_text(json.dumps(res["summary"], ensure_ascii=False, indent=2), encoding="utf-8")
+
+    s = res["summary"]
+    print(f"[matrix] 공고 {s['n_notices']} × 기업 {s['n_companies']} × 그룹 {s['n_groups']}  (라벨 {s['region_field_labeled']}건)")
+    print(f"[KPI] region_FP={s['kpi']['region_FP']}  region_recall@labeled={s['kpi']['region_recall_at_labeled']} (분모 {s['kpi']['region_recall_denom']}, 지역차단 FN {s['kpi']['region_recall_fn']})")
+    print(f"[FP후보] {s['fp_candidate_counts']}")
+    print(f"[FN후보] {s['fn_candidate_counts']}")
+    print(f"[자기모순] {s['contradiction_count']}건")
+    print(f"[out] {out_dir}")
+    return 0 if s["kpi"]["region_FP"] == 0 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
