@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -101,6 +102,31 @@ def _rf_is_own(region_field: str, city: str) -> bool:
 def _rf_is_nationwide(region_field: str) -> bool:
     rf = (region_field or "").strip()
     return ("전국" in rf) or ("수도권" in rf)
+
+
+_REGION_SUFFIXES = ("특별자치도", "특별자치시", "특별시", "광역시", "자치도", "자치시", "도", "시")
+
+
+def _short_region(tok: str) -> str:
+    """광역명 → 짧은형(서울특별시→서울, 경기도→경기)."""
+    t = (tok or "").strip()
+    for suf in _REGION_SUFFIXES:
+        if t.endswith(suf) and len(t) > len(suf):
+            return t[: -len(suf)]
+    return t
+
+
+def _own_in_bracket_tag(title: str, city: str) -> bool:
+    """제목의 대괄호 태그 [서울ㆍ인천ㆍ경기ㆍ강원] 안에 own 시가 토큰으로 있는가.
+    접두어(prefix)뿐 아니라 태그 어느 위치든 잡는다 — 다지역 태그 own 오차단(누락) 색출."""
+    if not city:
+        return False
+    cs = _short_region(city)
+    for grp in re.findall(r"\[([^\]]{1,40})\]", title or ""):
+        for tk in re.split(r"[ㆍ·|/,、\s]+", grp):
+            if tk and _short_region(tk) == cs:
+                return True
+    return False
 
 
 def build(date: str | None, cap: int | None) -> dict:
@@ -214,8 +240,8 @@ def build(date: str | None, cap: int | None) -> dict:
                     fn["fn_weaklabel_own"].append({"id": k, "cid": cid, "city": city, "rf": rf, "score": cv["score"], "title": n["title"]})
                 if _rf_is_nationwide(rf) and rstat in _REGION_BLOCKED:
                     fn["fn_nationwide_blocked"].append({"id": k, "cid": cid, "rf": rf, "region_status": rstat, "title": n["title"]})
-                # 제목 [own-city] 태그인데 지역차단
-                if city and (f"[{city}]" in n["title"] or f"[{city}" in n["title"]) and rstat in _REGION_BLOCKED:
+                # 제목 대괄호 태그 안에 own 시가 토큰으로 있는데 지역차단(다지역 태그 own 오차단 포함)
+                if _own_in_bracket_tag(n["title"], city) and rstat in _REGION_BLOCKED:
                     fn["fn_titletag_own"].append({"id": k, "cid": cid, "city": city, "region_status": rstat, "title": n["title"]})
 
         # 지역 recall@labeled 분모: own/전국 약라벨이 있는 (공고,기업) 쌍.

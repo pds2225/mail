@@ -57,6 +57,16 @@ def test_matrix_notice_shape():
     assert isinstance(n["groups"], dict)
 
 
+def test_own_in_bracket_tag():
+    """다지역 태그 안 own 시 탐지(접두어 아닌 위치·접미어 정규화 포함)."""
+    f = accuracy_matrix._own_in_bracket_tag
+    assert f("[서울ㆍ인천ㆍ경기ㆍ강원] 2026년 공고", "인천")   # 접두어 아님(중간)
+    assert f("[서울ㆍ인천ㆍ강원] 공고", "서울")               # 접두어
+    assert f("[경기도ㆍ강원도] 공고", "경기")                 # 접미어 정규화(경기도→경기)
+    assert not f("[강원] 공고", "서울")                       # own 없음
+    assert not f("서울 소재 (본문 언급) 공고", "서울")        # 대괄호 밖은 미탐(개최지 오탐 방지)
+
+
 def test_candidate_codes_are_known():
     """FP/FN 후보 코드가 계약된 집합에 속하는지(오타·스키마 drift 방지)."""
     res = _build_small()
