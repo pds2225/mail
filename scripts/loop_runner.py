@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
-"""Loop runner — TASK 1건에 대한 L1 실행 골격.
+"""Loop runner — TASK 프로필 분류 + 검증 골격 (Phase B Cloud Agent 연동용).
 
-프로필 분류 → (향후 Cloud Agent) → 검증 → 결과 코드 반환.
-현재 Phase A: doc_only 등 로컬 처리 가능 TASK는 검증만 수행하고,
-코드 생성이 필요한 TASK는 agent_required 상태를 반환한다.
-
-Usage (auto_dev_queue 내부 호출):
-  from loop_runner import run_task
-  result = run_task("TASK-002", "RULES.md에 ...")
+`auto_dev_queue.py`는 main의 `loops.json` + `auto_dev_executor` 경로를 사용한다.
+이 모듈은 `task_profiles.json` 기반 보조 실행기로만 유지한다.
 """
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -76,14 +70,20 @@ def paths_allowed(changed: list[str], profile_cfg: dict) -> tuple[bool, list[str
 
 
 def run_verify(tier: int, task_title: str) -> dict:
-    cmd = [sys.executable, str(VERIFY_SCRIPT), "--tier", str(tier), "--task-title", task_title, "--json"]
+    cmd = [sys.executable, str(VERIFY_SCRIPT), "--json"]
+    if tier <= 1:
+        cmd.append("--quick")
+    elif tier >= 3:
+        cmd.append("--with-core-sources")
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     if proc.stdout.strip():
         try:
-            return json.loads(proc.stdout)
+            report = json.loads(proc.stdout)
+            report["all_pass"] = report.get("ok", False)
+            return report
         except json.JSONDecodeError:
             pass
-    return {"all_pass": False, "blocked": False, "steps": [], "parse_error": proc.stderr}
+    return {"ok": False, "all_pass": False, "checks": [], "parse_error": proc.stderr}
 
 
 def run_task(task_id: str, task_title: str) -> TaskResult:
@@ -109,10 +109,11 @@ def run_task(task_id: str, task_title: str) -> TaskResult:
     tier = int(profile_cfg.get("tier", 1))
     report = run_verify(tier=tier, task_title=task_title)
 
-    if report.get("blocked"):
+    v1 = next((c for c in report.get("checks", []) if c.get("id") == "V1"), None)
+    if v1 and not v1.get("ok"):
         return TaskResult(
             status="BLOCKED",
-            reason="검증 게이트 blocked (발송 위험 또는 보호 파일)",
+            reason="검증 게이트 blocked (보호 파일)",
             profile=profile_name,
             verify_report=report,
         )

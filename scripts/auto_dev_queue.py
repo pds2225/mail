@@ -1,28 +1,28 @@
-"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기 (L1 오케스트레이터)
+"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
 2. TASKS.md에서 다음 PENDING TASK 1개 선택
-3. TASK를 RUNNING으로 이동
-4. loop_runner → loop_verify (루프 엔지니어링 L1)
-5. 실행 결과에 따라 DONE/FAILED/BLOCKED/AGENT_REQUIRED 처리
-6. auto_dev_state.json 업데이트
-7. GitHub Actions Summary 출력
-
-설계: docs/AUTO_DEV_LOOP_ENGINEERING.md
+3. loops.json 기준으로 루프 타입·5요소 결정
+4. loop_verify 게이트 실행 (종료 조건)
+5. 에이전트 슬롯 없으면 AWAITING_AGENT (PENDING 유지) — 허위 DONE 금지
+6. 실행 결과에 따라 DONE/FAILED/BLOCKED 처리
+7. auto_dev_state.json 업데이트
+8. GitHub Actions Summary 출력 (루프 5요소 포함)
 
 주의:
 - Secret/API Key/메일 계정 값은 절대 출력하지 않음
 - 실제 이메일 발송 금지 (dry-run / draft-only 기준)
 - 기존 앱 파일 수정 금지
 - Mail 관련 Secret은 발송 기능 검증 전까지 미사용
+- 설계: docs/LOOP_ENGINEERING_AUTO_DEV.md
 """
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -35,6 +35,7 @@ STATE_PATH = ROOT / "auto_dev_state.json"
 DONE_PATH = ROOT / "done_tasks.md"
 FAILED_PATH = ROOT / "failed_tasks.md"
 BLOCKED_PATH = ROOT / "blocked_tasks.md"
+LOOPS_PATH = ROOT / "auto_dev" / "loops.json"
 
 PROTECTED_FILES = {"monitor.py", "streamlit_app.py", ".env", ".env.example"}
 MAIL_SECRETS = {"GMAIL_ADDRESS", "GMAIL_APP_PASSWORD", "SMTP_HOST", "SMTP_PORT",
@@ -42,17 +43,27 @@ MAIL_SECRETS = {"GMAIL_ADDRESS", "GMAIL_APP_PASSWORD", "SMTP_HOST", "SMTP_PORT",
 MAX_RETRY = 2
 
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
+# 실제 코딩 에이전트 슬롯 연결 시 true. 미설정이면 허위 DONE 하지 않음.
+AGENT_ENABLED = os.environ.get("AUTO_DEV_AGENT", "false").lower() == "true"
+# 레거시: 검증만 통과하면 DONE (에이전트 없이). 기본 false.
+FORCE_DONE = os.environ.get("AUTO_DEV_FORCE_DONE", "false").lower() == "true"
+VERIFY_QUICK = os.environ.get("AUTO_DEV_VERIFY_QUICK", "true").lower() == "true"
+VERIFY_CORE = os.environ.get("AUTO_DEV_VERIFY_CORE", "false").lower() == "true"
+# 결정적 안전 실행기 (문서 NOOP/허용 패치). 기본 켜짐.
+SAFE_EXECUTOR = os.environ.get("AUTO_DEV_SAFE_EXECUTOR", "true").lower() == "true"
 
 
-def _load_loop_runner():
-    """scripts/loop_runner.py 동적 로드 (패키지 없이)."""
-    spec = importlib.util.spec_from_file_location(
-        "loop_runner", ROOT / "scripts" / "loop_runner.py"
-    )
-    if spec is None or spec.loader is None:
-        return None
+def _load_executor():
+    import importlib.util
+
+    path = ROOT / "scripts" / "auto_dev_executor.py"
+    name = "auto_dev_executor"
+    if name in sys.modules:
+        return sys.modules[name]
+    spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = mod
+    assert spec.loader is not None
+    sys.modules[name] = mod
     spec.loader.exec_module(mod)
     return mod
 
@@ -150,6 +161,47 @@ def move_task(content: str, task_line: str, from_section: str, to_section: str) 
     return "\n".join(result) + "\n"
 
 
+def move_task_to_pending_end(content: str, task_line: str, from_section: str = "RUNNING") -> str:
+    """RUNNING 등에서 제거 후 PENDING **맨 끝**에 추가 (에이전트 대기가 큐를 막지 않게)."""
+    lines = content.splitlines()
+    result: list[str] = []
+    removed = False
+    current_section = None
+    pending_header_idx = None
+
+    for i, line in enumerate(lines):
+        m = re.match(r"^## (.+)$", line)
+        if m:
+            current_section = m.group(1).strip()
+            if current_section == "PENDING":
+                pending_header_idx = len(result)
+        if current_section == from_section and line.strip() == task_line and not removed:
+            removed = True
+            continue
+        result.append(line)
+
+    # PENDING 섹션 끝(다음 ## 직전)에 삽입
+    insert_at = None
+    if pending_header_idx is not None:
+        insert_at = pending_header_idx + 1
+        j = pending_header_idx + 1
+        while j < len(result):
+            if re.match(r"^## ", result[j]):
+                break
+            insert_at = j + 1
+            j += 1
+        # skip trailing blank lines inside section for cleaner append
+        while insert_at > pending_header_idx + 1 and result[insert_at - 1].strip() == "":
+            insert_at -= 1
+        result.insert(insert_at, task_line)
+        if insert_at + 1 >= len(result) or result[insert_at + 1].strip() != "":
+            pass
+    else:
+        result.extend(["", "## PENDING", "", task_line])
+
+    return "\n".join(result) + "\n"
+
+
 def rebuild_tasks_md(sections: dict[str, list[str]], header: str) -> str:
     """섹션 딕셔너리에서 TASKS.md 재구성"""
     lines = [header.strip(), ""]
@@ -183,6 +235,21 @@ def preflight_check() -> list[str]:
     if not (ROOT / "RULES.md").exists():
         issues.append("RULES.md 파일이 없습니다")
 
+    # 3b. Loop Engineering 작업 자산
+    for rel in (
+        "auto_dev/loops.json",
+        "auto_dev/eval_rubric.md",
+        "auto_dev/exit_conditions.md",
+        "auto_dev/human_gates.md",
+        "docs/LOOP_ENGINEERING_AUTO_DEV.md",
+        "scripts/loop_verify.py",
+        "scripts/auto_dev_executor.py",
+        "scripts/decompose_defects.py",
+        "auto_dev/defects_inbox.md",
+    ):
+        if not (ROOT / rel).exists():
+            issues.append(f"루프 작업 자산 누락: {rel}")
+
     # 4. 앱 진입점 확인
     for pf in PROTECTED_FILES:
         full = ROOT / pf
@@ -213,11 +280,141 @@ def check_email_send_risk(task_title: str) -> bool:
     return any(kw in title_lower for kw in danger_keywords)
 
 
+# ── Loop Engineering 헬퍼 ─────────────────────────────────────────────────────
+
+def load_loops() -> dict:
+    if not LOOPS_PATH.exists():
+        return {"loops": {}, "defaults": {"max_retry": MAX_RETRY}}
+    try:
+        return json.loads(LOOPS_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {"loops": {}, "defaults": {"max_retry": MAX_RETRY}}
+
+
+def parse_task_meta(task_title: str) -> tuple[str, str]:
+    """제목에서 optional `loop:name` 메타 추출. 반환 (loop_key, cleaned_title)."""
+    m = re.search(r"\bloop:([a-z0-9\-]+)\b", task_title, re.I)
+    if m:
+        key = m.group(1).lower()
+        cleaned = (task_title[: m.start()] + task_title[m.end() :]).strip(" -—:")
+        return key, cleaned or task_title
+    return "", task_title
+
+
+def infer_loop_key(task_title: str) -> str:
+    meta, _ = parse_task_meta(task_title)
+    if meta:
+        return meta
+    t = task_title.lower()
+    if any(k in t for k in ("coverage", "수집", "core_sources", "3대 소스", "checklist")):
+        return "coverage-sentinel"
+    if any(k in t for k in ("fp", "fn", "accuracy", "골든", "빈틈", "matrix", "오탐", "누락")):
+        return "accuracy-defect"
+    if any(k in t for k in ("gate", "리콜", "recall", "pytest 실패", "회귀", "fix task")):
+        return "gate-repair"
+    if any(k in t for k in ("고객", "intake", "수신자 요청", "비전", "제휴")):
+        return "product-vision"
+    return "coding-fix"
+
+
+def format_loop_summary(loop_key: str, loop: dict | None) -> str:
+    if not loop:
+        return f"**루프:** `{loop_key}` (정의 없음 — ESC_UNKNOWN_EXIT)\n"
+    trigger = ", ".join(loop.get("trigger") or []) or "—"
+    execute = ", ".join(loop.get("execute") or []) or "—"
+    verify = ", ".join(loop.get("verify") or []) or "—"
+    memory = ", ".join(loop.get("memory") or []) or "—"
+    exit_block = loop.get("exit") or {}
+    exit_s = (
+        f"success={exit_block.get('success')}; "
+        f"escalate={exit_block.get('escalate')}"
+    )
+    gate = loop.get("human_gate") or "없음(L1 무인)"
+    return (
+        f"**루프:** `{loop_key}` ({loop.get('id', '?')} / {loop.get('tier', '?')}) "
+        f"— {loop.get('name', '')}\n\n"
+        f"| 요소 | 내용 |\n|------|------|\n"
+        f"| 트리거 | {trigger} |\n"
+        f"| 실행 | {execute} |\n"
+        f"| 검증 | {verify} |\n"
+        f"| 메모리 | {memory} |\n"
+        f"| 종료 | {exit_s} |\n"
+        f"| 사람 게이트 | {gate} |\n"
+    )
+
+
+def run_loop_verify() -> dict:
+    """scripts/loop_verify.py 호출. Secret 미출력."""
+    cmd = [sys.executable, str(ROOT / "scripts" / "loop_verify.py"), "--json"]
+    if VERIFY_QUICK:
+        cmd.append("--quick")
+    if VERIFY_CORE:
+        cmd.append("--with-core-sources")
+    try:
+        proc = subprocess.run(
+            cmd,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return {"ok": False, "error": str(e), "checks": []}
+    try:
+        data = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        data = {"ok": proc.returncode == 0, "raw_tail": (proc.stdout or proc.stderr or "")[-500:]}
+    data.setdefault("ok", proc.returncode == 0)
+    data["exit_code"] = proc.returncode
+    return data
+
+
+def next_task_id(sections: dict[str, list[str]]) -> str:
+    """TASKS 전체에서 최대 번호+1."""
+    max_n = 0
+    for tasks in sections.values():
+        for line in tasks:
+            m = re.match(r"^- (TASK-(\d+)):", line)
+            if m:
+                max_n = max(max_n, int(m.group(2)))
+    return f"TASK-{max_n + 1:03d}"
+
+
+def insert_pending_task(content: str, task_line: str) -> str:
+    """PENDING 섹션 헤더 바로 아래에 task 한 줄 삽입."""
+    lines = content.splitlines()
+    result = []
+    inserted = False
+    current = None
+    for line in lines:
+        m = re.match(r"^## (.+)$", line)
+        if m:
+            current = m.group(1).strip()
+        result.append(line)
+        if current == "PENDING" and m and not inserted:
+            result.append(task_line)
+            inserted = True
+    if not inserted:
+        result.append("")
+        result.append("## PENDING")
+        result.append("")
+        result.append(task_line)
+    return "\n".join(result) + "\n"
+
+
+def create_fix_task(content: str, parent_id: str, parent_title: str, reason: str) -> tuple[str, str]:
+    sections = parse_tasks(content)
+    fix_id = next_task_id(sections)
+    title = f"loop:gate-repair FIX {parent_id} — {reason[:80]}"
+    task_line = f"- {fix_id}: {title}"
+    return insert_pending_task(content, task_line), fix_id
+
+
 # ── 메인 실행 ────────────────────────────────────────────────────────────────
 
 def main() -> int:
     log("=== Auto Dev Queue 시작 ===")
-    log(f"DRY_RUN: {DRY_RUN}")
+    log(f"DRY_RUN: {DRY_RUN} AGENT_ENABLED: {AGENT_ENABLED} FORCE_DONE: {FORCE_DONE}")
     log(f"시간: {datetime.now(KST).strftime('%Y-%m-%d %H:%M KST')}")
 
     # 1. Preflight Check
@@ -230,6 +427,9 @@ def main() -> int:
         return 1
     log("  ✅ Preflight Check 통과")
 
+    loops_doc = load_loops()
+    loops = loops_doc.get("loops") or {}
+
     # 2. 상태 로드
     state = load_state()
 
@@ -239,153 +439,304 @@ def main() -> int:
 
     pending = sections.get("PENDING", [])
     if not pending:
-        log("  ℹ️ PENDING 작업 없음. 종료.")
-        write_summary("## ✅ Auto Dev Queue\n\n처리할 PENDING 작업이 없습니다.")
+        log("  ℹ️ PENDING 작업 없음 — drift verify만 수행")
+        verify = run_loop_verify()
+        drift_cmd = [sys.executable, str(ROOT / "scripts" / "loop_verify.py"), "--drift", "--json"]
+        try:
+            drift_proc = subprocess.run(drift_cmd, cwd=ROOT, capture_output=True, text=True, timeout=120)
+            drift = json.loads(drift_proc.stdout or "{}")
+        except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+            drift = {"ok": False}
+        write_summary(
+            "## ✅ Auto Dev Queue\n\n처리할 PENDING 작업이 없습니다.\n\n"
+            f"- loop_verify: {'pass' if verify.get('ok') else 'fail'}\n"
+            f"- drift: {'pass' if drift.get('ok') else 'fail'}\n"
+        )
         save_state(state)
-        return 0
+        return 0 if verify.get("ok", False) else 1
 
     # 4. 다음 TASK 선택
     task_line = pending[0]
     task_id, task_title = extract_task_info(task_line)
+    loop_key = infer_loop_key(task_title)
+    loop = loops.get(loop_key)
     log(f"  📋 선택: {task_id} — {task_title}")
+    log(f"  🔁 루프: {loop_key}")
+
+    if not loop:
+        log(f"  🚫 루프 정의 없음 → BLOCKED (ESC_UNKNOWN_EXIT)")
+        if not DRY_RUN:
+            new_content = move_task(content, task_line, "PENDING", "BLOCKED")
+            TASKS_PATH.write_text(new_content, encoding="utf-8")
+            append_to_log(BLOCKED_PATH, task_id, task_title, "루프 정의 없음 — write 권한 회수")
+        state["last_task"] = task_id
+        save_state(state)
+        write_summary(
+            f"## 🚫 BLOCKED (ESC_UNKNOWN_EXIT)\n\n`{task_id}`: {task_title}\n\n"
+            f"루프 `{loop_key}` 가 loops.json에 없습니다."
+        )
+        return 0
 
     # 5. 재시도 횟수 확인
     retry_count = state.get("retry_counts", {}).get(task_id, 0)
     if retry_count >= MAX_RETRY:
         log(f"  ⚠️ {task_id} 최대 재시도 횟수({MAX_RETRY}) 초과 → BLOCKED")
-        new_content = move_task(content, task_line, "PENDING", "BLOCKED")
-        TASKS_PATH.write_text(new_content, encoding="utf-8")
-        append_to_log(BLOCKED_PATH, task_id, task_title, f"최대 재시도 {MAX_RETRY}회 초과")
+        if not DRY_RUN:
+            new_content = move_task(content, task_line, "PENDING", "BLOCKED")
+            TASKS_PATH.write_text(new_content, encoding="utf-8")
+            append_to_log(BLOCKED_PATH, task_id, task_title, f"최대 재시도 {MAX_RETRY}회 초과")
         state["last_task"] = task_id
         save_state(state)
-        write_summary(f"## ⚠️ BLOCKED\n\n`{task_id}`: {task_title}\n\n사유: 최대 재시도 횟수 초과")
+        write_summary(
+            f"## ⚠️ BLOCKED\n\n`{task_id}`: {task_title}\n\n사유: 최대 재시도 횟수 초과\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
         return 0
 
     # 6. 이메일 발송 위험 감지
     if check_email_send_risk(task_title):
         log(f"  🚫 {task_id} 이메일 발송 위험 감지 → BLOCKED")
-        new_content = move_task(content, task_line, "PENDING", "BLOCKED")
-        TASKS_PATH.write_text(new_content, encoding="utf-8")
-        append_to_log(BLOCKED_PATH, task_id, task_title, "이메일 발송 위험 감지 — 수동 처리 필요")
+        if not DRY_RUN:
+            new_content = move_task(content, task_line, "PENDING", "BLOCKED")
+            TASKS_PATH.write_text(new_content, encoding="utf-8")
+            append_to_log(BLOCKED_PATH, task_id, task_title, "이메일 발송 위험 감지 — 수동 처리 필요")
         state["last_task"] = task_id
         save_state(state)
-        write_summary(f"## 🚫 BLOCKED (이메일 안전규칙)\n\n`{task_id}`: {task_title}")
+        write_summary(
+            f"## 🚫 BLOCKED (이메일 안전규칙 / G4)\n\n`{task_id}`: {task_title}\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
         return 0
 
-    # 7. RUNNING으로 이동
-    new_content = move_task(content, task_line, "PENDING", "RUNNING")
-    if not DRY_RUN:
-        TASKS_PATH.write_text(new_content, encoding="utf-8")
+    # 6b. 사람 게이트 — 단, '설계만/훅 문서화'는 안전 실행기로 닫을 수 있으면 통과
+    human_gate = loop.get("human_gate")
+    if human_gate and loop_key in ("accuracy-defect", "product-vision"):
+        design_only = any(k in task_title for k in ("설계만", "훅을 설계", "문서화", "decompose"))
+        if design_only and SAFE_EXECUTOR and not DRY_RUN:
+            try:
+                ex = _load_executor()
+                er = ex.execute_task(task_id, task_title, dry_run=False)
+                if er.status in ("DONE_NOOP", "DONE_PATCHED"):
+                    log(f"  ✅ 설계-only accuracy TASK 안전 종료: {er.reason}")
+                    # PENDING → DONE 직접
+                    done_content = move_task(content, task_line, "PENDING", "DONE")
+                    TASKS_PATH.write_text(done_content, encoding="utf-8")
+                    append_to_log(DONE_PATH, task_id, task_title, er.reason)
+                    state["last_task"] = task_id
+                    state["last_result"] = "DONE"
+                    save_state(state)
+                    write_summary(
+                        f"## ✅ DONE (design-only / safe executor)\n\n"
+                        f"`{task_id}`: {task_title}\n\n{er.reason}\n\n"
+                        + format_loop_summary(loop_key, loop)
+                    )
+                    return 0
+            except Exception as e:  # noqa: BLE001
+                log(f"  design-only executor skip: {e}")
+        log(f"  ⏸️ {task_id} 사람 게이트 {human_gate} 필요 — PENDING 끝으로 이동")
+        if not DRY_RUN:
+            rotated = move_task_to_pending_end(content, task_line, from_section="PENDING")
+            TASKS_PATH.write_text(rotated, encoding="utf-8")
+        write_summary(
+            f"## ⏸️ AWAITING_HUMAN ({human_gate})\n\n"
+            f"`{task_id}`: {task_title}\n\n"
+            f"이 루프는 사람 승인 전 L1 실행 금지. 큐 정체 방지를 위해 PENDING 끝으로 이동.\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
+        state["last_task"] = task_id
+        state["last_result"] = "AWAITING_HUMAN"
+        save_state(state)
+        return 0
 
-    log(f"  ▶ RUNNING: {task_id}")
-
+    # 7. DRY_RUN: 미리보기만 (실행기 예상 결과 포함)
     if DRY_RUN:
-        log(f"  🏷️ DRY_RUN: 실제 변경 없이 미리보기 종료")
-        profile_name, _ = ("?", {})
-        try:
-            loop_mod = _load_loop_runner()
-            if loop_mod:
-                profile_name, _ = loop_mod.classify_profile(task_title)
-        except Exception:
-            pass
+        preview = ""
+        if SAFE_EXECUTOR:
+            try:
+                ex = _load_executor()
+                er = ex.execute_task(task_id, task_title, dry_run=True)
+                preview = f"\n\n**안전 실행기 예상:** `{er.status}` — {er.reason}"
+            except Exception as e:  # noqa: BLE001 — dry-run 진단만
+                preview = f"\n\n**안전 실행기 예상:** 오류 `{e}`"
+        log("  🏷️ DRY_RUN: 실제 변경 없이 미리보기 종료")
         write_summary(
             f"## 🏷️ Dry Run\n\n"
             f"다음 처리 대상: `{task_id}`: {task_title}\n\n"
-            f"추정 프로필: `{profile_name}`\n\n"
-            f"실제 변경은 수행하지 않았습니다."
+            + format_loop_summary(loop_key, loop)
+            + preview
+            + "\n\n실제 변경은 수행하지 않았습니다."
         )
         save_state(state)
         return 0
 
-    # 8. L1 루프 실행 (loop_runner → loop_verify)
-    loop_mod = _load_loop_runner()
-    if loop_mod is None:
-        task_result = "FAILED"
-        task_reason = "loop_runner 로드 실패"
-    else:
-        loop_out = loop_mod.run_task(task_id, task_title)
-        status_map = {
-            "DONE": "DONE",
-            "FAILED": "FAILED",
-            "BLOCKED": "BLOCKED",
-            "AGENT_REQUIRED": "PENDING",  # Phase B까지 큐에 유지
-            "SKIPPED": "DONE",
-        }
-        task_result = status_map.get(loop_out.status, "FAILED")
-        task_reason = f"[{loop_out.profile}] {loop_out.reason}"
-        if loop_out.verify_report:
-            passed = sum(1 for s in loop_out.verify_report.get("steps", []) if s.get("ok"))
-            total = len(loop_out.verify_report.get("steps", []))
-            task_reason += f" (verify {passed}/{total})"
-        if loop_out.status == "AGENT_REQUIRED":
-            # RUNNING → PENDING 복귀 (에이전트 연동 전)
-            final_content = move_task(
-                TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "PENDING"
-            )
-            TASKS_PATH.write_text(final_content, encoding="utf-8")
-            log(f"  ⏸ AGENT_REQUIRED: {task_id} — PENDING 유지")
-            write_summary(
-                f"## ⏸ Agent Required\n\n"
-                f"`{task_id}`: {task_title}\n\n"
-                f"프로필: `{loop_out.profile}`\n\n"
-                f"Cloud Agent 연동(Phase B) 후 자동 구현 예정."
-            )
-            state["last_task"] = task_id
-            save_state(state)
-            return 0
+    # 8. RUNNING으로 이동
+    new_content = move_task(content, task_line, "PENDING", "RUNNING")
+    TASKS_PATH.write_text(new_content, encoding="utf-8")
+    log(f"  ▶ RUNNING: {task_id}")
 
-    # 9. 결과 처리
-    if task_result == "DONE":
-        final_content = move_task(
-            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "DONE"
-        )
-        TASKS_PATH.write_text(final_content, encoding="utf-8")
-        append_to_log(DONE_PATH, task_id, task_title)
-        log(f"  ✅ DONE: {task_id}")
-        summary_icon = "✅"
-    elif task_result == "BLOCKED":
-        final_content = move_task(
-            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "BLOCKED"
-        )
-        TASKS_PATH.write_text(final_content, encoding="utf-8")
-        append_to_log(BLOCKED_PATH, task_id, task_title, task_reason)
-        log(f"  🚫 BLOCKED: {task_id} — {task_reason}")
-        summary_icon = "🚫"
-    else:
-        final_content = move_task(
+    # 9. 검증 게이트 (종료 조건의 핵심)
+    log("--- loop_verify ---")
+    verify = run_loop_verify()
+    verify_ok = bool(verify.get("ok"))
+    log(f"  loop_verify: {'✅' if verify_ok else '❌'}")
+
+    if not verify_ok:
+        task_result = "FAILED"
+        task_reason = "loop_verify 실패 — 종료 조건 FAIL_RETRY"
+        failed_content = move_task(
             TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "FAILED"
         )
-        TASKS_PATH.write_text(final_content, encoding="utf-8")
+        failed_content, fix_id = create_fix_task(
+            failed_content, task_id, task_title, "loop_verify failed"
+        )
+        TASKS_PATH.write_text(failed_content, encoding="utf-8")
         append_to_log(FAILED_PATH, task_id, task_title, task_reason)
         retry_counts = state.get("retry_counts", {})
         retry_counts[task_id] = retry_count + 1
         state["retry_counts"] = retry_counts
-        log(f"  ❌ FAILED: {task_id} — {task_reason}")
-        summary_icon = "❌"
+        state["last_task"] = task_id
+        state["last_result"] = task_result
+        save_state(state)
+        write_summary(
+            f"## ❌ FAILED\n\n"
+            f"**처리:** `{task_id}`: {task_title}\n"
+            f"**결과:** {task_result}\n"
+            f"**사유:** {task_reason}\n"
+            f"**FIX TASK:** `{fix_id}`\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
+        log(f"  ❌ FAILED + FIX {fix_id}")
+        return 1
 
-    # 10. 상태 저장
+    # 10. 안전 실행기 (결정적 L1 실행)
+    exec_status = None
+    exec_reason = ""
+    if SAFE_EXECUTOR:
+        log("--- safe executor ---")
+        try:
+            ex = _load_executor()
+            er = ex.execute_task(task_id, task_title, dry_run=False)
+            exec_status, exec_reason = er.status, er.reason
+            log(f"  executor: {exec_status} — {exec_reason}")
+            if er.changed_files:
+                log(f"  changed: {er.changed_files}")
+                # 패치 후 재검증
+                verify2 = run_loop_verify()
+                if not verify2.get("ok"):
+                    exec_status = "BLOCKED"
+                    exec_reason = "패치 후 loop_verify 실패 — 보호/회귀"
+        except Exception as e:  # noqa: BLE001
+            exec_status = "NEEDS_AGENT"
+            exec_reason = f"executor error: {e}"
+            log(f"  executor error: {e}")
+
+    if exec_status == "BLOCKED":
+        final_content = move_task(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "BLOCKED"
+        )
+        TASKS_PATH.write_text(final_content, encoding="utf-8")
+        append_to_log(BLOCKED_PATH, task_id, task_title, exec_reason)
+        state["last_task"] = task_id
+        state["last_result"] = "BLOCKED"
+        save_state(state)
+        write_summary(
+            f"## 🚫 BLOCKED\n\n`{task_id}`: {task_title}\n\n{exec_reason}\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
+        return 0
+
+    if exec_status in ("DONE_NOOP", "DONE_PATCHED"):
+        final_content = move_task(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "DONE"
+        )
+        TASKS_PATH.write_text(final_content, encoding="utf-8")
+        append_to_log(DONE_PATH, task_id, task_title, exec_reason)
+        state["last_task"] = task_id
+        state["last_result"] = "DONE"
+        save_state(state)
+        remaining = parse_tasks(TASKS_PATH.read_text(encoding="utf-8")).get("PENDING", [])
+        next_info = ""
+        if remaining:
+            nid, ntitle = extract_task_info(remaining[0])
+            next_info = f"\n\n**다음 TASK:** `{nid}`: {ntitle}"
+        write_summary(
+            f"## ✅ DONE (safe executor)\n\n"
+            f"**처리:** `{task_id}`: {task_title}\n"
+            f"**결과:** {exec_status}\n"
+            f"**사유:** {exec_reason}\n\n"
+            + format_loop_summary(loop_key, loop)
+            + next_info
+        )
+        log(f"  ✅ DONE via executor: {task_id}")
+        log("=== 완료 ===")
+        return 0
+
+    # 11. 에이전트 슬롯 필요 — PENDING 맨 뒤로 보내 큐 정체 방지
+    if not AGENT_ENABLED and not FORCE_DONE:
+        back = move_task_to_pending_end(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, from_section="RUNNING"
+        )
+        TASKS_PATH.write_text(back, encoding="utf-8")
+        task_result = "AWAITING_AGENT"
+        task_reason = exec_reason or (
+            "loop_verify 통과. 안전 실행기 미처리 + AUTO_DEV_AGENT 미설정 "
+            "(허위 DONE 금지)."
+        )
+        state["last_task"] = task_id
+        state["last_result"] = task_result
+        save_state(state)
+        remaining = parse_tasks(TASKS_PATH.read_text(encoding="utf-8")).get("PENDING", [])
+        next_info = ""
+        if remaining:
+            nid, ntitle = extract_task_info(remaining[0])
+            next_info = f"\n\n**다음 TASK:** `{nid}`: {ntitle}"
+        write_summary(
+            f"## ⏸️ AWAITING_AGENT\n\n"
+            f"**처리:** `{task_id}`: {task_title}\n"
+            f"**결과:** {task_result}\n"
+            f"**사유:** {task_reason}\n\n"
+            + format_loop_summary(loop_key, loop)
+            + next_info
+        )
+        log(f"  ⏸️ AWAITING_AGENT: {task_id}")
+        log("=== 완료 ===")
+        return 0
+
+    # 12. 에이전트 활성 또는 FORCE_DONE
+    if AGENT_ENABLED:
+        task_result = "DONE"
+        task_reason = (
+            "AUTO_DEV_AGENT=true — 외부 에이전트 슬롯이 패치를 완료한 것으로 간주(연동 P4)"
+        )
+    else:
+        task_result = "DONE"
+        task_reason = "AUTO_DEV_FORCE_DONE=true — 검증 통과 후 강제 DONE"
+
+    final_content = move_task(
+        TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "DONE"
+    )
+    TASKS_PATH.write_text(final_content, encoding="utf-8")
+    append_to_log(DONE_PATH, task_id, task_title)
     state["last_task"] = task_id
+    state["last_result"] = task_result
     save_state(state)
 
-    # 11. 다음 PENDING 확인
-    remaining_content = TASKS_PATH.read_text(encoding="utf-8")
-    remaining_sections = parse_tasks(remaining_content)
+    remaining_sections = parse_tasks(TASKS_PATH.read_text(encoding="utf-8"))
     next_pending = remaining_sections.get("PENDING", [])
-
-    # 12. Summary 출력
     next_info = ""
     if next_pending:
         next_id, next_title = extract_task_info(next_pending[0])
         next_info = f"\n\n**다음 TASK:** `{next_id}`: {next_title}"
 
     write_summary(
-        f"## {summary_icon} Auto Dev Queue 결과\n\n"
+        f"## ✅ Auto Dev Queue 결과\n\n"
         f"**처리:** `{task_id}`: {task_title}\n"
         f"**결과:** {task_result}\n"
-        f"**사유:** {task_reason}"
-        f"{next_info}"
+        f"**사유:** {task_reason}\n\n"
+        + format_loop_summary(loop_key, loop)
+        + next_info
     )
-
+    log(f"  ✅ DONE: {task_id}")
     log("=== 완료 ===")
     return 0
 

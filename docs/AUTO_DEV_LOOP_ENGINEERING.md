@@ -1,6 +1,6 @@
 # Mail 프로젝트 자동개발 시스템 — 루프 엔지니어링 설계
 
-> **상태:** 설계 + 1차 인프라 (`scripts/loop_runner.py`, `scripts/loop_verify.py`, `auto_dev/loop_config.json`)
+> **상태:** 보조 설계 문서. **구현·운영 기준은 `docs/LOOP_ENGINEERING_AUTO_DEV.md`** (main에 병합된 L1/L2 루프, `loops.json`, `auto_dev_executor.py`).
 > **목표:** 사람이 매번 에이전트에게 지시하지 않고, **에이전트를 돌리는 루프**를 설계해 TASK 큐·검증·PR까지 무인으로 이어지게 한다.
 > **원칙:** 판단 기준은 재사용 가능한 **작업 자산(work assets)** 에 담고, 루프 전체가 최적화 단위가 된다.
 

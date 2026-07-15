@@ -1,189 +1,301 @@
 #!/usr/bin/env python3
-"""Loop verification — L1 검증 게이트 실행기.
+"""Loop verification entrypoint — Auto Dev L1 검증 단일 진입점.
 
-TASK 프로필 tier에 따라 recall_zero_gate, core_sources_checklist 등을 실행하고
-verify_report.json 형태의 판정을 반환한다.
+eval_rubric.md 의 V1–V3(및 옵션 V6)를 실행한다.
+Secret 값은 출력하지 않는다.
 
 Usage:
   python3 scripts/loop_verify.py
-  python3 scripts/loop_verify.py --tier 2
-  python3 scripts/loop_verify.py --tier 1 --json
+  python3 scripts/loop_verify.py --json
+  python3 scripts/loop_verify.py --quick          # unit only
+  python3 scripts/loop_verify.py --with-core-sources
+  python3 scripts/loop_verify.py --drift          # 작업 자산 드리프트 점검
+  python3 scripts/loop_verify.py --base-ref origin/main  # 보호파일 diff 기준
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import re
 import subprocess
 import sys
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = ROOT / "auto_dev" / "loop_config.json"
-PROTECTED = {"monitor.py", "streamlit_app.py", ".env", ".env.example"}
+KST = timezone(timedelta(hours=9))
+PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
+WORK_ASSETS = (
+    "RULES.md",
+    "TASKS.md",
+    "auto_dev/loops.json",
+    "auto_dev/eval_rubric.md",
+    "auto_dev/exit_conditions.md",
+    "auto_dev/human_gates.md",
+    "auto_dev/defects_inbox.md",
+    "docs/LOOP_ENGINEERING_AUTO_DEV.md",
+    "scripts/auto_dev_queue.py",
+    "scripts/auto_dev_executor.py",
+    "scripts/decompose_defects.py",
+    "scripts/loop_verify.py",
+)
 
 
-def _env() -> dict[str, str]:
+def _env_for_tests() -> dict:
     env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
     for key in ("BIZINFO_API_KEY", "ANTHROPIC_API_KEY", "GMAIL_ADDRESS", "GMAIL_APP_PASSWORD"):
-        env.setdefault(key, "loop-verify")
+        env.setdefault(key, "gate-check")
     return env
 
 
-def _run(cmd: list[str], cwd: Path | None = None) -> dict:
+def _run(cmd: list[str], timeout: int = 600) -> dict:
     proc = subprocess.run(
-        cmd, cwd=cwd or ROOT, capture_output=True, text=True, env=_env()
+        cmd,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        env=_env_for_tests(),
+        timeout=timeout,
     )
-    out = (proc.stdout or "") + (proc.stderr or "")
+    out = ((proc.stdout or "") + (proc.stderr or "")).strip()
+    tail = "\n".join(out.splitlines()[-8:]) if out else ""
     return {
-        "cmd": cmd,
+        "cmd": " ".join(cmd),
         "ok": proc.returncode == 0,
         "exit_code": proc.returncode,
-        "tail": out.strip().splitlines()[-3:] if out.strip() else [],
+        "tail": tail,
     }
 
 
-def step_preflight() -> dict:
-    issues: list[str] = []
-    for name in ("TASKS.md", "RULES.md", "AGENTS.md"):
-        if not (ROOT / name).exists():
-            issues.append(f"missing {name}")
-    content = (ROOT / "TASKS.md").read_text(encoding="utf-8") if (ROOT / "TASKS.md").exists() else ""
-    for section in ("PENDING", "RUNNING", "DONE", "FAILED", "BLOCKED"):
-        if f"## {section}" not in content:
-            issues.append(f"TASKS.md missing ## {section}")
-    return {"step": "preflight", "ok": not issues, "issues": issues}
-
-
-def step_email_send_risk(task_title: str = "") -> dict:
-    danger = [
-        "실제 발송", "send email", "smtp send", "메일 발송 실행",
-        "이메일 전송", "real send", "production send",
-    ]
-    hit = [kw for kw in danger if kw in task_title.lower()]
-    return {"step": "email_send_risk", "ok": not hit, "hits": hit}
-
-
-def step_protected_files_diff() -> dict:
-    proc = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD"],
-        cwd=ROOT, capture_output=True, text=True,
-    )
-    changed = [ln.strip() for ln in (proc.stdout or "").splitlines() if ln.strip()]
-    touched = [p for p in changed if Path(p).name in PROTECTED]
-    return {"step": "protected_files_diff", "ok": not touched, "touched": touched}
-
-
-def step_pytest_monitor() -> dict:
-    r = _run([sys.executable, "-m", "pytest", "test_monitor.py", "-q", "--tb=no"])
-    r["step"] = "pytest_monitor"
-    return r
-
-
-def step_recall_zero_gate() -> dict:
-    r = _run([sys.executable, "scripts/recall_zero_gate.py", "--json"])
-    r["step"] = "recall_zero_gate"
-    if r["ok"] and r["tail"]:
-        try:
-            r["report"] = json.loads(r["tail"][-1]) if r["tail"][-1].startswith("{") else None
-        except json.JSONDecodeError:
-            pass
-    return r
-
-
-def step_core_sources_offline() -> dict:
-    r = _run([sys.executable, "scripts/core_sources_checklist.py", "--json"])
-    r["step"] = "core_sources_checklist_offline"
-    return r
-
-
-def step_accuracy_regression() -> dict:
-    path = ROOT / "test_accuracy_regression.py"
-    if not path.exists():
-        return {"step": "test_accuracy_regression", "ok": True, "skipped": True}
-    r = _run([sys.executable, "-m", "pytest", "test_accuracy_regression.py", "-q", "--tb=no"])
-    r["step"] = "test_accuracy_regression"
-    return r
-
-
-STEP_RUNNERS = {
-    "preflight": lambda **_: step_preflight(),
-    "email_send_risk": lambda task_title="", **_: step_email_send_risk(task_title),
-    "protected_files_diff": lambda **_: step_protected_files_diff(),
-    "pytest_monitor": lambda **_: step_pytest_monitor(),
-    "recall_zero_gate": lambda **_: step_recall_zero_gate(),
-    "core_sources_checklist_offline": lambda **_: step_core_sources_offline(),
-    "test_accuracy_regression": lambda **_: step_accuracy_regression(),
-}
-
-
-def load_tier_steps(tier: int) -> list[str]:
-    cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    tiers = cfg.get("verification_tiers", {})
-    steps: list[str] = []
-    for t in range(0, tier + 1):
-        key = str(t)
-        if key in tiers:
-            steps.extend(tiers[key].get("steps", []))
-    # dedupe preserving order
-    seen: set[str] = set()
-    out: list[str] = []
-    for s in steps:
-        if s not in seen:
-            seen.add(s)
-            out.append(s)
-    return out
-
-
-def run_verification(tier: int = 1, task_title: str = "") -> dict:
-    steps = load_tier_steps(tier)
-    results: list[dict] = []
-    for name in steps:
-        runner = STEP_RUNNERS.get(name)
-        if not runner:
-            results.append({"step": name, "ok": False, "error": "unknown step"})
-            continue
-        results.append(runner(task_title=task_title))
-
-    all_pass = all(r.get("ok") for r in results)
-    blocked = any(
-        r.get("step") == "email_send_risk" and not r.get("ok") for r in results
-    ) or any(
-        r.get("step") == "protected_files_diff" and not r.get("ok") for r in results
-    )
+def check_protected_files(base_ref: str | None) -> dict:
+    """V1: 보호 파일 변경 여부. base_ref 없으면 working tree vs HEAD."""
+    changed: list[str] = []
+    try:
+        if base_ref:
+            proc = subprocess.run(
+                ["git", "diff", "--name-only", f"{base_ref}...HEAD"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            names = {n.strip() for n in (proc.stdout or "").splitlines() if n.strip()}
+            # also include unstaged/staged local changes
+            proc2 = subprocess.run(
+                ["git", "diff", "--name-only", "HEAD"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            names |= {n.strip() for n in (proc2.stdout or "").splitlines() if n.strip()}
+        else:
+            proc = subprocess.run(
+                ["git", "diff", "--name-only", "HEAD"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            names = {n.strip() for n in (proc.stdout or "").splitlines() if n.strip()}
+            proc_staged = subprocess.run(
+                ["git", "diff", "--name-only", "--cached"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            names |= {n.strip() for n in (proc_staged.stdout or "").splitlines() if n.strip()}
+        for pf in PROTECTED:
+            if pf in names or any(n == pf or n.endswith("/" + pf) for n in names):
+                changed.append(pf)
+    except OSError as e:
+        return {"id": "V1", "name": "protected_files", "ok": False, "error": str(e), "changed": []}
     return {
-        "tier": tier,
-        "all_pass": all_pass,
-        "blocked": blocked,
-        "steps": results,
+        "id": "V1",
+        "name": "protected_files",
+        "ok": len(changed) == 0,
+        "changed": changed,
+        "base_ref": base_ref or "HEAD(working-tree)",
+    }
+
+
+def check_unit() -> dict:
+    r = _run([sys.executable, "-m", "pytest", "test_monitor.py", "-q", "--tb=no"], timeout=300)
+    return {"id": "V2", "name": "unit_pytest", **r}
+
+
+def check_recall() -> dict:
+    r = _run([sys.executable, "scripts/recall_zero_gate.py"], timeout=600)
+    return {"id": "V3", "name": "recall_zero_gate", **r}
+
+
+def check_core_sources() -> dict:
+    r = _run([sys.executable, "scripts/core_sources_checklist.py"], timeout=600)
+    return {"id": "V6", "name": "core_sources_checklist", **r}
+
+
+def check_work_asset_presence() -> dict:
+    missing = [p for p in WORK_ASSETS if not (ROOT / p).exists()]
+    return {
+        "id": "D1",
+        "name": "work_assets_present",
+        "ok": len(missing) == 0,
+        "missing": missing,
+    }
+
+
+def check_loops_schema() -> dict:
+    path = ROOT / "auto_dev" / "loops.json"
+    issues: list[str] = []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        return {"id": "D2", "name": "loops_schema", "ok": False, "issues": [str(e)]}
+    loops = data.get("loops") or {}
+    required = ("trigger", "execute", "verify", "memory", "exit")
+    for name, loop in loops.items():
+        for key in required:
+            if key not in loop:
+                issues.append(f"{name}: missing {key}")
+        exit_block = loop.get("exit") or {}
+        if not exit_block.get("escalate") and not exit_block.get("success"):
+            issues.append(f"{name}: exit has no success/escalate")
+    return {"id": "D2", "name": "loops_schema", "ok": len(issues) == 0, "issues": issues}
+
+
+def check_tasks_structure() -> dict:
+    path = ROOT / "TASKS.md"
+    if not path.exists():
+        return {"id": "D3", "name": "tasks_structure", "ok": False, "issues": ["TASKS.md missing"]}
+    text = path.read_text(encoding="utf-8")
+    issues = []
+    for section in ("PENDING", "RUNNING", "DONE", "FAILED", "BLOCKED"):
+        if f"## {section}" not in text:
+            issues.append(f"missing ## {section}")
+    # orphan RUNNING warning (drift)
+    import re
+
+    m = re.search(r"## RUNNING\n+(.*?)(?=\n## |\Z)", text, re.S)
+    running_items = []
+    if m:
+        running_items = [ln for ln in m.group(1).splitlines() if ln.strip().startswith("- TASK-")]
+    return {
+        "id": "D3",
+        "name": "tasks_structure",
+        "ok": len(issues) == 0,
+        "issues": issues,
+        "running_orphan_count": len(running_items),
+        "running": running_items,
+    }
+
+
+def check_pending_backlog() -> dict:
+    """드리프트: PENDING 과다 적체는 L2 개입 신호."""
+    path = ROOT / "TASKS.md"
+    text = path.read_text(encoding="utf-8") if path.exists() else ""
+    import re
+
+    m = re.search(r"## PENDING\n+(.*?)(?=\n## |\Z)", text, re.S)
+    pending = []
+    if m:
+        pending = [ln.strip() for ln in m.group(1).splitlines() if ln.strip().startswith("- TASK-")]
+    warn_threshold = 20
+    return {
+        "id": "D4",
+        "name": "pending_backlog",
+        "ok": True,  # 경고만 — 검증 실패로 만들지 않음
+        "count": len(pending),
+        "warn": len(pending) >= warn_threshold,
+        "threshold": warn_threshold,
+    }
+
+
+def run_verify(
+    *,
+    quick: bool = False,
+    with_core_sources: bool = False,
+    base_ref: str | None = None,
+    drift_only: bool = False,
+) -> dict:
+    checks: list[dict] = []
+    if drift_only:
+        checks = [
+            check_work_asset_presence(),
+            check_loops_schema(),
+            check_tasks_structure(),
+            check_pending_backlog(),
+        ]
+    else:
+        checks.append(check_protected_files(base_ref))
+        checks.append(check_unit())
+        if not quick:
+            checks.append(check_recall())
+        if with_core_sources:
+            checks.append(check_core_sources())
+        # always attach lightweight drift presence (non-fatal unless missing assets when expected)
+        checks.append(check_work_asset_presence())
+        checks.append(check_loops_schema())
+
+    # Fatal: V* and D1/D2; D3 issues fatal; D4 warn only
+    fatal_ids = {"V1", "V2", "V3", "V6", "D1", "D2", "D3"}
+    ok = True
+    for c in checks:
+        if c.get("id") in fatal_ids and not c.get("ok", False):
+            ok = False
+        if c.get("id") == "D4" and c.get("warn"):
+            pass
+
+    return {
+        "ok": ok,
+        "ts": datetime.now(KST).isoformat(),
+        "mode": "drift" if drift_only else ("quick" if quick else "full"),
+        "checks": checks,
     }
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Mail auto-dev loop verification")
-    parser.add_argument("--tier", type=int, default=1)
-    parser.add_argument("--task-title", default="")
-    parser.add_argument("--json", action="store_true")
-    parser.add_argument("--out", type=Path, default=None)
+    parser = argparse.ArgumentParser(description="Mail Auto Dev loop verifier")
+    parser.add_argument("--json", action="store_true", help="JSON 출력")
+    parser.add_argument("--quick", action="store_true", help="unit + protected only")
+    parser.add_argument("--with-core-sources", action="store_true")
+    parser.add_argument("--drift", action="store_true", help="작업 자산 드리프트만")
+    parser.add_argument("--base-ref", default=None, help="보호파일 diff 기준 ref")
     args = parser.parse_args()
 
-    report = run_verification(tier=args.tier, task_title=args.task_title)
-    text = json.dumps(report, ensure_ascii=False, indent=2)
+    result = run_verify(
+        quick=args.quick,
+        with_core_sources=args.with_core_sources,
+        base_ref=args.base_ref,
+        drift_only=args.drift,
+    )
 
-    if args.out:
-        args.out.write_text(text + "\n", encoding="utf-8")
     if args.json:
-        print(text)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        status = "PASS" if report["all_pass"] else "FAIL"
-        print(f"[loop-verify] tier={args.tier} {status}")
-        for s in report["steps"]:
-            mark = "ok" if s.get("ok") else "FAIL"
-            print(f"  {s.get('step')}: {mark}")
+        print(f"[loop_verify] mode={result['mode']} ok={result['ok']}")
+        for c in result["checks"]:
+            status = "✅" if c.get("ok") else "❌"
+            if c.get("id") == "D4" and c.get("warn"):
+                status = "⚠️"
+            name = c.get("name", c.get("id"))
+            extra = ""
+            if c.get("changed"):
+                extra = f" changed={c['changed']}"
+            if c.get("missing"):
+                extra = f" missing={c['missing']}"
+            if c.get("issues"):
+                extra = f" issues={c['issues']}"
+            if c.get("summary"):
+                extra = f" {c['summary']}"
+            if c.get("tail") and not c.get("ok"):
+                extra = f" | {c['tail'][:200]}"
+            if c.get("id") == "D4":
+                extra = f" pending={c.get('count')} warn={c.get('warn')}"
+            print(f"  {status} {c.get('id')} {name}{extra}")
 
-    return 0 if report["all_pass"] else 1
+    return 0 if result["ok"] else 1
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except subprocess.TimeoutExpired:
+        print("[loop_verify] timeout", file=sys.stderr)
+        sys.exit(2)
