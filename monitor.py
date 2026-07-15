@@ -228,6 +228,11 @@ _APPLICANT_RESTRICT_LIST_RE = re.compile(
     rf"\s*{_APPLICANT_LOCATOR}\s*{_APPLICANT_NOUN}"
 )
 _REGION_TOKEN_RE = re.compile(_APPLICANT_REGION_TOKEN)
+# 인라인 다지역 나열 "서울·인천", "서울ㆍ인천ㆍ강원 권역" — interpunct(가운뎃점류)로 이어진 광역 2개+.
+# 대괄호 밖 표기라 _title_region_tags·소재나열 정규식이 못 잡던 '권역 묶음' own 오차단을 막는다.
+_INLINE_REGION_LIST_RE = re.compile(
+    rf"(?:{_APPLICANT_REGION_TOKEN})(?:\s*[ㆍ·・•‧∙/]\s*(?:{_APPLICANT_REGION_TOKEN}))+"
+)
 # 광역 풀네임 → 약칭(restricted set 비교용)
 _REGION_LONG_TO_SHORT = {
     "충청북도": "충북", "충청남도": "충남", "전라북도": "전북", "전라남도": "전남",
@@ -748,6 +753,12 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
             continue
         if re.search(rf"{re.escape(label)}\s*소재", text) and label not in regions:
             regions.append(label)
+    # 인라인 다지역 나열(가운뎃점류로 이어진 광역 2개+) — 나열된 광역 전부를 지원대상으로.
+    for m in _INLINE_REGION_LIST_RE.finditer(text):
+        for r in _REGION_TOKEN_RE.findall(m.group(0)):
+            val = _REGION_LONG_TO_SHORT.get(r, r)
+            if val not in regions:
+                regions.append(val)
     return {"regions": regions, "nationwide": nationwide}
 
 

@@ -61,6 +61,22 @@ def test_applicant_restricted_regions_multiregion_list():
     assert monitor._applicant_restricted_regions("부산 소재 기업만") == {"부산"}
 
 
+def test_inline_multiregion_own_eligible():
+    """인라인 '서울·인천 권역'(대괄호 없는 가운뎃점 나열) — own 광역은 적격, 밖은 차단."""
+    item = {"title": "2026년 소셜 벤더 운영 사업(성장 지원형 – 서울·인천 권역) 참여 기업 모집",
+            "description": ""}
+    for city in ("서울", "인천"):
+        assert _region_status(item, city) != "other_only", f"{city} 오차단(누락)"
+    assert _region_status(item, "부산") == "other_only"
+
+
+def test_detect_inline_region_list_scope():
+    """인라인 가운뎃점 나열이 _resolve_applicant_region_scope.regions 에 전부 반영."""
+    item = {"title": "성장 지원형 – 서울·인천 권역 모집", "description": ""}
+    regions = set(monitor._resolve_applicant_region_scope(item)["regions"])
+    assert {"서울", "인천"}.issubset(regions), regions
+
+
 def test_title_region_tags_scope_symmetry():
     """제목 다지역 태그가 _resolve_applicant_region_scope.regions 에 전부 반영(대칭)."""
     item = {"title": "[서울ㆍ인천ㆍ경기ㆍ강원] 2026년 공고", "description": ""}
