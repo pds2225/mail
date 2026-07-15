@@ -11,6 +11,16 @@
     "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인"
   },
   {
+    "id": "hanyang_startup",
+    "name": "한양대 창업지원단(신규사업공고)",
+    "type": "hanyang_startup_api",
+    "url": "https://startup.hanyang.ac.kr/board/startup_info/list",
+    "enabled": true,
+    "is_aggregator": false,
+    "max_pages": 3,
+    "note": "Next.js SPA — /api/board/content?boardEnName=startup_info JSON. 창업 교육·행사·사업화·R&D 공고 / 주기:주 2~3회"
+  },
+  {
     "id": "kstartup",
     "name": "K-Startup",
     "type": "kstartup_html",
@@ -3040,7 +3050,7 @@
   {
     "id": "imp_fae5a127",
     "name": "중소기업기술정보진흥원(TIPA)",
-    "type": "html_table",
+    "type": "tipa_html",
     "url": "https://www.tipa.or.kr/s040101/index/page/1",
     "enabled": true,
     "is_aggregator": false,

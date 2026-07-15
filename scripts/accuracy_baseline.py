@@ -34,6 +34,8 @@ RUNS = ACC_DIR / "runs"
 _TREND_HEADER = [
     "date", "n_notices", "region_FP", "region_recall", "recall_denom",
     "fp_cand_total", "fn_cand_total", "contradictions", "matched_total",
+    # 5필드 건전성(지역 외 4) 시계열 — 추출 완성도 추적
+    "posted_ok", "period_ok", "deadline_unknown", "amount_present", "type_classified",
 ]
 
 
@@ -117,6 +119,14 @@ def main(argv: list[str] | None = None) -> int:
         BASELINE.write_text(json.dumps(base, ensure_ascii=False, indent=2), encoding="utf-8")
         status = "SEED (기준선 신규)"
 
+    # 5필드 건전성(지역 외 4) 추출
+    fh = s.get("field_health") or {}
+    posted_ok = (fh.get("posted") or {}).get("ok", "")
+    period_ok = (fh.get("period") or {}).get("ok", "")
+    deadline_unknown = (fh.get("deadline_status") or {}).get("unknown", "")
+    amount_present = (fh.get("amount") or {}).get("present", "")
+    type_classified = (fh.get("type") or {}).get("classified", "")
+
     # ── trend append ──
     new_file = not TREND.exists()
     with TREND.open("a", encoding="utf-8", newline="") as f:
@@ -124,7 +134,8 @@ def main(argv: list[str] | None = None) -> int:
         if new_file:
             w.writerow(_TREND_HEADER)
         w.writerow([run_dir.name, s.get("n_notices"), region_fp, recall, denom,
-                    fp_total, fn_total, contra, matched_total])
+                    fp_total, fn_total, contra, matched_total,
+                    posted_ok, period_ok, deadline_unknown, amount_present, type_classified])
 
     print(f"[baseline] {status}")
     print(f"[KPI] region_FP={region_fp} region_recall={recall}(분모{denom}) FP후보={fp_total} FN후보={fn_total} 모순={contra} 매칭총={matched_total}")

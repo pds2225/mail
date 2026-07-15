@@ -1,0 +1,12 @@
+{
+ "response": "success",
+ "message": null,
+ "data": {
+  "cate": [],
+  "page": {
+   "pageNo": 99,
+   "totalCount": 1079
+  },
+  "list": []
+ }
+}

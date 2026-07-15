@@ -1,0 +1,484 @@
+{
+ "response": "success",
+ "message": null,
+ "data": {
+  "cate": [
+   {
+    "categoryCodeId": 1,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Learn",
+    "categoryCodeDesc": "예비창업자 창업기본교육\r\n",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 2,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Make",
+    "categoryCodeDesc": "아이디어를 구현하는 방법",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 3,
+    "categoryId": 1,
+    "categoryCodeName": "스타트업 Launch",
+    "categoryCodeDesc": "스타트업 창업 및 성장 지원",
+    "categoryName": "일반인 대상 교육"
+   },
+   {
+    "categoryCodeId": 4,
+    "categoryId": 2,
+    "categoryCodeName": "경진대회",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 5,
+    "categoryId": 2,
+    "categoryCodeName": "교육",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 6,
+    "categoryId": 2,
+    "categoryCodeName": "IR",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 7,
+    "categoryId": 2,
+    "categoryCodeName": "창업과제",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 8,
+    "categoryId": 2,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "창업지원정보"
+   },
+   {
+    "categoryCodeId": 9,
+    "categoryId": 3,
+    "categoryCodeName": "일반양식",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 18,
+    "categoryId": 4,
+    "categoryCodeName": "기업가정신",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 19,
+    "categoryId": 4,
+    "categoryCodeName": "비즈니스모델",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 20,
+    "categoryId": 4,
+    "categoryCodeName": "사업계획서",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 21,
+    "categoryId": 4,
+    "categoryCodeName": "지식재산권",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 22,
+    "categoryId": 4,
+    "categoryCodeName": "세무·회계",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 23,
+    "categoryId": 4,
+    "categoryCodeName": "마케팅·판로",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 24,
+    "categoryId": 4,
+    "categoryCodeName": "자금·투자",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 25,
+    "categoryId": 4,
+    "categoryCodeName": "글로벌",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 26,
+    "categoryId": 4,
+    "categoryCodeName": "정부지원사업",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 27,
+    "categoryId": 4,
+    "categoryCodeName": "기업운영·관리",
+    "categoryCodeDesc": null,
+    "categoryName": "온라인콘텐츠"
+   },
+   {
+    "categoryCodeId": 28,
+    "categoryId": 5,
+    "categoryCodeName": "교육",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 29,
+    "categoryId": 5,
+    "categoryCodeName": "행사/네트워크",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 30,
+    "categoryId": 5,
+    "categoryCodeName": "사업화",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 31,
+    "categoryId": 5,
+    "categoryCodeName": "R&D",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 32,
+    "categoryId": 5,
+    "categoryCodeName": "시설/공간/보육",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 33,
+    "categoryId": 5,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "신규사업공고"
+   },
+   {
+    "categoryCodeId": 34,
+    "categoryId": 6,
+    "categoryCodeName": "팀원구인",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 35,
+    "categoryId": 6,
+    "categoryCodeName": "협력/제안",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 36,
+    "categoryId": 6,
+    "categoryCodeName": "홍보",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 37,
+    "categoryId": 6,
+    "categoryCodeName": "기타",
+    "categoryCodeDesc": null,
+    "categoryName": "커뮤니티"
+   },
+   {
+    "categoryCodeId": 38,
+    "categoryId": 3,
+    "categoryCodeName": "창업강의",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 39,
+    "categoryId": 3,
+    "categoryCodeName": "창업실무",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 40,
+    "categoryId": 3,
+    "categoryCodeName": "창업통계",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   },
+   {
+    "categoryCodeId": 41,
+    "categoryId": 3,
+    "categoryCodeName": "국내외 창업동향",
+    "categoryCodeDesc": null,
+    "categoryName": "자료실"
+   }
+  ],
+  "page": {
+   "rownum": 0,
+   "pageSize": 10,
+   "pageBlock": 10,
+   "pageNo": 2,
+   "startRowNo": 10,
+   "endRowNo": 20,
+   "firstPageNo": 1,
+   "finalPageNo": 108,
+   "prevPageNo": 1,
+   "nextPageNo": 3,
+   "startPageNo": 1,
+   "endPageNo": 10,
+   "totalCount": 1079,
+   "searchField": null,
+   "searchValue": null,
+   "startDate": null,
+   "endDate": null,
+   "boardId": 0,
+   "regDate": null,
+   "boardEnName": "startup_info",
+   "boardKrName": null,
+   "boardDesc": null,
+   "useFile": null,
+   "useComment": null,
+   "writeRole": null,
+   "viewRole": null,
+   "isPrivacy": null,
+   "subName01": null,
+   "subName02": null,
+   "subName03": null,
+   "subName04": null,
+   "subName05": null,
+   "subName06": null,
+   "subName07": null,
+   "subDValue01": null,
+   "subDValue02": null,
+   "subDValue03": null,
+   "subDValue04": null,
+   "subDValue05": null,
+   "subDValue06": null,
+   "subDValue07": null,
+   "categoryId": null,
+   "categoryCodeId": null
+  },
+  "list": [
+   {
+    "rownum": 1069,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4321,
+    "title": "[SBA] 2026 국제 유스 창업 올림피아드 (~7.17.(월) 10:00)",
+    "content": "<figure class=\"image\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/c98a6afd-9356-4057-9e40-380fa3588962.png\"></figure><p><span style=\"background-color:rgb(255,255,255);color:rgb(34,34,34);\">서울경제진흥원(SBA)에서 세계 청소년 및 대학생의 혁신 창업 아이디어를 발굴하고자 본 대회를 개최합니다</span><span style=\"background-color:rgb(255,255,255);color:rgb(34,34,34);font-family:Arial, Helvetica, sans-serif;\">.&nbsp;</span></p><p><span style=\"background-color:rgb(255,255,255);color:rgb(34,34,34);font-family:Arial, Helvetica, sans-serif;\">관심있는 여러분의 많은 참여 부탁드립니다.</span></p><p>&nbsp;</p><p>가. 대회명 : 2026 국제 유스 창업 올림피아드 (영문 진행)</p><p>나. 모집 기간 : ~ 2026년 7월 27일(월) 10:00 마감 (KST 기준)</p><p>다. 모집 부문 : 개인 또는 팀 (최대 3명)</p><p>&nbsp; &nbsp;- 중고등 부문 : 국내외 중·고등학생 또는 이에 준하는 청소년</p><p>&nbsp; &nbsp;- 대학 부문 : 국내외 대학(원)생 재·휴학생 및 졸업 예정자 (만 34세 이하)</p><p>라. 시상 혜택 : 결선 진출 14팀 전원 시상 (대상 $5,000 및 서울특별시장상 수여)</p><p>&nbsp; &nbsp;※ 본선 진출팀 대상 '창업 멘토링' 및 '서울 투어(9/9)' 지원</p><p>마. 지원 방법 및 제출 서류 (국내 지원자 기준)</p><p>&nbsp; &nbsp;- 지원 방법 : 스타트업 플러스 홈페이지에서 직접 온라인 신청</p><p>&nbsp; &nbsp;- 공식 홈페이지 : <a href=\"https://startup-plus.kr/project/PRJ006960\"><span style=\"color:rgb(0,0,255);font-size:14px;\">https://startup-plus.kr/project/PRJ006960</span></a><span style=\"color:rgb(0,0,255);font-size:14px;\"> &nbsp;&nbsp;</span></p><p>&nbsp; &nbsp;- 제출 서류 : [공통] 신청서, 발표자료 PDF /<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[대학 부문 추가] 사업계획서(자유양식) PDF</p><p>바. 문의처<br>&nbsp; &nbsp;-<span style=\"font-size:16px;\"> </span><a href=\"mailto:twom-ent@twom-ent.com\"><span style=\"color:rgb(0,0,255);font-size:16px;\"><u>twom-ent@twom-ent.com</u></span></a> / 070-4788-1056</p>",
+    "regDate": "2026-07-07T13:27:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 33,
+    "fileExtension": null,
+    "viewCnt": 20,
+    "isNotice": false,
+    "sub01": "[SBA] 2026 국제 유스 창업 올림피아드 (~7.17.(월) 10:00)",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [
+     {
+      "fileId": 9844,
+      "contentId": 4321,
+      "status": "A",
+      "fileSize": 377536,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "edbc73c7-bf32-4220-9d02-45f3a8825173",
+      "fileOriginName": "공고문_Notice_International Youth Entrepreneurship Olympiad 2026.pdf",
+      "fileExtension": ".pdf"
+     },
+     {
+      "fileId": 9845,
+      "contentId": 4321,
+      "status": "A",
+      "fileSize": 62358,
+      "division": "BOARD_ATTACH",
+      "filePath": "/BOARD_ATTACH/2026/07",
+      "fileName": "e79e560c-f892-4e0b-9e31-9a27362a39d9",
+      "fileOriginName": "지원서_(Revised)_Application_Form_Name.docx",
+      "fileExtension": ".docx"
+     }
+    ],
+    "thumbList": [
+     {
+      "fileId": 9846,
+      "contentId": 4321,
+      "status": "A",
+      "fileSize": 142951,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "87659203-347b-4c2b-a9b6-c86f05bbd1c9",
+      "fileOriginName": "썸넬2.png",
+      "fileExtension": ".png"
+     }
+    ],
+    "categoryCodeName": "기타",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   },
+   {
+    "rownum": 1068,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4309,
+    "title": "「2026 지역창업 페스티벌 연계 제104회 대전창업포럼」참가 모집(~ 7. 7.(화))",
+    "content": "<figure class=\"image\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/78267917-7ff5-4e7e-8e71-346eb7c16491.png\"></figure><p>대전창조경제혁신센터에서는 우주항공 분야 스타트업의 교류 및 네트워킹 활성화를 위해 「2026 지역창업 페스티벌 연계 제104회 대전창업포럼」을 다음과 같이 개최하오니 많은 참여 바랍니다.</p><p>&nbsp;</p><p>&nbsp;</p><p>가. 행 사 명 : 2026 지역창업 페스티벌 연계 제104회 대전창업포럼<br>나. 주 제 : Ad Astar: 함께, 별을 향해<br>다. 일 시 : 2026년 7월 7일(화) 18:00 ~ 21:30<br>라. 장 소 : 과학카페 쿠아(QUA)(대전 유성구 신성로61번안길 53)<br>마. 주요내용</p><figure class=\"table\"><table><tbody><tr><td><p style=\"text-align:center;\"><strong>구분</strong></p></td><td><p style=\"text-align:center;\"><strong>시간</strong></p></td><td><p style=\"text-align:center;\"><strong>세 부 내 용</strong></p></td></tr><tr><td><p style=\"text-align:center;\">개회</p></td><td><p style=\"text-align:center;\">18:00 ~ 18:15</p></td><td><p style=\"text-align:center;\">개회 및 프로그램 안내</p></td></tr><tr><td><p style=\"text-align:center;\">우주항공 스타트업 IR</p></td><td><p style=\"text-align:center;\">18:15 ~ 19:00</p></td><td><p style=\"text-align:center;\">우주항공 스타트업 IR 피칭(3개 사)</p></td></tr><tr><td><p style=\"text-align:center;\">우주항공 포럼</p></td><td><p style=\"text-align:center;\">19:00 ~ 20:30</p></td><td><p style=\"text-align:center;\">우주항공 산업 해와판로개척, 선배 기업 사례, 지적재산권 보호 등</p><p style=\"text-align:center;\">분야별 인사이트 특강</p></td></tr><tr><td><p style=\"text-align:center;\">네트워킹</p></td><td><p style=\"text-align:center;\">20:30 ~ 21:30</p></td><td><p style=\"text-align:center;\">행사 참여자간 자유 네트워킹</p></td></tr></tbody></table></figure><p>&nbsp;</p><p>바. 모집기간 : ~ 2026년 7월 6일(월) 24:00<br>사. 신청방법 : 구글폼 신청</p><p>&nbsp; &nbsp; &nbsp;※URL : <a href=\"https://forms.gle/y3EQvS6DwMYmqJBg8\">https://forms.gle/y3EQvS6DwMYmqJBg8</a><br>아. 문 의 : 042‐385‐0765 (글로벌상생협력실 민주원 PM)</p>",
+    "regDate": "2026-07-06T11:40:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 29,
+    "fileExtension": null,
+    "viewCnt": 55,
+    "isNotice": false,
+    "sub01": "「2026 지역창업 페스티벌 연계 제104회 대전창업포럼」참가 모집(~ 7. 7.(화))",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [],
+    "thumbList": [
+     {
+      "fileId": 9810,
+      "contentId": 4309,
+      "status": "A",
+      "fileSize": 104421,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "24de76d8-50bf-4dcb-a102-f92aebd9f1f2",
+      "fileOriginName": "2026-07-06.jpg",
+      "fileExtension": ".jpg"
+     }
+    ],
+    "categoryCodeName": "행사/네트워크",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   },
+   {
+    "rownum": 1067,
+    "pageSize": 0,
+    "pageBlock": 0,
+    "pageNo": null,
+    "startRowNo": 0,
+    "endRowNo": 0,
+    "firstPageNo": 0,
+    "finalPageNo": 0,
+    "prevPageNo": 0,
+    "nextPageNo": 0,
+    "startPageNo": 0,
+    "endPageNo": 0,
+    "totalCount": 0,
+    "searchField": null,
+    "searchValue": null,
+    "startDate": null,
+    "endDate": null,
+    "contentId": 4306,
+    "title": "농식품 창업의 새싹을 함께 틔울, 아그리팡 모집 홍보( ~ 7. 3.(금) 18:00)",
+    "content": "<figure class=\"image image_resized\" style=\"width:75%;\"><img src=\"https://startup.hanyang.ac.kr:443/api/resource/BOARD_CONTENT_IMG/2026/07/e1fedf53-ecd5-47a3-9ac4-a119754b09ed.png\"></figure><p>🌱AFPRO 박람회와 농식품 창업콘테스트 현장을 함께 홍보할 대학(원)생 서포터즈 ‘아그리팡’을 모집합니다 🦄</p><p>SNS 콘텐츠 제작에 관심 있거나,농식품·창업·마케팅 분야 경험을 쌓고 싶은 대학(원)생이라면 누구나 지원 가능합니다!</p><p>&nbsp;</p><p>📌 모집대상: 전국 대학(원)생<br>📌 모집인원: 20명<br>📌 활동기간: 2026년 7월 ~ 9월<br>📌 신청기간: 2026. 6. 24.(수) ~ 7. 3.(금)<br>📌 주요활동: 개인 SNS 콘텐츠 제작, AFPRO 박람회 홍보 및 현장 참여, 농식품 창업콘테스트 결선·시상식 홍보 등</p><p>🎁 활동혜택<br>- 활동비 30만 원 지급<br>- 서포터즈 굿즈 제공<br>- SNS 마케팅 역량강화 교육<br>- AFPRO 박람회 및 농식품 창업콘테스트 현장 참여 기회<br>- 활동 수료증 발급</p><p>관심 있는 학생들은 아래 링크를 통해 신청해 주세요!</p><p>👉 신청 링크<br>https://forms.gle/cC3fKWh3oF5oh7iD7</p>",
+    "regDate": "2026-07-02T15:40:00",
+    "thumbnailImg": null,
+    "writerId": "admin",
+    "boardEnName": "startup_info",
+    "categoryCodeId": 29,
+    "fileExtension": null,
+    "viewCnt": 48,
+    "isNotice": false,
+    "sub01": "농식품 창업의 새싹을 함께 틔울, 아그리팡 모집 홍보( ~ 7. 3.(금) 18:00)",
+    "sub02": "",
+    "sub03": "",
+    "sub04": "",
+    "sub05": "",
+    "sub06": "",
+    "sub07": "",
+    "thumb": null,
+    "files": null,
+    "removeFiles": null,
+    "attachFileList": [],
+    "thumbList": [
+     {
+      "fileId": 9802,
+      "contentId": 4306,
+      "status": "A",
+      "fileSize": 408419,
+      "division": "BOARD_THUMB_IMG",
+      "filePath": "/BOARD_THUMB_IMG/2026/07",
+      "fileName": "9857aa49-6ca3-4de1-8898-2bb55f5d89d6",
+      "fileOriginName": "스크린샷 2026-07-02 154121.png",
+      "fileExtension": ".png"
+     }
+    ],
+    "categoryCodeName": "행사/네트워크",
+    "userName": "관리자",
+    "color": null,
+    "replyCount": 0
+   }
+  ]
+ },
+ "code": 200
+}
