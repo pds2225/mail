@@ -118,7 +118,9 @@ python -m loan.semas.collector --run-mode dry-run --send-email false
 - 설계: `docs/LOOP_ENGINEERING_AUTO_DEV.md` — 사람이 에이전트를 매번 지시하지 않고 **루프가 지시**한다.
 - 실행: GitHub Actions → "Auto Dev Queue" / 로컬 `DRY_RUN=true python3 scripts/auto_dev_queue.py`
 - 검증: `python3 scripts/loop_verify.py` · 드리프트 `python3 scripts/loop_verify.py --drift`
-- 허위 DONE 금지: `AUTO_DEV_AGENT` 없으면 `AWAITING_AGENT` (PENDING 유지)
+- 안전 실행기: 문서·검토 NOOP은 `scripts/auto_dev_executor.py`가 자동 DONE (허위 DONE 아님)
+- L2 빈틈: `auto_dev/defects_inbox.md` 작성 → G1 후 `python3 scripts/decompose_defects.py --approve`
+- 코딩 슬롯: `AUTO_DEV_AGENT=true` (미설정 시 에이전트 필요 TASK는 PENDING 뒤로 회전)
 
 ---
 

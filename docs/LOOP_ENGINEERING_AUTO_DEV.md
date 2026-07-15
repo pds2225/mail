@@ -249,11 +249,11 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 
 | Phase | 산출물 | 사람 |
 |-------|--------|------|
-| **P0** (본 문서) | `docs/LOOP_ENGINEERING_AUTO_DEV.md`, `auto_dev/*` 작업 자산, `loop_verify.py`, 큐·RULES 연동 | 리뷰 1회 |
-| **P1** | GHA에서 `loop_verify`를 auto-dev 전/후 게이트로 실행; Summary에 루프 5요소 표시 | 없음 |
-| **P2** | PENDING TASK 메타(`loop:` / `verify:`) 파싱; FIX TASK 자동 생성 강화 | 없음 |
-| **P3** | L2 accuracy-defect → TASK 자동 분해 (G1 승인 훅만 사람) | G1 |
-| **P4** | 에이전트 코딩 슬롯 API/Cloud 연동 (큐가 프롬프트 루프 소유) | G2 only |
+| **P0** | `docs/LOOP_ENGINEERING_AUTO_DEV.md`, `auto_dev/*`, `loop_verify.py`, 큐·RULES 연동 | ✅ |
+| **P1** | GHA drift/verify 게이트, Summary 루프 5요소 | ✅ |
+| **P2** | 안전 실행기(`auto_dev_executor`) — 문서 NOOP/허용 패치 자동 DONE; FIX TASK | ✅ |
+| **P3** | L2 `decompose_defects.py` — G1 `--approve` 후 TASK 분해 | ✅ (G1 훅) |
+| **P4** | 외부 코딩 에이전트 API/Cloud 슬롯 (`AUTO_DEV_AGENT`) | 대기 |
 
 ---
 
