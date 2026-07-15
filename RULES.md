@@ -93,4 +93,5 @@ failed_tasks.md
 blocked_tasks.md
 scripts/*
 .github/workflows/auto-dev-queue.yml
-```
+auto_dev/*
+docs/AUTO_DEV_LOOP_ENGINEERING.md

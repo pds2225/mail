@@ -1,12 +1,15 @@
-"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
+"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기 (L1 오케스트레이터)
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
 2. TASKS.md에서 다음 PENDING TASK 1개 선택
 3. TASK를 RUNNING으로 이동
-4. 실행 결과에 따라 DONE/FAILED/BLOCKED 처리
-5. auto_dev_state.json 업데이트
-6. GitHub Actions Summary 출력
+4. loop_runner → loop_verify (루프 엔지니어링 L1)
+5. 실행 결과에 따라 DONE/FAILED/BLOCKED/AGENT_REQUIRED 처리
+6. auto_dev_state.json 업데이트
+7. GitHub Actions Summary 출력
+
+설계: docs/AUTO_DEV_LOOP_ENGINEERING.md
 
 주의:
 - Secret/API Key/메일 계정 값은 절대 출력하지 않음
@@ -16,6 +19,7 @@
 """
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import re
@@ -38,6 +42,19 @@ MAIL_SECRETS = {"GMAIL_ADDRESS", "GMAIL_APP_PASSWORD", "SMTP_HOST", "SMTP_PORT",
 MAX_RETRY = 2
 
 DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
+
+
+def _load_loop_runner():
+    """scripts/loop_runner.py 동적 로드 (패키지 없이)."""
+    spec = importlib.util.spec_from_file_location(
+        "loop_runner", ROOT / "scripts" / "loop_runner.py"
+    )
+    if spec is None or spec.loader is None:
+        return None
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 
 # ── 유틸 ─────────────────────────────────────────────────────────────────────
@@ -262,21 +279,60 @@ def main() -> int:
 
     log(f"  ▶ RUNNING: {task_id}")
 
-    # 8. TASK 실행 (현재는 placeholder — 향후 AI 연동)
-    # 실제 TASK 처리 로직은 향후 구현
-    # 지금은 구조만 설정: PENDING → RUNNING → DONE/FAILED
-    task_result = "DONE"
-    task_reason = "큐 인프라 설치 완료 — 실제 TASK 처리는 향후 구현"
-
     if DRY_RUN:
         log(f"  🏷️ DRY_RUN: 실제 변경 없이 미리보기 종료")
+        profile_name, _ = ("?", {})
+        try:
+            loop_mod = _load_loop_runner()
+            if loop_mod:
+                profile_name, _ = loop_mod.classify_profile(task_title)
+        except Exception:
+            pass
         write_summary(
             f"## 🏷️ Dry Run\n\n"
             f"다음 처리 대상: `{task_id}`: {task_title}\n\n"
+            f"추정 프로필: `{profile_name}`\n\n"
             f"실제 변경은 수행하지 않았습니다."
         )
         save_state(state)
         return 0
+
+    # 8. L1 루프 실행 (loop_runner → loop_verify)
+    loop_mod = _load_loop_runner()
+    if loop_mod is None:
+        task_result = "FAILED"
+        task_reason = "loop_runner 로드 실패"
+    else:
+        loop_out = loop_mod.run_task(task_id, task_title)
+        status_map = {
+            "DONE": "DONE",
+            "FAILED": "FAILED",
+            "BLOCKED": "BLOCKED",
+            "AGENT_REQUIRED": "PENDING",  # Phase B까지 큐에 유지
+            "SKIPPED": "DONE",
+        }
+        task_result = status_map.get(loop_out.status, "FAILED")
+        task_reason = f"[{loop_out.profile}] {loop_out.reason}"
+        if loop_out.verify_report:
+            passed = sum(1 for s in loop_out.verify_report.get("steps", []) if s.get("ok"))
+            total = len(loop_out.verify_report.get("steps", []))
+            task_reason += f" (verify {passed}/{total})"
+        if loop_out.status == "AGENT_REQUIRED":
+            # RUNNING → PENDING 복귀 (에이전트 연동 전)
+            final_content = move_task(
+                TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "PENDING"
+            )
+            TASKS_PATH.write_text(final_content, encoding="utf-8")
+            log(f"  ⏸ AGENT_REQUIRED: {task_id} — PENDING 유지")
+            write_summary(
+                f"## ⏸ Agent Required\n\n"
+                f"`{task_id}`: {task_title}\n\n"
+                f"프로필: `{loop_out.profile}`\n\n"
+                f"Cloud Agent 연동(Phase B) 후 자동 구현 예정."
+            )
+            state["last_task"] = task_id
+            save_state(state)
+            return 0
 
     # 9. 결과 처리
     if task_result == "DONE":
