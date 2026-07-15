@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "description": "Mail 프로젝트 L1 에이전틱 코딩 루프 설정",
+  "trigger": {
+    "cron_kst": "0 9 * * *",
+    "cron_utc": "0 0 * * *",
+    "manual_workflow": "auto-dev-queue.yml",
+    "tasks_per_run": 1
+  },
+  "limits": {
+    "max_retry_per_task": 2,
+    "max_loop_iterations": 5,
+    "gha_timeout_minutes": 15,
+    "stale_running_hours": 24,
+    "no_progress_iterations": 3
+  },
+  "exit_conditions": {
+    "success": "verify.all_pass && !verify.blocked",
+    "blocked": [
+      "email_send_risk",
+      "protected_file_touched",
+      "secret_missing",
+      "max_retry_exceeded"
+    ],
+    "escalate_to_human": [
+      "core_logic_profile",
+      "config_data_merge",
+      "accuracy_g1_pending"
+    ]
+  },
+  "verification_tiers": {
+    "0": {
+      "label": "safety",
+      "steps": ["preflight", "email_send_risk", "protected_files_diff"]
+    },
+    "1": {
+      "label": "unit",
+      "steps": ["pytest_monitor"]
+    },
+    "2": {
+      "label": "domain",
+      "steps": ["recall_zero_gate", "core_sources_checklist_offline"]
+    },
+    "3": {
+      "label": "accuracy",
+      "steps": ["recall_zero_gate", "test_accuracy_regression"]
+    }
+  },
+  "auto_merge": {
+    "enabled": false,
+    "allowed_profiles": ["doc_only", "script_safe", "test_fix"],
+    "required_labels_absent": ["needs-human", "blocked"]
+  }
+}

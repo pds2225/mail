@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "description": "루프가 반복 참조하는 작업 자산 레지스트리. checksum은 loop_drift_check.py가 갱신.",
+  "assets": [
+    {
+      "id": "rules",
+      "path": "RULES.md",
+      "role": "안전 헌법 — 발송·Secret·보호 파일",
+      "drift_signals": ["발송 금지 규칙 삭제", "보호 파일 목록 축소"]
+    },
+    {
+      "id": "tasks",
+      "path": "TASKS.md",
+      "role": "L1 큐 백로그",
+      "drift_signals": ["RUNNING 고착", "PENDING 20건 초과"]
+    },
+    {
+      "id": "agents",
+      "path": "AGENTS.md",
+      "role": "에이전트 실행 컨텍스트",
+      "drift_signals": ["테스트 명령과 CI 불일치"]
+    },
+    {
+      "id": "recall_gate",
+      "path": "scripts/recall_zero_gate.py",
+      "role": "누락 제로 종료 조건",
+      "drift_signals": ["RECALL_SUITES 축소"]
+    },
+    {
+      "id": "core_sources_gate",
+      "path": "scripts/core_sources_checklist.py",
+      "role": "3대 소스 완성도 게이트",
+      "drift_signals": ["live_min_items 하향"]
+    },
+    {
+      "id": "loop_config",
+      "path": "auto_dev/loop_config.json",
+      "role": "루프 한도·종료 조건",
+      "drift_signals": ["max_retry 상향", "auto_merge 무조건 활성"]
+    },
+    {
+      "id": "site_add_packet",
+      "path": "WORKS/SITE_ADD_PR_PACKET.md",
+      "role": "사이트 추가 PR 템플릿",
+      "drift_signals": ["dry-run 체크리스트 삭제"]
+    }
+  ],
+  "checksums": {}
+}
