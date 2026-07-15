@@ -32,8 +32,11 @@ WORK_ASSETS = (
     "auto_dev/eval_rubric.md",
     "auto_dev/exit_conditions.md",
     "auto_dev/human_gates.md",
+    "auto_dev/defects_inbox.md",
     "docs/LOOP_ENGINEERING_AUTO_DEV.md",
     "scripts/auto_dev_queue.py",
+    "scripts/auto_dev_executor.py",
+    "scripts/decompose_defects.py",
     "scripts/loop_verify.py",
 )
 

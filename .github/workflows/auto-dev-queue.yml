@@ -53,6 +53,7 @@ jobs:
           # 코딩 에이전트 슬롯 미연동: 허위 DONE 금지 (AWAITING_AGENT)
           AUTO_DEV_AGENT: "false"
           AUTO_DEV_VERIFY_QUICK: "true"
+          AUTO_DEV_SAFE_EXECUTOR: "true"
         run: python3 scripts/auto_dev_queue.py
 
       - name: L1 검증 게이트 (loop_verify)

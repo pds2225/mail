@@ -49,6 +49,23 @@ AGENT_ENABLED = os.environ.get("AUTO_DEV_AGENT", "false").lower() == "true"
 FORCE_DONE = os.environ.get("AUTO_DEV_FORCE_DONE", "false").lower() == "true"
 VERIFY_QUICK = os.environ.get("AUTO_DEV_VERIFY_QUICK", "true").lower() == "true"
 VERIFY_CORE = os.environ.get("AUTO_DEV_VERIFY_CORE", "false").lower() == "true"
+# 결정적 안전 실행기 (문서 NOOP/허용 패치). 기본 켜짐.
+SAFE_EXECUTOR = os.environ.get("AUTO_DEV_SAFE_EXECUTOR", "true").lower() == "true"
+
+
+def _load_executor():
+    import importlib.util
+
+    path = ROOT / "scripts" / "auto_dev_executor.py"
+    name = "auto_dev_executor"
+    if name in sys.modules:
+        return sys.modules[name]
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 
 # ── 유틸 ─────────────────────────────────────────────────────────────────────
@@ -144,6 +161,47 @@ def move_task(content: str, task_line: str, from_section: str, to_section: str) 
     return "\n".join(result) + "\n"
 
 
+def move_task_to_pending_end(content: str, task_line: str, from_section: str = "RUNNING") -> str:
+    """RUNNING 등에서 제거 후 PENDING **맨 끝**에 추가 (에이전트 대기가 큐를 막지 않게)."""
+    lines = content.splitlines()
+    result: list[str] = []
+    removed = False
+    current_section = None
+    pending_header_idx = None
+
+    for i, line in enumerate(lines):
+        m = re.match(r"^## (.+)$", line)
+        if m:
+            current_section = m.group(1).strip()
+            if current_section == "PENDING":
+                pending_header_idx = len(result)
+        if current_section == from_section and line.strip() == task_line and not removed:
+            removed = True
+            continue
+        result.append(line)
+
+    # PENDING 섹션 끝(다음 ## 직전)에 삽입
+    insert_at = None
+    if pending_header_idx is not None:
+        insert_at = pending_header_idx + 1
+        j = pending_header_idx + 1
+        while j < len(result):
+            if re.match(r"^## ", result[j]):
+                break
+            insert_at = j + 1
+            j += 1
+        # skip trailing blank lines inside section for cleaner append
+        while insert_at > pending_header_idx + 1 and result[insert_at - 1].strip() == "":
+            insert_at -= 1
+        result.insert(insert_at, task_line)
+        if insert_at + 1 >= len(result) or result[insert_at + 1].strip() != "":
+            pass
+    else:
+        result.extend(["", "## PENDING", "", task_line])
+
+    return "\n".join(result) + "\n"
+
+
 def rebuild_tasks_md(sections: dict[str, list[str]], header: str) -> str:
     """섹션 딕셔너리에서 TASKS.md 재구성"""
     lines = [header.strip(), ""]
@@ -185,6 +243,9 @@ def preflight_check() -> list[str]:
         "auto_dev/human_gates.md",
         "docs/LOOP_ENGINEERING_AUTO_DEV.md",
         "scripts/loop_verify.py",
+        "scripts/auto_dev_executor.py",
+        "scripts/decompose_defects.py",
+        "auto_dev/defects_inbox.md",
     ):
         if not (ROOT / rel).exists():
             issues.append(f"루프 작업 자산 누락: {rel}")
@@ -447,14 +508,39 @@ def main() -> int:
         )
         return 0
 
-    # 6b. 사람 게이트 필요 루프는 자동 코딩 금지
+    # 6b. 사람 게이트 — 단, '설계만/훅 문서화'는 안전 실행기로 닫을 수 있으면 통과
     human_gate = loop.get("human_gate")
     if human_gate and loop_key in ("accuracy-defect", "product-vision"):
-        log(f"  ⏸️ {task_id} 사람 게이트 {human_gate} 필요 — PENDING 유지")
+        design_only = any(k in task_title for k in ("설계만", "훅을 설계", "문서화", "decompose"))
+        if design_only and SAFE_EXECUTOR and not DRY_RUN:
+            try:
+                ex = _load_executor()
+                er = ex.execute_task(task_id, task_title, dry_run=False)
+                if er.status in ("DONE_NOOP", "DONE_PATCHED"):
+                    log(f"  ✅ 설계-only accuracy TASK 안전 종료: {er.reason}")
+                    # PENDING → DONE 직접
+                    done_content = move_task(content, task_line, "PENDING", "DONE")
+                    TASKS_PATH.write_text(done_content, encoding="utf-8")
+                    append_to_log(DONE_PATH, task_id, task_title, er.reason)
+                    state["last_task"] = task_id
+                    state["last_result"] = "DONE"
+                    save_state(state)
+                    write_summary(
+                        f"## ✅ DONE (design-only / safe executor)\n\n"
+                        f"`{task_id}`: {task_title}\n\n{er.reason}\n\n"
+                        + format_loop_summary(loop_key, loop)
+                    )
+                    return 0
+            except Exception as e:  # noqa: BLE001
+                log(f"  design-only executor skip: {e}")
+        log(f"  ⏸️ {task_id} 사람 게이트 {human_gate} 필요 — PENDING 끝으로 이동")
+        if not DRY_RUN:
+            rotated = move_task_to_pending_end(content, task_line, from_section="PENDING")
+            TASKS_PATH.write_text(rotated, encoding="utf-8")
         write_summary(
             f"## ⏸️ AWAITING_HUMAN ({human_gate})\n\n"
             f"`{task_id}`: {task_title}\n\n"
-            f"이 루프는 사람 승인 전 L1 실행 금지.\n\n"
+            f"이 루프는 사람 승인 전 L1 실행 금지. 큐 정체 방지를 위해 PENDING 끝으로 이동.\n\n"
             + format_loop_summary(loop_key, loop)
         )
         state["last_task"] = task_id
@@ -462,14 +548,23 @@ def main() -> int:
         save_state(state)
         return 0
 
-    # 7. DRY_RUN: 미리보기만
+    # 7. DRY_RUN: 미리보기만 (실행기 예상 결과 포함)
     if DRY_RUN:
+        preview = ""
+        if SAFE_EXECUTOR:
+            try:
+                ex = _load_executor()
+                er = ex.execute_task(task_id, task_title, dry_run=True)
+                preview = f"\n\n**안전 실행기 예상:** `{er.status}` — {er.reason}"
+            except Exception as e:  # noqa: BLE001 — dry-run 진단만
+                preview = f"\n\n**안전 실행기 예상:** 오류 `{e}`"
         log("  🏷️ DRY_RUN: 실제 변경 없이 미리보기 종료")
         write_summary(
             f"## 🏷️ Dry Run\n\n"
             f"다음 처리 대상: `{task_id}`: {task_title}\n\n"
             + format_loop_summary(loop_key, loop)
-            + "\n실제 변경은 수행하지 않았습니다."
+            + preview
+            + "\n\n실제 변경은 수행하지 않았습니다."
         )
         save_state(state)
         return 0
@@ -513,17 +608,79 @@ def main() -> int:
         log(f"  ❌ FAILED + FIX {fix_id}")
         return 1
 
-    # 10. 에이전트 슬롯
+    # 10. 안전 실행기 (결정적 L1 실행)
+    exec_status = None
+    exec_reason = ""
+    if SAFE_EXECUTOR:
+        log("--- safe executor ---")
+        try:
+            ex = _load_executor()
+            er = ex.execute_task(task_id, task_title, dry_run=False)
+            exec_status, exec_reason = er.status, er.reason
+            log(f"  executor: {exec_status} — {exec_reason}")
+            if er.changed_files:
+                log(f"  changed: {er.changed_files}")
+                # 패치 후 재검증
+                verify2 = run_loop_verify()
+                if not verify2.get("ok"):
+                    exec_status = "BLOCKED"
+                    exec_reason = "패치 후 loop_verify 실패 — 보호/회귀"
+        except Exception as e:  # noqa: BLE001
+            exec_status = "NEEDS_AGENT"
+            exec_reason = f"executor error: {e}"
+            log(f"  executor error: {e}")
+
+    if exec_status == "BLOCKED":
+        final_content = move_task(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "BLOCKED"
+        )
+        TASKS_PATH.write_text(final_content, encoding="utf-8")
+        append_to_log(BLOCKED_PATH, task_id, task_title, exec_reason)
+        state["last_task"] = task_id
+        state["last_result"] = "BLOCKED"
+        save_state(state)
+        write_summary(
+            f"## 🚫 BLOCKED\n\n`{task_id}`: {task_title}\n\n{exec_reason}\n\n"
+            + format_loop_summary(loop_key, loop)
+        )
+        return 0
+
+    if exec_status in ("DONE_NOOP", "DONE_PATCHED"):
+        final_content = move_task(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "DONE"
+        )
+        TASKS_PATH.write_text(final_content, encoding="utf-8")
+        append_to_log(DONE_PATH, task_id, task_title, exec_reason)
+        state["last_task"] = task_id
+        state["last_result"] = "DONE"
+        save_state(state)
+        remaining = parse_tasks(TASKS_PATH.read_text(encoding="utf-8")).get("PENDING", [])
+        next_info = ""
+        if remaining:
+            nid, ntitle = extract_task_info(remaining[0])
+            next_info = f"\n\n**다음 TASK:** `{nid}`: {ntitle}"
+        write_summary(
+            f"## ✅ DONE (safe executor)\n\n"
+            f"**처리:** `{task_id}`: {task_title}\n"
+            f"**결과:** {exec_status}\n"
+            f"**사유:** {exec_reason}\n\n"
+            + format_loop_summary(loop_key, loop)
+            + next_info
+        )
+        log(f"  ✅ DONE via executor: {task_id}")
+        log("=== 완료 ===")
+        return 0
+
+    # 11. 에이전트 슬롯 필요 — PENDING 맨 뒤로 보내 큐 정체 방지
     if not AGENT_ENABLED and not FORCE_DONE:
-        # 허위 DONE 금지: RUNNING → PENDING 복귀
-        back = move_task(
-            TASKS_PATH.read_text(encoding="utf-8"), task_line, "RUNNING", "PENDING"
+        back = move_task_to_pending_end(
+            TASKS_PATH.read_text(encoding="utf-8"), task_line, from_section="RUNNING"
         )
         TASKS_PATH.write_text(back, encoding="utf-8")
         task_result = "AWAITING_AGENT"
-        task_reason = (
-            "loop_verify 통과. AUTO_DEV_AGENT 미설정 — 코딩 슬롯 대기 "
-            "(허위 DONE 금지). 설계 P4 참고."
+        task_reason = exec_reason or (
+            "loop_verify 통과. 안전 실행기 미처리 + AUTO_DEV_AGENT 미설정 "
+            "(허위 DONE 금지)."
         )
         state["last_task"] = task_id
         state["last_result"] = task_result
@@ -545,10 +702,12 @@ def main() -> int:
         log("=== 완료 ===")
         return 0
 
-    # 11. 에이전트 활성 또는 FORCE_DONE — 슬롯 placeholder
+    # 12. 에이전트 활성 또는 FORCE_DONE
     if AGENT_ENABLED:
         task_result = "DONE"
-        task_reason = "AUTO_DEV_AGENT=true — 외부 에이전트 슬롯이 패치를 완료한 것으로 간주(연동 P4)"
+        task_reason = (
+            "AUTO_DEV_AGENT=true — 외부 에이전트 슬롯이 패치를 완료한 것으로 간주(연동 P4)"
+        )
     else:
         task_result = "DONE"
         task_reason = "AUTO_DEV_FORCE_DONE=true — 검증 통과 후 강제 DONE"

@@ -111,3 +111,5 @@ scripts/*
 | 5 | L2 `accuracy-defect` / L3 `product-vision` 은 사람 게이트(G1/G3/G4) 전 코딩 금지 |
 | 6 | 작업 자산 드리프트는 `--drift`로 점검하고, 변질 자산만 수정 |
 | 7 | 사람 개입은 G1~G4만 (L1 무인 기본) |
+| 8 | `AUTO_DEV_FORCE_DONE` 는 비상용(기본 금지). 슬롯 없으면 `AWAITING_AGENT` | 허위 DONE 회귀 방지 |
+| 9 | `AUTO_DEV_SAFE_EXECUTOR` 기본 true — 문서 NOOP·허용 패치만 자동 DONE | 파서/핵심코드는 에이전트 |
