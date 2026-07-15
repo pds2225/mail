@@ -77,3 +77,20 @@ def test_candidate_codes_are_known():
     fn_ok = {"fn_weaklabel_own", "fn_nationwide_blocked", "fn_titletag_own"}
     assert set(res["fp"]["counts"]).issubset(fp_ok), res["fp"]["counts"]
     assert set(res["fn"]["counts"]).issubset(fn_ok), res["fn"]["counts"]
+
+
+def test_field_health_5field():
+    """5필드(지역 외 4) 추출 건전성이 summary·notice·후보에 나오는지(정밀 확장 가드)."""
+    res = _build_small()
+    if res.get("error"):
+        import pytest
+        pytest.skip(res["error"])
+    fh = res["summary"]["field_health"]
+    for f in ("posted", "period", "deadline_status", "amount", "type"):
+        assert f in fh, f"field_health 누락: {f}"
+    # 각 공고에 5필드 상태가 붙는다
+    n = res["matrix"]["notices"][0]
+    assert set(("posted", "period", "deadline_status", "amount", "type")).issubset(n["fields"]), n["fields"]
+    # 필드 이상 후보 코드는 계약된 집합만
+    field_ok = {"field_posted_bad", "field_period_unknown", "field_type_unclassified"}
+    assert set(res["field"]["counts"]).issubset(field_ok), res["field"]["counts"]

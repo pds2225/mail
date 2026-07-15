@@ -129,6 +129,49 @@ def _own_in_bracket_tag(title: str, city: str) -> bool:
     return False
 
 
+def _field_health(item: dict) -> dict:
+    """공고 1건의 5필드 중 지역 외 4필드(게시일·접수기간·지원금·성격) 추출 건전성.
+    monitor 추출함수를 '호출만' 해 present/valid 여부를 본다(판정로직 미수정). 값:
+      posted: ok|missing|bad / period: ok|missing / deadline_status: open|closed|upcoming|unknown
+      amount: present|none / type: classified|unclassified
+    """
+    # 게시일
+    pd = str(item.get("posted_date") or "").strip()
+    if not pd:
+        posted = "missing"
+    else:
+        try:
+            datetime.strptime(pd[:10], "%Y-%m-%d")
+            posted = "ok"
+        except Exception:  # noqa: BLE001
+            posted = "bad"
+    # 접수기간 / 마감
+    try:
+        dstat = monitor.classify_deadline_status(item)
+    except Exception:  # noqa: BLE001
+        dstat = "unknown"
+    try:
+        dl = str(monitor.resolve_item_deadline(item) or "").strip()
+    except Exception:  # noqa: BLE001
+        dl = ""
+    has_period = bool(item.get("application_period")) or bool(dl and not dl.startswith("2099"))
+    period = "ok" if has_period else "missing"
+    # 지원금
+    try:
+        amt = monitor.extract_support_amount(monitor._notice_text(item))
+    except Exception:  # noqa: BLE001
+        amt = None
+    amount = "present" if amt else "none"
+    # 성격(지원유형)
+    try:
+        types = monitor.classify_support_type(item)
+    except Exception:  # noqa: BLE001
+        types = ["그외"]
+    typ = "classified" if [t for t in types if t != "그외"] else "unclassified"
+    return {"posted": posted, "period": period, "deadline_status": dstat,
+            "amount": amount, "type": typ}
+
+
 def build(date: str | None, cap: int | None) -> dict:
     data_root = BASE_DIR / "data" / "raw"
     if not data_root.exists():
@@ -156,6 +199,7 @@ def build(date: str | None, cap: int | None) -> dict:
             "title": str(it.get("title", ""))[:110],
             "source": str(it.get("source") or it.get("site") or it.get("agency") or ""),
             "region_field": str(it.get("region_field") or "").strip(),
+            "fields": _field_health(it),
             "companies": {},
             "groups": {},
         }
@@ -288,6 +332,23 @@ def build(date: str | None, cap: int | None) -> dict:
             if gv.get("is_relevant"):
                 relevant_by_group[gid] += 1
 
+    # ── 5필드 추출 건전성 집계(지역 외 4필드: 게시일·접수기간·지원금·성격) ──
+    field_counts = {f: Counter() for f in ("posted", "period", "deadline_status", "amount", "type")}
+    field_cand: dict[str, list] = defaultdict(list)
+    for k in order:
+        fh = notices[k]["fields"]
+        for f, v in fh.items():
+            field_counts[f][v] += 1
+        # 이상 후보 — 디지털 표시/게이트에 영향(누락제로 관점: 미상은 버리지 말고 surface)
+        if fh["posted"] != "ok":
+            field_cand["field_posted_bad"].append({"id": k, "posted": fh["posted"], "title": notices[k]["title"]})
+        if fh["period"] == "missing" and fh["deadline_status"] == "unknown":
+            field_cand["field_period_unknown"].append({"id": k, "title": notices[k]["title"]})
+        if fh["type"] == "unclassified":
+            field_cand["field_type_unclassified"].append({"id": k, "title": notices[k]["title"]})
+    field_health = {f: dict(c) for f, c in field_counts.items()}
+    field_cand_counts = {c: len(v) for c, v in field_cand.items()}
+
     region_fp_total = len(region_fp_hits)
     fp_counts = {code: len(v) for code, v in fp.items()}
     fn_counts = {code: len(v) for code, v in fn.items()}
@@ -313,6 +374,8 @@ def build(date: str | None, cap: int | None) -> dict:
         "fp_candidate_counts": fp_counts,
         "fn_candidate_counts": fn_counts,
         "contradiction_count": len(contradictions),
+        "field_health": field_health,
+        "field_candidate_counts": field_cand_counts,
     }
 
     return {
@@ -321,6 +384,7 @@ def build(date: str | None, cap: int | None) -> dict:
                    "notices": [notices[k] for k in order]},
         "fp": {"counts": fp_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in fp.items()}},
         "fn": {"counts": fn_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in fn.items()}},
+        "field": {"counts": field_cand_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in field_cand.items()}},
         "contradictions": contradictions[: _CANDIDATE_CAP * 2],
         "region_fp_hits": region_fp_hits,
     }
@@ -347,6 +411,7 @@ def main(argv: list[str] | None = None) -> int:
     (out_dir / "fp_candidates.json").write_text(json.dumps(res["fp"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out_dir / "fn_candidates.json").write_text(json.dumps(res["fn"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out_dir / "contradictions.json").write_text(json.dumps(res["contradictions"], ensure_ascii=False, indent=1), encoding="utf-8")
+    (out_dir / "field_candidates.json").write_text(json.dumps(res["field"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out_dir / "summary.json").write_text(json.dumps(res["summary"], ensure_ascii=False, indent=2), encoding="utf-8")
 
     s = res["summary"]
@@ -355,6 +420,14 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[FP후보] {s['fp_candidate_counts']}")
     print(f"[FN후보] {s['fn_candidate_counts']}")
     print(f"[자기모순] {s['contradiction_count']}건")
+    fh = s["field_health"]
+    n = max(s["n_notices"], 1)
+    print("[5필드 건전성(지역 외 4)]")
+    print(f"  게시일 ok={fh['posted'].get('ok',0)} / missing={fh['posted'].get('missing',0)} / bad={fh['posted'].get('bad',0)}")
+    print(f"  접수기간 ok={fh['period'].get('ok',0)} / missing={fh['period'].get('missing',0)}  마감상태={dict(fh['deadline_status'])}")
+    print(f"  지원금 present={fh['amount'].get('present',0)} / none={fh['amount'].get('none',0)}")
+    print(f"  성격 classified={fh['type'].get('classified',0)} / unclassified={fh['type'].get('unclassified',0)}")
+    print(f"[필드이상후보] {s['field_candidate_counts']}")
     print(f"[out] {out_dir}")
     return 0 if s["kpi"]["region_FP"] == 0 else 1
 
