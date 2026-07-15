@@ -86,6 +86,11 @@ def main() -> int:
         rec = {
             "id": k,
             "region_field": rf,
+            # 5필드 스냅샷(지역 외 4) — 추출값 약참조(Tier A). 드리프트·회귀 감지용.
+            "posted_date": str(d.get("posted_date") or "").strip(),
+            "application_period": d.get("application_period") or "",
+            "deadline": str(d.get("deadline") or "").strip(),
+            "support_field": str(d.get("support_field") or "").strip(),
             "source": str(d.get("source") or d.get("site") or d.get("agency") or ""),
             "title": str(d.get("title", ""))[:120],
             "tier": "A",
