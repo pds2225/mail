@@ -19,7 +19,7 @@
       "has_factory": true,
       "export_focus": true,
       "support_type_prefs": ["지원금/바우처", "투자"],
-      "match_threshold": 50,
+      "match_threshold": 38,
       "weights": {
         "industry_match": 12,
         "interest_match": 8,
@@ -45,7 +45,7 @@
       "has_factory": false,
       "export_focus": false,
       "support_type_prefs": ["지원금/바우처", "투자"],
-      "match_threshold": 50
+      "match_threshold": 38
     },
     {
       "id": "cmp_bnco",
@@ -72,7 +72,7 @@
       "has_factory": false,
       "export_focus": true,
       "support_type_prefs": ["지원금/바우처", "투자", "융자"],
-      "match_threshold": 45,
+      "match_threshold": 38,
       "weights": {
         "industry_match": 12,
         "interest_match": 8,
