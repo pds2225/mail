@@ -172,6 +172,33 @@ def _field_health(item: dict) -> dict:
             "amount": amount, "type": typ}
 
 
+def _load_golden_regions() -> dict[str, str]:
+    """골든셋(id→region_field) — meta 에 region_field 없는 공고의 약라벨 보충용.
+
+    Tier A(소스 제공)는 meta 에 이미 있으므로 여기 값은 주로 Tier B(제목태그)·
+    Tier C(사람확인). meta 값이 있으면 meta 우선(골든이 meta 를 덮지 않음).
+    """
+    path = BASE_DIR / "data" / "golden" / "region_labels.jsonl"
+    out: dict[str, str] = {}
+    try:
+        with path.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    d = json.loads(line)
+                except Exception:  # noqa: BLE001
+                    continue
+                i = str(d.get("id") or "")
+                rf = str(d.get("region_field") or "").strip()
+                if i and rf and i not in out:
+                    out[i] = rf
+    except OSError:
+        pass
+    return out
+
+
 def build(date: str | None, cap: int | None) -> dict:
     data_root = BASE_DIR / "data" / "raw"
     if not data_root.exists():
@@ -186,6 +213,8 @@ def build(date: str | None, cap: int | None) -> dict:
     if not items or not companies:
         return {"error": f"공고 {len(items)} / 기업 {len(companies)} — 측정 불가"}
 
+    golden_rf = _load_golden_regions()
+
     # 공고 인덱스 (키 기준)
     notices: dict[str, dict] = {}
     order: list[str] = []
@@ -198,7 +227,7 @@ def build(date: str | None, cap: int | None) -> dict:
             "id": k,
             "title": str(it.get("title", ""))[:110],
             "source": str(it.get("source") or it.get("site") or it.get("agency") or ""),
-            "region_field": str(it.get("region_field") or "").strip(),
+            "region_field": str(it.get("region_field") or "").strip() or golden_rf.get(k, ""),
             "fields": _field_health(it),
             "companies": {},
             "groups": {},
