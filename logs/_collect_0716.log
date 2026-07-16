@@ -1,0 +1,843 @@
+2026-07-16 10:14:43,661 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=1&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:14:45,409 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=2&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:14:47,807 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=3&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:14:48,893 INFO 기업마당(Bizinfo): 1483건
+2026-07-16 10:14:48,905 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 54 / 날짜불명 0 / 제외 1429
+2026-07-16 10:14:49,377 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=1 "HTTP/1.1 200 "
+2026-07-16 10:14:49,601 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=2 "HTTP/1.1 200 "
+2026-07-16 10:14:49,843 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=3 "HTTP/1.1 200 "
+2026-07-16 10:14:49,850 INFO 한양대 창업지원단(신규사업공고): 30건
+2026-07-16 10:14:49,851 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 27
+2026-07-16 10:14:50,650 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:14:51,619 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=2&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:14:52,644 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=3&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:14:53,732 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:14:54,906 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=2&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:14:55,864 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=3&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:14:56,077 INFO K-Startup: 30건
+2026-07-16 10:14:56,077 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 27
+2026-07-16 10:14:58,021 INFO HTTP Request: POST https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituList.do "HTTP/1.1 200 OK"
+2026-07-16 10:14:58,035 INFO IRIS(범부처통합연구지원): 10건
+2026-07-16 10:14:58,035 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:14:59,020 INFO HTTP Request: GET https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310 "HTTP/1.1 200 OK"
+2026-07-16 10:14:59,350 INFO 중소벤처기업부: 10건
+2026-07-16 10:14:59,350 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 7
+2026-07-16 10:15:00,095 INFO HTTP Request: GET https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112 "HTTP/1.1 200 OK"
+2026-07-16 10:15:00,102 INFO 과학기술정보통신부: 0건
+2026-07-16 10:15:00,102 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:15:00,758 INFO HTTP Request: GET https://www.motie.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:15:01,239 INFO HTTP Request: GET https://www.motir.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 200 OK"
+2026-07-16 10:15:01,342 INFO 산업통상자원부: 10건
+2026-07-16 10:15:01,342 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:15:02,804 INFO HTTP Request: GET https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do "HTTP/1.1 200 OK"
+2026-07-16 10:15:03,215 INFO 고용노동부: 10건
+2026-07-16 10:15:03,215 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:15:04,546 INFO HTTP Request: GET https://www.mafra.go.kr/bbs/mafra/68/artclList.do "HTTP/1.1 200 OK"
+2026-07-16 10:15:04,624 INFO 농림축산식품부: 10건
+2026-07-16 10:15:04,624 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:15:05,486 INFO HTTP Request: GET https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10 "HTTP/1.1 404 Not Found"
+2026-07-16 10:15:05,487 ERROR 접속 실패 https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10: Client error '404 Not Found' for url 'https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-07-16 10:15:06,407 INFO HTTP Request: GET https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp "HTTP/1.1 302 Found"
+2026-07-16 10:15:06,459 INFO HTTP Request: GET https://www.mcst.go.kr/site/s_notice/press/pressView.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:15:06,462 INFO 문화체육관광부: 0건
+2026-07-16 10:15:06,462 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:15:08,310 INFO HTTP Request: GET https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:15:08,754 INFO HTTP Request: GET https://mofe.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 200 OK"
+2026-07-16 10:15:09,053 INFO 기획재정부: 0건
+2026-07-16 10:15:09,053 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:15:09,783 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.0 307 Temporary Redirect"
+2026-07-16 10:15:10,163 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:15:10,304 INFO 국토교통부: 10건
+2026-07-16 10:15:10,305 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 7
+2026-07-16 10:15:11,144 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=1 "HTTP/1.1 200 200"
+2026-07-16 10:15:12,252 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=2 "HTTP/1.1 200 200"
+2026-07-16 10:15:13,451 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=3 "HTTP/1.1 200 200"
+2026-07-16 10:15:14,290 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=4 "HTTP/1.1 200 200"
+2026-07-16 10:15:15,098 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=5 "HTTP/1.1 200 200"
+2026-07-16 10:15:16,004 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=6 "HTTP/1.1 200 200"
+2026-07-16 10:15:16,791 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=7 "HTTP/1.1 200 200"
+2026-07-16 10:15:17,697 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=8 "HTTP/1.1 200 200"
+2026-07-16 10:15:18,549 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=9 "HTTP/1.1 200 200"
+2026-07-16 10:15:19,323 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=10 "HTTP/1.1 200 200"
+2026-07-16 10:15:20,169 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=11 "HTTP/1.1 200 200"
+2026-07-16 10:15:20,987 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=12 "HTTP/1.1 200 200"
+2026-07-16 10:15:21,810 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=13 "HTTP/1.1 200 200"
+2026-07-16 10:15:23,328 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=14 "HTTP/1.1 200 200"
+2026-07-16 10:15:24,190 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=15 "HTTP/1.1 200 200"
+2026-07-16 10:15:24,993 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=16 "HTTP/1.1 200 200"
+2026-07-16 10:15:25,769 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=17 "HTTP/1.1 200 200"
+2026-07-16 10:15:26,636 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=18 "HTTP/1.1 200 200"
+2026-07-16 10:15:27,431 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=19 "HTTP/1.1 200 200"
+2026-07-16 10:15:28,453 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=20 "HTTP/1.1 200 200"
+2026-07-16 10:15:29,241 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=21 "HTTP/1.1 200 200"
+2026-07-16 10:15:30,099 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=22 "HTTP/1.1 200 200"
+2026-07-16 10:15:30,994 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=23 "HTTP/1.1 200 200"
+2026-07-16 10:15:31,871 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=24 "HTTP/1.1 200 200"
+2026-07-16 10:15:32,651 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=25 "HTTP/1.1 200 200"
+2026-07-16 10:15:33,445 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=26 "HTTP/1.1 200 200"
+2026-07-16 10:15:34,166 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=27 "HTTP/1.1 200 200"
+2026-07-16 10:15:34,938 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=28 "HTTP/1.1 200 200"
+2026-07-16 10:15:35,651 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=29 "HTTP/1.1 200 200"
+2026-07-16 10:15:36,365 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=30 "HTTP/1.1 200 200"
+2026-07-16 10:15:37,113 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=31 "HTTP/1.1 200 200"
+2026-07-16 10:15:38,978 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=32 "HTTP/1.1 200 200"
+2026-07-16 10:15:41,009 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=33 "HTTP/1.1 200 200"
+2026-07-16 10:15:41,884 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=34 "HTTP/1.1 200 200"
+2026-07-16 10:15:42,625 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=35 "HTTP/1.1 200 200"
+2026-07-16 10:15:43,376 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=36 "HTTP/1.1 200 200"
+2026-07-16 10:15:44,217 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=37 "HTTP/1.1 200 200"
+2026-07-16 10:15:45,034 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=38 "HTTP/1.1 200 200"
+2026-07-16 10:15:45,779 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=39 "HTTP/1.1 200 200"
+2026-07-16 10:15:46,449 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=40 "HTTP/1.1 200 200"
+2026-07-16 10:15:47,214 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=41 "HTTP/1.1 200 200"
+2026-07-16 10:15:47,965 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=42 "HTTP/1.1 200 200"
+2026-07-16 10:15:48,751 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=43 "HTTP/1.1 200 200"
+2026-07-16 10:15:49,511 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=44 "HTTP/1.1 200 200"
+2026-07-16 10:15:50,293 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=45 "HTTP/1.1 200 200"
+2026-07-16 10:15:51,065 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=46 "HTTP/1.1 200 200"
+2026-07-16 10:15:51,827 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=47 "HTTP/1.1 200 200"
+2026-07-16 10:15:52,588 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=48 "HTTP/1.1 200 200"
+2026-07-16 10:15:53,407 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=49 "HTTP/1.1 200 200"
+2026-07-16 10:15:54,195 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=50 "HTTP/1.1 200 200"
+2026-07-16 10:15:54,949 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=51 "HTTP/1.1 200 200"
+2026-07-16 10:15:55,721 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=52 "HTTP/1.1 200 200"
+2026-07-16 10:15:56,569 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=53 "HTTP/1.1 200 200"
+2026-07-16 10:15:57,304 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=54 "HTTP/1.1 200 200"
+2026-07-16 10:15:58,092 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=55 "HTTP/1.1 200 200"
+2026-07-16 10:15:58,857 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=56 "HTTP/1.1 200 200"
+2026-07-16 10:15:59,582 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=57 "HTTP/1.1 200 200"
+2026-07-16 10:16:00,301 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=58 "HTTP/1.1 200 200"
+2026-07-16 10:16:01,053 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=59 "HTTP/1.1 200 200"
+2026-07-16 10:16:01,801 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=60 "HTTP/1.1 200 200"
+2026-07-16 10:16:02,535 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=61 "HTTP/1.1 200 200"
+2026-07-16 10:16:05,067 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=62 "HTTP/1.1 200 200"
+2026-07-16 10:16:06,373 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=63 "HTTP/1.1 200 200"
+2026-07-16 10:16:07,203 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=64 "HTTP/1.1 200 200"
+2026-07-16 10:16:07,943 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=65 "HTTP/1.1 200 200"
+2026-07-16 10:16:08,658 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=66 "HTTP/1.1 200 200"
+2026-07-16 10:16:09,451 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=67 "HTTP/1.1 200 200"
+2026-07-16 10:16:10,172 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=68 "HTTP/1.1 200 200"
+2026-07-16 10:16:10,981 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=69 "HTTP/1.1 200 200"
+2026-07-16 10:16:11,888 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=70 "HTTP/1.1 200 200"
+2026-07-16 10:16:12,595 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=71 "HTTP/1.1 200 200"
+2026-07-16 10:16:13,329 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=72 "HTTP/1.1 200 200"
+2026-07-16 10:16:14,061 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=73 "HTTP/1.1 200 200"
+2026-07-16 10:16:14,796 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=74 "HTTP/1.1 200 200"
+2026-07-16 10:16:15,535 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=75 "HTTP/1.1 200 200"
+2026-07-16 10:16:16,314 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=76 "HTTP/1.1 200 200"
+2026-07-16 10:16:16,985 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=77 "HTTP/1.1 200 200"
+2026-07-16 10:16:17,700 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=78 "HTTP/1.1 200 200"
+2026-07-16 10:16:18,519 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=79 "HTTP/1.1 200 200"
+2026-07-16 10:16:19,231 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=80 "HTTP/1.1 200 200"
+2026-07-16 10:16:20,002 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=81 "HTTP/1.1 200 200"
+2026-07-16 10:16:20,781 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=82 "HTTP/1.1 200 200"
+2026-07-16 10:16:21,542 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=83 "HTTP/1.1 200 200"
+2026-07-16 10:16:22,317 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=84 "HTTP/1.1 200 200"
+2026-07-16 10:16:23,284 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=85 "HTTP/1.1 200 200"
+2026-07-16 10:16:24,065 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=86 "HTTP/1.1 200 200"
+2026-07-16 10:16:25,010 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=87 "HTTP/1.1 200 200"
+2026-07-16 10:16:25,771 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=88 "HTTP/1.1 200 200"
+2026-07-16 10:16:26,517 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=89 "HTTP/1.1 200 200"
+2026-07-16 10:16:27,242 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=90 "HTTP/1.1 200 200"
+2026-07-16 10:16:28,074 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=91 "HTTP/1.1 200 200"
+2026-07-16 10:16:28,806 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=92 "HTTP/1.1 200 200"
+2026-07-16 10:16:29,606 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=93 "HTTP/1.1 200 200"
+2026-07-16 10:16:30,546 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=94 "HTTP/1.1 200 200"
+2026-07-16 10:16:31,357 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=95 "HTTP/1.1 200 200"
+2026-07-16 10:16:32,184 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=96 "HTTP/1.1 200 200"
+2026-07-16 10:16:32,882 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=97 "HTTP/1.1 200 200"
+2026-07-16 10:16:34,249 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=98 "HTTP/1.1 200 200"
+2026-07-16 10:16:35,102 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=99 "HTTP/1.1 200 200"
+2026-07-16 10:16:36,114 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=100 "HTTP/1.1 200 200"
+2026-07-16 10:16:36,804 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=101 "HTTP/1.1 200 200"
+2026-07-16 10:16:37,577 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=102 "HTTP/1.1 200 200"
+2026-07-16 10:16:38,360 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=103 "HTTP/1.1 200 200"
+2026-07-16 10:16:39,213 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=104 "HTTP/1.1 200 200"
+2026-07-16 10:16:40,114 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=105 "HTTP/1.1 200 200"
+2026-07-16 10:16:40,834 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=106 "HTTP/1.1 200 200"
+2026-07-16 10:16:41,584 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=107 "HTTP/1.1 200 200"
+2026-07-16 10:16:42,297 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=108 "HTTP/1.1 200 200"
+2026-07-16 10:16:43,037 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=109 "HTTP/1.1 200 200"
+2026-07-16 10:16:43,738 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=110 "HTTP/1.1 200 200"
+2026-07-16 10:16:44,472 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=111 "HTTP/1.1 200 200"
+2026-07-16 10:16:45,158 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=112 "HTTP/1.1 200 200"
+2026-07-16 10:16:45,847 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=113 "HTTP/1.1 200 200"
+2026-07-16 10:16:46,622 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=114 "HTTP/1.1 200 200"
+2026-07-16 10:16:47,378 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=115 "HTTP/1.1 200 200"
+2026-07-16 10:16:48,116 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=116 "HTTP/1.1 200 200"
+2026-07-16 10:16:48,833 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=117 "HTTP/1.1 200 200"
+2026-07-16 10:16:49,535 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=118 "HTTP/1.1 200 200"
+2026-07-16 10:16:50,256 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=119 "HTTP/1.1 200 200"
+2026-07-16 10:16:50,946 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=120 "HTTP/1.1 200 200"
+2026-07-16 10:16:51,654 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=121 "HTTP/1.1 200 200"
+2026-07-16 10:16:52,355 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=122 "HTTP/1.1 200 200"
+2026-07-16 10:16:53,095 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=123 "HTTP/1.1 200 200"
+2026-07-16 10:16:53,801 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=124 "HTTP/1.1 200 200"
+2026-07-16 10:16:54,586 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=125 "HTTP/1.1 200 200"
+2026-07-16 10:16:55,310 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=126 "HTTP/1.1 200 200"
+2026-07-16 10:16:56,071 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=127 "HTTP/1.1 200 200"
+2026-07-16 10:16:56,827 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=128 "HTTP/1.1 200 200"
+2026-07-16 10:16:57,536 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=129 "HTTP/1.1 200 200"
+2026-07-16 10:16:58,408 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=130 "HTTP/1.1 200 200"
+2026-07-16 10:17:01,390 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=131 "HTTP/1.1 200 200"
+2026-07-16 10:17:02,108 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=132 "HTTP/1.1 200 200"
+2026-07-16 10:17:02,841 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=133 "HTTP/1.1 200 200"
+2026-07-16 10:17:03,588 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=134 "HTTP/1.1 200 200"
+2026-07-16 10:17:04,400 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=135 "HTTP/1.1 200 200"
+2026-07-16 10:17:05,166 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=136 "HTTP/1.1 200 200"
+2026-07-16 10:17:05,853 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=137 "HTTP/1.1 200 200"
+2026-07-16 10:17:06,598 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=138 "HTTP/1.1 200 200"
+2026-07-16 10:17:07,303 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=139 "HTTP/1.1 200 200"
+2026-07-16 10:17:08,007 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=140 "HTTP/1.1 200 200"
+2026-07-16 10:17:08,939 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=141 "HTTP/1.1 200 200"
+2026-07-16 10:17:09,722 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=142 "HTTP/1.1 200 200"
+2026-07-16 10:17:12,074 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=143 "HTTP/1.1 200 200"
+2026-07-16 10:17:12,846 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=144 "HTTP/1.1 200 200"
+2026-07-16 10:17:13,534 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=145 "HTTP/1.1 200 200"
+2026-07-16 10:17:14,208 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=146 "HTTP/1.1 200 200"
+2026-07-16 10:17:14,877 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=147 "HTTP/1.1 200 200"
+2026-07-16 10:17:15,580 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=148 "HTTP/1.1 200 200"
+2026-07-16 10:17:16,396 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=149 "HTTP/1.1 200 200"
+2026-07-16 10:17:17,818 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=150 "HTTP/1.1 200 200"
+2026-07-16 10:17:18,602 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=151 "HTTP/1.1 200 200"
+2026-07-16 10:17:19,365 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=152 "HTTP/1.1 200 200"
+2026-07-16 10:17:20,107 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=153 "HTTP/1.1 200 200"
+2026-07-16 10:17:20,801 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=154 "HTTP/1.1 200 200"
+2026-07-16 10:17:21,520 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=155 "HTTP/1.1 200 200"
+2026-07-16 10:17:22,264 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=156 "HTTP/1.1 200 200"
+2026-07-16 10:17:23,074 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=157 "HTTP/1.1 200 200"
+2026-07-16 10:17:23,793 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=158 "HTTP/1.1 200 200"
+2026-07-16 10:17:24,587 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=159 "HTTP/1.1 200 200"
+2026-07-16 10:17:25,313 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=160 "HTTP/1.1 200 200"
+2026-07-16 10:17:26,036 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=161 "HTTP/1.1 200 200"
+2026-07-16 10:17:26,800 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=162 "HTTP/1.1 200 200"
+2026-07-16 10:17:27,588 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=163 "HTTP/1.1 200 200"
+2026-07-16 10:17:28,344 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=164 "HTTP/1.1 200 200"
+2026-07-16 10:17:29,164 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=165 "HTTP/1.1 200 200"
+2026-07-16 10:17:30,114 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=166 "HTTP/1.1 200 200"
+2026-07-16 10:17:31,638 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=167 "HTTP/1.1 200 200"
+2026-07-16 10:17:33,922 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=168 "HTTP/1.1 200 200"
+2026-07-16 10:17:34,659 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=169 "HTTP/1.1 200 200"
+2026-07-16 10:17:35,437 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=170 "HTTP/1.1 200 200"
+2026-07-16 10:17:36,366 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=171 "HTTP/1.1 200 200"
+2026-07-16 10:17:37,075 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=172 "HTTP/1.1 200 200"
+2026-07-16 10:17:37,814 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=173 "HTTP/1.1 200 200"
+2026-07-16 10:17:38,546 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=174 "HTTP/1.1 200 200"
+2026-07-16 10:17:39,274 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=175 "HTTP/1.1 200 200"
+2026-07-16 10:17:40,139 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=176 "HTTP/1.1 200 200"
+2026-07-16 10:17:40,852 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=177 "HTTP/1.1 200 200"
+2026-07-16 10:17:41,585 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=178 "HTTP/1.1 200 200"
+2026-07-16 10:17:42,371 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=179 "HTTP/1.1 200 200"
+2026-07-16 10:17:43,127 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=180 "HTTP/1.1 200 200"
+2026-07-16 10:17:43,880 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=181 "HTTP/1.1 200 200"
+2026-07-16 10:17:44,650 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=182 "HTTP/1.1 200 200"
+2026-07-16 10:17:45,511 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=183 "HTTP/1.1 200 200"
+2026-07-16 10:17:46,702 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=184 "HTTP/1.1 200 200"
+2026-07-16 10:17:47,476 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=185 "HTTP/1.1 200 200"
+2026-07-16 10:17:48,228 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=186 "HTTP/1.1 200 200"
+2026-07-16 10:17:48,962 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=187 "HTTP/1.1 200 200"
+2026-07-16 10:17:49,680 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=188 "HTTP/1.1 200 200"
+2026-07-16 10:17:50,483 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=189 "HTTP/1.1 200 200"
+2026-07-16 10:17:51,308 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=190 "HTTP/1.1 200 200"
+2026-07-16 10:17:52,008 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=191 "HTTP/1.1 200 200"
+2026-07-16 10:17:52,751 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=192 "HTTP/1.1 200 200"
+2026-07-16 10:17:53,641 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=193 "HTTP/1.1 200 200"
+2026-07-16 10:17:54,381 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=194 "HTTP/1.1 200 200"
+2026-07-16 10:17:55,059 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=195 "HTTP/1.1 200 200"
+2026-07-16 10:17:55,798 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=196 "HTTP/1.1 200 200"
+2026-07-16 10:17:56,520 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=197 "HTTP/1.1 200 200"
+2026-07-16 10:17:57,290 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=198 "HTTP/1.1 200 200"
+2026-07-16 10:17:58,109 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=199 "HTTP/1.1 200 200"
+2026-07-16 10:17:58,845 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=200 "HTTP/1.1 200 200"
+2026-07-16 10:17:59,590 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=201 "HTTP/1.1 200 200"
+2026-07-16 10:18:00,347 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=202 "HTTP/1.1 200 200"
+2026-07-16 10:18:01,346 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=203 "HTTP/1.1 200 200"
+2026-07-16 10:18:02,047 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=204 "HTTP/1.1 200 200"
+2026-07-16 10:18:02,788 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=205 "HTTP/1.1 200 200"
+2026-07-16 10:18:03,584 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=206 "HTTP/1.1 200 200"
+2026-07-16 10:18:04,366 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=207 "HTTP/1.1 200 200"
+2026-07-16 10:18:05,274 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=208 "HTTP/1.1 200 200"
+2026-07-16 10:18:06,118 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=209 "HTTP/1.1 200 200"
+2026-07-16 10:18:06,283 INFO 정보통신산업진흥원(NIPA): 2073건
+2026-07-16 10:18:06,283 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 2073 / 제외 0
+2026-07-16 10:18:07,345 INFO HTTP Request: GET https://www.kiat.or.kr/front/board/boardContentsListAjax.do?board_id=90&che1=all&miv_pageSize=15 "HTTP/1.1 200 200"
+2026-07-16 10:18:07,396 INFO 한국산업기술진흥원(KIAT): 15건
+2026-07-16 10:18:07,397 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 14
+2026-07-16 10:18:07,982 INFO HTTP Request: GET https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do "HTTP/1.1 200 OK"
+2026-07-16 10:18:07,986 INFO 한국산업기술평가관리원(KEIT): 3건
+2026-07-16 10:18:07,986 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 3
+2026-07-16 10:18:08,240 INFO HTTP Request: GET https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do "HTTP/1.1 200 200"
+2026-07-16 10:18:08,517 INFO HTTP Request: POST https://www.kosmes.or.kr/sh/nts/notice_list.json "HTTP/1.1 200 200"
+2026-07-16 10:18:08,523 INFO 중소벤처기업진흥공단(KOSME): 42건
+2026-07-16 10:18:08,524 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 40
+2026-07-16 10:18:09,938 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:18:10,018 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:18:10,092 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:18:10,093 INFO 소진공 정책자금 온라인신청: 30건
+2026-07-16 10:18:10,093 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 30
+2026-07-16 10:18:11,072 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104 "HTTP/1.1 200 200"
+2026-07-16 10:18:11,236 INFO 한국콘텐츠진흥원(사업공고): 10건
+2026-07-16 10:18:11,237 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:18:11,995 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392 "HTTP/1.1 200 200"
+2026-07-16 10:18:12,567 INFO 한국콘텐츠진흥원(금융): 11건
+2026-07-16 10:18:12,568 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 10
+2026-07-16 10:18:13,479 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:18:13,685 INFO 한국무역보험공사(K-SURE): 12건
+2026-07-16 10:18:13,685 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:14,758 INFO HTTP Request: GET https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 308 Permanent Redirect"
+2026-07-16 10:18:15,300 INFO HTTP Request: GET https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 200 OK"
+2026-07-16 10:18:15,403 INFO 신용보증기금(KODIT): 10건
+2026-07-16 10:18:15,403 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:16,174 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU02096 "HTTP/1.1 200 200"
+2026-07-16 10:18:16,348 INFO 한국보건산업진흥원(KHIDI): 10건
+2026-07-16 10:18:16,348 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:17,806 INFO HTTP Request: GET https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277 "HTTP/1.1 200 OK"
+2026-07-16 10:18:17,951 INFO 한국환경산업기술원(KEITI): 10건
+2026-07-16 10:18:17,951 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 9 / 날짜불명 0 / 제외 1
+2026-07-16 10:18:21,684 INFO HTTP Request: GET https://www.ketep.re.kr/businessAcment?menuId=MENU002080200000000 "HTTP/1.1 200 OK"
+2026-07-16 10:18:21,955 INFO 한국에너지기술평가원(KETEP): 10건
+2026-07-16 10:18:21,956 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:22,659 INFO HTTP Request: GET https://www.kidp.or.kr/?menuno=918&act=list "HTTP/1.1 200 OK"
+2026-07-16 10:18:23,324 INFO 한국디자인진흥원(KIDP): 10건
+2026-07-16 10:18:23,324 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:24,152 INFO HTTP Request: GET https://www.rdcdp.or.kr/index.do?menu_id=00000746 "HTTP/1.1 200 "
+2026-07-16 10:18:24,449 INFO 지역디자인통합플랫폼: 0건
+2026-07-16 10:18:24,449 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:18:25,766 INFO HTTP Request: GET https://www.sba.seoul.kr/Pages/BusinessApply/Posting.aspx "HTTP/1.1 200 OK"
+2026-07-16 10:18:26,370 INFO 서울산업진흥원(SBA): 10건
+2026-07-16 10:18:26,370 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 8
+2026-07-16 10:18:30,055 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:18:33,781 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:18:36,819 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:18:38,787 INFO 인천테크노파크: 30건
+2026-07-16 10:18:38,787 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 28
+2026-07-16 10:18:41,866 INFO HTTP Request: GET https://www.bepa.kr/kor/view.do?no=1508 "HTTP/1.1 200 200"
+2026-07-16 10:18:42,250 INFO 부산경제진흥원(BEP): 12건
+2026-07-16 10:18:42,251 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:18:44,031 INFO HTTP Request: GET https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102 "HTTP/1.1 200 "
+2026-07-16 10:18:44,147 INFO 대전테크노파크: 11건
+2026-07-16 10:18:44,147 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:45,139 INFO HTTP Request: GET https://myfair.co/support-program-list "HTTP/1.1 200 OK"
+2026-07-16 10:18:45,178 INFO 마이페어: 0건
+2026-07-16 10:18:45,178 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:18:46,989 INFO HTTP Request: GET https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do "HTTP/1.1 200 "
+2026-07-16 10:18:47,436 INFO 한국무역협회(KITA): 10건
+2026-07-16 10:18:47,436 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 8
+2026-07-16 10:18:48,467 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice02_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:18:48,668 INFO SMTECH(중소기업기술개발): 15건
+2026-07-16 10:18:48,668 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:18:50,269 INFO HTTP Request: GET https://pms.gtp.or.kr/web/business/webBusinessList.do "HTTP/1.1 200 OK"
+2026-07-16 10:18:50,450 INFO 경기TP: 10건
+2026-07-16 10:18:50,451 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:18:51,169 INFO HTTP Request: GET https://www.gsp.or.kr/supportProject/UVSL0001.do "HTTP/1.1 200 "
+2026-07-16 10:18:51,290 INFO 경기스타트업플랫폼: 10건
+2026-07-16 10:18:51,290 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:18:51,841 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/business_list.do "HTTP/1.1 200 200"
+2026-07-16 10:18:51,965 INFO 창조경제혁신센터(공고): 2건
+2026-07-16 10:18:51,965 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 2 / 제외 0
+2026-07-16 10:18:53,546 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/event_list.do "HTTP/1.1 200 200"
+2026-07-16 10:18:53,623 INFO 창조경제혁신센터(행사): 2건
+2026-07-16 10:18:53,623 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 2 / 제외 0
+2026-07-16 10:18:59,208 INFO HTTP Request: GET https://www.seoultp.or.kr/user/nd19746.do "HTTP/1.1 200 OK"
+2026-07-16 10:18:59,223 INFO 서울TP: 15건
+2026-07-16 10:18:59,223 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:19:00,261 INFO HTTP Request: GET https://kovwa.or.kr/94 "HTTP/1.1 200 OK"
+2026-07-16 10:19:00,414 INFO 한국여성벤처협회: 0건
+2026-07-16 10:19:00,417 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:04,954 INFO HTTP Request: GET https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:05,083 INFO 혁신제품지정공고(나라장터): 0건
+2026-07-16 10:19:05,085 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:06,468 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024 "HTTP/1.1 200 200"
+2026-07-16 10:19:06,639 INFO 한국콘텐츠진흥원(일반공고): 1건
+2026-07-16 10:19:06,639 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 0
+2026-07-16 10:19:07,495 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:07,572 INFO 비즈오케이(BizOK) - 인천기업지원: 12건
+2026-07-16 10:19:07,572 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 12 / 제외 0
+2026-07-16 10:19:08,311 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:19:08,529 INFO 비즈오케이 - 인천 연간사업공고계획: 0건
+2026-07-16 10:19:08,530 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:10,855 INFO HTTP Request: GET https://www.incheon.go.kr/IC010205 "HTTP/1.1 200 OK"
+2026-07-16 10:19:11,936 INFO 인천광역시청 - 공고/고시: 10건
+2026-07-16 10:19:11,937 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 7 / 날짜불명 0 / 제외 3
+2026-07-16 10:19:14,723 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:19:18,053 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:19:21,202 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:19:21,387 INFO 인천테크노파크(ITP) - 공지사항: 30건
+2026-07-16 10:19:21,387 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 29
+2026-07-16 10:19:23,806 INFO HTTP Request: GET https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03 "HTTP/1.1 200 200"
+2026-07-16 10:19:24,540 INFO 인천경제자유구역청(IFEZ): 10건
+2026-07-16 10:19:24,540 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:19:25,156 INFO HTTP Request: GET https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228 "HTTP/1.1 200 OK"
+2026-07-16 10:19:25,169 INFO 인천상공회의소: 0건
+2026-07-16 10:19:25,170 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:25,824 INFO HTTP Request: GET https://www.ema.or.kr/bbs/support "HTTP/1.1 200 OK"
+2026-07-16 10:19:25,842 INFO 인천수출경영자협의회: 15건
+2026-07-16 10:19:25,842 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:19:26,367 INFO HTTP Request: GET http://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:19:27,113 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-07-16 10:19:27,176 INFO 인천소상공인종합지원센터: 15건
+2026-07-16 10:19:27,176 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 13
+2026-07-16 10:19:27,844 INFO HTTP Request: GET https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044 "HTTP/1.1 200 "
+2026-07-16 10:19:28,040 INFO 인천신용보증재단: 0건
+2026-07-16 10:19:28,041 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:29,699 INFO HTTP Request: GET https://www.icjg.go.kr/krcm01b "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:19:29,827 INFO HTTP Request: GET https://www.icjg.go.kr/index.html "HTTP/1.1 200 OK"
+2026-07-16 10:19:29,829 INFO 인천 중구청: 0건
+2026-07-16 10:19:29,829 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:19:31,156 INFO HTTP Request: GET https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:31,976 INFO 인천 부평구청: 10건
+2026-07-16 10:19:31,976 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 6 / 날짜불명 0 / 제외 4
+2026-07-16 10:19:32,335 INFO HTTP Request: GET https://www.kotra.or.kr/subList/20000020753 "HTTP/1.1 200 OK"
+2026-07-16 10:19:32,922 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:33,057 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:33,196 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:33,327 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:33,459 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:33,527 INFO KOTRA 무역투자24 - 사업공고: 10건
+2026-07-16 10:19:33,528 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:19:34,705 INFO HTTP Request: GET https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1&pNm=BOA0101 "HTTP/1.1 200 OK"
+2026-07-16 10:19:34,822 INFO 소상공인시장진흥공단 - 사업공고: 10건
+2026-07-16 10:19:34,822 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:19:36,087 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU01108 "HTTP/1.1 200 200"
+2026-07-16 10:19:36,410 INFO 한국보건산업진흥원(K-뷰티공고): 18건
+2026-07-16 10:19:36,411 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 17
+2026-07-16 10:19:39,698 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:19:42,595 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:19:45,778 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:19:45,997 INFO 인천TP 마케팅센터(뷰티산업육성): 15건
+2026-07-16 10:19:45,997 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:19:47,393 INFO HTTP Request: GET https://www.exportvoucher.com/portal/board/boardList?bbs_id=1&active_menu_cd=EZ005004000 "HTTP/1.1 200 OK"
+2026-07-16 10:19:47,571 INFO 수출바우처(수출지원기반활용): 15건
+2026-07-16 10:19:47,571 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:19:48,416 INFO HTTP Request: GET https://www.mssmiv.com/portal/board/BoardList?bbsId=1 "HTTP/1.1 200 "
+2026-07-16 10:19:48,517 INFO 중소기업 혁신바우처(MSSMIV): 14건
+2026-07-16 10:19:48,517 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 14
+2026-07-16 10:19:49,568 INFO HTTP Request: GET https://www.gokams.or.kr/01_news/notice_list.aspx "HTTP/1.1 200 OK"
+2026-07-16 10:19:49,720 INFO 예술경영지원센터: 111건
+2026-07-16 10:19:49,720 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 111 / 제외 0
+2026-07-16 10:19:51,964 INFO HTTP Request: GET https://hespa.or.kr/main/index.php?m_cd=23 "HTTP/1.1 200 OK"
+2026-07-16 10:19:51,996 INFO (재)헬스케어스파산업진흥원: 1건
+2026-07-16 10:19:51,996 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 0
+2026-07-16 10:19:54,245 INFO HTTP Request: GET https://www.smes.go.kr/mainbiz/usr/board/comNotice.do "HTTP/1.1 200 OK"
+2026-07-16 10:19:54,304 INFO MainBiz 메인 / 경영혁신형 중소기업: 10건
+2026-07-16 10:19:54,304 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:19:55,048 INFO HTTP Request: GET https://gsipa.or.kr/board/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:19:55,155 INFO 강릉과학산업진흥원: 50건
+2026-07-16 10:19:55,156 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 49 / 제외 1
+2026-07-16 10:19:55,675 INFO HTTP Request: GET http://www.gwef.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:19:55,733 INFO 강원경영자총협회: 15건
+2026-07-16 10:19:55,733 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:19:56,320 INFO HTTP Request: GET https://www.gwsinbo.or.kr/board/board_list.php?board_name=notice "HTTP/1.1 200 OK"
+2026-07-16 10:19:56,427 INFO 강원신용보증재단: 21건
+2026-07-16 10:19:56,428 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 1 / 제외 19
+2026-07-16 10:19:56,993 INFO HTTP Request: GET https://gwse.or.kr/bbs/board.php?bo_table=sub41 "HTTP/1.1 200 OK"
+2026-07-16 10:19:57,008 INFO 강원지속가능경제지원센터: 20건
+2026-07-16 10:19:57,009 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 20
+2026-07-16 10:19:57,564 INFO HTTP Request: GET https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:19:57,643 INFO 강원지역인적자원개발위원회: 10건
+2026-07-16 10:19:57,643 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:19:58,245 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01a&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-07-16 10:19:58,365 INFO 강원테크노파크: 21건
+2026-07-16 10:19:58,366 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 20
+2026-07-16 10:19:58,841 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01b&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-07-16 10:19:58,980 INFO 강원테크노파크: 33건
+2026-07-16 10:19:58,980 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 33
+2026-07-16 10:19:59,678 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub61 "HTTP/1.1 200 OK"
+2026-07-16 10:19:59,847 INFO 강원특별자치도경제진흥원: 15건
+2026-07-16 10:19:59,847 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:00,486 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21 "HTTP/1.1 200 OK"
+2026-07-16 10:20:00,641 INFO 강원특별자치도경제진흥원: 15건
+2026-07-16 10:20:00,641 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 13
+2026-07-16 10:20:03,324 INFO HTTP Request: GET https://www.gbsa.or.kr/board/notice.do "HTTP/1.1 200 "
+2026-07-16 10:20:03,510 INFO 경기도경제과학진흥원: 10건
+2026-07-16 10:20:03,510 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:04,388 INFO HTTP Request: GET https://www.gmr.or.kr/base/board/list?boardManagementNo=1&menuLevel=2&menuNo=14 "HTTP/1.1 200 200"
+2026-07-16 10:20:04,901 INFO 경기도시장상권진흥원: 10건
+2026-07-16 10:20:04,902 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:06,205 INFO HTTP Request: GET https://www.gwff.kr/base/board/list?boardManagementNo=21&menuLevel=2&menuNo=23 "HTTP/1.1 200 200"
+2026-07-16 10:20:06,458 INFO 경기도여성가족재단: 10건
+2026-07-16 10:20:06,458 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:07,193 INFO HTTP Request: GET https://www.gghrd.or.kr/board/notice.php "HTTP/1.1 200 OK"
+2026-07-16 10:20:07,222 INFO 경기지역인적자원개발위원회: 21건
+2026-07-16 10:20:07,223 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 21
+2026-07-16 10:20:08,099 INFO HTTP Request: GET https://www.gcon.or.kr/gcon/bbs/B0000001/list.do?menuNo=200057 "HTTP/1.1 200 200"
+2026-07-16 10:20:08,439 INFO 경기콘텐츠진흥원: 15건
+2026-07-16 10:20:08,439 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:09,458 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=anno "HTTP/1.1 200 OK"
+2026-07-16 10:20:09,600 INFO 경기테크노파크: 20건
+2026-07-16 10:20:09,600 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 20
+2026-07-16 10:20:10,655 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=expert "HTTP/1.1 200 OK"
+2026-07-16 10:20:10,838 INFO 경기테크노파크: 20건
+2026-07-16 10:20:10,838 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 20
+2026-07-16 10:20:11,388 INFO HTTP Request: GET https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/list/sub4_1 "HTTP/1.1 200 OK"
+2026-07-16 10:20:11,409 INFO 경남6차산업지원센터: 10건
+2026-07-16 10:20:11,409 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:12,855 INFO HTTP Request: GET https://www.gnsinbo.or.kr/bbs/board.php?bo_table=01_03_01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:20:13,003 INFO 경남신용보증재단: 15건
+2026-07-16 10:20:13,003 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:16,591 INFO HTTP Request: GET https://gnhrd.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:20:16,654 INFO 경남지역인적자원개발위원회: 12건
+2026-07-16 10:20:16,654 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:20:17,880 INFO HTTP Request: GET https://www.gntp.or.kr/board/list "HTTP/1.1 200 "
+2026-07-16 10:20:17,948 INFO 경남테크노파크: 10건
+2026-07-16 10:20:17,948 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:18,639 INFO HTTP Request: GET http://kbef.or.kr/zbxe/support1 "HTTP/1.1 200 OK"
+2026-07-16 10:20:18,657 INFO 경북경영자총협회: 25건
+2026-07-16 10:20:18,657 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 25
+2026-07-16 10:20:20,008 INFO HTTP Request: GET https://gbssc.or.kr/notice/ "HTTP/1.1 200 OK"
+2026-07-16 10:20:20,098 INFO 경북광역자활센터: 15건
+2026-07-16 10:20:20,099 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:20,744 INFO HTTP Request: GET http://www.geea.or.kr/bbs/notice "HTTP/1.1 200 OK"
+2026-07-16 10:20:20,771 INFO 경북북부경영자협회: 22건
+2026-07-16 10:20:20,772 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 22
+2026-07-16 10:20:22,133 INFO HTTP Request: GET https://forwoman.or.kr/main/contents.do?a_num=59464232 "HTTP/1.1 200 OK"
+2026-07-16 10:20:22,238 INFO 경북여성정책개발원: 11건
+2026-07-16 10:20:22,238 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 11
+2026-07-16 10:20:23,673 INFO HTTP Request: GET http://gbhrd.or.kr/zbxe/?mid=support1 "HTTP/1.1 200 OK"
+2026-07-16 10:20:23,691 INFO 경북지역인적자원개발위원회: 23건
+2026-07-16 10:20:23,691 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 23
+2026-07-16 10:20:24,485 INFO HTTP Request: GET https://www.gfund.kr/hp/info/M04_L01.do "HTTP/1.1 200 OK"
+2026-07-16 10:20:24,499 INFO 경상북도 중소기업육성자금 GFund: 5건
+2026-07-16 10:20:24,499 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 5
+2026-07-16 10:20:25,654 INFO HTTP Request: GET https://www.gepa.kr/?page_id=51 "HTTP/1.1 200 OK"
+2026-07-16 10:20:26,152 INFO 경상북도경제진흥원: 10건
+2026-07-16 10:20:26,153 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 5 / 날짜불명 0 / 제외 5
+2026-07-16 10:20:26,951 INFO HTTP Request: GET http://gbse.or.kr/HOME/gbse/sub.htm?nav_code=gbs1566979318 "HTTP/1.1 200 OK"
+2026-07-16 10:20:28,339 INFO 경상북도사회적경제지원센터: 13건
+2026-07-16 10:20:28,339 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 13
+2026-07-16 10:20:28,923 INFO HTTP Request: GET https://www.gipa.or.kr/community/01_1.php "HTTP/1.1 200 OK"
+2026-07-16 10:20:29,034 INFO 고양산업진흥원: 10건
+2026-07-16 10:20:29,034 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:20:29,918 INFO HTTP Request: GET http://www.gjef.or.kr/ko/28 "HTTP/1.1 200 OK"
+2026-07-16 10:20:29,975 INFO 광주경영자총협회: 15건
+2026-07-16 10:20:29,976 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:30,547 INFO HTTP Request: GET https://www.gjep.or.kr/cms/bbs/cms.php?dk_cms=comm_01 "HTTP/1.1 200 OK"
+2026-07-16 10:20:30,705 INFO 광주경제진흥상생일자리재단: 15건
+2026-07-16 10:20:30,705 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:51,633 INFO HTTP Request: GET http://www.gjjahwal.or.kr/ko/36 "HTTP/1.1 200 OK"
+2026-07-16 10:20:51,859 INFO 광주광역자활센터: 15건
+2026-07-16 10:20:51,860 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:20:52,437 INFO HTTP Request: GET https://www.gjsec.kr/bbs/board.php?bo_table=noti&sca=%EC%84%BC%ED%84%B0 "HTTP/1.1 200 OK"
+2026-07-16 10:20:52,462 INFO 광주사회적경제지원센터: 19건
+2026-07-16 10:20:52,462 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 2 / 제외 17
+2026-07-16 10:20:53,404 INFO HTTP Request: GET https://www.gjcci.or.kr/user/board/lists/board_cd/3010 "HTTP/1.1 200 OK"
+2026-07-16 10:20:53,530 INFO 광주상공회의소: 14건
+2026-07-16 10:20:53,530 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 14
+2026-07-16 10:20:54,547 INFO HTTP Request: GET https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003 "HTTP/1.1 200 200"
+2026-07-16 10:20:54,714 INFO 광주정보문화산업진흥원: 25건
+2026-07-16 10:20:54,715 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 25
+2026-07-16 10:20:57,185 INFO HTTP Request: GET https://gj.riia.or.kr/board/businessAnnouncement "HTTP/1.1 200 "
+2026-07-16 10:20:57,205 INFO 광주지역산업진흥원: 13건
+2026-07-16 10:20:57,205 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 13
+2026-07-16 10:20:57,826 INFO HTTP Request: GET https://www.gwangjuhrd.or.kr/user2/board/lists/board_cd/5010 "HTTP/1.1 200 OK"
+2026-07-16 10:20:57,932 INFO 광주지역인적자원개발위원회: 12건
+2026-07-16 10:20:57,933 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:20:59,087 INFO HTTP Request: GET https://www.gjtp.or.kr/home/business.cs?m=8 "HTTP/1.1 200 OK"
+2026-07-16 10:20:59,247 INFO 광주테크노파크: 30건
+2026-07-16 10:20:59,248 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 30
+2026-07-16 10:20:59,796 INFO HTTP Request: GET https://www.ne.go.kr/user/bbs/BD_selectBbsList.do?q_bbsSn=1003 "HTTP/1.1 200 OK"
+2026-07-16 10:20:59,956 INFO 국가교육위원회: 10건
+2026-07-16 10:20:59,956 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:01,008 INFO HTTP Request: GET https://www.kaia.re.kr/portal/bbs/list/B0000006.do?menuNo=200547 "HTTP/1.1 200 OK"
+2026-07-16 10:21:01,201 INFO 국토교통과학기술진흥원: 10건
+2026-07-16 10:21:01,201 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:21:02,278 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_01.html "HTTP/1.1 200 OK"
+2026-07-16 10:21:02,475 INFO 군포산업진흥원: 29건
+2026-07-16 10:21:02,475 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 5 / 제외 24
+2026-07-16 10:21:03,357 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_02.html "HTTP/1.1 200 OK"
+2026-07-16 10:21:03,565 INFO 군포산업진흥원: 30건
+2026-07-16 10:21:03,565 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 6 / 제외 24
+2026-07-16 10:21:04,331 INFO HTTP Request: GET https://www.kibo.or.kr/main/board/boardType01.do "HTTP/1.1 200 OK"
+2026-07-16 10:21:04,690 INFO 기술보증기금(기보): 10건
+2026-07-16 10:21:04,691 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:05,510 INFO HTTP Request: GET https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/list.do "HTTP/1.1 200 "
+2026-07-16 10:21:05,608 INFO 기업 SOS: 10건
+2026-07-16 10:21:05,608 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:21:06,279 INFO HTTP Request: GET https://www.hrd4u.or.kr/hrddoctor/web/board/list.do?mId=34 "HTTP/1.1 200 OK"
+2026-07-16 10:21:06,356 INFO 기업직업훈련지원시스템: 14건
+2026-07-16 10:21:06,356 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 14
+2026-07-16 10:21:07,026 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/ntfcPblancList.do?key=***&cate_cd=1&searchCnd=40900000000 "HTTP/1.1 200 OK"
+2026-07-16 10:21:07,374 INFO 김포시청: 10건
+2026-07-16 10:21:07,374 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 7
+2026-07-16 10:21:08,441 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/selectBbsNttList.do?bbsNo=292&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:21:08,856 INFO 김포시청: 12건
+2026-07-16 10:21:08,856 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:09,733 INFO HTTP Request: GET https://www.koreahana.or.kr/home/kor/board.do?ptSignature=QnrvtOekzKclpksn74dfsVKJGpwSxgFZ4viFnbbXAD0%3D&menuPos=51 "HTTP/1.1 200 200"
+2026-07-16 10:21:10,039 INFO 남북하나재단: 33건
+2026-07-16 10:21:10,039 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 33 / 제외 0
+2026-07-16 10:21:10,944 INFO HTTP Request: GET https://www.nyj.go.kr/www/selectEminwonWebList.do?key=***&sa1=01&sa1=02&sa1=04&sa1=05&sc4=2024 "HTTP/1.1 200 OK"
+2026-07-16 10:21:11,507 INFO 남양주시청: 10건
+2026-07-16 10:21:11,507 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:12,847 INFO HTTP Request: GET https://www.kwpi.or.kr/home/sub?menukey=7311 "HTTP/1.1 200 200"
+2026-07-16 10:21:12,963 INFO 노사발전재단 일터혁신플랫폼: 10건
+2026-07-16 10:21:12,963 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:13,686 INFO HTTP Request: GET https://nongshinbo.nonghyup.com/user/indexSub.do?codyMenuSeq=258789404&siteId=nongshinbo "HTTP/1.1 200 OK"
+2026-07-16 10:21:14,239 INFO 농림수산업자신용보증기금(농신보): 16건
+2026-07-16 10:21:14,240 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 16
+2026-07-16 10:21:15,136 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=319& "HTTP/1.1 200 OK"
+2026-07-16 10:21:15,227 INFO 대구경북경제자유구역청: 10건
+2026-07-16 10:21:15,227 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:21:16,253 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=321& "HTTP/1.1 200 OK"
+2026-07-16 10:21:16,346 INFO 대구경북경제자유구역청: 11건
+2026-07-16 10:21:16,346 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 11 / 제외 0
+2026-07-16 10:21:17,516 INFO HTTP Request: GET http://www.dgef.or.kr/Home/board/default.asp?v=1&s_no=1&m=01 "HTTP/1.1 200 OK"
+2026-07-16 10:21:17,566 INFO 대구경영자총협회: 20건
+2026-07-16 10:21:17,566 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 20 / 제외 0
+2026-07-16 10:21:21,299 INFO HTTP Request: GET https://startup.daegu.go.kr/index.do?menu_id=00002552 "HTTP/1.1 200 OK"
+2026-07-16 10:21:21,391 INFO 대구창업허브 DASH: 7건
+2026-07-16 10:21:21,391 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 7 / 제외 0
+2026-07-16 10:21:22,192 INFO HTTP Request: GET https://www.sinbo.or.kr/sub04_01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:21:22,236 INFO 대전신용보증재단: 10건
+2026-07-16 10:21:22,237 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:23,010 INFO HTTP Request: GET https://www.djbea.or.kr/board?menuId=MENU00310&siteId=null "HTTP/1.1 200 200"
+2026-07-16 10:21:23,012 INFO 대전일자리경제진흥원: 0건
+2026-07-16 10:21:23,013 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 0
+2026-07-16 10:21:24,750 INFO HTTP Request: GET https://d.nts.go.kr/daejeonnts/na/ntt/selectNttList.do?mi=5114&bbsId=6032 "HTTP/1.1 200 OK"
+2026-07-16 10:21:24,978 INFO 대전지방국세청: 22건
+2026-07-16 10:21:24,978 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 22 / 제외 0
+2026-07-16 10:21:26,323 INFO HTTP Request: GET https://djhrd.or.kr/sub0101 "HTTP/1.1 200 OK"
+2026-07-16 10:21:26,336 INFO 대전지역인적자원개발위원회: 10건
+2026-07-16 10:21:26,337 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:27,646 INFO HTTP Request: GET https://djtp.or.kr/board.es?mid=a20201000000&bid=0101 "HTTP/1.1 200 "
+2026-07-16 10:21:27,859 INFO 대전테크노파크: 10건
+2026-07-16 10:21:27,859 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:28,788 INFO HTTP Request: GET https://djtp.or.kr/pbanc?mid=a20101000000 "HTTP/1.1 200 "
+2026-07-16 10:21:28,965 INFO 대전테크노파크: 10건
+2026-07-16 10:21:28,965 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 5 / 제외 5
+2026-07-16 10:21:29,747 INFO HTTP Request: GET http://www.bsef.or.kr/03_news/news01.php "HTTP/1.1 200 OK"
+2026-07-16 10:21:30,291 INFO 부산경영자총협회: 18건
+2026-07-16 10:21:30,291 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 17
+2026-07-16 10:21:31,338 INFO HTTP Request: GET https://sehub.net/archives/category/alarm/opencat "HTTP/1.1 200 OK"
+2026-07-16 10:21:31,406 INFO 서울특별시 사회적경제지원센터: 18건
+2026-07-16 10:21:31,406 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 18
+2026-07-16 10:21:31,904 INFO HTTP Request: GET https://www.sjepa.or.kr/news-announcement "HTTP/1.1 200 OK"
+2026-07-16 10:21:31,954 INFO 세종일자리경제진흥원: 10건
+2026-07-16 10:21:31,954 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:32,574 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=notice01 "HTTP/1.1 200 OK"
+2026-07-16 10:21:32,645 INFO 세종테크노파크: 15건
+2026-07-16 10:21:32,645 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:21:33,238 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=business01 "HTTP/1.1 200 OK"
+2026-07-16 10:21:33,298 INFO 세종테크노파크: 15건
+2026-07-16 10:21:33,298 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 14
+2026-07-16 10:21:33,829 INFO HTTP Request: GET https://www.smart-factory.kr/ "HTTP/1.1 200 200"
+2026-07-16 10:21:34,612 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:21:35,414 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:21:36,228 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:21:37,008 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:21:37,892 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:21:37,894 INFO 스마트공장 사업관리시스템: 39건
+2026-07-16 10:21:37,894 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 5 / 날짜불명 0 / 제외 34
+2026-07-16 10:21:38,374 INFO HTTP Request: GET https://www.sida.kr/notification/news.html "HTTP/1.1 200 OK"
+2026-07-16 10:21:38,430 INFO 시흥산업진흥원: 20건
+2026-07-16 10:21:38,431 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 19
+2026-07-16 10:21:41,430 INFO HTTP Request: GET https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:21:41,743 INFO 안양시상권활성화센터: 12건
+2026-07-16 10:21:41,743 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:21:44,553 INFO HTTP Request: GET https://ypa.or.kr/information/businessnotice/ "HTTP/1.1 200 OK"
+2026-07-16 10:21:44,761 INFO 용인시산업진흥원: 27건
+2026-07-16 10:21:44,762 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 1 / 제외 26
+2026-07-16 10:21:45,211 INFO HTTP Request: GET http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01 "HTTP/1.1 200 OK"
+2026-07-16 10:21:45,221 INFO 울산양산경영자총협회: 15건
+2026-07-16 10:21:45,221 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:21:45,831 INFO HTTP Request: GET https://www.ubpi.or.kr/sub/?mcode=0403010000 "HTTP/1.1 200 OK"
+2026-07-16 10:21:45,981 INFO 울산일자리경제진흥원: 10건
+2026-07-16 10:21:45,981 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:46,542 INFO HTTP Request: GET https://www.ulsanhrd.or.kr/bbs/list.php?board_id=notice "HTTP/1.1 200 OK"
+2026-07-16 10:21:46,553 INFO 울산지역인적자원개발위원회: 18건
+2026-07-16 10:21:46,554 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 18
+2026-07-16 10:21:48,045 INFO HTTP Request: GET https://www.utp.or.kr/board/board.php?bo_table=sub0501&menu_group=4&sno=0401 "HTTP/1.1 200 OK"
+2026-07-16 10:21:48,157 INFO 울산테크노파크: 20건
+2026-07-16 10:21:48,157 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 19
+2026-07-16 10:21:49,243 INFO HTTP Request: GET https://www.wmit.or.kr/announce/businessAnnounceList.do "HTTP/1.1 200 "
+2026-07-16 10:21:49,397 INFO 원주의료기기산업진흥원: 10건
+2026-07-16 10:21:49,397 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:51,697 INFO HTTP Request: GET https://www.ep.go.kr/www/selectBbsNttList.do?bbsNo=42&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:21:52,095 INFO 은평구청: 10건
+2026-07-16 10:21:52,095 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:21:52,698 INFO HTTP Request: GET https://www.innobiz.net/company/company1_list.asp "HTTP/1.1 200 OK"
+2026-07-16 10:21:52,749 INFO 이노비즈협회(사)중소기업기술혁신: 10건
+2026-07-16 10:21:52,749 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:21:53,557 INFO HTTP Request: GET https://www.inef.or.kr/news/notice.php "HTTP/1.1 200 OK"
+2026-07-16 10:21:53,596 INFO 인천경영자총협회: 29건
+2026-07-16 10:21:53,596 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 29 / 제외 0
+2026-07-16 10:21:54,259 INFO HTTP Request: GET https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101 "HTTP/1.1 200 OK"
+2026-07-16 10:21:54,329 INFO 인천광역시사회적경제지원센터: 28건
+2026-07-16 10:21:54,329 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 12 / 제외 16
+2026-07-16 10:21:54,933 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business "HTTP/1.1 200 OK"
+2026-07-16 10:21:55,073 INFO 인천디자인지원센터: 37건
+2026-07-16 10:21:55,074 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 25 / 제외 12
+2026-07-16 10:21:55,808 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business2 "HTTP/1.1 200 OK"
+2026-07-16 10:21:55,918 INFO 인천디자인지원센터: 25건
+2026-07-16 10:21:55,918 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 14 / 제외 11
+2026-07-16 10:21:58,765 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-07-16 10:21:58,880 INFO 인천소상공인종합지원센터: 15건
+2026-07-16 10:21:58,880 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 13
+2026-07-16 10:21:59,533 INFO HTTP Request: GET https://event.jbci.or.kr/sub/s1_1.html "HTTP/1.1 200 OK"
+2026-07-16 10:21:59,539 INFO 전북창조경제혁신센터: 2건
+2026-07-16 10:21:59,539 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 2
+2026-07-16 10:22:00,513 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000002&menuCd=DOM_000000101002000000&contentsSid=4&cpath= "HTTP/1.1 200 OK"
+2026-07-16 10:22:00,663 INFO 전북테크노파크: 10건
+2026-07-16 10:22:00,663 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:01,621 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000006&menuCd=DOM_000000102001000000&paging=ok&gbun=&searchType=&keyword=&pageNo=1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:01,804 INFO 전북테크노파크: 26건
+2026-07-16 10:22:01,804 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 25
+2026-07-16 10:22:03,340 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub01_09 "HTTP/1.1 200 OK"
+2026-07-16 10:22:03,489 INFO 전북특별자치도경제통상진흥원: 20건
+2026-07-16 10:22:03,489 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 20 / 제외 0
+2026-07-16 10:22:04,234 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub02_07_01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:04,371 INFO 전북특별자치도경제통상진흥원: 15건
+2026-07-16 10:22:04,371 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:05,181 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A1000 "HTTP/1.1 200 OK"
+2026-07-16 10:22:05,448 INFO 전주정보문화산업진흥원: 9건
+2026-07-16 10:22:05,448 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 8
+2026-07-16 10:22:06,126 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A2000 "HTTP/1.1 200 OK"
+2026-07-16 10:22:06,380 INFO 전주정보문화산업진흥원: 9건
+2026-07-16 10:22:06,380 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 9
+2026-07-16 10:22:07,061 INFO HTTP Request: GET https://tmdf.or.kr/sub/sub03_01.php "HTTP/1.1 200 OK"
+2026-07-16 10:22:07,547 INFO 전통시장육성재단: 10건
+2026-07-16 10:22:07,547 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:08,221 INFO HTTP Request: GET https://www.nipa.kr/home/2-1 "HTTP/1.1 200 200"
+2026-07-16 10:22:08,398 INFO 정보통신산업진흥원: 12건
+2026-07-16 10:22:08,399 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:22:09,104 INFO HTTP Request: GET https://www.nipa.kr/home/2-2 "HTTP/1.1 200 200"
+2026-07-16 10:22:09,373 INFO 정보통신산업진흥원: 10건
+2026-07-16 10:22:09,373 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:10,391 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?Mcode=11182 "HTTP/1.1 200 OK"
+2026-07-16 10:22:10,561 INFO 정부24: 15건
+2026-07-16 10:22:10,561 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:13,638 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%A0%84%EB%AC%B8%EA%B0%80&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:13,744 INFO 정부24: 15건
+2026-07-16 10:22:13,744 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:14,392 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%9E%90%EB%AC%B8%EB%8B%A8&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:14,507 INFO 정부24: 15건
+2026-07-16 10:22:14,507 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:15,200 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EB%A9%98%ED%86%A0&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:15,317 INFO 정부24: 15건
+2026-07-16 10:22:15,317 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:15,958 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EA%B0%95%EC%82%AC&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:16,078 INFO 정부24: 15건
+2026-07-16 10:22:16,078 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:16,748 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%ED%8F%89%EA%B0%80%EC%9C%84%EC%9B%90&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:22:16,886 INFO 정부24: 15건
+2026-07-16 10:22:16,886 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 15 / 제외 0
+2026-07-16 10:22:18,064 INFO HTTP Request: GET http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:18,282 INFO 제주경영자총협회: 21건
+2026-07-16 10:22:18,283 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 21 / 제외 0
+2026-07-16 10:22:19,129 INFO HTTP Request: GET https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:19,323 INFO 제주신용보증재단: 16건
+2026-07-16 10:22:19,323 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 16 / 제외 0
+2026-07-16 10:22:19,851 INFO HTTP Request: GET http://www.jejuhrd.or.kr/index.php/contents/community/notice "HTTP/1.1 200 OK"
+2026-07-16 10:22:19,861 INFO 제주지역인적자원개발위원회: 10건
+2026-07-16 10:22:19,862 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:20,500 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:20,622 INFO 제주특별자치도 경제통상진흥원: 18건
+2026-07-16 10:22:20,622 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 18 / 제외 0
+2026-07-16 10:22:21,168 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:21,298 INFO 제주특별자치도 경제통상진흥원: 18건
+2026-07-16 10:22:21,299 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 18 / 제외 0
+2026-07-16 10:22:21,987 INFO HTTP Request: GET https://jeju.pass.or.kr/notice-board "HTTP/1.1 200 OK"
+2026-07-16 10:22:22,010 INFO 제주특별자치도사회서비스원: 10건
+2026-07-16 10:22:22,011 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:22,674 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice01_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:22:22,826 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-07-16 10:22:22,826 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:22:23,872 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice03_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:22:24,058 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-07-16 10:22:24,059 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:22:25,078 INFO HTTP Request: GET https://www.tipa.or.kr/ "HTTP/1.1 200 OK"
+2026-07-16 10:22:25,806 INFO HTTP Request: GET https://www.tipa.or.kr/s040101/index/page/1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:25,857 INFO 중소기업기술정보진흥원(TIPA): 10건
+2026-07-16 10:22:25,857 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:26,441 INFO HTTP Request: GET https://www.kosi.re.kr/kosbiWar/front/functionDisplay?menuFrontNo=239693504401196147746371791605890541073&menuFrontURL=front/announceList "HTTP/1.1 200 200"
+2026-07-16 10:22:26,779 INFO 중소벤처기업연구원: 20건
+2026-07-16 10:22:26,779 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 19
+2026-07-16 10:22:27,320 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=1 "HTTP/1.1 200 OK"
+2026-07-16 10:22:27,375 INFO 중소상공인희망재단: 10건
+2026-07-16 10:22:27,375 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:27,872 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=3 "HTTP/1.1 200 OK"
+2026-07-16 10:22:27,939 INFO 중소상공인희망재단: 10건
+2026-07-16 10:22:27,940 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:28,599 INFO HTTP Request: GET https://pms.ripc.org/pms/biz/applicant/notice/list.do "HTTP/1.1 200 200"
+2026-07-16 10:22:28,914 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:22:30,757 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:22:32,227 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:22:35,876 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:22:36,576 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:22:39,811 INFO 지역지식재산센터(RIPC) 사업공고: 50건
+2026-07-16 10:22:39,812 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 50
+2026-07-16 10:22:40,780 INFO HTTP Request: GET https://www.cwip.or.kr/bbs/board.php?bo_table=b0501 "HTTP/1.1 200 OK"
+2026-07-16 10:22:40,893 INFO 창원산업진흥원: 12건
+2026-07-16 10:22:40,893 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 12 / 제외 0
+2026-07-16 10:22:41,684 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=notice "HTTP/1.1 200 OK"
+2026-07-16 10:22:41,756 INFO 첨단정보통신융합산업기술원: 22건
+2026-07-16 10:22:41,756 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 22 / 제외 0
+2026-07-16 10:22:44,244 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=business "HTTP/1.1 200 OK"
+2026-07-16 10:22:44,318 INFO 첨단정보통신융합산업기술원: 19건
+2026-07-16 10:22:44,318 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 19 / 제외 0
+2026-07-16 10:22:45,076 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_bsm080_001.do "HTTP/1.1 200 OK"
+2026-07-16 10:22:45,315 INFO 청년창업사관학교: 10건
+2026-07-16 10:22:45,315 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:22:47,182 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_not002_001.do "HTTP/1.1 200 OK"
+2026-07-16 10:22:47,488 INFO 청년창업사관학교: 10건
+2026-07-16 10:22:47,488 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:22:48,090 INFO HTTP Request: GET https://www.cepa.or.kr/notice/notice.do?pm=6&ms=32 "HTTP/1.1 200 200"
+2026-07-16 10:22:48,183 INFO 충남경제진흥원: 10건
+2026-07-16 10:22:48,183 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 9
+2026-07-16 10:22:48,905 INFO HTTP Request: GET https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/ "HTTP/1.1 200 "
+2026-07-16 10:22:50,452 INFO 충남농업6차산업센터: 10건
+2026-07-16 10:22:50,452 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:51,365 INFO HTTP Request: GET https://www.cnse.kr/app/board/index?md_id=center_news "HTTP/1.1 200 OK"
+2026-07-16 10:22:51,401 INFO 충남사회적경제지원센터: 10건
+2026-07-16 10:22:51,401 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:52,408 INFO HTTP Request: GET https://www.ctp.or.kr/business/data.do "HTTP/1.1 200 200"
+2026-07-16 10:22:52,466 INFO 충남테크노파크: 10건
+2026-07-16 10:22:52,466 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:22:52,953 INFO HTTP Request: GET http://xn--6-482fq5fy8gs7i6jc.com/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:22:52,971 INFO 충북농촌융복합산업지원센터: 15건
+2026-07-16 10:22:52,971 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:22:54,256 INFO HTTP Request: GET http://www.cbse.co/board/blist/notice "HTTP/1.1 200 OK"
+2026-07-16 10:22:54,306 INFO 충북사회적경제센터: 23건
+2026-07-16 10:22:54,306 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 23 / 제외 0
+2026-07-16 10:22:55,054 INFO HTTP Request: GET https://www.cbsinbo.or.kr/sub.php?code=123 "HTTP/1.1 200 OK"
+2026-07-16 10:22:55,105 INFO 충북신용보증재단: 15건
+2026-07-16 10:22:55,105 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 14
+2026-07-16 10:22:56,725 INFO HTTP Request: GET https://www.cjrhrdc.org/board/notice "HTTP/1.1 200 OK"
+2026-07-16 10:22:56,824 INFO 충북지역인적자원개발위원회: 20건
+2026-07-16 10:22:56,824 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 20 / 제외 0
+2026-07-16 10:22:58,144 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36 "HTTP/1.1 200 OK"
+2026-07-16 10:22:58,316 INFO 충북테크노파크: 15건
+2026-07-16 10:22:58,316 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:22:59,398 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526 "HTTP/1.1 200 OK"
+2026-07-16 10:22:59,574 INFO 충북테크노파크: 15건
+2026-07-16 10:22:59,574 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:23:01,096 INFO HTTP Request: GET https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6 "HTTP/1.1 200 OK"
+2026-07-16 10:23:01,355 INFO 충북테크노파크 컨택센터: 10건
+2026-07-16 10:23:01,356 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:01,941 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=65 "HTTP/1.1 200 200"
+2026-07-16 10:23:02,050 INFO 충청남도 소상공인 지원센터: 10건
+2026-07-16 10:23:02,050 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:02,529 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=66 "HTTP/1.1 200 200"
+2026-07-16 10:23:02,602 INFO 충청남도 소상공인 지원센터: 10건
+2026-07-16 10:23:02,602 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:03,233 INFO HTTP Request: GET https://www.cba.ne.kr/home/sub.php?menukey=140 "HTTP/1.1 200 OK"
+2026-07-16 10:23:03,340 INFO 충청북도기업진흥원: 15건
+2026-07-16 10:23:03,340 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:23:03,992 INFO HTTP Request: GET https://www.cbsb.kr/home/sub.php?menukey=288 "HTTP/1.1 200 OK"
+2026-07-16 10:23:04,045 INFO 충청북도소상공인지원센터: 13건
+2026-07-16 10:23:04,045 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 13
+2026-07-16 10:23:05,093 INFO HTTP Request: GET https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword= "HTTP/1.1 200 200"
+2026-07-16 10:23:05,247 INFO 한국건강가정진흥원: 11건
+2026-07-16 10:23:05,248 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 11
+2026-07-16 10:23:06,060 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=23 "HTTP/1.1 200 OK"
+2026-07-16 10:23:06,142 INFO 한국경영기술지도사회: 11건
+2026-07-16 10:23:06,142 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 11
+2026-07-16 10:23:06,902 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=28 "HTTP/1.1 200 OK"
+2026-07-16 10:23:06,962 INFO 한국경영기술지도사회: 11건
+2026-07-16 10:23:06,962 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:07,884 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=128 "HTTP/1.1 200 OK"
+2026-07-16 10:23:07,951 INFO 한국경영기술지도사회: 17건
+2026-07-16 10:23:07,951 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 17
+2026-07-16 10:23:09,116 INFO HTTP Request: GET https://mainbiz.or.kr/notice/notice.asp?smen=1 "HTTP/1.1 200 OK"
+2026-07-16 10:23:09,172 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:23:09,172 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
