@@ -590,11 +590,73 @@ def _parse_period_dates(segment: str, base_year: int | None = None) -> list[Any]
     return sorted(set(dates))
 
 
-def extract_application_period(text: str) -> dict[str, str]:
-    """본문에서 신청·모집·접수 기간만 추출 (협약기간 등 제외)."""
+def _posted_date(item: dict):
+    """게시일(posted_date)을 date 로 파싱(연도 추론 기준). 없거나 불량이면 None."""
+    pd = str(item.get("posted_date") or "").strip()[:10]
+    if not pd:
+        return None
+    try:
+        return datetime.strptime(pd, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def _infer_deadline_year(month: int, day: int, posted):
+    """축약 마감(월/일)의 연도 추론. ★마감 ≥ 게시일 규칙으로 false-past(오'마감'=누락) 차단.
+    게시일 있으면 그 해로 두되 마감이 게시일보다 앞서면 +1년. 게시일 없으면 오늘 기준 반년 초과 과거면 +1년."""
+    if posted:
+        d = _valid_date(posted.year, month, day)
+        if d and d < posted:
+            d = _valid_date(posted.year + 1, month, day)
+        return d
+    today = datetime.now(KST).date()
+    d = _valid_date(today.year, month, day)
+    if d and (today - d).days > 200:
+        d = _valid_date(today.year + 1, month, day)
+    return d
+
+
+def _deadline_shortform(text: str, posted=None) -> dict[str, str]:
+    """라벨 없는 축약 마감표기 추출 — 제목/본문의 '~M/D', 'M/D~M/D', '~M월D일'.
+    한국 공고 제목에 매우 흔한 '(~7/7)'·'(접수 6/24~7/7)' 형식. tilde(~)로 앵커해 보수적."""
+    if not text:
+        return {}
+
+    def _single(e):
+        # 단일 마감(~M/D): 시작=게시일(신청 개시)로 둬 'open' 판정(마감만으로 upcoming 오분류 방지).
+        start = posted.isoformat() if (posted and posted <= e) else e.isoformat()
+        return {"start": start, "end": e.isoformat(), "display": e.isoformat(), "label": "축약마감"}
+
+    # 범위: M/D ~ M/D (슬래시·점). 뒤에 '18시' 등 다른 수가 와도 무방(일자 자체만 인접숫자 배제).
+    m = re.search(r"(?<!\d)(\d{1,2})\s*[./]\s*(\d{1,2})(?![./]?\d)\s*~\s*(\d{1,2})\s*[./]\s*(\d{1,2})(?![./]?\d)", text)
+    if m:
+        s = _infer_deadline_year(int(m.group(1)), int(m.group(2)), posted)
+        e = _infer_deadline_year(int(m.group(3)), int(m.group(4)), posted)
+        if s and e and e >= s:
+            return {"start": s.isoformat(), "end": e.isoformat(),
+                    "display": f"{s.isoformat()} ~ {e.isoformat()}", "label": "축약범위"}
+    # 단일 마감: ~ M/D  (tilde 필수)
+    m = re.search(r"~\s*(?<!\d)(\d{1,2})\s*[./]\s*(\d{1,2})(?![./]?\d)", text)
+    if m:
+        e = _infer_deadline_year(int(m.group(1)), int(m.group(2)), posted)
+        if e:
+            return _single(e)
+    # 단일 마감: ~ M월D일
+    m = re.search(r"~\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일", text)
+    if m:
+        e = _infer_deadline_year(int(m.group(1)), int(m.group(2)), posted)
+        if e:
+            return _single(e)
+    return {}
+
+
+def extract_application_period(text: str, posted=None) -> dict[str, str]:
+    """본문에서 신청·모집·접수 기간만 추출 (협약기간 등 제외).
+    posted(게시일 date) 를 주면 연도 추론에 사용 — 라벨 없는 축약 마감(~M/D)도 안전 복구."""
     if not text:
         return {}
     normalized = text.replace("\xa0", " ")
+    base_year = posted.year if posted else None
     for label in APPLICATION_PERIOD_LABELS:
         pattern = rf"{re.escape(label)}\s*[:：]?\s*([^\nㅇ]+)"
         m = re.search(pattern, normalized, flags=re.IGNORECASE)
@@ -603,18 +665,23 @@ def extract_application_period(text: str) -> dict[str, str]:
         segment = m.group(1).strip()
         if "까지" in segment:
             segment = segment[: segment.index("까지") + 2]
-        dates = _parse_period_dates(segment)
+        dates = _parse_period_dates(segment, base_year)
         if not dates:
+            # 라벨은 있으나 M월D일/연도형이 아닌 축약(6/24~7/7) — 축약 파서로 재시도
+            sf = _deadline_shortform(segment, posted)
+            if sf:
+                return sf
             continue
         start, end = dates[0].isoformat(), dates[-1].isoformat()
         display = f"{start} ~ {end}" if start != end else end
         return {"start": start, "end": end, "display": display, "label": label}
-    return {}
+    # 라벨 없이 제목/본문에 흔한 축약 마감표기 폴백
+    return _deadline_shortform(normalized, posted)
 
 
 def resolve_item_deadline(item: dict) -> str:
     """표시·필터용 마감일: 신청기간 우선, 없으면 기존 deadline."""
-    period = extract_application_period(_notice_body_text(item))
+    period = extract_application_period(_notice_body_text(item), _posted_date(item))
     if period.get("display"):
         return period["display"]
     return (item.get("deadline") or "").strip()
@@ -2828,7 +2895,7 @@ def classify_deadline_status(item: dict, today=None) -> str:
     if any(term in text for term in OPEN_DEADLINE_TERMS):
         return "open"
     body_text = _notice_body_text(item)
-    period = item.get("application_period") or extract_application_period(body_text)
+    period = item.get("application_period") or extract_application_period(body_text, _posted_date(item))
     if period.get("end"):
         try:
             end_date = datetime.strptime(period["end"], "%Y-%m-%d").date()
