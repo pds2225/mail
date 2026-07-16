@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-import hashlib, html, imaplib, json, logging, os, re, smtplib, ssl, time, unicodedata
+import hashlib, html, imaplib, json, logging, os, re, smtplib, ssl, threading, time, unicodedata
 from datetime import datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -455,6 +455,23 @@ NON_APPLICATION_PERIOD_LABELS = (
 )
 DETAIL_ENRICH_HOSTS = ("exportvoucher.com", "k-startup.go.kr", "nipa.kr", "bizinfo.go.kr")
 MAX_DETAIL_ENRICH = 40
+# --- 리스트-온리(상세 본문 미수집) 공고를 범용 추출기로 보강 ---
+# 목적: 접수기간·지원금·성격이 상세페이지에만 있고 목록엔 없는 소스(144개)를 재크롤해 최대 복구.
+GENERIC_DETAIL_ENRICH_ENABLED = os.environ.get("MONITOR_NO_GENERIC_ENRICH") != "1"
+MAX_GENERIC_DETAIL_ENRICH = 1500      # 하루 신규분 커버(초과분은 다음 실행에서 처리)
+DETAIL_ENRICH_WORKERS = 10            # 동시 상세 fetch 스레드 수
+_GENERIC_ENRICH_SKIP_EXT = (
+    ".pdf", ".hwp", ".hwpx", ".zip", ".xls", ".xlsx", ".doc", ".docx",
+    ".jpg", ".jpeg", ".png", ".gif",
+)
+# 정부/기관 게시판 상세 본문 컨테이너 공통 후보(범용)
+GENERIC_CONTENT_SELECTORS = (
+    ".board_view, .bbs_view, .board-view, .bo_v_con, #bo_v_con, .view_con, .view_cont, "
+    ".view_content, .viewcont, .cont_view, .board_txt, .board_cont, .bbs_content, "
+    ".detail, .detail_view, .view, .view_area, .con_area, .sub_content, .contents_view, "
+    "#content, #contents, article, main, .content, td.content"
+)
+_ENRICH_STORE_LOCK = threading.Lock()  # raw store 카운터 동시증가 보호(파일은 notice별 분리라 안전)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -833,6 +850,52 @@ def _detect_target_regions(text: str) -> dict[str, Any]:
     return {"regions": regions, "nationwide": nationwide}
 
 
+def _hangul_len(text: str) -> int:
+    """문자열 내 한글 음절 수(본문 블록 선택의 지표)."""
+    return sum(1 for ch in text if "가" <= ch <= "힣")
+
+
+def _extract_main_content(soup: BeautifulSoup) -> str:
+    """정부/기관 게시판 상세에서 본문 텍스트를 범용 추출.
+    ① 흔한 본문 컨테이너 후보 → ② 한글 텍스트가 가장 많은 블록 폴백.
+    (호스트별 파서가 없는 144개 리스트-온리 소스를 위한 범용 경로)"""
+    for tag in soup.select(
+        "script, style, nav, header, footer, aside, .lnb, .gnb, .snb, "
+        ".paging, .btn_area, .search, .skip, .top_menu, .footer, .header"
+    ):
+        try:
+            tag.decompose()
+        except Exception:
+            pass
+    node = soup.select_one(GENERIC_CONTENT_SELECTORS)
+    if node:
+        txt = node.get_text("\n", strip=True)
+        if _hangul_len(txt) >= 30:
+            return txt
+    # 폴백: 한글 텍스트가 가장 많은 블록(너무 큰 래퍼는 제외)
+    best, best_len = "", 0
+    for el in soup.find_all(("div", "td", "section", "article")):
+        txt = el.get_text("\n", strip=True)
+        hl = _hangul_len(txt)
+        if hl > best_len and len(txt) < 20000:
+            best, best_len = txt, hl
+    return best if best_len >= 30 else ""
+
+
+def _should_generic_enrich(item: dict, link: str) -> bool:
+    """리스트-온리(본문 미수집) 공고를 범용 상세 보강 대상으로 볼지 판정."""
+    if not link.lower().startswith(("http://", "https://")):
+        return False
+    path = link.lower().split("?")[0]
+    if any(path.endswith(ext) for ext in _GENERIC_ENRICH_SKIP_EXT):
+        return False
+    # 이미 본문이 충분하면 재조회 불필요 — '리스트-온리'만 대상(120자 미만)
+    desc = (item.get("description") or "").strip()
+    if len(desc) >= 120:
+        return False
+    return True
+
+
 def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
     """상세 페이지에서 본문·지역·신청기간 추출."""
     result: dict[str, str] = {}
@@ -882,9 +945,9 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
             if body:
                 result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
-        body = soup.select_one("article, .view_cont, #contents, main")
+        body = _extract_main_content(soup)
         if body:
-            result["body"] = body.get_text("\n", strip=True)[:12000]
+            result["body"] = body[:12000]
     return result
 
 
@@ -893,15 +956,19 @@ def enrich_item_from_detail(item: dict) -> dict:
     link = (item.get("link") or "").strip()
     if not link or item.get("detail_enriched"):
         return item
-    if not any(host in link for host in DETAIL_ENRICH_HOSTS):
-        return item
-    resp = _http_get(link)
+    specialized = any(host in link for host in DETAIL_ENRICH_HOSTS)
+    if not specialized:
+        # 전용 호스트가 아니면, 리스트-온리(본문 미수집)일 때만 범용 보강
+        if not GENERIC_DETAIL_ENRICH_ENABLED or not _should_generic_enrich(item, link):
+            return item
+    resp = _http_get(link, timeout=30)
     if resp is None:
         return item
     html_text = resp.text
     soup = BeautifulSoup(html_text, "html.parser")
     if _RAW_STORE is not None:
-        _RAW_STORE.save_detail_html(item["id"], link, html_text)
+        with _ENRICH_STORE_LOCK:
+            _RAW_STORE.save_detail_html(item["id"], link, html_text)
     fields = _parse_detail_from_page(soup, link)
     updated = {**item, "detail_enriched": True}
     body = fields.get("body", "")
@@ -931,15 +998,27 @@ def enrich_item_from_detail(item: dict) -> dict:
             period = {"start": start, "end": end, "display": display, "label": "신청기간"}
     if not period.get("display"):
         if fields.get("application_period_text"):
+            # 라벨 붙은 접수기간 텍스트 → 신뢰(전용/범용 공통)
             period_src = re.sub(
                 r"(\d{4})\.(\d{2})\.(\d{2})", r"\1-\2-\3", fields["application_period_text"],
             )
-        period = extract_application_period(period_src) or extract_application_period(body)
+            period = extract_application_period(period_src)
+        elif specialized:
+            # 전용 호스트만 무라벨 본문에서도 마감 추정(검증된 경로)
+            period = extract_application_period(period_src) or extract_application_period(body)
+        else:
+            # 범용: '신청/접수/모집기간' 라벨이 붙은 기간만 인정.
+            # loose/축약 마감(label='축약마감')은 배제 — 과거 날짜 오추출로 open 공고를
+            # closed 로 오판(누락)하는 것 방지(recall 우선). 검증된 extract_application_period 재사용.
+            cand = extract_application_period(body)
+            if cand.get("label") in APPLICATION_PERIOD_LABELS:
+                period = cand
     if period.get("display"):
         updated["deadline"] = period["display"]
         updated["application_period"] = period
-    elif not (updated.get("deadline") or "").strip():
-        # 상세만 있고 라벨이 없을 때 — 협약기간 등 비신청 라벨 구간은 제외
+    elif specialized and not (updated.get("deadline") or "").strip():
+        # 전용 호스트만: 상세만 있고 라벨이 없을 때 — 협약기간 등 비신청 라벨 구간은 제외
+        # (범용은 무라벨 loose 추정 안 함 → 누락 방지)
         scrubbed = body
         for lbl in NON_APPLICATION_PERIOD_LABELS:
             scrubbed = re.sub(
@@ -956,22 +1035,50 @@ def enrich_item_from_detail(item: dict) -> dict:
     if posted and not (updated.get("posted_date") or "").strip():
         updated["posted_date"] = posted
     if _RAW_STORE is not None:
-        _RAW_STORE.update_meta_after_enrich(updated)
+        with _ENRICH_STORE_LOCK:
+            _RAW_STORE.update_meta_after_enrich(updated)
     return updated
 
 
 def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict]:
-    """신규 공고 중 상세 보강이 필요한 항목만 HTTP 상세 조회."""
-    targets = [
+    """신규 공고 중 상세 보강이 필요한 항목을 HTTP 상세 조회(동시 처리).
+    ① 전용 호스트(구조화 파서) ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
+    specialized = [
         it for it in items
         if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
         and not it.get("detail_enriched")
     ][:limit]
+    generic: list[dict] = []
+    if GENERIC_DETAIL_ENRICH_ENABLED:
+        spec_ids = {it["id"] for it in specialized}
+        for it in items:
+            if it["id"] in spec_ids or it.get("detail_enriched"):
+                continue
+            link = (it.get("link") or "").strip()
+            if any(h in link for h in DETAIL_ENRICH_HOSTS):
+                continue  # 전용 호스트인데 limit 초과분 → 범용 대상 아님
+            if _should_generic_enrich(it, link):
+                generic.append(it)
+        generic = generic[:MAX_GENERIC_DETAIL_ENRICH]
+    targets = specialized + generic
     if not targets:
         return items
-    log.info("상세 보강: %d건", len(targets))
-    enriched_map = {it["id"]: enrich_item_from_detail(it) for it in targets}
-    return [enriched_map.get(it["id"], it) if it["id"] in enriched_map else it for it in items]
+    log.info("상세 보강: 전용 %d + 범용 %d = %d건 (동시 %d)",
+             len(specialized), len(generic), len(targets), DETAIL_ENRICH_WORKERS)
+    from concurrent.futures import ThreadPoolExecutor
+
+    def _one(it: dict) -> tuple[str, dict]:
+        try:
+            return it["id"], enrich_item_from_detail(it)
+        except Exception as e:  # 한 건 실패가 전체 보강을 막지 않게 격리
+            log.warning("상세 보강 실패 %s: %s", it.get("id"), e)
+            return it["id"], it
+
+    enriched_map: dict[str, dict] = {}
+    with ThreadPoolExecutor(max_workers=DETAIL_ENRICH_WORKERS) as pool:
+        for iid, updated in pool.map(_one, targets):
+            enriched_map[iid] = updated
+    return [enriched_map.get(it["id"], it) for it in items]
 
 
 def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
