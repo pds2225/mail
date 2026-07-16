@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import company_match  # noqa: E402
 
 
-def _company(threshold=38):
+def _company():
     return {
         "id": "cmp_t", "name": "t", "active": True,
         "region": {"city": "인천", "district": "남동구"},
@@ -23,7 +23,7 @@ def _company(threshold=38):
         "exclude_keywords": ["설명회"],
         "has_factory": False, "export_focus": False,
         "support_type_prefs": [],
-        "match_threshold": threshold,
+        "match_threshold": 38,
     }
 
 
@@ -77,3 +77,22 @@ def test_irrelevant_notice_still_rejected():
     res = _score(item, comp)
     out = company_match.match_for_company([item], comp)
     assert len(out["matched"]) == 0, (res["score"], res["reasons"])
+
+
+def test_grayzone_generic_keyword_excluded():
+    """회색지대(architect 후속조건): generic 관심키워드(박람회)만 히트하는 산업무관
+    공고(로컬푸드)는 임계 38에서도 exclude 로 차단된다 — 실누출 사례 고정."""
+    comp = _company()
+    comp["interest_keywords"] = ["수출", "바우처", "박람회"]
+    comp["exclude_keywords"] = ["설명회", "로컬푸드"]
+    item = {"title": "2026년 전국 8도 로컬푸드 단체박람회 참가기업 모집 공고",
+            "description": "지역 농특산물 로컬푸드 판매 박람회"}
+    out = company_match.match_for_company([item], comp)
+    assert len(out["matched"]) == 0
+
+
+def test_grayzone_exclude_in_real_config():
+    """실제 companies.json 의 제조 2사(bnco·incheon_mfg)에 로컬푸드 exclude 가 반영돼 있다."""
+    comps = {c["id"]: c for c in company_match.load_companies()}
+    for cid in ("cmp_bnco", "cmp_incheon_mfg"):
+        assert "로컬푸드" in comps[cid]["exclude_keywords"], cid
