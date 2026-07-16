@@ -841,3 +841,1483 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2026-07-16 10:23:09,116 INFO HTTP Request: GET https://mainbiz.or.kr/notice/notice.asp?smen=1 "HTTP/1.1 200 OK"
 2026-07-16 10:23:09,172 INFO 한국경영혁신중소기업협회: 10건
 2026-07-16 10:23:09,172 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:11,506 INFO HTTP Request: GET https://mainbiz.or.kr/notice/company.asp?smen=2 "HTTP/1.1 200 OK"
+2026-07-16 10:23:11,631 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:23:11,631 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:13,631 INFO HTTP Request: GET https://mainbiz.or.kr/notice/library.asp?smen=8 "HTTP/1.1 200 OK"
+2026-07-16 10:23:13,776 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:23:13,777 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:15,840 INFO HTTP Request: GET https://www.kma.or.kr/usrs/tutor/tutorForm.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:16,305 INFO 한국능률협회(KMA): 86건
+2026-07-16 10:23:16,305 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 86 / 제외 0
+2026-07-16 10:23:17,705 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:18,024 INFO 한국무역보험공사: 114건
+2026-07-16 10:23:18,027 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 114 / 제외 0
+2026-07-16 10:23:19,827 INFO HTTP Request: GET https://www.kipa.org/kipa/notice/kw_0403_01.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:23:20,037 INFO 한국발명진흥회: 10건
+2026-07-16 10:23:20,038 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 8
+2026-07-16 10:23:21,414 INFO HTTP Request: GET https://www.kipa.org/kipa/ip004/kw_apquestion_0501.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:23:21,675 INFO 한국발명진흥회: 10건
+2026-07-16 10:23:21,675 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 2 / 날짜불명 0 / 제외 8
+2026-07-16 10:23:23,514 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU00099 "HTTP/1.1 200 200"
+2026-07-16 10:23:23,828 INFO 한국보건산업진흥원: 11건
+2026-07-16 10:23:23,828 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 11
+2026-07-16 10:23:25,195 INFO HTTP Request: GET https://www.keit.re.kr/board.es?mid=a10301010000&bid=0009 "HTTP/1.1 200 OK"
+2026-07-16 10:23:25,330 INFO 한국산업기술기획평가원(KEIT): 1건
+2026-07-16 10:23:25,331 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 1
+2026-07-16 10:23:26,361 INFO HTTP Request: GET https://www.hrdkorea.or.kr/3/1/1 "HTTP/1.1 200 OK"
+2026-07-16 10:23:26,683 INFO 한국산업인력공단(HRDK): 10건
+2026-07-16 10:23:26,683 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:27,779 INFO HTTP Request: GET https://www.lmca.or.kr/22 "HTTP/1.1 200 OK"
+2026-07-16 10:23:27,858 INFO 한국상생지원협회: 6건
+2026-07-16 10:23:27,858 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 6 / 제외 0
+2026-07-16 10:23:28,668 INFO HTTP Request: GET https://www.knrec.or.kr/biz/pds/notice/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:28,894 INFO 한국에너지공단 신재생에너지센터: 24건
+2026-07-16 10:23:28,894 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 24
+2026-07-16 10:23:29,553 INFO HTTP Request: GET https://www.inventor.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:23:29,565 INFO 한국여성발명협회: 15건
+2026-07-16 10:23:29,565 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 15
+2026-07-16 10:23:30,251 INFO HTTP Request: GET https://www.kisa.or.kr/401 "HTTP/1.1 200 200"
+2026-07-16 10:23:30,332 INFO 한국인터넷진흥원(KISA): 10건
+2026-07-16 10:23:30,332 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 3 / 날짜불명 0 / 제외 7
+2026-07-16 10:23:31,369 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000137.do?menuNo=204802 "HTTP/1.1 200 200"
+2026-07-16 10:23:31,541 INFO 한국콘텐츠진흥원: 10건
+2026-07-16 10:23:31,541 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 4 / 날짜불명 0 / 제외 6
+2026-07-16 10:23:32,348 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104&recptSt= "HTTP/1.1 200 200"
+2026-07-16 10:23:32,472 INFO 한국콘텐츠진흥원: 10건
+2026-07-16 10:23:32,472 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:23:34,430 INFO HTTP Request: GET https://www.ksa.or.kr/ksa_kr/5217/subview.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:34,512 INFO 한국표준협회(KSA): 10건
+2026-07-16 10:23:34,512 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:23:37,718 INFO HTTP Request: GET https://ksa.or.kr/bbs/ksa_kr/1021/artclList.do?layout=unknown "HTTP/1.1 302 Found"
+2026-07-16 10:23:40,396 INFO HTTP Request: GET https://ksa.or.kr/ksa_kr/16279/subview.do;jsessionid=BFAE3AD86004FD6BED8578A3AAD3487A?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa3NhX2tyJTJGMTAyMSUyRmFydGNsTGlzdC5kbyUzRg%3D%3D "HTTP/1.1 200 OK"
+2026-07-16 10:23:40,458 INFO 한국표준협회(KSA): 10건
+2026-07-16 10:23:40,458 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 10 / 제외 0
+2026-07-16 10:23:45,803 INFO HTTP Request: GET https://www.keco.or.kr/web/lay1/bbs/S1T10C108/A/18/list.do "HTTP/1.1 200 "
+2026-07-16 10:23:46,123 INFO 한국환경공단: 10건
+2026-07-16 10:23:46,123 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 5 / 날짜불명 0 / 제외 5
+2026-07-16 10:23:51,293 INFO HTTP Request: GET https://www.hongcheon.go.kr/www/selectBbsNttList.do?bbsNo=1&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:23:51,619 INFO 홍천군청: 10건
+2026-07-16 10:23:51,619 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 10
+2026-07-16 10:23:55,385 INFO HTTP Request: GET https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do "HTTP/1.1 200 "
+2026-07-16 10:23:55,478 INFO 화성산업진흥원: 5건
+2026-07-16 10:23:55,478 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 1 / 날짜불명 0 / 제외 4
+2026-07-16 10:23:56,429 INFO HTTP Request: GET https://www.hstree.org/news/notice.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:56,744 INFO 화성시인재육성재단: 12건
+2026-07-16 10:23:56,762 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 0 / 날짜불명 0 / 제외 12
+2026-07-16 10:23:56,806 INFO === 모니터링 시작 v6 (2026-07-16 10:23 KST) / mode=preview ===
+2026-07-16 10:23:56,811 INFO 사이트: 219개 활성
+2026-07-16 10:23:56,813 INFO 그룹: 3개 활성
+2026-07-16 10:23:57,224 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=1 "HTTP/1.1 200 "
+2026-07-16 10:23:57,509 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=2 "HTTP/1.1 200 "
+2026-07-16 10:23:57,727 INFO HTTP Request: GET https://startup.hanyang.ac.kr/api/board/content?boardEnName=startup_info&page=3 "HTTP/1.1 200 "
+2026-07-16 10:23:57,754 INFO 한양대 창업지원단(신규사업공고): 30건
+2026-07-16 10:23:59,257 INFO HTTP Request: GET https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112 "HTTP/1.1 200 OK"
+2026-07-16 10:23:59,261 INFO 과학기술정보통신부: 0건
+2026-07-16 10:23:59,345 INFO HTTP Request: GET https://www.motie.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:23:59,463 INFO HTTP Request: GET https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do "HTTP/1.1 200 OK"
+2026-07-16 10:23:59,536 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:23:59,583 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=1&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:23:59,603 INFO HTTP Request: GET https://www.motir.go.kr/kor/article/ATCL2826a2625 "HTTP/1.1 200 OK"
+2026-07-16 10:23:59,754 INFO 산업통상자원부: 10건
+2026-07-16 10:23:59,958 INFO HTTP Request: GET https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310 "HTTP/1.1 200 OK"
+2026-07-16 10:24:00,290 INFO HTTP Request: GET https://www.mafra.go.kr/bbs/mafra/68/artclList.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:00,333 INFO 고용노동부: 10건
+2026-07-16 10:24:00,606 INFO 농림축산식품부: 10건
+2026-07-16 10:24:00,854 INFO 중소벤처기업부: 10건
+2026-07-16 10:24:00,857 INFO HTTP Request: POST https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituList.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:00,859 INFO IRIS(범부처통합연구지원): 10건
+2026-07-16 10:24:01,992 INFO HTTP Request: GET https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10 "HTTP/1.1 404 Not Found"
+2026-07-16 10:24:01,993 ERROR 접속 실패 https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10: Client error '404 Not Found' for url 'https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-07-16 10:24:01,994 ERROR 수집 실패 (해양수산부): 해양수산부 접속 실패 (HTML 수집)
+2026-07-16 10:24:02,346 INFO HTTP Request: GET https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp "HTTP/1.1 302 Found"
+2026-07-16 10:24:02,426 INFO HTTP Request: GET https://www.mcst.go.kr/site/s_notice/press/pressView.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:24:02,429 INFO 문화체육관광부: 0건
+2026-07-16 10:24:02,468 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.0 307 Temporary Redirect"
+2026-07-16 10:24:02,529 INFO HTTP Request: GET https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:24:02,614 INFO HTTP Request: GET https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do "HTTP/1.1 200 200"
+2026-07-16 10:24:02,858 INFO HTTP Request: GET https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:24:02,869 INFO HTTP Request: GET https://mofe.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028 "HTTP/1.1 200 OK"
+2026-07-16 10:24:02,943 INFO HTTP Request: POST https://www.kosmes.or.kr/sh/nts/notice_list.json "HTTP/1.1 200 200"
+2026-07-16 10:24:02,981 INFO 국토교통부: 10건
+2026-07-16 10:24:02,984 INFO 중소벤처기업진흥공단(KOSME): 42건
+2026-07-16 10:24:03,022 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=2&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:24:03,120 INFO HTTP Request: GET https://www.kiat.or.kr/front/board/boardContentsListAjax.do?board_id=90&che1=all&miv_pageSize=15 "HTTP/1.1 200 200"
+2026-07-16 10:24:03,199 INFO 한국산업기술진흥원(KIAT): 15건
+2026-07-16 10:24:03,350 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=1 "HTTP/1.1 200 200"
+2026-07-16 10:24:03,741 INFO 기획재정부: 0건
+2026-07-16 10:24:04,072 INFO HTTP Request: GET https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:04,083 INFO 한국산업기술평가관리원(KEIT): 3건
+2026-07-16 10:24:04,368 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=2&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:24:04,662 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:24:04,777 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104 "HTTP/1.1 200 200"
+2026-07-16 10:24:04,863 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:24:05,047 INFO HTTP Request: POST https://ols.semas.or.kr/ols/man/SMAN051M/search.do "HTTP/1.1 201 Created"
+2026-07-16 10:24:05,049 INFO 소진공 정책자금 온라인신청: 30건
+2026-07-16 10:24:05,137 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392 "HTTP/1.1 200 200"
+2026-07-16 10:24:05,397 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=3&viewCount=100&pbancSttus=ing&pbancClssCd=PBC010 "HTTP/1.1 200 200"
+2026-07-16 10:24:05,411 INFO 한국콘텐츠진흥원(사업공고): 10건
+2026-07-16 10:24:05,778 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:05,794 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=2 "HTTP/1.1 200 200"
+2026-07-16 10:24:05,813 INFO 한국콘텐츠진흥원(금융): 11건
+2026-07-16 10:24:05,888 INFO HTTP Request: GET https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 308 Permanent Redirect"
+2026-07-16 10:24:05,985 INFO 한국무역보험공사(K-SURE): 12건
+2026-07-16 10:24:06,379 INFO HTTP Request: GET https://www.kodit.or.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148 "HTTP/1.1 200 OK"
+2026-07-16 10:24:06,421 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU02096 "HTTP/1.1 200 200"
+2026-07-16 10:24:06,522 INFO 신용보증기금(KODIT): 10건
+2026-07-16 10:24:06,651 INFO 한국보건산업진흥원(KHIDI): 10건
+2026-07-16 10:24:07,142 INFO HTTP Request: GET https://www.ketep.re.kr/businessAcment?menuId=MENU002080200000000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:07,363 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=1&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:24:07,371 INFO 한국에너지기술평가원(KETEP): 10건
+2026-07-16 10:24:07,381 INFO HTTP Request: GET https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277 "HTTP/1.1 200 OK"
+2026-07-16 10:24:07,548 INFO HTTP Request: GET https://www.kidp.or.kr/?menuno=918&act=list "HTTP/1.1 200 OK"
+2026-07-16 10:24:07,867 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=3 "HTTP/1.1 200 200"
+2026-07-16 10:24:07,890 INFO 한국환경산업기술원(KEITI): 10건
+2026-07-16 10:24:08,213 INFO 한국디자인진흥원(KIDP): 10건
+2026-07-16 10:24:08,302 INFO HTTP Request: GET https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do?crtfcKey=***&dataType=json&pageIndex=3&pageUnit=500 "HTTP/1.1 200 OK"
+2026-07-16 10:24:08,383 INFO HTTP Request: GET https://www.rdcdp.or.kr/index.do?menu_id=00000746 "HTTP/1.1 200 "
+2026-07-16 10:24:08,762 INFO 지역디자인통합플랫폼: 0건
+2026-07-16 10:24:08,779 INFO HTTP Request: GET https://www.sba.seoul.kr/Pages/BusinessApply/Posting.aspx "HTTP/1.1 200 OK"
+2026-07-16 10:24:09,117 INFO 기업마당(Bizinfo): 1483건
+2026-07-16 10:24:09,218 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=4 "HTTP/1.1 200 200"
+2026-07-16 10:24:09,268 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=2&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:24:09,470 INFO 서울산업진흥원(SBA): 10건
+2026-07-16 10:24:09,927 INFO HTTP Request: GET https://myfair.co/support-program-list "HTTP/1.1 200 OK"
+2026-07-16 10:24:09,951 INFO 마이페어: 0건
+2026-07-16 10:24:10,310 INFO HTTP Request: GET https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102 "HTTP/1.1 200 "
+2026-07-16 10:24:10,619 INFO HTTP Request: GET https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do "HTTP/1.1 200 "
+2026-07-16 10:24:10,667 INFO 대전테크노파크: 11건
+2026-07-16 10:24:11,004 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=5 "HTTP/1.1 200 200"
+2026-07-16 10:24:11,194 INFO HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schMenuId=10090&pageIndex=3&viewCount=100&pbancSttus=ing&pbancClssCd=PBC020 "HTTP/1.1 200 200"
+2026-07-16 10:24:11,675 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice02_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:11,824 INFO K-Startup: 30건
+2026-07-16 10:24:11,882 INFO 한국무역협회(KITA): 10건
+2026-07-16 10:24:11,983 INFO HTTP Request: GET https://www.gsp.or.kr/supportProject/UVSL0001.do "HTTP/1.1 200 "
+2026-07-16 10:24:12,231 INFO SMTECH(중소기업기술개발): 15건
+2026-07-16 10:24:12,233 INFO HTTP Request: GET https://www.bepa.kr/kor/view.do?no=1508 "HTTP/1.1 200 200"
+2026-07-16 10:24:12,254 INFO 경기스타트업플랫폼: 10건
+2026-07-16 10:24:12,391 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:12,392 INFO HTTP Request: GET https://pms.gtp.or.kr/web/business/webBusinessList.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:12,406 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=6 "HTTP/1.1 200 200"
+2026-07-16 10:24:12,765 INFO 경기TP: 10건
+2026-07-16 10:24:12,768 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/event_list.do "HTTP/1.1 200 200"
+2026-07-16 10:24:12,769 INFO HTTP Request: GET https://ccei.creativekorea.or.kr/service/business_list.do "HTTP/1.1 200 200"
+2026-07-16 10:24:12,829 INFO 부산경제진흥원(BEP): 12건
+2026-07-16 10:24:12,852 INFO 창조경제혁신센터(공고): 2건
+2026-07-16 10:24:12,875 INFO 창조경제혁신센터(행사): 2건
+2026-07-16 10:24:13,488 INFO HTTP Request: GET https://kovwa.or.kr/94 "HTTP/1.1 200 OK"
+2026-07-16 10:24:13,634 INFO 한국여성벤처협회: 0건
+2026-07-16 10:24:13,927 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=7 "HTTP/1.1 200 200"
+2026-07-16 10:24:14,063 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:24:14,088 INFO HTTP Request: GET https://bizok.incheon.go.kr/open_content/support.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:14,200 INFO 비즈오케이(BizOK) - 인천기업지원: 12건
+2026-07-16 10:24:14,284 INFO 비즈오케이 - 인천 연간사업공고계획: 0건
+2026-07-16 10:24:14,439 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024 "HTTP/1.1 200 200"
+2026-07-16 10:24:14,572 INFO 한국콘텐츠진흥원(일반공고): 1건
+2026-07-16 10:24:14,923 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=8 "HTTP/1.1 200 200"
+2026-07-16 10:24:15,623 INFO HTTP Request: GET https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:15,769 INFO 혁신제품지정공고(나라장터): 0건
+2026-07-16 10:24:15,891 INFO HTTP Request: GET https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228 "HTTP/1.1 200 OK"
+2026-07-16 10:24:15,908 INFO 인천상공회의소: 0건
+2026-07-16 10:24:16,219 INFO HTTP Request: GET https://www.incheon.go.kr/IC010205 "HTTP/1.1 200 OK"
+2026-07-16 10:24:16,536 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=9 "HTTP/1.1 200 200"
+2026-07-16 10:24:17,113 INFO HTTP Request: GET http://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:24:17,127 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:24:17,193 INFO 인천광역시청 - 공고/고시: 10건
+2026-07-16 10:24:17,339 INFO HTTP Request: GET https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03 "HTTP/1.1 200 200"
+2026-07-16 10:24:17,829 INFO HTTP Request: GET https://www.seoultp.or.kr/user/nd19746.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:17,849 INFO 서울TP: 15건
+2026-07-16 10:24:17,925 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:17,932 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=10 "HTTP/1.1 200 200"
+2026-07-16 10:24:18,167 INFO 인천경제자유구역청(IFEZ): 10건
+2026-07-16 10:24:18,318 INFO HTTP Request: GET https://www.ema.or.kr/bbs/support "HTTP/1.1 200 OK"
+2026-07-16 10:24:18,343 INFO 인천수출경영자협의회: 15건
+2026-07-16 10:24:18,843 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:18,896 INFO 인천소상공인종합지원센터: 15건
+2026-07-16 10:24:18,921 INFO HTTP Request: GET https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044 "HTTP/1.1 200 "
+2026-07-16 10:24:19,005 INFO HTTP Request: GET https://www.kotra.or.kr/subList/20000020753 "HTTP/1.1 200 OK"
+2026-07-16 10:24:19,140 INFO 인천신용보증재단: 0건
+2026-07-16 10:24:19,141 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=11 "HTTP/1.1 200 200"
+2026-07-16 10:24:19,610 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:19,656 INFO HTTP Request: GET https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:19,763 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:19,841 INFO HTTP Request: GET https://www.icjg.go.kr/krcm01b "HTTP/1.1 301 Moved Permanently"
+2026-07-16 10:24:19,905 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:20,155 INFO HTTP Request: GET https://www.icjg.go.kr/index.html "HTTP/1.1 200 OK"
+2026-07-16 10:24:20,156 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=12 "HTTP/1.1 200 200"
+2026-07-16 10:24:20,159 INFO 인천 중구청: 0건
+2026-07-16 10:24:20,226 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:20,423 INFO HTTP Request: POST https://www.kotra.or.kr/module/subhome/bizAply/selectBmBizAllListAjax.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:20,496 INFO KOTRA 무역투자24 - 사업공고: 10건
+2026-07-16 10:24:20,521 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU01108 "HTTP/1.1 200 200"
+2026-07-16 10:24:20,558 INFO 인천 부평구청: 10건
+2026-07-16 10:24:20,894 INFO 한국보건산업진흥원(K-뷰티공고): 18건
+2026-07-16 10:24:21,687 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=13 "HTTP/1.1 200 200"
+2026-07-16 10:24:21,933 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=13&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:24:22,064 INFO HTTP Request: GET https://www.exportvoucher.com/portal/board/boardList?bbs_id=1&active_menu_cd=EZ005004000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:22,103 INFO HTTP Request: GET https://www.gokams.or.kr/01_news/notice_list.aspx "HTTP/1.1 200 OK"
+2026-07-16 10:24:22,152 INFO HTTP Request: GET https://www.mssmiv.com/portal/board/BoardList?bbsId=1 "HTTP/1.1 200 "
+2026-07-16 10:24:22,154 INFO 인천테크노파크: 30건
+2026-07-16 10:24:22,184 INFO 중소기업 혁신바우처(MSSMIV): 14건
+2026-07-16 10:24:22,226 INFO 예술경영지원센터: 111건
+2026-07-16 10:24:22,288 INFO 수출바우처(수출지원기반활용): 15건
+2026-07-16 10:24:22,713 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:24:22,896 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=14 "HTTP/1.1 200 200"
+2026-07-16 10:24:23,360 INFO HTTP Request: GET https://hespa.or.kr/main/index.php?m_cd=23 "HTTP/1.1 200 OK"
+2026-07-16 10:24:23,382 INFO (재)헬스케어스파산업진흥원: 1건
+2026-07-16 10:24:23,382 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:23,406 INFO HTTP Request: GET http://www.gwef.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:23,470 INFO HTTP Request: GET https://www.smes.go.kr/mainbiz/usr/board/comNotice.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:23,476 INFO 강원경영자총협회: 15건
+2026-07-16 10:24:23,534 INFO HTTP Request: GET https://gsipa.or.kr/board/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:23,542 INFO MainBiz 메인 / 경영혁신형 중소기업: 10건
+2026-07-16 10:24:23,711 INFO 강릉과학산업진흥원: 50건
+2026-07-16 10:24:24,281 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=15 "HTTP/1.1 200 200"
+2026-07-16 10:24:24,757 INFO HTTP Request: GET https://www.gwsinbo.or.kr/board/board_list.php?board_name=notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:24,891 INFO 강원신용보증재단: 21건
+2026-07-16 10:24:24,953 INFO HTTP Request: GET https://gwse.or.kr/bbs/board.php?bo_table=sub41 "HTTP/1.1 200 OK"
+2026-07-16 10:24:24,980 INFO 강원지속가능경제지원센터: 20건
+2026-07-16 10:24:24,981 INFO HTTP Request: GET https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:25,042 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01a&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:25,046 INFO 강원지역인적자원개발위원회: 10건
+2026-07-16 10:24:25,160 INFO 강원테크노파크: 21건
+2026-07-16 10:24:25,754 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=16 "HTTP/1.1 200 200"
+2026-07-16 10:24:26,052 INFO HTTP Request: GET https://www.gwtp.or.kr/gwtp/bbsNew_list.php?code=sub01b&keyvalue=sub01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:26,327 INFO 강원테크노파크: 33건
+2026-07-16 10:24:26,470 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub61 "HTTP/1.1 200 OK"
+2026-07-16 10:24:26,771 INFO 강원특별자치도경제진흥원: 15건
+2026-07-16 10:24:26,994 INFO HTTP Request: GET https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21 "HTTP/1.1 200 OK"
+2026-07-16 10:24:27,231 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=17 "HTTP/1.1 200 200"
+2026-07-16 10:24:27,342 INFO 강원특별자치도경제진흥원: 15건
+2026-07-16 10:24:27,408 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=15&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:24:27,577 INFO 인천테크노파크(ITP) - 공지사항: 30건
+2026-07-16 10:24:27,761 INFO HTTP Request: GET https://www.gmr.or.kr/base/board/list?boardManagementNo=1&menuLevel=2&menuNo=14 "HTTP/1.1 200 200"
+2026-07-16 10:24:28,160 INFO HTTP Request: GET https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1&pNm=BOA0101 "HTTP/1.1 200 OK"
+2026-07-16 10:24:28,245 INFO 경기도시장상권진흥원: 10건
+2026-07-16 10:24:28,307 INFO 소상공인시장진흥공단 - 사업공고: 10건
+2026-07-16 10:24:28,315 INFO HTTP Request: GET https://www.gwff.kr/base/board/list?boardManagementNo=21&menuLevel=2&menuNo=23 "HTTP/1.1 200 200"
+2026-07-16 10:24:28,525 INFO HTTP Request: GET https://www.gbsa.or.kr/board/notice.do "HTTP/1.1 200 "
+2026-07-16 10:24:28,540 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=18 "HTTP/1.1 200 200"
+2026-07-16 10:24:28,545 INFO 경기도여성가족재단: 10건
+2026-07-16 10:24:28,553 INFO HTTP Request: GET https://www.gghrd.or.kr/board/notice.php "HTTP/1.1 200 OK"
+2026-07-16 10:24:28,600 INFO 경기지역인적자원개발위원회: 21건
+2026-07-16 10:24:28,795 INFO 경기도경제과학진흥원: 10건
+2026-07-16 10:24:28,821 INFO HTTP Request: GET https://www.gcon.or.kr/gcon/bbs/B0000001/list.do?menuNo=200057 "HTTP/1.1 200 200"
+2026-07-16 10:24:29,271 INFO 경기콘텐츠진흥원: 15건
+2026-07-16 10:24:29,698 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=2 "HTTP/1.1 200 OK"
+2026-07-16 10:24:29,795 INFO HTTP Request: GET https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/list/sub4_1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:29,820 INFO 경남6차산업지원센터: 10건
+2026-07-16 10:24:29,835 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=anno "HTTP/1.1 200 OK"
+2026-07-16 10:24:29,895 INFO HTTP Request: GET https://www.gtp.or.kr/web/bbs/noticeList.jsp?gbun=expert "HTTP/1.1 200 OK"
+2026-07-16 10:24:29,940 INFO HTTP Request: GET https://www.gnsinbo.or.kr/bbs/board.php?bo_table=01_03_01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:30,014 INFO 경기테크노파크: 20건
+2026-07-16 10:24:30,057 INFO 경기테크노파크: 20건
+2026-07-16 10:24:30,114 INFO 경남신용보증재단: 15건
+2026-07-16 10:24:30,223 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=19 "HTTP/1.1 200 200"
+2026-07-16 10:24:30,423 INFO HTTP Request: GET https://gnhrd.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:30,541 INFO 경남지역인적자원개발위원회: 12건
+2026-07-16 10:24:30,737 INFO HTTP Request: GET https://www.gntp.or.kr/board/list "HTTP/1.1 200 "
+2026-07-16 10:24:30,815 INFO 경남테크노파크: 10건
+2026-07-16 10:24:31,077 INFO HTTP Request: GET http://kbef.or.kr/zbxe/support1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:31,113 INFO 경북경영자총협회: 25건
+2026-07-16 10:24:31,376 INFO HTTP Request: GET https://gbssc.or.kr/notice/ "HTTP/1.1 200 OK"
+2026-07-16 10:24:31,421 INFO HTTP Request: GET http://www.geea.or.kr/bbs/notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:31,447 INFO 경북북부경영자협회: 22건
+2026-07-16 10:24:31,525 INFO 경북광역자활센터: 15건
+2026-07-16 10:24:31,639 INFO HTTP Request: GET https://forwoman.or.kr/main/contents.do?a_num=59464232 "HTTP/1.1 200 OK"
+2026-07-16 10:24:32,114 INFO HTTP Request: GET http://gbhrd.or.kr/zbxe/?mid=support1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:32,125 INFO 경북여성정책개발원: 11건
+2026-07-16 10:24:32,118 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=20 "HTTP/1.1 200 200"
+2026-07-16 10:24:32,155 INFO 경북지역인적자원개발위원회: 23건
+2026-07-16 10:24:32,459 INFO HTTP Request: GET https://www.gfund.kr/hp/info/M04_L01.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:32,483 INFO 경상북도 중소기업육성자금 GFund: 5건
+2026-07-16 10:24:32,704 INFO HTTP Request: GET http://gbse.or.kr/HOME/gbse/sub.htm?nav_code=gbs1566979318 "HTTP/1.1 200 OK"
+2026-07-16 10:24:32,947 INFO HTTP Request: GET https://www.gepa.kr/?page_id=51 "HTTP/1.1 200 OK"
+2026-07-16 10:24:33,426 INFO 경상북도경제진흥원: 10건
+2026-07-16 10:24:33,533 INFO HTTP Request: GET https://www.gipa.or.kr/community/01_1.php "HTTP/1.1 200 OK"
+2026-07-16 10:24:33,657 INFO HTTP Request: GET https://www.itp.or.kr/intro.asp?tmid=36&PageNum=3 "HTTP/1.1 200 OK"
+2026-07-16 10:24:33,694 INFO 고양산업진흥원: 10건
+2026-07-16 10:24:33,823 INFO HTTP Request: GET https://www.gjep.or.kr/cms/bbs/cms.php?dk_cms=comm_01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:33,852 INFO HTTP Request: GET http://www.gjef.or.kr/ko/28 "HTTP/1.1 200 OK"
+2026-07-16 10:24:33,906 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=21 "HTTP/1.1 200 200"
+2026-07-16 10:24:33,921 INFO 인천TP 마케팅센터(뷰티산업육성): 15건
+2026-07-16 10:24:33,978 INFO 광주경영자총협회: 15건
+2026-07-16 10:24:34,024 INFO 광주경제진흥상생일자리재단: 15건
+2026-07-16 10:24:34,058 INFO 경상북도사회적경제지원센터: 13건
+2026-07-16 10:24:35,051 INFO HTTP Request: GET http://www.gjjahwal.or.kr/ko/36 "HTTP/1.1 200 OK"
+2026-07-16 10:24:35,296 INFO 광주광역자활센터: 15건
+2026-07-16 10:24:35,783 INFO HTTP Request: GET https://www.gjcci.or.kr/user/board/lists/board_cd/3010 "HTTP/1.1 200 OK"
+2026-07-16 10:24:35,880 INFO 광주상공회의소: 14건
+2026-07-16 10:24:35,950 INFO HTTP Request: GET https://www.gjsec.kr/bbs/board.php?bo_table=noti&sca=%EC%84%BC%ED%84%B0 "HTTP/1.1 200 OK"
+2026-07-16 10:24:35,980 INFO 광주사회적경제지원센터: 19건
+2026-07-16 10:24:36,089 INFO HTTP Request: GET https://www.gwangjuhrd.or.kr/user2/board/lists/board_cd/5010 "HTTP/1.1 200 OK"
+2026-07-16 10:24:36,139 INFO HTTP Request: GET https://www.gjtp.or.kr/home/business.cs?m=8 "HTTP/1.1 200 OK"
+2026-07-16 10:24:36,183 INFO 광주지역인적자원개발위원회: 12건
+2026-07-16 10:24:36,188 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=22 "HTTP/1.1 200 200"
+2026-07-16 10:24:36,268 INFO 광주테크노파크: 30건
+2026-07-16 10:24:36,405 INFO HTTP Request: GET https://gj.riia.or.kr/board/businessAnnouncement "HTTP/1.1 200 "
+2026-07-16 10:24:36,443 INFO 광주지역산업진흥원: 13건
+2026-07-16 10:24:36,586 INFO HTTP Request: GET https://www.ne.go.kr/user/bbs/BD_selectBbsList.do?q_bbsSn=1003 "HTTP/1.1 200 OK"
+2026-07-16 10:24:36,696 INFO HTTP Request: GET https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003 "HTTP/1.1 200 200"
+2026-07-16 10:24:36,772 INFO 국가교육위원회: 10건
+2026-07-16 10:24:37,330 INFO 광주정보문화산업진흥원: 25건
+2026-07-16 10:24:37,375 INFO HTTP Request: GET https://www.kaia.re.kr/portal/bbs/list/B0000006.do?menuNo=200547 "HTTP/1.1 200 OK"
+2026-07-16 10:24:37,506 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_01.html "HTTP/1.1 200 OK"
+2026-07-16 10:24:37,603 INFO HTTP Request: GET https://www.kibo.or.kr/main/board/boardType01.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:37,609 INFO 국토교통과학기술진흥원: 10건
+2026-07-16 10:24:37,615 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=23 "HTTP/1.1 200 200"
+2026-07-16 10:24:37,716 INFO 군포산업진흥원: 29건
+2026-07-16 10:24:38,114 INFO HTTP Request: GET https://gpipa.or.kr/sub05/sub05_02.html "HTTP/1.1 200 OK"
+2026-07-16 10:24:38,117 INFO HTTP Request: GET https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/list.do "HTTP/1.1 200 "
+2026-07-16 10:24:38,436 INFO 기업 SOS: 10건
+2026-07-16 10:24:38,634 INFO HTTP Request: GET https://www.hrd4u.or.kr/hrddoctor/web/board/list.do?mId=34 "HTTP/1.1 200 OK"
+2026-07-16 10:24:38,861 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/ntfcPblancList.do?key=***&cate_cd=1&searchCnd=40900000000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:38,861 INFO HTTP Request: GET https://www.gimpo.go.kr/portal/selectBbsNttList.do?bbsNo=292&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:24:38,868 INFO 군포산업진흥원: 30건
+2026-07-16 10:24:39,030 INFO 기업직업훈련지원시스템: 14건
+2026-07-16 10:24:39,712 INFO HTTP Request: GET https://www.nyj.go.kr/www/selectEminwonWebList.do?key=***&sa1=01&sa1=02&sa1=04&sa1=05&sc4=2024 "HTTP/1.1 200 OK"
+2026-07-16 10:24:39,713 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=24 "HTTP/1.1 200 200"
+2026-07-16 10:24:40,158 INFO 김포시청: 10건
+2026-07-16 10:24:40,400 INFO 김포시청: 12건
+2026-07-16 10:24:40,682 INFO HTTP Request: GET https://nongshinbo.nonghyup.com/user/indexSub.do?codyMenuSeq=258789404&siteId=nongshinbo "HTTP/1.1 200 OK"
+2026-07-16 10:24:40,683 INFO HTTP Request: GET https://www.koreahana.or.kr/home/kor/board.do?ptSignature=QnrvtOekzKclpksn74dfsVKJGpwSxgFZ4viFnbbXAD0%3D&menuPos=51 "HTTP/1.1 200 200"
+2026-07-16 10:24:40,687 INFO HTTP Request: GET https://www.kwpi.or.kr/home/sub?menukey=7311 "HTTP/1.1 200 200"
+2026-07-16 10:24:40,808 INFO 노사발전재단 일터혁신플랫폼: 10건
+2026-07-16 10:24:40,886 INFO 농림수산업자신용보증기금(농신보): 16건
+2026-07-16 10:24:41,062 INFO 남북하나재단: 33건
+2026-07-16 10:24:41,252 INFO 남양주시청: 10건
+2026-07-16 10:24:41,461 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=319& "HTTP/1.1 200 OK"
+2026-07-16 10:24:41,543 INFO 대구경북경제자유구역청: 10건
+2026-07-16 10:24:41,733 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=25 "HTTP/1.1 200 200"
+2026-07-16 10:24:41,734 INFO HTTP Request: GET https://www.dgfez.go.kr/page.php?mnu_uid=321& "HTTP/1.1 200 OK"
+2026-07-16 10:24:41,799 INFO 기술보증기금(기보): 10건
+2026-07-16 10:24:41,883 INFO 대구경북경제자유구역청: 11건
+2026-07-16 10:24:42,131 INFO HTTP Request: GET http://www.dgef.or.kr/Home/board/default.asp?v=1&s_no=1&m=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:42,217 INFO 대구경영자총협회: 20건
+2026-07-16 10:24:42,905 INFO HTTP Request: GET https://startup.daegu.go.kr/index.do?menu_id=00002552 "HTTP/1.1 200 OK"
+2026-07-16 10:24:43,004 INFO 대구창업허브 DASH: 7건
+2026-07-16 10:24:43,198 INFO HTTP Request: GET https://www.djbea.or.kr/board?menuId=MENU00310&siteId=null "HTTP/1.1 200 200"
+2026-07-16 10:24:43,199 INFO 대전일자리경제진흥원: 0건
+2026-07-16 10:24:43,523 INFO HTTP Request: GET https://www.sinbo.or.kr/sub04_01_01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:43,574 INFO 대전신용보증재단: 10건
+2026-07-16 10:24:43,575 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=26 "HTTP/1.1 200 200"
+2026-07-16 10:24:43,754 INFO HTTP Request: GET https://djhrd.or.kr/sub0101 "HTTP/1.1 200 OK"
+2026-07-16 10:24:43,776 INFO 대전지역인적자원개발위원회: 10건
+2026-07-16 10:24:43,895 INFO HTTP Request: GET http://www.bsef.or.kr/03_news/news01.php "HTTP/1.1 200 OK"
+2026-07-16 10:24:43,914 INFO HTTP Request: GET https://djtp.or.kr/pbanc?mid=a20101000000 "HTTP/1.1 200 "
+2026-07-16 10:24:44,025 INFO 부산경영자총협회: 18건
+2026-07-16 10:24:44,288 INFO HTTP Request: GET https://d.nts.go.kr/daejeonnts/na/ntt/selectNttList.do?mi=5114&bbsId=6032 "HTTP/1.1 200 OK"
+2026-07-16 10:24:44,289 INFO HTTP Request: GET https://djtp.or.kr/board.es?mid=a20201000000&bid=0101 "HTTP/1.1 200 "
+2026-07-16 10:24:44,294 INFO 대전테크노파크: 10건
+2026-07-16 10:24:44,433 INFO 대전테크노파크: 10건
+2026-07-16 10:24:44,520 INFO 대전지방국세청: 22건
+2026-07-16 10:24:44,529 INFO HTTP Request: GET https://sehub.net/archives/category/alarm/opencat "HTTP/1.1 200 OK"
+2026-07-16 10:24:44,610 INFO 서울특별시 사회적경제지원센터: 18건
+2026-07-16 10:24:44,611 INFO HTTP Request: GET https://www.sjepa.or.kr/news-announcement "HTTP/1.1 200 OK"
+2026-07-16 10:24:44,708 INFO 세종일자리경제진흥원: 10건
+2026-07-16 10:24:44,982 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=notice01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:45,000 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=27 "HTTP/1.1 200 200"
+2026-07-16 10:24:45,071 INFO 세종테크노파크: 15건
+2026-07-16 10:24:45,273 INFO HTTP Request: GET https://sjtp.or.kr/bbs/board.php?bo_table=business01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:45,359 INFO 세종테크노파크: 15건
+2026-07-16 10:24:45,510 INFO HTTP Request: GET https://www.smart-factory.kr/ "HTTP/1.1 200 200"
+2026-07-16 10:24:45,587 INFO HTTP Request: GET https://www.sida.kr/notification/news.html "HTTP/1.1 200 OK"
+2026-07-16 10:24:45,650 INFO 시흥산업진흥원: 20건
+2026-07-16 10:24:45,777 INFO HTTP Request: GET http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:45,794 INFO 울산양산경영자총협회: 15건
+2026-07-16 10:24:46,264 INFO HTTP Request: GET https://www.ubpi.or.kr/sub/?mcode=0403010000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:46,331 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:24:46,353 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=28 "HTTP/1.1 200 200"
+2026-07-16 10:24:46,434 INFO 울산일자리경제진흥원: 10건
+2026-07-16 10:24:46,521 INFO HTTP Request: GET https://www.ulsanhrd.or.kr/bbs/list.php?board_id=notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:46,542 INFO 울산지역인적자원개발위원회: 18건
+2026-07-16 10:24:46,767 INFO HTTP Request: GET https://www.utp.or.kr/board/board.php?bo_table=sub0501&menu_group=4&sno=0401 "HTTP/1.1 200 OK"
+2026-07-16 10:24:46,901 INFO 울산테크노파크: 20건
+2026-07-16 10:24:47,267 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:24:47,347 INFO HTTP Request: GET https://www.wmit.or.kr/announce/businessAnnounceList.do "HTTP/1.1 200 "
+2026-07-16 10:24:47,548 INFO 원주의료기기산업진흥원: 10건
+2026-07-16 10:24:47,602 INFO HTTP Request: GET https://www.innobiz.net/company/company1_list.asp "HTTP/1.1 200 OK"
+2026-07-16 10:24:47,644 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=29 "HTTP/1.1 200 200"
+2026-07-16 10:24:47,671 INFO 이노비즈협회(사)중소기업기술혁신: 10건
+2026-07-16 10:24:47,961 INFO HTTP Request: GET https://ypa.or.kr/information/businessnotice/ "HTTP/1.1 200 OK"
+2026-07-16 10:24:48,084 INFO HTTP Request: GET https://www.inef.or.kr/news/notice.php "HTTP/1.1 200 OK"
+2026-07-16 10:24:48,143 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:24:48,176 INFO HTTP Request: GET https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:24:48,200 INFO 인천경영자총협회: 29건
+2026-07-16 10:24:48,329 INFO 용인시산업진흥원: 27건
+2026-07-16 10:24:48,481 INFO 안양시상권활성화센터: 12건
+2026-07-16 10:24:48,769 INFO HTTP Request: GET https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101 "HTTP/1.1 200 OK"
+2026-07-16 10:24:48,831 INFO 인천광역시사회적경제지원센터: 28건
+2026-07-16 10:24:48,832 INFO HTTP Request: GET https://www.ep.go.kr/www/selectBbsNttList.do?bbsNo=42&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:24:49,102 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business "HTTP/1.1 200 OK"
+2026-07-16 10:24:49,133 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:24:49,628 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=30 "HTTP/1.1 200 200"
+2026-07-16 10:24:49,649 INFO 인천디자인지원센터: 37건
+2026-07-16 10:24:50,056 INFO HTTP Request: POST https://www.smart-factory.kr/usr/bg/ba/ma/bsnsPbanc/selectBsnsPbancPage.do "HTTP/1.1 200 200"
+2026-07-16 10:24:50,057 INFO 스마트공장 사업관리시스템: 39건
+2026-07-16 10:24:50,368 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000002&menuCd=DOM_000000101002000000&contentsSid=4&cpath= "HTTP/1.1 200 OK"
+2026-07-16 10:24:50,369 INFO HTTP Request: GET https://idsc.kr/_NBoard/board.php?bo_table=business2 "HTTP/1.1 200 OK"
+2026-07-16 10:24:50,399 INFO HTTP Request: GET https://event.jbci.or.kr/sub/s1_1.html "HTTP/1.1 200 OK"
+2026-07-16 10:24:50,444 INFO 은평구청: 10건
+2026-07-16 10:24:50,451 INFO 전북창조경제혁신센터: 2건
+2026-07-16 10:24:50,553 INFO HTTP Request: GET https://www.insupport.or.kr/sub/?mcode=0404010000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:50,736 INFO 인천디자인지원센터: 25건
+2026-07-16 10:24:50,788 INFO 인천소상공인종합지원센터: 15건
+2026-07-16 10:24:50,929 INFO 전북테크노파크: 10건
+2026-07-16 10:24:51,272 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub01_09 "HTTP/1.1 200 OK"
+2026-07-16 10:24:51,279 INFO HTTP Request: GET https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000006&menuCd=DOM_000000102001000000&paging=ok&gbun=&searchType=&keyword=&pageNo=1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:51,684 INFO 전북특별자치도경제통상진흥원: 20건
+2026-07-16 10:24:51,907 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=31 "HTTP/1.1 200 200"
+2026-07-16 10:24:51,927 INFO 전북테크노파크: 26건
+2026-07-16 10:24:52,082 INFO HTTP Request: GET https://tmdf.or.kr/sub/sub03_01.php "HTTP/1.1 200 OK"
+2026-07-16 10:24:52,083 INFO HTTP Request: GET https://www.nipa.kr/home/2-1 "HTTP/1.1 200 200"
+2026-07-16 10:24:52,121 INFO 전통시장육성재단: 10건
+2026-07-16 10:24:52,126 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A1000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:52,222 INFO HTTP Request: GET https://www.jica.or.kr/2025/inner.php?sMenu=A2000 "HTTP/1.1 200 OK"
+2026-07-16 10:24:52,248 INFO 정보통신산업진흥원: 12건
+2026-07-16 10:24:52,349 INFO 전주정보문화산업진흥원: 9건
+2026-07-16 10:24:52,467 INFO 전주정보문화산업진흥원: 9건
+2026-07-16 10:24:52,604 INFO HTTP Request: GET https://www.jbba.kr/bbs/board.php?bo_table=sub02_07_01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:52,660 INFO HTTP Request: GET https://www.nipa.kr/home/2-2 "HTTP/1.1 200 200"
+2026-07-16 10:24:52,747 INFO 전북특별자치도경제통상진흥원: 15건
+2026-07-16 10:24:52,837 INFO 정보통신산업진흥원: 10건
+2026-07-16 10:24:53,308 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?Mcode=11182 "HTTP/1.1 200 OK"
+2026-07-16 10:24:53,351 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=32 "HTTP/1.1 200 200"
+2026-07-16 10:24:53,435 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%A0%84%EB%AC%B8%EA%B0%80&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:53,765 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EC%9E%90%EB%AC%B8%EB%8B%A8&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:54,017 INFO 정부24: 15건
+2026-07-16 10:24:54,094 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EB%A9%98%ED%86%A0&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:54,095 INFO HTTP Request: GET http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:54,191 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%EA%B0%95%EC%82%AC&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:54,316 INFO HTTP Request: GET https://www.gov.kr/portal/locgovNews?srchTxt=%ED%8F%89%EA%B0%80%EC%9C%84%EC%9B%90&srchSort=01 "HTTP/1.1 200 OK"
+2026-07-16 10:24:54,327 INFO 정부24: 15건
+2026-07-16 10:24:54,351 INFO 제주경영자총협회: 21건
+2026-07-16 10:24:54,596 INFO 정부24: 15건
+2026-07-16 10:24:55,057 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=33 "HTTP/1.1 200 200"
+2026-07-16 10:24:55,081 INFO 정부24: 15건
+2026-07-16 10:24:55,462 INFO 정부24: 15건
+2026-07-16 10:24:55,648 INFO HTTP Request: GET http://www.jejuhrd.or.kr/index.php/contents/community/notice "HTTP/1.1 200 OK"
+2026-07-16 10:24:55,661 INFO 정부24: 15건
+2026-07-16 10:24:55,865 INFO 제주지역인적자원개발위원회: 10건
+2026-07-16 10:24:55,866 INFO HTTP Request: GET https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:56,109 INFO 제주신용보증재단: 16건
+2026-07-16 10:24:56,122 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:56,124 INFO HTTP Request: GET https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:56,497 INFO HTTP Request: GET https://jeju.pass.or.kr/notice-board "HTTP/1.1 200 OK"
+2026-07-16 10:24:56,503 INFO 제주특별자치도 경제통상진흥원: 18건
+2026-07-16 10:24:56,545 INFO 제주특별자치도사회서비스원: 10건
+2026-07-16 10:24:56,568 INFO 제주특별자치도 경제통상진흥원: 18건
+2026-07-16 10:24:56,708 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice01_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:57,106 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=34 "HTTP/1.1 200 200"
+2026-07-16 10:24:57,344 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-07-16 10:24:57,453 INFO HTTP Request: GET https://www.tipa.or.kr/ "HTTP/1.1 200 OK"
+2026-07-16 10:24:57,779 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=3 "HTTP/1.1 200 OK"
+2026-07-16 10:24:57,780 INFO HTTP Request: GET https://pms.ripc.org/pms/biz/applicant/notice/list.do "HTTP/1.1 200 200"
+2026-07-16 10:24:57,831 INFO HTTP Request: GET https://www.heemangfdn.or.kr/layout/res/home.php?go=pds.list&pds_type=1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:57,832 INFO HTTP Request: GET https://www.kosi.re.kr/kosbiWar/front/functionDisplay?menuFrontNo=239693504401196147746371791605890541073&menuFrontURL=front/announceList "HTTP/1.1 200 200"
+2026-07-16 10:24:58,053 INFO 중소상공인희망재단: 10건
+2026-07-16 10:24:58,077 INFO 중소상공인희망재단: 10건
+2026-07-16 10:24:58,078 INFO HTTP Request: GET https://www.smtech.go.kr/front/ifg/no/notice03_list.do "HTTP/1.1 200 OK"
+2026-07-16 10:24:58,410 INFO HTTP Request: GET https://www.tipa.or.kr/s040101/index/page/1 "HTTP/1.1 200 OK"
+2026-07-16 10:24:58,411 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:24:58,794 INFO 중소기업기술정보진흥원(TIPA): 10건
+2026-07-16 10:24:59,350 INFO 중소기업 기술개발사업 종합관리시스템: 15건
+2026-07-16 10:24:59,351 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=35 "HTTP/1.1 200 200"
+2026-07-16 10:24:59,664 INFO HTTP Request: GET https://www.cwip.or.kr/bbs/board.php?bo_table=b0501 "HTTP/1.1 200 OK"
+2026-07-16 10:25:00,079 INFO 중소벤처기업연구원: 20건
+2026-07-16 10:25:00,120 INFO 창원산업진흥원: 12건
+2026-07-16 10:25:00,325 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=notice "HTTP/1.1 200 OK"
+2026-07-16 10:25:00,643 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_bsm080_001.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:00,644 INFO HTTP Request: GET https://iact.or.kr/module/board/board.php?bo_id=business "HTTP/1.1 200 OK"
+2026-07-16 10:25:00,679 INFO 첨단정보통신융합산업기술원: 22건
+2026-07-16 10:25:01,177 INFO 첨단정보통신융합산업기술원: 19건
+2026-07-16 10:25:01,574 INFO HTTP Request: GET https://www.cepa.or.kr/notice/notice.do?pm=6&ms=32 "HTTP/1.1 200 200"
+2026-07-16 10:25:01,628 INFO 청년창업사관학교: 10건
+2026-07-16 10:25:01,718 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=36 "HTTP/1.1 200 200"
+2026-07-16 10:25:01,757 INFO 충남경제진흥원: 10건
+2026-07-16 10:25:01,953 INFO HTTP Request: GET https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/ "HTTP/1.1 200 "
+2026-07-16 10:25:01,955 INFO HTTP Request: GET https://start.kosmes.or.kr/yh_not002_001.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:02,359 INFO HTTP Request: GET https://www.cnse.kr/app/board/index?md_id=center_news "HTTP/1.1 200 OK"
+2026-07-16 10:25:02,428 INFO 충남사회적경제지원센터: 10건
+2026-07-16 10:25:02,540 INFO HTTP Request: GET http://xn--6-482fq5fy8gs7i6jc.com/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:25:02,576 INFO 충북농촌융복합산업지원센터: 15건
+2026-07-16 10:25:02,818 INFO 청년창업사관학교: 10건
+2026-07-16 10:25:02,819 INFO HTTP Request: GET https://www.ctp.or.kr/business/data.do "HTTP/1.1 200 200"
+2026-07-16 10:25:03,009 INFO HTTP Request: GET http://www.cbse.co/board/blist/notice "HTTP/1.1 200 OK"
+2026-07-16 10:25:03,020 INFO 충남테크노파크: 10건
+2026-07-16 10:25:03,058 INFO 충북사회적경제센터: 23건
+2026-07-16 10:25:03,328 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=37 "HTTP/1.1 200 200"
+2026-07-16 10:25:03,674 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:25:03,884 INFO HTTP Request: GET https://www.cbsinbo.or.kr/sub.php?code=123 "HTTP/1.1 200 OK"
+2026-07-16 10:25:04,123 INFO 충북신용보증재단: 15건
+2026-07-16 10:25:04,830 INFO 충남농업6차산업센터: 10건
+2026-07-16 10:25:04,896 INFO HTTP Request: GET https://www.cjrhrdc.org/board/notice "HTTP/1.1 200 OK"
+2026-07-16 10:25:05,126 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=38 "HTTP/1.1 200 200"
+2026-07-16 10:25:05,131 INFO 충북지역인적자원개발위원회: 20건
+2026-07-16 10:25:05,419 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:25:05,420 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=65 "HTTP/1.1 200 200"
+2026-07-16 10:25:05,824 INFO 충청남도 소상공인 지원센터: 10건
+2026-07-16 10:25:05,992 INFO HTTP Request: GET https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6 "HTTP/1.1 200 OK"
+2026-07-16 10:25:06,152 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526 "HTTP/1.1 200 OK"
+2026-07-16 10:25:06,271 INFO HTTP Request: GET https://sbiz.cepa.or.kr/sosang/notice/notice.do?pm=10&ms=66 "HTTP/1.1 200 200"
+2026-07-16 10:25:06,591 INFO HTTP Request: GET https://www.cba.ne.kr/home/sub.php?menukey=140 "HTTP/1.1 200 OK"
+2026-07-16 10:25:06,623 INFO 충청남도 소상공인 지원센터: 10건
+2026-07-16 10:25:06,832 INFO 충청북도기업진흥원: 15건
+2026-07-16 10:25:06,837 INFO 충북테크노파크: 15건
+2026-07-16 10:25:07,561 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=39 "HTTP/1.1 200 200"
+2026-07-16 10:25:07,635 INFO HTTP Request: GET https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36 "HTTP/1.1 200 OK"
+2026-07-16 10:25:07,864 INFO HTTP Request: GET https://www.cbsb.kr/home/sub.php?menukey=288 "HTTP/1.1 200 OK"
+2026-07-16 10:25:08,064 INFO 충청북도소상공인지원센터: 13건
+2026-07-16 10:25:08,240 INFO 충북테크노파크 컨택센터: 10건
+2026-07-16 10:25:08,593 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=23 "HTTP/1.1 200 OK"
+2026-07-16 10:25:08,634 INFO 충북테크노파크: 15건
+2026-07-16 10:25:08,783 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=28 "HTTP/1.1 200 OK"
+2026-07-16 10:25:08,803 INFO 한국경영기술지도사회: 11건
+2026-07-16 10:25:08,822 INFO HTTP Request: GET https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword= "HTTP/1.1 200 200"
+2026-07-16 10:25:09,015 INFO 한국경영기술지도사회: 11건
+2026-07-16 10:25:09,240 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=40 "HTTP/1.1 200 200"
+2026-07-16 10:25:09,733 INFO 한국건강가정진흥원: 11건
+2026-07-16 10:25:09,734 INFO HTTP Request: GET https://www.kmtca.or.kr/?p=128 "HTTP/1.1 200 OK"
+2026-07-16 10:25:09,782 INFO 한국경영기술지도사회: 17건
+2026-07-16 10:25:09,970 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:25:10,148 INFO HTTP Request: GET https://mainbiz.or.kr/notice/notice.asp?smen=1 "HTTP/1.1 200 OK"
+2026-07-16 10:25:10,202 INFO HTTP Request: GET https://mainbiz.or.kr/notice/company.asp?smen=2 "HTTP/1.1 200 OK"
+2026-07-16 10:25:10,207 INFO HTTP Request: GET https://mainbiz.or.kr/notice/library.asp?smen=8 "HTTP/1.1 200 OK"
+2026-07-16 10:25:10,206 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:25:10,275 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:25:10,309 INFO 한국경영혁신중소기업협회: 10건
+2026-07-16 10:25:10,448 INFO HTTP Request: POST https://pms.ripc.org/pms/biz/applicant/notice/getNoticeList.do "HTTP/1.1 200 200"
+2026-07-16 10:25:10,574 INFO HTTP Request: GET https://www.kma.or.kr/usrs/tutor/tutorForm.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:11,484 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=41 "HTTP/1.1 200 200"
+2026-07-16 10:25:11,797 INFO HTTP Request: GET https://www.ksure.or.kr/rh-kr/bbs/i-412/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:12,235 INFO HTTP Request: GET https://www.keit.re.kr/board.es?mid=a10301010000&bid=0009 "HTTP/1.1 200 OK"
+2026-07-16 10:25:12,804 INFO HTTP Request: GET https://www.khidi.or.kr/board?menuId=MENU00099 "HTTP/1.1 200 200"
+2026-07-16 10:25:13,197 INFO 한국능률협회(KMA): 86건
+2026-07-16 10:25:13,251 INFO 한국무역보험공사: 114건
+2026-07-16 10:25:13,480 INFO 한국산업기술기획평가원(KEIT): 1건
+2026-07-16 10:25:13,676 INFO HTTP Request: GET https://www.kipa.org/kipa/notice/kw_0403_01.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:25:13,804 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=42 "HTTP/1.1 200 200"
+2026-07-16 10:25:13,805 INFO HTTP Request: GET https://www.kipa.org/kipa/ip004/kw_apquestion_0501.jsp "HTTP/1.1 200 OK"
+2026-07-16 10:25:15,078 INFO 한국보건산업진흥원: 11건
+2026-07-16 10:25:15,333 INFO HTTP Request: GET https://www.knrec.or.kr/biz/pds/notice/list.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:15,339 INFO HTTP Request: GET https://www.hrdkorea.or.kr/3/1/1 "HTTP/1.1 200 OK"
+2026-07-16 10:25:15,344 INFO 한국발명진흥회: 10건
+2026-07-16 10:25:15,383 INFO 한국발명진흥회: 10건
+2026-07-16 10:25:15,513 INFO 지역지식재산센터(RIPC) 사업공고: 50건
+2026-07-16 10:25:15,517 INFO HTTP Request: GET https://www.lmca.or.kr/22 "HTTP/1.1 200 OK"
+2026-07-16 10:25:15,754 INFO 한국상생지원협회: 6건
+2026-07-16 10:25:15,905 INFO 한국에너지공단 신재생에너지센터: 24건
+2026-07-16 10:25:15,966 INFO 한국산업인력공단(HRDK): 10건
+2026-07-16 10:25:16,133 INFO HTTP Request: GET https://www.inventor.or.kr/bbs/board.php?bo_table=notice "HTTP/1.1 200 OK"
+2026-07-16 10:25:16,154 INFO 한국여성발명협회: 15건
+2026-07-16 10:25:16,233 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=43 "HTTP/1.1 200 200"
+2026-07-16 10:25:16,637 INFO HTTP Request: GET https://www.kisa.or.kr/401 "HTTP/1.1 200 200"
+2026-07-16 10:25:16,732 INFO 한국인터넷진흥원(KISA): 10건
+2026-07-16 10:25:16,839 INFO HTTP Request: GET https://www.kocca.kr/kocca/pims/list.do?menuNo=204104&recptSt= "HTTP/1.1 200 200"
+2026-07-16 10:25:16,871 INFO HTTP Request: GET https://www.kocca.kr/kocca/bbs/list/B0000137.do?menuNo=204802 "HTTP/1.1 200 200"
+2026-07-16 10:25:17,035 INFO 한국콘텐츠진흥원: 10건
+2026-07-16 10:25:17,114 INFO 한국콘텐츠진흥원: 10건
+2026-07-16 10:25:17,675 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=44 "HTTP/1.1 200 200"
+2026-07-16 10:25:17,722 INFO HTTP Request: GET https://ksa.or.kr/bbs/ksa_kr/1021/artclList.do?layout=unknown "HTTP/1.1 302 Found"
+2026-07-16 10:25:17,820 INFO HTTP Request: GET https://www.keco.or.kr/web/lay1/bbs/S1T10C108/A/18/list.do "HTTP/1.1 200 "
+2026-07-16 10:25:17,924 INFO HTTP Request: GET https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do "HTTP/1.1 200 "
+2026-07-16 10:25:18,033 INFO HTTP Request: GET https://www.hongcheon.go.kr/www/selectBbsNttList.do?bbsNo=1&key=*** "HTTP/1.1 200 OK"
+2026-07-16 10:25:18,080 INFO HTTP Request: GET https://www.hstree.org/news/notice.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:18,157 INFO 한국환경공단: 10건
+2026-07-16 10:25:18,232 INFO 화성산업진흥원: 5건
+2026-07-16 10:25:18,235 INFO HTTP Request: GET https://www.ksa.or.kr/ksa_kr/5217/subview.do "HTTP/1.1 200 OK"
+2026-07-16 10:25:18,387 INFO 한국표준협회(KSA): 10건
+2026-07-16 10:25:18,510 INFO 화성시인재육성재단: 12건
+2026-07-16 10:25:18,569 INFO 홍천군청: 10건
+2026-07-16 10:25:18,845 INFO HTTP Request: GET https://ksa.or.kr/ksa_kr/16279/subview.do;jsessionid=4254098FA7DCD9DC8CE08DA72827F8AC?enc=Zm5jdDF8QEB8JTJGYmJzJTJGa3NhX2tyJTJGMTAyMSUyRmFydGNsTGlzdC5kbyUzRg%3D%3D "HTTP/1.1 200 OK"
+2026-07-16 10:25:18,882 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=45 "HTTP/1.1 200 200"
+2026-07-16 10:25:18,994 INFO 한국표준협회(KSA): 10건
+2026-07-16 10:25:20,179 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=46 "HTTP/1.1 200 200"
+2026-07-16 10:25:21,187 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=47 "HTTP/1.1 200 200"
+2026-07-16 10:25:22,182 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=48 "HTTP/1.1 200 200"
+2026-07-16 10:25:23,048 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=49 "HTTP/1.1 200 200"
+2026-07-16 10:25:23,808 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=50 "HTTP/1.1 200 200"
+2026-07-16 10:25:24,599 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=51 "HTTP/1.1 200 200"
+2026-07-16 10:25:25,350 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=52 "HTTP/1.1 200 200"
+2026-07-16 10:25:26,140 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=53 "HTTP/1.1 200 200"
+2026-07-16 10:25:26,944 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=54 "HTTP/1.1 200 200"
+2026-07-16 10:25:27,754 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=55 "HTTP/1.1 200 200"
+2026-07-16 10:25:28,489 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=56 "HTTP/1.1 200 200"
+2026-07-16 10:25:29,297 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=57 "HTTP/1.1 200 200"
+2026-07-16 10:25:30,027 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=58 "HTTP/1.1 200 200"
+2026-07-16 10:25:30,787 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=59 "HTTP/1.1 200 200"
+2026-07-16 10:25:31,576 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=60 "HTTP/1.1 200 200"
+2026-07-16 10:25:32,333 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=61 "HTTP/1.1 200 200"
+2026-07-16 10:25:33,280 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=62 "HTTP/1.1 200 200"
+2026-07-16 10:25:34,263 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=63 "HTTP/1.1 200 200"
+2026-07-16 10:25:35,060 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=64 "HTTP/1.1 200 200"
+2026-07-16 10:25:35,845 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=65 "HTTP/1.1 200 200"
+2026-07-16 10:25:36,624 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=66 "HTTP/1.1 200 200"
+2026-07-16 10:25:37,414 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=67 "HTTP/1.1 200 200"
+2026-07-16 10:25:39,305 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=68 "HTTP/1.1 200 200"
+2026-07-16 10:25:40,306 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=69 "HTTP/1.1 200 200"
+2026-07-16 10:25:41,382 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=70 "HTTP/1.1 200 200"
+2026-07-16 10:25:42,329 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=71 "HTTP/1.1 200 200"
+2026-07-16 10:25:43,390 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=72 "HTTP/1.1 200 200"
+2026-07-16 10:25:44,533 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=73 "HTTP/1.1 200 200"
+2026-07-16 10:25:45,708 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=74 "HTTP/1.1 200 200"
+2026-07-16 10:25:46,723 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=75 "HTTP/1.1 200 200"
+2026-07-16 10:25:47,569 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=76 "HTTP/1.1 200 200"
+2026-07-16 10:25:48,450 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=77 "HTTP/1.1 200 200"
+2026-07-16 10:25:49,395 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=78 "HTTP/1.1 200 200"
+2026-07-16 10:25:50,293 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=79 "HTTP/1.1 200 200"
+2026-07-16 10:25:51,494 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=80 "HTTP/1.1 200 200"
+2026-07-16 10:25:53,282 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=81 "HTTP/1.1 200 200"
+2026-07-16 10:25:55,238 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=82 "HTTP/1.1 200 200"
+2026-07-16 10:25:56,499 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=83 "HTTP/1.1 200 200"
+2026-07-16 10:25:57,464 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=84 "HTTP/1.1 200 200"
+2026-07-16 10:25:58,762 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=85 "HTTP/1.1 200 200"
+2026-07-16 10:26:00,514 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=86 "HTTP/1.1 200 200"
+2026-07-16 10:26:01,398 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=87 "HTTP/1.1 200 200"
+2026-07-16 10:26:02,224 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=88 "HTTP/1.1 200 200"
+2026-07-16 10:26:03,008 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=89 "HTTP/1.1 200 200"
+2026-07-16 10:26:03,847 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=90 "HTTP/1.1 200 200"
+2026-07-16 10:26:04,593 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=91 "HTTP/1.1 200 200"
+2026-07-16 10:26:05,473 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=92 "HTTP/1.1 200 200"
+2026-07-16 10:26:06,316 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=93 "HTTP/1.1 200 200"
+2026-07-16 10:26:07,110 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=94 "HTTP/1.1 200 200"
+2026-07-16 10:26:08,076 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=95 "HTTP/1.1 200 200"
+2026-07-16 10:26:08,938 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=96 "HTTP/1.1 200 200"
+2026-07-16 10:26:09,980 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=97 "HTTP/1.1 200 200"
+2026-07-16 10:26:10,786 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=98 "HTTP/1.1 200 200"
+2026-07-16 10:26:11,601 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=99 "HTTP/1.1 200 200"
+2026-07-16 10:26:12,609 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=100 "HTTP/1.1 200 200"
+2026-07-16 10:26:13,511 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=101 "HTTP/1.1 200 200"
+2026-07-16 10:26:14,342 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=102 "HTTP/1.1 200 200"
+2026-07-16 10:26:15,748 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=103 "HTTP/1.1 200 200"
+2026-07-16 10:26:16,749 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=104 "HTTP/1.1 200 200"
+2026-07-16 10:26:17,642 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=105 "HTTP/1.1 200 200"
+2026-07-16 10:26:18,408 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=106 "HTTP/1.1 200 200"
+2026-07-16 10:26:19,198 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=107 "HTTP/1.1 200 200"
+2026-07-16 10:26:19,955 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=108 "HTTP/1.1 200 200"
+2026-07-16 10:26:20,740 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=109 "HTTP/1.1 200 200"
+2026-07-16 10:26:21,649 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=110 "HTTP/1.1 200 200"
+2026-07-16 10:26:22,511 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=111 "HTTP/1.1 200 200"
+2026-07-16 10:26:23,567 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=112 "HTTP/1.1 200 200"
+2026-07-16 10:26:24,523 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=113 "HTTP/1.1 200 200"
+2026-07-16 10:26:25,505 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=114 "HTTP/1.1 200 200"
+2026-07-16 10:26:26,337 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=115 "HTTP/1.1 200 200"
+2026-07-16 10:26:27,267 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=116 "HTTP/1.1 200 200"
+2026-07-16 10:26:28,158 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=117 "HTTP/1.1 200 200"
+2026-07-16 10:26:30,387 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=118 "HTTP/1.1 200 200"
+2026-07-16 10:26:31,170 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=119 "HTTP/1.1 200 200"
+2026-07-16 10:26:33,139 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=120 "HTTP/1.1 200 200"
+2026-07-16 10:26:35,354 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=121 "HTTP/1.1 200 200"
+2026-07-16 10:26:36,475 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=122 "HTTP/1.1 200 200"
+2026-07-16 10:26:39,377 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=123 "HTTP/1.1 200 200"
+2026-07-16 10:26:42,426 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=124 "HTTP/1.1 200 200"
+2026-07-16 10:26:43,814 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=125 "HTTP/1.1 200 200"
+2026-07-16 10:26:45,010 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=126 "HTTP/1.1 200 200"
+2026-07-16 10:26:46,331 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=127 "HTTP/1.1 200 200"
+2026-07-16 10:26:47,281 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=128 "HTTP/1.1 200 200"
+2026-07-16 10:26:48,252 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=129 "HTTP/1.1 200 200"
+2026-07-16 10:26:49,491 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=130 "HTTP/1.1 200 200"
+2026-07-16 10:26:50,837 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=131 "HTTP/1.1 200 200"
+2026-07-16 10:26:52,153 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=132 "HTTP/1.1 200 200"
+2026-07-16 10:26:53,200 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=133 "HTTP/1.1 200 200"
+2026-07-16 10:26:54,587 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=134 "HTTP/1.1 200 200"
+2026-07-16 10:26:55,726 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=135 "HTTP/1.1 200 200"
+2026-07-16 10:26:57,094 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=136 "HTTP/1.1 200 200"
+2026-07-16 10:26:58,631 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=137 "HTTP/1.1 200 200"
+2026-07-16 10:26:59,456 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=138 "HTTP/1.1 200 200"
+2026-07-16 10:27:00,494 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=139 "HTTP/1.1 200 200"
+2026-07-16 10:27:01,820 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=140 "HTTP/1.1 200 200"
+2026-07-16 10:27:03,145 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=141 "HTTP/1.1 200 200"
+2026-07-16 10:27:04,305 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=142 "HTTP/1.1 200 200"
+2026-07-16 10:27:05,136 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=143 "HTTP/1.1 200 200"
+2026-07-16 10:27:05,902 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=144 "HTTP/1.1 200 200"
+2026-07-16 10:27:06,701 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=145 "HTTP/1.1 200 200"
+2026-07-16 10:27:07,517 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=146 "HTTP/1.1 200 200"
+2026-07-16 10:27:08,761 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=147 "HTTP/1.1 200 200"
+2026-07-16 10:27:09,734 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=148 "HTTP/1.1 200 200"
+2026-07-16 10:27:10,803 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=149 "HTTP/1.1 200 200"
+2026-07-16 10:27:11,606 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=150 "HTTP/1.1 200 200"
+2026-07-16 10:27:13,909 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=151 "HTTP/1.1 200 200"
+2026-07-16 10:27:15,962 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=152 "HTTP/1.1 200 200"
+2026-07-16 10:27:17,398 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=153 "HTTP/1.1 200 200"
+2026-07-16 10:27:18,705 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=154 "HTTP/1.1 200 200"
+2026-07-16 10:27:19,529 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=155 "HTTP/1.1 200 200"
+2026-07-16 10:27:20,371 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=156 "HTTP/1.1 200 200"
+2026-07-16 10:27:21,272 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=157 "HTTP/1.1 200 200"
+2026-07-16 10:27:22,037 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=158 "HTTP/1.1 200 200"
+2026-07-16 10:27:22,814 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=159 "HTTP/1.1 200 200"
+2026-07-16 10:27:23,773 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=160 "HTTP/1.1 200 200"
+2026-07-16 10:27:24,655 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=161 "HTTP/1.1 200 200"
+2026-07-16 10:27:25,430 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=162 "HTTP/1.1 200 200"
+2026-07-16 10:27:26,185 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=163 "HTTP/1.1 200 200"
+2026-07-16 10:27:26,961 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=164 "HTTP/1.1 200 200"
+2026-07-16 10:27:27,738 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=165 "HTTP/1.1 200 200"
+2026-07-16 10:27:28,567 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=166 "HTTP/1.1 200 200"
+2026-07-16 10:27:29,429 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=167 "HTTP/1.1 200 200"
+2026-07-16 10:27:30,454 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=168 "HTTP/1.1 200 200"
+2026-07-16 10:27:31,395 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=169 "HTTP/1.1 200 200"
+2026-07-16 10:27:32,213 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=170 "HTTP/1.1 200 200"
+2026-07-16 10:27:33,357 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=171 "HTTP/1.1 200 200"
+2026-07-16 10:27:34,381 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=172 "HTTP/1.1 200 200"
+2026-07-16 10:27:35,168 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=173 "HTTP/1.1 200 200"
+2026-07-16 10:27:35,945 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=174 "HTTP/1.1 200 200"
+2026-07-16 10:27:36,689 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=175 "HTTP/1.1 200 200"
+2026-07-16 10:27:37,449 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=176 "HTTP/1.1 200 200"
+2026-07-16 10:27:38,224 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=177 "HTTP/1.1 200 200"
+2026-07-16 10:27:38,991 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=178 "HTTP/1.1 200 200"
+2026-07-16 10:27:39,758 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=179 "HTTP/1.1 200 200"
+2026-07-16 10:27:40,518 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=180 "HTTP/1.1 200 200"
+2026-07-16 10:27:41,330 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=181 "HTTP/1.1 200 200"
+2026-07-16 10:27:42,198 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=182 "HTTP/1.1 200 200"
+2026-07-16 10:27:42,948 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=183 "HTTP/1.1 200 200"
+2026-07-16 10:27:43,791 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=184 "HTTP/1.1 200 200"
+2026-07-16 10:27:44,597 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=185 "HTTP/1.1 200 200"
+2026-07-16 10:27:45,488 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=186 "HTTP/1.1 200 200"
+2026-07-16 10:27:46,296 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=187 "HTTP/1.1 200 200"
+2026-07-16 10:27:47,090 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=188 "HTTP/1.1 200 200"
+2026-07-16 10:27:47,896 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=189 "HTTP/1.1 200 200"
+2026-07-16 10:27:48,684 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=190 "HTTP/1.1 200 200"
+2026-07-16 10:27:49,502 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=191 "HTTP/1.1 200 200"
+2026-07-16 10:27:51,175 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=192 "HTTP/1.1 200 200"
+2026-07-16 10:27:52,034 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=193 "HTTP/1.1 200 200"
+2026-07-16 10:27:52,815 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=194 "HTTP/1.1 200 200"
+2026-07-16 10:27:53,650 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=195 "HTTP/1.1 200 200"
+2026-07-16 10:27:54,404 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=196 "HTTP/1.1 200 200"
+2026-07-16 10:27:55,169 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=197 "HTTP/1.1 200 200"
+2026-07-16 10:27:56,017 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=198 "HTTP/1.1 200 200"
+2026-07-16 10:27:56,849 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=199 "HTTP/1.1 200 200"
+2026-07-16 10:27:57,628 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=200 "HTTP/1.1 200 200"
+2026-07-16 10:27:58,422 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=201 "HTTP/1.1 200 200"
+2026-07-16 10:27:59,156 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=202 "HTTP/1.1 200 200"
+2026-07-16 10:28:00,023 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=203 "HTTP/1.1 200 200"
+2026-07-16 10:28:01,018 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=204 "HTTP/1.1 200 200"
+2026-07-16 10:28:01,870 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=205 "HTTP/1.1 200 200"
+2026-07-16 10:28:02,699 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=206 "HTTP/1.1 200 200"
+2026-07-16 10:28:03,561 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=207 "HTTP/1.1 200 200"
+2026-07-16 10:28:04,385 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=208 "HTTP/1.1 200 200"
+2026-07-16 10:28:05,176 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=209 "HTTP/1.1 200 200"
+2026-07-16 10:28:05,334 INFO 정보통신산업진흥원(NIPA): 2073건
+2026-07-16 10:28:05,335 INFO 수집 완료: 6807건
+2026-07-16 10:28:05,336 INFO 중복제거: '[공고] 2026년 지역 중대재해 예' 유지, '[공고] 2026년 지역 중대재해 예' 제거 (고용노동부)
+2026-07-16 10:28:05,338 INFO 중복제거: '2026년 숙련기능인력 E-7-4 전' 유지, '2026년 숙련기능인력 E-7-4 전' 제거 (중소벤처기업진흥공단(KOSME))
+2026-07-16 10:28:05,338 INFO 중복제거: '2026년 외국전문인력 E-7-1 고' 유지, '2026년 외국전문인력 E-7-1 고' 제거 (중소벤처기업진흥공단(KOSME))
+2026-07-16 10:28:05,338 INFO 중복제거: '2026년 기업인력애로센터 활용 취업' 유지, '2026년 기업인력애로센터 활용 취업' 제거 (중소벤처기업진흥공단(KOSME))
+2026-07-16 10:28:05,339 INFO 중복제거: '2026년 중소기업 정책자금 융자계획' 유지, '2026년 중소기업 정책자금 융자계획' 제거 (중소벤처기업진흥공단(KOSME))
+2026-07-16 10:28:05,339 INFO 중복제거: '2026년도 산업통상부-공공기관 기술' 유지, '2026년도 산업통상부-공공기관 기술' 제거 (한국산업기술진흥원(KIAT))
+2026-07-16 10:28:05,339 INFO 중복제거: '2026년 청정제조기반구축사업 통합 ' 유지, '2026년 청정제조기반구축사업 통합 ' 제거 (한국산업기술진흥원(KIAT))
+2026-07-16 10:28:05,340 INFO 중복제거: '2026년 소상공인 정책자금 융자계획' 유지, '2026년 소상공인 정책자금 융자계획' 제거 (소진공 정책자금 온라인신청)
+2026-07-16 10:28:05,342 INFO 중복제거: '공공기관 종합청렴도 평가 관련 개인정' 유지, '공공기관 종합청렴도 평가 관련 개인정' 제거 (신용보증기금(KODIT))
+2026-07-16 10:28:05,350 INFO 중복제거: '[강원] 2026년 5차 특허분쟁 대' 유지, '2026년 5차 특허분쟁 대응전략 지' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,351 INFO 중복제거: '2026년 두바이국제콘텐츠마켓 참가기' 유지, '2026년 두바이국제콘텐츠마켓 참가기' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,351 INFO 중복제거: '2026년 백년소상공인 모집(재지정)' 유지, '2026년 백년소상공인 모집(재지정)' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,355 INFO 중복제거: '2026년 중소기업 지역혁신 유공 포' 유지, '2026년 중소기업 지역혁신 유공 포' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,355 INFO 중복제거: '2026년 중소기업 융합 촉진 유공 ' 유지, '2026년 중소기업 융합 촉진 유공 ' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,356 INFO 중복제거: '2026년 글로벌 비즈니스 라운드테이' 유지, '2026년 글로벌 비즈니스 라운드테이' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,360 INFO 중복제거: '콘텐츠 해외 투자유치 지원 프로그램 ' 유지, '2026년 콘텐츠 해외 투자유치 지원' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,375 INFO 중복제거: '2026년 청정제조기반구축사업 통합 ' 유지, '2026년 청정제조기반구축사업 통합 ' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,376 INFO 중복제거: '싱가포르 미디어테크 쇼케이스 참가기업' 유지, '싱가포르 미디어테크 쇼케이스 참가기업' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,385 INFO 중복제거: '2026년 K-Animation Gl' 유지, '2026년 K-Animation Gl' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,408 INFO 중복제거: '2026년 기술사업화 유공자 포상 신' 유지, '2026년 기술사업화 유공자 포상 신' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,455 INFO 중복제거: '[대구] 2026년 연구조직(기업부설' 유지, '2026년 연구조직(기업부설연구소 등' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,466 INFO 중복제거: '2026년 IP투자연계 지식재산평가 ' 유지, '2026년 IP투자연계 지식재산평가 ' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,491 INFO 중복제거: '2026년 통상변화대응지원사업 참여기' 유지, '2026년 통상변화대응지원사업 참여기' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,529 INFO 중복제거: '2026년 일터혁신 상생컨설팅 지원사' 유지, '2026년 일터혁신 상생컨설팅 지원사' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,535 INFO 중복제거: '2026년 현장실습 훈련(시니어 인턴' 유지, '2026년 현장실습훈련(시니어인턴십)' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,538 INFO 중복제거: '2026년 미래내일 일경험 사업 인턴' 유지, '2026년 미래내일일경험사업(인턴형)' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,550 INFO 중복제거: '2026년 청년일자리도약장려금 참여기' 유지, '2026년 청년일자리 도약장려금 참여' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,581 INFO 중복제거: '2026년 기업인력애로센터 활용 취업' 유지, '2026년 기업인력애로센터 활용 취업' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,593 INFO 중복제거: '[충북] 2026년 청년일자리도약장려' 유지, '[충북] 2026년 청년일자리도약장려' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,632 INFO 중복제거: '2026년 미래내일 일경험 참여기업 ' 유지, '[경북] 2026년 미래내일일경험 참' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,663 INFO 중복제거: '[울산] 2026년 소상공인 고용보험' 유지, '2026년 소상공인 고용보험료 지원사' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,667 INFO 중복제거: '2026년 미래내일 일경험 사업 참여' 유지, '2026년 미래내일 일경험 사업 참여' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,670 INFO 중복제거: '제조 DX멘토단 활용지원(2026년 ' 유지, '2026년 스마트 제조혁신 지원사업 ' 제거 (기업마당(Bizinfo))
+2026-07-16 10:28:05,676 INFO 중복제거: '기업마당(Bizinfo)' ([대전ㆍ경북] 2026년 지역 첨단제) → '대전테크노파크' (2026년 지역 첨단제조 스타트업 스) 로 교체
+2026-07-16 10:28:05,696 INFO 중복제거: '2026년도 하반기 중소벤처기업부 혁' 유지, '2026년도 하반기 중소벤처기업부 혁' 제거 (SMTECH(중소기업기술개발))
+2026-07-16 10:28:05,716 INFO 중복제거: '지원사업공고' 유지, '지원사업공고' 제거 (창조경제혁신센터(행사))
+2026-07-16 10:28:05,716 INFO 중복제거: 'CCEI 투자' 유지, 'CCEI 투자' 제거 (창조경제혁신센터(행사))
+2026-07-16 10:28:05,719 INFO 중복제거: '2026년 K-브랜드분쟁 대응전략 지' 유지, '[인천지식재산센터] 2026년 K-브' 제거 (비즈오케이(BizOK) - 인천기업지원)
+2026-07-16 10:28:05,720 INFO 중복제거: '기업마당(Bizinfo)' ([인천] 2026년 라오스 비엔티안 ) → '비즈오케이(BizOK) - 인천기업지원' (「2026년 라오스 비엔티안 시장개척) 로 교체
+2026-07-16 10:28:05,721 INFO 중복제거: '사용자가이드' 유지, '사용자가이드' 제거 (한국콘텐츠진흥원(일반공고))
+2026-07-16 10:28:05,746 INFO 중복제거: '기업마당(Bizinfo)' ([충남] 2026년 1인 자영업자 고) → '인천소상공인종합지원센터' (2026년 1인 자영업자 고용보험료 ) 로 교체
+2026-07-16 10:28:05,759 INFO 중복제거: '2026 세계폐암학회(WCLC) 참가' 유지, '2026 세계폐암학회(WCLC) 참가' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,760 INFO 중복제거: '바이오유럽(BIO-Europe) 20' 유지, '바이오유럽(BIO-Europe) 20' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,761 INFO 중복제거: '2026 ESMO(유럽종양학회) 사절' 유지, '2026 ESMO(유럽종양학회) 사절' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,761 INFO 중복제거: 'BIO-EUROPE 2026 할인 코' 유지, 'BIO-EUROPE 2026 할인 코' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,762 INFO 중복제거: '2026년 핵심인재 글로벌 브릿지 연' 유지, '2026년 핵심인재 글로벌 브릿지 연' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,763 INFO 중복제거: '2026년 바이오헬스 특허 및 인허가' 유지, '2026년 바이오헬스 특허 및 인허가' 제거 (한국보건산업진흥원(K-뷰티공고))
+2026-07-16 10:28:05,767 INFO 중복제거: '2026 콘텐츠 제작 프로젝트 지원사' 유지, '2026 콘텐츠 제작 프로젝트 지원사' 제거 (인천테크노파크)
+2026-07-16 10:28:05,770 INFO 중복제거: '기업마당(Bizinfo)' (2026년 중소기업 정보보호 지원사업) → '인천테크노파크' (2026년 중소기업 정보보호 지원사업) 로 교체
+2026-07-16 10:28:05,773 INFO 중복제거: '2026년 인천 일하기 좋은 뿌리기업' 유지, '2026년 인천 일하기 좋은 뿌리기업' 제거 (인천테크노파크)
+2026-07-16 10:28:05,792 INFO 중복제거: '채용정보' 유지, '채용정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,793 INFO 중복제거: '입찰정보' 유지, '입찰정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,793 INFO 중복제거: '언론보도' 유지, '언론보도' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,793 INFO 중복제거: 'KAMS NOW' 유지, 'KAMS Now' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,794 INFO 중복제거: '일자리정보' 유지, '일자리 정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,794 INFO 중복제거: '공모ㆍ기금ㆍ행사' 유지, '공모ㆍ기금ㆍ행사' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,794 INFO 중복제거: '뉴스레터' 유지, '뉴스레터' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,797 INFO 중복제거: '오시는길' 유지, '오시는길' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,798 INFO 중복제거: '채용정보' 유지, '채용정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,799 INFO 중복제거: '입찰정보' 유지, '입찰정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,799 INFO 중복제거: '언론보도' 유지, '언론보도' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,799 INFO 중복제거: 'KAMS NOW' 유지, 'KAMS NOW' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,800 INFO 중복제거: '일자리정보' 유지, '일자리정보' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,800 INFO 중복제거: '공모ㆍ기금ㆍ행사' 유지, '공모ㆍ기금ㆍ행사' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,800 INFO 중복제거: '뉴스레터' 유지, '뉴스레터' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,801 INFO 중복제거: '지원/신청' 유지, '지원/신청' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,801 INFO 중복제거: '공모사업 안내' 유지, '공모사업 안내' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,802 INFO 중복제거: '온라인 참가신청' 유지, '온라인 참가신청' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,802 INFO 중복제거: '예술경영컨설팅' 유지, '예술경영컨설팅' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,805 INFO 중복제거: '사업안내' 유지, '사업안내' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,806 INFO 중복제거: '예술현장 성장기반 조성' 유지, '예술현장 성장기반 조성' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,806 INFO 중복제거: '공연시장 활성화 지원' 유지, '공연시장 활성화 지원' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,807 INFO 중복제거: '미술시장 활성화 지원' 유지, '미술시장 활성화 지원' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,807 INFO 중복제거: '아트코리아랩' 유지, '아트코리아랩' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,807 INFO 중복제거: '자료공간' 유지, '자료공간' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,808 INFO 중복제거: '발간자료' 유지, '발간자료' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,808 INFO 중복제거: '동향/분석자료' 유지, '동향/분석자료' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,808 INFO 중복제거: '전문예술법인단체현황' 유지, '전문예술법인단체현황' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,809 INFO 중복제거: '정보공개' 유지, '정보공개' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,809 INFO 중복제거: '정보공개제도' 유지, '정보공개제도' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,809 INFO 중복제거: '정보공개청구' 유지, '정보공개청구' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,810 INFO 중복제거: '사전정보공표' 유지, '사전정보공표' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,810 INFO 중복제거: '공공데이터개방' 유지, '공공데이터개방' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,810 INFO 중복제거: '통합공시' 유지, '통합공시' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,811 INFO 중복제거: '자체공시' 유지, '자체공시' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,813 INFO 중복제거: '사업실명제' 유지, '사업실명제' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,813 INFO 중복제거: '부패신고센터' 유지, '부패신고센터' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,814 INFO 중복제거: '고객의 소리' 유지, '고객의 소리' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,814 INFO 중복제거: '기관소개' 유지, '기관소개' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,814 INFO 중복제거: '인사말' 유지, '인사말' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,815 INFO 중복제거: '연혁' 유지, '연혁' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,815 INFO 중복제거: '미션&비전' 유지, '미션&비전' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,815 INFO 중복제거: '윤리인권경영' 유지, '윤리인권경영' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,816 INFO 중복제거: '오시는길' 유지, '오시는 길' 제거 (예술경영지원센터)
+2026-07-16 10:28:05,816 INFO 중복제거: '2026년도 중기부 수출지원기반활용사' 유지, '(중기부) 2026년도 중기부 수출지' 제거 (수출바우처(수출지원기반활용))
+2026-07-16 10:28:05,834 INFO 중복제거: '기업마당(Bizinfo)' ([강원] 2026년 첨단 융복합 기술) → '강릉과학산업진흥원' (2026년「첨단 융복합 기술 기반 바) 로 교체
+2026-07-16 10:28:05,835 INFO 중복제거: '[AI 및 멀티소스 다중 센서 기반 ' 유지, '[AI 및 멀티소스 다중 센서 기반 ' 제거 (강릉과학산업진흥원)
+2026-07-16 10:28:05,838 INFO 중복제거: '[AI 및 멀티소스 다중 센서 기반 ' 유지, '[AI 및 멀티소스 다중센서 기반 연' 제거 (강릉과학산업진흥원)
+2026-07-16 10:28:05,839 INFO 중복제거: '2026년 강원해양수산창업투자지원사업' 유지, '2026년 강원해양수산창업투자지원사업' 제거 (강릉과학산업진흥원)
+2026-07-16 10:28:05,864 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,864 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,865 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,865 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,866 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,867 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,867 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,868 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,868 INFO 중복제거: '채용' 유지, '채용' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,869 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,869 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,870 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,871 INFO 중복제거: '채용' 유지, '채용' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,871 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,872 INFO 중복제거: '공지사항' 유지, '공지사항' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,872 INFO 중복제거: '외부기관공지' 유지, '외부기관공지' 제거 (강원지속가능경제지원센터)
+2026-07-16 10:28:05,894 INFO 중복제거: '(2026-154호)2026년 강원 ' 유지, '(2026-154호)2026년 강원 ' 제거 (강원테크노파크)
+2026-07-16 10:28:05,900 INFO 중복제거: '채용공고' 유지, '채용공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,901 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,901 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,902 INFO 중복제거: '채용공고' 유지, '채용공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,902 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,902 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,902 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,903 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,904 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,904 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,904 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,905 INFO 중복제거: '입찰공고' 유지, '입찰공고' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,906 INFO 중복제거: '일자리부' 유지, '일자리부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,906 INFO 중복제거: '일자리부' 유지, '일자리부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,907 INFO 중복제거: '전략사업부' 유지, '전략사업부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,907 INFO 중복제거: '일자리부' 유지, '일자리부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,908 INFO 중복제거: '지식재산' 유지, '지식재산' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,908 INFO 중복제거: '일자리부' 유지, '일자리부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,909 INFO 중복제거: '지식재산' 유지, '지식재산' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,909 INFO 중복제거: '성장지원부' 유지, '성장지원부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,910 INFO 중복제거: '전략사업부' 유지, '전략사업부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,910 INFO 중복제거: '일자리부' 유지, '일자리부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,910 INFO 중복제거: '전략사업부' 유지, '전략사업부' 제거 (강원특별자치도경제진흥원)
+2026-07-16 10:28:05,913 INFO 중복제거: '기업마당(Bizinfo)' ([인천] 2026년 중동 상황 위기 ) → '인천테크노파크(ITP) - 공지사항' (‘중동 상황 위기 대응 긴급 수출바우) 로 교체
+2026-07-16 10:28:05,927 INFO 중복제거: '2026년 소상공인 정책자금 융자계획' 유지, '2026년 소상공인 정책자금 융자계획' 제거 (소상공인시장진흥공단 - 사업공고)
+2026-07-16 10:28:05,946 INFO 중복제거: '기관공지 2026년 경기도 공직유관단' 유지, '경기도 공직유관단체 종합청렴도 평가 ' 제거 (경기도경제과학진흥원)
+2026-07-16 10:28:05,950 INFO 중복제거: '기관공지 2026년 경기도 공직유관단' 유지, '경기도 공직유관단체 종합청렴도 평가 ' 제거 (경기콘텐츠진흥원)
+2026-07-16 10:28:05,952 INFO 중복제거: '2025년 경기콘텐츠진흥원 홈페이지 ' 유지, '2025년 경기콘텐츠진흥원 홈페이지 ' 제거 (경기콘텐츠진흥원)
+2026-07-16 10:28:05,959 INFO 중복제거: '기관공지 2026년 경기도 공직유관단' 유지, '경기도 공직유관단체 종합청렴도 평가 ' 제거 (경기콘텐츠진흥원)
+2026-07-16 10:28:05,974 INFO 중복제거: '경기테크노파크 편의시설 임차인 선정 ' 유지, '경기테크노파크 편의시설 임차인 선정 ' 제거 (경기테크노파크)
+2026-07-16 10:28:05,974 INFO 중복제거: '[교육안내]2026년 양평군 중소기업' 유지, '[교육안내]2026년 양평군 중소기업' 제거 (경기테크노파크)
+2026-07-16 10:28:05,975 INFO 중복제거: '[교육안내] 2026년 광명상생플랫폼' 유지, '[교육안내] 2026년 광명상생플랫폼' 제거 (경기테크노파크)
+2026-07-16 10:28:05,975 INFO 중복제거: '[교육안내] 2026년 안산시 온라인' 유지, '[교육안내] 2026년 안산시 온라인' 제거 (경기테크노파크)
+2026-07-16 10:28:05,976 INFO 중복제거: '[교육안내] 2026년 파주시 청년창' 유지, '[교육안내] 2026년 파주시 청년창' 제거 (경기테크노파크)
+2026-07-16 10:28:05,976 INFO 중복제거: '2026년 스마트제조 전문인력 육성사' 유지, '2026년 스마트제조 전문인력 육성사' 제거 (경기테크노파크)
+2026-07-16 10:28:05,977 INFO 중복제거: '[교육안내] 2026년 양주시 중소기' 유지, '[교육안내] 2026년 양주시 중소기' 제거 (경기테크노파크)
+2026-07-16 10:28:05,977 INFO 중복제거: '『2026년 경기도 제조로봇 도입지원' 유지, '『2026년 경기도 제조로봇 도입지원' 제거 (경기테크노파크)
+2026-07-16 10:28:05,978 INFO 중복제거: '2026년 안산스마트허브 기술혁신 2' 유지, '2026년 안산스마트허브 기술혁신 2' 제거 (경기테크노파크)
+2026-07-16 10:28:05,978 INFO 중복제거: '「2026 제조로봇 도입지원 해외진출' 유지, '「2026 제조로봇 도입지원 해외진출' 제거 (경기테크노파크)
+2026-07-16 10:28:05,979 INFO 중복제거: '[안내] ‘광명상생플랫폼 명칭공모’ ' 유지, '[안내] ‘광명상생플랫폼 명칭공모’ ' 제거 (경기테크노파크)
+2026-07-16 10:28:05,979 INFO 중복제거: '2026년 안산ITㆍSW기업 성장지원' 유지, '2026년 안산ITㆍSW기업 성장지원' 제거 (경기테크노파크)
+2026-07-16 10:28:05,980 INFO 중복제거: '2026년 안산ITㆍSW기업 성장지원' 유지, '2026년 안산ITㆍSW기업 성장지원' 제거 (경기테크노파크)
+2026-07-16 10:28:05,980 INFO 중복제거: '경기도형 지역혁신생태계 구축(미래차)' 유지, '경기도형 지역혁신생태계 구축(미래차)' 제거 (경기테크노파크)
+2026-07-16 10:28:05,981 INFO 중복제거: '2026년 기술닥터사업 평가위원 후보' 유지, '2026년 기술닥터사업 평가위원 후보' 제거 (경기테크노파크)
+2026-07-16 10:28:05,982 INFO 중복제거: '2026년 기술닥터사업 중기애로기술지' 유지, '2026년 기술닥터사업 중기애로기술지' 제거 (경기테크노파크)
+2026-07-16 10:28:05,982 INFO 중복제거: '2026년 안산스마트허브 기술혁신 선' 유지, '2026년 안산스마트허브 기술혁신 선' 제거 (경기테크노파크)
+2026-07-16 10:28:05,982 INFO 중복제거: '2026년 안산시 피지컬로봇 실증지원' 유지, '2026년 안산시 피지컬로봇 실증지원' 제거 (경기테크노파크)
+2026-07-16 10:28:05,983 INFO 중복제거: '2026 로봇직업교육센터 구축사업 외' 유지, '2026 로봇직업교육센터 구축사업 외' 제거 (경기테크노파크)
+2026-07-16 10:28:05,984 INFO 중복제거: '2026년 예비수소전문기업 지원사업 ' 유지, '2026년 예비수소전문기업 지원사업 ' 제거 (경기테크노파크)
+2026-07-16 10:28:05,988 INFO 중복제거: '2026년 2분기 보증기업 경기실사지' 유지, '공고/보증 제2026-4호 2026년' 제거 (경남신용보증재단)
+2026-07-16 10:28:05,991 INFO 중복제거: '2026년 1분기 보증기업 경기실사지' 유지, '공고/보증 제2026-2호 2026년' 제거 (경남신용보증재단)
+2026-07-16 10:28:06,017 INFO 중복제거: '[2026 시군특화] 포항지역 거주 ' 유지, '[2026 시군특화] 포항지역 거주 ' 제거 (경북북부경영자협회)
+2026-07-16 10:28:06,018 INFO 중복제거: '[2026 시군특화] 포항지역 거주 ' 유지, '[2026 시군특화] 포항지역 거주 ' 제거 (경북북부경영자협회)
+2026-07-16 10:28:06,023 INFO 중복제거: '[26꿈이음] 청춘카페 지원사업 참여' 유지, '[26꿈이음] 청춘카페 지원사업 참여' 제거 (경북북부경영자협회)
+2026-07-16 10:28:06,052 INFO 중복제거: '기업마당(Bizinfo)' ([경북] 2026년 창업 및 경쟁력강) → '경상북도 중소기업육성자금 GFund' (2026년 창업 및 경쟁력강화 사업자) 로 교체
+2026-07-16 10:28:06,053 INFO 중복제거: '기업마당(Bizinfo)' ([광주] 2026년 벤처기업육성자금 ) → '경상북도 중소기업육성자금 GFund' (2026년 벤처기업 육성자금 지원계획) 로 교체
+2026-07-16 10:28:06,078 INFO 중복제거: '채용정보' 유지, '채용정보' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,079 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,079 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,080 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,080 INFO 중복제거: '채용정보' 유지, '채용정보' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,081 INFO 중복제거: '채용정보' 유지, '채용정보' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,081 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,082 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,082 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,083 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,083 INFO 중복제거: '소상공인지원' 유지, '소상공인지원' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,084 INFO 중복제거: '타기관공고' 유지, '타기관공고' 제거 (광주경제진흥상생일자리재단)
+2026-07-16 10:28:06,085 INFO 중복제거: '기업마당(Bizinfo)' ([경북] 2026년 사회연대경제 청년) → '경상북도사회적경제지원센터' (「사회연대경제 청년 일경험 시범사업」) 로 교체
+2026-07-16 10:28:06,102 INFO 중복제거: '2026년 제31회 한국유통대상 정부' 유지, '2026년 제31회 한국유통대상 정부' 제거 (광주상공회의소)
+2026-07-16 10:28:06,106 INFO 중복제거: '2026년 7월/8월 AI 역량강화 ' 유지, '2026년 7월/8월 AI 역량강화 ' 제거 (광주상공회의소)
+2026-07-16 10:28:06,116 INFO 중복제거: '2026년 사회적경제 교육 : 소셜 ' 유지, '2026년 사회적경제 교육 : 소셜 ' 제거 (광주사회적경제지원센터)
+2026-07-16 10:28:06,117 INFO 중복제거: '2026년 광주사회적경제지원센터 신규' 유지, '광주사회적경제지원센터 신규직원 채용 ' 제거 (광주사회적경제지원센터)
+2026-07-16 10:28:06,121 INFO 중복제거: '[인자위 공고 제2026-09호] 2' 유지, '[인자위 공고 제2026-09호] 2' 제거 (광주지역인적자원개발위원회)
+2026-07-16 10:28:06,127 INFO 중복제거: '기업마당(Bizinfo)' ([전남광주] 차세대 지능형 반도체 적) → '광주테크노파크' (차세대 지능형 반도체 적용 온디바이스) 로 교체
+2026-07-16 10:28:06,131 INFO 중복제거: '기업마당(Bizinfo)' ([전남광주] 첨단 AX실증산단구축사업) → '광주테크노파크' (광주첨단 AX실증산단구축사업(2차년도) 로 교체
+2026-07-16 10:28:06,139 INFO 중복제거: '기업마당(Bizinfo)' ([충북] 2026년 청년일자리도약장려) → '광주테크노파크' (2026년 청년일자리도약장려금 사업) 로 교체
+2026-07-16 10:28:06,152 INFO 중복제거: '국가교육위원회 전입희망자(일반직) 모' 유지, '국가교육위원회 전입희망자(일반직) 모' 제거 (국가교육위원회)
+2026-07-16 10:28:06,152 INFO 중복제거: '2026년 국가교육위원회 정책연구과제' 유지, '2026년 국가교육위원회 정책연구과제' 제거 (국가교육위원회)
+2026-07-16 10:28:06,154 INFO 중복제거: '국가교육위원회 전입희망자(일반직) 모' 유지, '국가교육위원회 전입희망자(일반직) 모' 제거 (국가교육위원회)
+2026-07-16 10:28:06,156 INFO 중복제거: '2026년 국가교육위원회 정책연구과제' 유지, '2026년 국가교육위원회 정책연구과제' 제거 (국가교육위원회)
+2026-07-16 10:28:06,165 INFO 중복제거: '기업마당(Bizinfo)' ([전남광주] 2026년 지역 디지털 ) → '광주정보문화산업진흥원' (「2026년 지역 디지털 품질관리 역) 로 교체
+2026-07-16 10:28:06,173 INFO 중복제거: '공공기관 AI 활용 국민제안 접수(상' 유지, '공공기관 AI 활용 국민제안 접수(상' 제거 (국토교통과학기술진흥원)
+2026-07-16 10:28:06,176 INFO 중복제거: '[ HOME ]' 유지, '[ HOME ]' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,176 INFO 중복제거: '[ HOME ]' 유지, '[ HOME ]' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,177 INFO 중복제거: '\ufffd\u06fe\u0233\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '\ufffd\u06fe\u0233\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,187 INFO 중복제거: '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 유지, '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,192 INFO 중복제거: '[ HOME ]' 유지, '[ HOME ]' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,193 INFO 중복제거: '[ HOME ]' 유지, '[ HOME ]' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,194 INFO 중복제거: '[ HOME ]' 유지, '[ HOME ]' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,195 INFO 중복제거: '\ufffd\ufffd\ufffd\ufffd\ufffd\u04b0\ufffd\ufffd\ufffd\u01af\u022d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '\ufffd\ufffd\ufffd\ufffd\ufffd\u04b0\ufffd\ufffd\ufffd\u01af\u022d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,198 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,200 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd' 유지, '2026\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,201 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd' 유지, '2026\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,202 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd' 유지, '2026\ufffd\ufffd \ufffd\u04b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \ufffd\ufffd' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,202 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '2026\ufffd\ufffd \ufffd\ufffd\ufffd\uedef\ufffd\ufffd \ufffdκ\ufffd \ufffd\ufffd' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,204 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,204 INFO 중복제거: '2026\ufffd\ufffd \xe2\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd' 유지, '2026\ufffd\ufffd \xe2\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,205 INFO 중복제거: '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd' 유지, '2026\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,206 INFO 중복제거: '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 유지, '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,206 INFO 중복제거: '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 유지, '\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\xf3\ufffd\ufffd\ufffd\ufffdħ' 제거 (군포산업진흥원)
+2026-07-16 10:28:06,230 INFO 중복제거: '(김포시)경기도 기업옴부즈만 현장컨설' 유지, '경기도 기업옴부즈만 현장컨설팅 운영' 제거 (김포시청)
+2026-07-16 10:28:06,234 INFO 중복제거: '기업마당(Bizinfo)' (2026년 일터혁신 상생컨설팅 지원사) → '노사발전재단 일터혁신플랫폼' ([모집공고] 2026년 일터혁신 상생) 로 교체
+2026-07-16 10:28:06,240 INFO 중복제거: '[공지사항] 농신보 이용 시 유의하시' 유지, '[공지사항] 농신보 이용 시 유의하시' 제거 (농림수산업자신용보증기금(농신보))
+2026-07-16 10:28:06,248 INFO 중복제거: '[ HOME ]' 유지, 'HOME' 제거 (남북하나재단)
+2026-07-16 10:28:06,248 INFO 중복제거: '정보공개' 유지, '정보공개' 제거 (남북하나재단)
+2026-07-16 10:28:06,249 INFO 중복제거: 'English' 유지, 'ENGLISH' 제거 (남북하나재단)
+2026-07-16 10:28:06,251 INFO 중복제거: '정보공개' 유지, '정보공개' 제거 (남북하나재단)
+2026-07-16 10:28:06,251 INFO 중복제거: 'English' 유지, 'ENGLISH' 제거 (남북하나재단)
+2026-07-16 10:28:06,251 INFO 중복제거: '[하나원] 정착지원금' 유지, '[하나원] 정착지원금' 제거 (남북하나재단)
+2026-07-16 10:28:06,252 INFO 중복제거: '하나 더 1사1인 캠페인' 유지, '하나 더 1사1인 캠페인' 제거 (남북하나재단)
+2026-07-16 10:28:06,252 INFO 중복제거: '북향민 온라인 채용관' 유지, '북향민 온라인 채용관' 제거 (남북하나재단)
+2026-07-16 10:28:06,253 INFO 중복제거: '참 괜찮은 중소기업 채용사이트' 유지, '참 괜찮은 중소기업 채용사이트' 제거 (남북하나재단)
+2026-07-16 10:28:06,255 INFO 중복제거: '외교통일위원회' 유지, '외교통일위원회' 제거 (남북하나재단)
+2026-07-16 10:28:06,259 INFO 중복제거: 'Refugees Internation' 유지, 'Refugees Internation' 제거 (남북하나재단)
+2026-07-16 10:28:06,261 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (남북하나재단)
+2026-07-16 10:28:06,286 INFO 중복제거: '영천하이테크파크지구 개발계획 변경을 ' 유지, '영천하이테크파크지구 개발계획 변경을 ' 제거 (대구경북경제자유구역청)
+2026-07-16 10:28:06,293 INFO 중복제거: '\ufffd\ufffd2026\ufffd\ufffd \ufffd\ufffd\ufffd\u07f3\ufffd \ufffd\ufffd\u0238\ufffd\ufffd' 유지, '\ufffd\ufffd2026\ufffd\ufffd \ufffd\ufffd\ufffd\u07f3\ufffd \ufffd\ufffd\u0238\ufffd\ufffd' 제거 (대구경영자총협회)
+2026-07-16 10:28:06,297 INFO 중복제거: '회원가입' 유지, '회원가입' 제거 (대구창업허브 DASH)
+2026-07-16 10:28:06,297 INFO 중복제거: '로그인' 유지, '로그인' 제거 (대구창업허브 DASH)
+2026-07-16 10:28:06,298 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (대구창업허브 DASH)
+2026-07-16 10:28:06,298 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (대구창업허브 DASH)
+2026-07-16 10:28:06,300 INFO 중복제거: '찾아오시는 길' 유지, '찾아오시는 길' 제거 (대구창업허브 DASH)
+2026-07-16 10:28:06,301 INFO 중복제거: '25년도 지역신보 보증사업평가 고객만' 유지, '지역신보 보증사업평가 고객만족도 조사' 제거 (대전신용보증재단)
+2026-07-16 10:28:06,305 INFO 중복제거: '공고/보증 제2026-5호 2026년' 유지, '2026년 보증이용기업 금융실태 및 ' 제거 (대전신용보증재단)
+2026-07-16 10:28:06,305 INFO 중복제거: '2026년 2분기 보증기업 경기실사지' 유지, '2026년 2분기 보증기업 경기실사지' 제거 (대전신용보증재단)
+2026-07-16 10:28:06,306 INFO 중복제거: '공고/보증 제2026-3호 2026년' 유지, '2026년 지역신보 보증이용기업의 폐' 제거 (대전신용보증재단)
+2026-07-16 10:28:06,314 INFO 중복제거: '\u231c2026\ufffd\ufffd \ufffd\u0677\u03b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd ' 유지, '\u231c2026\ufffd\ufffd \ufffd\u0677\u03b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd ' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,315 INFO 중복제거: '\u231c2026\ufffd\ufffd \ufffd\u0677\u03b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd ' 유지, '\u231c2026\ufffd\ufffd \ufffd\u0677\u03b0\ufffd\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd ' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,320 INFO 중복제거: '2026\ufffd\ufffd \ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd' 유지, '2026\ufffd\ufffd \ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd \ufffd' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,321 INFO 중복제거: '\ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u033d\ufffd \ufffd\u05f7ο\ufffd' 유지, '\ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u033d\ufffd \ufffd\u05f7ο\ufffd' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,321 INFO 중복제거: '\ufffd\ufffd\ufffdΡ\ufffd\ufffd\uf864\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \xfb\ufffd\ufffd \ufffd' 유지, '\ufffd\ufffd\ufffdΡ\ufffd\ufffd\uf864\ufffd\ufffd \ufffd\ufffd\ufffd\ufffd \xfb\ufffd\ufffd \ufffd' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,322 INFO 중복제거: '\ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u01f0\ufffd\ufffd\xf6\ufffd\ufffd\ufffd\ufffd\ufffd ' 유지, '\ufffdλ\ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\u01f0\ufffd\ufffd\xf6\ufffd\ufffd\ufffd\ufffd\ufffd ' 제거 (부산경영자총협회)
+2026-07-16 10:28:06,367 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,367 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,368 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,368 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,369 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,370 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,370 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,371 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,371 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,372 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,372 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,373 INFO 중복제거: '공지' 유지, '공지' 제거 (세종테크노파크)
+2026-07-16 10:28:06,373 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,374 INFO 중복제거: '공고' 유지, '공고' 제거 (세종테크노파크)
+2026-07-16 10:28:06,405 INFO 중복제거: '기업마당(Bizinfo)' ([울산] 2026년 해외규격인증 획득) → '울산일자리경제진흥원' (2026년 해외규격인증 획득 지원사업) 로 교체
+2026-07-16 10:28:06,406 INFO 중복제거: '기업마당(Bizinfo)' ([울산] ULSAN EXPORT PL) → '울산일자리경제진흥원' (ULSAN EXPORT PLAZA 2) 로 교체
+2026-07-16 10:28:06,418 INFO 중복제거: '울산지역인적자원개발위원회 전담직원 채' 유지, '울산지역인적자원개발위원회 전담직원 채' 제거 (울산지역인적자원개발위원회)
+2026-07-16 10:28:06,422 INFO 중복제거: '울산테크노파크 직원 사칭 사기 주의 ' 유지, '울산테크노파크 직원 사칭 사기 주의 ' 제거 (울산테크노파크)
+2026-07-16 10:28:06,423 INFO 중복제거: '울산테크노파크 직원 사칭 사기 사건 ' 유지, '울산테크노파크 직원 사칭 사기 사건 ' 제거 (울산테크노파크)
+2026-07-16 10:28:06,427 INFO 중복제거: '울산테크노파크 직원 사칭 사기 주의 ' 유지, '울산테크노파크 직원 사칭 사기 주의 ' 제거 (울산테크노파크)
+2026-07-16 10:28:06,458 INFO 중복제거: '2026년 철강업종 버팀이음 프로젝트' 유지, '2026년 철강업종 버팀이음 프로젝트' 제거 (인천경영자총협회)
+2026-07-16 10:28:06,459 INFO 중복제거: '2026년 철강업종 버팀이음 프로젝트' 유지, '2026년 철강업종 버팀이음 프로젝트' 제거 (인천경영자총협회)
+2026-07-16 10:28:06,492 INFO 중복제거: '기업마당(Bizinfo)' (소상공인 경영안정 바우처 지원사업 시) → '안양시상권활성화센터' (소상공인 경영안정 바우처 지원사업) 로 교체
+2026-07-16 10:28:06,494 INFO 중복제거: '[모집공고] 2026년 전문화교육 A' 유지, '[모집공고] 2026년 전문화교육 A' 제거 (인천광역시사회적경제지원센터)
+2026-07-16 10:28:06,500 INFO 중복제거: '[공지사항] 인천광역시사회적경제지원센' 유지, '[공지사항] 인천광역시사회적경제지원센' 제거 (인천광역시사회적경제지원센터)
+2026-07-16 10:28:06,504 INFO 중복제거: '[2]' 유지, '2' 제거 (인천광역시사회적경제지원센터)
+2026-07-16 10:28:06,530 INFO 중복제거: '[2]' 유지, '2' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,531 INFO 중복제거: '3' 유지, '3' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,531 INFO 중복제거: '4' 유지, '4' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,532 INFO 중복제거: '5' 유지, '5' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,532 INFO 중복제거: '6' 유지, '6' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,533 INFO 중복제거: '7' 유지, '7' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,533 INFO 중복제거: '8' 유지, '8' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,534 INFO 중복제거: '9' 유지, '9' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,534 INFO 중복제거: '10' 유지, '10' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,545 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[제주] 2026년 제조DX멘토단 활' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,547 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[포항] 2026년 제조DX멘토단 활' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,548 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[경기북부]2026년 제조DX멘토단 ' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,549 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[경남]2026년 제조DX멘토단 활용' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,550 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[충북] 2026년 제조DX멘토단 활' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,552 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[전남]2026년 제조DX멘토단 활용' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,552 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '[전북] 2026년 제조DX멘토단 활' 제거 (스마트공장 사업관리시스템)
+2026-07-16 10:28:06,557 INFO 중복제거: '기업마당(Bizinfo)' (2026년 스마트공장 수준확인 사업 ) → '스마트공장 사업관리시스템' (2026년 스마트공장 수준확인 사업 ) 로 교체
+2026-07-16 10:28:06,558 INFO 중복제거: '기업마당(Bizinfo)' (2026년 제조DX멘토단 활용지원사업) → '스마트공장 사업관리시스템' (2026년 제조DX멘토단 활용지원사업) 로 교체
+2026-07-16 10:28:06,566 INFO 중복제거: '2026 콘텐츠 제작 프로젝트 지원사' 유지, '2026 콘텐츠 제작 프로젝트 지원사' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,567 INFO 중복제거: '2026년 인천 일하기 좋은 뿌리기업' 유지, '2026년 인천 일하기 좋은 뿌리기업' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,574 INFO 중복제거: '[2]' 유지, '2' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,575 INFO 중복제거: '3' 유지, '3' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,575 INFO 중복제거: '4' 유지, '4' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,576 INFO 중복제거: '5' 유지, '5' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,576 INFO 중복제거: '6' 유지, '6' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,577 INFO 중복제거: '7' 유지, '7' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,577 INFO 중복제거: '8' 유지, '8' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,578 INFO 중복제거: '9' 유지, '9' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,579 INFO 중복제거: '10' 유지, '10' 제거 (인천디자인지원센터)
+2026-07-16 10:28:06,579 INFO 중복제거: '디지털마케팅 기본 교육(2026년 2' 유지, '디지털마케팅 기본 교육(2026년 2' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,580 INFO 중복제거: '디지털마케팅 심화 교육(2026년 2' 유지, '디지털마케팅 심화 교육(2026년 2' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,580 INFO 중복제거: '2026년 폐업 및 새출발 지원 2차' 유지, '2026년 폐업 및 새출발 지원 2차' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,581 INFO 중복제거: '(정정) 2026년 인천 골목창업 첫' 유지, '(정정) 2026년 인천 골목창업 첫' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,581 INFO 중복제거: '인천송림 소공인특화지원센터 자율사업「' 유지, '인천송림 소공인특화지원센터 자율사업「' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,581 INFO 중복제거: '2026년 경제금융 상황극 공연 사업' 유지, '2026년 경제금융 상황극 공연 사업' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,582 INFO 중복제거: '2026년 골목상권 공동체 육성(신규' 유지, '2026년 골목상권 공동체 육성(신규' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,582 INFO 중복제거: '2026년 주거부동산 머니코칭 사업공' 유지, '2026년 주거부동산 머니코칭 사업공' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,582 INFO 중복제거: '2026년 1인 자영업자 고용보험료 ' 유지, '2026년 1인 자영업자 고용보험료 ' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,583 INFO 중복제거: '2026년 스트레스 머니코칭 사업공고' 유지, '2026년 스트레스 머니코칭 사업공고' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,584 INFO 중복제거: '2026년 인천 골목 창업 첫걸음 지' 유지, '2026년 인천 골목 창업 첫걸음 지' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,584 INFO 중복제거: '2026년 재정 머니코칭 사업공고' 유지, '2026년 재정 머니코칭 사업공고' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,584 INFO 중복제거: '2026년 소상공인 재도약 컨설팅 지' 유지, '2026년 소상공인 재도약 컨설팅 지' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,585 INFO 중복제거: '2026년 찾아가는 도서관 금융교육 ' 유지, '2026년 찾아가는 도서관 금융교육 ' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,585 INFO 중복제거: '2026년 경제금융 보드게임 사업공고' 유지, '2026년 경제금융 보드게임 사업공고' 제거 (인천소상공인종합지원센터)
+2026-07-16 10:28:06,588 INFO 중복제거: '수요기관 임직원 사칭 허위구매 사기피' 유지, '수요기관 임직원 사칭 허위구매 사기피' 제거 (전북테크노파크)
+2026-07-16 10:28:06,605 INFO 중복제거: '기업마당(Bizinfo)' ([전북] 2026년 자영업자 사회보험) → '전북특별자치도경제통상진흥원' (2026년 자영업자 사회보험료 지원 ) 로 교체
+2026-07-16 10:28:06,613 INFO 중복제거: '기업마당(Bizinfo)' ([전북] 2026년 가명정보 활용 컨) → '전북테크노파크' (2026년 가명정보 활용 컨설팅 지원) 로 교체
+2026-07-16 10:28:06,614 INFO 중복제거: '2026년 제조DX멘토단 활용지원(구' 유지, '2026년 제조DX멘토단 활용지원(구' 제거 (전북테크노파크)
+2026-07-16 10:28:06,618 INFO 중복제거: '기업마당(Bizinfo)' ([전북] 2026년 에너지산업융복합단) → '전북테크노파크' (「2026년 에너지산업융복합단지 공동) 로 교체
+2026-07-16 10:28:06,621 INFO 중복제거: '2026년 전북 산업체 애로기술 해결' 유지, '[재공고] 2026년 전북 산업체 애' 제거 (전북테크노파크)
+2026-07-16 10:28:06,624 INFO 중복제거: '기업마당(Bizinfo)' ([전북] 인공지능 분야 기술지도 희망) → '전북테크노파크' (인공지능 분야 기술지도 희망기업 모집) 로 교체
+2026-07-16 10:28:06,679 INFO 중복제거: '2026년도 소프트웨어 산업발전 유공' 유지, '2026년도 소프트웨어 산업발전 유공' 제거 (정보통신산업진흥원)
+2026-07-16 10:28:06,691 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,692 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,694 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,694 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,695 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,697 INFO 중복제거: '국민비서 구삐' 유지, '국민비서 구삐' 제거 (정부24)
+2026-07-16 10:28:06,697 INFO 중복제거: '인증등록/관리' 유지, '인증등록/관리' 제거 (정부24)
+2026-07-16 10:28:06,698 INFO 중복제거: '복합인증관리' 유지, '복합인증관리' 제거 (정부24)
+2026-07-16 10:28:06,699 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,699 INFO 중복제거: '누리집 안내지도' 유지, '누리집 안내지도' 제거 (정부24)
+2026-07-16 10:28:06,700 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,700 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,701 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,701 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,702 INFO 중복제거: '상담예약' 유지, '상담예약' 제거 (정부24)
+2026-07-16 10:28:06,702 INFO 중복제거: '공공서비스 활용(Open API)' 유지, '공공서비스 활용(Open API)' 제거 (정부24)
+2026-07-16 10:28:06,703 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,704 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,705 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,707 INFO 중복제거: '웹 접근성 품질인증 마크 획득' 유지, '웹 접근성 품질인증 마크 획득' 제거 (정부24)
+2026-07-16 10:28:06,708 INFO 중복제거: '2026년 제3회 일터혁신과 노사안정' 유지, '2026년 제3회 일터혁신과 노사안정' 제거 (제주경영자총협회)
+2026-07-16 10:28:06,713 INFO 중복제거: '2026년 제3회 일터혁신과 노사안정' 유지, '2026년 제3회 일터혁신과 노사안정' 제거 (제주경영자총협회)
+2026-07-16 10:28:06,723 INFO 중복제거: '국민비서 구삐' 유지, '국민비서 구삐' 제거 (정부24)
+2026-07-16 10:28:06,724 INFO 중복제거: '인증등록/관리' 유지, '인증등록/관리' 제거 (정부24)
+2026-07-16 10:28:06,725 INFO 중복제거: '복합인증관리' 유지, '복합인증관리' 제거 (정부24)
+2026-07-16 10:28:06,725 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,726 INFO 중복제거: '누리집 안내지도' 유지, '누리집 안내지도' 제거 (정부24)
+2026-07-16 10:28:06,726 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,727 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,728 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,729 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,730 INFO 중복제거: '상담예약' 유지, '상담예약' 제거 (정부24)
+2026-07-16 10:28:06,731 INFO 중복제거: '공공서비스 활용(Open API)' 유지, '공공서비스 활용(Open API)' 제거 (정부24)
+2026-07-16 10:28:06,731 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,732 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,732 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,733 INFO 중복제거: '웹 접근성 품질인증 마크 획득' 유지, '웹 접근성 품질인증 마크 획득' 제거 (정부24)
+2026-07-16 10:28:06,734 INFO 중복제거: '국민비서 구삐' 유지, '국민비서 구삐' 제거 (정부24)
+2026-07-16 10:28:06,734 INFO 중복제거: '인증등록/관리' 유지, '인증등록/관리' 제거 (정부24)
+2026-07-16 10:28:06,735 INFO 중복제거: '복합인증관리' 유지, '복합인증관리' 제거 (정부24)
+2026-07-16 10:28:06,735 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,736 INFO 중복제거: '누리집 안내지도' 유지, '누리집 안내지도' 제거 (정부24)
+2026-07-16 10:28:06,737 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,739 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,739 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,740 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,741 INFO 중복제거: '상담예약' 유지, '상담예약' 제거 (정부24)
+2026-07-16 10:28:06,741 INFO 중복제거: '공공서비스 활용(Open API)' 유지, '공공서비스 활용(Open API)' 제거 (정부24)
+2026-07-16 10:28:06,742 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,742 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,743 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,743 INFO 중복제거: '웹 접근성 품질인증 마크 획득' 유지, '웹 접근성 품질인증 마크 획득' 제거 (정부24)
+2026-07-16 10:28:06,744 INFO 중복제거: '국민비서 구삐' 유지, '국민비서 구삐' 제거 (정부24)
+2026-07-16 10:28:06,744 INFO 중복제거: '인증등록/관리' 유지, '인증등록/관리' 제거 (정부24)
+2026-07-16 10:28:06,745 INFO 중복제거: '복합인증관리' 유지, '복합인증관리' 제거 (정부24)
+2026-07-16 10:28:06,746 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,747 INFO 중복제거: '누리집 안내지도' 유지, '누리집 안내지도' 제거 (정부24)
+2026-07-16 10:28:06,747 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,748 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,748 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,749 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,749 INFO 중복제거: '상담예약' 유지, '상담예약' 제거 (정부24)
+2026-07-16 10:28:06,750 INFO 중복제거: '공공서비스 활용(Open API)' 유지, '공공서비스 활용(Open API)' 제거 (정부24)
+2026-07-16 10:28:06,750 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,751 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,752 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,752 INFO 중복제거: '웹 접근성 품질인증 마크 획득' 유지, '웹 접근성 품질인증 마크 획득' 제거 (정부24)
+2026-07-16 10:28:06,753 INFO 중복제거: '국민비서 구삐' 유지, '국민비서 구삐' 제거 (정부24)
+2026-07-16 10:28:06,754 INFO 중복제거: '인증등록/관리' 유지, '인증등록/관리' 제거 (정부24)
+2026-07-16 10:28:06,755 INFO 중복제거: '복합인증관리' 유지, '복합인증관리' 제거 (정부24)
+2026-07-16 10:28:06,755 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,756 INFO 중복제거: '누리집 안내지도' 유지, '누리집 안내지도' 제거 (정부24)
+2026-07-16 10:28:06,757 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,757 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,758 INFO 중복제거: '1588-2188' 유지, '1588-2188' 제거 (정부24)
+2026-07-16 10:28:06,758 INFO 중복제거: '110' 유지, '110' 제거 (정부24)
+2026-07-16 10:28:06,759 INFO 중복제거: '상담예약' 유지, '상담예약' 제거 (정부24)
+2026-07-16 10:28:06,760 INFO 중복제거: '공공서비스 활용(Open API)' 유지, '공공서비스 활용(Open API)' 제거 (정부24)
+2026-07-16 10:28:06,760 INFO 중복제거: '개인정보처리방침' 유지, '개인정보처리방침' 제거 (정부24)
+2026-07-16 10:28:06,761 INFO 중복제거: '이용약관' 유지, '이용약관' 제거 (정부24)
+2026-07-16 10:28:06,762 INFO 중복제거: '보안센터' 유지, '보안센터' 제거 (정부24)
+2026-07-16 10:28:06,763 INFO 중복제거: '웹 접근성 품질인증 마크 획득' 유지, '웹 접근성 품질인증 마크 획득' 제거 (정부24)
+2026-07-16 10:28:06,789 INFO 중복제거: '[2]' 유지, '2' 제거 (제주신용보증재단)
+2026-07-16 10:28:06,807 INFO 중복제거: '언어 · 정서 통합 개입 모델 「마음' 유지, '언어 · 정서 통합 개입 모델 「마음' 제거 (제주특별자치도사회서비스원)
+2026-07-16 10:28:06,839 INFO 중복제거: '[서울시여성가족재단] 서울 소재 소상' 유지, '[서울시여성가족재단] 서울 소재 소상' 제거 (중소상공인희망재단)
+2026-07-16 10:28:06,847 INFO 중복제거: '기업마당(Bizinfo)' (2026년 중소기업 R&D 우수성과 ) → '중소기업기술정보진흥원(TIPA)' (2026년 중소기업 R&D 우수성과 ) 로 교체
+2026-07-16 10:28:06,849 INFO 중복제거: '2026년 창업성장기술개발(디딤돌) ' 유지, '2026년 창업성장기술개발(디딤돌) ' 제거 (중소기업기술정보진흥원(TIPA))
+2026-07-16 10:28:06,851 INFO 중복제거: '2026년 제약바이오벤처 협업기반 기' 유지, '2026년 제약바이오벤처 협업기반 기' 제거 (중소기업기술정보진흥원(TIPA))
+2026-07-16 10:28:06,855 INFO 중복제거: '한-호주 글로벌 R&D 협력 포럼 개' 유지, '한-호주 글로벌 R&D 협력 포럼 개' 제거 (중소기업 기술개발사업 종합관리시스템)
+2026-07-16 10:28:06,856 INFO 중복제거: '2026년 창업성장기술개발(디딤돌) ' 유지, '2026년 창업성장기술개발(디딤돌) ' 제거 (중소기업 기술개발사업 종합관리시스템)
+2026-07-16 10:28:06,857 INFO 중복제거: '2026 민관공동기술사업화R&D(구매' 유지, '2026 민관공동기술사업화R&D(구매' 제거 (중소기업 기술개발사업 종합관리시스템)
+2026-07-16 10:28:06,861 INFO 중복제거: '[중요] 국내 중소기업 대상 신규 랜' 유지, '[중요] 국내 중소기업 대상 신규 랜' 제거 (중소기업 기술개발사업 종합관리시스템)
+2026-07-16 10:28:06,892 INFO 중복제거: '[앵커 1-2] 대학-기업 융합형 선' 유지, '[앵커 1-2] 대학-기업 융합형 선' 제거 (첨단정보통신융합산업기술원)
+2026-07-16 10:28:06,900 INFO 중복제거: '번호' 유지, '번호' 제거 (첨단정보통신융합산업기술원)
+2026-07-16 10:28:06,901 INFO 중복제거: '[RISE 3-2] 디지털전환 현장캠' 유지, '[RISE 3-2] 디지털전환 현장캠' 제거 (첨단정보통신융합산업기술원)
+2026-07-16 10:28:06,902 INFO 중복제거: '2026년 기술서비스 지원대상 기업 ' 유지, '2026년 기술서비스 지원대상 기업 ' 제거 (첨단정보통신융합산업기술원)
+2026-07-16 10:28:06,907 INFO 중복제거: '2025년 AI 기반 공정혁신 시뮬레' 유지, 'AI 기반 공정혁신 시뮬레이션 사업 ' 제거 (첨단정보통신융합산업기술원)
+2026-07-16 10:28:06,913 INFO 중복제거: '2026년 중소벤처기업진흥공단 정책자' 유지, '중소벤처기업진흥공단' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,940 INFO 중복제거: '농촌융복합산업 자금(융자) 지원사업 ' 유지, '2026년도 농촌융복합산업 자금(융자' 제거 (충북농촌융복합산업지원센터)
+2026-07-16 10:28:06,945 INFO 중복제거: '2026년 중소벤처기업진흥공단 정책자' 유지, '중소벤처기업진흥공단' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,946 INFO 중복제거: '중소벤처기업연수원' 유지, '중소벤처기업연수원' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,946 INFO 중복제거: '내일채움공제사업' 유지, '내일채움공제사업' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,947 INFO 중복제거: '수출바우처사업' 유지, '수출바우처사업' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,948 INFO 중복제거: '기업나라' 유지, '기업나라' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,949 INFO 중복제거: '이러닝연수' 유지, '이러닝연수' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,949 INFO 중복제거: '고비즈코리아' 유지, '고비즈코리아' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,950 INFO 중복제거: '중소벤처기업부' 유지, '중소벤처기업부' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,950 INFO 중복제거: 'K-스타트업' 유지, 'K-스타트업' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,951 INFO 중복제거: '중소기업기술정보진흥원' 유지, '중소기업기술정보진흥원' 제거 (청년창업사관학교)
+2026-07-16 10:28:06,953 INFO 중복제거: '기업마당(Bizinfo)' ([충남] 2026년 예비수소전문기업지) → '충남테크노파크' (「2026년 예비수소전문기업지원사업」) 로 교체
+2026-07-16 10:28:06,957 INFO 중복제거: '모집중(2026-132호) 『지역디지' 유지, '지역 디지털 품질관리역량강화사업 20' 제거 (충남테크노파크)
+2026-07-16 10:28:06,961 INFO 중복제거: '[안내] 행정안전부 「월간 마을기업」' 유지, '[안내] 행정안전부 「월간 마을기업」' 제거 (충북사회적경제센터)
+2026-07-16 10:28:06,977 INFO 중복제거: '공고/보증 제2026-5호 2026년' 유지, '2026년 보증이용기업 금융실태 및 ' 제거 (충북신용보증재단)
+2026-07-16 10:28:06,984 INFO 중복제거: '2026년 1분기 보증기업 경기실사지' 유지, '2026년 1분기 보증기업 경기실사지' 제거 (충북신용보증재단)
+2026-07-16 10:28:07,001 INFO 중복제거: '2025년 충청북도 산업구조변화대응 ' 유지, '2025년 충청북도 산업구조변화대응 ' 제거 (충북지역인적자원개발위원회)
+2026-07-16 10:28:07,012 INFO 중복제거: '(적금지원) 충남청년 정착플러스 통장' 유지, '(적금지원) 충남청년 정착플러스 통장' 제거 (충청남도 소상공인 지원센터)
+2026-07-16 10:28:07,013 INFO 중복제거: '기업마당(Bizinfo)' ([충남] 2026년 제5회 희망드림 ) → '충청남도 소상공인 지원센터' (2026년 제5회 희망드림 판매전) 로 교체
+2026-07-16 10:28:07,029 INFO 중복제거: '2026년 제6차 신규직원 채용 2차' 유지, '2026년 제6차 신규직원 채용 2차' 제거 (충청북도기업진흥원)
+2026-07-16 10:28:07,039 INFO 중복제거: '2026년 청년 소상공인 창업응원금 ' 유지, '2026년 청년 소상공인 창업응원금 ' 제거 (충청북도소상공인지원센터)
+2026-07-16 10:28:07,040 INFO 중복제거: '2026년도 시군구 연고산업 육성사업' 유지, '2026년도 시군구 연고산업 육성사업' 제거 (충청북도소상공인지원센터)
+2026-07-16 10:28:07,041 INFO 중복제거: '반사회적\u2027불법적 대부계약 무효 및 불' 유지, '반사회적\u2027불법적 대부계약 무효 및 불' 제거 (충청북도소상공인지원센터)
+2026-07-16 10:28:07,046 INFO 중복제거: '2026 컨설팅 연계 온라인홍보 지원' 유지, '2026 컨설팅 연계 온라인홍보 지원' 제거 (충청북도소상공인지원센터)
+2026-07-16 10:28:07,051 INFO 중복제거: '[\ufffd\u0471\ufffd\u022f\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd]\u022f\ufffd\ufffd\ufffd\ufffd' 유지, '[\ufffd\u0471\ufffd\u022f\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd]\u022f\ufffd\ufffd\ufffd\ufffd' 제거 (충북테크노파크 컨택센터)
+2026-07-16 10:28:07,057 INFO 중복제거: '[\ufffd\u0233\ufffd] \ufffd\ufffd\ufffdμ\ufffd\ufffd\ufffd\ufffd\u0775\ufffd ÷\ufffd\ufffd' 유지, '[\ufffd\u0233\ufffd] \ufffd\ufffd\ufffdμ\ufffd\ufffd\ufffd\ufffd\u0775\ufffd ÷\ufffd\ufffd' 제거 (충북테크노파크)
+2026-07-16 10:28:07,073 INFO 중복제거: '[마감] AI 기반 디지털전환(DX)' 유지, '[마감] AI 기반 디지털전환(DX)' 제거 (한국경영기술지도사회)
+2026-07-16 10:28:07,092 INFO 중복제거: '[모집] 2026년도 한성대학교 지식' 유지, '[모집] 2026년도 한성대학교 지식' 제거 (한국경영기술지도사회)
+2026-07-16 10:28:07,098 INFO 중복제거: '[모집] 2026 중소기업 경영혁신 ' 유지, '[모집] 2026 중소기업 경영혁신 ' 제거 (한국경영혁신중소기업협회)
+2026-07-16 10:28:07,110 INFO 중복제거: '[재공고]「2026 중소기업 기술·경' 유지, '[공고]「2026 중소기업 기술·경영' 제거 (한국경영혁신중소기업협회)
+2026-07-16 10:28:07,113 INFO 중복제거: '생성형AI 입문' 유지, '생성형AI 입문' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,116 INFO 중복제거: '리더십' 유지, '리더십' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,120 INFO 중복제거: '신임·승진자' 유지, '신임·승진자' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,122 INFO 중복제거: 'OA' 유지, 'OA' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,125 INFO 중복제거: 'HRD' 유지, 'HRD' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,128 INFO 중복제거: '전략\u2219기획' 유지, '전략\u2219기획' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,133 INFO 중복제거: 'CS·컨택센터' 유지, 'CS·컨택센터' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,138 INFO 중복제거: '미주·유럽' 유지, '미주·유럽' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,141 INFO 중복제거: '공통스킬' 유지, '공통스킬' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,146 INFO 중복제거: '최고경영자조찬회' 유지, '최고경영자조찬회' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,149 INFO 중복제거: '퇴직예정' 유지, '퇴직예정' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,152 INFO 중복제거: '공공특화' 유지, '공공특화' 제거 (한국능률협회(KMA))
+2026-07-16 10:28:07,162 INFO 중복제거: '연혁' 유지, '연혁' 제거 (한국무역보험공사)
+2026-07-16 10:28:07,186 INFO 중복제거: '중장기수출보험(구매자신용)' 유지, '중장기수출보험(구매자신용·채권)' 제거 (한국무역보험공사)
+2026-07-16 10:28:07,197 INFO 중복제거: '단기수출보험(단체보험)' 유지, '단기수출보험(단체보험)' 제거 (한국무역보험공사)
+2026-07-16 10:28:07,200 INFO 중복제거: 'FAQ' 유지, 'FAQ' 제거 (한국무역보험공사)
+2026-07-16 10:28:07,212 INFO 중복제거: '채용공고' 유지, '채용공고' 제거 (한국무역보험공사)
+2026-07-16 10:28:07,222 INFO 중복제거: '고정형 영상정보처리기기운영관리 방침' 유지, '개인정보 처리방침 및 고정형 영상정보' 제거 (한국산업기술기획평가원(KEIT))
+2026-07-16 10:28:07,226 INFO 중복제거: '[긴급공지] 한국보건산업진흥원 임직원' 유지, '[긴급공지] 한국보건산업진흥원 임직원' 제거 (한국보건산업진흥원)
+2026-07-16 10:28:07,226 INFO 중복제거: 'BIO-EUROPE 2026 할인 코' 유지, 'BIO-EUROPE 2026 할인 코' 제거 (한국보건산업진흥원)
+2026-07-16 10:28:07,239 INFO 중복제거: '[안내] D2B 디자인페어 썸머스쿨 ' 유지, '[안내] D2B 디자인페어 썸머스쿨 ' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,239 INFO 중복제거: '2026년 투자유치설명회 및 컨설팅 ' 유지, '2026년 투자유치설명회 및 컨설팅 ' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,240 INFO 중복제거: '[안내] D2B 디자인페어 1차 합격' 유지, '[안내] D2B 디자인페어 1차 합격' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,241 INFO 중복제거: '민간-공공기관 협력 미활용 특허 무료' 유지, '민간-공공기관 협력 미활용 특허 무료' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,242 INFO 중복제거: '2026 상표·디자인권전 출품신청 접' 유지, '2026 상표·디자인권전 출품신청 접' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,242 INFO 중복제거: '2026년 제3차 직무발명보상 우수기' 유지, '2026년 제3차 직무발명보상 우수기' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,243 INFO 중복제거: '2026 서울국제발명전시회 출품 신청' 유지, '2026 서울국제발명전시회 출품 신청' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,244 INFO 중복제거: '「발명굿즈 숏폼 콘텐츠 공모전-발명이' 유지, '「발명굿즈 숏폼 콘텐츠 공모전-발명이' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,245 INFO 중복제거: '2026 대한민국발명특허대전 출품 신' 유지, '2026 대한민국발명특허대전 출품 신' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,246 INFO 중복제거: '[D2B] D2B 디자인페어 1차 합' 유지, '[D2B] D2B 디자인페어 1차 합' 제거 (한국발명진흥회)
+2026-07-16 10:28:07,290 INFO 중복제거: '[2]' 유지, '2' 제거 (한국상생지원협회)
+2026-07-16 10:28:07,290 INFO 중복제거: '3' 유지, '3' 제거 (한국상생지원협회)
+2026-07-16 10:28:07,291 INFO 중복제거: '4' 유지, '4' 제거 (한국상생지원협회)
+2026-07-16 10:28:07,291 INFO 중복제거: '5' 유지, '5' 제거 (한국상생지원협회)
+2026-07-16 10:28:07,292 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,293 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,293 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,294 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,294 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,296 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,297 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,297 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,298 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,298 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,299 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,300 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,300 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,301 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,302 INFO 중복제거: '종료' 유지, '종료' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,302 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,303 INFO 중복제거: '종료' 유지, '종료' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,304 INFO 중복제거: '종료' 유지, '종료' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,306 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,307 INFO 중복제거: '종료' 유지, '종료' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,307 INFO 중복제거: '진행' 유지, '진행' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,308 INFO 중복제거: '종료' 유지, '종료' 제거 (한국에너지공단 신재생에너지센터)
+2026-07-16 10:28:07,308 INFO 중복제거: '공공기관 종합청렴도 평가 관련 개인정' 유지, '2026년도 공공기관 종합청렴도 평가' 제거 (한국산업인력공단(HRDK))
+2026-07-16 10:28:07,315 INFO 중복제거: '기업마당(Bizinfo)' (2026년 NCS 기업활용 우수사례 ) → '한국산업인력공단(HRDK)' (2026년 NCS 기업활용 우수사례 ) 로 교체
+2026-07-16 10:28:07,323 INFO 중복제거: '[채용] 사무국 직원 채용 최종합격자' 유지, '[채용] 사무국 직원 채용 최종합격자' 제거 (한국여성발명협회)
+2026-07-16 10:28:07,324 INFO 중복제거: '[채용] 사무국 직원 채용 서류전형 ' 유지, '[채용] 사무국 직원 채용 서류전형 ' 제거 (한국여성발명협회)
+2026-07-16 10:28:07,336 INFO 중복제거: '2026 콘텐츠IP 마켓 참가기업 모' 유지, '2026 콘텐츠IP 마켓 참가기업 모' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,336 INFO 중복제거: '2026년 두바이국제콘텐츠마켓 참가기' 유지, '2026년 두바이국제콘텐츠마켓 참가기' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,336 INFO 중복제거: '2026 ATF 한국공동관 및 쇼케이' 유지, '2026 ATF 한국공동관 및 쇼케이' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,336 INFO 중복제거: '2026 스웨덴 게임 컨퍼런스(Swe' 유지, '2026 스웨덴 게임 컨퍼런스(Swe' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,337 INFO 중복제거: '2026년 글로벌 비즈니스 라운드테이' 유지, '2026년 글로벌 비즈니스 라운드테이' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,337 INFO 중복제거: '<오사카 인터내셔널 기프트쇼 2026' 유지, '<오사카 인터내셔널 기프트쇼 2026' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,337 INFO 중복제거: '콘텐츠 해외 투자유치 지원 프로그램 ' 유지, '콘텐츠 해외 투자유치 지원 프로그램 ' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,337 INFO 중복제거: '패션코드 2027 S/S 참가브랜드 ' 유지, '패션코드 2027 S/S 참가브랜드 ' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,337 INFO 중복제거: '싱가포르 미디어테크 쇼케이스 참가기업' 유지, '싱가포르 미디어테크 쇼케이스 참가기업' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,338 INFO 중복제거: '2026년 K-Animation Gl' 유지, '2026년 K-Animation Gl' 제거 (한국콘텐츠진흥원)
+2026-07-16 10:28:07,348 INFO 중복제거: '공공기관 종합청렴도 평가 관련 개인정' 유지, '제목 공공기관 종합청렴도 평가 관련 ' 제거 (한국환경공단)
+2026-07-16 10:28:07,368 INFO 중복제거: '2026년 화성 into 테크노폴 1' 유지, '2026년 화성 into 테크노폴 1' 제거 (화성시인재육성재단)
+2026-07-16 10:28:07,387 INFO 중복제거: '2026년 희망리턴패키지 재기사업화 ' 유지, '2026년 희망리턴패키지 재기사업화 ' 제거 (한국표준협회(KSA))
+2026-07-16 10:28:07,391 INFO 중복제거: '전 국민 AI 서비스 보편적 활용 지' 유지, '전 국민 AI 서비스 보편적 활용 지' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,392 INFO 중복제거: '2026년도 소프트웨어 산업발전 유공' 유지, '2026년도 소프트웨어 산업발전 유공' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,392 INFO 중복제거: '2026년도 SaaS 전환 컨설팅 2' 유지, '2026년도 SaaS 전환 컨설팅 2' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,393 INFO 중복제거: '하노이 IT지원센터‘26년 하반기 연' 유지, '하노이 IT지원센터‘26년 하반기 연' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,393 INFO 중복제거: '[재공고]싱가포르IT지원센터 2026' 유지, '[재공고]싱가포르IT지원센터 2026' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,394 INFO 중복제거: '2026년도 고용노동부(안전보건공단)' 유지, '2026년도 고용노동부(안전보건공단)' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,395 INFO 중복제거: '2026년 오픈소스 개발자 대회 공고' 유지, '2026년 오픈소스 개발자 대회 공고' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,396 INFO 중복제거: '2026년도 과학기술정보통신부「고성능' 유지, '2026년도 과학기술정보통신부「고성능' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,397 INFO 중복제거: '\uff622026년도 AX 원스톱 바우처\uff63 ' 유지, '\uff622026년도 AX 원스톱 바우처\uff63 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,397 INFO 중복제거: '호치민IT지원센터 2026년 7월 입' 유지, '호치민IT지원센터 2026년 7월 입' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,445 INFO 중복제거: '2026년「AI 통합 바우처 지원사업' 유지, '2026년「AI 통합 바우처 지원사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,473 INFO 중복제거: '2026년 글로벌 SaaS 마켓플레이' 유지, '2026년 글로벌 SaaS 마켓플레이' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,474 INFO 중복제거: '[재공고]2026년 소프트웨어 인재키' 유지, '2026년 소프트웨어 인재키움 사업 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,488 INFO 중복제거: '하노이 IT지원센터 ‘26년 상반기 ' 유지, '하노이 IT지원센터 ‘26년 상반기 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,503 INFO 중복제거: '2025년 3차 메타버스허브 입주기업' 유지, '2025년 3차 메타버스허브 입주기업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,513 INFO 중복제거: '하노이 IT지원센터‘25년 하반기 입' 유지, '하노이 IT지원센터‘25년 하반기 입' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,531 INFO 중복제거: '하노이 IT지원센터‘25년 하반기 입' 유지, '하노이 IT지원센터‘25년 하반기 입' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,535 INFO 중복제거: '2025년 2차 메타버스허브 입주기업' 유지, '2025년 2차 메타버스허브 입주기업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,539 INFO 중복제거: 'UAE IT지원센터 '25년도 입주 ' 유지, 'UAE IT지원센터 '25년도 입주 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,540 INFO 중복제거: '[재공고]하노이IT지원센터 한-베 협' 유지, '하노이IT지원센터 한-베 협력 한국 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,540 INFO 중복제거: '[재공고]싱가포르IT지원센터 2025' 유지, '싱가포르IT지원센터 2025년 하반기' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,547 INFO 중복제거: '2026년 AI컴퓨팅자원 활용기반 강' 유지, 'AI컴퓨팅자원 활용기반 강화사업 (G' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,561 INFO 중복제거: '[연장공고] 2025년도 VICTOR' 유지, '2025년도 VICTORY 프로그램(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,580 INFO 중복제거: '2025년도 고용노동부(한국산업안전보' 유지, '2025년도 고용노동부(한국산업안전보' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,607 INFO 중복제거: '체인지업그라운드 지역확산 모델 구축 ' 유지, '체인지업그라운드 지역확산 모델 구축 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,609 INFO 중복제거: '(접수방법 추가공지) 2025년 SW' 유지, '2025년 SW신산업 글로벌 레퍼런스' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,619 INFO 중복제거: '(수정) 2025년 K-클라우드 프로' 유지, '(수정) 2025년 K-클라우드 프로' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,621 INFO 중복제거: '[재공고]2025년 지역 자율형 디지' 유지, '2025년 지역 자율형 디지털 혁신프' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,676 INFO 중복제거: '2024년도 소프트웨어 산업발전 유공' 유지, '2024년도 소프트웨어 산업발전 유공' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,717 INFO 중복제거: '2024년 AI반도체 기술인재 공급 ' 유지, '2024년 AI반도체 기술인재 공급 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,771 INFO 중복제거: '2024년 디지털인프라(SW) 진단 ' 유지, '2024년 디지털인프라(SW) 진단 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,782 INFO 중복제거: '아프리카 프론티어 액셀러레이션 프로그' 유지, '아프리카 프론티어 액셀러레이션 프로그' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,806 INFO 중복제거: '2024년 AI바우처 지원사업 공고' 유지, '2024년 AI바우처 지원사업 공고 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,824 INFO 중복제거: '2023년 글로벌 메타버스 플랫폼 활' 유지, '2023년 글로벌 메타버스 플랫폼 활' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,828 INFO 중복제거: '2024년 호치민IT지원센터 글로벌 ' 유지, '호치민IT지원센터 글로벌 ICT Gr' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,851 INFO 중복제거: '「2023년 블록체인 전문 컨설팅 지' 유지, '「2023년 블록체인 전문 컨설팅 지' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,859 INFO 중복제거: '2023년도『수출 유망 메타버스 강소' 유지, '2023년도『수출 유망 메타버스 강소' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,873 INFO 중복제거: '[사전공개] 28GHz 산업융합 확산' 유지, '(사전공개) 28GHz 산업융합 확산' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,912 INFO 중복제거: '[수정공고] 데이터 활용 의료·건강 ' 유지, '데이터 활용 의료·건강 생태계 조성 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,920 INFO 중복제거: '2024년 AI기반 의료시스템 디지털' 유지, 'AI기반 의료시스템 디지털 전환 지원' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,961 INFO 중복제거: 'AI바우처 지원사업 공급기업 Pool' 유지, 'AI바우처 지원사업 공급기업 Pool' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,964 INFO 중복제거: '[수정공고] K-Health 국민의료' 유지, 'K-Health 국민의료 AI서비스 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,974 INFO 중복제거: '2022 AIoT 쇼케이스(재난안전 ' 유지, '2022 AIoT 쇼케이스(재난안전 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:07,982 INFO 중복제거: '2022년 AI앰뷸런스 시범적용 지역' 유지, '2022년 AI앰뷸런스 시범적용 지역' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,000 INFO 중복제거: '디지털콘텐츠기업 성장지원센터 입주기업' 유지, '디지털콘텐츠기업 성장지원센터 입주기업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,002 INFO 중복제거: '(참고) 2022년 닥터앤서 클리닉 ' 유지, '2022년 닥터앤서 클리닉 신규 과제' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,042 INFO 중복제거: '2021년 누리꿈스퀘어 XR기업성장지' 유지, '2021년 누리꿈스퀘어 XR기업성장지' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,057 INFO 중복제거: '2021년 인공지능 온라인 경진대회 ' 유지, '2021년 인공지능 온라인 경진대회 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,070 INFO 중복제거: '2021년 누리꿈스퀘어 XR기업성장지' 유지, '2021년 누리꿈스퀘어 XR기업성장지' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,089 INFO 중복제거: '2021년도 과학기술정보통신부 SW안' 유지, '2021년도 과학기술정보통신부 SW안' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,104 INFO 중복제거: '2021년 기술선도형 CG콘텐츠 개발' 유지, '2021년 기술선도형 CG콘텐츠 개발' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,105 INFO 중복제거: '2021년 SW공학기술 역량강화 지원' 유지, '2021년 SW공학기술 역량강화 지원' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,118 INFO 중복제거: '2021년도 과학기술정보통신부 AI ' 유지, '2021년도 과학기술정보통신부 AI ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,125 INFO 중복제거: '2021년 민간지능정보서비스확산 사업' 유지, '2021년 민간지능정보서비스확산 사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,198 INFO 중복제거: '2020년 기술선도형 CG콘텐츠 개발' 유지, '2020년 기술선도형 CG콘텐츠 개발' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,200 INFO 중복제거: '2020년도 인공지능 중심 산업융합 ' 유지, '2020년도 인공지능중심 산업융합 집' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,211 INFO 중복제거: '[수정공고] 2020년 AI 바우처 ' 유지, '2020년 AI 바우처 지원사업 공고' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,213 INFO 중복제거: '2020년 IoT혁신센터 입주기업 모' 유지, '2020년 IoT혁신센터 입주기업 모' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,214 INFO 중복제거: '[수정공고] 2020년도 인공지능중심' 유지, '2020년도 인공지능중심 산업융합 집' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,215 INFO 중복제거: '한국IT기업의 인도시장 진출 지원사업' 유지, '한국IT기업의 인도시장 진출 지원사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,226 INFO 중복제거: '2020년 기술선도형 CG콘텐츠 개발' 유지, '2020년 기술선도형 CG콘텐츠 개발' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,287 INFO 중복제거: '2022년 소프트웨어 산업발전 유공자' 유지, '2022년 소프트웨어 산업발전 유공자' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,288 INFO 중복제거: '[추가모집] 2019년 베트남시장 진' 유지, '2019년 베트남시장 진출을 위한 S' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,289 INFO 중복제거: '[추가모집] 2019년 싱가포르시장 ' 유지, '2019년 싱가포르시장 진출을 위한 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,304 INFO 중복제거: '디지털 헬스케어 스타트업 공모(201' 유지, '디지털 헬스케어 스타트업 공모(201' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,307 INFO 중복제거: '블록체인 스타트업 공모(2019 K-' 유지, '블록체인 스타트업 공모(2019 K-' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,315 INFO 중복제거: 'AI / Cloud 스타트업 공모(2' 유지, 'AI / Cloud 스타트업 공모(2' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,317 INFO 중복제거: 'AI / BigData 스타트업 공모' 유지, 'AI / BigData 스타트업 공모' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,319 INFO 중복제거: '2019 K-Global 액셀러레이터' 유지, '2019 K-Global 액셀러레이터' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,323 INFO 중복제거: '[마감] VICTORY 프로그램 [V' 유지, '[마감] VICTORY 프로그램 [V' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,325 INFO 중복제거: '[추가공고] 2018년도 SAVE 프' 유지, '2018년도 SAVE 프로그램(글로벌' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,326 INFO 중복제거: '[추가공고] 2018년도 SAVE 프' 유지, '2018년도 SAVE 프로그램(글로벌' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,357 INFO 중복제거: '(수정공고) 2019년 고성능 컴퓨팅' 유지, '(수정공고)2019년 고성능 컴퓨팅 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,441 INFO 중복제거: '2017년 3D프린팅 기술활용 단종조' 유지, '2017년 3D프린팅 기술활용 단종조' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,452 INFO 중복제거: '[보충설명자료] 2017년 공동주택I' 유지, '2017년 공동주택ICT융합컨소시엄 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,456 INFO 중복제거: '2017년 글로벌 SaaS 육성 프로' 유지, '글로벌 SaaS 육성 프로젝트 사업 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,483 INFO 중복제거: '2017년 K-Global 기업가정신' 유지, '2017년 K-Global 기업가정신' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,492 INFO 중복제거: '2017년 K-Global 기업가정신' 유지, '2017년 K-Global 기업가정신' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,512 INFO 중복제거: 'ICT융합 Industry4.0s(조' 유지, 'ICT융합 Industry4.0s(조' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,575 INFO 중복제거: '2016년 K-Global Re-St' 유지, '2016년 K-Global Re-St' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,576 INFO 중복제거: '2016년 K-Global 스마트·모' 유지, '2016년 K-Global 스마트·모' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,600 INFO 중복제거: 'K-Startup Grand Chal' 유지, 'K-Startup Grand Chal' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,601 INFO 중복제거: '[서면합격 발표] K-Global 스' 유지, 'K-Global 스마트 모바일 스타기' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,641 INFO 중복제거: '(수정공고)헬스케어 ICT융합 협력과' 유지, '헬스케어ICT융합 협력과제 개발 사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,649 INFO 중복제거: '‘2016년도 스마트러닝시범콘텐츠 개' 유지, '‘스마트러닝시범콘텐츠 개발지원 ’사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,661 INFO 중복제거: '2022년도 클라우드 기반 SW개발환' 유지, '클라우드기반 SW개발환경 지원사업 신' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,663 INFO 중복제거: '2016년 K-Global Re-St' 유지, 'K-Global Re-Startup(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,664 INFO 중복제거: '2016년 K-Global Re-St' 유지, 'K-Global Re-Startup(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,668 INFO 중복제거: '`15년 ICT융합실증확산 지원사업 ' 유지, '`15년 ICT융합실증확산 지원사업 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,681 INFO 중복제거: ''2015 대한민국 ICT Innov' 유지, ''2015 대한민국 ICT Innov' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,688 INFO 중복제거: '2016년도『창의도전형 SW R&D』' 유지, '창의도전형 SW R&D 사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,691 INFO 중복제거: '2015년도 K-Global ICT ' 유지, '2015년도 K-Global ICT ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,701 INFO 중복제거: '2015년 디지털콘텐츠 동반성장지원사' 유지, '2015년 디지털콘텐츠 동반성장지원사' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,708 INFO 중복제거: '해외인재스카우팅사업 신규지원 대상과제' 유지, '해외인재스카우팅사업 신규지원 대상과제' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,740 INFO 중복제거: '[추가모집공고] 2014년 SW수출마' 유지, '[추가모집공고] 2014년 SW수출마' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,749 INFO 중복제거: '2014년도 ICT 재도전 단계별 지' 유지, '2014년도 ICT 재도전 단계별 지' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,767 INFO 중복제거: '해외인재스카우팅사업 신규지원 대상과제' 유지, '해외인재스카우팅사업 신규지원 대상과제' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,776 INFO 중복제거: '2014년 정보통신응용기술개발지원(융' 유지, '2014년 정보통신응용기술개발지원(융' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,818 INFO 중복제거: '2014년 정보통신응용기술개발지원(융' 유지, '(융자)2014년 정보통신응용기술개발' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,858 INFO 중복제거: '2014년도 정보통신응용기술개발지원(' 유지, '2014년도 정보통신응용기술개발지원(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,859 INFO 중복제거: '2014년 대학IT연구센터 및 IT융' 유지, '2014년 대학IT연구센터 및 IT융' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,860 INFO 중복제거: '[수정공고] 2014년 SW공학기술 ' 유지, '2014년 SW공학기술 현장적용 지원' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,863 INFO 중복제거: '2014년 대학IT연구센터 및 IT융' 유지, '2014년대학IT연구센터 및 IT융합' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,864 INFO 중복제거: '2014년 차세대콘텐츠 동반성장지원사' 유지, '2014년 차세대콘텐츠 동반성장지원 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,871 INFO 중복제거: '2014년도 정보통신연구기반구축 신규' 유지, '2014년도 정보통신연구기반구축 신규' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,881 INFO 중복제거: '2014년도 정보통신응용기술개발지원(' 유지, '2014년도 정보통신응용기술개발지원(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,889 INFO 중복제거: '[재공고] 2013년도 SW자산재개발' 유지, '『2013년도 SW자산재개발 사업 S' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,902 INFO 중복제거: '2013년도 정보통신응용기술개발지원(' 유지, '2013년도 정보통신응용기술개발지원(' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,911 INFO 중복제거: '2013년도 『차량IT융합 협력과제 ' 유지, '2013년도 『차량IT융합 협력과제 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,940 INFO 중복제거: '2013년도 『차량IT융합 협력과제 ' 유지, '2013년도 『차량IT융합 협력과제 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,948 INFO 중복제거: '2013년도 IT고급인재양성사업(IT' 유지, '2013년도 IT고급인재양성사업(IT' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,966 INFO 중복제거: '2014년 SW동아리 재능기부 챌린지' 유지, 'SW동아리 재능기부 챌린지 사업 공고' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,967 INFO 중복제거: ''13년 산학협력 특성화 지원사업 신' 유지, ''13년 산학협력 특성화 지원사업 신' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,972 INFO 중복제거: '2013년 IT기반 ESCO 신사업모' 유지, '2013년 IT기반 ESCO 신사업모' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,975 INFO 중복제거: '2013년도 신규 IT융합혁신센터 사' 유지, '2013년도 신규 IT융합혁신센터 사' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,981 INFO 중복제거: '2013년도 정보통신연구기반구축 신규' 유지, '2013년도 정보통신연구기반구축 신규' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:08,982 INFO 중복제거: '2013년 SW융합역량강화(재직자)과' 유지, '2013년 SW융합역량강화(재직자)과' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,001 INFO 중복제거: '2012년 대기업 연계 IT/SW창의' 유지, '`12년 대기업 연계 IT/SW창의연' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,056 INFO 중복제거: 'IT교수역량강화지원사업' 유지, 'IT교수역량강화지원사업' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,089 INFO 중복제거: '2012년도 전자문서 비즈니스모델 시' 유지, '2012년도 전자문서 비즈니스모델 시' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,149 INFO 중복제거: 'IT교수역량강화지원사업' 유지, '2011년 IT교수역량강화지원 사업계' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,176 INFO 중복제거: '2012년 공개SW 커뮤니티 지원사업' 유지, '공개SW 커뮤니티 지원사업 사업공고' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,195 INFO 중복제거: '2022년 Korea IT Schoo' 유지, '2022년 Korea IT Schoo' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,211 INFO 중복제거: '글로벌ICT포털(GIP) 현지 전문가' 유지, 'NIPA 글로벌ICT포털(GIP) 현' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,223 INFO 중복제거: '주한 베트남 유학생 SW인력양성 교육' 유지, '주한 베트남 유학생 SW인력양성 교육' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,265 INFO 중복제거: '22년 디지털인프라(SW) 진단 및 ' 유지, '22년 디지털인프라(SW) 진단 및 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,275 INFO 중복제거: '2022년도 \uff62산업전문인력 AI역량강' 유지, '2022년도 \uff62산업전문인력 AI역량강' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,281 INFO 중복제거: '한인도SW상생협력센터 공용 오피스 사' 유지, '2022년 한인도SW상생협력센터 공용' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,282 INFO 중복제거: '2022년 고성능컴퓨팅지원 사업 운영' 유지, '2022년 고성능컴퓨팅지원 사업 운영' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,284 INFO 중복제거: '2025년 1차 메타버스허브 입주기업' 유지, '메타버스허브 입주기업 모집 공고' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,315 INFO 중복제거: '(수정공고-마감시간 수정) 2021년' 유지, '2021년 디지털 전환 교육 지원 사' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,321 INFO 중복제거: '2022년 K-Startup 그랜드 ' 유지, 'K-Startup 그랜드 챌린지 액셀' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,323 INFO 중복제거: '2021년 블록체인 기술검증(PoC)' 유지, '2021년 블록체인 기술검증(PoC)' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,363 INFO 중복제거: '2020년 해외 진출용 방송콘텐츠 재' 유지, '2020년 해외 진출용 방송콘텐츠 재' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,408 INFO 중복제거: '2020년 K-Startup 그랜드 ' 유지, '[수정공고] 2020년 K-Start' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,424 INFO 중복제거: '2020년 K-Startup 그랜드 ' 유지, '[수정공고] 2020년 K-Start' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,436 INFO 중복제거: '\u200b21년 상반기 K-실감스튜디오 인프' 유지, 'Volumetric 콘텐츠 시범제작 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,437 INFO 중복제거: '[수정공고] 2020년 K-Start' 유지, '2020년 K-Startup 그랜드 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,439 INFO 중복제거: '2020년 ICT융합 디바이스 개발 ' 유지, '2020년 ICT융합 디바이스 개발 ' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,440 INFO 중복제거: '2020년 개방형 경진대회 플랫폼 구' 유지, '2020년 개방형 경진대회 플랫폼 구' 제거 (정보통신산업진흥원(NIPA))
+2026-07-16 10:28:09,458 INFO 중복제거: 6807건 → 6139건
+2026-07-16 10:28:09,460 INFO 신규(미발송): 2738건 / 전체: 6139건
+2026-07-16 10:28:09,466 INFO 원문 저장 시작: D:\mail\data\raw\2026-07-16
+2026-07-16 10:28:16,064 INFO 상세 보강: 40건
+2026-07-16 10:28:16,930 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124403 "HTTP/1.1 200 OK"
+2026-07-16 10:28:17,831 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124402 "HTTP/1.1 200 OK"
+2026-07-16 10:28:18,686 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124401 "HTTP/1.1 200 OK"
+2026-07-16 10:28:19,656 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124400 "HTTP/1.1 200 OK"
+2026-07-16 10:28:20,635 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124399 "HTTP/1.1 200 OK"
+2026-07-16 10:28:21,446 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124397 "HTTP/1.1 200 OK"
+2026-07-16 10:28:22,302 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124396 "HTTP/1.1 200 OK"
+2026-07-16 10:28:23,229 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124395 "HTTP/1.1 200 OK"
+2026-07-16 10:28:24,229 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124394 "HTTP/1.1 200 OK"
+2026-07-16 10:28:25,199 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124393 "HTTP/1.1 200 OK"
+2026-07-16 10:28:26,112 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124392 "HTTP/1.1 200 OK"
+2026-07-16 10:28:27,047 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124391 "HTTP/1.1 200 OK"
+2026-07-16 10:28:28,005 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124390 "HTTP/1.1 200 OK"
+2026-07-16 10:28:28,861 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124389 "HTTP/1.1 200 OK"
+2026-07-16 10:28:29,897 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124388 "HTTP/1.1 200 OK"
+2026-07-16 10:28:30,983 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124387 "HTTP/1.1 200 OK"
+2026-07-16 10:28:31,973 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124386 "HTTP/1.1 200 OK"
+2026-07-16 10:28:33,159 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124385 "HTTP/1.1 200 OK"
+2026-07-16 10:28:34,171 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124384 "HTTP/1.1 200 OK"
+2026-07-16 10:28:35,149 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124383 "HTTP/1.1 200 OK"
+2026-07-16 10:28:36,107 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124382 "HTTP/1.1 200 OK"
+2026-07-16 10:28:36,953 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124381 "HTTP/1.1 200 OK"
+2026-07-16 10:28:37,901 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124380 "HTTP/1.1 200 OK"
+2026-07-16 10:28:39,301 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124379 "HTTP/1.1 200 OK"
+2026-07-16 10:28:40,254 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124378 "HTTP/1.1 200 OK"
+2026-07-16 10:28:41,942 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124377 "HTTP/1.1 200 OK"
+2026-07-16 10:28:42,897 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124376 "HTTP/1.1 200 OK"
+2026-07-16 10:28:43,784 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124375 "HTTP/1.1 200 OK"
+2026-07-16 10:28:44,890 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124374 "HTTP/1.1 200 OK"
+2026-07-16 10:28:45,919 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124373 "HTTP/1.1 200 OK"
+2026-07-16 10:28:46,947 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124372 "HTTP/1.1 200 OK"
+2026-07-16 10:28:47,859 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124371 "HTTP/1.1 200 OK"
+2026-07-16 10:28:48,877 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124370 "HTTP/1.1 200 OK"
+2026-07-16 10:28:49,890 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124369 "HTTP/1.1 200 OK"
+2026-07-16 10:28:50,946 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124368 "HTTP/1.1 200 OK"
+2026-07-16 10:28:52,071 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124367 "HTTP/1.1 200 OK"
+2026-07-16 10:28:53,045 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124366 "HTTP/1.1 200 OK"
+2026-07-16 10:28:54,045 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124365 "HTTP/1.1 200 OK"
+2026-07-16 10:28:55,179 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124364 "HTTP/1.1 200 OK"
+2026-07-16 10:28:56,421 INFO HTTP Request: GET https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124363 "HTTP/1.1 200 OK"
+2026-07-16 10:28:56,859 INFO \U0001f3af 집중 모니터링 매칭: 122건
+2026-07-16 10:28:56,883 INFO 날짜분류(직전영업일-1, target=2026-07-15, today=2026-07-16): 확정 135 / 날짜불명 352 / 제외 2251
+2026-07-16 10:28:56,946 INFO 날짜필터 후 메일대상 195건 (확정 135 + 날짜불명포함 60/352, 정책=recall) / 검토대기 292 / 제외 2251
+2026-07-16 10:28:56,975 INFO 원본전체 행정고지·잡공고 제외: 23건
+2026-07-16 10:28:56,977 INFO 기업 프로필 로드: 3개 (정밀 매칭 활성)
+2026-07-16 10:28:58,383 INFO 그룹 '비앤코인터내셔날 (인천 발레·화장품·수출)' 기업매칭 컷오프: 6건 → 검토 강등
+2026-07-16 10:28:58,524 INFO === 완료 ===
+2026-07-16 10:28:58,525 INFO 그룹: 3개 활성
+2026-07-16 10:28:58,526 INFO \U0001f4ca 오늘 품질: 빠짐없이 위험!(위험 6)·적합만 위험!(위험 51)·전달 5건
+2026-07-16 10:28:58,537 INFO dry-run 완료: 수집=6807 신규=2738 review_queue=292 mail_sent=False seen_changed=False
