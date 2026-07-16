@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "description": "Mail 프로젝트 Loop Engineering 루프 정의. docs/LOOP_ENGINEERING_AUTO_DEV.md 참고.",
+  "defaults": {
+    "max_retry": 2,
+    "protected_files": ["monitor.py", "streamlit_app.py", ".env", ".env.example"],
+    "verify_command": "python3 scripts/loop_verify.py",
+    "allow_email_send": false
+  },
+  "loops": {
+    "coding-fix": {
+      "id": "L1-A",
+      "tier": "L1",
+      "name": "에이전틱 코딩 수정",
+      "trigger": [
+        "TASKS.md PENDING 1건 선택",
+        "GitHub Actions schedule/workflow_dispatch"
+      ],
+      "execute": [
+        "허용 파일만 수정하는 패치 세션",
+        "docs/scripts/tests/JSON 설정(비수신자) 중심"
+      ],
+      "verify": [
+        "protected_files_clean",
+        "unit_pytest",
+        "recall_zero_gate"
+      ],
+      "memory": [
+        "auto_dev_state.json",
+        "TASKS.md",
+        "done_tasks.md|failed_tasks.md|blocked_tasks.md"
+      ],
+      "exit": {
+        "success": ["verify_all_pass", "diff_committed_or_pr"],
+        "failure": ["verify_fail_and_retry_lt_max"],
+        "escalate": [
+          "retry_ge_max",
+          "protected_file_touched",
+          "email_send_risk",
+          "secret_missing"
+        ],
+        "stop_no_progress": ["identical_error_hash_twice"]
+      },
+      "human_gate": null
+    },
+    "gate-repair": {
+      "id": "L1-B",
+      "tier": "L1",
+      "name": "게이트 실패 자동 복구",
+      "trigger": [
+        "loop_verify non-zero",
+        "CI test failure on auto-dev branch"
+      ],
+      "execute": [
+        "실패 스위트 대상 FIX TASK 생성",
+        "최소 패치 후 동일 게이트 재실행"
+      ],
+      "verify": [
+        "unit_pytest",
+        "recall_zero_gate",
+        "no_regression_vs_base"
+      ],
+      "memory": [
+        "failed_tasks.md",
+        "auto_dev_state.json.retry_counts"
+      ],
+      "exit": {
+        "success": ["gates_green"],
+        "failure": ["retry_lt_max"],
+        "escalate": ["retry_ge_max", "protected_file_touched"],
+        "stop_no_progress": ["identical_error_hash_twice"]
+      },
+      "human_gate": null
+    },
+    "coverage-sentinel": {
+      "id": "L1-C",
+      "tier": "L1",
+      "name": "수집 건전성 감시",
+      "trigger": [
+        "monitor dry-run 일자 롤",
+        "core_sources_checklist 스케줄"
+      ],
+      "execute": [
+        "coverage / 3대 소스 checklist (네트워크 환경)"
+      ],
+      "verify": [
+        "core_sources_checklist",
+        "baseline_delta_ok"
+      ],
+      "memory": [
+        "coverage report artifact"
+      ],
+      "exit": {
+        "success": ["checklist_ok"],
+        "failure": [],
+        "escalate": ["high_severity_coverage_drop"],
+        "stop_no_progress": []
+      },
+      "human_gate": "G1",
+      "notes": "high-severity 시 자동 패치 금지, 사람 통보"
+    },
+    "accuracy-defect": {
+      "id": "L2-A",
+      "tier": "L2",
+      "name": "FP/FN 빈틈 클러스터",
+      "trigger": [
+        "주간 accuracy matrix",
+        "골든풀 갱신"
+      ],
+      "execute": [
+        "match-runner",
+        "FP/FN hunter",
+        "s3_defects 클러스터 → G1 승인 후 coding-fix TASK 분해"
+      ],
+      "verify": [
+        "no_guess_labels",
+        "recall_policy_hold"
+      ],
+      "memory": [
+        "matrix.json",
+        "s3_defects.md",
+        "labels/golden.jsonl"
+      ],
+      "exit": {
+        "success": ["g1_approved_and_tasks_enqueued"],
+        "failure": ["matrix_incomplete"],
+        "escalate": ["label_conflict", "policy_violation"],
+        "stop_no_progress": []
+      },
+      "human_gate": "G1",
+      "notes": "G1 승인 전 L1 코딩 금지"
+    },
+    "product-vision": {
+      "id": "L3-A",
+      "tier": "L3",
+      "name": "외부 피드백 → 제품 방향",
+      "trigger": [
+        "customer intake",
+        "오추천 신고",
+        "신규 기관 요청"
+      ],
+      "execute": [
+        "사람이 비전·그룹 방향 문서화",
+        "L2 루브릭/TASKS 반영"
+      ],
+      "verify": [
+        "human_value_judgment"
+      ],
+      "memory": [
+        "docs/CUSTOMER_INTAKE.md",
+        "docs/HANDOFF_PROMPT.md",
+        "groups.json direction notes"
+      ],
+      "exit": {
+        "success": ["vision_written_to_l2_assets"],
+        "failure": [],
+        "escalate": [],
+        "stop_no_progress": []
+      },
+      "human_gate": "G3_G4",
+      "notes": "자동화 최소 — 맥락 우위 구간"
+    }
+  }
+}

@@ -114,6 +114,14 @@ python -m loan.semas.collector --run-mode dry-run --send-email false
 - 현재 Gmail 발송 방식은 소규모용입니다. 안정 운영이 필요하면 Resend·SendGrid·Postmark 같은 이메일 API 전환을 권장합니다.
 - 개발자용 모니터 파이프라인·사이트 수집기·dry-run 점검 절차는 `docs/MONITOR_ENGINEERING_RUNBOOK.md`를 참고하세요.
 
+### Auto Dev Queue (Loop Engineering)
+- 설계: `docs/LOOP_ENGINEERING_AUTO_DEV.md` — 사람이 에이전트를 매번 지시하지 않고 **루프가 지시**한다.
+- 실행: GitHub Actions → "Auto Dev Queue" / 로컬 `DRY_RUN=true python3 scripts/auto_dev_queue.py`
+- 검증: `python3 scripts/loop_verify.py` · 드리프트 `python3 scripts/loop_verify.py --drift`
+- 안전 실행기: 문서·검토 NOOP은 `scripts/auto_dev_executor.py`가 자동 DONE (허위 DONE 아님)
+- L2 빈틈: `auto_dev/defects_inbox.md` 작성 → G1 후 `python3 scripts/decompose_defects.py --approve`
+- 코딩 슬롯: `AUTO_DEV_AGENT=true` (미설정 시 에이전트 필요 TASK는 PENDING 뒤로 회전)
+
 ---
 
 **원격 저장소:** https://github.com/pds2225/mail
