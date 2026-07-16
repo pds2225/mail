@@ -4153,6 +4153,59 @@ def _mask_email(email: str) -> str:
 # (그룹·raw_all·watchlist 등 모든 발송 경로가 send_email/send_to_list 를 거치므로 여기서 일괄 차단)
 _ONLY_TO: str = ""
 
+# 사용자 ⭕/❌ 피드백 루프(Tier C 골든 축적) — 모듈이 없어도 발송은 그대로(표시 전용).
+try:
+    import feedback as _feedback_mod
+    _FEEDBACK_OK = True
+except Exception:  # noqa: BLE001
+    _feedback_mod = None
+    _FEEDBACK_OK = False
+
+
+def _feedback_links_enabled() -> bool:
+    """MONITOR_NO_FEEDBACK_LINKS=1 이면 digest 피드백 링크를 끈다(표시 전용 스위치)."""
+    return _FEEDBACK_OK and os.getenv("MONITOR_NO_FEEDBACK_LINKS", "") not in ("1", "true", "True")
+
+
+# 본문(plain)의 링크를 HTML 파트에서 실제 클릭 가능한 앵커로 바꾼다.
+# (기존엔 escape 만 해 mailto 피드백 링크가 눌리지 않았다 — 공고 🔗 링크도 함께 클릭 가능해짐)
+_LINK_RE = re.compile(r"""(https?://[^\s<>"']+|mailto:[^\s<>"']+)""")
+
+
+def _linkify_html(text: str) -> str:
+    """escape + URL→<a> + 줄바꿈→<br>. 피드백 mailto 는 '⭕ 맞아요/❌ 아니에요' 라벨로 표시."""
+    text = text or ""
+    out: list[str] = []
+    pos = 0
+    for m in _LINK_RE.finditer(text):
+        out.append(html.escape(text[pos:m.start()]))
+        raw = m.group(0)
+        url = raw.rstrip(".,;)")            # 문장부호는 링크에서 제외
+        tail = raw[len(url):]
+        label = ""
+        if _FEEDBACK_OK:
+            try:
+                label = _feedback_mod.feedback_link_label(url)
+            except Exception:  # noqa: BLE001
+                label = ""
+        out.append(f'<a href="{html.escape(url, quote=True)}">{html.escape(label or url)}</a>')
+        out.append(html.escape(tail))
+        pos = m.end()
+    out.append(html.escape(text[pos:]))
+    return "".join(out).replace("\n", "<br>")
+
+
+def _render_feedback_block(items: list[dict]) -> str:
+    """digest 하단 '이 추천 맞았나요?' ⭕/❌ 섹션. 실패해도 발송은 계속(표시 전용)."""
+    if not (items and _feedback_links_enabled()):
+        return ""
+    try:
+        return _feedback_mod.render_feedback_block(items, GMAIL_ADDRESS)
+    except Exception as e:  # noqa: BLE001
+        log.warning("피드백 링크 생성 실패(무시): %s", e)
+        return ""
+
+
 def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
     msg = MIMEMultipart("alternative")
@@ -4160,7 +4213,7 @@ def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     msg.attach(MIMEText(body, "plain", "utf-8"))
     msg.attach(MIMEText(
         f"<html><body style='font-family:Arial;line-height:1.7'>"
-        f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
+        f"<pre style='white-space:pre-wrap;font-family:inherit'>{_linkify_html(body)}</pre>"
         f"</body></html>", "html", "utf-8"))
     return msg
 
@@ -4697,10 +4750,12 @@ def execute_monitor(
             )
             # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
             region_unknown_block = render_region_unknown(ru_items)
+            # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
+            feedback_block = _render_feedback_block(g_items)
             subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
             send_to_list(
                 f"[{group.get('name')}] {subj_count} ({date_str})",
-                header + voucher_block + summary + region_unknown_block + kw_footer,
+                header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
                 group.get("recipients", []),
             )
             if voucher_items:
