@@ -62,8 +62,27 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f seen_ids.json || true
-          git diff --staged --quiet || git commit -m "chore: seen_ids 업데이트 $(date +'%Y-%m-%d')"
-          git push || true
+          if git diff --staged --quiet; then
+            echo "seen_ids 변경 없음 — 커밋 생략"; exit 0
+          fi
+          git commit -m "chore: seen_ids 업데이트 $(date +'%Y-%m-%d')"
+          # 실행 중 원격 main 이 앞서가면(다른 실행/머지) push 가 거부된다. 기존 `git push || true`
+          # 는 그 경우 오늘 발송 이력을 조용히 버려 다음날 '중복 재발송' 위험이 있었다.
+          # → 원격과 seen_ids 를 합집합 병합(어느 이력도 안 잃음) 후 재커밋·재push 를 최대 5회 재시도.
+          for i in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo "seen_ids push 성공 (시도 $i)"; exit 0
+            fi
+            echo "push 거부 — 원격과 seen_ids 합집합 병합 후 재시도 ($i)"
+            git fetch origin main || true
+            git show origin/main:seen_ids.json > /tmp/remote_seen_ids.json 2>/dev/null || echo "[]" > /tmp/remote_seen_ids.json
+            python scripts/merge_seen_ids.py seen_ids.json /tmp/remote_seen_ids.json || true
+            git reset --soft origin/main
+            git add -f seen_ids.json
+            git commit -m "chore: seen_ids 업데이트(원격 병합) $(date +'%Y-%m-%d')" || true
+            sleep 2
+          done
+          echo "::warning::seen_ids push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"
 
       - name: 실패(크래시) 시 폰 알림
         if: failure()
