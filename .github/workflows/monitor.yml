@@ -87,7 +87,13 @@ jobs:
             echo "push 거부 — 원격 트리 기준으로 두 파일만 재적용 후 재시도 ($i)"
             git fetch origin main || true
             # 우리 seen_ids 를 하드리셋 전에 보존(리셋 후 원격본을 우리 것과 합집합).
-            cp -f seen_ids.json /tmp/local_seen_ids.json 2>/dev/null || echo "[]" > /tmp/local_seen_ids.json
+            # ★ 백업이 실패하면 절대 빈 값으로 대체하지 않는다 — 빈 배열로 union 하면 오늘 발송
+            #   이력이 사라진다. 백업 실패 시엔 reset --hard 를 건너뛰어(로컬 seen_ids 원본 보존)
+            #   이번 재시도만 넘긴다(데이터 유실 0; 최악의 경우 다음 실행에서 재수렴).
+            if ! cp -f seen_ids.json /tmp/local_seen_ids.json; then
+              echo "::warning::seen_ids 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀(오늘 이력 보존)"
+              sleep 2; continue
+            fi
             git reset --hard origin/main
             python scripts/merge_seen_ids.py seen_ids.json /tmp/local_seen_ids.json || true   # 원격 ∪ 우리
             # 피드백 라벨: 하드리셋으로 파일이 원격본이 됨 → 오늘 O/X 를 멱등 재수집(원격 ∪ 오늘).
