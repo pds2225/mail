@@ -278,7 +278,9 @@ def build(date: str | None, cap: int | None) -> dict:
                 "is_relevant": bool(ev.get("is_relevant")),
                 "region_status": ev.get("region_status"),
                 "region_unknown_review": bool(ev.get("region_unknown_review")),
-                "reason_codes": (ev.get("exclude_reason_codes") or [])[:3],
+                # 전체 코드 보존(잘리면 feedback_suggest 의 키워드/지역/제외 진단이 오판하고
+                # 아래 grp_region_blocked 판정도 코드가 3번째 밖이면 놓친다). 표시는 소비측에서 자른다.
+                "reason_codes": list(ev.get("exclude_reason_codes") or []),
             }
 
     # ── 후보·모순·KPI 산출 ──

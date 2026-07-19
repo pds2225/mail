@@ -88,6 +88,41 @@ def test_false_send_review_for_X_delivered():
     assert "g_ai" in sugg[0]["groups"]
 
 
+def test_company_path_delivery_is_not_a_miss():
+    """O 인데 기업 경로(company matched)로 발송됨 → 놓침 아님(제안 없음)."""
+    n = {"id": "n1", "title": "인천 화장품 수출바우처 공고", "feedback": "O",
+         "groups": {"g_incheon": {"is_relevant": False, "reason_codes": ["REGION_UNKNOWN"]}},
+         "companies": {"cmp_bnco": {"decision": "matched", "score": 40}}}
+    assert fs.diagnose_notice(n, GKW) == []
+
+
+def test_company_path_false_send_flagged():
+    """X 인데 기업 경로로 발송됨 → false_send_review(기업 경로 포함)."""
+    n = {"id": "n2", "title": "무관 공고", "feedback": "X",
+         "groups": {"g_incheon": {"is_relevant": False, "reason_codes": ["INDUSTRY_NOT_MATCHED"]}},
+         "companies": {"cmp_bnco": {"decision": "matched", "score": 33}}}
+    sugg = fs.diagnose_notice(n, GKW)
+    assert len(sugg) == 1 and sugg[0]["kind"] == "false_send_review"
+    assert sugg[0]["companies"] == ["cmp_bnco"]
+
+
+def test_full_reason_codes_keyword_miss_beyond_third():
+    """reason_codes 가 잘리지 않고 전량 오면, 3번째 밖의 INDUSTRY_NOT_MATCHED 도 키워드미스로 인식.
+
+    (accuracy_matrix 가 코드를 [:3] 로 자르던 버그의 소비측 회귀 가드 — 전량 코드 가정.)
+    """
+    n = _notice(
+        "O",
+        {"g_ai": {"is_relevant": False, "reason_codes": [
+            "MISSING_APPLICATION_PERIOD", "LOW_CONFIDENCE", "NOT_GRANT_NOTICE", "INDUSTRY_NOT_MATCHED"]},
+         "g_incheon": {"is_relevant": False, "reason_codes": ["INDUSTRY_NOT_MATCHED"]}},
+        title="그린바이오 실증 지원 공고",
+    )
+    # 모든 그룹이 키워드 미스 → region/date/exclude 제안이 아니라 keyword_add 만 나와야 한다.
+    kinds = {s["kind"] for s in fs.diagnose_notice(n, GKW)}
+    assert kinds == {"keyword_add"}
+
+
 def test_unlabeled_notice_yields_nothing():
     """골든 라벨 없는 공고는 제안 대상 아님."""
     n = _notice("", {"g_ai": {"is_relevant": False, "reason_codes": ["INDUSTRY_NOT_MATCHED"]}})

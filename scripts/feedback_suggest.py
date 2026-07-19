@@ -92,24 +92,29 @@ def diagnose_notice(notice: dict, group_keywords: dict[str, list[str]]) -> list[
     if fb not in ("O", "X"):
         return []
     groups = notice.get("groups") or {}
-    recommended_by = [gid for gid, gv in groups.items() if gv.get("is_relevant")]
+    # '발송/추천됨' 판정은 accuracy_matrix 와 동일하게 그룹(is_relevant)+기업(matched) 두 경로를
+    # 모두 본다. 그룹만 보면 기업 경로로 나간 O 공고를 '놓침'으로 오진단하고, X 오발송을 놓친다.
+    comps = notice.get("companies") or {}
+    rec_groups = [gid for gid, gv in groups.items() if gv.get("is_relevant")]
+    rec_comps = [cid for cid, cv in comps.items() if cv.get("decision") == "matched"]
+    recommended = bool(rec_groups or rec_comps)
     nid = notice.get("id", "")
     title = notice.get("title", "")
     out: list[dict] = []
 
     # ── X(무관)인데 추천/발송됨 = 오발송 → 검토 플래그(정밀도) ──
     if fb == "X":
-        if recommended_by:
+        if recommended:
             out.append({
                 "kind": "false_send_review", "notice_id": nid, "title": title,
-                "groups": recommended_by,
-                "suggestion": "사람이 X(무관)로 표시했는데 발송됨 — 해당 그룹 키워드/조건 정밀도 점검.",
+                "groups": rec_groups, "companies": rec_comps,
+                "suggestion": "사람이 X(무관)로 표시했는데 발송됨 — 해당 그룹/기업 키워드·조건 정밀도 점검.",
             })
         return out
 
     # ── 여기부터 O(관련) ──
-    if recommended_by:
-        return []  # O 이고 이미 추천됨 = 정상(놓침 아님)
+    if recommended:
+        return []  # O 이고 이미 추천됨(그룹 또는 기업 경로) = 정상(놓침 아님)
 
     # O 인데 어느 그룹도 추천 안 함 = 놓침. 그룹별로 '한 끗 차이' 원인 진단.
     all_keyword_missed = True
