@@ -281,6 +281,9 @@ def build(date: str | None, cap: int | None) -> dict:
                 # 전체 코드 보존(잘리면 feedback_suggest 의 키워드/지역/제외 진단이 오판하고
                 # 아래 grp_region_blocked 판정도 코드가 3번째 밖이면 놓친다). 표시는 소비측에서 자른다.
                 "reason_codes": list(ev.get("exclude_reason_codes") or []),
+                # 키워드 게이트 통과 여부(순수). INDUSTRY_NOT_MATCHED 는 키워드 미스와 지원유형
+                # 불일치 둘 다에서 붙으므로, feedback_suggest 가 둘을 구분하려면 이 신호가 필요하다.
+                "keyword_pass": bool(ev.get("group_keyword_pass", True)),
             }
 
     # ── 후보·모순·KPI 산출 ──

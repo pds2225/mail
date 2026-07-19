@@ -81,12 +81,20 @@ def candidate_terms(title: str, existing: set[str], *, limit: int = 4) -> list[s
     return seen[:limit]
 
 
-def diagnose_notice(notice: dict, group_keywords: dict[str, list[str]]) -> list[dict]:
+def diagnose_notice(
+    notice: dict,
+    group_keywords: dict[str, list[str]],
+    *,
+    suggest_keywords: bool = True,
+) -> list[dict]:
     """공고 1건의 O/X 골든과 그룹별 판정으로 제안 목록을 만든다(제안 전용).
 
     notice: accuracy_matrix build()["matrix"]["notices"] 원소
-      {id,title,feedback,groups:{gid:{is_relevant,region_status,region_unknown_review,reason_codes}}}
+      {id,title,feedback,groups:{gid:{is_relevant,region_status,region_unknown_review,
+                                       reason_codes,keyword_pass}}}
     group_keywords: {gid: [or_keywords...]}  (기존 키워드 재제안 방지용)
+    suggest_keywords: False 면 keyword_add 제안을 억제한다(기존 키워드 목록을 모를 때 —
+      예: groups.json 로드 실패 → 중복어 추천 방지).
     """
     fb = (notice.get("feedback") or "").upper()
     if fb not in ("O", "X"):
@@ -118,12 +126,24 @@ def diagnose_notice(notice: dict, group_keywords: dict[str, list[str]]) -> list[
 
     # O 인데 어느 그룹도 추천 안 함 = 놓침. 그룹별로 '한 끗 차이' 원인 진단.
     all_keyword_missed = True
+    all_region_hard = True   # 모든 그룹이 확실한 타지역이면 키워드를 더해도 못 살림(제안 억제).
     for gid, gv in groups.items():
         codes = set(gv.get("reason_codes") or [])
-        kw_missed = KEYWORD_MISS in codes
+        # 키워드 미스 판정: keyword_pass 신호가 있으면 그걸 우선한다. INDUSTRY_NOT_MATCHED 는
+        # (a) 키워드 게이트 실패(진짜 미스)와 (b) 지원유형 불일치(키워드는 맞음) 둘 다에서 붙어
+        # 코드만 보면 (b)를 키워드 미스로 오진단한다 → keyword_pass 로 (a)/(b)를 가른다.
+        kw_pass = gv.get("keyword_pass")
+        if kw_pass is None:
+            kw_missed = KEYWORD_MISS in codes           # 신호 없음(레거시/합성) → 코드 기반
+        else:
+            kw_missed = not kw_pass
+        # 지원유형 불일치: 키워드는 통과했는데 INDUSTRY_NOT_MATCHED 가 붙은 경우(=3685행 경로).
+        support_blocked = (KEYWORD_MISS in codes) and not kw_missed
         if not kw_missed:
             all_keyword_missed = False
         region_hard = bool(codes & REGION_HARD_CODES) or gv.get("region_status") == "not_eligible"
+        if not region_hard:
+            all_region_hard = False
         region_unknown = (
             gv.get("region_unknown_review")
             or gv.get("region_status") == "unknown"
@@ -156,9 +176,18 @@ def diagnose_notice(notice: dict, group_keywords: dict[str, list[str]]) -> list[
                 "suggestion": f"[{gid}] 키워드는 맞는데 제외규칙({', '.join(excl_blocked)})에 걸림 — "
                               "억울한 제외면 그룹 화이트리스트/규칙 완화 검토.",
             })
+        elif support_blocked:
+            out.append({
+                "kind": "support_relax", "notice_id": nid, "title": title, "group": gid,
+                "evidence": ["INDUSTRY_NOT_MATCHED"],
+                "suggestion": f"[{gid}] 키워드는 맞는데 지원유형(support_types) 불일치로 막힘 — "
+                              "제목 토큰 추가가 아니라 그룹 support_types 범위 점검이 필요.",
+            })
 
     # 어느 그룹도 키워드 매칭 안 됨 → 키워드 후보 제안(그룹 미지정, 전역 풀).
-    if all_keyword_missed and groups:
+    # 단, 모든 그룹이 확실한 타지역(region_hard)이면 키워드를 더해도 못 살리므로 제안하지 않는다.
+    # groups.json 을 몰라(로드 실패) 기존 키워드 중복 방지가 불가한 경우에도 억제한다.
+    if suggest_keywords and all_keyword_missed and groups and not all_region_hard:
         existing = set()
         for kws in group_keywords.values():
             existing |= {str(k) for k in (kws or [])}
@@ -172,12 +201,16 @@ def diagnose_notice(notice: dict, group_keywords: dict[str, list[str]]) -> list[
     return out
 
 
-def build_suggestions(notices: list[dict], groups: list[dict]) -> dict:
-    """공고 목록(accuracy_matrix)·그룹으로 제안 리포트를 만든다(제안 전용·집계)."""
+def build_suggestions(notices: list[dict], groups: list[dict], *, keywords_known: bool = True) -> dict:
+    """공고 목록(accuracy_matrix)·그룹으로 제안 리포트를 만든다(제안 전용·집계).
+
+    keywords_known: False 면(groups.json 로드 실패 등 기존 키워드 목록 부재) keyword_add 제안을
+      억제한다 — 기존 키워드와 중복되는 후보를 걸러낼 수 없어 잘못된 추천이 나가는 것을 막는다.
+    """
     gkw = {(g.get("id") or g.get("name") or "grp"): (g.get("or_keywords") or []) for g in (groups or [])}
     suggestions: list[dict] = []
     for n in notices or []:
-        suggestions.extend(diagnose_notice(n, gkw))
+        suggestions.extend(diagnose_notice(n, gkw, suggest_keywords=keywords_known))
 
     by_kind = Counter(s["kind"] for s in suggestions)
     # 키워드 후보 빈도 집계(여러 놓침에서 반복되는 후보 = 강한 신호).
@@ -223,13 +256,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[skip] {res['error']}")
         return 0
     notices = (res.get("matrix") or {}).get("notices") or []
+    keywords_known = True
     try:
         groups = monitor.load_groups()
     except Exception as e:  # noqa: BLE001
         groups = []
-        print(f"[warn] load_groups 실패: {e}", file=sys.stderr)
+        keywords_known = False   # 기존 키워드 목록 부재 → keyword_add 억제(중복 추천 방지)
+        print(f"[warn] load_groups 실패: {e} — keyword_add 제안 억제", file=sys.stderr)
 
-    report = build_suggestions(notices, groups)
+    report = build_suggestions(notices, groups, keywords_known=keywords_known)
     print(_format_summary(report))
 
     stamp = (args.date or "all").replace("-", "")

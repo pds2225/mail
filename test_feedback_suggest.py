@@ -129,6 +129,76 @@ def test_unlabeled_notice_yields_nothing():
     assert fs.diagnose_notice(n, GKW) == []
 
 
+def test_no_keyword_add_when_all_groups_hard_region_blocked():
+    """모든 그룹이 키워드 미스 + 확실한 타지역 → 키워드를 더해도 못 살림 → keyword_add 없음.
+
+    (Bugbot: '키워드를 못 잡았지만 지역도 확실히 타지역'인 공고에 제목 토큰을 추천하던 오작동 가드.)
+    """
+    n = _notice(
+        "O",
+        {"g_ai": {"is_relevant": False, "region_status": "not_eligible",
+                  "reason_codes": ["INDUSTRY_NOT_MATCHED", "REGION_NOT_ELIGIBLE"]},
+         "g_incheon": {"is_relevant": False, "region_status": "not_eligible",
+                       "reason_codes": ["INDUSTRY_NOT_MATCHED", "DISTRICT_NOT_ELIGIBLE"]}},
+        title="부산 그린바이오 소재 실증 지원 공고",
+    )
+    assert fs.diagnose_notice(n, GKW) == []
+
+
+def test_keyword_add_when_some_group_region_open():
+    """일부 그룹은 지역이 열려 있으면(타지역 확정 아님) 키워드 추가로 살릴 여지 → keyword_add 유지."""
+    n = _notice(
+        "O",
+        {"g_ai": {"is_relevant": False, "region_status": "not_eligible",
+                  "reason_codes": ["INDUSTRY_NOT_MATCHED", "REGION_NOT_ELIGIBLE"]},
+         "g_incheon": {"is_relevant": False, "region_status": "eligible",
+                       "reason_codes": ["INDUSTRY_NOT_MATCHED"]}},
+        title="그린바이오 소재 실증 지원 공고",
+    )
+    kinds = {s["kind"] for s in fs.diagnose_notice(n, GKW)}
+    assert "keyword_add" in kinds
+
+
+def test_support_type_mismatch_is_not_keyword_add():
+    """키워드는 맞는데(keyword_pass=True) 지원유형 불일치로 INDUSTRY_NOT_MATCHED → support_relax.
+
+    (Bugbot: INDUSTRY_NOT_MATCHED 를 무조건 키워드 미스로 봐 제목 토큰을 추천하던 오진단 가드.)
+    """
+    n = _notice("O", {"g_incheon": {
+        "is_relevant": False, "region_status": "eligible", "keyword_pass": True,
+        "reason_codes": ["INDUSTRY_NOT_MATCHED"],
+    }})
+    sugg = fs.diagnose_notice(n, GKW)
+    kinds = {s["kind"] for s in sugg}
+    assert kinds == {"support_relax"}
+    assert "keyword_add" not in kinds
+
+
+def test_keyword_pass_false_is_still_keyword_miss():
+    """keyword_pass=False(진짜 키워드 게이트 실패)면 여전히 키워드 미스로 keyword_add."""
+    n = _notice(
+        "O",
+        {"g_ai": {"is_relevant": False, "keyword_pass": False,
+                  "reason_codes": ["INDUSTRY_NOT_MATCHED"]}},
+        title="그린바이오 소재 실증 지원 공고",
+    )
+    kinds = {s["kind"] for s in fs.diagnose_notice(n, GKW)}
+    assert "keyword_add" in kinds
+
+
+def test_keyword_add_suppressed_when_keywords_unknown():
+    """groups.json 로드 실패(keywords_known=False) → 기존 키워드 중복 방지 불가 → keyword_add 억제."""
+    notices = [
+        _notice("O", {"g_ai": {"is_relevant": False, "reason_codes": ["INDUSTRY_NOT_MATCHED"]}},
+                title="그린바이오 소재 실증 공고", nid="a"),
+    ]
+    rep = fs.build_suggestions(notices, [], keywords_known=False)
+    assert rep["counts"].get("keyword_add", 0) == 0
+    # 반대로 keywords_known=True(기본) 이면 후보가 나온다(회귀 대비).
+    rep2 = fs.build_suggestions(notices, [{"id": "g_ai", "or_keywords": ["AI"]}])
+    assert rep2["counts"].get("keyword_add", 0) >= 1
+
+
 def test_build_suggestions_aggregates_and_ranks_keywords():
     """집계: 여러 놓침에서 반복되는 키워드 후보가 빈도순 상위에 온다."""
     notices = [
