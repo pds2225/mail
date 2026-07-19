@@ -56,33 +56,46 @@ jobs:
           path: coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
 
-      - name: seen_ids.json 커밋 (발송한 공고 기록 → 다음날 중복 재발송 방지)
+      - name: seen_ids.json·O/X 피드백 커밋 (중복 재발송 방지 + 골든 라벨 축적)
         if: always()
+        env:
+          GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f seen_ids.json || true
+          # 사용자가 digest 하단 '⭕ 맞아요/❌ 아니에요' 를 누르면 [MAIL-FB] 메일이 자기 함으로
+          # 온다. 읽기전용 IMAP 으로 그 O/X 를 수집해 골든 라벨(data/golden/feedback_labels.jsonl,
+          # tier C=사람확인)에 누적한다 → 정확도 하네스가 '사람 정답 vs 우리 판정'을 대조.
+          # 수집 실패는 발송·중복방지와 무관하므로 경고만 내고 계속한다(발송은 이미 끝났다).
+          python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
+          git add -f seen_ids.json data/golden/feedback_labels.jsonl || true
           if git diff --staged --quiet; then
-            echo "seen_ids 변경 없음 — 커밋 생략"; exit 0
+            echo "seen_ids·피드백 라벨 변경 없음 — 커밋 생략"; exit 0
           fi
-          git commit -m "chore: seen_ids 업데이트 $(date +'%Y-%m-%d')"
+          git commit -m "chore: seen_ids·O/X 피드백 업데이트 $(date +'%Y-%m-%d')"
           # 실행 중 원격 main 이 앞서가면(다른 실행/머지) push 가 거부된다. 기존 `git push || true`
           # 는 그 경우 오늘 발송 이력을 조용히 버려 다음날 '중복 재발송' 위험이 있었다.
-          # → 원격과 seen_ids 를 합집합 병합(어느 이력도 안 잃음) 후 재커밋·재push 를 최대 5회 재시도.
+          # → 원격과 병합(seen_ids=합집합, 피드백=원격 라벨에 오늘 O/X 멱등 재병합) 후
+          #   재커밋·재push 를 최대 5회 재시도. 어느 이력·라벨도 잃지 않는다.
           for i in 1 2 3 4 5; do
             if git push origin HEAD:main; then
-              echo "seen_ids push 성공 (시도 $i)"; exit 0
+              echo "커밋백 push 성공 (시도 $i)"; exit 0
             fi
-            echo "push 거부 — 원격과 seen_ids 합집합 병합 후 재시도 ($i)"
+            echo "push 거부 — 원격과 병합 후 재시도 ($i)"
             git fetch origin main || true
             git show origin/main:seen_ids.json > /tmp/remote_seen_ids.json 2>/dev/null || echo "[]" > /tmp/remote_seen_ids.json
             python scripts/merge_seen_ids.py seen_ids.json /tmp/remote_seen_ids.json || true
+            # 피드백 라벨: 원격본을 받아 오늘 O/X 를 재병합(collect_feedback 는 파일에 append-only
+            # 병합이라 같은 메일을 다시 넣어도 '동일'로 처리 = 멱등 → 원격∪오늘 라벨).
+            git checkout origin/main -- data/golden/feedback_labels.jsonl 2>/dev/null || true
+            python scripts/collect_feedback.py --days 60 || true
             git reset --soft origin/main
-            git add -f seen_ids.json
-            git commit -m "chore: seen_ids 업데이트(원격 병합) $(date +'%Y-%m-%d')" || true
+            git add -f seen_ids.json data/golden/feedback_labels.jsonl
+            git commit -m "chore: seen_ids·O/X 피드백 업데이트(원격 병합) $(date +'%Y-%m-%d')" || true
             sleep 2
           done
-          echo "::warning::seen_ids push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"
+          echo "::warning::커밋백 push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"
 
       - name: 실패(크래시) 시 폰 알림
         if: failure()
