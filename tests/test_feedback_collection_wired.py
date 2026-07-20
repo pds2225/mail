@@ -9,7 +9,7 @@ import pathlib
 
 import yaml
 
-WF = pathlib.Path(__file__).resolve().parent / ".github/workflows/monitor.yml"
+WF = pathlib.Path(__file__).resolve().parent.parent / ".github/workflows/monitor.yml"
 
 
 def _steps():

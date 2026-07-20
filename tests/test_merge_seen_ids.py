@@ -8,7 +8,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 import merge_seen_ids as m  # noqa: E402  (scripts/merge_seen_ids.py)
 
 
