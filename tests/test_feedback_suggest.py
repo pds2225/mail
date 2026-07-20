@@ -6,7 +6,7 @@ diagnose_notice 는 순수 함수(입력=accuracy_matrix notice 레코드 + 그�
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 import feedback_suggest as fs  # noqa: E402
 
 
