@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, quote
+from urllib.parse import urljoin, quote, urlsplit
 
 import httpx
 from anthropic import Anthropic
@@ -428,6 +428,107 @@ EXCLUSION_RULES = [
     ]),
     ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
 ]
+
+# ── [제목 앵커] 비공고 정적 페이지 제외 (2026-07-20, 사용자 O/X 피드백: '사전정보공표' ❌) ──
+# 배경: 일부 소스의 리스트 셀렉터가 본문 게시판이 아니라 헤더/푸터/사이드 nav 의 <a> 를 통째로
+#       긁어, 기관 소개·정보공개·약관 같은 '정적 페이지'가 공고로 발송됐다.
+#
+# ★설계 원칙 (이 repo 평생 원칙: 누락 제로(recall) > 정확도(precision))
+#   1) EXCLUSION_RULES 에 넣지 않는다. 그쪽은 제목+본문을 합친 text 를 보므로, 본문에 우연히
+#      그 단어가 있는 '진짜 공고'까지 함께 막혀 누락이 난다. 여기는 오직 제목·링크만 본다.
+#   2) 부분포함(substring) 금지 — '제목 전체 완전일치'만 판정한다. 실측 반례:
+#      '정보공개'→신용보증기금 「2026년 정보공개 고객 모니터링단」모집공고(진짜),
+#      '채용'→74건 중 73건 진짜, '입찰'→26건 중 25건 진짜, '개인정보'→10건 전부 진짜.
+#   3) 이중 안전장치 — 제목에 공고성 토큰(모집·공고·신청·접수·참가·선정·공모·지원사업)이
+#      하나라도 있으면 목록에 있어도 절대 막지 않는다.
+#   4) 스냅샷 9,406건 시뮬레이션에서 safe_to_block=true 로 확인된 문자열만 등재한다.
+#      '정보공개'·'개인정보처리방침'·'지원사업공고'·'공지사항'은 진짜 공고 반례가 있어 제외.
+#   5) 날짜 공란·URL 패턴은 판정 근거로 쓰지 않는다 — 양방향으로 실패한다(정크가 게시일을
+#      갖고 있고, 반대로 날짜 없는 진짜 공고가 대량 존재).
+#
+# 끄기: 환경변수 MONITOR_NO_NONNOTICE_FILTER=1 (오차단 발견 시 즉시 무력화용)
+NONNOTICE_FILTER_ENV = "MONITOR_NO_NONNOTICE_FILTER"
+
+# 제목에 이 토큰이 하나라도 있으면 비공고 판정을 건너뛴다(이중 안전장치).
+# ★'지원'·'설명회'는 적대적 반증에서 나온 보강 — 링크 도메인 룰만으로 막히던 경계 사례
+#   ('중소기업 홍보영상 제작 지원(유튜브)' + youtube 링크)를 통과시킨다. 이 토큰들은 필터를
+#   더 느슨하게만 만들어 recall 을 해칠 수 없고, 차단목록 중 '지원'을 품은 항목은
+#   '지원/신청' 하나뿐이라 정크 차단력 손실도 없다.
+NOTICE_SIGNAL_TOKENS = (
+    "모집", "공고", "신청", "접수", "지원사업", "참가", "선정", "공모", "지원", "설명회",
+)
+
+# 제목 '완전일치' 차단 목록 — 각 항목이 그 정적 페이지의 명칭 '자체'인 경우만.
+NON_NOTICE_TITLES = frozenset(_t.casefold() for _t in [
+    # 정보공개 정적 페이지 (★사용자 O/X 피드백 실제 사례)
+    "사전정보공표", "정보공개제도", "정보공개청구", "정보공개제도란",
+    # 약관·방침
+    "이용약관", "저작권정책", "영상정보처리기기방침", "고정형 영상정보처리기기운영관리 방침",
+    # 기관 소개 메뉴
+    "인사말", "연혁", "미션&비전", "기관소개", "조직구성", "조직 및 업무", "오시는길",
+    # 사이트 공통 링크
+    "회원가입", "로그인", "english", "사이트맵",
+    # 고객지원 정적 페이지
+    "faq", "ncs관련 faq", "고객의 소리", "홈페이지불편신고", "부패신고센터",
+    # 경영공시 메뉴
+    "통합공시", "자체공시", "사업실명제", "업무추진비", "징계현황", "주요계약현황",
+    "기부금 수령 및 집행현황", "상품권 구매사용 현황", "공공데이터개방",
+    # 게시판 목록 메뉴 (※부분포함 절대 금지 — '채용'·'입찰'은 대부분 진짜 공고다)
+    "채용정보", "일자리정보", "입찰정보",
+    # 자료실 메뉴
+    "뉴스레터", "언론보도", "자료공간", "발간자료", "동향/분석자료", "kams now", "컨설팅 전문 정보",
+    # 사업소개 메뉴 (공고성 토큰이 있는 '지원/신청'·'공모사업 안내'·'온라인 참가신청'은
+    #   NOTICE_SIGNAL_TOKENS 가드에 먼저 걸려 실제로는 통과한다 — 의도된 recall 우선 동작)
+    "사업안내", "지원/신청", "공모사업 안내", "온라인 참가신청",
+    # 정부24 푸터 링크
+    "누리집 안내지도", "복합인증관리", "보안센터", "인증등록/관리", "상담예약",
+    "국민비서 구삐", "공공서비스 활용(open api)", "웹 접근성 품질인증 마크 획득",
+    # 테이블 헤더·페이지네이션 오수집
+    "번호", "새 카테고리", "날짜순", "[2]", "[ home ]",
+    # 대표번호(링크가 tel: 이 아닌 경우 대비)
+    "110", "1588-2188",
+    # nav/배너 링크가 공고로 저장된 사례 (근본 해결은 해당 소스 셀렉터 수정)
+    "oa", "직무 솔루션>", "k-스타트업", "단기수출보험(선적후)", "human rights watch",
+])
+
+# 링크 스킴·도메인 기반 판정 (오탐 0 — 공고 상세가 tel:/SNS 일 수 없다)
+NON_NOTICE_LINK_SCHEMES = ("tel:", "mailto:")
+NON_NOTICE_LINK_DOMAINS = (
+    "instagram.com", "x.com", "twitter.com", "facebook.com", "youtube.com",
+)
+
+
+def _normalize_title_key(title: Any) -> str:
+    """제목 정규화 — 앞뒤 공백 제거 + 연속 공백 1칸 축약 + 대소문자 무시."""
+    return " ".join(str(title or "").split()).casefold()
+
+
+def non_notice_reason(item: dict) -> str:
+    """공고가 아닌 정적/메뉴/외부링크 페이지면 근거 문자열, 아니면 "" 를 반환한다.
+
+    제목(완전일치)과 링크(스킴·도메인)만 본다. 본문(description)은 절대 보지 않는다.
+    """
+    if os.environ.get(NONNOTICE_FILTER_ENV) == "1":
+        return ""
+
+    raw_title = str(item.get("title") or "")
+    # ★이중 안전장치: 공고성 토큰이 하나라도 있으면 비공고로 판정하지 않는다.
+    if any(tok in raw_title for tok in NOTICE_SIGNAL_TOKENS):
+        return ""
+
+    title_key = _normalize_title_key(raw_title)
+    if title_key and title_key in NON_NOTICE_TITLES:
+        return raw_title.strip()
+
+    link = str(item.get("link") or "").strip()
+    low = link.lower()
+    if low.startswith(NON_NOTICE_LINK_SCHEMES):
+        return low.split(":", 1)[0] + ":"
+    host = urlsplit(low).netloc.split("@")[-1].split(":")[0]
+    host = host[4:] if host.startswith("www.") else host
+    if host and host in NON_NOTICE_LINK_DOMAINS:
+        return host
+    return ""
 
 REGION_EXCLUDE_PHRASES = [
     "수도권 제외", "수도권 소재 기업 제외", "서울·경기·인천 제외", "서울 경기 인천 제외",
@@ -3604,6 +3705,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
                     notice_type = rule_notice_type
             if rule_target_type != "unknown":
                 target_type = rule_target_type
+
+    # [제목 앵커] 비공고 정적 페이지(기관소개·정보공개·약관·nav 링크 등) 제외.
+    # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
+    nonnotice_hit = non_notice_reason(item)
+    if nonnotice_hit:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
 
     if service_hits:
         excluded_keywords.extend(service_hits)
