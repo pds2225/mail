@@ -26,4 +26,4 @@ jobs:
           python -m pip install pytest
 
       - name: pytest 실행
-        run: python -m pytest test_monitor.py -v
+        run: python -m pytest tests/test_monitor.py -v

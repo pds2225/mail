@@ -65,3 +65,22 @@ reports/company_match/
 RESUME.md
 data/raw/
 !data/raw/.gitkeep
+
+# 임시 진단·실험 스크립트 (루트 한정 — 패키지 __init__.py 는 제외)
+/_*.py
+!/__init__.py
+/scratch_*.txt
+
+# 수동 백업본 (groups.json.bak2, sites.json.bak_genfix, seen_ids.json.fullbak …)
+*.bak
+*.bak[0-9]
+*.bak_*
+*.fullbak
+*.datebak
+
+# 런타임 로그 (logs/*.md 는 위에서 처리)
+logs/*.log
+logs/*.json
+
+# 공고 첨부 다운로드 (scripts/download_kstartup_targets.py 로 재생성 가능)
+downloads/

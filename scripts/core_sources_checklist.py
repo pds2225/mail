@@ -61,7 +61,7 @@ def _site_by_id(site_id: str) -> dict | None:
 
 def _run_pytest(rel: str) -> tuple[bool, str]:
     env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
-    cmd = [sys.executable, "-m", "pytest", str(ROOT / rel), "-q", "--tb=no"]
+    cmd = [sys.executable, "-m", "pytest", str(ROOT / "tests" / rel), "-q", "--tb=no"]
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env=env)
     tail = (proc.stdout or "").strip().splitlines()
     summary = tail[-1] if tail else ""
