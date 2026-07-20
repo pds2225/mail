@@ -3765,6 +3765,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "deadline_status": deadline_status,
         "region_status": region_status,
         "industry_status": "matched" if group_keyword_pass or matched_keywords or priority_keywords else "not_matched",
+        # 그룹 or/and 키워드 게이트 통과 여부(순수). INDUSTRY_NOT_MATCHED 는 키워드 미스(3682행)와
+        # 지원유형 불일치(3685행) 둘 다에서 붙어 코드만으론 구분 불가 → 소비측(feedback_suggest)이
+        # '진짜 키워드 미스 vs 지원유형 불일치'를 가르도록 게이트 결과 자체를 노출한다.
+        "group_keyword_pass": group_keyword_pass,
         "matched_keywords": matched_keywords,
         "excluded_keywords": excluded_keywords,
         "priority_keyword": bool(priority_keywords),
