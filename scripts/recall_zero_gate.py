@@ -37,7 +37,7 @@ def _run_pytest(suite: str) -> dict:
     env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
     for key in ("BIZINFO_API_KEY", "ANTHROPIC_API_KEY", "GMAIL_ADDRESS", "GMAIL_APP_PASSWORD"):
         env.setdefault(key, "gate-check")
-    cmd = [sys.executable, "-m", "pytest", str(ROOT / suite), "-q", "--tb=no", "--runxfail"]
+    cmd = [sys.executable, "-m", "pytest", str(ROOT / "tests" / suite), "-q", "--tb=no", "--runxfail"]
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env=env)
     tail = (proc.stdout or "") + (proc.stderr or "")
     summary = tail.strip().splitlines()[-1] if tail.strip() else ""
