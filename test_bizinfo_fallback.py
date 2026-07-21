@@ -88,3 +88,58 @@ def test_datagokr_requires_key(monkeypatch):
         assert False
     except RuntimeError as e:
         assert "DATA_GO_KR_KEY" in str(e)
+
+
+def test_empty_fallback_does_not_hide_direct_failure(monkeypatch):
+    """직결 하드 실패 + 폴백 빈 결과 → 0건으로 숨기지 않고 직결 예외 재발생(수집실패 신호)."""
+    def boom(s):
+        raise RuntimeError("timeout")
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct", boom)
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: [])   # 폴백도 0건
+    try:
+        m.fetch_bizinfo(SITE)
+        assert False, "직결 하드 실패가 0건에 묻히면 안 됨"
+    except RuntimeError as e:
+        assert "timeout" in str(e)
+
+
+def test_datagokr_error_envelope_detected():
+    """data.go.kr 200-OK 에러 봉투(resultCode/returnReasonCode)를 에러로 인식."""
+    # 표준 header
+    assert m._datagokr_error(
+        {"response": {"header": {"resultCode": "30", "resultMsg": "SERVICE KEY IS NOT REGISTERED"}}})
+    # 레거시 cmmMsgHeader
+    assert m._datagokr_error(
+        {"OpenAPI_ServiceResponse": {"cmmMsgHeader": {"returnReasonCode": "22", "errMsg": "LIMITED"}}})
+    # 성공 코드는 에러 아님
+    assert m._datagokr_error({"response": {"header": {"resultCode": "00", "resultMsg": "NORMAL"}}}) == ""
+    assert m._datagokr_error({"response": {"header": {"resultCode": "0000"}}}) == ""
+    assert m._datagokr_error({}) == ""
+
+
+def test_datagokr_raises_on_error_header(monkeypatch):
+    """폴백이 에러 봉투를 받으면(빈 items) '진짜 0건'이 아니라 RuntimeError."""
+    class _Resp:
+        def json(self):
+            return {"response": {"header": {"resultCode": "30", "resultMsg": "NO KEY"}},
+                    "body": {"items": ""}}
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    monkeypatch.setattr(m, "_http_get", lambda *a, **k: _Resp())
+    try:
+        m._fetch_bizinfo_datagokr(SITE)
+        assert False, "에러 봉투는 예외여야 함"
+    except RuntimeError as e:
+        assert "data.go.kr 오류" in str(e)
+
+
+def test_datagokr_happy_path(monkeypatch):
+    """정상 header + items → 파싱 성공."""
+    class _Resp:
+        def json(self):
+            return {"response": {"header": {"resultCode": "00"},
+                    "body": {"items": {"item": [{"pblancId": "x1", "pblancNm": "T"}]}}}}
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    monkeypatch.setattr(m, "_http_get", lambda *a, **k: _Resp())
+    out = m._fetch_bizinfo_datagokr({**SITE, "datagokr_num_rows": 500})
+    assert len(out) == 1 and out[0]["id"] == "x1"

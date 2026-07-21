@@ -1367,6 +1367,28 @@ def _datagokr_rows(data: dict) -> list[dict]:
     return rows or []
 
 
+def _datagokr_error(data: dict) -> str:
+    """data.go.kr 200-OK 에러 봉투에서 에러 메시지를 뽑는다(성공/무에러면 '').
+
+    공공데이터포털은 인증키오류·트래픽초과 등을 HTTP 200 + header.resultCode 로 준다.
+    이를 안 보면 빈 items 를 '정상 0건'으로 오인해(직결 reqErr 과 달리) 수집실패를 놓친다.
+    성공 코드: '00'/'0000'(표준 header) · '00'(레거시 cmmMsgHeader).
+    """
+    if not isinstance(data, dict):
+        return ""
+    hdr = (data.get("response") or {}).get("header") if "response" in data else None
+    if isinstance(hdr, dict):
+        code = str(hdr.get("resultCode", "")).strip()
+        if code and code not in ("00", "0000"):
+            return f"{code} {hdr.get('resultMsg', '')}".strip()
+    cmm = (data.get("OpenAPI_ServiceResponse") or {}).get("cmmMsgHeader")
+    if isinstance(cmm, dict):
+        code = str(cmm.get("returnReasonCode", "")).strip()
+        if code and code not in ("00", "0000"):
+            return f"{code} {cmm.get('errMsg', cmm.get('returnAuthMsg', ''))}".strip()
+    return ""
+
+
 def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
     """공공데이터포털(data.go.kr) 기업마당 지원사업정보 폴백 수집(영구 경로).
 
@@ -1398,6 +1420,12 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
             if items:
                 break
             raise RuntimeError(f"기업마당 data.go.kr JSON 파싱 실패: {e}") from e
+        # 직결 reqErr 과 동형: 200-OK 에러 봉투(인증키오류·트래픽초과)는 '진짜 0건'과 구분해 올린다.
+        if err := _datagokr_error(data):
+            if items:
+                log.error("기업마당 data.go.kr 오류(page %d): %s — 부분 %d건", page, err, len(items))
+                break
+            raise RuntimeError(f"기업마당 data.go.kr 오류: {err}")
         rows = _datagokr_rows(data)
         if not rows:
             break
@@ -1439,8 +1467,15 @@ def fetch_bizinfo(site: dict) -> list[dict]:
     if DATA_GO_KR_KEY:
         try:
             fb = _fetch_bizinfo_datagokr(site)
-            log.info("%s: %d건 (data.go.kr 폴백)", site["name"], len(fb))
-            return fb
+            if fb:
+                log.info("%s: %d건 (data.go.kr 폴백)", site["name"], len(fb))
+                return fb
+            # 폴백이 빈 결과: 직결이 하드 실패였다면 0건으로 숨기지 않고 '수집실패'로 올린다.
+            #   (직결이 정상 0건이었으면 direct_err 없음 → 아래서 [] 반환.)
+            if direct_err is None:
+                log.info("%s: 0건", site["name"])
+                return items
+            log.error("기업마당 data.go.kr 폴백 0건 — 직결 하드 실패 재발생(수집실패로 표기)")
         except Exception as e:  # noqa: BLE001
             log.error("기업마당 data.go.kr 폴백도 실패: %s", e)
 
