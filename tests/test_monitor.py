@@ -807,51 +807,6 @@ def test_filter_for_group_diagnostics_returns_excluded_summary_for_dry_run():
     assert "DISTRICT_NOT_ELIGIBLE" in summary
 
 
-# ── DebouncedCallback 동시 실행 격리 테스트 ────────────────────────────────────
-def test_debounced_callback_serialises_concurrent_fires():
-    """
-    두 타이머 스레드가 동시에 _fire()를 호출해도 callback이 겹치지 않아야 한다.
-
-    수정 전: _exec_lock 없음 → 두 callback 동시 실행 가능 → 중복 Sheets 행 기록
-    수정 후: _exec_lock 으로 직렬화 → 두 번째 fire는 첫 번째 완료 후 실행
-    """
-    import threading
-    from customer_intake.inbox_watch import DebouncedCallback
-
-    overlap_detected = threading.Event()
-    inside = threading.Event()
-    call_count = [0]
-    lock = threading.Lock()
-
-    def slow_callback():
-        # Mark entry and check for overlap
-        with lock:
-            call_count[0] += 1
-            if inside.is_set():
-                overlap_detected.set()
-            inside.set()
-        try:
-            threading.Event().wait(timeout=0.1)  # simulate slow work
-        finally:
-            inside.clear()
-
-    # Use a zero-delay debounce to make two fires easy to trigger
-    debounced = DebouncedCallback(delay_sec=0, callback=slow_callback)
-
-    # Trigger two fires in rapid succession
-    t1 = threading.Thread(target=debounced._fire)
-    t2 = threading.Thread(target=debounced._fire)
-    t1.start()
-    t2.start()
-    t1.join()
-    t2.join()
-
-    assert not overlap_detected.is_set(), (
-        "두 _fire() 호출이 동시에 callback을 실행했습니다 — 중복 처리 버그"
-    )
-    assert call_count[0] == 2, "두 fire 모두 실행되어야 합니다 (직렬화, 누락 아님)"
-
-
 # ── 작업 A·C: 키워드 보강 회귀 테스트 ──────────────────────────────────────────
 
 def test_open_deadline_terms_new_items_positive():

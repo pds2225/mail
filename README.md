@@ -27,7 +27,7 @@
 |------|---------|------|
 | **① 공고 수집·필터·메일** | 지원사업 공고를 모아 우리 회사에 맞는 것만 메일로 발송 | 핵심 기능 (`monitor.py`) |
 | **② 정책자금 점검** | 소상공인시장진흥공단(소진공) 정책자금 공고를 따로 점검 | `loan/` 폴더 |
-| **③ 고객사 서류 자동 입력** | 사업자등록증 등 서류 사진을 읽어 구글 시트에 자동 정리 | `customer_intake` (메일 기능과 별개) |
+| **③ 고객사 서류 자동 입력** | 사업자등록증 등 서류 사진을 읽어 구글 시트에 자동 정리 | → **`D:\v_up\customer_intake`** 로 이관 (별도 도구) |
 
 ---
 
@@ -62,18 +62,12 @@
 
 ---
 
-## 6. 고객사 서류 자동 입력 (③번 기능, 일상 사용법)
+## 6. 고객사 서류 자동 입력 (③번 기능)
 
-사업자등록증 같은 서류를 폴더에 넣기만 하면, 글자를 읽어서 구글 시트에 자동으로 정리해 줍니다.
-
-1. 서류 파일(PDF/사진)을 **`D:\customer_intake_inbox`** 폴더에 넣습니다.
-2. PC가 켜져 있으면 백그라운드에서 **자동으로 처리**됩니다.
-3. 결과 확인 폴더:
-   - 성공 → `D:\customer_intake_done`
-   - 실패 → `D:\customer_intake_failed`
-   - 보고서 → `D:\customer_intake_reports`
-
-> 자세한 설치·복구 방법은 `docs/CUSTOMER_INTAKE.md` 와 `D:\mail` 폴더의 `install_customer_intake_autostart.ps1` 등 도우미 파일을 참고하세요.
+> **이 기능은 `D:\v_up\customer_intake` 로 이관되었습니다.**
+> 메일 발송(`monitor.py`)과 코드가 전혀 얽히지 않은 별도 도구라 저장소를 분리했습니다.
+> 사용법·설치·복구는 이관된 위치의 `customer_intake\CUSTOMER_INTAKE.md` 를 참고하세요.
+> (inbox·done·failed·reports 폴더 경로 `D:\customer_intake_*` 는 그대로입니다.)
 
 ---
 
