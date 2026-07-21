@@ -133,6 +133,36 @@ def test_datagokr_raises_on_error_header(monkeypatch):
         assert "data.go.kr 오류" in str(e)
 
 
+def test_legit_direct_zero_skips_fallback(monkeypatch):
+    """직결이 정상 0건(예외 아님)이면 폴백을 타지 않는다 — 정상 0 이 뒤집히면 안 됨."""
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct", lambda s: [])   # 정상 0건
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    called = {"fb": False}
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr",
+                        lambda s: called.__setitem__("fb", True) or [m._item("z", "Z", "", "", "", "", s["name"])])
+    out = m.fetch_bizinfo(SITE)
+    assert out == [] and called["fb"] is False, "정상 0건은 폴백 없이 그대로 [] 여야 함"
+
+
+def test_datagokr_retries_transient_failure(monkeypatch):
+    """폴백도 api_retries 만큼 재시도(첫 시도 None → 재시도 성공)."""
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    monkeypatch.setattr(m, "_HTTP_RETRY_BACKOFF", 0)  # 테스트 즉시 실행
+    calls = {"n": 0}
+
+    class _Resp:
+        def json(self):
+            return {"response": {"header": {"resultCode": "00"},
+                    "body": {"items": {"item": [{"pblancId": "r1", "pblancNm": "T"}]}}}}
+
+    def fake_get(*a, **k):
+        calls["n"] += 1
+        return None if calls["n"] == 1 else _Resp()   # 1회차 실패 → 재시도 성공
+    monkeypatch.setattr(m, "_http_get", fake_get)
+    out = m._fetch_bizinfo_datagokr({**SITE, "api_retries": 2, "datagokr_max_pages": 1})
+    assert len(out) == 1 and calls["n"] == 2   # 재시도로 성공(1 실패 + 1 성공)
+
+
 def test_datagokr_happy_path(monkeypatch):
     """정상 header + items → 파싱 성공."""
     class _Resp:

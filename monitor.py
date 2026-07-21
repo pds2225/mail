@@ -1398,22 +1398,33 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
     """
     if not DATA_GO_KR_KEY:
         raise RuntimeError("DATA_GO_KR_KEY 미설정 — data.go.kr 폴백 비활성")
-    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/mdaExpanBizInfoService/getExpanBizInfo")
+    # 실제 발급 엔드포인트(중기부 1421000/bizinfo). 요청변수 명세가 오퍼레이션마다 달라
+    # 파라미터는 sites.json 의 datagokr_params 로 덮어쓸 수 있게 열어둔다(무코드 튜닝).
+    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/bizinfo")
     rows_key = int(site.get("datagokr_num_rows", 500))
     max_pages = int(site.get("datagokr_max_pages", site.get("api_max_pages", 4)))
     timeout = int(site.get("api_timeout", 30))
+    retries = max(0, int(site.get("api_retries", 2)))
     agg = site.get("is_aggregator", True)
+    extra_params = site.get("datagokr_params", {})
     items: list[dict] = []
     seen_ids: set[str] = set()
     for page in range(1, max_pages + 1):
-        r = _http_get(url, timeout=timeout, params={
-            "serviceKey": DATA_GO_KR_KEY, "returnType": "json", "dataType": "json",
-            "numOfRows": str(rows_key), "pageNo": str(page)})
+        # 직결과 동일하게 일시적 네트워크/5xx 블립은 api_retries 만큼 흡수(백오프).
+        r = None
+        for attempt in range(retries + 1):
+            r = _http_get(url, timeout=timeout, params={
+                "serviceKey": DATA_GO_KR_KEY, "returnType": "json", "dataType": "json",
+                "numOfRows": str(rows_key), "pageNo": str(page), **extra_params})
+            if r is not None:
+                break
+            if attempt < retries:
+                time.sleep(_HTTP_RETRY_BACKOFF * (attempt + 1))
         if r is None:
             if items:
                 log.error("기업마당 data.go.kr 접속 실패(page %d) — 부분 %d건", page, len(items))
                 break
-            raise RuntimeError(f"기업마당 data.go.kr 접속 실패 (page {page})")
+            raise RuntimeError(f"기업마당 data.go.kr 접속 실패 (page {page}, {retries + 1}회 시도)")
         try:
             data = r.json()
         except Exception as e:
@@ -1464,17 +1475,15 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         items = []
         direct_err = e
 
-    if DATA_GO_KR_KEY:
+    # 직결이 하드 실패(direct_err)했을 때만 폴백을 탄다. 직결이 정상 0건이면 그 0 을 신뢰
+    # (폴백을 안 탄다 — 정상 0건이 data.go.kr 비어있음/다른 결과로 뒤집히지 않도록).
+    if direct_err is not None and DATA_GO_KR_KEY:
         try:
             fb = _fetch_bizinfo_datagokr(site)
             if fb:
                 log.info("%s: %d건 (data.go.kr 폴백)", site["name"], len(fb))
                 return fb
-            # 폴백이 빈 결과: 직결이 하드 실패였다면 0건으로 숨기지 않고 '수집실패'로 올린다.
-            #   (직결이 정상 0건이었으면 direct_err 없음 → 아래서 [] 반환.)
-            if direct_err is None:
-                log.info("%s: 0건", site["name"])
-                return items
+            # 폴백도 0건: 직결 하드 실패를 0건으로 숨기지 않고 아래서 예외 재발생(수집실패 신호).
             log.error("기업마당 data.go.kr 폴백 0건 — 직결 하드 실패 재발생(수집실패로 표기)")
         except Exception as e:  # noqa: BLE001
             log.error("기업마당 data.go.kr 폴백도 실패: %s", e)
