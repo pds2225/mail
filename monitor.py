@@ -1400,7 +1400,7 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
         raise RuntimeError("DATA_GO_KR_KEY 미설정 — data.go.kr 폴백 비활성")
     # 실제 발급 엔드포인트(중기부 1421000/bizinfo). 요청변수 명세가 오퍼레이션마다 달라
     # 파라미터는 sites.json 의 datagokr_params 로 덮어쓸 수 있게 열어둔다(무코드 튜닝).
-    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/bizinfo")
+    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/bizinfo/pblancBsnsService")
     rows_key = int(site.get("datagokr_num_rows", 500))
     max_pages = int(site.get("datagokr_max_pages", site.get("api_max_pages", 4)))
     timeout = int(site.get("api_timeout", 30))
