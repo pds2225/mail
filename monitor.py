@@ -78,6 +78,10 @@ def _require_env(key: str) -> str:
     return val
 
 BIZINFO_API_KEY    = _require_env("BIZINFO_API_KEY")
+# 선택: 공공데이터포털(data.go.kr) 기업마당 지원사업정보 서비스키.
+#   bizinfo.go.kr 직결 API 가 GitHub Actions 러너 IP 에서 WAF/지역차단(timeout)될 때의
+#   영구 폴백 경로. 값이 있으면 직결 실패 시 data.go.kr 로 재시도한다(없으면 폴백 비활성).
+DATA_GO_KR_KEY     = os.environ.get("DATA_GO_KR_KEY", "").strip()
 ANTHROPIC_API_KEY  = _require_env("ANTHROPIC_API_KEY")
 GMAIL_ADDRESS      = _require_env("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = _require_env("GMAIL_APP_PASSWORD")
@@ -1236,34 +1240,77 @@ def _item(id_, title, link, author, desc, deadline, source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
 
 
-def fetch_bizinfo(site: dict) -> list[dict]:
-    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
-    #
-    # ★ 실패 신호 규약(커버리지 오탐 방지):
-    #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
-    #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
-    #   fetch_success=False='수집실패'로 분류한다 →
-    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확 표기
-    #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
-    #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
-    #   이미 일부 페이지를 모은 뒤(page 2+) 실패하면 예외 대신 모은 만큼 부분 반환(가용 데이터 보존).
-    #   일시적 5xx/네트워크 블립은 api_retries 만큼 재시도해 흡수(단발 장애로 0건 알림 폭주 차단).
+def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
+    """기업마당 API(직결·data.go.kr 공통) 원소 1건 → 표준 item. 필드명은 두 경로가 동일 계열."""
+    iid = norm(it.get("pblancId", it.get("seq", "")))
+    ttl = norm(it.get("pblancNm", it.get("title", "")))
+    lnk = norm(it.get("pblancUrl", it.get("link", "")))
+    if not iid:
+        iid = f"bizinfo_{stable_id(ttl + lnk)}"
+    posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
+    if posted and len(posted) >= 10:
+        posted = posted[:10]
+    if not posted:
+        posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
+    return _item(
+        iid, ttl, lnk,
+        norm(it.get("jrsdInsttNm", it.get("author", ""))),
+        norm(it.get("bsnsSumryCn", it.get("description", ""))),
+        norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
+        site_name, posted, agg,
+    )
+
+
+def _fetch_bizinfo_direct(site: dict) -> list[dict]:
+    """bizinfo.go.kr 직결 RSS-API 수집(워밍업 세션 + 빠른실패).
+
+    ★ WAF 워밍업: 정부포털은 API 직타를 WAF 가 무응답 tarpit(→timeout) 시키는 경우가 있어,
+      먼저 홈(referer)을 GET 해 쿠키를 받은 **같은 세션**으로 API 를 친다(TIPA WAF 우회와 동형).
+    ★ 빠른실패: 정상 응답은 <2s 다. 차단이면 무한정 매달리지 말고 api_timeout(기본 30s)에 끊어
+      과거 90s×재시도로 실행이 3~4시간 늘어지던 문제를 줄인다(닿으면 그대로 성공).
+    실패 신호 규약은 종전과 동일 — 아무 것도 못 모으고 하드 실패면 RuntimeError.
+    """
     page_unit = int(site.get("api_page_unit", 500))
     max_pages = int(site.get("api_max_pages", 4))
     retries = max(0, int(site.get("api_retries", 2)))
+    timeout = int(site.get("api_timeout", 30))
+    home = site.get("warmup_url", "https://www.bizinfo.go.kr/")
     items: list[dict] = []
     seen_ids: set[str] = set()
     agg = site.get("is_aggregator", True)
     params_base = {"crtfcKey": BIZINFO_API_KEY, "dataType": "json"}
+    hdrs = {**HTTP_HEADERS, "Referer": home}
+
+    def _warm(c: httpx.Client) -> None:
+        try:  # best-effort — 실패해도 API 직타로 진행(쿠키 없이도 되면 그대로 됨)
+            c.get(home, timeout=min(timeout, 15))
+        except Exception as e:  # noqa: BLE001
+            log.debug("기업마당 워밍업 생략(%s)", e)
 
     for page in range(1, max_pages + 1):
         r = None
         for attempt in range(retries + 1):
-            r = _http_get(
-                site["url"],
-                params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
-                timeout=90,
-            )
+            # 매 시도 새 세션(쿠키 초기화) + 워밍업 → API. SSL 폴백 3단계는 종전 유지.
+            for stage in ("strict", "no_verify", "legacy"):
+                verify: Any = True if stage == "strict" else (
+                    False if stage == "no_verify" else _legacy_ssl_ctx())
+                try:
+                    with httpx.Client(timeout=timeout, headers=hdrs,
+                                      follow_redirects=True, verify=verify) as c:
+                        if page == 1 and attempt == 0:
+                            _warm(c)
+                        resp = c.get(site["url"], params={
+                            **params_base, "pageIndex": str(page), "pageUnit": str(page_unit)})
+                        resp.raise_for_status()
+                        r = resp
+                        break
+                except httpx.HTTPStatusError as e:
+                    log.error("접속 실패 %s: %s", site["url"], e)
+                    r = None
+                    break
+                except Exception:  # noqa: BLE001 — SSL/네트워크/타임아웃 → 다음 stage
+                    r = None
+                    continue
             if r is not None:
                 break
             if attempt < retries:
@@ -1291,29 +1338,115 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         if not raw:
             break
         for it in raw:
-            iid = norm(it.get("pblancId", it.get("seq", "")))
-            ttl = norm(it.get("pblancNm", it.get("title", "")))
-            lnk = norm(it.get("pblancUrl", it.get("link", "")))
-            if not iid:
-                iid = f"bizinfo_{stable_id(ttl + lnk)}"
-            if iid in seen_ids:
+            parsed = _bizinfo_parse_item(it, site["name"], agg)
+            if parsed["id"] in seen_ids:
                 continue
-            seen_ids.add(iid)
-            posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
-            if posted and len(posted) >= 10:
-                posted = posted[:10]
-            if not posted:
-                posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-            items.append(_item(
-                iid, ttl, lnk,
-                norm(it.get("jrsdInsttNm", it.get("author", ""))),
-                norm(it.get("bsnsSumryCn", it.get("description", ""))),
-                norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
-                site["name"], posted, agg,
-            ))
+            seen_ids.add(parsed["id"])
+            items.append(parsed)
         if len(raw) < page_unit:
             break
-    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def _datagokr_rows(data: dict) -> list[dict]:
+    """data.go.kr 응답 봉투에서 item 리스트를 꺼낸다(표준 response.body.items.item + 변형 허용)."""
+    if not isinstance(data, dict):
+        return []
+    body = (data.get("response") or {}).get("body") if "response" in data else None
+    rows = None
+    if isinstance(body, dict):
+        items = body.get("items")
+        if isinstance(items, dict):
+            rows = items.get("item")
+        elif isinstance(items, list):
+            rows = items
+    if rows is None:  # 직결과 동일한 jsonArray 형태로 주는 오퍼레이션도 있음
+        rows = data.get("jsonArray")
+    if isinstance(rows, dict):
+        rows = [rows]
+    return rows or []
+
+
+def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
+    """공공데이터포털(data.go.kr) 기업마당 지원사업정보 폴백 수집(영구 경로).
+
+    bizinfo.go.kr 직결이 러너 IP 에서 차단될 때 사용. data.go.kr 은 API 전용 게이트웨이라
+    WAF/지역차단이 없다. 엔드포인트·페이지 파라미터는 발급받은 오퍼레이션에 맞춰 sites.json 에서
+    덮어쓸 수 있게 열어둔다(datagokr_url 등). 서비스키는 DATA_GO_KR_KEY 환경변수.
+    """
+    if not DATA_GO_KR_KEY:
+        raise RuntimeError("DATA_GO_KR_KEY 미설정 — data.go.kr 폴백 비활성")
+    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/mdaExpanBizInfoService/getExpanBizInfo")
+    rows_key = int(site.get("datagokr_num_rows", 500))
+    max_pages = int(site.get("datagokr_max_pages", site.get("api_max_pages", 4)))
+    timeout = int(site.get("api_timeout", 30))
+    agg = site.get("is_aggregator", True)
+    items: list[dict] = []
+    seen_ids: set[str] = set()
+    for page in range(1, max_pages + 1):
+        r = _http_get(url, timeout=timeout, params={
+            "serviceKey": DATA_GO_KR_KEY, "returnType": "json", "dataType": "json",
+            "numOfRows": str(rows_key), "pageNo": str(page)})
+        if r is None:
+            if items:
+                log.error("기업마당 data.go.kr 접속 실패(page %d) — 부분 %d건", page, len(items))
+                break
+            raise RuntimeError(f"기업마당 data.go.kr 접속 실패 (page {page})")
+        try:
+            data = r.json()
+        except Exception as e:
+            if items:
+                break
+            raise RuntimeError(f"기업마당 data.go.kr JSON 파싱 실패: {e}") from e
+        rows = _datagokr_rows(data)
+        if not rows:
+            break
+        for it in rows:
+            parsed = _bizinfo_parse_item(it, site["name"], agg)
+            if parsed["id"] in seen_ids:
+                continue
+            seen_ids.add(parsed["id"])
+            items.append(parsed)
+        if len(rows) < rows_key:
+            break
+    return items
+
+
+def fetch_bizinfo(site: dict) -> list[dict]:
+    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
+    #
+    # ★ 실패 신호 규약(커버리지 오탐 방지):
+    #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
+    #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
+    #   fetch_success=False='수집실패'로 분류한다 →
+    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확 표기
+    #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
+    #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
+    #
+    # ★ 폴백(영구 해결책): bizinfo.go.kr 직결이 러너 IP 에서 WAF/지역차단(timeout)되면,
+    #   DATA_GO_KR_KEY 가 설정된 경우 공공데이터포털(data.go.kr) 경로로 재시도한다(차단 없음).
+    #   직결이 한 건이라도 모으면 그대로 쓰고, 하드 실패했을 때만 폴백을 탄다.
+    try:
+        items = _fetch_bizinfo_direct(site)
+        if items:
+            log.info("%s: %d건", site["name"], len(items))
+            return items
+        direct_err: Exception | None = None
+    except Exception as e:  # noqa: BLE001 — 직결 하드 실패 → 폴백 시도(있으면)
+        items = []
+        direct_err = e
+
+    if DATA_GO_KR_KEY:
+        try:
+            fb = _fetch_bizinfo_datagokr(site)
+            log.info("%s: %d건 (data.go.kr 폴백)", site["name"], len(fb))
+            return fb
+        except Exception as e:  # noqa: BLE001
+            log.error("기업마당 data.go.kr 폴백도 실패: %s", e)
+
+    if direct_err is not None:
+        raise direct_err
+    log.info("%s: 0건", site["name"])
     return items
 
 
