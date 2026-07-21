@@ -63,13 +63,26 @@ def test_direct_fail_no_key_reraises(monkeypatch):
         assert "접속 실패" in str(e)
 
 
-def test_direct_fail_with_key_uses_fallback(monkeypatch):
-    def boom(s):
-        raise RuntimeError("timeout")
-    monkeypatch.setattr(m, "_fetch_bizinfo_direct", boom)
+def test_datagokr_primary_used_when_key(monkeypatch):
+    """키 있으면 data.go.kr 우선(검증됨) — 성공하면 bizinfo 직결은 호출하지 않는다."""
     monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
     monkeypatch.setattr(m, "_fetch_bizinfo_datagokr",
-                        lambda s: [m._item("d1", "FB", "", "", "", "", s["name"])])
+                        lambda s: [m._item("g1", "DG", "", "", "", "", s["name"])])
+    called = {"direct": False}
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct",
+                        lambda s: called.__setitem__("direct", True) or [m._item("x", "X", "", "", "", "", s["name"])])
+    out = m.fetch_bizinfo(SITE)
+    assert len(out) == 1 and out[0]["id"] == "g1" and called["direct"] is False
+
+
+def test_fall_to_direct_when_datagokr_hard_fails(monkeypatch):
+    """data.go.kr 이 하드 실패하면 bizinfo 직결로 폴백한다."""
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    def boom(s):
+        raise RuntimeError("data.go.kr 오류")
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", boom)
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct",
+                        lambda s: [m._item("d1", "DIRECT", "", "", "", "", s["name"])])
     out = m.fetch_bizinfo(SITE)
     assert len(out) == 1 and out[0]["id"] == "d1"
 
@@ -90,18 +103,20 @@ def test_datagokr_requires_key(monkeypatch):
         assert "DATA_GO_KR_KEY" in str(e)
 
 
-def test_empty_fallback_does_not_hide_direct_failure(monkeypatch):
-    """직결 하드 실패 + 폴백 빈 결과 → 0건으로 숨기지 않고 직결 예외 재발생(수집실패 신호)."""
-    def boom(s):
-        raise RuntimeError("timeout")
-    monkeypatch.setattr(m, "_fetch_bizinfo_direct", boom)
+def test_both_paths_hard_fail_raises(monkeypatch):
+    """두 경로 모두 하드 실패 → 0건으로 숨기지 않고 예외를 올린다(커버리지 수집실패 신호)."""
     monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
-    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: [])   # 폴백도 0건
+    def dg_boom(s):
+        raise RuntimeError("data.go.kr 오류: 트래픽초과")
+    def direct_boom(s):
+        raise RuntimeError("기업마당 API 접속 실패 (timeout)")
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", dg_boom)
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct", direct_boom)
     try:
         m.fetch_bizinfo(SITE)
-        assert False, "직결 하드 실패가 0건에 묻히면 안 됨"
+        assert False, "둘 다 하드 실패면 예외여야 함"
     except RuntimeError as e:
-        assert "timeout" in str(e)
+        assert "data.go.kr 오류" in str(e)   # 첫 경로(primary) 예외를 대표로 올린다
 
 
 def test_datagokr_error_envelope_detected():
@@ -133,15 +148,15 @@ def test_datagokr_raises_on_error_header(monkeypatch):
         assert "data.go.kr 오류" in str(e)
 
 
-def test_legit_direct_zero_skips_fallback(monkeypatch):
-    """직결이 정상 0건(예외 아님)이면 폴백을 타지 않는다 — 정상 0 이 뒤집히면 안 됨."""
-    monkeypatch.setattr(m, "_fetch_bizinfo_direct", lambda s: [])   # 정상 0건
+def test_datagokr_legit_zero_trusted(monkeypatch):
+    """primary(data.go.kr)가 정상 0건(예외 아님)이면 그 응답을 신뢰 — 직결로 안 넘어간다."""
     monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
-    called = {"fb": False}
-    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr",
-                        lambda s: called.__setitem__("fb", True) or [m._item("z", "Z", "", "", "", "", s["name"])])
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: [])   # 정상 0건(권위)
+    called = {"direct": False}
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct",
+                        lambda s: called.__setitem__("direct", True) or [m._item("z", "Z", "", "", "", "", s["name"])])
     out = m.fetch_bizinfo(SITE)
-    assert out == [] and called["fb"] is False, "정상 0건은 폴백 없이 그대로 [] 여야 함"
+    assert out == [] and called["direct"] is False, "primary 정상 0건은 직결로 안 넘어가야 함"
 
 
 def test_datagokr_retries_transient_failure(monkeypatch):

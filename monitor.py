@@ -1297,8 +1297,9 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
                 try:
                     with httpx.Client(timeout=timeout, headers=hdrs,
                                       follow_redirects=True, verify=verify) as c:
-                        if page == 1 and attempt == 0:
-                            _warm(c)
+                        # 매 요청이 새 세션(쿠키 초기화)이라 워밍업도 매번 해야 한다 — page 1 에만
+                        # 하면 page 2+·재시도 세션은 WAF 쿠키 없이 직타해 timeout 될 수 있다.
+                        _warm(c)
                         resp = c.get(site["url"], params={
                             **params_base, "pageIndex": str(page), "pageUnit": str(page_unit)})
                         resp.raise_for_status()
@@ -1452,46 +1453,40 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
 
 
 def fetch_bizinfo(site: dict) -> list[dict]:
-    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
+    # 기업마당 수집. 두 경로를 순서대로 시도한다:
+    #   ① DATA_GO_KR_KEY 있으면 data.go.kr(공공데이터포털) 우선 — API 전용 게이트웨이라
+    #      러너 IP WAF/지역차단이 없다(라이브 검증됨). bizinfo.go.kr 직결은 러너에서 거의 항상
+    #      timeout 되므로, 직결을 먼저 시도하면 매 실행 ~90초를 헛되이 버린다 → data.go.kr 우선.
+    #   ② 직결(bizinfo.go.kr RSS-API) — 키가 없거나 data.go.kr 이 하드 실패했을 때의 경로.
     #
-    # ★ 실패 신호 규약(커버리지 오탐 방지):
-    #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
-    #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
-    #   fetch_success=False='수집실패'로 분류한다 →
-    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확 표기
-    #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
-    #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
-    #
-    # ★ 폴백(영구 해결책): bizinfo.go.kr 직결이 러너 IP 에서 WAF/지역차단(timeout)되면,
-    #   DATA_GO_KR_KEY 가 설정된 경우 공공데이터포털(data.go.kr) 경로로 재시도한다(차단 없음).
-    #   직결이 한 건이라도 모으면 그대로 쓰고, 하드 실패했을 때만 폴백을 탄다.
-    try:
-        items = _fetch_bizinfo_direct(site)
-        if items:
-            log.info("%s: %d건", site["name"], len(items))
-            return items
-        direct_err: Exception | None = None
-    except Exception as e:  # noqa: BLE001 — 직결 하드 실패 → 폴백 시도(있으면)
-        items = []
-        direct_err = e
+    # ★ 실패 신호 규약(커버리지 오탐 방지) — 한 경로가 '예외 없이' 완료하면(0건이어도) 그 응답을
+    #   권위 있는 것으로 신뢰해 그대로 반환한다(정상 0건 = '진짜 0건' → [] 반환, 다음 경로로 안 넘어감).
+    #   경로가 하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr/resultCode 오류)하면 다음 경로로 넘어가고,
+    #   모든 경로가 하드 실패하면 첫 예외를 올린다 → 상위(fetch_all)가 fetch_success=False='수집실패'로
+    #   분류(커버리지 알림 정확 표기 + baseline 오염 방지).
+    if DATA_GO_KR_KEY:
+        sources = [("data.go.kr", _fetch_bizinfo_datagokr), ("bizinfo 직결", _fetch_bizinfo_direct)]
+    else:
+        sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
-    # 직결이 하드 실패(direct_err)했을 때만 폴백을 탄다. 직결이 정상 0건이면 그 0 을 신뢰
-    # (폴백을 안 탄다 — 정상 0건이 data.go.kr 비어있음/다른 결과로 뒤집히지 않도록).
-    if direct_err is not None and DATA_GO_KR_KEY:
+    hard_err: Exception | None = None
+    for label, fn in sources:
         try:
-            fb = _fetch_bizinfo_datagokr(site)
-            if fb:
-                log.info("%s: %d건 (data.go.kr 폴백)", site["name"], len(fb))
-                return fb
-            # 폴백도 0건: 직결 하드 실패를 0건으로 숨기지 않고 아래서 예외 재발생(수집실패 신호).
-            log.error("기업마당 data.go.kr 폴백 0건 — 직결 하드 실패 재발생(수집실패로 표기)")
-        except Exception as e:  # noqa: BLE001
-            log.error("기업마당 data.go.kr 폴백도 실패: %s", e)
+            got = fn(site)
+        except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
+            log.error("기업마당 %s 실패: %s", label, e)
+            if hard_err is None:
+                hard_err = e
+            continue
+        # 예외 없이 완료 = 권위 있는 응답(0건이어도 신뢰) → 그대로 반환.
+        log.info("%s: %d건 (%s)", site["name"], len(got), label)
+        return got
 
-    if direct_err is not None:
-        raise direct_err
+    # 모든 경로가 하드 실패 → 수집실패 신호로 올린다.
+    if hard_err is not None:
+        raise hard_err
     log.info("%s: 0건", site["name"])
-    return items
+    return []
 
 
 def fetch_myfair_legacy(site: dict) -> list[dict]:
