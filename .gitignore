@@ -20,10 +20,6 @@ reports/review/*_send.csv
 reports/review/*_mail_draft.txt
 # digest 품질 계측 산출물 (런타임 생성)
 workspace/digest_quality_*.json
-customer_intake/reports/
-customer_intake/processed_files.json
-customer_intake/_test_done/
-customer_intake/_test_reports/
 
 # Python
 __pycache__/
