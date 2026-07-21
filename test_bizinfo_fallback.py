@@ -44,6 +44,12 @@ def test_parse_item_common_fields():
 
 
 def test_direct_success_skips_fallback(monkeypatch):
+    """키 없음(직결 전용): 직결 성공이면 data.go.kr 은 호출하지 않는다.
+
+    ★ DATA_GO_KR_KEY 를 명시적으로 비운다 — 환경(.env)에 키가 있으면 data.go.kr 우선이라
+      직결 mock 이 안 돌아 이 테스트가 무의미해진다(순서 의존 제거).
+    """
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "")
     monkeypatch.setattr(m, "_fetch_bizinfo_direct", lambda s: [m._item("i1", "T", "", "", "", "", s["name"])])
     called = {"fb": False}
     monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: called.__setitem__("fb", True) or [])
