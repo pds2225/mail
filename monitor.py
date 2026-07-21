@@ -114,7 +114,9 @@ HTTP_HEADERS   = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
+    # brotli(br) 미광고: httpx 런타임에 brotli 디코더가 없어 서버가 br 로 응답하면
+    # 압축 바이트를 그대로 받아 파싱 0건이 됨(예: myfair). 디코딩 가능한 gzip/deflate 만 광고한다.
+    "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
     "Sec-Fetch-Dest": "document",
