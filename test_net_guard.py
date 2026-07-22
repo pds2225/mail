@@ -71,3 +71,26 @@ def test_empty_or_hostless():
 def test_is_safe_shortcut():
     assert ng.is_safe("https://8.8.8.8/") is True
     assert ng.is_safe("http://127.0.0.1/") is False
+
+
+# ── 위험 보강(de-risk): 킬스위치·화이트리스트·reserved 오탐 제거 ──
+def test_kill_switch_disables_guard(monkeypatch):
+    """MONITOR_NO_NET_GUARD=1 이면 사설 IP 도 통과(라이브 오차단 즉시 복구)."""
+    monkeypatch.setenv("MONITOR_NO_NET_GUARD", "1")
+    assert ng.check_url("http://127.0.0.1/")[0] is True
+    assert ng.check_url("http://10.0.0.1/")[0] is True
+
+
+def test_host_allowlist_overrides_block(monkeypatch):
+    """NET_GUARD_ALLOW_HOSTS 에 있으면 무조건 통과(정상 소스 오차단 escape hatch)."""
+    monkeypatch.setenv("NET_GUARD_ALLOW_HOSTS", "internal.gov.kr, other.example")
+    ok, why = ng.check_url("http://internal.gov.kr/notice")
+    assert ok is True and "allowlist" in why
+
+
+def test_critical_ranges_still_blocked():
+    """de-risk 후에도 SSRF 핵심 대역은 여전히 차단(커버리지 회귀 가드)."""
+    for ip in ("10.0.0.1", "127.0.0.1", "169.254.169.254", "0.0.0.0",
+               "192.168.0.1", "172.16.0.1"):
+        assert ng._ip_blocked(ip) is True, ip
+    assert ng._ip_blocked("8.8.8.8") is False and ng._ip_blocked("93.184.216.34") is False

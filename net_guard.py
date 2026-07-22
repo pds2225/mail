@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import ipaddress
+import os
 import socket
 from urllib.parse import urlparse
 
@@ -28,7 +29,12 @@ _ALLOW_SCHEMES = ("http", "https")
 
 
 def _ip_blocked(value: str) -> bool:
-    """IP 문자열이 사설/루프백/링크로컬/예약/멀티캐스트/미지정이면 True. IP 아니면 False."""
+    """IP 문자열이 SSRF 위험 대역(사설/루프백/링크로컬/예약/멀티캐스트/미지정)이면 True.
+
+    IPv4 예약대역(240/4)은 Python 상 is_private 이기도 해 어차피 차단되므로, 커버리지를 위해
+    원 판정을 유지한다. '정상 소스 오차단' 우려는 check_url 의 킬스위치·화이트리스트로 무코드
+    복구할 수 있게 하여 완화한다(실 소스는 공인 IP 라 오탐 확률 자체가 낮음).
+    """
     try:
         a = ipaddress.ip_address(value)
     except ValueError:
@@ -41,8 +47,24 @@ def _ip_blocked(value: str) -> bool:
     )
 
 
+def _disabled() -> bool:
+    """킬스위치 — MONITOR_NO_NET_GUARD=1 이면 가드 전체 비활성(라이브 오차단 시 즉시 복구)."""
+    return os.environ.get("MONITOR_NO_NET_GUARD", "").strip() in ("1", "true", "True")
+
+
+def _host_allowlisted(host: str) -> bool:
+    """운영자 화이트리스트 — NET_GUARD_ALLOW_HOSTS(쉼표구분)에 있으면 무조건 통과(escape hatch)."""
+    allow = os.environ.get("NET_GUARD_ALLOW_HOSTS", "")
+    if not allow:
+        return False
+    hosts = {h.strip().lower() for h in allow.split(",") if h.strip()}
+    return host.lower() in hosts
+
+
 def check_url(url: str, *, allow_schemes: tuple[str, ...] = _ALLOW_SCHEMES) -> tuple[bool, str]:
     """(안전여부, 사유). 안전하면 (True, 'ok...'), 아니면 (False, 차단사유)."""
+    if _disabled():
+        return True, "ok(net_guard 비활성)"
     p = urlparse(url or "")
     scheme = (p.scheme or "").lower()
     if scheme not in allow_schemes:
@@ -50,6 +72,8 @@ def check_url(url: str, *, allow_schemes: tuple[str, ...] = _ALLOW_SCHEMES) -> t
     host = p.hostname
     if not host:
         return False, "호스트 없음"
+    if _host_allowlisted(host):                 # 운영자 화이트리스트 우선(오차단 escape hatch)
+        return True, "ok(allowlist)"
     if host.lower() in _BLOCKED_HOSTS:
         return False, f"차단 호스트: {host}"
     if _ip_blocked(host):                       # IP 리터럴 직접 차단
