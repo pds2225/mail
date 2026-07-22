@@ -7,7 +7,7 @@ net_guard.check_url 이 사설/내부 IP·비 http(s)·메타데이터 호스트
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import net_guard as ng  # noqa: E402
 
 
