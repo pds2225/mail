@@ -529,6 +529,24 @@ def load_json(path: Path, default):
         log.warning("%s 로드 실패: %s", path, e)
         return default
 
+
+def _pii_config(env_var: str, file_loader):
+    """PII 격리(#96·#149): 환경변수(JSON 문자열)가 있으면 그걸 우선 쓰고, 없으면 파일에서 읽는다.
+
+    실 수신자(groups.json)·기업 프로필(companies.json)을 Git 에 평문 커밋하는 대신 GitHub Secret
+    등 환경변수로 주입할 수 있게 한다. 파싱 실패 시 파일로 폴백(운영 중단 방지).
+    (워크플로에 secret 을 넘기고 실데이터 파일을 .gitignore 하는 배선은 Part B — monitor.yml/.gitignore.)
+    """
+    raw = os.environ.get(env_var, "").strip()
+    if raw:
+        try:
+            data = json.loads(raw)
+            log.info("%s 환경변수에서 로드(파일 대신 — PII 격리)", env_var)
+            return data
+        except Exception as e:  # noqa: BLE001
+            log.error("%s 파싱 실패 — 파일로 폴백: %s", env_var, e)
+    return file_loader()
+
 def save_json(path: Path, data) -> None:
     content = json.dumps(data, ensure_ascii=False, indent=2)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -1133,8 +1151,9 @@ def load_sites() -> list[dict]:
     return active
 
 def load_groups() -> list[dict]:
-    groups = load_json(GROUPS_PATH, [])
-    active = [g for g in groups if g.get("active", True)]
+    # PII 격리(#149): 실 수신자가 담긴 그룹 설정을 환경변수(MAIL_GROUPS_JSON)로 주입 가능.
+    groups = _pii_config("MAIL_GROUPS_JSON", lambda: load_json(GROUPS_PATH, []))
+    active = [g for g in (groups or []) if g.get("active", True)]
     log.info("그룹: %d개 활성", len(active))
     return active
 
@@ -4749,7 +4768,9 @@ def execute_monitor(
     companies_by_id: dict = {}
     if settings.get("company_match_enabled") and _CM_OK:
         try:
-            companies_by_id = {c["id"]: c for c in _load_companies()}
+            # PII 격리(#96): 기업 프로필을 환경변수(MAIL_COMPANIES_JSON)로 주입 가능(없으면 파일).
+            _companies = _pii_config("MAIL_COMPANIES_JSON", _load_companies)
+            companies_by_id = {c["id"]: c for c in (_companies or [])}
             log.info("기업 프로필 로드: %d개 (정밀 매칭 활성)", len(companies_by_id))
         except Exception as e:
             log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
