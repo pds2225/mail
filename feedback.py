@@ -28,12 +28,18 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote, unquote
 
+import feedback_token  # O/X 토큰 HMAC 서명·검증(#132, opt-in: MAIL_FEEDBACK_SECRET)
+
 BASE_DIR = Path(__file__).resolve().parent
 LABELS_PATH = BASE_DIR / "data" / "golden" / "feedback_labels.jsonl"
 
 SUBJECT_TAG = "[MAIL-FB]"
 # 메일 클라이언트가 제목 앞에 Re:/전달: 등을 붙여도 잡히게 search 사용.
-_SUBJECT_RE = re.compile(r"\[\s*MAIL-FB\s*\]\s*([OX])\s+([A-Za-z0-9_.:\-%]{1,120})", re.IGNORECASE)
+# nid(공백 없음) 뒤에 선택적 16-hex 서명 토큰이 올 수 있다(#132).
+_SUBJECT_RE = re.compile(
+    r"\[\s*MAIL-FB\s*\]\s*([OX])\s+([A-Za-z0-9_.:\-%]{1,120})(?:\s+([0-9a-fA-F]{16}))?",
+    re.IGNORECASE,
+)
 
 # digest 하단 피드백 목록 상한(표시 전용 — 게이트·발송량과 무관)
 MAX_FEEDBACK_ITEMS = 40
@@ -56,9 +62,16 @@ def normalize_verdict(value: str) -> str:
 
 
 def feedback_mailto(to_addr: str, verdict: str, notice_id: str) -> str:
-    """클릭하면 '제목이 채워진 메일 작성창'이 열리는 mailto 링크(발송은 사용자가 직접)."""
+    """클릭하면 '제목이 채워진 메일 작성창'이 열리는 mailto 링크(발송은 사용자가 직접).
+
+    MAIL_FEEDBACK_SECRET 이 설정되면 제목 끝에 HMAC 서명 토큰을 붙여 위조를 막는다(#132).
+    """
     v = normalize_verdict(verdict) or "O"
-    subject = f"{SUBJECT_TAG} {v} {str(notice_id).strip()}"
+    nid = str(notice_id).strip()
+    subject = f"{SUBJECT_TAG} {v} {nid}"
+    sig = feedback_token.sign(v, nid)
+    if sig:
+        subject += f" {sig}"
     return f"mailto:{quote(str(to_addr).strip())}?subject={quote(subject, safe='')}"
 
 
@@ -114,7 +127,12 @@ def parse_feedback_subject(subject: str) -> dict | None:
     nid = unquote(m.group(2)).strip().rstrip(".,;)")
     if not nid:
         return None
-    return {"verdict": m.group(1).upper(), "id": nid}
+    verdict = m.group(1).upper()
+    # HMAC 검증(#132): MAIL_FEEDBACK_SECRET 설정 시 서명 없거나 틀리면 위조로 간주해 버린다.
+    # 키 미설정이면 verify 는 항상 True(하위호환 — 서명 없던 기존 피드백도 그대로 수집).
+    if not feedback_token.verify(verdict, nid, m.group(3)):
+        return None
+    return {"verdict": verdict, "id": nid}
 
 
 def load_feedback_labels(path: Path | None = None) -> dict[str, dict]:
