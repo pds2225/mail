@@ -29,6 +29,7 @@ except ImportError:
     _CM_OK = False
 
 import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
+import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -1188,6 +1189,10 @@ def _legacy_ssl_ctx() -> ssl.SSLContext:
 
 def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **kwargs) -> httpx.Response | None:
     """GET with 3-stage SSL fallback (bizinfo API·JSON 등 _soup 외 호출용)."""
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20): 사설/내부 IP·비 http(s) 차단
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     last_err: Exception | None = None
     for stage in ("strict", "no_verify", "legacy"):
@@ -1197,6 +1202,9 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
             with httpx.Client(timeout=timeout, headers=hdrs, follow_redirects=True,
                               verify=verify) as c:
                 r = c.get(url, **kwargs)
+                if not net_guard.is_safe(str(r.url)):  # 리다이렉트 최종 호스트 재검사
+                    log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url)
+                    return None
                 r.raise_for_status()
                 return r
         except httpx.HTTPStatusError as e:
@@ -1210,6 +1218,10 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
 
 
 def _soup(url: str, extra_headers: dict | None = None, **kwargs):
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20)
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
     # 정상 사이트는 (1)에서 즉시 성공 → 기존 동작·속도 보존. SSL 실패만 폴백.
@@ -1225,7 +1237,10 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
             try:
                 with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
                                   verify=verify) as c:
-                    r = c.get(url, **kwargs); r.raise_for_status()
+                    r = c.get(url, **kwargs)
+                    if not net_guard.is_safe(str(r.url)):   # 리다이렉트 최종 호스트 재검사
+                        log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url); return None
+                    r.raise_for_status()
                     return BeautifulSoup(r.text, "html.parser")
             except httpx.HTTPStatusError as e:
                 log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
