@@ -12,10 +12,12 @@ on:
           - 'true'
           - 'false'
 
-  schedule:
-    # 매일 오전 9시 KST (UTC 00:00)
-    # 주의: AUTO_DEV_PAT Secret 미설정 시 github.token 으로 fallback (PR 생성 권한 제한될 수 있음)
-    - cron: '0 0 * * *'
+  # schedule 트리거 제거(2026-07): AUTO_DEV_PAT 만료로 매일 checkout 단계에서 실패했고,
+  # AUTO_DEV_AGENT="false"(에이전트 미연동)라 스케줄 실행이 실질 작업을 못 함.
+  # 필요 시 위 workflow_dispatch 로 수동 실행 가능. 재가동하려면 유효한 AUTO_DEV_PAT 등록 후
+  # 아래 schedule 블록을 복구할 것.
+  # schedule:
+  #   - cron: '0 0 * * *'   # 매일 오전 9시 KST (UTC 00:00)
 
 concurrency:
   group: auto-dev-queue
