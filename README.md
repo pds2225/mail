@@ -26,7 +26,7 @@
 | 기능 | 하는 일 | 비고 |
 |------|---------|------|
 | **① 공고 수집·필터·메일** | 지원사업 공고를 모아 우리 회사에 맞는 것만 메일로 발송 | 핵심 기능 (`monitor.py`) |
-| **② 정책자금 점검** | 소상공인시장진흥공단(소진공) 정책자금 공고를 따로 점검 | `loan/` 폴더 |
+| **② 정책자금 점검** | 소상공인시장진흥공단(소진공) 정책자금 공고를 따로 점검 | → **`D:\v_up\loan`** 로 이관 |
 | **③ 고객사 서류 자동 입력** | 사업자등록증 등 서류 사진을 읽어 구글 시트에 자동 정리 | → **`D:\v_up\customer_intake`** 로 이관 (별도 도구) |
 
 ---
@@ -94,12 +94,10 @@ python monitor.py
 ```
 
 ### 정책자금 점검 모듈 (②번 기능)
-```powershell
-cd D:\mail
-python -m loan.semas.collector --run-mode dry-run --send-email false
-```
-- 대상 설정: `loan/config/semas.yml`
-- 리포트: `reports/loan/semas_loan_scan.md`
+
+> **이 기능은 `D:\v_up\loan` 으로 이관되었습니다.** (메일 발송과 코드가 안 얽힌 별도 도구)
+> 실행: `cd D:\v_up; python -m loan.semas.collector --run-mode dry-run --send-email false`
+> ※ 메일 digest 안의 소진공 정책자금 공고 수집(`monitor.py` 의 semas_loan_ols)은 **그대로 유지**됩니다.
 
 ### 안전·운영 메모
 - 테스트에서 **실제 메일 발송 금지** (항상 미리보기/모의 실행).
