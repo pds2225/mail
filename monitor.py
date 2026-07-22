@@ -30,6 +30,9 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# 설정(groups.json 등)을 환경변수(시크릿)로 주입 가능하게 하는 로더 — PII 를 레포에 안 올림.
+import config_env  # 순수 표준라이브러리, 필수 환경변수/네트워크 없음
+
 try:
     from raw_store import RawStore as _RawStore
 except ImportError:
@@ -1127,8 +1130,16 @@ def load_sites() -> list[dict]:
     return active
 
 def load_groups() -> list[dict]:
-    groups = load_json(GROUPS_PATH, [])
-    active = [g for g in groups if g.get("active", True)]
+    # MAIL_GROUPS_JSON(인라인 JSON 또는 파일경로) 우선 → 없으면 groups.json 폴백.
+    # 수신자 이메일 등 PII 를 레포에 커밋하지 않고 시크릿으로 주입하기 위함(하위호환).
+    groups = config_env.load_config(
+        "MAIL_GROUPS_JSON", GROUPS_PATH, [],
+        on_error=lambda e: log.warning("MAIL_GROUPS_JSON 로드 실패 — groups.json 폴백: %s", e),
+    )
+    if not isinstance(groups, list):
+        log.warning("그룹 설정이 리스트가 아님(%s) — 빈 목록 처리", type(groups).__name__)
+        groups = []
+    active = [g for g in groups if isinstance(g, dict) and g.get("active", True)]
     log.info("그룹: %d개 활성", len(active))
     return active
 

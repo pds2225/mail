@@ -22,6 +22,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import config_env  # env-first 설정 로더(순수 표준라이브러리) — self-contained 유지
+
 BASE_DIR = Path(__file__).resolve().parent
 COMPANIES_PATH = BASE_DIR / "companies.json"
 
@@ -94,14 +96,24 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
 
 
 def load_companies(path: str | Path | None = None) -> list[dict[str, Any]]:
-    """companies.json 에서 active=true 기업 프로필을 로드. 파일 없으면 빈 리스트(예외 없음)."""
-    p = Path(path) if path else COMPANIES_PATH
-    if not p.exists():
-        return []
-    try:
-        raw = json.loads(p.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return []
+    """active=true 기업 프로필을 로드. 파일 없거나 파싱 실패 시 빈 리스트(예외 없음).
+
+    - path 명시 시: 그 파일만 사용(환경변수 무시) — 테스트/명시 호출 하위호환.
+    - path 미지정 시: MAIL_COMPANIES_JSON(인라인 JSON 또는 파일경로) 우선,
+      없으면 companies.json 폴백. 수신자 이메일 등 PII 를 시크릿으로 주입하기 위함.
+    """
+    if path is not None:
+        p = Path(path)
+        if not p.exists():
+            return []
+        try:
+            raw: Any = json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return []
+    else:
+        raw = config_env.load_config("MAIL_COMPANIES_JSON", COMPANIES_PATH, None)
+        if raw is None:
+            return []
     if isinstance(raw, dict):
         raw = raw.get("companies", [])
     if not isinstance(raw, list):
