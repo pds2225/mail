@@ -28,6 +28,8 @@ try:
 except ImportError:
     _CM_OK = False
 
+import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
+
 BASE_DIR = Path(__file__).resolve().parent
 
 try:
@@ -87,6 +89,8 @@ SITES_PATH    = BASE_DIR / "sites.json"
 GROUPS_PATH   = BASE_DIR / "groups.json"
 SETTINGS_PATH = BASE_DIR / "settings.json"
 SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
+# (기준일·그룹·수신자) 단위 발송 멱등 상태 — 크래시/부분실패 후 재실행 시 중복발송 방지.
+DELIVERY_STATE_PATH = BASE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -4330,7 +4334,16 @@ def draft_to_list(subject: str, body: str, recipients: list[str]) -> None:
             log.error("초안 생성 실패 (%s): %s", _mask_email(to), e)
 
 
-def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
+def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict | None = None) -> None:
+    """수신자별 개별 발송(To/Cc 상호노출 없음).
+
+    idem 이 주어지면 (기준일·그룹·수신자) 단위 멱등 발송을 한다:
+      idem = {"date": 기준일자, "group": 그룹키, "path": 상태파일경로}
+    - 이미 성공 기록된 (일자·그룹·수신자)는 건너뛴다 → 크래시/부분실패 후 재실행이 성공
+      수신자에게 중복 발송하지 않음(진단서 #113·#114).
+    - 발송 성공 즉시 체크포인트 저장 → 루프 도중 중단돼도 이미 보낸 수신자는 보존(#144).
+    idem 이 없으면 종전 동작(멱등 없이 전량 발송) — watchlist·원본전체 등 기존 호출 하위호환.
+    """
     if _ONLY_TO:
         recipients = [_ONLY_TO]
     # 초안 모드: 발송 대신 각 수신자별 Gmail 초안 생성(allow_send 게이트와 무관하게 초안만).
@@ -4345,10 +4358,18 @@ def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
         )
         return
     global _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
+    delivered: set[str] = delivery_state.load(idem["path"]) if idem else set()
     for to in validate_recipients(recipients)["valid"]:
+        dkey = delivery_state.key(idem["date"], idem["group"], to) if idem else None
+        if dkey is not None and dkey in delivered:
+            log.info("멱등 skip (이미 발송됨): %s [%s]", _mask_email(to), idem["group"])
+            continue
         try:
             send_email(subject, body, to)
             _SEND_OK += 1
+            if idem and dkey is not None:
+                # 성공 즉시 체크포인트 — 중단 시에도 이 수신자는 재발송 안 됨.
+                delivery_state.mark(idem["path"], dkey, _cache=delivered)
         except Exception as e:
             _SEND_FAIL += 1
             _LAST_SEND_ERR = str(e)
@@ -4759,10 +4780,16 @@ def execute_monitor(
             # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
             feedback_block = _render_feedback_block(g_items)
             subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
+            # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
+            _send_kw: dict = {}
+            if persist_seen:
+                _gid = str(group.get("id") or group.get("name") or "grp")
+                _send_kw["idem"] = {"date": str(target_date), "group": _gid, "path": str(DELIVERY_STATE_PATH)}
             send_to_list(
                 f"[{group.get('name')}] {subj_count} ({date_str})",
                 header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
                 group.get("recipients", []),
+                **_send_kw,
             )
             if voucher_items:
                 alert_ntfy(
@@ -4771,6 +4798,12 @@ def execute_monitor(
                     + "\n".join(f"- {it['title'][:50]}" for it in voucher_items[:5]),
                     priority="high", tags="loudspeaker",
                 )
+            # 체크포인트(#144): 이 그룹 발송분을 즉시 seen 기록·저장 → 이후 그룹에서 크래시해도
+            # 이미 보낸 건은 다음 실행에서 재발송되지 않는다(종전엔 루프 끝에서만 저장).
+            if persist_seen:
+                seen_ids.update(it["id"] for it in g_items if it.get("id"))
+                seen_ids.update(it["id"] for it in ru_items if it.get("id"))
+                save_seen_ids(seen_ids)
 
     # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:
