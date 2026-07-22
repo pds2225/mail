@@ -30,6 +30,7 @@ except ImportError:
 
 import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
 import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
+import llm_safety      # Claude 요약 인젝션 격리·사실성 검증(#99·#101·#102·#104)
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -4122,7 +4123,13 @@ def claude_summarize(items: list[dict], group: dict) -> str:
                  [f"AND({', '.join(ag)})" for ag in and_groups[:2]]
     kw_ctx     = "키워드: " + " | ".join(kw_parts) if kw_parts else "키워드: 전체"
     type_ctx   = f"지원유형: {', '.join(stypes)}"
-    prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
+    # 인젝션 관측(로깅) — 차단이 아니라 격리+사후검증이 주 방어.
+    _inj = llm_safety.detect_injection(items_txt)
+    if _inj:
+        log.warning("공고 원문에 인젝션 의심 문구 %d건(격리·검증으로 방어): %s", len(_inj), _inj[:3])
+    prompt = f"""{llm_safety.guard_preamble()}
+
+아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
 중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
 마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
 
@@ -4142,7 +4149,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 ━━━━━━━━━━━━━━━━━━
 
 공고 목록:
-{items_txt}"""
+{llm_safety.wrap_untrusted(items_txt)}"""
     try:
         resp = client.messages.create(
             model="claude-haiku-4-5-20251001", max_tokens=8000,
@@ -4154,7 +4161,14 @@ def claude_summarize(items: list[dict], group: dict) -> str:
             log.warning("Claude 요약이 토큰 상한에 걸려 잘림 — fallback_body 로 대체(본문 보존)")
             return fallback_body(limited)
         text = resp.content[0].text.strip()
-        return text or fallback_body(limited)
+        if not text:
+            return fallback_body(limited)
+        # 사실성 사후검증(#99·#101·#104): 미승인 링크 호스트·다수 누락이면 결정론적 DB 렌더로 대체.
+        _ok, _why = llm_safety.verify_summary(text, limited)
+        if not _ok:
+            log.warning("Claude 요약 사실성 검증 실패 — fallback_body(DB값)로 대체: %s", _why)
+            return fallback_body(limited)
+        return text
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)
@@ -4389,6 +4403,27 @@ def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict |
             _SEND_FAIL += 1
             _LAST_SEND_ERR = str(e)
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
+
+
+def guard_group_recipients(recipients: list[str], settings: dict, group_name: str) -> list[str]:
+    """#120: settings['recipient_allowlist'] 설정 시 화이트리스트 밖 수신자를 제외·경보.
+
+    groups.json 오설정(A그룹 recipients 에 B고객 유입)으로 타 그룹 다이제스트가 잘못 나가는 것을
+    방지한다. allowlist 미설정이면 종전 그대로(동작 불변, opt-in).
+    """
+    allow = settings.get("recipient_allowlist") or []
+    if not allow:
+        return recipients
+    allow_set = {str(a).strip().lower() for a in allow}
+    kept = [r for r in recipients if str(r).strip().lower() in allow_set]
+    dropped = [r for r in recipients if str(r).strip().lower() not in allow_set]
+    if dropped:
+        log.error("수신자 화이트리스트 위반(그룹 '%s') — 발송 제외 %d명: %s",
+                  group_name, len(dropped), ", ".join(_mask_email(d) for d in dropped))
+        alert_ntfy("recipient_guard",
+                   f"[{group_name}] 화이트리스트 밖 수신자 {len(dropped)}명 발송 차단(그룹 설정 확인)",
+                   priority="high", tags="warning")
+    return kept
 
 
 VOUCHER_KEYWORDS = ("수출바우처", "혁신바우처")
@@ -4800,10 +4835,11 @@ def execute_monitor(
             if persist_seen:
                 _gid = str(group.get("id") or group.get("name") or "grp")
                 _send_kw["idem"] = {"date": str(target_date), "group": _gid, "path": str(DELIVERY_STATE_PATH)}
+            _recips = guard_group_recipients(group.get("recipients", []), settings, group.get("name"))
             send_to_list(
                 f"[{group.get('name')}] {subj_count} ({date_str})",
                 header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
-                group.get("recipients", []),
+                _recips,
                 **_send_kw,
             )
             if voucher_items:
