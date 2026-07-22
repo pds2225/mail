@@ -28,6 +28,10 @@ try:
 except ImportError:
     _CM_OK = False
 
+import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
+import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
+import llm_safety      # Claude 요약 인젝션 격리·사실성 검증(#99·#101·#102·#104)
+
 BASE_DIR = Path(__file__).resolve().parent
 
 try:
@@ -87,6 +91,8 @@ SITES_PATH    = BASE_DIR / "sites.json"
 GROUPS_PATH   = BASE_DIR / "groups.json"
 SETTINGS_PATH = BASE_DIR / "settings.json"
 SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
+# (기준일·그룹·수신자) 단위 발송 멱등 상태 — 크래시/부분실패 후 재실행 시 중복발송 방지.
+DELIVERY_STATE_PATH = BASE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -623,6 +629,24 @@ def load_json(path: Path, default):
     except Exception as e:
         log.warning("%s 로드 실패: %s", path, e)
         return default
+
+
+def _pii_config(env_var: str, file_loader):
+    """PII 격리(#96·#149): 환경변수(JSON 문자열)가 있으면 그걸 우선 쓰고, 없으면 파일에서 읽는다.
+
+    실 수신자(groups.json)·기업 프로필(companies.json)을 Git 에 평문 커밋하는 대신 GitHub Secret
+    등 환경변수로 주입할 수 있게 한다. 파싱 실패 시 파일로 폴백(운영 중단 방지).
+    (워크플로에 secret 을 넘기고 실데이터 파일을 .gitignore 하는 배선은 Part B — monitor.yml/.gitignore.)
+    """
+    raw = os.environ.get(env_var, "").strip()
+    if raw:
+        try:
+            data = json.loads(raw)
+            log.info("%s 환경변수에서 로드(파일 대신 — PII 격리)", env_var)
+            return data
+        except Exception as e:  # noqa: BLE001
+            log.error("%s 파싱 실패 — 파일로 폴백: %s", env_var, e)
+    return file_loader()
 
 def save_json(path: Path, data) -> None:
     content = json.dumps(data, ensure_ascii=False, indent=2)
@@ -1228,8 +1252,9 @@ def load_sites() -> list[dict]:
     return active
 
 def load_groups() -> list[dict]:
-    groups = load_json(GROUPS_PATH, [])
-    active = [g for g in groups if g.get("active", True)]
+    # PII 격리(#149): 실 수신자가 담긴 그룹 설정을 환경변수(MAIL_GROUPS_JSON)로 주입 가능.
+    groups = _pii_config("MAIL_GROUPS_JSON", lambda: load_json(GROUPS_PATH, []))
+    active = [g for g in (groups or []) if g.get("active", True)]
     log.info("그룹: %d개 활성", len(active))
     return active
 
@@ -1285,6 +1310,10 @@ def _legacy_ssl_ctx() -> ssl.SSLContext:
 
 def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **kwargs) -> httpx.Response | None:
     """GET with 3-stage SSL fallback (bizinfo API·JSON 등 _soup 외 호출용)."""
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20): 사설/내부 IP·비 http(s) 차단
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     last_err: Exception | None = None
     for stage in ("strict", "no_verify", "legacy"):
@@ -1294,6 +1323,9 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
             with httpx.Client(timeout=timeout, headers=hdrs, follow_redirects=True,
                               verify=verify) as c:
                 r = c.get(url, **kwargs)
+                if not net_guard.is_safe(str(r.url)):  # 리다이렉트 최종 호스트 재검사
+                    log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url)
+                    return None
                 r.raise_for_status()
                 return r
         except httpx.HTTPStatusError as e:
@@ -1307,6 +1339,10 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
 
 
 def _soup(url: str, extra_headers: dict | None = None, **kwargs):
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20)
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
     # 정상 사이트는 (1)에서 즉시 성공 → 기존 동작·속도 보존. SSL 실패만 폴백.
@@ -1322,7 +1358,10 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
             try:
                 with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
                                   verify=verify) as c:
-                    r = c.get(url, **kwargs); r.raise_for_status()
+                    r = c.get(url, **kwargs)
+                    if not net_guard.is_safe(str(r.url)):   # 리다이렉트 최종 호스트 재검사
+                        log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url); return None
+                    r.raise_for_status()
                     return BeautifulSoup(r.text, "html.parser")
             except httpx.HTTPStatusError as e:
                 log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
@@ -4213,7 +4252,13 @@ def claude_summarize(items: list[dict], group: dict) -> str:
                  [f"AND({', '.join(ag)})" for ag in and_groups[:2]]
     kw_ctx     = "키워드: " + " | ".join(kw_parts) if kw_parts else "키워드: 전체"
     type_ctx   = f"지원유형: {', '.join(stypes)}"
-    prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
+    # 인젝션 관측(로깅) — 차단이 아니라 격리+사후검증이 주 방어.
+    _inj = llm_safety.detect_injection(items_txt)
+    if _inj:
+        log.warning("공고 원문에 인젝션 의심 문구 %d건(격리·검증으로 방어): %s", len(_inj), _inj[:3])
+    prompt = f"""{llm_safety.guard_preamble()}
+
+아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
 중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
 마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
 
@@ -4233,7 +4278,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 ━━━━━━━━━━━━━━━━━━
 
 공고 목록:
-{items_txt}"""
+{llm_safety.wrap_untrusted(items_txt)}"""
     try:
         resp = client.messages.create(
             model="claude-haiku-4-5-20251001", max_tokens=8000,
@@ -4245,7 +4290,14 @@ def claude_summarize(items: list[dict], group: dict) -> str:
             log.warning("Claude 요약이 토큰 상한에 걸려 잘림 — fallback_body 로 대체(본문 보존)")
             return fallback_body(limited)
         text = resp.content[0].text.strip()
-        return text or fallback_body(limited)
+        if not text:
+            return fallback_body(limited)
+        # 사실성 사후검증(#99·#101·#104): 미승인 링크 호스트·다수 누락이면 결정론적 DB 렌더로 대체.
+        _ok, _why = llm_safety.verify_summary(text, limited)
+        if not _ok:
+            log.warning("Claude 요약 사실성 검증 실패 — fallback_body(DB값)로 대체: %s", _why)
+            return fallback_body(limited)
+        return text
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)
@@ -4440,7 +4492,16 @@ def draft_to_list(subject: str, body: str, recipients: list[str]) -> None:
             log.error("초안 생성 실패 (%s): %s", _mask_email(to), e)
 
 
-def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
+def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict | None = None) -> None:
+    """수신자별 개별 발송(To/Cc 상호노출 없음).
+
+    idem 이 주어지면 (기준일·그룹·수신자) 단위 멱등 발송을 한다:
+      idem = {"date": 기준일자, "group": 그룹키, "path": 상태파일경로}
+    - 이미 성공 기록된 (일자·그룹·수신자)는 건너뛴다 → 크래시/부분실패 후 재실행이 성공
+      수신자에게 중복 발송하지 않음(진단서 #113·#114).
+    - 발송 성공 즉시 체크포인트 저장 → 루프 도중 중단돼도 이미 보낸 수신자는 보존(#144).
+    idem 이 없으면 종전 동작(멱등 없이 전량 발송) — watchlist·원본전체 등 기존 호출 하위호환.
+    """
     if _ONLY_TO:
         recipients = [_ONLY_TO]
     # 초안 모드: 발송 대신 각 수신자별 Gmail 초안 생성(allow_send 게이트와 무관하게 초안만).
@@ -4455,14 +4516,43 @@ def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
         )
         return
     global _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
+    delivered: set[str] = delivery_state.load(idem["path"]) if idem else set()
     for to in validate_recipients(recipients)["valid"]:
+        dkey = delivery_state.key(idem["date"], idem["group"], to) if idem else None
+        if dkey is not None and dkey in delivered:
+            log.info("멱등 skip (이미 발송됨): %s [%s]", _mask_email(to), idem["group"])
+            continue
         try:
             send_email(subject, body, to)
             _SEND_OK += 1
+            if idem and dkey is not None:
+                # 성공 즉시 체크포인트 — 중단 시에도 이 수신자는 재발송 안 됨.
+                delivery_state.mark(idem["path"], dkey, _cache=delivered)
         except Exception as e:
             _SEND_FAIL += 1
             _LAST_SEND_ERR = str(e)
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
+
+
+def guard_group_recipients(recipients: list[str], settings: dict, group_name: str) -> list[str]:
+    """#120: settings['recipient_allowlist'] 설정 시 화이트리스트 밖 수신자를 제외·경보.
+
+    groups.json 오설정(A그룹 recipients 에 B고객 유입)으로 타 그룹 다이제스트가 잘못 나가는 것을
+    방지한다. allowlist 미설정이면 종전 그대로(동작 불변, opt-in).
+    """
+    allow = settings.get("recipient_allowlist") or []
+    if not allow:
+        return recipients
+    allow_set = {str(a).strip().lower() for a in allow}
+    kept = [r for r in recipients if str(r).strip().lower() in allow_set]
+    dropped = [r for r in recipients if str(r).strip().lower() not in allow_set]
+    if dropped:
+        log.error("수신자 화이트리스트 위반(그룹 '%s') — 발송 제외 %d명: %s",
+                  group_name, len(dropped), ", ".join(_mask_email(d) for d in dropped))
+        alert_ntfy("recipient_guard",
+                   f"[{group_name}] 화이트리스트 밖 수신자 {len(dropped)}명 발송 차단(그룹 설정 확인)",
+                   priority="high", tags="warning")
+    return kept
 
 
 VOUCHER_KEYWORDS = ("수출바우처", "혁신바우처")
@@ -4788,7 +4878,9 @@ def execute_monitor(
     companies_by_id: dict = {}
     if settings.get("company_match_enabled") and _CM_OK:
         try:
-            companies_by_id = {c["id"]: c for c in _load_companies()}
+            # PII 격리(#96): 기업 프로필을 환경변수(MAIL_COMPANIES_JSON)로 주입 가능(없으면 파일).
+            _companies = _pii_config("MAIL_COMPANIES_JSON", _load_companies)
+            companies_by_id = {c["id"]: c for c in (_companies or [])}
             log.info("기업 프로필 로드: %d개 (정밀 매칭 활성)", len(companies_by_id))
         except Exception as e:
             log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
@@ -4869,10 +4961,17 @@ def execute_monitor(
             # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
             feedback_block = _render_feedback_block(g_items)
             subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
+            # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
+            _send_kw: dict = {}
+            if persist_seen:
+                _gid = str(group.get("id") or group.get("name") or "grp")
+                _send_kw["idem"] = {"date": str(target_date), "group": _gid, "path": str(DELIVERY_STATE_PATH)}
+            _recips = guard_group_recipients(group.get("recipients", []), settings, group.get("name"))
             send_to_list(
                 f"[{group.get('name')}] {subj_count} ({date_str})",
                 header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
-                group.get("recipients", []),
+                _recips,
+                **_send_kw,
             )
             if voucher_items:
                 alert_ntfy(
@@ -4881,6 +4980,12 @@ def execute_monitor(
                     + "\n".join(f"- {it['title'][:50]}" for it in voucher_items[:5]),
                     priority="high", tags="loudspeaker",
                 )
+            # 체크포인트(#144): 이 그룹 발송분을 즉시 seen 기록·저장 → 이후 그룹에서 크래시해도
+            # 이미 보낸 건은 다음 실행에서 재발송되지 않는다(종전엔 루프 끝에서만 저장).
+            if persist_seen:
+                seen_ids.update(it["id"] for it in g_items if it.get("id"))
+                seen_ids.update(it["id"] for it in ru_items if it.get("id"))
+                save_seen_ids(seen_ids)
 
     # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:
