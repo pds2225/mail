@@ -98,11 +98,11 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
 def load_companies(path: str | Path | None = None) -> list[dict[str, Any]]:
     """active=true 기업 프로필을 로드. 파일 없거나 파싱 실패 시 빈 리스트(예외 없음).
 
-    - path 명시 시: 그 파일만 사용(환경변수 무시) — 테스트/명시 호출 하위호환.
-    - path 미지정 시: MAIL_COMPANIES_JSON(인라인 JSON 또는 파일경로) 우선,
+    - path 명시(비어있지 않음) 시: 그 파일만 사용(환경변수 무시) — 테스트/명시 호출 하위호환.
+    - path 미지정/빈값 시: MAIL_COMPANIES_JSON(인라인 JSON 또는 파일경로) 우선,
       없으면 companies.json 폴백. 수신자 이메일 등 PII 를 시크릿으로 주입하기 위함.
     """
-    if path is not None:
+    if path:  # None·"" 은 falsy → 기본(env→companies.json) 경로 사용(구 truthiness 동등)
         p = Path(path)
         if not p.exists():
             return []

@@ -1132,9 +1132,11 @@ def load_sites() -> list[dict]:
 def load_groups() -> list[dict]:
     # MAIL_GROUPS_JSON(인라인 JSON 또는 파일경로) 우선 → 없으면 groups.json 폴백.
     # 수신자 이메일 등 PII 를 레포에 커밋하지 않고 시크릿으로 주입하기 위함(하위호환).
+    # on_error 메시지는 env/파일 어느 쪽 실패에도 맞게 출처 중립. config_env 가 env 원문(PII)을
+    # 제거한 예외를 전달하므로 %s 로 찍어도 수신자 이메일 등은 새지 않는다(파일 실패는 경로만 포함).
     groups = config_env.load_config(
         "MAIL_GROUPS_JSON", GROUPS_PATH, [],
-        on_error=lambda e: log.warning("MAIL_GROUPS_JSON 로드 실패 — groups.json 폴백: %s", e),
+        on_error=lambda e: log.warning("그룹 설정 로드 실패 — 파일/기본값 폴백: %s", e),
     )
     if not isinstance(groups, list):
         log.warning("그룹 설정이 리스트가 아님(%s) — 빈 목록 처리", type(groups).__name__)
