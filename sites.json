@@ -8,7 +8,9 @@
     "is_aggregator": true,
     "api_page_unit": 500,
     "api_max_pages": 4,
-    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인"
+    "api_timeout": 30,
+    "warmup_url": "https://www.bizinfo.go.kr/",
+    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인. 직결이 러너 IP 차단(timeout) 시 DATA_GO_KR_KEY 있으면 data.go.kr 폴백."
   },
   {
     "id": "hanyang_startup",

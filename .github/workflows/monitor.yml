@@ -47,6 +47,9 @@ jobs:
       - name: 공고 digest 자동발송 (+커버리지 이상탐지·크래시 알림)
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
+          # 선택: 공공데이터포털 기업마당 서비스키. bizinfo.go.kr 직결이 러너 IP 에서
+          #   WAF/지역차단(timeout)될 때 data.go.kr 폴백을 켠다(시크릿 없으면 폴백 비활성).
+          DATA_GO_KR_KEY:     ${{ secrets.DATA_GO_KR_KEY }}
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
