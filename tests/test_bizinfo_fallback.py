@@ -18,7 +18,7 @@ os.environ.setdefault("GMAIL_ADDRESS", "x")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "x")
 os.environ.setdefault("NTFY_TOPIC", "x")
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import monitor as m  # noqa: E402
 
 SITE = {"name": "기업마당(Bizinfo)", "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",

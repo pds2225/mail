@@ -80,3 +80,6 @@ logs/*.json
 
 # 공고 첨부 다운로드 (scripts/download_kstartup_targets.py 로 재생성 가능)
 downloads/
+
+# 빌드/익스포트 산출물
+*.zip

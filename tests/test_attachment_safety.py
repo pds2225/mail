@@ -12,7 +12,7 @@ os.environ.setdefault("GMAIL_ADDRESS", "x")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "x")
 os.environ.setdefault("NTFY_TOPIC", "x")
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import scripts.fetch_notice_attachments as fna  # noqa: E402
 
 
