@@ -543,7 +543,8 @@ with tab_review:
         content = latest.read_text(encoding="utf-8")
 
         # 요약 섹션 추출
-        summary_match = re.search(r"## 요약\n(.*?)---", content, re.DOTALL)
+        # 표 구분선(|---|)의 '---'에서 잘리지 않도록 단독 줄 '---'까지 매칭
+        summary_match = re.search(r"## 요약\n(.*?)\n---\n", content, re.DOTALL)
         if summary_match:
             st.markdown(summary_match.group(1).strip())
 
