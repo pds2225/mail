@@ -124,7 +124,8 @@
       "link_arg_re": "article\\.view\\('(\\d+)'\\)",
       "link_template": "/kor/article/ATCL2826a2625/{0}/view"
     },
-    "note": "산업부"
+    "note": "산업부",
+    "max_pages": 2
   },
   {
     "id": "moel",
@@ -136,7 +137,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "고용부 국고보조사업 [PC 실행 시 정상 접속]"
+    "note": "고용부 국고보조사업 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "mafra",
@@ -334,7 +336,8 @@
       "link_id_attr": "data-ntt-sn"
     },
     "note": "수출보험/보증 공고 목록 [홈페이지에서 공고 목록 URL로 변경]",
-    "date_selector": "ul.board_info_list li"
+    "date_selector": "ul.board_info_list li",
+    "max_pages": 2
   },
   {
     "id": "kibo",
@@ -386,7 +389,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "보건/의료/바이오 [PC 실행 시 정상 접속]"
+    "note": "보건/의료/바이오 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "keiti",
@@ -414,7 +418,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "에너지기술 R&D 사업공고 [2026-06 URL 갱신: businessAcment/list?menuId → businessAcment?menuId, 전체 491건 테이블 형식]"
+    "note": "에너지기술 R&D 사업공고 [2026-06 URL 갱신: businessAcment/list?menuId → businessAcment?menuId, 전체 491건 테이블 형식]",
+    "max_pages": 2
   },
   {
     "id": "foodpolis",
@@ -523,7 +528,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "대전 기업 지원 일반사업공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]"
+    "note": "대전 기업 지원 일반사업공고 목록 [홈페이지에서 공고 목록 URL로 변경, eGovFrame 표준 게시판]",
+    "max_pages": 2
   },
   {
     "id": "myfair",
@@ -614,7 +620,8 @@
     "selectors": {
       "row": ".board li"
     },
-    "note": "여성벤처 지원사업 [PC 실행 시 정상 접속]"
+    "note": "여성벤처 지원사업 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "ppi",
@@ -745,7 +752,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "인천 뷰티기업 인프라구축 지원 [PC 실행 시 정상 접속]"
+    "note": "인천 뷰티기업 인프라구축 지원 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "insupport",
@@ -757,7 +765,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "소공인 클린제조환경 조성 등 [PC 실행 시 정상 접속]"
+    "note": "소공인 클린제조환경 조성 등 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "icgf",
@@ -920,7 +929,8 @@
       "link_template": "/web/board/webBoardView.kmdc?b_idx={0}&bCd=1&pNm=BOA0101",
       "link_arg_re": "fncGoDetail\\('(\\d+)'\\)"
     },
-    "note": "소공인 지원사업 공고 [PC 실행 시 정상 접속]"
+    "note": "소공인 지원사업 공고 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "khidi_kbeauty",
@@ -932,7 +942,8 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "K-뷰티 해외판매장/플래그십허브 [PC 실행 시 정상 접속]"
+    "note": "K-뷰티 해외판매장/플래그십허브 [PC 실행 시 정상 접속]",
+    "max_pages": 2
   },
   {
     "id": "connectworks",
@@ -1186,7 +1197,8 @@
     "url": "https://www.gwsinbo.or.kr/board/board_list.php?board_name=notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_86d69e8d",
@@ -1321,7 +1333,8 @@
     "url": "https://www.gmr.or.kr/base/board/list?boardManagementNo=1&menuLevel=2&menuNo=14",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_ac08023d",
@@ -1384,7 +1397,8 @@
     "url": "https://www.gghrd.or.kr/board/notice.php",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_5d6f7946",
@@ -1535,7 +1549,8 @@
     "url": "http://kbef.or.kr/zbxe/support1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_9f6637bd",
@@ -1562,7 +1577,8 @@
     "url": "http://www.geea.or.kr/bbs/notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "경총 공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "경총 공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_bc1a66bd",
@@ -1589,7 +1605,8 @@
     "url": "http://gbhrd.or.kr/zbxe/?mid=support1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_ac859502",
@@ -1670,7 +1687,8 @@
     "url": "https://www.gipa.or.kr/community/01_1.php",
     "enabled": true,
     "is_aggregator": false,
-    "note": "일반공지 / 주기:주 2~3회 / 우선순위:상"
+    "note": "일반공지 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_758648a9",
@@ -1697,7 +1715,8 @@
     "url": "http://www.gjef.or.kr/ko/28",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_faa858b5",
@@ -1706,7 +1725,8 @@
     "url": "https://www.gjep.or.kr/cms/bbs/cms.php?dk_cms=comm_01",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_8998eef2",
@@ -1715,7 +1735,8 @@
     "url": "http://www.gjjahwal.or.kr/ko/36",
     "enabled": true,
     "is_aggregator": false,
-    "note": "센터소식 / 주기:주 1회 / 우선순위:중"
+    "note": "센터소식 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_761f4e5f",
@@ -1760,7 +1781,8 @@
     "url": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_2b5aeab3",
@@ -1805,7 +1827,8 @@
     "url": "https://www.gjtp.or.kr/home/business.cs?m=8",
     "enabled": true,
     "is_aggregator": false,
-    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "지원사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_908d11bd",
@@ -1868,7 +1891,8 @@
     "url": "https://www.kaia.re.kr/portal/bbs/list/B0000006.do?menuNo=200547",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_0716c015",
@@ -1880,7 +1904,8 @@
     "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_93b91306",
@@ -1892,7 +1917,8 @@
     "note": "사업공고 / 주기:주 1회 / 우선순위:상",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_e0b8d791",
@@ -1910,7 +1936,8 @@
     "url": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/list.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_4f321c10",
@@ -1937,7 +1964,8 @@
     "url": "https://www.gimpo.go.kr/portal/ntfcPblancList.do?key=1004&cate_cd=1&searchCnd=40900000000",
     "enabled": true,
     "is_aggregator": false,
-    "note": "고시/공고 / 주기:주 1회 / 우선순위:중"
+    "note": "고시/공고 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_5200845a",
@@ -1946,7 +1974,8 @@
     "url": "https://www.gimpo.go.kr/portal/selectBbsNttList.do?bbsNo=292&key=999",
     "enabled": true,
     "is_aggregator": false,
-    "note": "알림사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "알림사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_f0bf6765",
@@ -2012,7 +2041,8 @@
     "url": "https://www.kwpi.or.kr/home/sub?menukey=7311",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_0ba961db",
@@ -2075,7 +2105,8 @@
     "url": "https://www.dgfez.go.kr/page.php?mnu_uid=319&",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_1a8d8b8d",
@@ -2084,7 +2115,8 @@
     "url": "https://www.dgfez.go.kr/page.php?mnu_uid=321&",
     "enabled": true,
     "is_aggregator": false,
-    "note": "고시/공고 / 주기:주 1회 / 우선순위:중"
+    "note": "고시/공고 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_0c3b8e1f",
@@ -2215,7 +2247,8 @@
       "link": "a.tit",
       "link_id_attr": "data-id",
       "link_template": "/mps/bizTskPbnc/view?tsk_pbnc_id={0}&menuKey=TOfnnvp207"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_a8d7ddda",
@@ -2272,7 +2305,8 @@
     "url": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_2418665a",
@@ -2281,7 +2315,8 @@
     "url": "https://djtp.or.kr/pbanc?mid=a20101000000",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_72039c8a",
@@ -2458,7 +2493,8 @@
     "url": "https://www.sida.kr/notification/news.html",
     "enabled": true,
     "is_aggregator": false,
-    "note": "새소식 / 주기:주 1회 / 우선순위:중"
+    "note": "새소식 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_aabdbb3c",
@@ -2497,7 +2533,8 @@
     "url": "https://www.anyang.go.kr/amrc/selectBbsNttList.do?bbsNo=1284&key=3887",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_271bf547",
@@ -2542,7 +2579,8 @@
     "url": "https://www.ubpi.or.kr/sub/?mcode=0403010000",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_50b8c911",
@@ -2560,7 +2598,8 @@
     "url": "https://www.ulsanhrd.or.kr/bbs/list.php?board_id=notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_4d844748",
@@ -2578,7 +2617,8 @@
     "url": "https://www.utp.or.kr/board/board.php?bo_table=sub0501&menu_group=4&sno=0401",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_7577759c",
@@ -2614,7 +2654,8 @@
     "url": "https://www.ep.go.kr/www/selectBbsNttList.do?bbsNo=42&key=744",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_3c273d70",
@@ -2623,7 +2664,8 @@
     "url": "https://www.innobiz.net/company/company1_list.asp",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_4456e24e",
@@ -2632,7 +2674,8 @@
     "url": "https://www.inef.or.kr/news/notice.php",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_344ddf55",
@@ -2644,7 +2687,8 @@
     "note": "센터공지 / 주기:월 1~2회 / 우선순위:하",
     "selectors": {
       "row": ".board-list li"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_00dbe351",
@@ -2656,7 +2700,8 @@
     "note": "사업고시/공고 / 주기:주 1회 / 우선순위:상",
     "selectors": {
       "row": ".board-list li"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_13a8e6d1",
@@ -2668,7 +2713,8 @@
     "note": "유관사업 고시/공고 / 주기:주 1회 / 우선순위:상",
     "selectors": {
       "row": ".board-list li"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_89def0d1",
@@ -2677,7 +2723,8 @@
     "url": "https://www.insupport.or.kr/sub/?mcode=0404010000",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_fd8af24e",
@@ -2743,7 +2790,8 @@
     "url": "https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000002&menuCd=DOM_000000101002000000&contentsSid=4&cpath=",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_c7e267eb",
@@ -2752,7 +2800,8 @@
     "url": "https://www.jbtp.or.kr/board/list.jbtp?boardId=BBS_0000006&menuCd=DOM_000000102001000000&paging=ok&gbun=&searchType=&keyword=&pageNo=1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_91c0dbbd",
@@ -2824,7 +2873,8 @@
     "url": "https://www.nipa.kr/home/2-1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_c09f57a5",
@@ -2833,7 +2883,8 @@
     "url": "https://www.nipa.kr/home/2-2",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 1회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_0671c689",
@@ -2917,7 +2968,8 @@
     "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_822232e0",
@@ -2953,7 +3005,8 @@
     "url": "https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_b2694be5",
@@ -2962,7 +3015,8 @@
     "url": "http://www.jejuhrd.or.kr/index.php/contents/community/notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하"
+    "note": "공지사항 / 주기:월 1~2회 / 우선순위:하",
+    "max_pages": 2
   },
   {
     "id": "imp_c54d32c7",
@@ -2992,7 +3046,8 @@
     "note": "사업공고 / 주기:주 1회 / 우선순위:상",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_cc5ad182",
@@ -3004,7 +3059,8 @@
     "note": "유관기관 소식 / 주기:주 1회 / 우선순위:중",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_fb29d5bb",
@@ -3031,7 +3087,8 @@
     "url": "https://www.smtech.go.kr/front/ifg/no/notice03_list.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "기타 공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "기타 공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_22960005",
@@ -3230,7 +3287,8 @@
     "note": "공지사항 / 주기:주 1회 / 우선순위:중",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_b3d682a9",
@@ -3242,7 +3300,8 @@
     "note": "사업접수 / 주기:주 1회 / 우선순위:상",
     "selectors": {
       "row": "table tr"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_f4ce3dda",
@@ -3320,7 +3379,8 @@
     "url": "https://www.xn--6-6v7en42by2es7i6jc.com/100101/board/event_notice/",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_2e771ea3",
@@ -3329,7 +3389,8 @@
     "url": "https://www.cnse.kr/app/board/index?md_id=center_news",
     "enabled": true,
     "is_aggregator": false,
-    "note": "센터소식 / 주기:주 1회 / 우선순위:중"
+    "note": "센터소식 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_46549125",
@@ -3428,7 +3489,8 @@
     "url": "https://www.cjrhrdc.org/board/notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_5f7815d8",
@@ -3446,7 +3508,8 @@
     "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_notice&lm_uid=36",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_6dd08ea4",
@@ -3455,7 +3518,8 @@
     "url": "https://www.cbtp.or.kr/index.php?control=bbs&board_id=news_public_notice&lm_uid=526",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고-타기관 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고-타기관 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_51e6cfcf",
@@ -3464,7 +3528,8 @@
     "url": "https://contact.cbtp.or.kr/index.php?control=bbs&board_id=b_notice&lm_uid=6",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_a0e736b6",
@@ -3491,7 +3556,8 @@
     "url": "https://www.cba.ne.kr/home/sub.php?menukey=140",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_c4eac5de",
@@ -3500,7 +3566,8 @@
     "url": "https://www.cbsb.kr/home/sub.php?menukey=288",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_8f9353fc",
@@ -3644,7 +3711,8 @@
     "url": "https://www.kihf.or.kr/web/lay1/bbs/S1T838C97/A/3/list.do?rows=10&cpage=1&cat=&article_seq=&condition=TITLE&keyword=",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_460e3b32",
@@ -3653,7 +3721,8 @@
     "url": "https://www.kmtca.or.kr/?p=23",
     "enabled": true,
     "is_aggregator": false,
-    "note": "컨설팅 공지 / 주기:매일 / 우선순위:상"
+    "note": "컨설팅 공지 / 주기:매일 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_343a2ada",
@@ -3662,7 +3731,8 @@
     "url": "https://www.kmtca.or.kr/?p=28",
     "enabled": true,
     "is_aggregator": false,
-    "note": "교육공지 / 주기:주 1회 / 우선순위:중"
+    "note": "교육공지 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_f046a0cc",
@@ -3671,7 +3741,8 @@
     "url": "https://www.kmtca.or.kr/?p=128",
     "enabled": true,
     "is_aggregator": false,
-    "note": "협회공지 / 주기:주 1회 / 우선순위:중"
+    "note": "협회공지 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_40bd609e",
@@ -3689,7 +3760,8 @@
     "url": "https://mainbiz.or.kr/notice/notice.asp?smen=1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_47dc766c",
@@ -3698,7 +3770,8 @@
     "url": "https://mainbiz.or.kr/notice/company.asp?smen=2",
     "enabled": true,
     "is_aggregator": false,
-    "note": "중소기업지원정보 / 주기:주 1회 / 우선순위:중"
+    "note": "중소기업지원정보 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_7b9a6ef1",
@@ -3707,7 +3780,8 @@
     "url": "https://mainbiz.or.kr/notice/library.asp?smen=8",
     "enabled": true,
     "is_aggregator": false,
-    "note": "입찰/채용공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "입찰/채용공고 / 주기:주 2~3회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_7b9f8f65",
@@ -3821,7 +3895,8 @@
     "url": "https://www.khidi.or.kr/board?menuId=MENU00099",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_dc80d32f",
@@ -3839,7 +3914,8 @@
     "url": "https://www.keit.re.kr/board.es?mid=a10301010000&bid=0009",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공고·공시 / 주기:주 1회 / 우선순위:상"
+    "note": "공고·공시 / 주기:주 1회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_b8655082",
@@ -3884,7 +3960,8 @@
     "url": "https://www.hrdkorea.or.kr/3/1/1",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_5748a319",
@@ -3905,7 +3982,8 @@
     "note": "공지사항 / 주기:주 1회 / 우선순위:중",
     "selectors": {
       "row": ".board li"
-    }
+    },
+    "max_pages": 2
   },
   {
     "id": "imp_5ff55ef2",
@@ -3977,7 +4055,8 @@
     "url": "https://www.knrec.or.kr/biz/pds/notice/list.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_1298d9a4",
@@ -3986,7 +4065,8 @@
     "url": "https://www.inventor.or.kr/bbs/board.php?bo_table=notice",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_5f64ee0e",
@@ -4022,7 +4102,8 @@
     "url": "https://www.kocca.kr/kocca/pims/list.do?menuNo=204104&recptSt=",
     "enabled": true,
     "is_aggregator": false,
-    "note": "지원공고 / 주기:주 1회 / 우선순위:상"
+    "note": "지원공고 / 주기:주 1회 / 우선순위:상",
+    "max_pages": 2
   },
   {
     "id": "imp_894bbfc5",
@@ -4079,7 +4160,8 @@
     "url": "https://www.hongcheon.go.kr/www/selectBbsNttList.do?bbsNo=1&key=255",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_7c2e01d7",
@@ -4088,7 +4170,8 @@
     "url": "https://www.hsbiz.or.kr/bbs/BBSMSTR_000000000040/list.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_d9e51ba5",
@@ -4097,7 +4180,8 @@
     "url": "https://www.hstree.org/news/notice.do",
     "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "max_pages": 2
   },
   {
     "id": "imp_20197f39",
