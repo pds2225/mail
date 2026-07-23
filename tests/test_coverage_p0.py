@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""P0 수집누락 탐지 — 개발요청서 §5 필수 시나리오 10종 + 판정 계약 테스트.
+"""P0 수집누락 탐지 — 필수 실패 시나리오와 판정 계약 테스트.
 
 순수 판정부(coverage_alert)는 네트워크·파일 없이 검증하고, 산출물/알림 배선은
 monkeypatch 로 격리한다. 실제 메일 발송은 어떤 경로로도 일어나지 않는다.
@@ -26,6 +26,7 @@ def _row(**kw) -> dict:
         fetch_success=True, fetch_error="",
         item_count=24, posted_parsed_count=24, date_unknown_count=0,
         detail_link_ok_count=24,
+        valid_record_count=24, suspicious_content_count=0,
     )
     base.update(kw)
     return base
@@ -74,6 +75,39 @@ def test_http_ok_but_zero_items_with_baseline_is_p0():
     assert report["risk_level"] == "P0"
     assert ca.REASON_ZERO_ITEMS_WITH_BASELINE in report["reason_codes"]
     assert report["drop_rate"] == 1.0
+
+
+def test_http_ok_but_login_or_captcha_items_are_p0():
+    """HTTP 200이어도 로그인·캡차 화면을 공고로 읽었으면 정상 수집이 아니다."""
+    report = ca.classify_source_status(
+        _row(item_count=4, valid_record_count=4, suspicious_content_count=3),
+        _history(count=4),
+    )
+    assert report["status"] == ca.COLLECT_STATUS_PARTIAL
+    assert report["risk_level"] == "P0"
+    assert ca.REASON_CONTENT_VALIDATION_FAILED in report["reason_codes"]
+    assert report["detail"]["suspicious_content_rate"] == 0.75
+
+
+def test_one_legitimate_maintenance_notice_does_not_trigger_content_failure():
+    """실제 점검 공고 1건 때문에 사이트 전체를 오류 화면으로 오인하지 않는다."""
+    report = ca.classify_source_status(
+        _row(item_count=20, valid_record_count=20, suspicious_content_count=1,
+             posted_parsed_count=20, detail_link_ok_count=20),
+        _history(count=20),
+    )
+    assert ca.REASON_CONTENT_VALIDATION_FAILED not in report["reason_codes"]
+
+
+def test_http_ok_but_most_records_missing_required_fields_is_p0():
+    report = ca.classify_source_status(
+        _row(item_count=10, valid_record_count=3, suspicious_content_count=0,
+             posted_parsed_count=3, date_unknown_count=7, detail_link_ok_count=3),
+        _history(count=10),
+    )
+    assert report["risk_level"] == "P0"
+    assert ca.REASON_SCHEMA_VALIDATION_FAILED in report["reason_codes"]
+    assert report["detail"]["valid_record_rate"] == 0.3
 
 
 def test_parser_error_is_classified_as_parser_failed():
@@ -127,6 +161,29 @@ def test_mild_drop_is_not_flagged():
         _history(count=24))
     assert report["status"] == ca.COLLECT_STATUS_SUCCESS
     assert report["risk_level"] == ""
+
+
+def test_abnormal_collection_spike_is_p1():
+    """평소 20건 → 70건은 과거 전체목록 유입 가능성이 있어 검토 대상이다."""
+    report = ca.classify_source_status(
+        _row(item_count=70, posted_parsed_count=70, detail_link_ok_count=70,
+             valid_record_count=70),
+        _history(count=20),
+    )
+    assert report["status"] == ca.COLLECT_STATUS_PARTIAL
+    assert report["risk_level"] == "P1"
+    assert ca.REASON_COLLECTION_SPIKE_HIGH in report["reason_codes"]
+    assert report["detail"]["spike_ratio"] == 3.5
+
+
+def test_small_absolute_increase_is_not_spike():
+    """1건 → 3건은 배수만 크고 절대 증가량은 작으므로 정상 변동이다."""
+    report = ca.classify_source_status(
+        _row(item_count=3, posted_parsed_count=3, detail_link_ok_count=3,
+             valid_record_count=3),
+        _history(count=1),
+    )
+    assert ca.REASON_COLLECTION_SPIKE_HIGH not in report["reason_codes"]
 
 
 # ── §5-5. 첫 페이지와 다음 페이지가 반복 ─────────────────────────────────────
