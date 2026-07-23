@@ -1,0 +1,45 @@
+{
+  "entries": {
+    "0234fa3878ab67c0471942e8420057af314f6011b3f70fb942f6f34cf4cd09f9": {
+      "sha256": "0234fa3878ab67c0471942e8420057af314f6011b3f70fb942f6f34cf4cd09f9",
+      "original_name": "biz_reg_test.pdf",
+      "status": "done",
+      "processed_at": "2026-05-23 17:15:32",
+      "report_path": "D:\\customer_intake_reports\\customer_intake_20260523_171532.md",
+      "note": ""
+    },
+    "7b9cc4cf295240dd31aeaf48092e97329b06434d85a64ea031767328637084bb": {
+      "sha256": "7b9cc4cf295240dd31aeaf48092e97329b06434d85a64ea031767328637084bb",
+      "original_name": "dup_test.pdf",
+      "status": "done",
+      "processed_at": "2026-05-23 17:16:01",
+      "report_path": "D:\\customer_intake_reports\\customer_intake_20260523_171601.md",
+      "note": ""
+    },
+    "c72a96ab42ce7763b640432617d4b0133f20104e9a344dbf55c9a00b8dcf845a": {
+      "sha256": "c72a96ab42ce7763b640432617d4b0133f20104e9a344dbf55c9a00b8dcf845a",
+      "original_name": "미래큐러스사업자등록증.pdf",
+      "status": "done",
+      "processed_at": "2026-05-23 17:39:08",
+      "report_path": "D:\\customer_intake_reports\\customer_intake_20260523_173908.md",
+      "note": ""
+    },
+    "a591083f2dcccf93a7cb3ee5a1227ad42b8d2ab01fb71fbcf064f7e7f5855547": {
+      "sha256": "a591083f2dcccf93a7cb3ee5a1227ad42b8d2ab01fb71fbcf064f7e7f5855547",
+      "original_name": "verify_run2.pdf",
+      "status": "done",
+      "processed_at": "2026-05-23 17:49:29",
+      "report_path": "D:\\customer_intake_reports\\customer_intake_20260523_174929.md",
+      "note": ""
+    },
+    "e9aa336f3f53497c7c2841b4eb2ed07e85ce110a56ce502db43789263e751249": {
+      "sha256": "e9aa336f3f53497c7c2841b4eb2ed07e85ce110a56ce502db43789263e751249",
+      "original_name": "예성이엔지 CRETOP.pdf",
+      "status": "done",
+      "processed_at": "2026-05-26 09:26:12",
+      "report_path": "D:\\customer_intake_reports\\customer_intake_20260526_092612.md",
+      "note": ""
+    }
+  },
+  "updated_at": "2026-05-26 09:26:12"
+}
