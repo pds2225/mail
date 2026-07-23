@@ -612,7 +612,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": ".board li"
     },
     "note": "여성벤처 지원사업 [PC 실행 시 정상 접속]"
   },
@@ -671,7 +671,7 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": ".board_list li"
     },
     "note": "인천 기업지원 통합플랫폼 [PC 실행 시 정상 접속]"
   },
@@ -811,25 +811,25 @@
     "id": "ic_yeonsu",
     "name": "인천 연수구청",
     "type": "html_table",
-    "url": "https://www.yeonsu.go.kr/",
-    "enabled": false,
+    "url": "https://www.yeonsu.go.kr/main/community/notify/notice.asp",
+    "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 지원사업 [비활성화: 리다이렉트 루프]"
+    "note": "중소기업 지원사업 [2026-07-23 공고게시판 URL 확보·활성화, 유효행 35]"
   },
   {
     "id": "ic_namdong",
     "name": "인천 남동구청",
     "type": "html_table",
-    "url": "https://www.namdong.go.kr/",
-    "enabled": false,
+    "url": "https://www.namdong.go.kr/main/news/announce.jsp",
+    "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": ".board_list li"
     },
-    "note": "남동공단 기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+    "note": "중소기업 지원사업 [2026-07-23 공고게시판 URL 확보·활성화, 유효행 10]"
   },
   {
     "id": "ic_bupyeong",
@@ -855,17 +855,17 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+    "note": "중소기업 지원사업 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요] [셀렉터 재확보 필요: 기본셀렉터가 메뉴·사진뉴스 추출]"
   },
   {
     "id": "ic_seo",
     "name": "인천 서구청",
     "type": "html_table",
     "url": "https://www.seo.incheon.kr/",
-    "enabled": false,
+    "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": ".board_list li"
     },
     "note": "중소기업육성기금/전시회 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
   },
@@ -879,7 +879,7 @@
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요]"
+    "note": "국내전시회 참가기업 지원 [비활성화: 홈페이지 URL, 공고 목록 URL 확인 후 활성화 필요] [셀렉터 재확보 필요: 기본셀렉터가 메뉴·사진뉴스 추출]"
   },
   {
     "id": "ic_ongjin",
