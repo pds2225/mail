@@ -13,6 +13,7 @@ os.environ.setdefault("ANTHROPIC_API_KEY", "test_key")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "test_pass")
 os.environ.setdefault("GMAIL_ADDRESS", "test@test.com")
 os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
+os.environ.setdefault("MAIL_FEEDBACK_SECRET", "feedback-loop-test-secret")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import feedback  # noqa: E402
@@ -21,19 +22,24 @@ import monitor  # noqa: E402
 NID = "PBLN_000000000092578"
 
 
+def _subject(verdict: str, notice_id: str) -> str:
+    return f"[MAIL-FB] {verdict} {notice_id} {feedback.feedback_token.sign(verdict, notice_id)}"
+
+
 # ── 제목 파싱 ──────────────────────────────────────────────
 def test_parse_subject_basic():
-    got = feedback.parse_feedback_subject(f"[MAIL-FB] X {NID}")
+    got = feedback.parse_feedback_subject(_subject("X", NID))
     assert got == {"verdict": "X", "id": NID}
 
 
 def test_parse_subject_with_reply_prefix_and_lowercase():
-    got = feedback.parse_feedback_subject(f"Re: [mail-fb] o {NID}")
+    got = feedback.parse_feedback_subject("Re: " + _subject("O", NID).replace("[MAIL-FB] O", "[mail-fb] o"))
     assert got == {"verdict": "O", "id": NID}
 
 
 def test_parse_subject_percent_encoded():
-    got = feedback.parse_feedback_subject(f"%5BMAIL-FB%5D%20X%20{NID}")
+    from urllib.parse import quote
+    got = feedback.parse_feedback_subject(quote(_subject("X", NID)))
     assert got == {"verdict": "X", "id": NID}
 
 
@@ -176,7 +182,7 @@ class _FakeIMAP:
     def fetch(self, num, spec):
         from email.header import Header
         self.fetch_specs.append(spec)
-        subject = f"[MAIL-FB] X {NID}" if num == b"1" else str(Header(f"[MAIL-FB] O {NID}b", "utf-8").encode())
+        subject = _subject("X", NID) if num == b"1" else str(Header(_subject("O", NID + "b"), "utf-8").encode())
         raw = f"Subject: {subject}\r\nDate: Thu, 16 Jul 2026 09:00:00 +0900\r\n\r\n".encode()
         return ("OK", [(b"1 (BODY[HEADER])", raw)])
 
@@ -202,7 +208,7 @@ def test_collect_is_readonly_and_parses_real_mime_headers(monkeypatch):
 
 
 def test_collect_masks_address():
-    assert collect_feedback._mask("ekth3691@gmail.com") == "ek******@gmail.com"
+    assert collect_feedback._mask("test-recipient@example.test") == "te************@example.test"
     assert collect_feedback._mask("") == "***"
 
 

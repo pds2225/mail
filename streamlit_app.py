@@ -5,6 +5,8 @@ import hashlib, json, re, subprocess, sys
 from pathlib import Path
 import streamlit as st
 import logging
+import private_config
+from state_store import atomic_write_json, load_json_with_recovery
 # Streamlit 초기화 경고 억제
 logging.getLogger("streamlit.runtime.scriptrunner.script_runner").setLevel(logging.ERROR)
 
@@ -13,6 +15,8 @@ SITES_PATH    = Path("sites.json")
 GROUPS_PATH   = Path("groups.json")
 SETTINGS_PATH = Path("settings.json")
 SEEN_IDS_PATH = Path("seen_ids.json")
+WATCHLIST_PATH = Path("watchlist.json")
+COMPANIES_PATH = Path("companies.json")
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 SITE_TYPES = {
@@ -45,12 +49,58 @@ KNOWN_REGIONS = ["서울", "부산", "대구", "인천", "광주", "대전", "�
 # ── 유틸 ─────────────────────────────────────────────────────────────────────
 def load_json(path: Path, default):
     try:
-        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
+        return load_json_with_recovery(path, default)
     except Exception:
         return default
 
 def save_json(path: Path, data) -> None:
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    atomic_write_json(path, data, indent=2, backup=True)
+
+
+def _config_bundle():
+    """Load public matching rules plus recipient PII from the encrypted private store."""
+    public_groups = load_json(GROUPS_PATH, [])
+    public_settings = load_json(SETTINGS_PATH, {})
+    public_watchlist = load_json(WATCHLIST_PATH, {})
+    public_companies = load_json(COMPANIES_PATH, [])
+    payload = private_config.load_private_payload()
+    if payload:
+        return (
+            private_config.merge_groups(public_groups, payload),
+            private_config.merge_settings(public_settings, payload),
+            private_config.merge_watchlist(public_watchlist, payload),
+            private_config.merge_companies(public_companies, payload),
+        )
+    return public_groups, public_settings, public_watchlist, public_companies
+
+
+def load_groups_config() -> list[dict]:
+    return list(_config_bundle()[0] or [])
+
+
+def load_settings_config() -> dict:
+    return dict(_config_bundle()[1] or {})
+
+
+def _save_private_bundle(groups: list[dict], settings: dict) -> None:
+    """Save matching rules publicly and recipient/company emails only in encrypted local state."""
+    _, _, watchlist, companies = _config_bundle()
+    public_groups, public_settings, public_watchlist, public_companies, payload = private_config.split_public_private(
+        groups, settings, watchlist, companies,
+    )
+    private_config.save_private_payload(payload)
+    save_json(GROUPS_PATH, public_groups)
+    save_json(SETTINGS_PATH, public_settings)
+    save_json(WATCHLIST_PATH, public_watchlist)
+    save_json(COMPANIES_PATH, public_companies)
+
+
+def save_groups_config(groups: list[dict]) -> None:
+    _save_private_bundle(groups, load_settings_config())
+
+
+def save_settings_config(settings: dict) -> None:
+    _save_private_bundle(load_groups_config(), settings)
 
 def new_group_id() -> str:
     import time
@@ -103,12 +153,12 @@ def init_defaults() -> None:
             "regions": ["인천"],
             "keywords": {"logic": "OR", "keywords": ["화장품", "뷰티", "해외전시회", "수출지원"]},
             "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
-            "recipients": ["ekth3691@gmail.com"],
+            "tenant_id": "default", "recipients": [],
         }])
     if not SETTINGS_PATH.exists():
         save_json(SETTINGS_PATH, {
             "date_filter_enabled": True, "days_back": 1,
-            "raw_all_enabled": True, "raw_all_recipients": ["ekth3691@gmail.com"],
+            "raw_all_enabled": True, "tenant_id": "default", "raw_all_recipients": [],
         })
 
 init_defaults()
@@ -228,7 +278,7 @@ with tab_sites:
 # TAB 2 — 그룹 관리
 # ══════════════════════════════════════════════════════════════════
 with tab_groups:
-    groups: list[dict] = load_json(GROUPS_PATH, [])
+    groups: list[dict] = load_groups_config()
     st.subheader(f"등록된 그룹 ({len(groups)}개)")
     st.caption("그룹 = 필수조건(지역) + OR/AND/제외 키워드 + 지원유형 + 수신자. 그룹마다 별도 메일 발송.")
 
@@ -265,7 +315,7 @@ with tab_groups:
             if or_del:
                 or_list.remove(or_del)
                 grp.update({"or_keywords": or_list, "required_conditions": {"regions": g_regions}})
-                save_json(GROUPS_PATH, groups); st.rerun()
+                save_groups_config(groups); st.rerun()
             ork1, ork2 = st.columns([3, 1])
             with ork1:
                 new_or_kw = st.text_input("OR 키워드 추가", placeholder="예: 화장품",
@@ -276,7 +326,7 @@ with tab_groups:
                     if new_or_kw.strip() not in or_list:
                         or_list.append(new_or_kw.strip())
                         grp.update({"or_keywords": or_list, "required_conditions": {"regions": g_regions}})
-                        save_json(GROUPS_PATH, groups); st.rerun()
+                        save_groups_config(groups); st.rerun()
 
             # ── AND 키워드 그룹 ────────────────────────────────────
             st.markdown("**🔗 AND 키워드 그룹** (한 줄 = 한 그룹, 그룹 내 키워드 전부 포함 시 통과)")
@@ -298,7 +348,7 @@ with tab_groups:
             if excl_del:
                 excl_list.remove(excl_del)
                 grp.update({"exclude_keywords": excl_list, "required_conditions": {"regions": g_regions}})
-                save_json(GROUPS_PATH, groups); st.rerun()
+                save_groups_config(groups); st.rerun()
             exk1, exk2 = st.columns([3, 1])
             with exk1:
                 new_excl_kw = st.text_input("제외 키워드 추가", placeholder="예: 대기업",
@@ -309,7 +359,7 @@ with tab_groups:
                     if new_excl_kw.strip() not in excl_list:
                         excl_list.append(new_excl_kw.strip())
                         grp.update({"exclude_keywords": excl_list, "required_conditions": {"regions": g_regions}})
-                        save_json(GROUPS_PATH, groups); st.rerun()
+                        save_groups_config(groups); st.rerun()
 
             st.markdown("**📂 지원유형**")
             g_stypes = []
@@ -346,10 +396,10 @@ with tab_groups:
                         "support_types": g_stypes,
                         "recipients": [e.strip() for e in recip_text.splitlines() if e.strip()],
                     }
-                    save_json(GROUPS_PATH, groups); st.success("저장 완료"); st.rerun()
+                    save_groups_config(groups); st.success("저장 완료"); st.rerun()
             with bs2:
                 if st.button("🗑 그룹 삭제", key=f"g_del_{i}", use_container_width=True):
-                    groups.pop(i); save_json(GROUPS_PATH, groups); st.rerun()
+                    groups.pop(i); save_groups_config(groups); st.rerun()
 
     # ── 그룹 추가 ─────────────────────────────────────────────────
     st.divider()
@@ -377,9 +427,10 @@ with tab_groups:
                     "and_keyword_groups": _parse_and_groups(ng_and_text),
                     "exclude_keywords":   [k.strip() for k in ng_excl_kws.split(",") if k.strip()],
                     "support_types":      ng_stypes or ALL_SUPPORT_TYPES,
+                    "tenant_id":          "default",
                     "recipients":         [ng_email.strip()],
                 })
-                save_json(GROUPS_PATH, groups); st.success(f"'{ng_name}' 추가 완료!"); st.rerun()
+                save_groups_config(groups); st.success(f"'{ng_name}' 추가 완료!"); st.rerun()
 
     with st.expander("💡 그룹 설정 안내"):
         st.markdown("""
@@ -405,7 +456,7 @@ with tab_groups:
 # TAB 3 — 설정
 # ══════════════════════════════════════════════════════════════════
 with tab_settings:
-    settings: dict = load_json(SETTINGS_PATH, {})
+    settings: dict = load_settings_config()
     st.subheader("⚙️ 전역 설정")
 
     st.markdown("**📅 날짜 필터 (D-1 공고만)**")
@@ -431,9 +482,10 @@ with tab_settings:
             "date_filter_enabled": df_on,
             "days_back": int(days_b),
             "raw_all_enabled": raw_on,
+            "tenant_id": settings.get("tenant_id", "default"),
             "raw_all_recipients": [e.strip() for e in raw_emails.splitlines() if e.strip()],
         }
-        save_json(SETTINGS_PATH, new_settings)
+        save_settings_config(new_settings)
         st.success("설정 저장 완료!")
 
 
@@ -442,8 +494,8 @@ with tab_settings:
 # ══════════════════════════════════════════════════════════════════
 with tab_run:
     sites_now    = load_json(SITES_PATH, [])
-    groups_now   = load_json(GROUPS_PATH, [])
-    settings_now = load_json(SETTINGS_PATH, {})
+    groups_now   = load_groups_config()
+    settings_now = load_settings_config()
 
     active_sites  = [s for s in sites_now  if s.get("enabled")]
     active_groups = [g for g in groups_now if g.get("active")]

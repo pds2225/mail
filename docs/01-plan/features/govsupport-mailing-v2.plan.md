@@ -1,7 +1,7 @@
 # Plan: govsupport-mailing-v2 — 정부지원사업 공고 메일링 개선
 
 **Created**: 2026-05-31
-**Owner**: ekth3691@gmail.com
+**Owner**: test-recipient@example.test
 **PDCA Phase**: Plan
 **Base Repo**: pds2225/mail (D:\mail)
 
@@ -19,10 +19,10 @@
 | Key | Value |
 |-----|-------|
 | WHY | 잘못된 공고가 발송되어 신뢰도가 떨어지고, 수집 누락으로 기회 손실이 발생. 운영자는 매번 수동 보정 중. |
-| WHO | 인천 남동구 제조/수출 기업 운영자 (1차: ekth3691@gmail.com), 추후 그룹별 다중 수신자. |
+| WHO | 인천 남동구 제조/수출 기업 운영자 (1차: test-recipient@example.test), 추후 그룹별 다중 수신자. |
 | RISK | (1) 실제 메일 오발송 (2) monitor.py 수정 시 기존 안정 동작 회귀 (3) 외부 사이트 SSL/TLS 변화로 수집 재실패. |
 | SUCCESS | False Positive 50% 감소, 수집 실패 사이트 진단 리포트 생성, 그룹/수신자/필터 UI에서 코드 수정 없이 운영 가능. |
-| SCOPE | monitor.py 필터/수집 로직 한정 수정, streamlit_app.py UI 보강(허용), groups.json/sites.json 운영. **테스트 메일은 ekth3691@gmail.com 1개로만**. |
+| SCOPE | monitor.py 필터/수집 로직 한정 수정, streamlit_app.py UI 보강(허용), groups.json/sites.json 운영. **테스트 메일은 test-recipient@example.test 1개로만**. |
 
 ## 1. Requirements
 
@@ -35,7 +35,7 @@
 
 ### Non-Functional
 - NF1. monitor.py 기존 함수 시그니처 유지(회귀 방지).
-- NF2. **테스트 단계 메일 발송은 ekth3691@gmail.com 1개로만 한정**.
+- NF2. **테스트 단계 메일 발송은 test-recipient@example.test 1개로만 한정**.
 - NF3. 모든 변경은 dry-run으로 우선 검증 후 실발송.
 - NF4. Secret/API Key 출력 금지.
 
@@ -47,7 +47,7 @@
 | SC2 | 사이트별 진단 리포트 생성(82개 사이트) | reports/site_diagnostic_YYYYMMDD.md 존재 |
 | SC3 | 그룹/수신자 UI에서 추가/삭제 후 즉시 dry-run에 반영 | UI 조작 → groups.json 갱신 → preview 확인 |
 | SC4 | 기존 monitor.py 단위 테스트(test_monitor.py) 전부 통과 | `python -m pytest test_monitor.py -v` |
-| SC5 | 테스트 발송이 ekth3691@gmail.com 외 주소로 가지 않음 | 발송 로그 마스킹 확인 |
+| SC5 | 테스트 발송이 test-recipient@example.test 외 주소로 가지 않음 | 발송 로그 마스킹 확인 |
 
 ## 3. Out of Scope
 
@@ -69,13 +69,13 @@
 2. **필터 정밀화**: monitor.py의 `filter_for_group_with_diagnostics` 주변에 점수/임계값/LLM 2차 판정(선택) 추가.
 3. **UI 보강**: streamlit_app.py에 그룹/수신자/필터 편집 화면 추가 또는 기존 화면 정리.
 4. **수집 어댑터 복구**: sites.json + monitor.py의 수집 함수에서 진단 상위 실패 사이트만 핀포인트 보강.
-5. **테스트 안전망**: 변경 전 groups.json 백업, recipients를 ekth3691@gmail.com만 남기는 테스트용 토글.
+5. **테스트 안전망**: 변경 전 groups.json 백업, recipients를 test-recipient@example.test만 남기는 테스트용 토글.
 
 ## 6. Risks & Mitigations
 
 | Risk | Mitigation |
 |------|-----------|
-| 실제 메일 오발송 | 테스트 단계 recipients = ekth3691@gmail.com 강제, dry-run 우선 |
+| 실제 메일 오발송 | 테스트 단계 recipients = test-recipient@example.test 강제, dry-run 우선 |
 | monitor.py 회귀 | test_monitor.py 전체 통과 게이트, 함수 시그니처 유지 |
 | LLM 비용 폭증 | 2차 판정은 1차 필터 통과한 후보에만 적용, 일일 호출 상한 |
 | 외부 사이트 SSL 변화 | 진단 리포트로 가시화, 복구는 상위 N개만 |

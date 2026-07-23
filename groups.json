@@ -51,16 +51,15 @@
       "투자",
       "그외"
     ],
-    "recipients": [
-      "ekth3691@gmail.com"
-    ],
+    "recipients": [],
     "score_threshold": 1,
     "llm_check_enabled": true,
     "llm_check_threshold_band": [
       40,
       70
     ],
-    "llm_call_limit_per_run": 30
+    "llm_call_limit_per_run": 30,
+    "tenant_id": "default"
   },
   {
     "id": "grp_bnco",
@@ -191,10 +190,7 @@
       "투자",
       "그외"
     ],
-    "recipients": [
-      "ekth3691@gmail.com",
-      "dvd197001@gmail.com"
-    ],
+    "recipients": [],
     "score_threshold": 45,
     "weights": {
       "priority_match": 30,
@@ -202,7 +198,8 @@
       "exclude_penalty": -50,
       "region_match": 20
     },
-    "llm_check_enabled": true
+    "llm_check_enabled": true,
+    "tenant_id": "default"
   },
   {
     "id": "grp_prestartup_ai",
@@ -252,10 +249,7 @@
       "투자",
       "그외"
     ],
-    "recipients": [
-      "ekth3691@gmail.com",
-      "khban99@gmail.com"
-    ],
+    "recipients": [],
     "score_threshold": 1,
     "llm_check_enabled": true,
     "llm_check_threshold_band": [
@@ -267,6 +261,7 @@
       "인천",
       "경기",
       "수도권"
-    ]
+    ],
+    "tenant_id": "default"
   }
 ]

@@ -13,7 +13,6 @@
     "https://www.mssmiv.com/portal/board",
     "https://www.modoo.or.kr"
   ],
-  "recipients": [
-    "ekth3691@gmail.com"
-  ]
+  "recipients": [],
+  "tenant_id": "default"
 }

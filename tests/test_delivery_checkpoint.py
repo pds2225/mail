@@ -36,8 +36,10 @@ def test_load_missing_or_broken_is_empty(tmp_path):
 
 def test_save_load_roundtrip_atomic(tmp_path):
     p = tmp_path / "d.json"
-    ds.save(p, {"2026-07-21|g|a@b.com", "2026-07-21|g|c@d.com"})
-    assert ds.load(p) == {"2026-07-21|g|a@b.com", "2026-07-21|g|c@d.com"}
+    keys = {ds.key("2026-07-21", "g", "a@b.com"), ds.key("2026-07-21", "g", "c@d.com")}
+    ds.save(p, keys)
+    assert ds.load(p) == keys
+    assert "@" not in p.read_text(encoding="utf-8")
     # 트레일링 개행 없음(seen_ids 포맷 규약)
     assert not p.read_text(encoding="utf-8").endswith("\n")
 
@@ -54,8 +56,9 @@ def test_prune_keeps_recent_dates(tmp_path):
 
 def test_mark_checkpoints_immediately(tmp_path):
     p = tmp_path / "d.json"
-    cache = ds.mark(p, "2026-07-21|g|a@b.com")
-    assert "2026-07-21|g|a@b.com" in cache
+    key = ds.key("2026-07-21", "g", "a@b.com")
+    cache = ds.mark(p, key)
+    assert key in cache
     assert ds.load(p) == cache                        # 즉시 파일에 반영(체크포인트)
 
 

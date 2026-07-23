@@ -91,7 +91,7 @@ def test_execute_monitor_excludes_noise_from_raw_all(monkeypatch):
                                                     "or_keywords": ["수출바우처"], "recipients": []}])
     monkeypatch.setattr(m, "load_settings", lambda: {
         "date_filter_enabled": False, "raw_all_enabled": True,
-        "raw_all_recipients": ["ekth3691@gmail.com"], "company_match_enabled": False,
+        "raw_all_recipients": ["test-recipient@example.test"], "company_match_enabled": False,
     })
     sent = []
     monkeypatch.setattr(m, "send_to_list",

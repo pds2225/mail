@@ -13,7 +13,6 @@ from typing import Any
 from urllib.parse import urljoin, quote, urlsplit
 
 import httpx
-from anthropic import Anthropic
 from bs4 import BeautifulSoup
 
 # ── 기업 맞춤 정밀 매칭(2차 컷오프) — 선택적 ────────────────────────────────────
@@ -29,8 +28,11 @@ except ImportError:
     _CM_OK = False
 
 import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
+import delivery_outbox # 암호화된 수신자별 재시도 대기열(#113·#114·#115)
 import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
-import llm_safety      # Claude 요약 인젝션 격리·사실성 검증(#99·#101·#102·#104)
+import private_config  # 수신자·기업 이메일 분리와 tenant 경계(#96·#97·#149)
+import run_lock        # 로컬 실발송 단일 실행 가드(#17)
+from state_store import atomic_write_json, load_json_with_recovery
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -667,7 +669,7 @@ def html_pre(value: str) -> str:
 
 def load_json(path: Path, default):
     try:
-        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
+        return load_json_with_recovery(path, default)
     except Exception as e:
         log.warning("%s 로드 실패: %s", path, e)
         return default
@@ -691,14 +693,10 @@ def _pii_config(env_var: str, file_loader):
     return file_loader()
 
 def save_json(path: Path, data) -> None:
-    content = json.dumps(data, ensure_ascii=False, indent=2)
-    tmp = path.with_suffix(path.suffix + ".tmp")
     try:
-        tmp.write_text(content, encoding="utf-8")
-        tmp.replace(path)
+        atomic_write_json(path, data, indent=2, backup=True)
     except Exception as e:
         log.error("파일 저장 실패 %s: %s", path, e)
-        tmp.unlink(missing_ok=True)
         raise
 
 def normalize_title(title: str) -> str:
@@ -1294,8 +1292,27 @@ def load_sites() -> list[dict]:
     return active
 
 def load_groups() -> list[dict]:
-    # PII 격리(#149): 실 수신자가 담긴 그룹 설정을 환경변수(MAIL_GROUPS_JSON)로 주입 가능.
+    # 평문 groups.json 은 매칭 규칙만 가진다. 실제 수신자는 암호화된 private payload 로만 결합한다.
+    # MAIL_GROUPS_JSON 은 이미 배포된 이전 Secret 형식과 테스트 호환을 위한 읽기 전용 이행 경로다.
+    legacy_raw = os.environ.get("MAIL_GROUPS_JSON", "").strip()
+    try:
+        legacy_groups = bool(legacy_raw and isinstance(json.loads(legacy_raw), list))
+    except json.JSONDecodeError:
+        legacy_groups = False
     groups = _pii_config("MAIL_GROUPS_JSON", lambda: load_json(GROUPS_PATH, []))
+    private_payload = private_config.load_private_payload()
+    if private_payload:
+        groups = private_config.merge_groups(groups, private_payload)
+    else:
+        groups = [
+            {
+                **dict(group),
+                "tenant_id": private_config.normalize_tenant_id(group.get("tenant_id")),
+                # 공개 파일에는 수신자를 신뢰하지 않는다. 배포 이전의 Secret 형식만 이행 허용.
+                "recipients": list(group.get("recipients") or []) if legacy_groups else [],
+            }
+            for group in (groups or []) if isinstance(group, dict)
+        ]
     active = [g for g in (groups or []) if g.get("active", True)]
     log.info("그룹: %d개 활성", len(active))
     return active
@@ -1324,7 +1341,14 @@ def load_settings() -> dict:
         "raw_store_max_detail_bytes": 800_000,
         "raw_store_gzip_detail": True,
     }
-    return {**default, **load_json(SETTINGS_PATH, {})}
+    settings = {**default, **load_json(SETTINGS_PATH, {})}
+    private_payload = private_config.load_private_payload()
+    if private_payload:
+        settings = private_config.merge_settings(settings, private_payload)
+    else:
+        settings["tenant_id"] = private_config.normalize_tenant_id(settings.get("tenant_id"))
+        settings["raw_all_recipients"] = []
+    return settings
 
 
 def _with_raw_store_stats(result: dict) -> dict:
@@ -4464,79 +4488,15 @@ def render_region_unknown(items: list[dict], limit: int = 30) -> str:
 
 
 def claude_summarize(items: list[dict], group: dict) -> str:
-    if not items: return ""
-    limited = sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE]
-    client  = Anthropic(api_key=ANTHROPIC_API_KEY)
-    g           = _normalize_group(group)
-    req_regions = g.get("required_conditions", {}).get("regions", [])
-    stypes      = g.get("support_types", ALL_SUPPORT_TYPES)
-    or_kws      = g.get("or_keywords", [])
-    and_groups  = g.get("and_keyword_groups", [])
-    items_txt = "\n\n".join(
-        f"[{i+1}] [{' · '.join(it.get('_types', ['미분류']))}] [등록:{it.get('posted_date','날짜불명')}]\n"
-        f"제목: {it['title']}\n기관: {it['author']}\n내용: {it['description']}\n"
-        f"마감: {resolve_item_deadline(it)} ({it.get('deadline_status', 'unknown')})\n"
-        f"지역 적합성: {_region_label(it)}\n공장 조건: {_factory_label(it)}\n"
-        f"스마트공장 관련성: {_smart_relevance_label(it)}\n"
-        f"매칭 키워드: {', '.join(it.get('matched_keywords', [])) or '미기재'}\n"
-        f"우선 키워드: {', '.join(it.get('priority_keywords', [])) or '없음'}\n"
-        f"점수: {it.get('relevance_score', 0)}\n출처: {it['source']}\n링크: {it['link']}"
-        for i, it in enumerate(limited)
-    )
-    region_ctx = f"대상지역: {', '.join(req_regions) if req_regions else '전국'}"
-    kw_parts   = ([f"OR({', '.join(or_kws[:4])})"] if or_kws else []) + \
-                 [f"AND({', '.join(ag)})" for ag in and_groups[:2]]
-    kw_ctx     = "키워드: " + " | ".join(kw_parts) if kw_parts else "키워드: 전체"
-    type_ctx   = f"지원유형: {', '.join(stypes)}"
-    # 인젝션 관측(로깅) — 차단이 아니라 격리+사후검증이 주 방어.
-    _inj = llm_safety.detect_injection(items_txt)
-    if _inj:
-        log.warning("공고 원문에 인젝션 의심 문구 %d건(격리·검증으로 방어): %s", len(_inj), _inj[:3])
-    prompt = f"""{llm_safety.guard_preamble()}
+    """Render the digest from collected fields only.
 
-아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
-중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
-마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
-
-출력 형식:
-━━━━━━━━━━━━━━━━━━
-📌 [사업명]
-• 지원유형:
-• 지원기관:
-• 지원내용/금액:
-• 신청마감:
-• 지역조건:
-• 공장 조건:
-• 스마트공장 관련성:
-• 매칭 키워드:
-• 출처:
-• 🔗 링크
-━━━━━━━━━━━━━━━━━━
-
-공고 목록:
-{llm_safety.wrap_untrusted(items_txt)}"""
-    try:
-        resp = client.messages.create(
-            model="claude-haiku-4-5-20251001", max_tokens=8000,
-            messages=[{"role": "user", "content": prompt}])
-        # 출력 토큰 상한(max_tokens)에 걸려 응답이 중간에 끊기면 뒤쪽 공고 본문이 통째로
-        # 사라진다(메일 '본문 잘림'). 이때는 요약본 대신 전 공고를 빠짐없이 담는
-        # fallback_body 로 대체해 누락을 막는다.
-        if getattr(resp, "stop_reason", None) == "max_tokens":
-            log.warning("Claude 요약이 토큰 상한에 걸려 잘림 — fallback_body 로 대체(본문 보존)")
-            return fallback_body(limited)
-        text = resp.content[0].text.strip()
-        if not text:
-            return fallback_body(limited)
-        # 사실성 사후검증(#99·#101·#104): 미승인 링크 호스트·다수 누락이면 결정론적 DB 렌더로 대체.
-        _ok, _why = llm_safety.verify_summary(text, limited)
-        if not _ok:
-            log.warning("Claude 요약 사실성 검증 실패 — fallback_body(DB값)로 대체: %s", _why)
-            return fallback_body(limited)
-        return text
-    except Exception as e:
-        log.exception("Claude 요약 실패: %s", e)
-        return fallback_body(limited)
+    A language model must never be the source of a delivered support amount, posted date,
+    reception period, organization, or link. Keeping this former API name avoids a broad
+    caller refactor while making P0 factual integrity and prompt-injection safety absolute.
+    """
+    if not items:
+        return ""
+    return fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -4567,8 +4527,17 @@ except Exception:  # noqa: BLE001
 
 
 def _feedback_links_enabled() -> bool:
-    """MONITOR_NO_FEEDBACK_LINKS=1 이면 digest 피드백 링크를 끈다(표시 전용 스위치)."""
-    return _FEEDBACK_OK and os.getenv("MONITOR_NO_FEEDBACK_LINKS", "") not in ("1", "true", "True")
+    """서명키가 있는 경우에만 O/X 링크를 표시한다.
+
+    미서명 피드백은 누구나 제목을 위조할 수 있어 P0 학습 입력으로 쓰지 않는다. 키가 없으면
+    피드백 기능만 비활성화하고 공고 발송은 정상 진행한다.
+    """
+    return (
+        _FEEDBACK_OK
+        and bool(getattr(_feedback_mod, "feedback_token", None))
+        and _feedback_mod.feedback_token.enabled()
+        and os.getenv("MONITOR_NO_FEEDBACK_LINKS", "") not in ("1", "true", "True")
+    )
 
 
 # 본문(plain)의 링크를 HTML 파트에서 실제 클릭 가능한 앵커로 바꾼다.
@@ -4728,7 +4697,7 @@ def draft_to_list(subject: str, body: str, recipients: list[str]) -> None:
             log.error("초안 생성 실패 (%s): %s", _mask_email(to), e)
 
 
-def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict | None = None) -> None:
+def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict | None = None) -> set[str]:
     """수신자별 개별 발송(To/Cc 상호노출 없음).
 
     idem 이 주어지면 (기준일·그룹·수신자) 단위 멱등 발송을 한다:
@@ -4743,24 +4712,31 @@ def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict |
     # 초안 모드: 발송 대신 각 수신자별 Gmail 초안 생성(allow_send 게이트와 무관하게 초안만).
     if _DRAFT_MODE:
         draft_to_list(subject, body, recipients)
-        return
+        return set()
     if not _ALLOW_SMTP_SEND:
         checked = validate_recipients(recipients)
         log.info(
             "발송 생략 (allow_send=False): subject=%s recipients=%s",
             subject[:60], ", ".join(checked["masked"]) or "(없음)",
         )
-        return
+        return set()
     global _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
     delivered: set[str] = delivery_state.load(idem["path"]) if idem else set()
+    delivered_recipients: set[str] = set()
     for to in validate_recipients(recipients)["valid"]:
-        dkey = delivery_state.key(idem["date"], idem["group"], to) if idem else None
-        if dkey is not None and dkey in delivered:
+        dkey = delivery_state.key(
+            idem["date"], idem["group"], to, tenant=idem.get("tenant", "default"),
+        ) if idem else None
+        if dkey is not None and (
+            dkey in delivered or delivery_state.legacy_key(idem["date"], idem["group"], to) in delivered
+        ):
             log.info("멱등 skip (이미 발송됨): %s [%s]", _mask_email(to), idem["group"])
+            delivered_recipients.add(to.strip().lower())
             continue
         try:
             send_email(subject, body, to)
             _SEND_OK += 1
+            delivered_recipients.add(to.strip().lower())
             if idem and dkey is not None:
                 # 성공 즉시 체크포인트 — 중단 시에도 이 수신자는 재발송 안 됨.
                 delivery_state.mark(idem["path"], dkey, _cache=delivered)
@@ -4768,20 +4744,34 @@ def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict |
             _SEND_FAIL += 1
             _LAST_SEND_ERR = str(e)
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
+    return delivered_recipients
 
 
-def guard_group_recipients(recipients: list[str], settings: dict, group_name: str) -> list[str]:
+def guard_group_recipients(
+    recipients: list[str], settings: dict, group_name: str, *, group: dict | None = None,
+) -> list[str]:
     """#120: settings['recipient_allowlist'] 설정 시 화이트리스트 밖 수신자를 제외·경보.
 
     groups.json 오설정(A그룹 recipients 에 B고객 유입)으로 타 그룹 다이제스트가 잘못 나가는 것을
     방지한다. allowlist 미설정이면 종전 그대로(동작 불변, opt-in).
     """
+    scoped = list(recipients)
+    # 새 private payload 경로에서는 그룹 ID와 tenant ID 모두 일치한 수신자만 통과한다.
+    # payload 가 없을 때는 이미 평문 public config 가 recipients=[] 이므로 자연스럽게 fail-closed 된다.
+    if group is not None and private_config.load_private_payload():
+        scoped = private_config.allowed_recipients(group, scoped)
+        if len(scoped) != len(recipients):
+            log.error("tenant 수신자 경계 위반(그룹 '%s') — 발송 제외 %d명",
+                      group_name, len(recipients) - len(scoped))
+            alert_ntfy("recipient_tenant_guard",
+                       f"[{group_name}] tenant 경계 밖 수신자 발송 차단",
+                       priority="high", tags="warning")
     allow = settings.get("recipient_allowlist") or []
     if not allow:
-        return recipients
+        return scoped
     allow_set = {str(a).strip().lower() for a in allow}
-    kept = [r for r in recipients if str(r).strip().lower() in allow_set]
-    dropped = [r for r in recipients if str(r).strip().lower() not in allow_set]
+    kept = [r for r in scoped if str(r).strip().lower() in allow_set]
+    dropped = [r for r in scoped if str(r).strip().lower() not in allow_set]
     if dropped:
         log.error("수신자 화이트리스트 위반(그룹 '%s') — 발송 제외 %d명: %s",
                   group_name, len(dropped), ", ".join(_mask_email(d) for d in dropped))
@@ -4789,6 +4779,85 @@ def guard_group_recipients(recipients: list[str], settings: dict, group_name: st
                    f"[{group_name}] 화이트리스트 밖 수신자 {len(dropped)}명 발송 차단(그룹 설정 확인)",
                    priority="high", tags="warning")
     return kept
+
+
+def _outbox_targets(recipients: list[str]) -> list[str]:
+    targets = [_ONLY_TO] if _ONLY_TO else recipients
+    return validate_recipients(targets)["valid"]
+
+
+def deliver_with_outbox(
+    subject: str,
+    body: str,
+    recipients: list[str],
+    *,
+    date: str,
+    tenant: str,
+    group: str,
+    notice_ids: list[str],
+) -> None:
+    """Persist a PII-encrypted delivery plan before SMTP, then checkpoint each recipient.
+
+    ``seen_ids`` is deliberately updated later, after every planned delivery has either
+    completed or been retained in this encrypted queue. That ordering prevents both lost
+    notices and duplicate messages across crash/partial-recipient reruns (#113–#115).
+    """
+    targets = _outbox_targets(recipients)
+    if not targets:
+        log.warning("발송 대기열 생성 생략(유효 수신자 없음): group=%s", group)
+        return
+    entry = delivery_outbox.upsert(
+        date=date,
+        tenant=tenant,
+        group=group,
+        subject=subject,
+        body=body,
+        recipients=targets,
+        notice_ids=notice_ids,
+    )
+    delivered = send_to_list(
+        subject,
+        body,
+        targets,
+        idem={"date": date, "tenant": tenant, "group": group, "path": str(DELIVERY_STATE_PATH)},
+    )
+    delivery_outbox.settle(entry["id"], delivered)
+
+
+def retry_pending_outbox() -> None:
+    """Finish only the recipients that remain after an interrupted send run."""
+    for entry in delivery_outbox.pending():
+        recipients = [str(value) for value in entry.get("recipients", [])]
+        if not recipients:
+            continue
+        delivered = send_to_list(
+            str(entry.get("subject") or ""),
+            str(entry.get("body") or ""),
+            recipients,
+            idem={
+                "date": str(entry.get("date") or ""),
+                "tenant": str(entry.get("tenant") or "default"),
+                "group": str(entry.get("group") or "outbox"),
+                "path": str(DELIVERY_STATE_PATH),
+            },
+        )
+        delivery_outbox.settle(str(entry.get("id") or ""), delivered)
+
+
+def persist_completed_outbox(seen_ids: set[str]) -> set[str]:
+    """Commit completed deliveries to seen_ids, then acknowledge their encrypted records."""
+    completed = delivery_outbox.completed()
+    if not completed:
+        return seen_ids
+    notice_ids = {
+        str(notice_id) for entry in completed
+        for notice_id in (entry.get("notice_ids") or []) if str(notice_id)
+    }
+    if notice_ids:
+        seen_ids.update(notice_ids)
+        save_seen_ids(seen_ids)
+    delivery_outbox.acknowledge_completed({str(entry.get("id") or "") for entry in completed})
+    return seen_ids
 
 
 VOUCHER_KEYWORDS = ("수출바우처", "혁신바우처")
@@ -4856,11 +4925,21 @@ def load_watchlist() -> dict:
     raw = load_json(WATCHLIST_PATH, {})
     if not isinstance(raw, dict):
         return {"keywords": [], "urls": [], "recipients": []}
-    return {
+    private_payload = private_config.load_private_payload()
+    # 테스트/진단이 임시 watchlist 경로를 주입할 때는 운영 수신자 payload 를 섞지 않는다.
+    if private_payload and WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+        raw = private_config.merge_watchlist(raw, private_payload)
+    elif WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+        # 공개 운영 파일의 수신자는 무시한다. 암호화 payload 가 없는 상태에서는 발송하지 않는다.
+        raw = {**raw, "recipients": []}
+    normalized = {
         "keywords": [str(k).strip() for k in (raw.get("keywords") or []) if str(k).strip()],
         "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
         "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
     }
+    if raw.get("tenant_id"):
+        normalized["tenant_id"] = private_config.normalize_tenant_id(raw.get("tenant_id"))
+    return normalized
 
 
 def _norm_url(u: str) -> str:
@@ -4963,6 +5042,14 @@ def execute_monitor(
     seen_ids = load_seen_ids()
     days_back = settings.get("days_back", 1)
 
+    # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
+    # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
+    if allow_send and persist_seen:
+        if not delivery_outbox.is_ready():
+            raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
+        retry_pending_outbox()
+        seen_ids = persist_completed_outbox(seen_ids)
+
     if not sites:
         log.info("활성 사이트 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites"})
@@ -5055,7 +5142,17 @@ def execute_monitor(
                     f"  링크: {it.get('link') or it.get('url') or '미기재'}\n\n"
                     for i, it in enumerate(watch_hits, 1)
                 )
-                send_to_list(f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})", wl_body, wl_recipients)
+                wl_subject = f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})"
+                if allow_send and persist_seen:
+                    deliver_with_outbox(
+                        wl_subject, wl_body, wl_recipients,
+                        date=str(target_date),
+                        tenant=str(watchlist.get("tenant_id") or settings.get("tenant_id") or "default"),
+                        group="watchlist",
+                        notice_ids=[str(it.get("id") or "") for it in watch_hits],
+                    )
+                else:
+                    send_to_list(wl_subject, wl_body, wl_recipients)
             alert_ntfy(
                 "watchlist",
                 f"집중 모니터링 공고 {len(watch_hits)}건!\n"
@@ -5081,16 +5178,20 @@ def execute_monitor(
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
             f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지·잡공고 {raw_dropped}건 제외)\n\n"
         ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
-        send_to_list(
-            f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건",
-            body_raw, settings["raw_all_recipients"],
-        )
+        raw_subject = f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건"
+        if allow_send and persist_seen:
+            deliver_with_outbox(
+                raw_subject, body_raw, settings["raw_all_recipients"],
+                date=str(target_date),
+                tenant=str(settings.get("tenant_id") or "default"),
+                group="raw_all",
+                notice_ids=[str(it.get("id") or "") for it in raw_items],
+            )
+        else:
+            send_to_list(raw_subject, body_raw, settings["raw_all_recipients"])
 
     if not filtered_new:
         log.info("처리 대상 없음. 종료.")
-        if persist_seen:
-            seen_ids.update(it["id"] for it in deduped)
-            save_seen_ids(seen_ids)
         return _with_raw_store_stats({
             "ok": True,
             "mode": mode,
@@ -5198,17 +5299,22 @@ def execute_monitor(
             feedback_block = _render_feedback_block(g_items)
             subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
             # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
-            _send_kw: dict = {}
-            if persist_seen:
-                _gid = str(group.get("id") or group.get("name") or "grp")
-                _send_kw["idem"] = {"date": str(target_date), "group": _gid, "path": str(DELIVERY_STATE_PATH)}
-            _recips = guard_group_recipients(group.get("recipients", []), settings, group.get("name"))
-            send_to_list(
-                f"[{group.get('name')}] {subj_count} ({date_str})",
-                header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
-                _recips,
-                **_send_kw,
+            _gid = str(group.get("id") or group.get("name") or "grp")
+            _recips = guard_group_recipients(
+                group.get("recipients", []), settings, group.get("name"), group=group,
             )
+            _subject = f"[{group.get('name')}] {subj_count} ({date_str})"
+            _body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
+            if allow_send and persist_seen:
+                deliver_with_outbox(
+                    _subject, _body, _recips,
+                    date=str(target_date),
+                    tenant=str(group.get("tenant_id") or "default"),
+                    group=_gid,
+                    notice_ids=[str(it.get("id") or "") for it in (g_items + ru_items)],
+                )
+            else:
+                send_to_list(_subject, _body, _recips)
             if voucher_items:
                 alert_ntfy(
                     f"voucher {len(voucher_items)}",
@@ -5216,18 +5322,10 @@ def execute_monitor(
                     + "\n".join(f"- {it['title'][:50]}" for it in voucher_items[:5]),
                     priority="high", tags="loudspeaker",
                 )
-            # 체크포인트(#144): 이 그룹 발송분을 즉시 seen 기록·저장 → 이후 그룹에서 크래시해도
-            # 이미 보낸 건은 다음 실행에서 재발송되지 않는다(종전엔 루프 끝에서만 저장).
-            if persist_seen:
-                seen_ids.update(it["id"] for it in g_items if it.get("id"))
-                seen_ids.update(it["id"] for it in ru_items if it.get("id"))
-                save_seen_ids(seen_ids)
-
-    # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
-    if persist_seen:
-        seen_ids.update(it["id"] for it in deduped)
-        seen_ids.update(it["id"] for it in date_unknown if it.get("id"))
-        save_seen_ids(seen_ids)
+    # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
+    # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
+    if allow_send and persist_seen:
+        seen_ids = persist_completed_outbox(seen_ids)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
     final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
@@ -5841,6 +5939,14 @@ if __name__ == "__main__":
     if args.only_to:
         _ONLY_TO = args.only_to
         log.info("only-to 모드: 모든 발송 수신자를 %s 로 강제합니다(테스트)", _mask_email(args.only_to))
+    if args.send and not args.persist_seen:
+        parser.error("--send 는 --persist-seen 과 함께 사용해야 합니다(중복·누락 방지 대기열 필수)")
+    _run_guard = None
+    if args.send:
+        _run_guard = run_lock.MonitorRunLock()
+        if not _run_guard.acquire():
+            log.warning("다른 실발송 run 이 진행 중입니다 — 이번 실행은 중복 방지를 위해 종료합니다")
+            raise SystemExit(0)
     try:
         if args.draft:
             # 초안 모드: 실발송 없이 공고 digest 를 Gmail 초안으로 생성.
@@ -5900,3 +6006,6 @@ if __name__ == "__main__":
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise
+    finally:
+        if _run_guard is not None:
+            _run_guard.release()

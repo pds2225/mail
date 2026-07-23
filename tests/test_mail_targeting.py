@@ -25,7 +25,7 @@ def _company():
     return {
         "id": "cmp_test",
         "name": "테스트 인천 화장품 제조",
-        "email": "ekth3691@gmail.com",
+        "email": "test-recipient@example.test",
         "active": True,
         "region": {"city": "인천", "district": "남동구"},
         "industry_keywords": ["화장품", "제조"],

@@ -26,25 +26,6 @@ sys.path.insert(0, str(ROOT))
 import monitor as m  # noqa: E402
 
 
-class _FakeResp:
-    def __init__(self, text, stop_reason):
-        self.content = [type("B", (), {"text": text})()]
-        self.stop_reason = stop_reason
-
-
-class _FakeMessages:
-    def __init__(self, text, stop_reason):
-        self._text, self._stop = text, stop_reason
-
-    def create(self, **kw):
-        return _FakeResp(self._text, self._stop)
-
-
-class _FakeClient:
-    def __init__(self, text, stop_reason):
-        self.messages = _FakeMessages(text, stop_reason)
-
-
 def _items():
     return [
         {"id": "a", "title": "인천 화장품 제조 스마트공장 고도화 지원",
@@ -63,29 +44,23 @@ def _group():
             "required_conditions": {"regions": ["인천"]}}
 
 
-def test_summary_truncation_falls_back_to_complete_body(monkeypatch):
-    """stop_reason=max_tokens(요약 잘림) → 전 공고 빠짐없는 fallback_body 로 대체."""
-    monkeypatch.setattr(m, "Anthropic",
-                        lambda **kw: _FakeClient("📌 인천 화장품 제조 …여기서 잘림", "max_tokens"))
+def test_summary_never_truncates_or_omits_collected_notices():
+    """발송용 요약은 모델 출력 대신 전 공고를 빠짐없이 담는 결정론적 본문이다."""
     body = m.claude_summarize(_items(), _group())
-    # 잘린 요약이 아니라 두 공고 모두 담긴 완전한 본문이어야 한다.
     assert "인천 화장품 제조" in body
-    assert "뒤쪽 공고" in body                       # 잘림으로 사라지면 안 됨
+    assert "뒤쪽 공고" in body
     assert "이 공고 본문이 요약 잘림으로 사라지면 안 된다" in body
 
 
-def test_summary_normal_stop_uses_model_output(monkeypatch):
-    """정상 종료(stop_reason=end_turn)면 모델 요약 본문을 그대로 사용."""
-    monkeypatch.setattr(m, "Anthropic",
-                        lambda **kw: _FakeClient("MODEL_SUMMARY_OK", "end_turn"))
+def test_summary_never_uses_model_text():
+    """환경 변수와 무관하게 환각 가능한 모델 문장은 발송 본문으로 쓰지 않는다."""
     body = m.claude_summarize(_items(), _group())
-    assert body == "MODEL_SUMMARY_OK"
+    assert "MODEL_SUMMARY_OK" not in body
+    assert "인천 화장품 제조" in body and "뒤쪽 공고" in body
 
 
-def test_summary_empty_output_falls_back(monkeypatch):
-    """빈 응답도 fallback_body 로 대체(빈 본문 발송 방지)."""
-    monkeypatch.setattr(m, "Anthropic",
-                        lambda **kw: _FakeClient("   ", "end_turn"))
+def test_summary_never_returns_empty_for_nonempty_items():
+    """공고가 있으면 모델 상태와 무관하게 본문이 비지 않는다."""
     body = m.claude_summarize(_items(), _group())
     assert "인천 화장품 제조" in body and "뒤쪽 공고" in body
 
