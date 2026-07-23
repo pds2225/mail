@@ -67,6 +67,21 @@ jobs:
           path: coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
 
+      # P0 수집누락 실행대장·알림 사본 보존. logs/ 는 .gitignore 대상이라 커밋되지 않으므로
+      # 아티팩트로 남기지 않으면 러너 종료와 함께 사라진다("만들었는데 아무도 못 봄" 방지).
+      - name: 소스 실행대장·P0 알림 아티팩트 업로드
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-coverage-${{ github.run_id }}
+          path: |
+            logs/source_coverage_*.json
+            logs/source_coverage_*.md
+            logs/p0_collection_alert_*.md
+            logs/site_collection_coverage_report.md
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: seen_ids.json·O/X 피드백 커밋 (중복 재발송 방지 + 골든 라벨 축적)
         if: always()
         env:

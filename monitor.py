@@ -590,6 +590,44 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 
+# ── 페이지네이션 계측 (P0 수집누락 탐지용) ────────────────────────────────────
+# 각 fetcher 가 "몇 페이지를 돌았고 왜 멈췄는지"를 남긴다. 이 정보는 함수 밖에서는
+# 관찰할 수 없다(모든 fetcher 가 list[dict] 만 반환하므로). 네트워크 요청을 1건도
+# 늘리지 않고, items 를 읽지도 바꾸지도 않는 append-only 계측이다.
+#   stop_reason: SINGLE_PAGE(페이지네이션 없음) / EMPTY_PAGE(빈 페이지로 정상 종료)
+#                / MAX_PAGES_HIT(상한에 걸려 끊김 = 더 있을 수 있음)
+# 킬스위치: MONITOR_NO_PAGE_STATS=1
+_PAGE_STATS: dict[str, dict] = {}
+
+
+def _page_stat(site_id: str, **fields: Any) -> None:
+    """페이지 계측 기록. 실패해도 수집을 절대 막지 않는다(전부 무시)."""
+    try:
+        if os.environ.get("MONITOR_NO_PAGE_STATS") or not site_id:
+            return
+        cur = _PAGE_STATS.get(site_id) or {}
+        cur.update(fields)
+        _PAGE_STATS[site_id] = cur  # site_id 키 단위 대입만 (스레드 경합 회피)
+    except Exception:
+        pass
+
+
+def page_stats_snapshot() -> dict[str, dict]:
+    """현재까지 기록된 페이지 계측 스냅샷(얕은 복사)."""
+    try:
+        return {k: dict(v) for k, v in _PAGE_STATS.items()}
+    except Exception:
+        return {}
+
+
+def reset_page_stats() -> None:
+    """계측 초기화(실행 단위 분리용)."""
+    try:
+        _PAGE_STATS.clear()
+    except Exception:
+        pass
+
+
 # 보안: 로그(특히 httpx 요청 로그)에 평문 노출되는 API 인증키를 마스킹한다.
 # 정부 공공데이터 인증키(crtfcKey 등)가 요청 URL 쿼리로 들어가 INFO 로그에
 # 그대로 찍히던 문제 차단. 로깅 계층(핸들러)에서만 가리므로 실제 요청값엔 영향 없음.
@@ -1429,6 +1467,7 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
         except Exception as e:  # noqa: BLE001
             log.debug("기업마당 워밍업 생략(%s)", e)
 
+    _pages_done, _stop_reason, _dup_pages = 0, "MAX_PAGES_HIT", 0
     for page in range(1, max_pages + 1):
         r = None
         for attempt in range(retries + 1):
@@ -1478,16 +1517,24 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
         raw = data.get("jsonArray", data.get("channel", {}).get("item", []))
         if isinstance(raw, dict):
             raw = [raw]
+        _pages_done, _stop_reason = page, "MAX_PAGES_HIT"
         if not raw:
+            _stop_reason = "EMPTY_PAGE"
             break
+        _before = len(items)
         for it in raw:
             parsed = _bizinfo_parse_item(it, site["name"], agg)
             if parsed["id"] in seen_ids:
                 continue
             seen_ids.add(parsed["id"])
             items.append(parsed)
+        if len(items) == _before:
+            _dup_pages += 1  # 이 페이지가 전부 기존 항목 = 같은 내용 반복 의심
         if len(raw) < page_unit:
+            _stop_reason = "LAST_PAGE"
             break
+    _page_stat(site.get("id", ""), stop_reason=_stop_reason, pages_fetched=_pages_done,
+               duplicate_page=_dup_pages >= 2, items=len(items))
     return items
 
 
@@ -1762,6 +1809,10 @@ def fetch_html_generic(site: dict) -> list[dict]:
         desc = select_text(row, selectors.get("description", ""))
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
                            title, link, author, desc, deadline, site["name"], posted, agg))
+    # 이 수집기는 페이지네이션을 하지 않는다(첫 페이지만). 목록 행 수와 실제 추출 수를
+    # 함께 남겨, 페이지가 꽉 찬 채 끝났는지(=뒤에 더 있을 가능성)를 사후 판단할 수 있게 한다.
+    _page_stat(site.get("id", ""), stop_reason="SINGLE_PAGE", pages_fetched=1,
+               row_candidates=len(soup.select(sel)), items=len(items))
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -2958,6 +3009,11 @@ def fetch_site_coverage(
             "dedup_removed_estimate": 0,
             "final_mail_target_estimate": 0,
             "missing_risk": "높음",
+            # P0 수집누락 탐지용 — 키는 항상 존재하게 두어 판정부가 분기하지 않게 한다
+            "detail_link_ok_count": 0,
+            "collect_status": "",
+            "reason_codes": [],
+            "risk_level": "",
         }
         if not site.get("enabled", True):
             row["fetch_error"] = "disabled_in_config"
@@ -2976,8 +3032,16 @@ def fetch_site_coverage(
             row["posted_parsed_count"] = len(matched)
             row["date_unknown_count"] = len(unknown)
             row["today_target_count"] = len(matched)
-            row["dedup_removed_estimate"] = 0
+            # 중복제거 전·후 건수 — 같은 id 가 여러 번 잡히면 목록 파싱이 흔들린 신호
+            unique_ids = {it.get("id") for it in items if it.get("id")}
+            row["dedup_removed_estimate"] = max(0, len(items) - len(unique_ids))
             row["final_mail_target_estimate"] = len(matched) + len(unknown)
+            # 상세링크 추출률 — 링크가 목록 URL 그대로면 상세로 못 들어간 것
+            site_url = (site.get("url") or "").split("#")[0]
+            row["detail_link_ok_count"] = sum(
+                1 for it in items
+                if (it.get("link") or "") and (it.get("link") or "").split("#")[0] != site_url
+            )
         except Exception as exc:
             row["fetch_error"] = str(exc)[:200]
         row["missing_risk"] = _coverage_risk_level(row)
@@ -5347,6 +5411,90 @@ def write_coverage_anomaly_report(
     return path
 
 
+def write_source_coverage_json(
+    payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
+) -> Path:
+    """기계 판독용 실행대장. logs/source_coverage_YYYYMMDD.json"""
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return path
+
+
+def write_source_coverage_md(
+    payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
+) -> Path:
+    """관리자 확인용 실행대장 보고서. logs/source_coverage_YYYYMMDD.md"""
+    import coverage_alert as _ca  # noqa: PLC0415
+
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_ca.render_coverage_markdown(payload), encoding="utf-8")
+    return path
+
+
+def write_p0_collection_alert(
+    payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
+) -> Path:
+    """P0 누락위험 알림 사본. logs/p0_collection_alert_YYYYMMDD.md"""
+    import coverage_alert as _ca  # noqa: PLC0415
+
+    run_at = run_at or datetime.now(KST)
+    path = path or (BASE_DIR / "logs" / f"p0_collection_alert_{run_at:%Y%m%d}.md")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_ca.render_p0_alert_markdown(payload), encoding="utf-8")
+    return path
+
+
+def run_source_coverage_audit(
+    rows: list[dict],
+    sites: list[dict] | None = None,
+    *,
+    allow_alert: bool = True,
+    run_at: datetime | None = None,
+    write_files: bool = True,
+) -> dict:
+    """활성 소스 실행 완전성·수집 품질을 P0/P1 로 판정하고 산출물·알림을 남긴다.
+
+    운영 게이트이지만 **발송을 막지 않는다** — P0 가 나와도 상태만 DEGRADED 로 표시하고
+    정상 수집분의 판정·발송은 그대로 계속된다. 전체를 try/except 로 감싸 이 감사 자체의
+    실패가 본 작업(수집·발송)에 절대 전파되지 않게 한다.
+
+    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="OK").
+    """
+    try:
+        import coverage_alert as _ca  # noqa: PLC0415
+
+        run_at = run_at or datetime.now(KST)
+        baseline = _ca.load_coverage_baseline()
+        page_stats = page_stats_snapshot()
+        reports = _ca.classify_sources(rows, baseline, page_stats=page_stats)
+        exec_check = _ca.verify_source_execution(sites, rows)
+        summary = _ca.summarize_run_status(reports, exec_check)
+        payload = _ca.build_coverage_payload(
+            rows, reports, summary, exec_check=exec_check,
+            generated_at=run_at.strftime("%Y-%m-%d %H:%M KST"),
+        )
+        files: dict[str, str] = {}
+        if write_files:
+            files["json"] = str(write_source_coverage_json(payload, run_at=run_at))
+            files["md"] = str(write_source_coverage_md(payload, run_at=run_at))
+            if summary.get("p0_count"):
+                files["p0_alert"] = str(write_p0_collection_alert(payload, run_at=run_at))
+        if summary.get("p0_count") and allow_alert:
+            alert_email(
+                f"[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
+                _ca.format_p0_alert_message(payload),
+            )
+        return {**summary, "payload": payload, "files": files}
+    except Exception as e:  # 감사 실패는 절대 수집·발송을 막지 않는다
+        log.warning("소스 커버리지 감사 실패(무시): %s", e)
+        return {"status": "OK", "p0_count": 0, "p1_count": 0, "p0_sources": [],
+                "p1_sources": [], "payload": {}, "files": {}, "audit_error": str(e)[:200]}
+
+
 def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) -> list[dict]:
     """커버리지 이상탐지: baseline 대비 0건 급락·수집실패·급감을 찾아 (보수적으로) 폰 알림.
 
@@ -5574,9 +5722,16 @@ def run_dry_run(
 
     coverage_rows: list[dict] = []
     coverage_anomalies: list[dict] = []
+    coverage_audit: dict = {}
     if fetch_coverage:
         all_sites = load_json(SITES_PATH, [])
+        reset_page_stats()
         coverage_rows = fetch_site_coverage(all_sites)
+        # 활성 소스 실행 완전성·품질 감사(P0/P1). 알림은 anomaly_check 와 중복되지 않게
+        # P0 가 있을 때만 별도 1회. 실패해도 내부에서 흡수되어 dry-run 을 막지 않는다.
+        coverage_audit = run_source_coverage_audit(
+            coverage_rows, all_sites, allow_alert=allow_coverage_alert,
+        )
         coverage_anomalies = run_coverage_anomaly_check(
             coverage_rows, allow_alert=allow_coverage_alert,
         )
@@ -5586,6 +5741,13 @@ def run_dry_run(
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
+    result["source_coverage_summary"] = {
+        k: v for k, v in coverage_audit.items() if k not in ("payload",)
+    }
+    # 최상위 스칼라로 승격 — API 응답 요약(_result_summary)이 스칼라만 통과시키기 때문
+    result["run_status"] = coverage_audit.get("status", "OK")
+    result["collection_p0_count"] = int(coverage_audit.get("p0_count", 0) or 0)
+    result["collection_p1_count"] = int(coverage_audit.get("p1_count", 0) or 0)
     result["recipient_audit"] = {
         g.get("name"): validate_recipients(g.get("recipients", []))
         for g in load_groups()
@@ -5716,8 +5878,18 @@ if __name__ == "__main__":
             # 0건/급감/실패 시 PC 이메일 알림(누락 방지, PR #123). --coverage-alert 일 때만.
             if args.coverage_alert and not args.skip_coverage_fetch:
                 try:
-                    run_coverage_anomaly_check(
-                        fetch_site_coverage(load_json(SITES_PATH, [])), allow_alert=True)
+                    _all_sites = load_json(SITES_PATH, [])
+                    reset_page_stats()
+                    _cov_rows = fetch_site_coverage(_all_sites)
+                    # P0 감사 — 활성 소스 미실행·수집실패·급감을 즉시 알린다.
+                    # 발송을 막지 않는다: 아래 main() 은 결과와 무관하게 그대로 실행된다.
+                    _audit = run_source_coverage_audit(_cov_rows, _all_sites, allow_alert=True)
+                    if _audit.get("status") == "DEGRADED":
+                        log.warning(
+                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (발송은 계속 진행)",
+                            _audit.get("p0_count"), _audit.get("p1_count"),
+                        )
+                    run_coverage_anomaly_check(_cov_rows, allow_alert=True)
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             main(
