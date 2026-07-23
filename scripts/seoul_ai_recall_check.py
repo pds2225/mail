@@ -37,7 +37,7 @@ FIXTURES = [
         "id": "support_field_ai",
         "item": {
             "title": "인공지능 사업화 지원 모집",
-            "description": "신청기간 2026.07.01~",
+            "description": "상시 신청접수",
             "support_field": "AI/데이터",
             "author": "NIPA",
         },
