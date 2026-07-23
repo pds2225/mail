@@ -3365,6 +3365,53 @@ def _application_like(text: str) -> bool:
     return any(kw in text for kw in ("모집", "신청", "접수", "공모"))
 
 
+_SUPPLIER_ROLE_TERMS = ("공급기업", "수행기관", "서비스 제공자")
+_DEMAND_ROLE_TERMS = ("수요기업", "참여기업", "신청 기업", "지원기업", "제조기업", "중소기업")
+
+
+def _mixed_target_roles(item: dict) -> bool:
+    """제목/구조화 대상에 수요·공급 모집이 함께 명시됐는지 판정한다."""
+    role_text = norm(f"{item.get('title', '')} {item.get('target_field', '')}").lower()
+    return (
+        any(term in role_text for term in _SUPPLIER_ROLE_TERMS)
+        and any(term in role_text for term in _DEMAND_ROLE_TERMS)
+    )
+
+
+def _active_application_title(title: str) -> bool:
+    """제목이 결과·종료 안내가 아닌 현재 모집 공고인지 보수적으로 판정한다."""
+    inactive_terms = (
+        "모집 결과", "모집결과", "선정 결과", "선정결과", "최종 선정",
+        "최종선정", "마감 안내", "접수 마감", "성료", "개최 결과", "개최결과",
+    )
+    if any(term in title for term in inactive_terms):
+        return False
+    active_terms = (
+        "모집", "신청", "접수", "공모", "참가신청",
+        "지원사업 공고", "지원 사업 공고", "지원계획 공고", "사업 공고",
+    )
+    return _application_like(title) and any(term in title for term in active_terms)
+
+
+def _split_exclusion_hits(item: dict, code: str, hits: list[str]) -> tuple[list[str], list[str]]:
+    """제외 단서를 자동 제외(hard)와 참고 문맥(soft)으로 나눈다.
+
+    제외 단어가 제목에 있거나 제목이 모집 공고가 아니면 기존처럼 hard다.
+    반대로 제목이 명백한 모집 공고인데 본문에만 교육·설명회·지침 등이 있으면
+    부대 일정/유의사항일 수 있으므로 soft 근거로 남기고 공고 전체를 버리지 않는다.
+    """
+    if not hits:
+        return [], []
+    title = norm(item.get("title", "")).lower()
+    if code == "SUPPLIER_ONLY" and _mixed_target_roles(item):
+        return [], list(hits)
+    if any(hit in title for hit in hits):
+        return list(hits), []
+    if _active_application_title(title):
+        return [], list(hits)
+    return list(hits), []
+
+
 def _notice_text(item: dict) -> str:
     body = _notice_body_text(item)
     deadline = (item.get("deadline") or "").strip().lower()
@@ -3979,6 +4026,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     result = {**item}
     reason_codes: list[str] = []
     excluded_keywords: list[str] = []
+    soft_excluded_keywords: list[str] = []
     target_type = "unknown"
     notice_type = "unknown"
 
@@ -3994,13 +4042,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     for code, rule_notice_type, rule_target_type, keywords in EXCLUSION_RULES:
         hits = [kw for kw in keywords if kw in text]
-        if hits:
+        hard_hits, soft_hits = _split_exclusion_hits(item, code, hits)
+        soft_excluded_keywords.extend(soft_hits)
+        if hard_hits:
             reason_codes.append(code)
-            excluded_keywords.extend(hits)
+            excluded_keywords.extend(hard_hits)
             if notice_type == "unknown":
-                if code == "GUIDELINE_OR_MANUAL" and any("매뉴얼" in hit for hit in hits):
+                if code == "GUIDELINE_OR_MANUAL" and any("매뉴얼" in hit for hit in hard_hits):
                     notice_type = "manual"
-                elif code == "GUIDELINE_OR_MANUAL" and any("부정수급" in hit for hit in hits):
+                elif code == "GUIDELINE_OR_MANUAL" and any("부정수급" in hit for hit in hard_hits):
                     notice_type = "admin_notice"
                 else:
                     notice_type = rule_notice_type
@@ -4016,9 +4066,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
-    if service_hits:
-        excluded_keywords.extend(service_hits)
-        if "설명회" in service_hits:
+    hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
+    soft_excluded_keywords.extend(soft_service_hits)
+    if hard_service_hits:
+        excluded_keywords.extend(hard_service_hits)
+        if "설명회" in hard_service_hits:
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
         elif not application_like or ("단독" in text and not priority_keywords):
@@ -4029,11 +4081,17 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         reason_codes.append("SMART_FACTORY_INFO_ONLY")
 
     if target_type == "unknown":
-        if any(kw in text for kw in ["공급기업", "수행기관", "서비스 제공자"]):
+        supplier_signal = any(kw in text for kw in _SUPPLIER_ROLE_TERMS)
+        demand_signal = any(
+            kw in text for kw in ["수요기업", "참여기업", "중소기업", "소상공인", "제조기업", "신청 기업"]
+        )
+        if supplier_signal and demand_signal:
+            target_type = "mixed"
+        elif supplier_signal:
             target_type = "supplier"
         elif any(kw in text for kw in ["기선정", "선정기업 대상", "협약", "정산", "결과보고"]):
             target_type = "selected_company"
-        elif any(kw in text for kw in ["수요기업", "참여기업", "중소기업", "소상공인", "제조기업", "신청 기업"]):
+        elif demand_signal:
             target_type = "demand_company"
 
     if notice_type == "unknown" and application_like:
@@ -4076,9 +4134,18 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
     group_excluded = [k for k in excl_kws if _kw_in_text(text, k)]
-    if group_excluded:
+    mixed_supplier_hits = [
+        hit for hit in group_excluded
+        if _mixed_target_roles(item) and any(term in hit for term in _SUPPLIER_ROLE_TERMS)
+    ]
+    if mixed_supplier_hits:
+        soft_excluded_keywords.extend(mixed_supplier_hits)
+        group_excluded = [hit for hit in group_excluded if hit not in mixed_supplier_hits]
+    hard_group_hits, soft_group_hits = _split_exclusion_hits(item, "GROUP_EXCLUSION", group_excluded)
+    soft_excluded_keywords.extend(soft_group_hits)
+    if hard_group_hits:
         reason_codes.append("NOT_GRANT_NOTICE")
-        excluded_keywords.extend(group_excluded)
+        excluded_keywords.extend(hard_group_hits)
 
     kw_text = _keyword_match_text(item)
     or_kws = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
@@ -4119,6 +4186,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     reason_codes = _unique(reason_codes)
     excluded_keywords = _unique(excluded_keywords)
+    soft_excluded_keywords = _unique(soft_excluded_keywords)
     region_status = region_info["region_status"]
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
@@ -4168,6 +4236,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         notes.append("업력 조건 확인 필요 — 공고에 업력 명시 없음")
     if amount_status == "unknown":
         notes.append("지원금액 조건 확인 필요 — 공고에 금액 명시 없음")
+    if soft_excluded_keywords:
+        notes.append(
+            "본문 제외 단서 확인 필요 — 모집 본체와 함께 기재되어 자동 제외하지 않음: "
+            + ", ".join(soft_excluded_keywords[:5])
+        )
 
     result.update({
         "is_relevant": is_relevant,
@@ -4182,11 +4255,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "group_keyword_pass": group_keyword_pass,
         "matched_keywords": matched_keywords,
         "excluded_keywords": excluded_keywords,
+        "soft_excluded_keywords": soft_excluded_keywords,
         "priority_keyword": bool(priority_keywords),
         "priority_keywords": priority_keywords,
         "relevance_score": relevance_score,
         "exclude_reason_codes": reason_codes,
-        "filter_confidence": "high" if is_relevant or reason_codes else "medium",
+        "filter_confidence": (
+            "medium" if soft_excluded_keywords
+            else ("high" if is_relevant or reason_codes else "medium")
+        ),
         "applicant_region_city": g.get("applicant_region_city", APPLICANT_REGION_CITY),
         "applicant_region_district": g.get("applicant_region_district", APPLICANT_REGION_DISTRICT),
         "eligible_regions": region_info["eligible_regions"],
