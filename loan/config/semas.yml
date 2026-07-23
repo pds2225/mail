@@ -1,6 +1,0 @@
-target_url: https://ols.semas.or.kr/ols/man/SMAN051M/page.do
-lookback_days: 3
-request_timeout_seconds: 20
-report_path: reports/loan/semas_loan_scan.md
-seen_path: reports/loan/semas_seen_notices.json
-

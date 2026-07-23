@@ -8,7 +8,9 @@
     "is_aggregator": true,
     "api_page_unit": 500,
     "api_max_pages": 4,
-    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인"
+    "api_timeout": 30,
+    "warmup_url": "https://www.bizinfo.go.kr/",
+    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인. 직결이 러너 IP 차단(timeout) 시 DATA_GO_KR_KEY 있으면 data.go.kr 폴백."
   },
   {
     "id": "hanyang_startup",
@@ -1121,10 +1123,15 @@
     "id": "imp_d3574882",
     "name": "가족친화지원사업",
     "type": "html_table",
-    "url": "https://www.ffsb.kr/ffsb/bs/boardList.do?boardSeq=1&menuSeq=5190",
-    "enabled": false,
+    "url": "https://www.ffsb.kr/ffsbbod/bs/boardList.do?boardSeq=1&menuSeq=5190",
+    "enabled": true,
     "is_aggregator": false,
-    "note": "공지사항 / 주기:주 1회 / 우선순위:중"
+    "note": "공지사항 / 주기:주 1회 / 우선순위:중",
+    "selectors": {
+      "row": "table tbody tr",
+      "link_template": "/ffsbbod/bs/boardView.do?conSeq={0}&boardSeq=1",
+      "link_arg_re": "fnBoardContentView\\('(\\d+)'\\)"
+    }
   },
   {
     "id": "imp_b477693f",
@@ -2157,10 +2164,15 @@
     "id": "imp_aa580dba",
     "name": "대구테크노파크",
     "type": "html_table",
-    "url": "https://ttp.org/bbs/BoardControl.do?bbsId=BBSMSTR_000000000003",
-    "enabled": false,
+    "url": "https://ttp.org/bbs/BoardControll.do?bbsId=BBSMSTR_000000000003",
+    "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상",
+    "selectors": {
+      "row": "table tbody tr",
+      "link_template": "/bbs/BoardControll.do?bbsId=BBSMSTR_000000000003&nttId={0}",
+      "link_arg_re": "fn_egov_inqire_notice\\('(\\d+)'"
+    }
   },
   {
     "id": "imp_e9ed440c",
@@ -3769,8 +3781,8 @@
     "id": "imp_2ac217ad",
     "name": "한국문화산업협회",
     "type": "html_table",
-    "url": "http://www.kcia.or.kr/bbs/board.php?bo_table=notice",
-    "enabled": false,
+    "url": "http://www.kcia.or.kr/home/notice/notice.php",
+    "enabled": true,
     "is_aggregator": false,
     "note": "공지사항 / 주기:주 1회 / 우선순위:중"
   },

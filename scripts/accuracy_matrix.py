@@ -35,6 +35,7 @@ for p in (BASE_DIR, BASE_DIR / "scripts"):
 
 import company_match  # noqa: E402
 import monitor  # noqa: E402
+import feedback  # noqa: E402 (사용자 O/X 피드백 = Tier C 사람 정답)
 from run_company_match import _enrich_for_company  # noqa: E402 (#15 인천고정 버그 수정 반영)
 
 # region_field 가 이 값이면 기업 지역 무관하게 적격(타지역 아님)
@@ -214,6 +215,7 @@ def build(date: str | None, cap: int | None) -> dict:
         return {"error": f"공고 {len(items)} / 기업 {len(companies)} — 측정 불가"}
 
     golden_rf = _load_golden_regions()
+    fb_verdicts = feedback.feedback_verdicts()   # 사람 정답(Tier C): {공고id: 'O'|'X'}
 
     # 공고 인덱스 (키 기준)
     notices: dict[str, dict] = {}
@@ -228,6 +230,7 @@ def build(date: str | None, cap: int | None) -> dict:
             "title": str(it.get("title", ""))[:110],
             "source": str(it.get("source") or it.get("site") or it.get("agency") or ""),
             "region_field": str(it.get("region_field") or "").strip() or golden_rf.get(k, ""),
+            "feedback": fb_verdicts.get(k, ""),
             "fields": _field_health(it),
             "companies": {},
             "groups": {},
@@ -275,7 +278,12 @@ def build(date: str | None, cap: int | None) -> dict:
                 "is_relevant": bool(ev.get("is_relevant")),
                 "region_status": ev.get("region_status"),
                 "region_unknown_review": bool(ev.get("region_unknown_review")),
-                "reason_codes": (ev.get("exclude_reason_codes") or [])[:3],
+                # 전체 코드 보존(잘리면 feedback_suggest 의 키워드/지역/제외 진단이 오판하고
+                # 아래 grp_region_blocked 판정도 코드가 3번째 밖이면 놓친다). 표시는 소비측에서 자른다.
+                "reason_codes": list(ev.get("exclude_reason_codes") or []),
+                # 키워드 게이트 통과 여부(순수). INDUSTRY_NOT_MATCHED 는 키워드 미스와 지원유형
+                # 불일치 둘 다에서 붙으므로, feedback_suggest 가 둘을 구분하려면 이 신호가 필요하다.
+                "keyword_pass": bool(ev.get("group_keyword_pass", True)),
             }
 
     # ── 후보·모순·KPI 산출 ──
@@ -349,6 +357,33 @@ def build(date: str | None, cap: int | None) -> dict:
                         "title": n["title"][:70],
                     })
 
+    # ── 사람 정답(Tier C 피드백) 대조 ──
+    # "실제 나간 메일이 맞았나"가 최종 정답. 우리가 추천(그룹 발송 대상 또는 기업 매칭)한 것과
+    # 사람 O/X 가 어긋난 건만 뽑아 하네스(fp-hunter/fn-hunter)의 최우선 입력으로 넘긴다.
+    fb_agree = fb_fp = fb_fn = 0
+    fb_mismatch: list[dict] = []
+    for k in order:
+        n = notices[k]
+        v = n.get("feedback") or ""
+        if not v:
+            continue
+        rec_groups = [gid for gid, gv in n["groups"].items() if gv.get("is_relevant")]
+        rec_comps = [cid for cid, cv in n["companies"].items() if cv.get("decision") == "matched"]
+        recommended = bool(rec_groups or rec_comps)
+        if v == "X" and recommended:
+            fb_fp += 1
+            fb_mismatch.append({"id": k, "kind": "feedback_fp", "title": n["title"],
+                                "groups": rec_groups, "companies": rec_comps,
+                                "note": "사람 X 인데 추천/발송됨"})
+        elif v == "O" and not recommended:
+            fb_fn += 1
+            fb_mismatch.append({"id": k, "kind": "feedback_fn", "title": n["title"],
+                                "groups": [], "companies": [],
+                                "note": "사람 O 인데 추천 안 됨(누락)"})
+        else:
+            fb_agree += 1
+    fb_labeled = fb_agree + fb_fp + fb_fn
+
     # 매칭 총량(그룹/기업)
     matched_by_company = Counter()
     for k in order:
@@ -403,6 +438,13 @@ def build(date: str | None, cap: int | None) -> dict:
         "fp_candidate_counts": fp_counts,
         "fn_candidate_counts": fn_counts,
         "contradiction_count": len(contradictions),
+        "feedback": {
+            "labeled": fb_labeled,
+            "agree": fb_agree,
+            "feedback_fp": fb_fp,
+            "feedback_fn": fb_fn,
+            "agreement": round(fb_agree / fb_labeled, 4) if fb_labeled else None,
+        },
         "field_health": field_health,
         "field_candidate_counts": field_cand_counts,
     }
@@ -416,6 +458,7 @@ def build(date: str | None, cap: int | None) -> dict:
         "field": {"counts": field_cand_counts, "cap": _CANDIDATE_CAP, "candidates": {c: v[:_CANDIDATE_CAP] for c, v in field_cand.items()}},
         "contradictions": contradictions[: _CANDIDATE_CAP * 2],
         "region_fp_hits": region_fp_hits,
+        "feedback_mismatch": fb_mismatch[: _CANDIDATE_CAP * 2],
     }
 
 
@@ -442,6 +485,7 @@ def main(argv: list[str] | None = None) -> int:
     (out_dir / "contradictions.json").write_text(json.dumps(res["contradictions"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out_dir / "field_candidates.json").write_text(json.dumps(res["field"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out_dir / "summary.json").write_text(json.dumps(res["summary"], ensure_ascii=False, indent=2), encoding="utf-8")
+    (out_dir / "feedback_mismatch.json").write_text(json.dumps(res["feedback_mismatch"], ensure_ascii=False, indent=1), encoding="utf-8")
 
     s = res["summary"]
     print(f"[matrix] 공고 {s['n_notices']} × 기업 {s['n_companies']} × 그룹 {s['n_groups']}  (라벨 {s['region_field_labeled']}건)")
@@ -449,6 +493,13 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[FP후보] {s['fp_candidate_counts']}")
     print(f"[FN후보] {s['fn_candidate_counts']}")
     print(f"[자기모순] {s['contradiction_count']}건")
+    fb = s["feedback"]
+    if fb["labeled"]:
+        print(f"[사람정답(O/X 피드백)] 라벨 {fb['labeled']}건 · 일치 {fb['agree']} "
+              f"(일치율 {fb['agreement']}) · 오추천 {fb['feedback_fp']} · 누락 {fb['feedback_fn']}")
+    else:
+        print("[사람정답(O/X 피드백)] 라벨 0건 — 메일의 O/X 링크를 누르면 여기 쌓입니다"
+              " (python scripts/collect_feedback.py)")
     fh = s["field_health"]
     n = max(s["n_notices"], 1)
     print("[5필드 건전성(지역 외 4)]")

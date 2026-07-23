@@ -1,7 +1,0 @@
-2026-07-14 18:29:55,730 INFO 그룹: 3개 활성
-[matrix] 공고 3493 × 기업 3 × 그룹 3  (라벨 28건)
-[KPI] region_FP=0  region_recall@labeled=1.0 (분모 50, 지역차단 FN 0)
-[FP후보] {}
-[FN후보] {'fn_weaklabel_own': 2, 'fn_titletag_own': 6}
-[자기모순] 0건
-[out] D:\mail\.omc\accuracy\runs\2026-07-14

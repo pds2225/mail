@@ -117,7 +117,7 @@ def check_protected_files(base_ref: str | None) -> dict:
 
 
 def check_unit() -> dict:
-    r = _run([sys.executable, "-m", "pytest", "test_monitor.py", "-q", "--tb=no"], timeout=300)
+    r = _run([sys.executable, "-m", "pytest", "tests/test_monitor.py", "-q", "--tb=no"], timeout=300)
     return {"id": "V2", "name": "unit_pytest", **r}
 
 

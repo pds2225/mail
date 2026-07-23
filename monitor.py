@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, quote
+from urllib.parse import urljoin, quote, urlsplit
 
 import httpx
 from anthropic import Anthropic
@@ -27,6 +27,10 @@ try:
     _CM_OK = True
 except ImportError:
     _CM_OK = False
+
+import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
+import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
+import llm_safety      # Claude 요약 인젝션 격리·사실성 검증(#99·#101·#102·#104)
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -78,6 +82,10 @@ def _require_env(key: str) -> str:
     return val
 
 BIZINFO_API_KEY    = _require_env("BIZINFO_API_KEY")
+# 선택: 공공데이터포털(data.go.kr) 기업마당 지원사업정보 서비스키.
+#   bizinfo.go.kr 직결 API 가 GitHub Actions 러너 IP 에서 WAF/지역차단(timeout)될 때의
+#   영구 폴백 경로. 값이 있으면 직결 실패 시 data.go.kr 로 재시도한다(없으면 폴백 비활성).
+DATA_GO_KR_KEY     = os.environ.get("DATA_GO_KR_KEY", "").strip()
 ANTHROPIC_API_KEY  = _require_env("ANTHROPIC_API_KEY")
 GMAIL_ADDRESS      = _require_env("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = _require_env("GMAIL_APP_PASSWORD")
@@ -87,6 +95,8 @@ SITES_PATH    = BASE_DIR / "sites.json"
 GROUPS_PATH   = BASE_DIR / "groups.json"
 SETTINGS_PATH = BASE_DIR / "settings.json"
 SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
+# (기준일·그룹·수신자) 단위 발송 멱등 상태 — 크래시/부분실패 후 재실행 시 중복발송 방지.
+DELIVERY_STATE_PATH = BASE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -114,7 +124,9 @@ HTTP_HEADERS   = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8",
-    "Accept-Encoding": "gzip, deflate, br",
+    # brotli(br) 미광고: httpx 런타임에 brotli 디코더가 없어 서버가 br 로 응답하면
+    # 압축 바이트를 그대로 받아 파싱 0건이 됨(예: myfair). 디코딩 가능한 gzip/deflate 만 광고한다.
+    "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
     "Sec-Fetch-Dest": "document",
@@ -429,6 +441,107 @@ EXCLUSION_RULES = [
     ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
 ]
 
+# ── [제목 앵커] 비공고 정적 페이지 제외 (2026-07-20, 사용자 O/X 피드백: '사전정보공표' ❌) ──
+# 배경: 일부 소스의 리스트 셀렉터가 본문 게시판이 아니라 헤더/푸터/사이드 nav 의 <a> 를 통째로
+#       긁어, 기관 소개·정보공개·약관 같은 '정적 페이지'가 공고로 발송됐다.
+#
+# ★설계 원칙 (이 repo 평생 원칙: 누락 제로(recall) > 정확도(precision))
+#   1) EXCLUSION_RULES 에 넣지 않는다. 그쪽은 제목+본문을 합친 text 를 보므로, 본문에 우연히
+#      그 단어가 있는 '진짜 공고'까지 함께 막혀 누락이 난다. 여기는 오직 제목·링크만 본다.
+#   2) 부분포함(substring) 금지 — '제목 전체 완전일치'만 판정한다. 실측 반례:
+#      '정보공개'→신용보증기금 「2026년 정보공개 고객 모니터링단」모집공고(진짜),
+#      '채용'→74건 중 73건 진짜, '입찰'→26건 중 25건 진짜, '개인정보'→10건 전부 진짜.
+#   3) 이중 안전장치 — 제목에 공고성 토큰(모집·공고·신청·접수·참가·선정·공모·지원사업)이
+#      하나라도 있으면 목록에 있어도 절대 막지 않는다.
+#   4) 스냅샷 9,406건 시뮬레이션에서 safe_to_block=true 로 확인된 문자열만 등재한다.
+#      '정보공개'·'개인정보처리방침'·'지원사업공고'·'공지사항'은 진짜 공고 반례가 있어 제외.
+#   5) 날짜 공란·URL 패턴은 판정 근거로 쓰지 않는다 — 양방향으로 실패한다(정크가 게시일을
+#      갖고 있고, 반대로 날짜 없는 진짜 공고가 대량 존재).
+#
+# 끄기: 환경변수 MONITOR_NO_NONNOTICE_FILTER=1 (오차단 발견 시 즉시 무력화용)
+NONNOTICE_FILTER_ENV = "MONITOR_NO_NONNOTICE_FILTER"
+
+# 제목에 이 토큰이 하나라도 있으면 비공고 판정을 건너뛴다(이중 안전장치).
+# ★'지원'·'설명회'는 적대적 반증에서 나온 보강 — 링크 도메인 룰만으로 막히던 경계 사례
+#   ('중소기업 홍보영상 제작 지원(유튜브)' + youtube 링크)를 통과시킨다. 이 토큰들은 필터를
+#   더 느슨하게만 만들어 recall 을 해칠 수 없고, 차단목록 중 '지원'을 품은 항목은
+#   '지원/신청' 하나뿐이라 정크 차단력 손실도 없다.
+NOTICE_SIGNAL_TOKENS = (
+    "모집", "공고", "신청", "접수", "지원사업", "참가", "선정", "공모", "지원", "설명회",
+)
+
+# 제목 '완전일치' 차단 목록 — 각 항목이 그 정적 페이지의 명칭 '자체'인 경우만.
+NON_NOTICE_TITLES = frozenset(_t.casefold() for _t in [
+    # 정보공개 정적 페이지 (★사용자 O/X 피드백 실제 사례)
+    "사전정보공표", "정보공개제도", "정보공개청구", "정보공개제도란",
+    # 약관·방침
+    "이용약관", "저작권정책", "영상정보처리기기방침", "고정형 영상정보처리기기운영관리 방침",
+    # 기관 소개 메뉴
+    "인사말", "연혁", "미션&비전", "기관소개", "조직구성", "조직 및 업무", "오시는길",
+    # 사이트 공통 링크
+    "회원가입", "로그인", "english", "사이트맵",
+    # 고객지원 정적 페이지
+    "faq", "ncs관련 faq", "고객의 소리", "홈페이지불편신고", "부패신고센터",
+    # 경영공시 메뉴
+    "통합공시", "자체공시", "사업실명제", "업무추진비", "징계현황", "주요계약현황",
+    "기부금 수령 및 집행현황", "상품권 구매사용 현황", "공공데이터개방",
+    # 게시판 목록 메뉴 (※부분포함 절대 금지 — '채용'·'입찰'은 대부분 진짜 공고다)
+    "채용정보", "일자리정보", "입찰정보",
+    # 자료실 메뉴
+    "뉴스레터", "언론보도", "자료공간", "발간자료", "동향/분석자료", "kams now", "컨설팅 전문 정보",
+    # 사업소개 메뉴 (공고성 토큰이 있는 '지원/신청'·'공모사업 안내'·'온라인 참가신청'은
+    #   NOTICE_SIGNAL_TOKENS 가드에 먼저 걸려 실제로는 통과한다 — 의도된 recall 우선 동작)
+    "사업안내", "지원/신청", "공모사업 안내", "온라인 참가신청",
+    # 정부24 푸터 링크
+    "누리집 안내지도", "복합인증관리", "보안센터", "인증등록/관리", "상담예약",
+    "국민비서 구삐", "공공서비스 활용(open api)", "웹 접근성 품질인증 마크 획득",
+    # 테이블 헤더·페이지네이션 오수집
+    "번호", "새 카테고리", "날짜순", "[2]", "[ home ]",
+    # 대표번호(링크가 tel: 이 아닌 경우 대비)
+    "110", "1588-2188",
+    # nav/배너 링크가 공고로 저장된 사례 (근본 해결은 해당 소스 셀렉터 수정)
+    "oa", "직무 솔루션>", "k-스타트업", "단기수출보험(선적후)", "human rights watch",
+])
+
+# 링크 스킴·도메인 기반 판정 (오탐 0 — 공고 상세가 tel:/SNS 일 수 없다)
+NON_NOTICE_LINK_SCHEMES = ("tel:", "mailto:")
+NON_NOTICE_LINK_DOMAINS = (
+    "instagram.com", "x.com", "twitter.com", "facebook.com", "youtube.com",
+)
+
+
+def _normalize_title_key(title: Any) -> str:
+    """제목 정규화 — 앞뒤 공백 제거 + 연속 공백 1칸 축약 + 대소문자 무시."""
+    return " ".join(str(title or "").split()).casefold()
+
+
+def non_notice_reason(item: dict) -> str:
+    """공고가 아닌 정적/메뉴/외부링크 페이지면 근거 문자열, 아니면 "" 를 반환한다.
+
+    제목(완전일치)과 링크(스킴·도메인)만 본다. 본문(description)은 절대 보지 않는다.
+    """
+    if os.environ.get(NONNOTICE_FILTER_ENV) == "1":
+        return ""
+
+    raw_title = str(item.get("title") or "")
+    # ★이중 안전장치: 공고성 토큰이 하나라도 있으면 비공고로 판정하지 않는다.
+    if any(tok in raw_title for tok in NOTICE_SIGNAL_TOKENS):
+        return ""
+
+    title_key = _normalize_title_key(raw_title)
+    if title_key and title_key in NON_NOTICE_TITLES:
+        return raw_title.strip()
+
+    link = str(item.get("link") or "").strip()
+    low = link.lower()
+    if low.startswith(NON_NOTICE_LINK_SCHEMES):
+        return low.split(":", 1)[0] + ":"
+    host = urlsplit(low).netloc.split("@")[-1].split(":")[0]
+    host = host[4:] if host.startswith("www.") else host
+    if host and host in NON_NOTICE_LINK_DOMAINS:
+        return host
+    return ""
+
 REGION_EXCLUDE_PHRASES = [
     "수도권 제외", "수도권 소재 기업 제외", "서울·경기·인천 제외", "서울 경기 인천 제외",
     "수도권 소재 기업 신청 불가", "인천 제외", "비수도권 기업 대상",
@@ -520,6 +633,24 @@ def load_json(path: Path, default):
     except Exception as e:
         log.warning("%s 로드 실패: %s", path, e)
         return default
+
+
+def _pii_config(env_var: str, file_loader):
+    """PII 격리(#96·#149): 환경변수(JSON 문자열)가 있으면 그걸 우선 쓰고, 없으면 파일에서 읽는다.
+
+    실 수신자(groups.json)·기업 프로필(companies.json)을 Git 에 평문 커밋하는 대신 GitHub Secret
+    등 환경변수로 주입할 수 있게 한다. 파싱 실패 시 파일로 폴백(운영 중단 방지).
+    (워크플로에 secret 을 넘기고 실데이터 파일을 .gitignore 하는 배선은 Part B — monitor.yml/.gitignore.)
+    """
+    raw = os.environ.get(env_var, "").strip()
+    if raw:
+        try:
+            data = json.loads(raw)
+            log.info("%s 환경변수에서 로드(파일 대신 — PII 격리)", env_var)
+            return data
+        except Exception as e:  # noqa: BLE001
+            log.error("%s 파싱 실패 — 파일로 폴백: %s", env_var, e)
+    return file_loader()
 
 def save_json(path: Path, data) -> None:
     content = json.dumps(data, ensure_ascii=False, indent=2)
@@ -1125,8 +1256,9 @@ def load_sites() -> list[dict]:
     return active
 
 def load_groups() -> list[dict]:
-    groups = load_json(GROUPS_PATH, [])
-    active = [g for g in groups if g.get("active", True)]
+    # PII 격리(#149): 실 수신자가 담긴 그룹 설정을 환경변수(MAIL_GROUPS_JSON)로 주입 가능.
+    groups = _pii_config("MAIL_GROUPS_JSON", lambda: load_json(GROUPS_PATH, []))
+    active = [g for g in (groups or []) if g.get("active", True)]
     log.info("그룹: %d개 활성", len(active))
     return active
 
@@ -1182,6 +1314,10 @@ def _legacy_ssl_ctx() -> ssl.SSLContext:
 
 def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **kwargs) -> httpx.Response | None:
     """GET with 3-stage SSL fallback (bizinfo API·JSON 등 _soup 외 호출용)."""
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20): 사설/내부 IP·비 http(s) 차단
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     last_err: Exception | None = None
     for stage in ("strict", "no_verify", "legacy"):
@@ -1191,6 +1327,9 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
             with httpx.Client(timeout=timeout, headers=hdrs, follow_redirects=True,
                               verify=verify) as c:
                 r = c.get(url, **kwargs)
+                if not net_guard.is_safe(str(r.url)):  # 리다이렉트 최종 호스트 재검사
+                    log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url)
+                    return None
                 r.raise_for_status()
                 return r
         except httpx.HTTPStatusError as e:
@@ -1204,6 +1343,10 @@ def _http_get(url: str, extra_headers: dict | None = None, timeout: int = 60, **
 
 
 def _soup(url: str, extra_headers: dict | None = None, **kwargs):
+    _ok, _why = net_guard.check_url(url)          # SSRF 가드(#20)
+    if not _ok:
+        log.error("차단됨(SSRF 가드) %s: %s", url, _why)
+        return None
     hdrs = {**HTTP_HEADERS, **(extra_headers or {})}
     # 3단계 SSL 폴백: (1) 표준 검증 (2) 검증 해제 (3) legacy SSL ctx
     # 정상 사이트는 (1)에서 즉시 성공 → 기존 동작·속도 보존. SSL 실패만 폴백.
@@ -1219,7 +1362,10 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
             try:
                 with httpx.Client(timeout=30, headers=hdrs, follow_redirects=True,
                                   verify=verify) as c:
-                    r = c.get(url, **kwargs); r.raise_for_status()
+                    r = c.get(url, **kwargs)
+                    if not net_guard.is_safe(str(r.url)):   # 리다이렉트 최종 호스트 재검사
+                        log.error("차단됨(SSRF 리다이렉트) %s → %s", url, r.url); return None
+                    r.raise_for_status()
                     return BeautifulSoup(r.text, "html.parser")
             except httpx.HTTPStatusError as e:
                 log.error("접속 실패 %s: %s", url, e); return None  # 404 등은 폴백 무의미
@@ -1236,34 +1382,78 @@ def _item(id_, title, link, author, desc, deadline, source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
 
 
-def fetch_bizinfo(site: dict) -> list[dict]:
-    # pageUnit/pageIndex 로 안정 수집(실측 상한 ~1500건). searchCnt 단독은 환경에 따라 0건·상한 불명확.
-    #
-    # ★ 실패 신호 규약(커버리지 오탐 방지):
-    #   하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr 인증키오류)는 '진짜 0건'과 구분해
-    #   RuntimeError 로 올린다. 그래야 상위(fetch_all/fetch_site_coverage)가 이를
-    #   fetch_success=False='수집실패'로 분류한다 →
-    #     · 커버리지 알림이 "0건 급락"(정상 응답인데 0건)이 아니라 "수집실패"로 정확 표기
-    #     · update_coverage_baseline 이 실패한 날을 baseline 에 넣지 않아 평소값(median) 오염 방지
-    #   반대로 API 가 200 으로 정상 응답하며 jsonArray 가 빈 배열이면 그건 '진짜 0건' → [] 반환.
-    #   이미 일부 페이지를 모은 뒤(page 2+) 실패하면 예외 대신 모은 만큼 부분 반환(가용 데이터 보존).
-    #   일시적 5xx/네트워크 블립은 api_retries 만큼 재시도해 흡수(단발 장애로 0건 알림 폭주 차단).
+def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
+    """기업마당 API(직결·data.go.kr 공통) 원소 1건 → 표준 item. 필드명은 두 경로가 동일 계열."""
+    iid = norm(it.get("pblancId", it.get("seq", "")))
+    ttl = norm(it.get("pblancNm", it.get("title", "")))
+    lnk = norm(it.get("pblancUrl", it.get("link", "")))
+    if not iid:
+        iid = f"bizinfo_{stable_id(ttl + lnk)}"
+    posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
+    if posted and len(posted) >= 10:
+        posted = posted[:10]
+    if not posted:
+        posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
+    return _item(
+        iid, ttl, lnk,
+        norm(it.get("jrsdInsttNm", it.get("author", ""))),
+        norm(it.get("bsnsSumryCn", it.get("description", ""))),
+        norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
+        site_name, posted, agg,
+    )
+
+
+def _fetch_bizinfo_direct(site: dict) -> list[dict]:
+    """bizinfo.go.kr 직결 RSS-API 수집(워밍업 세션 + 빠른실패).
+
+    ★ WAF 워밍업: 정부포털은 API 직타를 WAF 가 무응답 tarpit(→timeout) 시키는 경우가 있어,
+      먼저 홈(referer)을 GET 해 쿠키를 받은 **같은 세션**으로 API 를 친다(TIPA WAF 우회와 동형).
+    ★ 빠른실패: 정상 응답은 <2s 다. 차단이면 무한정 매달리지 말고 api_timeout(기본 30s)에 끊어
+      과거 90s×재시도로 실행이 3~4시간 늘어지던 문제를 줄인다(닿으면 그대로 성공).
+    실패 신호 규약은 종전과 동일 — 아무 것도 못 모으고 하드 실패면 RuntimeError.
+    """
     page_unit = int(site.get("api_page_unit", 500))
     max_pages = int(site.get("api_max_pages", 4))
     retries = max(0, int(site.get("api_retries", 2)))
+    timeout = int(site.get("api_timeout", 30))
+    home = site.get("warmup_url", "https://www.bizinfo.go.kr/")
     items: list[dict] = []
     seen_ids: set[str] = set()
     agg = site.get("is_aggregator", True)
     params_base = {"crtfcKey": BIZINFO_API_KEY, "dataType": "json"}
+    hdrs = {**HTTP_HEADERS, "Referer": home}
+
+    def _warm(c: httpx.Client) -> None:
+        try:  # best-effort — 실패해도 API 직타로 진행(쿠키 없이도 되면 그대로 됨)
+            c.get(home, timeout=min(timeout, 15))
+        except Exception as e:  # noqa: BLE001
+            log.debug("기업마당 워밍업 생략(%s)", e)
 
     for page in range(1, max_pages + 1):
         r = None
         for attempt in range(retries + 1):
-            r = _http_get(
-                site["url"],
-                params={**params_base, "pageIndex": str(page), "pageUnit": str(page_unit)},
-                timeout=90,
-            )
+            # 매 시도 새 세션(쿠키 초기화) + 워밍업 → API. SSL 폴백 3단계는 종전 유지.
+            for stage in ("strict", "no_verify", "legacy"):
+                verify: Any = True if stage == "strict" else (
+                    False if stage == "no_verify" else _legacy_ssl_ctx())
+                try:
+                    with httpx.Client(timeout=timeout, headers=hdrs,
+                                      follow_redirects=True, verify=verify) as c:
+                        # 매 요청이 새 세션(쿠키 초기화)이라 워밍업도 매번 해야 한다 — page 1 에만
+                        # 하면 page 2+·재시도 세션은 WAF 쿠키 없이 직타해 timeout 될 수 있다.
+                        _warm(c)
+                        resp = c.get(site["url"], params={
+                            **params_base, "pageIndex": str(page), "pageUnit": str(page_unit)})
+                        resp.raise_for_status()
+                        r = resp
+                        break
+                except httpx.HTTPStatusError as e:
+                    log.error("접속 실패 %s: %s", site["url"], e)
+                    r = None
+                    break
+                except Exception:  # noqa: BLE001 — SSL/네트워크/타임아웃 → 다음 stage
+                    r = None
+                    continue
             if r is not None:
                 break
             if attempt < retries:
@@ -1291,30 +1481,154 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         if not raw:
             break
         for it in raw:
-            iid = norm(it.get("pblancId", it.get("seq", "")))
-            ttl = norm(it.get("pblancNm", it.get("title", "")))
-            lnk = norm(it.get("pblancUrl", it.get("link", "")))
-            if not iid:
-                iid = f"bizinfo_{stable_id(ttl + lnk)}"
-            if iid in seen_ids:
+            parsed = _bizinfo_parse_item(it, site["name"], agg)
+            if parsed["id"] in seen_ids:
                 continue
-            seen_ids.add(iid)
-            posted = norm(it.get("regDt", it.get("pblancDt", it.get("creatPnttm", it.get("updtPnttm", "")))))
-            if posted and len(posted) >= 10:
-                posted = posted[:10]
-            if not posted:
-                posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-            items.append(_item(
-                iid, ttl, lnk,
-                norm(it.get("jrsdInsttNm", it.get("author", ""))),
-                norm(it.get("bsnsSumryCn", it.get("description", ""))),
-                norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
-                site["name"], posted, agg,
-            ))
+            seen_ids.add(parsed["id"])
+            items.append(parsed)
         if len(raw) < page_unit:
             break
-    log.info("%s: %d건", site["name"], len(items))
     return items
+
+
+def _datagokr_rows(data: dict) -> list[dict]:
+    """data.go.kr 응답 봉투에서 item 리스트를 꺼낸다(표준 response.body.items.item + 변형 허용)."""
+    if not isinstance(data, dict):
+        return []
+    body = (data.get("response") or {}).get("body") if "response" in data else None
+    rows = None
+    if isinstance(body, dict):
+        items = body.get("items")
+        if isinstance(items, dict):
+            rows = items.get("item")
+        elif isinstance(items, list):
+            rows = items
+    if rows is None:  # 직결과 동일한 jsonArray 형태로 주는 오퍼레이션도 있음
+        rows = data.get("jsonArray")
+    if isinstance(rows, dict):
+        rows = [rows]
+    return rows or []
+
+
+def _datagokr_error(data: dict) -> str:
+    """data.go.kr 200-OK 에러 봉투에서 에러 메시지를 뽑는다(성공/무에러면 '').
+
+    공공데이터포털은 인증키오류·트래픽초과 등을 HTTP 200 + header.resultCode 로 준다.
+    이를 안 보면 빈 items 를 '정상 0건'으로 오인해(직결 reqErr 과 달리) 수집실패를 놓친다.
+    성공 코드: '00'/'0000'(표준 header) · '00'(레거시 cmmMsgHeader).
+    """
+    if not isinstance(data, dict):
+        return ""
+    hdr = (data.get("response") or {}).get("header") if "response" in data else None
+    if isinstance(hdr, dict):
+        code = str(hdr.get("resultCode", "")).strip()
+        if code and code not in ("00", "0000"):
+            return f"{code} {hdr.get('resultMsg', '')}".strip()
+    cmm = (data.get("OpenAPI_ServiceResponse") or {}).get("cmmMsgHeader")
+    if isinstance(cmm, dict):
+        code = str(cmm.get("returnReasonCode", "")).strip()
+        if code and code not in ("00", "0000"):
+            return f"{code} {cmm.get('errMsg', cmm.get('returnAuthMsg', ''))}".strip()
+    return ""
+
+
+def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
+    """공공데이터포털(data.go.kr) 기업마당 지원사업정보 폴백 수집(영구 경로).
+
+    bizinfo.go.kr 직결이 러너 IP 에서 차단될 때 사용. data.go.kr 은 API 전용 게이트웨이라
+    WAF/지역차단이 없다. 엔드포인트·페이지 파라미터는 발급받은 오퍼레이션에 맞춰 sites.json 에서
+    덮어쓸 수 있게 열어둔다(datagokr_url 등). 서비스키는 DATA_GO_KR_KEY 환경변수.
+    """
+    if not DATA_GO_KR_KEY:
+        raise RuntimeError("DATA_GO_KR_KEY 미설정 — data.go.kr 폴백 비활성")
+    # 실제 발급 엔드포인트(중기부 1421000/bizinfo). 요청변수 명세가 오퍼레이션마다 달라
+    # 파라미터는 sites.json 의 datagokr_params 로 덮어쓸 수 있게 열어둔다(무코드 튜닝).
+    url = site.get("datagokr_url", "https://apis.data.go.kr/1421000/bizinfo/pblancBsnsService")
+    rows_key = int(site.get("datagokr_num_rows", 500))
+    max_pages = int(site.get("datagokr_max_pages", site.get("api_max_pages", 4)))
+    timeout = int(site.get("api_timeout", 30))
+    retries = max(0, int(site.get("api_retries", 2)))
+    agg = site.get("is_aggregator", True)
+    extra_params = site.get("datagokr_params", {})
+    items: list[dict] = []
+    seen_ids: set[str] = set()
+    for page in range(1, max_pages + 1):
+        # 직결과 동일하게 일시적 네트워크/5xx 블립은 api_retries 만큼 흡수(백오프).
+        r = None
+        for attempt in range(retries + 1):
+            r = _http_get(url, timeout=timeout, params={
+                "serviceKey": DATA_GO_KR_KEY, "returnType": "json", "dataType": "json",
+                "numOfRows": str(rows_key), "pageNo": str(page), **extra_params})
+            if r is not None:
+                break
+            if attempt < retries:
+                time.sleep(_HTTP_RETRY_BACKOFF * (attempt + 1))
+        if r is None:
+            if items:
+                log.error("기업마당 data.go.kr 접속 실패(page %d) — 부분 %d건", page, len(items))
+                break
+            raise RuntimeError(f"기업마당 data.go.kr 접속 실패 (page {page}, {retries + 1}회 시도)")
+        try:
+            data = r.json()
+        except Exception as e:
+            if items:
+                break
+            raise RuntimeError(f"기업마당 data.go.kr JSON 파싱 실패: {e}") from e
+        # 직결 reqErr 과 동형: 200-OK 에러 봉투(인증키오류·트래픽초과)는 '진짜 0건'과 구분해 올린다.
+        if err := _datagokr_error(data):
+            if items:
+                log.error("기업마당 data.go.kr 오류(page %d): %s — 부분 %d건", page, err, len(items))
+                break
+            raise RuntimeError(f"기업마당 data.go.kr 오류: {err}")
+        rows = _datagokr_rows(data)
+        if not rows:
+            break
+        for it in rows:
+            parsed = _bizinfo_parse_item(it, site["name"], agg)
+            if parsed["id"] in seen_ids:
+                continue
+            seen_ids.add(parsed["id"])
+            items.append(parsed)
+        if len(rows) < rows_key:
+            break
+    return items
+
+
+def fetch_bizinfo(site: dict) -> list[dict]:
+    # 기업마당 수집. 두 경로를 순서대로 시도한다:
+    #   ① DATA_GO_KR_KEY 있으면 data.go.kr(공공데이터포털) 우선 — API 전용 게이트웨이라
+    #      러너 IP WAF/지역차단이 없다(라이브 검증됨). bizinfo.go.kr 직결은 러너에서 거의 항상
+    #      timeout 되므로, 직결을 먼저 시도하면 매 실행 ~90초를 헛되이 버린다 → data.go.kr 우선.
+    #   ② 직결(bizinfo.go.kr RSS-API) — 키가 없거나 data.go.kr 이 하드 실패했을 때의 경로.
+    #
+    # ★ 실패 신호 규약(커버리지 오탐 방지) — 한 경로가 '예외 없이' 완료하면(0건이어도) 그 응답을
+    #   권위 있는 것으로 신뢰해 그대로 반환한다(정상 0건 = '진짜 0건' → [] 반환, 다음 경로로 안 넘어감).
+    #   경로가 하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr/resultCode 오류)하면 다음 경로로 넘어가고,
+    #   모든 경로가 하드 실패하면 첫 예외를 올린다 → 상위(fetch_all)가 fetch_success=False='수집실패'로
+    #   분류(커버리지 알림 정확 표기 + baseline 오염 방지).
+    if DATA_GO_KR_KEY:
+        sources = [("data.go.kr", _fetch_bizinfo_datagokr), ("bizinfo 직결", _fetch_bizinfo_direct)]
+    else:
+        sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
+
+    hard_err: Exception | None = None
+    for label, fn in sources:
+        try:
+            got = fn(site)
+        except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
+            log.error("기업마당 %s 실패: %s", label, e)
+            if hard_err is None:
+                hard_err = e
+            continue
+        # 예외 없이 완료 = 권위 있는 응답(0건이어도 신뢰) → 그대로 반환.
+        log.info("%s: %d건 (%s)", site["name"], len(got), label)
+        return got
+
+    # 모든 경로가 하드 실패 → 수집실패 신호로 올린다.
+    if hard_err is not None:
+        raise hard_err
+    log.info("%s: 0건", site["name"])
+    return []
 
 
 def fetch_myfair_legacy(site: dict) -> list[dict]:
@@ -3605,6 +3919,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             if rule_target_type != "unknown":
                 target_type = rule_target_type
 
+    # [제목 앵커] 비공고 정적 페이지(기관소개·정보공개·약관·nav 링크 등) 제외.
+    # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
+    nonnotice_hit = non_notice_reason(item)
+    if nonnotice_hit:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     if service_hits:
         excluded_keywords.extend(service_hits)
         if "설명회" in service_hits:
@@ -3765,6 +4088,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "deadline_status": deadline_status,
         "region_status": region_status,
         "industry_status": "matched" if group_keyword_pass or matched_keywords or priority_keywords else "not_matched",
+        # 그룹 or/and 키워드 게이트 통과 여부(순수). INDUSTRY_NOT_MATCHED 는 키워드 미스(3682행)와
+        # 지원유형 불일치(3685행) 둘 다에서 붙어 코드만으론 구분 불가 → 소비측(feedback_suggest)이
+        # '진짜 키워드 미스 vs 지원유형 불일치'를 가르도록 게이트 결과 자체를 노출한다.
+        "group_keyword_pass": group_keyword_pass,
         "matched_keywords": matched_keywords,
         "excluded_keywords": excluded_keywords,
         "priority_keyword": bool(priority_keywords),
@@ -4097,7 +4424,13 @@ def claude_summarize(items: list[dict], group: dict) -> str:
                  [f"AND({', '.join(ag)})" for ag in and_groups[:2]]
     kw_ctx     = "키워드: " + " | ".join(kw_parts) if kw_parts else "키워드: 전체"
     type_ctx   = f"지원유형: {', '.join(stypes)}"
-    prompt = f"""아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
+    # 인젝션 관측(로깅) — 차단이 아니라 격리+사후검증이 주 방어.
+    _inj = llm_safety.detect_injection(items_txt)
+    if _inj:
+        log.warning("공고 원문에 인젝션 의심 문구 %d건(격리·검증으로 방어): %s", len(_inj), _inj[:3])
+    prompt = f"""{llm_safety.guard_preamble()}
+
+아래는 [{region_ctx} / {kw_ctx} / {type_ctx}] 조건으로 선별된 공고입니다.
 중소기업이 실제 활용 가능한 공고를 선별·정리해주세요.
 마감 임박(7일 이내) 공고는 '⚠️ 마감 임박' 섹션을 앞에 배치하세요.
 
@@ -4117,7 +4450,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 ━━━━━━━━━━━━━━━━━━
 
 공고 목록:
-{items_txt}"""
+{llm_safety.wrap_untrusted(items_txt)}"""
     try:
         resp = client.messages.create(
             model="claude-haiku-4-5-20251001", max_tokens=8000,
@@ -4129,7 +4462,14 @@ def claude_summarize(items: list[dict], group: dict) -> str:
             log.warning("Claude 요약이 토큰 상한에 걸려 잘림 — fallback_body 로 대체(본문 보존)")
             return fallback_body(limited)
         text = resp.content[0].text.strip()
-        return text or fallback_body(limited)
+        if not text:
+            return fallback_body(limited)
+        # 사실성 사후검증(#99·#101·#104): 미승인 링크 호스트·다수 누락이면 결정론적 DB 렌더로 대체.
+        _ok, _why = llm_safety.verify_summary(text, limited)
+        if not _ok:
+            log.warning("Claude 요약 사실성 검증 실패 — fallback_body(DB값)로 대체: %s", _why)
+            return fallback_body(limited)
+        return text
     except Exception as e:
         log.exception("Claude 요약 실패: %s", e)
         return fallback_body(limited)
@@ -4153,6 +4493,59 @@ def _mask_email(email: str) -> str:
 # (그룹·raw_all·watchlist 등 모든 발송 경로가 send_email/send_to_list 를 거치므로 여기서 일괄 차단)
 _ONLY_TO: str = ""
 
+# 사용자 ⭕/❌ 피드백 루프(Tier C 골든 축적) — 모듈이 없어도 발송은 그대로(표시 전용).
+try:
+    import feedback as _feedback_mod
+    _FEEDBACK_OK = True
+except Exception:  # noqa: BLE001
+    _feedback_mod = None
+    _FEEDBACK_OK = False
+
+
+def _feedback_links_enabled() -> bool:
+    """MONITOR_NO_FEEDBACK_LINKS=1 이면 digest 피드백 링크를 끈다(표시 전용 스위치)."""
+    return _FEEDBACK_OK and os.getenv("MONITOR_NO_FEEDBACK_LINKS", "") not in ("1", "true", "True")
+
+
+# 본문(plain)의 링크를 HTML 파트에서 실제 클릭 가능한 앵커로 바꾼다.
+# (기존엔 escape 만 해 mailto 피드백 링크가 눌리지 않았다 — 공고 🔗 링크도 함께 클릭 가능해짐)
+_LINK_RE = re.compile(r"""(https?://[^\s<>"']+|mailto:[^\s<>"']+)""")
+
+
+def _linkify_html(text: str) -> str:
+    """escape + URL→<a> + 줄바꿈→<br>. 피드백 mailto 는 '⭕ 맞아요/❌ 아니에요' 라벨로 표시."""
+    text = text or ""
+    out: list[str] = []
+    pos = 0
+    for m in _LINK_RE.finditer(text):
+        out.append(html.escape(text[pos:m.start()]))
+        raw = m.group(0)
+        url = raw.rstrip(".,;)")            # 문장부호는 링크에서 제외
+        tail = raw[len(url):]
+        label = ""
+        if _FEEDBACK_OK:
+            try:
+                label = _feedback_mod.feedback_link_label(url)
+            except Exception:  # noqa: BLE001
+                label = ""
+        out.append(f'<a href="{html.escape(url, quote=True)}">{html.escape(label or url)}</a>')
+        out.append(html.escape(tail))
+        pos = m.end()
+    out.append(html.escape(text[pos:]))
+    return "".join(out).replace("\n", "<br>")
+
+
+def _render_feedback_block(items: list[dict]) -> str:
+    """digest 하단 '이 추천 맞았나요?' ⭕/❌ 섹션. 실패해도 발송은 계속(표시 전용)."""
+    if not (items and _feedback_links_enabled()):
+        return ""
+    try:
+        return _feedback_mod.render_feedback_block(items, GMAIL_ADDRESS)
+    except Exception as e:  # noqa: BLE001
+        log.warning("피드백 링크 생성 실패(무시): %s", e)
+        return ""
+
+
 def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
     msg = MIMEMultipart("alternative")
@@ -4160,7 +4553,7 @@ def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     msg.attach(MIMEText(body, "plain", "utf-8"))
     msg.attach(MIMEText(
         f"<html><body style='font-family:Arial;line-height:1.7'>"
-        f"<pre style='white-space:pre-wrap;font-family:inherit'>{html_pre(body)}</pre>"
+        f"<pre style='white-space:pre-wrap;font-family:inherit'>{_linkify_html(body)}</pre>"
         f"</body></html>", "html", "utf-8"))
     return msg
 
@@ -4271,7 +4664,16 @@ def draft_to_list(subject: str, body: str, recipients: list[str]) -> None:
             log.error("초안 생성 실패 (%s): %s", _mask_email(to), e)
 
 
-def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
+def send_to_list(subject: str, body: str, recipients: list[str], *, idem: dict | None = None) -> None:
+    """수신자별 개별 발송(To/Cc 상호노출 없음).
+
+    idem 이 주어지면 (기준일·그룹·수신자) 단위 멱등 발송을 한다:
+      idem = {"date": 기준일자, "group": 그룹키, "path": 상태파일경로}
+    - 이미 성공 기록된 (일자·그룹·수신자)는 건너뛴다 → 크래시/부분실패 후 재실행이 성공
+      수신자에게 중복 발송하지 않음(진단서 #113·#114).
+    - 발송 성공 즉시 체크포인트 저장 → 루프 도중 중단돼도 이미 보낸 수신자는 보존(#144).
+    idem 이 없으면 종전 동작(멱등 없이 전량 발송) — watchlist·원본전체 등 기존 호출 하위호환.
+    """
     if _ONLY_TO:
         recipients = [_ONLY_TO]
     # 초안 모드: 발송 대신 각 수신자별 Gmail 초안 생성(allow_send 게이트와 무관하게 초안만).
@@ -4286,14 +4688,43 @@ def send_to_list(subject: str, body: str, recipients: list[str]) -> None:
         )
         return
     global _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR
+    delivered: set[str] = delivery_state.load(idem["path"]) if idem else set()
     for to in validate_recipients(recipients)["valid"]:
+        dkey = delivery_state.key(idem["date"], idem["group"], to) if idem else None
+        if dkey is not None and dkey in delivered:
+            log.info("멱등 skip (이미 발송됨): %s [%s]", _mask_email(to), idem["group"])
+            continue
         try:
             send_email(subject, body, to)
             _SEND_OK += 1
+            if idem and dkey is not None:
+                # 성공 즉시 체크포인트 — 중단 시에도 이 수신자는 재발송 안 됨.
+                delivery_state.mark(idem["path"], dkey, _cache=delivered)
         except Exception as e:
             _SEND_FAIL += 1
             _LAST_SEND_ERR = str(e)
             log.error("발송 실패 (%s): %s", _mask_email(to), e)
+
+
+def guard_group_recipients(recipients: list[str], settings: dict, group_name: str) -> list[str]:
+    """#120: settings['recipient_allowlist'] 설정 시 화이트리스트 밖 수신자를 제외·경보.
+
+    groups.json 오설정(A그룹 recipients 에 B고객 유입)으로 타 그룹 다이제스트가 잘못 나가는 것을
+    방지한다. allowlist 미설정이면 종전 그대로(동작 불변, opt-in).
+    """
+    allow = settings.get("recipient_allowlist") or []
+    if not allow:
+        return recipients
+    allow_set = {str(a).strip().lower() for a in allow}
+    kept = [r for r in recipients if str(r).strip().lower() in allow_set]
+    dropped = [r for r in recipients if str(r).strip().lower() not in allow_set]
+    if dropped:
+        log.error("수신자 화이트리스트 위반(그룹 '%s') — 발송 제외 %d명: %s",
+                  group_name, len(dropped), ", ".join(_mask_email(d) for d in dropped))
+        alert_ntfy("recipient_guard",
+                   f"[{group_name}] 화이트리스트 밖 수신자 {len(dropped)}명 발송 차단(그룹 설정 확인)",
+                   priority="high", tags="warning")
+    return kept
 
 
 VOUCHER_KEYWORDS = ("수출바우처", "혁신바우처")
@@ -4619,7 +5050,9 @@ def execute_monitor(
     companies_by_id: dict = {}
     if settings.get("company_match_enabled") and _CM_OK:
         try:
-            companies_by_id = {c["id"]: c for c in _load_companies()}
+            # PII 격리(#96): 기업 프로필을 환경변수(MAIL_COMPANIES_JSON)로 주입 가능(없으면 파일).
+            _companies = _pii_config("MAIL_COMPANIES_JSON", _load_companies)
+            companies_by_id = {c["id"]: c for c in (_companies or [])}
             log.info("기업 프로필 로드: %d개 (정밀 매칭 활성)", len(companies_by_id))
         except Exception as e:
             log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
@@ -4697,11 +5130,20 @@ def execute_monitor(
             )
             # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
             region_unknown_block = render_region_unknown(ru_items)
+            # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
+            feedback_block = _render_feedback_block(g_items)
             subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
+            # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
+            _send_kw: dict = {}
+            if persist_seen:
+                _gid = str(group.get("id") or group.get("name") or "grp")
+                _send_kw["idem"] = {"date": str(target_date), "group": _gid, "path": str(DELIVERY_STATE_PATH)}
+            _recips = guard_group_recipients(group.get("recipients", []), settings, group.get("name"))
             send_to_list(
                 f"[{group.get('name')}] {subj_count} ({date_str})",
-                header + voucher_block + summary + region_unknown_block + kw_footer,
-                group.get("recipients", []),
+                header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer,
+                _recips,
+                **_send_kw,
             )
             if voucher_items:
                 alert_ntfy(
@@ -4710,6 +5152,12 @@ def execute_monitor(
                     + "\n".join(f"- {it['title'][:50]}" for it in voucher_items[:5]),
                     priority="high", tags="loudspeaker",
                 )
+            # 체크포인트(#144): 이 그룹 발송분을 즉시 seen 기록·저장 → 이후 그룹에서 크래시해도
+            # 이미 보낸 건은 다음 실행에서 재발송되지 않는다(종전엔 루프 끝에서만 저장).
+            if persist_seen:
+                seen_ids.update(it["id"] for it in g_items if it.get("id"))
+                seen_ids.update(it["id"] for it in ru_items if it.get("id"))
+                save_seen_ids(seen_ids)
 
     # ⑦ seen_ids 업데이트 (date_unknown도 포함 — 날짜불명 공고 재발송 방지)
     if persist_seen:

@@ -1,0 +1,3 @@
+{"id": "custom_f4574ebb_0d06902e917cfc7385bf", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 17 Jul 2026 15:24:54 +0900", "last_seen": "Fri, 17 Jul 2026 15:24:54 +0900"}
+{"id": "kstartup_178537", "verdict": "O", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 17 Jul 2026 15:25:01 +0900", "last_seen": "Fri, 17 Jul 2026 15:25:01 +0900"}
+{"id": "kstartup_178539", "verdict": "O", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 17 Jul 2026 15:24:58 +0900", "last_seen": "Fri, 17 Jul 2026 15:24:58 +0900"}

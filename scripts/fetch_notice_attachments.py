@@ -77,6 +77,38 @@ DOC_EXT_RE = re.compile(r"\.(hwp|hwpx|pdf|docx?|xlsx?|pptx?|zip|7z|rar|txt|jpe?g
 # 사이트 공통 안내서·도움말(공고 첨부가 아닌 네비게이션 파일) — 후보에서 제외
 SITE_GUIDE_RE = re.compile(r"/guide/|/help/|/manual/|manual\.pdf|user_?guide|/common/.*manual", re.IGNORECASE)
 
+# ── 첨부 안전 가드(#27 악성첨부·#28 ZIP Bomb) ──
+MAX_ATTACH_BYTES = 60 * 1024 * 1024   # 파일당 상한 60MB — 초대용량·압축폭탄 다운로드 차단
+MAX_ATTACH_COUNT = 30                  # 공고당 첨부 개수 상한 — 악성 페이지의 대량 링크 폭주 차단
+# 실행·스크립트 확장자 — 공고 첨부로 저장 금지(악성코드 차단)
+BLOCKED_EXTENSIONS = frozenset({
+    "exe", "bat", "cmd", "com", "scr", "pif", "msi", "msp", "cpl", "dll", "sys",
+    "js", "jse", "vbs", "vbe", "wsf", "wsh", "ps1", "psm1", "jar", "apk", "app",
+    "sh", "bash", "reg", "lnk", "hta", "gadget", "cab",
+})
+
+
+def is_blocked_extension(name: str) -> bool:
+    """실행/스크립트 확장자면 True — 공고 첨부로 저장하지 않는다(악성 첨부 차단)."""
+    ext = Path(str(name or "")).suffix.lstrip(".").lower()
+    return ext in BLOCKED_EXTENSIONS
+
+
+def _read_capped(resp: "httpx.Response", max_bytes: int = MAX_ATTACH_BYTES) -> bytes:
+    """스트리밍으로 최대 max_bytes 까지만 읽는다. 초과하면 RuntimeError(중단·미저장).
+
+    r.content 를 통째로 메모리에 올리기 전에 청크 단위로 누적·상한 검사해 초대용량/압축폭탄
+    다운로드로 디스크·메모리가 고갈되는 것을 막는다.
+    """
+    chunks: list[bytes] = []
+    total = 0
+    for chunk in resp.iter_bytes():
+        total += len(chunk)
+        if total > max_bytes:
+            raise RuntimeError(f"첨부 크기 상한 초과(> {max_bytes // (1024 * 1024)}MB) — 저장 거부")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
 
 @dataclass
 class FileResult:
@@ -284,34 +316,41 @@ def download_attachment(cand: AttachmentCandidate, detail_url: str, notice_dir: 
     own = client is None
     cli = client or _new_client()
     try:
-        r = cli.get(cand.url, headers={"Referer": detail_url})
-        r.raise_for_status()
+        # 스트리밍으로 받아 크기 상한(#28)을 넘으면 중단·미저장. Content-Length 로 조기 차단.
+        with cli.stream("GET", cand.url, headers={"Referer": detail_url}) as r:
+            r.raise_for_status()
+            ctype = r.headers.get("content-type", "").lower()
+            cd = r.headers.get("content-disposition", "")
+            clen = r.headers.get("content-length", "")
+            if clen.isdigit() and int(clen) > MAX_ATTACH_BYTES:
+                raise RuntimeError(
+                    f"첨부 크기 상한 초과(Content-Length {int(clen) // (1024 * 1024)}MB) — 저장 거부")
+            content = _read_capped(r)   # 실제 바이트 캡(헤더 위조 대비)
 
-        ctype = r.headers.get("content-type", "").lower()
-        cd = r.headers.get("content-disposition", "")
         name_from_cd = decode_cd_filename(cd)
-
         cd_has_doc_ext = bool(name_from_cd and DOC_EXT_RE.search(name_from_cd))
         url_has_doc_ext = bool(EXT_RE.search(cand.url))
 
-        # 차단/오류 HTML 을 첨부로 저장하지 않는다.
-        # 본문 스니핑은 확장자 힌트와 무관하게 항상 — 죽은 .hwp 직링크가 200 에러페이지를
-        # 반환해도 저장 금지(진짜 HWP/PDF/ZIP 바이너리는 HTML 마커로 시작하지 않는다).
-        if _looks_like_html_body(r.content):
+        # 차단/오류 HTML 을 첨부로 저장하지 않는다(진짜 바이너리는 HTML 마커로 시작하지 않음).
+        if _looks_like_html_body(content):
             raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
         # content-type 단독 검사는 확장자 힌트가 있으면 면제(구형 서버의 타입 오설정 대응)
         if not cd_has_doc_ext and not url_has_doc_ext and "text/html" in ctype:
             raise RuntimeError(f"첨부가 아닌 HTML 응답(차단/오류 페이지 가능): {cand.url}")
 
-        file_name = name_from_cd or _filename_from_url_or_label(cand, r, idx)
+        file_name = name_from_cd or _filename_from_url_or_label_name(cand, idx)
         file_name = safe_filename(file_name, 180)
         if not DOC_EXT_RE.search(file_name):
             ext = _guess_ext(ctype, cand.url)
             if ext and not file_name.lower().endswith(ext):
                 file_name = f"{file_name}{ext}"
 
+        # 실행/스크립트 확장자 첨부는 저장 거부(#27 악성 첨부).
+        if is_blocked_extension(file_name):
+            raise RuntimeError(f"실행/스크립트 확장자 첨부 차단: {file_name}")
+
         save_path = unique_path(notice_dir / file_name)
-        save_path.write_bytes(r.content)
+        save_path.write_bytes(content)
         return file_name, save_path
     finally:
         if own:
@@ -359,7 +398,7 @@ def _guess_ext(ctype: str, url: str) -> str:
     return mimetypes.guess_extension(mt) or ""
 
 
-def _filename_from_url_or_label(cand: AttachmentCandidate, response: httpx.Response, idx: int) -> str:
+def _filename_from_url_or_label_name(cand: AttachmentCandidate, idx: int) -> str:
     parsed = urlparse(cand.url)
     base = unquote(Path(parsed.path).name)
     if base and "." in base:
@@ -441,6 +480,12 @@ def process_url(url: str, out_dir: Path, dry_run: bool) -> list[FileResult]:
 
         if not candidates:
             return [FileResult(title, url, "NO_ATTACHMENTS")]
+
+        # 공고당 첨부 개수 상한(#27) — 악성/오동작 페이지가 수백 개 링크를 노출해도 폭주 방지.
+        if len(candidates) > MAX_ATTACH_COUNT:
+            log.warning("첨부 후보 %d개 > 상한 %d — 상위 %d개만 처리",
+                        len(candidates), MAX_ATTACH_COUNT, MAX_ATTACH_COUNT)
+            candidates = candidates[:MAX_ATTACH_COUNT]
 
         # 제목이 메뉴명/사이트명 등으로 약하면 첫 첨부 파일명에서 보정(NIPA 등 JS 렌더링)
         if _looks_generic(title):
