@@ -54,8 +54,13 @@ jobs:
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NTFY_TOPIC:         ${{ secrets.NTFY_TOPIC }}
-        # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 그룹 수신자 전원
-        #   (ekth3691 + dvd197001 + khban99)에게 매일 08:00 KST 실제 발송한다.
+          # 수신자·회사 이메일은 Git 평문 JSON 대신 암호화된 Secret payload 에서만 결합한다.
+          MAIL_PRIVATE_CONFIG_JSON: ${{ secrets.MAIL_PRIVATE_CONFIG_JSON }}
+          MAIL_PRIVATE_CONFIG_KEY:  ${{ secrets.MAIL_PRIVATE_CONFIG_KEY }}
+          MAIL_DELIVERY_STATE_SECRET: ${{ secrets.MAIL_DELIVERY_STATE_SECRET }}
+          MAIL_FEEDBACK_SECRET: ${{ secrets.MAIL_FEEDBACK_SECRET }}
+        # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 암호화된 그룹 수신자에게
+        # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
         # --coverage-alert: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
         run: python monitor.py --send --persist-seen --coverage-alert
@@ -87,6 +92,9 @@ jobs:
         env:
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          MAIL_PRIVATE_CONFIG_KEY:  ${{ secrets.MAIL_PRIVATE_CONFIG_KEY }}
+          MAIL_DELIVERY_STATE_SECRET: ${{ secrets.MAIL_DELIVERY_STATE_SECRET }}
+          MAIL_FEEDBACK_SECRET: ${{ secrets.MAIL_FEEDBACK_SECRET }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -95,7 +103,7 @@ jobs:
           # tier C=사람확인)에 누적한다 → 정확도 하네스가 '사람 정답 vs 우리 판정'을 대조.
           # 수집 실패는 발송·중복방지와 무관하므로 경고만 내고 계속한다(발송은 이미 끝났다).
           python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
-          git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json || true
+          git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json delivery_outbox.enc || true
           if git diff --staged --quiet; then
             echo "seen_ids·피드백 라벨 변경 없음 — 커밋 생략"; exit 0
           fi
@@ -120,11 +128,27 @@ jobs:
               echo "::warning::seen_ids 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀(오늘 이력 보존)"
               sleep 2; continue
             fi
+            # 수신자별 delivery checkpoint/outbox 도 함께 보존한다. 이 둘을 잃으면 부분성공
+            # 수신자에게 다시 보내거나 미전송 공고를 잃을 수 있다.
+            if [ -f delivery_state.json ] && ! cp -f delivery_state.json /tmp/local_delivery_state.json; then
+              echo "::warning::delivery_state 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
+              sleep 2; continue
+            fi
+            if [ -f delivery_outbox.enc ] && ! cp -f delivery_outbox.enc /tmp/local_delivery_outbox.enc; then
+              echo "::warning::delivery_outbox 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
+              sleep 2; continue
+            fi
             git reset --hard origin/main
             python scripts/merge_seen_ids.py seen_ids.json /tmp/local_seen_ids.json || true   # 원격 ∪ 우리
+            if [ -f /tmp/local_delivery_state.json ]; then
+              python scripts/merge_delivery_state.py delivery_state.json /tmp/local_delivery_state.json || true
+            fi
+            if [ -f /tmp/local_delivery_outbox.enc ]; then
+              python scripts/merge_delivery_outbox.py delivery_outbox.enc /tmp/local_delivery_outbox.enc || true
+            fi
             # 피드백 라벨: 하드리셋으로 파일이 원격본이 됨 → 오늘 O/X 를 멱등 재수집(원격 ∪ 오늘).
             python scripts/collect_feedback.py --days 60 || true
-            git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json || true
+            git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json delivery_outbox.enc || true
             if git diff --staged --quiet; then
               echo "원격에 이미 반영됨 — 추가 커밋 불필요"; exit 0
             fi

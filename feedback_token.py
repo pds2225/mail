@@ -6,8 +6,8 @@
 
 이 모듈: (verdict, notice_id) 에 대한 짧은 HMAC-SHA256 태그를 만들고 검증한다.
   - 서명키는 환경변수 MAIL_FEEDBACK_SECRET.
-  - **opt-in**: 키가 없으면 sign 은 빈 문자열, verify 는 항상 통과(종전 동작·하위호환).
-    키가 있으면 제목에 서명이 붙고, 검증 실패(위조·미서명)한 피드백은 버려진다.
+  - **fail-closed**: 키가 없으면 sign 은 빈 문자열이고, 수집은 모두 거부한다.
+    키가 있을 때만 제목에 서명이 붙고 유효 서명 피드백만 골든에 들어간다.
   - 상수시간 비교(hmac.compare_digest)로 타이밍 누출 방지.
 """
 from __future__ import annotations
@@ -40,10 +40,10 @@ def sign(verdict: str, notice_id: str) -> str:
 
 
 def verify(verdict: str, notice_id: str, sig: str | None) -> bool:
-    """서명 검증. 키 미설정이면 True(하위호환). 키 있으면 유효 서명만 True."""
+    """서명 검증. 키가 없거나 미서명·위조면 거부한다."""
     s = _secret()
     if not s:
-        return True                # opt-in: 키 없으면 검증 안 함
+        return False
     sig = (sig or "").strip().lower()
     if not _SIG_RE.match(sig):
         return False               # 미서명·형식오류 → 위조로 간주

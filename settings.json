@@ -3,10 +3,7 @@
   "days_back": 1,
   "include_date_unknown": false,
   "raw_all_enabled": true,
-  "raw_all_recipients": [
-    "ekth3691@gmail.com",
-    "khban99@gmail.com"
-  ],
+  "raw_all_recipients": [],
   "company_match_enabled": true,
   "max_posted_age_days": null,
   "date_unknown_policy": "recall",
@@ -14,5 +11,6 @@
   "raw_store_enabled": true,
   "raw_store_retention_days": 30,
   "raw_store_max_detail_bytes": 800000,
-  "raw_store_gzip_detail": true
+  "raw_store_gzip_detail": true,
+  "tenant_id": "default"
 }

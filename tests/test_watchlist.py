@@ -22,7 +22,7 @@ import monitor as m  # noqa: E402
 WL = {
     "keywords": ["지식재산", "IP나래"],
     "urls": ["https://pms.ripc.org/pms/biz/smallBusiness/"],
-    "recipients": ["ekth3691@gmail.com"],
+    "recipients": ["test-recipient@example.test"],
 }
 
 
@@ -84,7 +84,7 @@ def test_execute_monitor_force_includes_and_sends_focus_mail(monkeypatch):
         "raw_all_recipients": [], "company_match_enabled": False,
     })
     monkeypatch.setattr(m, "load_watchlist", lambda: {
-        "keywords": ["지식재산"], "urls": [], "recipients": ["ekth3691@gmail.com"]})
+        "keywords": ["지식재산"], "urls": [], "recipients": ["test-recipient@example.test"]})
     sent = []
     monkeypatch.setattr(m, "send_to_list", lambda s, b, r: sent.append((s, b, r)))
     pushed = []
@@ -96,6 +96,6 @@ def test_execute_monitor_force_includes_and_sends_focus_mail(monkeypatch):
     assert focus, "집중 모니터링 전용 메일이 발송돼야 함"
     subj, body, recip = focus[0]
     assert "지식재산" in body
-    assert recip == ["ekth3691@gmail.com"]
+    assert recip == ["test-recipient@example.test"]
     assert pushed, "워치 매칭 시 ntfy 푸시가 호출돼야 함"
     assert res["filtered_items"] >= 1   # 강제포함 확인

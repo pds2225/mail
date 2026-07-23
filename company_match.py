@@ -22,6 +22,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import private_config
+
 BASE_DIR = Path(__file__).resolve().parent
 COMPANIES_PATH = BASE_DIR / "companies.json"
 
@@ -63,7 +65,7 @@ DEFAULT_WEIGHTS: dict[str, int] = {
 }
 DEFAULT_THRESHOLD = 60
 
-TEST_RECIPIENT = "ekth3691@gmail.com"
+TEST_RECIPIENT = "test-recipient@example.test"
 
 
 # ── 기업 프로필 로딩 ──────────────────────────────────────────────────────────
@@ -77,6 +79,7 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
         "id": str(raw.get("id") or raw.get("email") or "company"),
         "name": str(raw.get("name") or "이름없는 기업"),
         "email": str(raw.get("email") or ""),
+        "tenant_id": private_config.normalize_tenant_id(raw.get("tenant_id")),
         "active": bool(raw.get("active", True)),
         "region": {
             "city": str(region.get("city") or ""),
@@ -102,6 +105,8 @@ def load_companies(path: str | Path | None = None) -> list[dict[str, Any]]:
         raw = json.loads(p.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return []
+    if path is None:
+        raw = private_config.merge_companies(raw)
     if isinstance(raw, dict):
         raw = raw.get("companies", [])
     if not isinstance(raw, list):
@@ -453,7 +458,7 @@ def mask_email(email: str) -> str:
 
 
 def assert_test_recipient_only(companies: list[dict[str, Any]]) -> tuple[bool, list[str]]:
-    """테스트 단계 안전장치: ekth3691@gmail.com 외 수신자가 있으면 (False, 위반목록).
+    """테스트 단계 안전장치: test-recipient@example.test 외 수신자가 있으면 (False, 위반목록).
 
     실제 발송 경로가 없으므로 예외를 던지지 않고 결과만 반환(호출 측에서 차단/경고).
     """
