@@ -1775,17 +1775,49 @@ def fetch_kstartup(site: dict) -> list[dict]:
     return items
 
 
-def fetch_html_generic(site: dict) -> list[dict]:
+# 페이지 링크 href 에서 흔히 쓰이는 페이지 파라미터(자동 탐지 보조용)
+_PAGE_PARAM_RE = re.compile(
+    r"[?&](?:page|pageIndex|pageNo|pageNum|pageNumber|currentPage|currentPageNo|"
+    r"cpage|nPage|curPage|offset|start)="
+    r"(\d+)", re.I)
+
+
+def _next_page_url(soup: BeautifulSoup, base_url: str, next_no: int) -> str:
+    """게시판 하단 페이지 링크에서 다음 페이지 URL 을 찾는다. 못 찾으면 빈 문자열.
+
+    대부분의 정부·공공 게시판은 하단에 `1 2 3 4 5` 숫자 링크를 둔다. 그 중 다음 번호와
+    텍스트가 일치하는 앵커를 고른다. `javascript:` 링크는 상세 URL 합성 규칙 없이는
+    따라갈 수 없으므로 건너뛴다(무리하게 추측하지 않는다).
+    """
+    try:
+        for a in soup.select("a[href]"):
+            if a.get_text(strip=True) != str(next_no):
+                continue
+            href = a.get("href", "")
+            if not href or href.startswith("javascript:") or href.startswith("#"):
+                continue
+            nxt = urljoin(base_url, href)
+            if nxt.split("#")[0] == base_url.split("#")[0]:
+                continue  # 같은 페이지로 돌아오는 링크
+            page_match = _PAGE_PARAM_RE.search(nxt)
+            if not page_match or int(page_match.group(1)) != next_no:
+                continue  # 숫자 제목의 상세링크(id=2 등)를 페이지 링크로 오인하지 않는다.
+            return nxt
+    except Exception:
+        pass
+    return ""
+
+
+def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[dict]:
+    """generic HTML 목록 한 페이지에서 공고 항목을 파싱한다.
+
+    (fetch_html_generic 의 기존 행 파싱 로직 그대로 — 페이지네이션 지원을 위해
+    함수로 분리만 했다. 동작 변경 없음.)
+    """
     selectors = site.get("selectors", {})
-    sel    = selectors.get("row", "table tbody tr")
+    sel = selectors.get("row", "table tbody tr")
     date_selector = site.get("date_selector") or selectors.get("date", "")
     deadline_selector = site.get("deadline_selector") or selectors.get("deadline", "")
-    soup   = _soup(site["url"])
-    if not soup:
-        # 접속/파싱 실패(soup=None)는 '진짜 0건'과 다르다 → 예외로 올려 상위가
-        # fetch_success=False='수집실패'로 분류(커버리지 '0건 급락' 오탐·baseline 오염 방지).
-        # 정상 응답인데 행이 0개면 soup 는 truthy → 아래에서 [] 반환(진짜 0건은 그대로).
-        raise RuntimeError(f"{site.get('name', site.get('id', ''))} 접속 실패 (HTML 수집)")
     items, agg = [], site.get("is_aggregator", False)
     for row in soup.select(sel):
         title_selector = selectors.get("title", "")
@@ -1796,8 +1828,9 @@ def fetch_html_generic(site: dict) -> list[dict]:
             title = select_text(row, title_selector) or title
         if not title: continue
         href = a.get("href", "") if a else ""
-        link = urljoin(site["url"], href) if href else site["url"]
-        bad_link = (not href or link.split("#")[0] == site["url"].split("#")[0]
+        # 상대경로·중복링크 판정은 '지금 읽고 있는 페이지' 기준이어야 2페이지 이후도 정확하다.
+        link = urljoin(page_url, href) if href else page_url
+        bad_link = (not href or link.split("#")[0] == page_url.split("#")[0]
                     or href.startswith("javascript:"))
         if bad_link:
             # 목록 링크가 javascript:/#/onclick(글ID만) 인 사이트: selectors 의 합성 규칙으로 상세 URL 구성.
@@ -1815,7 +1848,7 @@ def fetch_html_generic(site: dict) -> list[dict]:
                 else:
                     grp = []
                 if grp and all(grp):
-                    link = urljoin(site["url"], tmpl.format(*grp))
+                    link = urljoin(page_url, tmpl.format(*grp))
                 else:
                     continue
             else:
@@ -1833,11 +1866,66 @@ def fetch_html_generic(site: dict) -> list[dict]:
         desc = select_text(row, selectors.get("description", ""))
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
                            title, link, author, desc, deadline, site["name"], posted, agg))
-    # 이 수집기는 페이지네이션을 하지 않는다(첫 페이지만). 목록 행 수와 실제 추출 수를
-    # 함께 남겨, 페이지가 꽉 찬 채 끝났는지(=뒤에 더 있을 가능성)를 사후 판단할 수 있게 한다.
-    _page_stat(site.get("id", ""), stop_reason="SINGLE_PAGE", pages_fetched=1,
-               row_candidates=len(soup.select(sel)), items=len(items))
-    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
+def fetch_html_generic(site: dict) -> list[dict]:
+    """generic HTML 목록 수집.
+
+    기본은 **첫 페이지만**(max_pages 미설정 시 1) — 기존 동작을 그대로 보존한다.
+    sites.json 에 `max_pages: N`(N>1) 을 준 소스만 다음 페이지를 따라간다(opt-in).
+    다음 페이지 URL 은 하단 페이지 번호 링크에서 자동 탐지하며, 못 찾으면 즉시 멈춘다.
+    """
+    selectors = site.get("selectors", {})
+    sel = selectors.get("row", "table tbody tr")
+    try:
+        max_pages = max(1, int(site.get("max_pages", 1)))
+    except (TypeError, ValueError):
+        max_pages = 1
+
+    soup = _soup(site["url"])
+    if not soup:
+        # 접속/파싱 실패(soup=None)는 '진짜 0건'과 다르다 → 예외로 올려 상위가
+        # fetch_success=False='수집실패'로 분류(커버리지 '0건 급락' 오탐·baseline 오염 방지).
+        # 정상 응답인데 행이 0개면 soup 는 truthy → 아래에서 [] 반환(진짜 0건은 그대로).
+        raise RuntimeError(f"{site.get('name', site.get('id', ''))} 접속 실패 (HTML 수집)")
+
+    items = _generic_page_items(soup, site, site["url"])
+    seen_ids = {it["id"] for it in items}
+    page_url = site["url"]
+    pages_fetched = 1
+    stop_reason = "SINGLE_PAGE" if max_pages == 1 else "LAST_PAGE"
+    dup_pages = 0
+
+    for page_no in range(2, max_pages + 1):
+        next_url = _next_page_url(soup, page_url, page_no)
+        if not next_url:
+            stop_reason = "NO_NEXT_LINK"
+            break
+        soup = _soup(next_url)
+        if not soup:
+            # 2페이지 이후 실패는 1페이지 수집분을 버릴 이유가 없다 — 부분 수집으로 계속.
+            stop_reason = "PAGE_FETCH_FAILED"
+            break
+        page_url = next_url
+        pages_fetched = page_no
+        page_items = _generic_page_items(soup, site, next_url)
+        fresh = [it for it in page_items if it["id"] not in seen_ids]
+        if not fresh:
+            # 다음 페이지가 이전과 같은 내용 = 페이지 파라미터가 안 먹는 사이트
+            dup_pages += 1
+            stop_reason = "DUPLICATE_PAGE"
+            break
+        seen_ids.update(it["id"] for it in fresh)
+        items.extend(fresh)
+        if page_no == max_pages:
+            stop_reason = "MAX_PAGES_HIT"
+
+    _page_stat(site.get("id", ""), stop_reason=stop_reason, pages_fetched=pages_fetched,
+               duplicate_page=dup_pages > 0, row_candidates=len(soup.select(sel)) if soup else 0,
+               items=len(items))
+    log.info("%s: %d건%s", site["name"], len(items),
+             f" ({pages_fetched}p)" if pages_fetched > 1 else "")
     return items
 
 
