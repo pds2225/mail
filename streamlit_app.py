@@ -114,8 +114,8 @@ def init_defaults() -> None:
 init_defaults()
 
 # ── 앱 ───────────────────────────────────────────────────────────────────────
-st.set_page_config(page_title="수출지원 모니터링", page_icon="📡", layout="wide")
-st.title("📡 수출지원 모니터링 관리")
+st.set_page_config(page_title="지원사업 메일링 자동화", page_icon="📡", layout="wide")
+st.title("📡 지원사업 메일링 자동화")
 
 tab_sites, tab_groups, tab_settings, tab_run, tab_review = st.tabs(
     ["📡 소스 관리", "👥 그룹 관리", "⚙️ 설정", "▶ 실행", "🔍 공고 검수"]
