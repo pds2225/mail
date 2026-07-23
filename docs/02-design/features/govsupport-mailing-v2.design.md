@@ -9,10 +9,10 @@
 | Key | Value |
 |-----|-------|
 | WHY | 부적합 공고 발송으로 신뢰도 저하, 수집 누락으로 기회 손실. 운영자 수동 보정 부담. |
-| WHO | 인천 남동구 제조/수출 기업 운영자 (1차: ekth3691@gmail.com). |
+| WHO | 인천 남동구 제조/수출 기업 운영자 (1차: test-recipient@example.test). |
 | RISK | (1) 오발송 (2) monitor.py 회귀 (3) 외부 사이트 SSL/TLS 변화. |
 | SUCCESS | FP 50% ↓, 사이트 진단 리포트, 그룹/수신자/필터 UI 자가관리. |
-| SCOPE | monitor.py 최소수정, 신규 3모듈 추가, streamlit 페이지 1개 추가, **테스트 발송은 ekth3691@gmail.com 1개로만**. |
+| SCOPE | monitor.py 최소수정, 신규 3모듈 추가, streamlit 페이지 1개 추가, **테스트 발송은 test-recipient@example.test 1개로만**. |
 
 ## 1. Overview
 
@@ -131,7 +131,7 @@ def render():
 | L1 unit | `score_and_filter()` 하위호환 (필드 누락 시 통과) | pytest |
 | L2 integ | `diagnose_site()` mock httpx로 ok/timeout/empty 케이스 | pytest |
 | L3 e2e | dry-run으로 monitor 전체 흐름에서 점수 적용 결과 비교 | 수동 |
-| L4 safety | 테스트 발송 시 recipients = ekth3691@gmail.com 1개만 검증 | 수동 |
+| L4 safety | 테스트 발송 시 recipients = test-recipient@example.test 1개만 검증 | 수동 |
 
 ## 8. Risks & Mitigations
 
@@ -141,7 +141,7 @@ def render():
 | groups.json 손상 | 저장 시 자동 백업 (`groups.backup.{ts}.json`) |
 | monitor.py 회귀 | hook 호출 1줄만 추가, score_threshold 미존재 시 기존 동작 유지 |
 | 사이트 진단 장시간 | 사이트별 timeout 15초, 병렬 호출은 v2 이후 |
-| 오발송 | `confirm_send="SEND"` 가드 유지, 테스트 단계 recipients = ekth3691@gmail.com |
+| 오발송 | `confirm_send="SEND"` 가드 유지, 테스트 단계 recipients = test-recipient@example.test |
 
 ## 9. Implementation Order
 

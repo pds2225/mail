@@ -60,7 +60,7 @@ def test_execute_monitor_subject_groupname_and_keyword_footer(monkeypatch):
         "id": "g", "name": "AI팀", "active": True, "or_keywords": ["AI"],
         "required_conditions": {"regions": ["전국"]},
         "applicant_region_city": "서울특별시", "applicant_region_label": "서울",
-        "recipients": ["ekth3691@gmail.com"]}])
+        "recipients": ["test-recipient@example.test"]}])
     monkeypatch.setattr(m, "load_settings", lambda: {
         "date_filter_enabled": False, "raw_all_enabled": False, "raw_all_recipients": [],
         "company_match_enabled": False})

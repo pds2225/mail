@@ -98,7 +98,10 @@ def test_load_companies_filters_active_and_fills_defaults(tmp_path):
 def test_real_companies_json_loads():
     out = company_match.load_companies()  # 프로젝트 companies.json
     assert len(out) >= 1
-    assert all(c["email"] == company_match.TEST_RECIPIENT for c in out)
+    # 추적 JSON에는 이메일이 없어야 하며, 운영 Secret 이 있을 때만 로더가 결합한다.
+    public_text = company_match.COMPANIES_PATH.read_text(encoding="utf-8")
+    assert "@" not in public_text
+    assert all("email" in c for c in out)
 
 
 # ── US-002: 점수 ──────────────────────────────────────────────────────────────

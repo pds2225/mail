@@ -25,7 +25,7 @@
 - 환경변수: `D:\mail\.env`에 `BIZINFO_API_KEY`, `ANTHROPIC_API_KEY`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` 모두 존재
 
 ### 3. 핵심 안전규칙 (위반 금지)
-1. **테스트 메일 발송은 ekth3691@gmail.com 1개 주소로만 한다**. 다른 수신자(예: dvd197001@gmail.com)는 테스트 단계에서 제외.
+1. **테스트 메일 발송은 test-recipient@example.test 1개 주소로만 한다**. 다른 수신자(예: test-recipient@example.test)는 테스트 단계에서 제외.
 2. **monitor.py를 그대로 실행하면 실제 메일이 발송된다** (`main()`이 `allow_send=True`). dry-run은 `execute_monitor(allow_send=False)`를 별도 진입점에서 호출.
 3. **monitor.py 수정은 허용**되지만 회귀 위험이 크므로 hook 호출(1~2줄)만 추가하는 방식 유지.
 4. Secret/API Key/Token/비밀번호 출력·코드 하드코딩 금지.
@@ -106,7 +106,7 @@
   "or_keywords": [...],
   "exclude_keywords": [...],
   "priority_keywords": [...],
-  "recipients": ["ekth3691@gmail.com", "dvd197001@gmail.com"],
+  "recipients": ["test-recipient@example.test", "test-recipient@example.test"],
   "score_threshold": 50,
   "weights": {
     "priority_match": 30,

@@ -3,7 +3,6 @@
     {
       "id": "cmp_incheon_mfg",
       "name": "인천 남동구 제조수출 기업",
-      "email": "ekth3691@gmail.com",
       "active": true,
       "region": {
         "city": "인천",
@@ -64,12 +63,12 @@
         "support_type_bonus": 8,
         "exclude_penalty": -60,
         "region_mismatch_penalty": -40
-      }
+      },
+      "tenant_id": "default"
     },
     {
       "id": "cmp_seoul_ai",
       "name": "서울 AI·SaaS 스타트업",
-      "email": "ekth3691@gmail.com",
       "active": true,
       "region": {
         "city": "서울",
@@ -115,12 +114,12 @@
         "지원금/바우처",
         "투자"
       ],
-      "match_threshold": 38
+      "match_threshold": 38,
+      "tenant_id": "default"
     },
     {
       "id": "cmp_bnco",
       "name": "비앤코인터내셔날 (인천 남동구 여성 제조수출)",
-      "email": "ekth3691@gmail.com",
       "active": true,
       "region": {
         "city": "인천",
@@ -214,12 +213,12 @@
         "support_type_bonus": 8,
         "exclude_penalty": -60,
         "region_mismatch_penalty": -40
-      }
+      },
+      "tenant_id": "default"
     },
     {
       "id": "cmp_yesung_eng",
       "name": "예성이엔지 (경기 화성 제조/뿌리기업)",
-      "email": "ekth3691@gmail.com",
       "active": true,
       "region": {
         "city": "경기",
@@ -271,7 +270,8 @@
         "지원금/바우처",
         "투자"
       ],
-      "match_threshold": 38
+      "match_threshold": 38,
+      "tenant_id": "default"
     }
   ]
 }

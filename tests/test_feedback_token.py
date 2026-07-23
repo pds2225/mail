@@ -15,12 +15,12 @@ import feedback as fb  # noqa: E402
 SECRET = "test-secret-abc123"
 
 
-def test_no_secret_is_backward_compatible(monkeypatch):
+def test_no_secret_fails_closed(monkeypatch):
     monkeypatch.delenv("MAIL_FEEDBACK_SECRET", raising=False)
     assert ft.enabled() is False
     assert ft.sign("O", "PBLN_1") == ""          # 서명 미부착
-    assert ft.verify("O", "PBLN_1", None) is True  # 검증 안 함(통과)
-    assert ft.verify("X", "PBLN_1", "deadbeefdeadbeef") is True
+    assert ft.verify("O", "PBLN_1", None) is False
+    assert ft.verify("X", "PBLN_1", "deadbeefdeadbeef") is False
 
 
 def test_sign_and_verify_roundtrip(monkeypatch):
@@ -69,6 +69,6 @@ def test_parse_accepts_valid_and_rejects_forged(monkeypatch):
     assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_OTHER {sig}") is None
 
 
-def test_parse_unsigned_ok_without_secret(monkeypatch):
+def test_parse_unsigned_rejected_without_secret(monkeypatch):
     monkeypatch.delenv("MAIL_FEEDBACK_SECRET", raising=False)
-    assert fb.parse_feedback_subject("[MAIL-FB] X PBLN_9") == {"verdict": "X", "id": "PBLN_9"}
+    assert fb.parse_feedback_subject("[MAIL-FB] X PBLN_9") is None

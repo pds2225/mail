@@ -22,36 +22,56 @@
 """
 from __future__ import annotations
 
-import json
+import hashlib
+import hmac
 import os
-import tempfile
 from pathlib import Path
+
+from state_store import atomic_write_json, load_json_with_recovery
 
 MAX_KEEP_DATES = 30  # 최근 N개 기준일자의 키만 유지(무한 증가 방지)
 
 
-def key(date: str, group: str, recipient: str) -> str:
-    """발송 멱등 키 — (기준일자|그룹|수신자소문자). 수신자 공백·대소문자 정규화."""
+def _recipient_token(recipient: str, *, secret: str | None = None) -> str:
+    """Stable recipient token that never writes a raw email into Git-backed state."""
+    normalized = (recipient or "").strip().lower().encode("utf-8")
+    secret = (secret if secret is not None else os.environ.get("MAIL_DELIVERY_STATE_SECRET", "")).strip()
+    if secret:
+        digest = hmac.new(secret.encode("utf-8"), normalized, hashlib.sha256).hexdigest()
+        return "hmac_" + digest[:32]
+    # Local/test fallback is still one-way and avoids raw email persistence. Production
+    # injects MAIL_DELIVERY_STATE_SECRET through GitHub Secrets.
+    return "sha256_" + hashlib.sha256(normalized).hexdigest()[:32]
+
+
+def key(date: str, group: str, recipient: str, *, tenant: str = "default") -> str:
+    """PII-free delivery key — (date|tenant|group|recipient-token)."""
     d = (date or "").strip()
     g = (group or "").strip()
-    r = (recipient or "").strip().lower()
-    return f"{d}|{g}|{r}"
+    t = (tenant or "default").strip() or "default"
+    return f"{d}|{t}|{g}|{_recipient_token(recipient)}"
+
+
+def legacy_key(date: str, group: str, recipient: str) -> str:
+    """Pre-P0 default-tenant key candidate, retained only to avoid one migration resend."""
+    return f"{(date or '').strip()}|default|{(group or '').strip()}|{_recipient_token(recipient, secret='')}"
+
+
+def _upgrade_legacy_key(value: str) -> str:
+    """Convert old date|group|email keys on read without retaining raw email."""
+    parts = str(value).split("|")
+    if len(parts) == 3 and "@" in parts[2]:
+        return key(parts[0], parts[1], parts[2])
+    return str(value)
 
 
 def load(path: str | os.PathLike) -> set[str]:
     """저장된 발송 키 집합을 읽는다(없거나 깨졌으면 빈 집합 — 발송을 막지 않는다)."""
-    try:
-        raw = Path(path).read_text(encoding="utf-8")
-    except OSError:
-        return set()
-    try:
-        data = json.loads(raw)
-    except (ValueError, TypeError):
-        return set()
+    data = load_json_with_recovery(path, [])
     if isinstance(data, dict):  # {key: ts} 형태도 허용
-        return {str(k) for k in data}
+        return {_upgrade_legacy_key(str(k)) for k in data}
     if isinstance(data, list):
-        return {str(k) for k in data}
+        return {_upgrade_legacy_key(str(k)) for k in data}
     return set()
 
 
@@ -67,19 +87,8 @@ def _prune(keys: set[str]) -> set[str]:
 def save(path: str | os.PathLike, keys: set[str]) -> None:
     """발송 키 집합을 원자적으로 저장(tmp→replace). seen_ids 와 동일 포맷 규약(정렬·개행없음)."""
     keys = _prune(set(keys))
-    p = Path(path)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(sorted(keys), ensure_ascii=False, indent=1)
-    fd, tmp = tempfile.mkstemp(dir=str(p.parent), prefix=".delivery_", suffix=".tmp")
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(text)
-        os.replace(tmp, p)  # 원자적 교체 — 중단 시 원본 보존
-    finally:
-        try:
-            os.unlink(tmp)
-        except OSError:
-            pass
+    # state_store supplies a process lock, atomic replacement, and rolling backups.
+    atomic_write_json(path, sorted(keys), indent=1, backup=True)
 
 
 def mark(path: str | os.PathLike, k: str, _cache: set[str] | None = None) -> set[str]:

@@ -29,6 +29,7 @@ from pathlib import Path
 from urllib.parse import quote, unquote
 
 import feedback_token  # O/X 토큰 HMAC 서명·검증(#132, opt-in: MAIL_FEEDBACK_SECRET)
+from state_store import atomic_write_bytes_while_locked, locked_path
 
 BASE_DIR = Path(__file__).resolve().parent
 LABELS_PATH = BASE_DIR / "data" / "golden" / "feedback_labels.jsonl"
@@ -173,42 +174,44 @@ def merge_feedback_labels(records: list[dict], path: Path | None = None) -> dict
     반환: {"added","updated","unchanged","invalid","total"}
     """
     p = Path(path) if path else LABELS_PATH
-    existing = load_feedback_labels(p)
     stats = {"added": 0, "updated": 0, "unchanged": 0, "invalid": 0}
-    changed = False
-    for rec in records or []:
-        nid = str((rec or {}).get("id") or "").strip()
-        verdict = normalize_verdict((rec or {}).get("verdict"))
-        if not nid or not verdict:
-            stats["invalid"] += 1
-            continue
-        prev = existing.get(nid)
-        now = str(rec.get("received") or _now_iso())
-        if prev is None:
-            existing[nid] = {
-                "id": nid,
-                "verdict": verdict,
-                "tier": "C",
-                "source": str(rec.get("source") or "mail-feedback"),
-                "title": str(rec.get("title") or "")[:110],
-                "first_seen": now,
-                "last_seen": now,
-            }
-            stats["added"] += 1
-            changed = True
-        elif prev.get("verdict") != verdict:
-            prev.update({"verdict": verdict, "tier": "C", "last_seen": now})
-            if rec.get("title") and not prev.get("title"):
-                prev["title"] = str(rec["title"])[:110]
-            stats["updated"] += 1
-            changed = True
-        else:
-            stats["unchanged"] += 1
-    if changed:
-        p.parent.mkdir(parents=True, exist_ok=True)
-        lines = [json.dumps(existing[i], ensure_ascii=False) for i in sorted(existing)]
-        tmp = p.with_suffix(p.suffix + ".tmp")
-        tmp.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        tmp.replace(p)
+    # 읽기→병합→교체 전체를 한 잠금에 넣어 IMAP 수집/수동 실행이 겹쳐도 사람 라벨을 잃지 않는다.
+    with locked_path(p):
+        existing = load_feedback_labels(p)
+        changed = False
+        for rec in records or []:
+            nid = str((rec or {}).get("id") or "").strip()
+            verdict = normalize_verdict((rec or {}).get("verdict"))
+            if not nid or not verdict:
+                stats["invalid"] += 1
+                continue
+            prev = existing.get(nid)
+            now = str(rec.get("received") or _now_iso())
+            if prev is None:
+                existing[nid] = {
+                    "id": nid,
+                    "verdict": verdict,
+                    "tier": "C",
+                    "source": str(rec.get("source") or "mail-feedback"),
+                    "title": str(rec.get("title") or "")[:110],
+                    "first_seen": now,
+                    "last_seen": now,
+                }
+                stats["added"] += 1
+                changed = True
+            elif prev.get("verdict") != verdict:
+                prev.update({"verdict": verdict, "tier": "C", "last_seen": now})
+                if rec.get("title") and not prev.get("title"):
+                    prev["title"] = str(rec["title"])[:110]
+                stats["updated"] += 1
+                changed = True
+            else:
+                stats["unchanged"] += 1
+        if changed:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            lines = [json.dumps(existing[i], ensure_ascii=False) for i in sorted(existing)]
+            atomic_write_bytes_while_locked(
+                p, ("\n".join(lines) + "\n").encode("utf-8"), backup=True,
+            )
     stats["total"] = len(existing)
     return stats
