@@ -773,15 +773,16 @@
   },
   {
     "id": "ic_junggu",
-    "name": "인천 중구청",
+    "name": "인천 제물포구청(구 중구청)",
     "type": "html_table",
-    "url": "https://www.icjg.go.kr/krcm01b",
+    "url": "https://www.jemulpo.go.kr/main/bbs/bbsMsgList.do?bcd=announce",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "td.title"
     },
-    "note": "중소기업육성자금 등 [PC 실행 시 정상 접속]"
+    "note": "중소기업육성자금 등 [2026-07-01 중구 폐지→영종구·제물포구 분구, 제물포구로 이관·검증 10건 / 영종구는 JS렌더링이라 미배선]"
   },
   {
     "id": "ic_donggu",
@@ -2205,10 +2206,16 @@
     "id": "imp_d8f131f3",
     "name": "대전일자리경제진흥원",
     "type": "html_table",
-    "url": "https://www.djbea.or.kr/board?menuId=MENU00310&siteId=null",
+    "url": "https://www.djbea.or.kr/mps/bizTskPbnc?menuKey=TOfnnvp207",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상"
+    "note": "사업공고 / 주기:주 2~3회 / 우선순위:상 [2026-07-23 사이트개편 menuId→menuKey 대응·링크합성 배선, 검증 10건·마감일 추출 OK]",
+    "selectors": {
+      "row": "div.board_list > ul > li",
+      "link": "a.tit",
+      "link_id_attr": "data-id",
+      "link_template": "/mps/bizTskPbnc/view?tsk_pbnc_id={0}&menuKey=TOfnnvp207"
+    }
   },
   {
     "id": "imp_a8d7ddda",
@@ -2721,10 +2728,13 @@
     "id": "imp_c8108805",
     "name": "전북창조경제혁신센터",
     "type": "html_table",
-    "url": "https://event.jbci.or.kr/sub/s1_1.html",
+    "url": "https://www.jbci.or.kr/sub/business_1.html",
     "enabled": true,
     "is_aggregator": false,
-    "note": "사업공모 / 주기:주 1회 / 우선순위:상"
+    "note": "사업공모 / 주기:주 1회 / 우선순위:상 [2026-07-23 event 서브도메인→본사이트 사업공고 게시판 교체, div기반 표, 검증 10건]",
+    "selectors": {
+      "row": "div.board_table .divTableRow"
+    }
   },
   {
     "id": "imp_02740064",
