@@ -129,6 +129,7 @@ class RawStore:
             "region_field": item.get("region_field"),
             "application_period": item.get("application_period"),
             "detail_enriched": item.get("detail_enriched"),
+            "detail_extraction": item.get("detail_extraction"),
         }
         for k in (
             "business_age_text", "target_field", "target_age_field",

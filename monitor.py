@@ -575,6 +575,13 @@ MAX_DETAIL_ENRICH = 40
 GENERIC_DETAIL_ENRICH_ENABLED = os.environ.get("MONITOR_NO_GENERIC_ENRICH") != "1"
 MAX_GENERIC_DETAIL_ENRICH = 1500      # 하루 신규분 커버(초과분은 다음 실행에서 처리)
 DETAIL_ENRICH_WORKERS = 10            # 동시 상세 fetch 스레드 수
+
+# 상세정보 추출 상태. 빈 문자열 하나로 "원문 미기재/파싱 실패/접근 실패"를 섞지 않는다.
+EXTRACTION_SUCCESS = "SUCCESS"
+NOT_SPECIFIED = "NOT_SPECIFIED"
+PARSE_FAILED = "PARSE_FAILED"
+DETAIL_FETCH_FAILED = "DETAIL_FETCH_FAILED"
+_DETAIL_FAILURE_STATUSES = frozenset({PARSE_FAILED, DETAIL_FETCH_FAILED})
 _GENERIC_ENRICH_SKIP_EXT = (
     ".pdf", ".hwp", ".hwpx", ".zip", ".xls", ".xlsx", ".doc", ".docx",
     ".jpg", ".jpeg", ".png", ".gif",
@@ -1063,6 +1070,77 @@ def _should_generic_enrich(item: dict, link: str) -> bool:
     return True
 
 
+_DETAIL_FIELD_KEYS: dict[str, tuple[str, ...]] = {
+    "title": ("title",),
+    "organizer": ("organizer_field", "author"),
+    "url": ("link",),
+    "description": ("description",),
+    "application_period": ("application_period", "deadline"),
+    "target": (
+        "target_field", "business_age_text", "target_age_field",
+        "exclude_target_field", "support_field",
+    ),
+    "region": ("region_field",),
+}
+
+
+def _extraction_evidence(value: Any) -> str:
+    """메타에 남길 짧은 근거. 원문 전체나 오류/Secret은 기록하지 않는다."""
+    if isinstance(value, dict):
+        value = value.get("display") or value.get("end") or json.dumps(
+            value, ensure_ascii=False, sort_keys=True)
+    return re.sub(r"\s+", " ", str(value or "")).strip()[:160]
+
+
+def _with_detail_extraction(
+    item: dict,
+    status: str,
+    reason: str,
+    *,
+    detail_keys: set[str] | None = None,
+) -> dict:
+    """핵심 필드별 성공·미기재·파싱실패·접근실패와 출처·근거를 부착."""
+    detail_keys = detail_keys or set()
+    missing_status = NOT_SPECIFIED if status == EXTRACTION_SUCCESS else status
+    field_statuses: dict[str, dict[str, str]] = {}
+    for field_name, candidate_keys in _DETAIL_FIELD_KEYS.items():
+        chosen_key = ""
+        chosen_value: Any = ""
+        for key in candidate_keys:
+            value = item.get(key)
+            present = bool(value) if isinstance(value, dict) else bool(
+                str(value or "").strip())
+            if present:
+                chosen_key, chosen_value = key, value
+                break
+        if chosen_key:
+            field_statuses[field_name] = {
+                "status": EXTRACTION_SUCCESS,
+                "source": "detail" if chosen_key in detail_keys else "list",
+                "evidence": _extraction_evidence(chosen_value),
+            }
+        else:
+            field_statuses[field_name] = {
+                "status": missing_status,
+                "source": "detail",
+                "evidence": "",
+            }
+    return {
+        **item,
+        "detail_extraction": {
+            "status": status,
+            "reason": reason,
+            "fields": field_statuses,
+        },
+    }
+
+
+def _persist_detail_extraction_meta(item: dict) -> None:
+    if _RAW_STORE is not None:
+        with _ENRICH_STORE_LOCK:
+            _RAW_STORE.update_meta_after_enrich(item)
+
+
 def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
     """상세 페이지에서 본문·지역·신청기간 추출."""
     result: dict[str, str] = {}
@@ -1121,8 +1199,13 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
 def enrich_item_from_detail(item: dict) -> dict:
     """상세 페이지를 조회해 description·deadline·지역 정보를 보강."""
     link = (item.get("link") or "").strip()
-    if not link or item.get("detail_enriched"):
+    if item.get("detail_enriched"):
         return item
+    if not link:
+        updated = _with_detail_extraction(
+            item, DETAIL_FETCH_FAILED, "missing_detail_url")
+        _persist_detail_extraction_meta(updated)
+        return updated
     specialized = any(host in link for host in DETAIL_ENRICH_HOSTS)
     if not specialized:
         # 전용 호스트가 아니면, 리스트-온리(본문 미수집)일 때만 범용 보강
@@ -1130,18 +1213,28 @@ def enrich_item_from_detail(item: dict) -> dict:
             return item
     resp = _http_get(link, timeout=30)
     if resp is None:
-        return item
+        updated = _with_detail_extraction(
+            item, DETAIL_FETCH_FAILED, "http_no_response")
+        _persist_detail_extraction_meta(updated)
+        return updated
     html_text = resp.text
     soup = BeautifulSoup(html_text, "html.parser")
     if _RAW_STORE is not None:
         with _ENRICH_STORE_LOCK:
             _RAW_STORE.save_detail_html(item["id"], link, html_text)
     fields = _parse_detail_from_page(soup, link)
+    if not any(str(value or "").strip() for value in fields.values()):
+        updated = _with_detail_extraction(
+            item, PARSE_FAILED, "no_extractable_detail")
+        _persist_detail_extraction_meta(updated)
+        return updated
     updated = {**item, "detail_enriched": True}
+    detail_keys = set(fields)
     body = fields.get("body", "")
     if body:
         desc = (item.get("description") or "").strip()
         updated["description"] = f"{desc}\n{body}".strip() if desc else body
+        detail_keys.add("description")
     if fields.get("region_field"):
         updated["region_field"] = fields["region_field"]
     # K-Startup 구조화 신호(업력/대상/주관기관 등) 전용 키로 보존 — 숫자 든 값은
@@ -1201,9 +1294,11 @@ def enrich_item_from_detail(item: dict) -> dict:
     posted = extract_date_from_text(body)
     if posted and not (updated.get("posted_date") or "").strip():
         updated["posted_date"] = posted
-    if _RAW_STORE is not None:
-        with _ENRICH_STORE_LOCK:
-            _RAW_STORE.update_meta_after_enrich(updated)
+    if period.get("display"):
+        detail_keys.update({"deadline", "application_period"})
+    updated = _with_detail_extraction(
+        updated, EXTRACTION_SUCCESS, "detail_parsed", detail_keys=detail_keys)
+    _persist_detail_extraction_meta(updated)
     return updated
 
 
@@ -1239,7 +1334,10 @@ def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict
             return it["id"], enrich_item_from_detail(it)
         except Exception as e:  # 한 건 실패가 전체 보강을 막지 않게 격리
             log.warning("상세 보강 실패 %s: %s", it.get("id"), e)
-            return it["id"], it
+            failed = _with_detail_extraction(
+                it, DETAIL_FETCH_FAILED, "detail_exception")
+            _persist_detail_extraction_meta(failed)
+            return it["id"], failed
 
     enriched_map: dict[str, dict] = {}
     with ThreadPoolExecutor(max_workers=DETAIL_ENRICH_WORKERS) as pool:
@@ -4341,14 +4439,27 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         and application_like
         and group_keyword_pass
     )
+    detail_status = str(
+        (item.get("detail_extraction") or {}).get("status") or "")
+    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES
+    detail_failure_blockers = {
+        "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
+        "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
+        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
+    }
+    detail_failure_review = (
+        detail_failure
+        and not (set(reason_codes) & detail_failure_blockers)
+    )
     review_needed = (
         not is_relevant
-        and bool(priority_keywords)
-        and not (set(reason_codes) & {
-            "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
-            "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
-            "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
-        })
+        and (
+            (
+                bool(priority_keywords)
+                and not (set(reason_codes) & detail_failure_blockers)
+            )
+            or detail_failure_review
+        )
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
     #  버리지 말고 '지역 미상' 버킷으로 보내 보고 메일 하단에 함께 첨부한다(누락 방지).
@@ -4380,6 +4491,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             "본문 제외 단서 확인 필요 — 모집 본체와 함께 기재되어 자동 제외하지 않음: "
             + ", ".join(soft_excluded_keywords[:5])
         )
+    if detail_failure_review:
+        notes.append("상세정보 추출 실패 — 원문 재확인 필요")
 
     result.update({
         "is_relevant": is_relevant,
@@ -4400,7 +4513,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "relevance_score": relevance_score,
         "exclude_reason_codes": reason_codes,
         "filter_confidence": (
-            "medium" if soft_excluded_keywords
+            "medium" if soft_excluded_keywords or detail_failure
             else ("high" if is_relevant or reason_codes else "medium")
         ),
         "applicant_region_city": g.get("applicant_region_city", APPLICANT_REGION_CITY),
@@ -4413,6 +4526,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "required_conditions": required_conditions,
         "notes": notes,
         "review_needed": review_needed,
+        "detail_failure_review": detail_failure_review,
         "region_unknown_review": region_unknown_review,
         "business_years_status": biz_years_status,
         "support_amount_status": amount_status,
