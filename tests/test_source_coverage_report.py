@@ -135,7 +135,7 @@ def test_page_stat_never_raises():
 
 # ── coverage row 신규 필드 ──────────────────────────────────────────────────
 def test_fetch_site_coverage_populates_new_fields(monkeypatch):
-    """detail_link_ok_count·dedup_removed_estimate 가 실제로 집계된다."""
+    """상세링크·중복·레코드 품질 지표가 실제로 집계된다."""
     site = {"id": "s", "name": "S", "type": "html_table",
             "url": "https://x.kr/list", "enabled": True}
     items = [
@@ -153,6 +153,8 @@ def test_fetch_site_coverage_populates_new_fields(monkeypatch):
     assert row["item_count"] == 4
     assert row["detail_link_ok_count"] == 3   # 목록 URL 그대로인 1건 제외
     assert row["dedup_removed_estimate"] == 1  # 중복 id 1건
+    assert row["valid_record_count"] == 4
+    assert row["suspicious_content_count"] == 0
     for key in ("collect_status", "reason_codes", "risk_level"):
         assert key in row
 
@@ -162,5 +164,27 @@ def test_disabled_site_row_has_new_fields(monkeypatch):
                                    "url": "u", "enabled": False}])
     assert rows[0]["fetch_error"] == "disabled_in_config"
     assert rows[0]["detail_link_ok_count"] == 0
+    assert rows[0]["valid_record_count"] == 0
+    assert rows[0]["suspicious_content_count"] == 0
     report = ca.classify_source_status(rows[0], None)
     assert report["status"] == ca.COLLECT_STATUS_SKIPPED
+
+
+def test_fetch_site_coverage_counts_invalid_and_suspicious_records(monkeypatch):
+    site = {"id": "s", "name": "S", "type": "html_table",
+            "url": "https://x.kr/list", "enabled": True}
+    items = [
+        {"id": "1", "title": "정상 공고", "link": "https://x.kr/1", "posted_date": ""},
+        {"id": "2", "title": "로그인 후 이용해 주세요", "link": "https://x.kr/login",
+         "description": "자동입력방지 CAPTCHA", "posted_date": ""},
+        {"id": "", "title": "제목만 있음", "link": "", "posted_date": None},
+        "unexpected raw text",
+    ]
+    monkeypatch.setitem(m.FETCHERS, "html_table", lambda s: items)
+
+    row = m.fetch_site_coverage([site])[0]
+
+    assert row["fetch_success"] is True
+    assert row["item_count"] == 4
+    assert row["valid_record_count"] == 2
+    assert row["suspicious_content_count"] == 1

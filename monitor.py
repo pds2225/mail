@@ -3080,11 +3080,44 @@ FETCHERS = {
 }
 
 
+_COVERAGE_ERROR_CONTENT_HINTS = (
+    "captcha", "access denied", "forbidden", "login required", "log in required",
+    "service unavailable", "under maintenance", "temporarily unavailable",
+    "로그인 후", "로그인이 필요", "자동입력방지", "보안문자",
+    "접근 권한", "접근이 제한", "서비스 점검", "시스템 점검",
+    "오류가 발생", "페이지를 찾을 수 없",
+)
+
+
+def _coverage_item_quality(items: list[Any]) -> tuple[int, int]:
+    """(필수필드 정상 건수, 오류 화면 의심 건수). 원문·개인정보는 저장하지 않는다."""
+    valid_count = 0
+    suspicious_count = 0
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        required = (item.get("id"), item.get("title"), item.get("link"))
+        if all(str(value or "").strip() for value in required):
+            valid_count += 1
+        text = " ".join(
+            str(item.get(key) or "") for key in ("title", "description", "author")
+        ).casefold()
+        if any(hint in text for hint in _COVERAGE_ERROR_CONTENT_HINTS):
+            suspicious_count += 1
+    return valid_count, suspicious_count
+
+
 def _coverage_risk_level(row: dict) -> str:
     if not row.get("enabled", True):
         return "낮음"
     if row.get("fetch_error") or not row.get("fetch_success"):
         return "높음"
+    item_count = int(row.get("item_count", 0) or 0)
+    if item_count > 0:
+        if int(row.get("suspicious_content_count", 0) or 0) / item_count >= 0.5:
+            return "높음"
+        if int(row.get("valid_record_count", item_count) or 0) / item_count < 0.8:
+            return "높음"
     if row.get("date_unknown_count", 0) > 0 and row.get("posted_parsed_count", 0) == 0:
         return "높음"
     if row.get("date_unknown_count", 0) > row.get("posted_parsed_count", 0):
@@ -3123,6 +3156,8 @@ def fetch_site_coverage(
             "missing_risk": "높음",
             # P0 수집누락 탐지용 — 키는 항상 존재하게 두어 판정부가 분기하지 않게 한다
             "detail_link_ok_count": 0,
+            "valid_record_count": 0,
+            "suspicious_content_count": 0,
             "collect_status": "",
             "reason_codes": [],
             "risk_level": "",
@@ -3137,22 +3172,38 @@ def fetch_site_coverage(
             rows.append(row)
             continue
         try:
-            items = fn(site)
+            fetched = fn(site)
+            if fetched is None:
+                items = []
+            elif isinstance(fetched, list):
+                items = fetched
+            elif isinstance(fetched, (dict, str, bytes)):
+                items = [fetched]
+            else:
+                items = list(fetched)
             row["fetch_success"] = True
             row["item_count"] = len(items)
-            matched, unknown, _excl = partition_posted_dates(items, days_back)
+            valid_count, suspicious_count = _coverage_item_quality(items)
+            row["valid_record_count"] = valid_count
+            row["suspicious_content_count"] = suspicious_count
+            dict_items = [
+                {**it, "posted_date": str(it.get("posted_date") or "")}
+                for it in items if isinstance(it, dict)
+            ]
+            matched, unknown, _excl = partition_posted_dates(dict_items, days_back)
             row["posted_parsed_count"] = len(matched)
             row["date_unknown_count"] = len(unknown)
             row["today_target_count"] = len(matched)
             # 중복제거 전·후 건수 — 같은 id 가 여러 번 잡히면 목록 파싱이 흔들린 신호
-            unique_ids = {it.get("id") for it in items if it.get("id")}
+            unique_ids = {it.get("id") for it in dict_items if it.get("id")}
             row["dedup_removed_estimate"] = max(0, len(items) - len(unique_ids))
             row["final_mail_target_estimate"] = len(matched) + len(unknown)
             # 상세링크 추출률 — 링크가 목록 URL 그대로면 상세로 못 들어간 것
             site_url = (site.get("url") or "").split("#")[0]
             row["detail_link_ok_count"] = sum(
-                1 for it in items
-                if (it.get("link") or "") and (it.get("link") or "").split("#")[0] != site_url
+                1 for it in dict_items
+                if str(it.get("link") or "")
+                and str(it.get("link") or "").split("#")[0] != site_url
             )
         except Exception as exc:
             row["fetch_error"] = str(exc)[:200]

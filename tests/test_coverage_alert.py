@@ -166,6 +166,23 @@ def test_update_skips_anomalous_zero_to_preserve_baseline():
     assert updated["a"] == [5, 6, 5, 7]
 
 
+def test_update_skips_quality_failure_and_spike_to_preserve_baseline():
+    """오류 화면·깨진 스키마·과거 전체목록 유입은 정상 기준선으로 학습하지 않는다."""
+    baseline = {"a": [20, 21, 19, 20], "b": [10, 10, 11, 9], "c": [20, 20, 21, 19]}
+    rows = [
+        _row("a", item_count=20) | {
+            "valid_record_count": 20, "suspicious_content_count": 15},
+        _row("b", item_count=10) | {
+            "valid_record_count": 2, "suspicious_content_count": 0},
+        _row("c", item_count=70) | {
+            "valid_record_count": 70, "suspicious_content_count": 0},
+    ]
+
+    updated = ca.update_coverage_baseline(baseline, rows, today="2026-07-23")
+
+    assert updated == baseline
+
+
 def test_update_replaces_same_day_entry():
     """같은 날짜 재실행은 window 슬롯을 추가로 쓰지 않고 마지막 값을 교체."""
     baseline = {"a": [5, _entry("2026-06-22", 6)]}
