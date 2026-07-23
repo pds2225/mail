@@ -145,8 +145,8 @@ def update_coverage_baseline(
 ) -> dict:
     """fetch_success 이면서 이상치가 아닌 사이트만 오늘 item_count 를 롤링 이력에 반영한다.
 
-    실패·급락·급감한 날은 추가하지 않아 baseline 오염을 막고, 같은 날짜 재실행은 append 대신
-    마지막 값을 교체해 window 가 날짜 단위로 유지되게 한다.
+    실패·급락·품질 이상·비정상 급증일은 추가하지 않아 baseline 오염을 막고,
+    같은 날짜 재실행은 append 대신 마지막 값을 교체해 window 가 날짜 단위로 유지되게 한다.
     """
     updated = dict(baseline) if isinstance(baseline, dict) else {}
     anomalous_site_ids = {
@@ -164,6 +164,8 @@ def update_coverage_baseline(
         if not site_id:
             continue
         if site_id in anomalous_site_ids:
+            continue
+        if _row_has_baseline_pollution(row, updated.get(site_id)):
             continue
         history = updated.get(site_id)
         history = list(history) if isinstance(history, list) else []
@@ -199,7 +201,7 @@ def format_anomaly_message(anomalies: list[dict]) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# P0 수집누락 탐지 — 상태 5종·사유코드 10종·P0/P1 등급 (기존 판정과 독립)
+# P0 수집누락 탐지 — 상태 5종·사유코드·P0/P1 등급 (기존 판정과 독립)
 # ══════════════════════════════════════════════════════════════════════════
 # 위 detect_coverage_anomalies 는 "알림용 보수적 판정"이라 신규 사이트를 건너뛰고
 # severity high/medium 2단계만 쓴다. 아래는 그와 별개로 "활성 소스가 전부 실행됐고
@@ -212,7 +214,8 @@ COLLECT_STATUS_FAILED = "FAILED"
 COLLECT_STATUS_SKIPPED = "SKIPPED"
 COLLECT_STATUS_ZERO_SUSPICIOUS = "ZERO_SUSPICIOUS"
 
-# 사유코드 10종 (요구 스펙 고정 — 이름 변경 금지)
+# 기존 사유코드는 이름을 바꾸지 않는다. 아래 3종은 HTTP 200 위장 실패·스키마 붕괴·
+# 과거 전체목록 유입을 조용히 정상으로 오인하던 빈틈을 메운다.
 REASON_SOURCE_NOT_EXECUTED = "SOURCE_NOT_EXECUTED"
 REASON_FETCH_FAILED = "FETCH_FAILED"
 REASON_PARSER_FAILED = "PARSER_FAILED"
@@ -223,6 +226,9 @@ REASON_PAGINATION_INCOMPLETE = "PAGINATION_INCOMPLETE"
 REASON_DUPLICATE_PAGE_LOOP = "DUPLICATE_PAGE_LOOP"
 REASON_DETAIL_LINK_RATE_LOW = "DETAIL_LINK_RATE_LOW"
 REASON_BASELINE_INSUFFICIENT = "BASELINE_INSUFFICIENT"
+REASON_CONTENT_VALIDATION_FAILED = "CONTENT_VALIDATION_FAILED"
+REASON_SCHEMA_VALIDATION_FAILED = "SCHEMA_VALIDATION_FAILED"
+REASON_COLLECTION_SPIKE_HIGH = "COLLECTION_SPIKE_HIGH"
 
 P0_REASONS = frozenset({
     REASON_SOURCE_NOT_EXECUTED,
@@ -231,12 +237,15 @@ P0_REASONS = frozenset({
     REASON_ZERO_ITEMS_WITH_BASELINE,
     REASON_COLLECTION_DROP_HIGH,
     REASON_DUPLICATE_PAGE_LOOP,
+    REASON_CONTENT_VALIDATION_FAILED,
+    REASON_SCHEMA_VALIDATION_FAILED,
 })
 P1_REASONS = frozenset({
     REASON_DATE_PARSE_RATE_LOW,
     REASON_PAGINATION_INCOMPLETE,
     REASON_DETAIL_LINK_RATE_LOW,
     REASON_BASELINE_INSUFFICIENT,
+    REASON_COLLECTION_SPIKE_HIGH,
 })
 
 BASELINE_WINDOW_RUNS = 7   # 기준선 = 최근 정상 7회
@@ -246,6 +255,10 @@ DROP_RATIO_P1 = 0.5        # 50~79% 급감 → P1
 DATE_PARSE_MIN_RATE = 0.5  # 게시일 파싱률 50% 미만 → P0
 DATE_PARSE_DROP_PP = 0.3   # 평소 대비 30%p 이상 하락 → P1
 DETAIL_LINK_MIN_RATE = 0.5  # 상세링크 추출률 50% 미만 → P1
+VALID_RECORD_MIN_RATE = 0.8  # id·title·link 정상 레코드 80% 미만 → P0
+SUSPICIOUS_CONTENT_MAX_RATE = 0.5  # 로그인·캡차·점검 화면이 절반 이상 → P0
+SPIKE_RATIO_P1 = 3.0        # 평소 중앙값의 3배 이상
+SPIKE_ABSOLUTE_EXCESS = 20  # 단, 절대 증가가 20건 이상일 때만 → P1
 
 # 파서 계열 실패를 접속 실패와 구분하기 위한 단서(소문자 비교)
 _PARSER_ERROR_HINTS = (
@@ -259,6 +272,10 @@ DEFAULT_THRESHOLDS: dict[str, float] = {
     "date_parse_min_rate": DATE_PARSE_MIN_RATE,
     "date_parse_drop_pp": DATE_PARSE_DROP_PP,
     "detail_link_min_rate": DETAIL_LINK_MIN_RATE,
+    "valid_record_min_rate": VALID_RECORD_MIN_RATE,
+    "suspicious_content_max_rate": SUSPICIOUS_CONTENT_MAX_RATE,
+    "spike_ratio_p1": SPIKE_RATIO_P1,
+    "spike_absolute_excess": SPIKE_ABSOLUTE_EXCESS,
     "baseline_min_runs": BASELINE_MIN_RUNS,
     "baseline_window_runs": BASELINE_WINDOW_RUNS,
 }
@@ -298,6 +315,32 @@ def _rate(numerator: Any, denominator: Any) -> float | None:
         return float(numerator or 0) / den
     except (TypeError, ValueError):
         return None
+
+
+def _row_has_baseline_pollution(row: dict, history: list | None) -> bool:
+    """실패 화면·깨진 레코드·비정상 대량 유입을 정상 기준선에 넣지 않는다."""
+    item_count = int(row.get("item_count", 0) or 0)
+    if item_count <= 0:
+        return False
+
+    if "valid_record_count" in row:
+        valid_rate = _rate(row.get("valid_record_count"), item_count)
+        if valid_rate is not None and valid_rate < VALID_RECORD_MIN_RATE:
+            return True
+
+    if "suspicious_content_count" in row:
+        suspicious_rate = _rate(row.get("suspicious_content_count"), item_count)
+        if (suspicious_rate is not None
+                and suspicious_rate >= SUSPICIOUS_CONTENT_MAX_RATE):
+            return True
+
+    stats = baseline_stats(history)
+    median = stats["median"]
+    if stats["sufficient"] and median and median > 0:
+        if (item_count / median >= SPIKE_RATIO_P1
+                and item_count - median >= SPIKE_ABSOLUTE_EXCESS):
+            return True
+    return False
 
 
 def grade_for(reason_codes: list[str]) -> str:
@@ -368,7 +411,21 @@ def classify_source_status(
         return _source_report(
             row, COLLECT_STATUS_ZERO_SUSPICIOUS, reason_codes, stats, detail)
 
-    # ⑦~⑪ 수집은 됐지만 품질 이상 — 누적 판정
+    # ⑦~⑭ 수집은 됐지만 품질 이상 — 누적 판정
+    if "valid_record_count" in row:
+        valid_rate = _rate(row.get("valid_record_count"), item_count)
+        if valid_rate is not None:
+            detail["valid_record_rate"] = round(valid_rate, 4)
+            if valid_rate < float(th["valid_record_min_rate"]):
+                reason_codes.append(REASON_SCHEMA_VALIDATION_FAILED)
+
+    if "suspicious_content_count" in row:
+        suspicious_rate = _rate(row.get("suspicious_content_count"), item_count)
+        if suspicious_rate is not None:
+            detail["suspicious_content_rate"] = round(suspicious_rate, 4)
+            if suspicious_rate >= float(th["suspicious_content_max_rate"]):
+                reason_codes.append(REASON_CONTENT_VALIDATION_FAILED)
+
     if stats["sufficient"] and median and median > 0:
         ratio = item_count / median
         drop_rate = max(0.0, 1.0 - ratio)
@@ -380,6 +437,10 @@ def classify_source_status(
             # 50~79% 급감 → 같은 사유코드지만 등급만 P1 (스펙상 중간 급감 전용 코드가 없다)
             reason_codes.append(REASON_COLLECTION_DROP_HIGH)
             detail["drop_p1"] = True
+        if (ratio >= float(th["spike_ratio_p1"])
+                and item_count - median >= float(th["spike_absolute_excess"])):
+            reason_codes.append(REASON_COLLECTION_SPIKE_HIGH)
+            detail["spike_ratio"] = round(ratio, 4)
 
     if page_stat:
         stop_reason = str(page_stat.get("stop_reason") or "")
@@ -568,6 +629,9 @@ _REASON_LABELS = {
     REASON_DUPLICATE_PAGE_LOOP: "페이지 반복(동일 내용)",
     REASON_DETAIL_LINK_RATE_LOW: "상세링크 추출률 저하",
     REASON_BASELINE_INSUFFICIENT: "기준선 부족(정상 3회 미만)",
+    REASON_CONTENT_VALIDATION_FAILED: "로그인·캡차·점검 화면 의심",
+    REASON_SCHEMA_VALIDATION_FAILED: "필수 항목 구조 손상",
+    REASON_COLLECTION_SPIKE_HIGH: "수집건수 비정상 급증",
 }
 
 
