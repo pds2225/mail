@@ -330,6 +330,99 @@ def test_cross_own_region_x_unknown_date():
 
 
 # ══════════════════════════════════════════════════════════════════
+# 2026-07-24 실메일 회귀 — 예비창업 AI 그룹의 광범위 키워드 오탐
+# ══════════════════════════════════════════════════════════════════
+def _prestartup_item(title, description, region_field="전국", **extra):
+    item = {
+        "id": "reported-mail-case",
+        "title": title,
+        "description": description,
+        "region_field": region_field,
+        "deadline": "2026-12-31",
+        "application_period": dict(PERIOD),
+        "posted_date": "2026-06-18",
+        "is_aggregator": False,
+        "author": "기관",
+    }
+    item.update(extra)
+    return item
+
+
+def test_prestartup_search_terms_match_mail_footer_exactly():
+    """메일에 표시한 검색조건 3개와 실제 판정 키워드가 달라지면 안 된다."""
+    assert G["grp_prestartup_ai"]["or_keywords"] == ["AI", "인공지능", "생성형AI"]
+
+
+@pytest.mark.parametrize("item,reason", [
+    (
+        _prestartup_item(
+            "2026년도 인천시 방산 중소기업 생산성향상 지원사업 수혜 후보기업 모집 공고",
+            "인천 방산 중소기업의 생산 소프트웨어 고도화 지원",
+            "인천",
+        ),
+        "INDUSTRY_NOT_MATCHED",
+    ),
+    (
+        _prestartup_item(
+            "수요기관 임직원 사칭 허위구매 사기피해 예방 안내",
+            "조달업체 데이터를 악용한 사칭 사기 대응방법 안내",
+        ),
+        "INDUSTRY_NOT_MATCHED",
+    ),
+    (
+        _prestartup_item(
+            "2026년 데이터 ON 고양 빅데이터 아카데미 참여자 모집 공고",
+            "고양 시민과 학생 대상 빅데이터 교육",
+            "경기",
+        ),
+        "INDUSTRY_NOT_MATCHED",
+    ),
+    (
+        _prestartup_item(
+            "AI기반 종단간 미래자동차 특화플랫폼 기획위원(후보자) 모집공고",
+            "기획위원 후보자를 모집합니다",
+        ),
+        "NOT_GRANT_NOTICE",
+    ),
+    (
+        _prestartup_item(
+            "인천 펜타포트 생성형 인공지능 최적화 도입",
+            "보도자료: 음악축제의 AI 검색 홍보 전략을 소개합니다",
+            "인천",
+        ),
+        "NOT_GRANT_NOTICE",
+    ),
+])
+def test_prestartup_reported_false_positives_are_excluded(item, reason):
+    bucket, ev = bucket_of(item, "grp_prestartup_ai")
+    assert bucket == "excluded"
+    assert reason in ev["exclude_reason_codes"]
+
+
+@pytest.mark.parametrize("item", [
+    _prestartup_item(
+        "2026년 2차 서울 AI 허브 신규 입주기업 모집 안내",
+        "서울 소재 AI 스타트업의 입주 신청을 받습니다",
+        "서울",
+        support_field="시설ㆍ공간ㆍ보육",
+    ),
+    _prestartup_item(
+        "제조 AI 기술 사업화 지원 수혜기업 모집",
+        "전국 AI 스타트업의 기술 사업화 신청을 받습니다",
+        support_field="사업화",
+    ),
+    _prestartup_item(
+        "[서울] 2026년 한국전자전 관악S밸리관 참가기업 모집 공고",
+        "관악 소재 스타트업 중 AX(AI transformation) 제품 보유기업 신청",
+        "서울",
+    ),
+])
+def test_prestartup_reported_true_positives_remain_included(item):
+    bucket, ev = bucket_of(item, "grp_prestartup_ai")
+    assert bucket == "included", ev.get("exclude_reason_codes")
+
+
+# ══════════════════════════════════════════════════════════════════
 # 커버리지 게이트 — 모든 (axis, category) 적용 셀이 ≥1 케이스에 매핑
 # ══════════════════════════════════════════════════════════════════
 def test_coverage_complete():

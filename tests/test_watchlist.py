@@ -48,6 +48,28 @@ def test_is_watchlisted_none():
     assert m.is_watchlisted({"title": "일반 공고", "link": "https://other.go.kr/x"}, WL) is False
 
 
+def test_project_watchlist_does_not_bypass_dates_on_generic_ip_navigation():
+    """상세페이지 공통 메뉴의 '지식재산' 한 단어로 오래된 무관 공고를 강제포함하지 않는다."""
+    project_watchlist = json.loads((ROOT / "watchlist.json").read_text(encoding="utf-8"))
+    stale_notice = {
+        "title": "수요기관 임직원 사칭 허위구매 사기피해 예방 안내",
+        "description": "사이트 공통 메뉴: 지식재산 지원 안내",
+        "link": "https://www.innobiz.net/company/company1_view.asp?Seq=434",
+    }
+    assert "지식재산" not in project_watchlist["keywords"]
+    assert m.is_watchlisted(stale_notice, project_watchlist) is False
+
+
+def test_project_watchlist_keeps_ripc_board_url():
+    """일반 키워드를 제거해도 지정한 지식재산 공고 게시판은 집중감시한다."""
+    project_watchlist = json.loads((ROOT / "watchlist.json").read_text(encoding="utf-8"))
+    notice = {
+        "title": "IP나래 프로그램 공고",
+        "link": "https://pms.ripc.org/pms/biz/smallBusiness/board/viewBoardDetail.do?id=5",
+    }
+    assert m.is_watchlisted(notice, project_watchlist) is True
+
+
 def test_load_watchlist_normalizes(tmp_path, monkeypatch):
     p = tmp_path / "watchlist.json"
     p.write_text(json.dumps({"keywords": ["지식재산", "  ", ""], "urls": ["u"], "recipients": ["r@x.com"]}),
