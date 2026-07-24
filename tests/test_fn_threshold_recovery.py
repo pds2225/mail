@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import company_match  # noqa: E402
+from mail_core.matching import company_match  # noqa: E402
 
 
 def _company():

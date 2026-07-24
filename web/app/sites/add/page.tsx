@@ -71,7 +71,7 @@ export default function SiteAddPage() {
       <header className="page-header">
         <h1 className="page-title">사이트 추가</h1>
         <p className="page-desc">
-          저장은 PR 패킷 생성입니다. 운영 <code>sites.json</code>은 자동 변경되지 않습니다.
+          저장은 PR 패킷 생성입니다. 운영 <code>config/sites.json</code>은 자동 변경되지 않습니다.
         </p>
       </header>
 

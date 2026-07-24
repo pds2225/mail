@@ -4,13 +4,13 @@
   "assets": [
     {
       "id": "rules",
-      "path": "RULES.md",
+      "path": "docs/project/RULES.md",
       "role": "안전 헌법 — 발송·Secret·보호 파일",
       "drift_signals": ["발송 금지 규칙 삭제", "보호 파일 목록 축소"]
     },
     {
       "id": "tasks",
-      "path": "TASKS.md",
+      "path": "docs/project/TASKS.md",
       "role": "L1 큐 백로그",
       "drift_signals": ["RUNNING 고착", "PENDING 20건 초과"]
     },
@@ -40,7 +40,7 @@
     },
     {
       "id": "site_add_packet",
-      "path": "WORKS/SITE_ADD_PR_PACKET.md",
+      "path": "docs/works/SITE_ADD_PR_PACKET.md",
       "role": "사이트 추가 PR 템플릿",
       "drift_signals": ["dry-run 체크리스트 삭제"]
     }

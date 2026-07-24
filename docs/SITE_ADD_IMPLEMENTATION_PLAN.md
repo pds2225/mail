@@ -10,20 +10,20 @@ flowchart LR
   M --> U["사용자 검토"]
   U --> GH["GitHub PR"]
   GH --> MJ["merge 승인"]
-  MJ --> SJ["sites.json 운영 반영"]
+  MJ --> SJ["config/sites.json 운영 반영"]
 ```
 
 1. 사용자가 사이트명·URL·카테고리·수집 방식·활성·메모·URL 테스트 여부 입력
-2. 서버가 레포 `sites.json`을 읽어 중복·형식 검증
+2. 서버가 레포 `config/sites.json`을 읽어 중복·형식 검증
 3. 선택 시 URL HEAD/GET probe (`probeUrlReachable`)
 4. 검증 통과 시 PR 패킷 생성 (운영 파일 미변경)
 5. 사용자가 브랜치·PR 생성 → merge 승인
 
-## sites.json 반영 방식
+## config/sites.json 반영 방식
 
 - **런타임:** `buildSitesPatch()`로 미리보기만 생성
-- **반영:** PR에서 `sites.json` 배열 끝에 1건 추가 (또는 패킷 JSON 스니펫 붙여넣기)
-- **금지:** Vercel API가 운영 브랜치 `sites.json`을 직접 commit/push 하지 않음
+- **반영:** PR에서 `config/sites.json` 배열 끝에 1건 추가 (또는 패킷 JSON 스니펫 붙여넣기)
+- **금지:** Vercel API가 운영 브랜치 `config/sites.json`을 직접 commit/push 하지 않음
 
 ### `html_table` / `html_card` selector 메모
 
@@ -72,7 +72,7 @@ flowchart LR
 - `buildSiteAddPacket()` → 마크다운
 - 제목 초안: `feat(sites): add {id} — {name}`
 - 본문: URL, type, dry-run 체크리스트
-- 로컬: `WORKS/SITE_ADD_PR_PACKET.md` 기록
+- 로컬: `docs/works/SITE_ADD_PR_PACKET.md` 기록
 
 ### 2차 (NEEDS_USER)
 
@@ -81,7 +81,7 @@ flowchart LR
 - `GITHUB_TOKEN` — repo contents + pull_requests
 - `GITHUB_REPO` — 기본 `pds2225/mail`
 
-흐름: create branch → commit `sites.json` → `gh pr create --draft`  
+흐름: create branch → commit `config/sites.json` → `gh pr create --draft`
 **자동 merge 금지**, 토큰 값 로그 출력 금지.
 
 ## 수집 누락 방지 연결

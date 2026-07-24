@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 import monitor as m  # noqa: E402
 
-G = {g["id"]: g for g in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))}
+G = {g["id"]: g for g in json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))}
 
 
 def notice(title, description="", link="https://example.go.kr/notice/view.do?id=1", **kw):

@@ -19,7 +19,7 @@ import respx
 # conftest.py 가 import 전 env 를 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "msit"
+FX = pathlib.Path(__file__).parent / "fixtures" / "msit"
 MSIT_URL = "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112"
 
 

@@ -9,7 +9,7 @@ export function repoRoot(): string {
     path.join(process.cwd(), "../.."),
   ];
   for (const root of candidates) {
-    if (fs.existsSync(path.join(root, "sites.json"))) {
+    if (fs.existsSync(path.join(root, "config", "sites.json"))) {
       return path.resolve(root);
     }
   }
@@ -17,5 +17,5 @@ export function repoRoot(): string {
 }
 
 export function configPath(name: "sites.json" | "groups.json" | "settings.json"): string {
-  return path.join(repoRoot(), name);
+  return path.join(repoRoot(), "config", name);
 }

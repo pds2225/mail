@@ -83,14 +83,14 @@
 자동개발 큐가 수정할 수 있는 파일:
 
 ```
-TASKS.md
-RULES.md
+docs/project/TASKS.md
+docs/project/RULES.md
 AGENTS.md
 README.md
-auto_dev_state.json
-done_tasks.md
-failed_tasks.md
-blocked_tasks.md
+var/state/auto_dev_state.json
+docs/project/done_tasks.md
+docs/project/failed_tasks.md
+docs/project/blocked_tasks.md
 auto_dev/*
 docs/LOOP_ENGINEERING_AUTO_DEV.md
 scripts/*

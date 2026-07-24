@@ -23,7 +23,7 @@ import monitor  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 GROUP = next(
     group
-    for group in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))
+    for group in json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))
     if group["id"] == "grp_prestartup_ai"
 )
 TODAY = date(2026, 7, 23)

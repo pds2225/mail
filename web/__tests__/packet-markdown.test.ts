@@ -18,7 +18,7 @@ describe("packet markdown", () => {
       validation,
     });
 
-    expect(packet).toContain("대상: groups.json");
+    expect(packet).toContain("대상: config/groups.json");
     expect(packet).toContain("valid: 1건");
     expect(packet).toContain("rejected: 2건");
     expect(packet).not.toContain("alice.secret@example.com");

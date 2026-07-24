@@ -27,7 +27,7 @@ import hmac
 import os
 from pathlib import Path
 
-from state_store import atomic_write_json, load_json_with_recovery
+from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
 MAX_KEEP_DATES = 30  # 최근 N개 기준일자의 키만 유지(무한 증가 방지)
 

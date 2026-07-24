@@ -52,7 +52,7 @@ class SourceSpec:
 
 
 def _load_sites() -> list[dict]:
-    return json.loads((ROOT / "sites.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "config" / "sites.json").read_text(encoding="utf-8"))
 
 
 def _site_by_id(site_id: str) -> dict | None:

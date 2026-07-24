@@ -9,29 +9,29 @@ site configuration, or matching policy.
 
 ## Pipeline
 
-1. Load configuration from `sites.json`, `groups.json`, `companies.json`, and `settings.json`.
+1. Load configuration from `config/sites.json`, `config/groups.json`, `config/companies.json`, and `config/settings.json`.
 2. Fetch enabled sites through the collector registered in `FETCHERS`.
 3. Enrich detail pages for links under `exportvoucher.com`, `k-startup.go.kr`, `nipa.kr`, and
    `bizinfo.go.kr` up to `MAX_DETAIL_ENRICH` items per run.
-4. Deduplicate by notice ID and `seen_ids.json`.
-5. Apply posted-date policy from `settings.json`.
+4. Deduplicate by notice ID and `var/state/seen_ids.json`.
+5. Apply posted-date policy from `config/settings.json`.
 6. Evaluate each active group into `included`, `region_unknown`, `review`, or `excluded`.
 7. In send mode only, summarize included items and send mail. Region-unknown items are
    rendered as a "지역 미상 - 확인 필요" section at the bottom of the same group email.
-8. Persist `seen_ids.json` only when persistence is allowed.
+8. Persist `var/state/seen_ids.json` only when persistence is allowed.
 
 Optional raw notice archive (local PC): when `raw_store_enabled` is true in
-`settings.json`, new notice metadata and enriched detail HTML are saved under
+`config/settings.json`, new notice metadata and enriched detail HTML are saved under
 `data/raw/YYYY-MM-DD/`. See `docs/RAW_STORE.md`.
 
 ## Public Configuration Interfaces
 
-### `sites.json`
+### `config/sites.json`
 
 Each site entry must have:
 
 - `id`: stable prefix for generated item IDs.
-- `name`: display name in logs/reports/email.
+- `name`: display name in logs, reports, and email.
 - `type`: collector key registered in `FETCHERS`.
 - `url`: list or API URL used by the collector.
 - `enabled`: false skips the site.
@@ -101,7 +101,7 @@ period/deadline when parsable, and preserves structured K-Startup fields such as
 
 ## Date And Recall Policy
 
-`settings.json` controls posted-date filtering:
+`config/settings.json` controls posted-date filtering:
 
 - `date_filter_enabled`: when true, only the target business-day window plus allowed
   date-unknown notices continue to group matching.
@@ -115,7 +115,7 @@ period/deadline when parsable, and preserves structured K-Startup fields such as
   `true -> all`, `false -> strict`.
 - `max_posted_age_days`: optional hard cap for old posted dates.
 
-The current checked-in `settings.json` sets `date_unknown_policy` to `recall`.
+The current checked-in `config/settings.json` sets `date_unknown_policy` to `recall`.
 
 ## Group Matching Buckets
 
@@ -138,14 +138,14 @@ Important constraints:
 ## Safe Operations
 
 Use dry-run commands for automation and development. They set placeholder environment
-variables and disable `seen_ids.json` persistence.
+variables and disable `var/state/seen_ids.json` persistence.
 
 ```bash
 python3 scripts/monitor_dry_run.py --skip-coverage-fetch
 python3 scripts/monitor_dry_run.py --skip-coverage-fetch --json
 ```
 
-Use the full coverage fetch when changing collectors or `sites.json` selectors:
+Use the full coverage fetch when changing collectors or `config/sites.json` selectors:
 
 ```bash
 python3 scripts/monitor_dry_run.py
@@ -153,9 +153,9 @@ python3 scripts/monitor_dry_run.py
 
 Generated reports:
 
-- `logs/site_collection_coverage_report.md`
-- `logs/today_notice_missing_risk_report.md`
-- `logs/review_queue_YYYYMMDD.md`
+- `var/logs/site_collection_coverage_report.md`
+- `var/logs/today_notice_missing_risk_report.md`
+- `var/logs/review_queue_YYYYMMDD.md`
 
 For unit-level regression coverage:
 
@@ -185,7 +185,7 @@ real email sending.
   `scripts/monitor_dry_run.py` set safe placeholders before importing it.
 - Some Korean public sites fail TLS negotiation from cloud VMs. This can appear in
   integration/coverage fetches even when parser logic is correct.
-- `seen_ids.json` is runtime state. Do not delete it casually; doing so can allow old
+- `var/state/seen_ids.json` is runtime state. Do not delete it casually; doing so can allow old
   notices to be treated as new.
 - For static list pages with `javascript:` links, add `link_template` plus `link_id_attr`
   or `link_arg_re`; otherwise generic collection intentionally skips those rows.

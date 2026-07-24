@@ -4,7 +4,7 @@ Run: python -m pytest test_scoring.py -v
 """
 from __future__ import annotations
 
-import scoring
+from mail_core.matching import scoring
 
 
 def _group(**overrides):

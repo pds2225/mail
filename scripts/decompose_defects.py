@@ -18,7 +18,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TASKS_PATH = ROOT / "TASKS.md"
+TASKS_PATH = ROOT / "docs" / "project" / "TASKS.md"
 DEFAULT_INBOX = ROOT / "auto_dev" / "defects_inbox.md"
 KST = timezone(timedelta(hours=9))
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """P0 산출물 writer·감사 진입점 배선 테스트.
 
-BASE_DIR 를 tmp_path 로 monkeypatch 해 실제 repo 를 오염시키지 않는다.
+LOGS_DIR를 tmp_path로 monkeypatch 해 실제 repo를 오염시키지 않는다.
 메일 발송은 alert_email 을 가로채 캡처만 한다(실발송 0회).
 """
 from __future__ import annotations
@@ -15,7 +15,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import coverage_alert as ca  # noqa: E402
+from mail_core.operations import coverage_alert as ca  # noqa: E402
 import monitor as m  # noqa: E402
 
 
@@ -37,8 +37,8 @@ def _history(count: int = 24, n: int = 7) -> list[dict]:
 
 @pytest.fixture()
 def sandbox(tmp_path, monkeypatch):
-    """BASE_DIR·baseline 경로를 tmp 로 격리하고 메일을 가로챈다."""
-    monkeypatch.setattr(m, "BASE_DIR", tmp_path)
+    """로그·baseline 경로를 tmp 로 격리하고 메일을 가로챈다."""
+    monkeypatch.setattr(m, "LOGS_DIR", tmp_path / "logs")
     monkeypatch.setattr(ca, "COVERAGE_BASELINE_PATH", tmp_path / "coverage_baseline.json")
     sent: list[tuple] = []
     monkeypatch.setattr(m, "alert_email", lambda *a, **k: sent.append(a))

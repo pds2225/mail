@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import delivery_outbox  # noqa: E402
+from mail_core.delivery import outbox as delivery_outbox  # noqa: E402
 
 
 def _merge_entries(left: dict, right: dict) -> dict:

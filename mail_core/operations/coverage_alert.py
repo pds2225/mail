@@ -17,8 +17,9 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-BASE_DIR = Path(__file__).resolve().parent
-COVERAGE_BASELINE_PATH = BASE_DIR / "coverage_baseline.json"
+from mail_core.paths import STATE_DIR
+
+COVERAGE_BASELINE_PATH = STATE_DIR / "coverage_baseline.json"
 
 
 # ── baseline 입출력 ──────────────────────────────────────────────────────────

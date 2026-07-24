@@ -7,22 +7,25 @@ secrets/
 !secrets/README.md
 
 # 실행 중 생성되는 파일
-seen_ids.json
-delivery_state.json
-delivery_outbox.enc
+# 아래 3개 상태 파일은 GitHub Actions의 실행 간 멱등성 유지를 위해 예외적으로 추적한다.
+# var/state/seen_ids.json
+# var/state/delivery_state.json
+# var/outbox/delivery_outbox.enc
 monitor.run.lock
 *.lock
 state_backups/
-coverage_baseline.json
-logs/*.md
-!logs/.gitkeep
+var/state/coverage_baseline.json
+var/state/state_backups/
+var/outbox/state_backups/
+var/logs/*
+!var/logs/.gitkeep
 test_results.json
-reports/loan/semas_loan_scan.md
-reports/loan/semas_seen_notices.json
+var/reports/loan/semas_loan_scan.md
+var/reports/loan/semas_seen_notices.json
 # 검수 결과 파일 (런타임 생성, 직접 배포하지 않음)
-reports/review/*_review.md
-reports/review/*_send.csv
-reports/review/*_mail_draft.txt
+var/reports/review/*_review.md
+var/reports/review/*_send.csv
+var/reports/review/*_mail_draft.txt
 # digest 품질 계측 산출물 (런타임 생성)
 workspace/digest_quality_*.json
 
@@ -54,18 +57,18 @@ node_modules/
 .claude/
 
 # Local diagnostic outputs
-groups.backup.*.json
-reports/site_diagnostic_*.json
-reports/site_diagnostic_*.md
-reports/site_parse_diag_*.json
-reports/autofill_recs.json
-reports/diag_classified.json
+config/groups.backup.*.json
+var/reports/site_diagnostic_*.json
+var/reports/site_diagnostic_*.md
+var/reports/site_parse_diag_*.json
+var/reports/autofill_recs.json
+var/reports/diag_classified.json
 .omc/
 .bkit/
-reports/company_match/
+var/reports/company_match/
 RESUME.md
-data/raw/
-!data/raw/.gitkeep
+var/raw/*
+!var/raw/.gitkeep
 
 # 임시 진단·실험 스크립트 (루트 한정 — 패키지 __init__.py 는 제외)
 /_*.py
@@ -79,9 +82,9 @@ data/raw/
 *.fullbak
 *.datebak
 
-# 런타임 로그 (logs/*.md 는 위에서 처리)
-logs/*.log
-logs/*.json
+# 런타임 로그 (`var/logs/*.md`는 위에서 처리)
+var/logs/*.log
+var/logs/*.json
 
 # 공고 첨부 다운로드 (scripts/download_kstartup_targets.py 로 재생성 가능)
 downloads/

@@ -12,7 +12,7 @@ from urllib.parse import urlsplit, urlunsplit
 import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent
-SITES_PATH = ROOT / "sites.json"
+SITES_PATH = ROOT / "config" / "sites.json"
 XLSX = Path(r"C:\Users\ekth3\OneDrive\문서\카카오톡 받은 파일\정부지원사업_모니터링_사이트목록_통합본_342개 (1).xlsx")
 SHEET = "전체목록"
 

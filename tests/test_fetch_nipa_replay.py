@@ -19,7 +19,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "nipa"
+FX = pathlib.Path(__file__).parent / "fixtures" / "nipa"
 NIPA_URL = "https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2"
 
 # 9키 스키마 (monitor._item 반환 키)

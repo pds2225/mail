@@ -9,7 +9,7 @@
 | 화면 | `/recipients` (`web/app/recipients/page.tsx`) |
 | 검증 API | `POST /api/recipients/validate` |
 | 패킷 API | `POST /api/recipients/packet` |
-| 패킷 파일 | `WORKS/RECIPIENT_UPDATE_PACKET.md` (로컬 FS 쓰기 가능 시) |
+| 패킷 파일 | `docs/works/RECIPIENT_UPDATE_PACKET.md` (로컬 FS 쓰기 가능 시) |
 
 절차:
 
@@ -17,7 +17,7 @@
 2. 이메일 입력 (한 줄에 하나, 또는 쉼표 구분)
 3. **검증** → 형식·중복 결과 확인 (목록은 마스킹만 표시)
 4. **PR 패킷 생성** → 마크다운 복사 후 GitHub PR 작성
-5. merge 승인 후에만 `groups.json` / `settings.json` 운영 반영
+5. merge 승인 후에만 `config/groups.json` / `config/settings.json` 운영 반영
 
 **금지:** Vercel에서 승인 없이 JSON 직접 저장, 실제 SMTP 발송, 임의 주소를 코드에 커밋.
 
@@ -25,12 +25,12 @@
 
 | 용도 | 파일 | 필드 |
 |------|------|------|
-| 그룹별 발송 | `groups.json` | 각 그룹의 `recipients` (배열) |
-| 원본전체 메일 | `settings.json` | `raw_all_recipients` (배열) |
+| 그룹별 발송 | `config/groups.json` | 각 그룹의 `recipients` (배열) |
+| 원본전체 메일 | `config/settings.json` | `raw_all_recipients` (배열) |
 
 ## 추가 방법
 
-1. `groups.json`에서 대상 그룹을 연다.
+1. `config/groups.json`에서 대상 그룹을 연다.
 2. `recipients` 배열에 **검증된** 이메일을 한 줄씩 추가한다.
 3. 저장 후 dry-run으로 검증한다.
 

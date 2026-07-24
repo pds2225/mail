@@ -22,10 +22,10 @@ import re
 from pathlib import Path
 from typing import Any
 
-import private_config
+from mail_core.paths import CONFIG_DIR
+from mail_core.security import private_config
 
-BASE_DIR = Path(__file__).resolve().parent
-COMPANIES_PATH = BASE_DIR / "companies.json"
+COMPANIES_PATH = CONFIG_DIR / "companies.json"
 
 # 전국 17개 광역 지자체 (다른 지역 한정 공고 감지용)
 KNOWN_REGIONS = [
@@ -152,7 +152,7 @@ def _count_hits(text_lower: str, keywords: list[str]) -> tuple[int, list[str]]:
 _METRO_FAMILY = {"서울", "인천", "경기", "수도권"}
 
 # 권역(클러스터) → 소속 광역. 단일 정본 region_clusters 모듈 공유(monitor 와 drift 방지).
-from region_clusters import REGION_CLUSTER as _REGION_CLUSTER
+from .region_clusters import REGION_CLUSTER as _REGION_CLUSTER
 
 
 def _region_cluster_verdict(atext: str, city: str) -> tuple[bool, bool]:

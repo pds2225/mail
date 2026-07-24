@@ -1,7 +1,7 @@
 """govsupport-mailing-v2 site diagnostic module.
 
 Design Ref: §5 site_diagnostic.py — 82개 사이트 dry-run + Markdown 리포트.
-Plan SC2: reports/site_diagnostic_YYYYMMDD.md 존재.
+Plan SC2: var/reports/site_diagnostic_YYYYMMDD.md 존재.
 
 monitor.py를 import하지 않고 독립적으로 사이트 URL에 HTTP HEAD/GET을 시도하여
 응답 가능 여부와 응답 시간만 측정한다. 컨텐츠 파싱 검증은 후속 단계.
@@ -16,6 +16,8 @@ from typing import Any
 
 import httpx
 import ssl
+
+from mail_core.paths import REPORTS_DIR
 
 DEFAULT_TIMEOUT = 15
 BROWSER_HEADERS = {
@@ -123,8 +125,8 @@ def diagnose_site(site: dict[str, Any], timeout: int = DEFAULT_TIMEOUT) -> dict[
     return result
 
 
-def diagnose_all(sites: list[dict], reports_dir: Path | str = "reports") -> str:
-    reports_dir = Path(reports_dir)
+def diagnose_all(sites: list[dict], reports_dir: Path | str | None = None) -> str:
+    reports_dir = Path(reports_dir) if reports_dir is not None else REPORTS_DIR
     reports_dir.mkdir(parents=True, exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     report_path = reports_dir / f"site_diagnostic_{ts}.md"

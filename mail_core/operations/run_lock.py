@@ -3,11 +3,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from state_store import FileLock, LockBusyError
+from mail_core.paths import STATE_DIR
+from mail_core.storage.state_store import FileLock, LockBusyError
 
 
-BASE_DIR = Path(__file__).resolve().parent
-RUN_LOCK_PATH = BASE_DIR / "monitor.run.lock"
+RUN_LOCK_PATH = STATE_DIR / "monitor.run.lock"
 
 
 class MonitorRunLock:

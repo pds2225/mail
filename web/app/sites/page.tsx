@@ -36,7 +36,7 @@ export default function SitesPage() {
         <div>
           <h1 className="page-title">사이트 목록</h1>
           <p className="page-desc">
-            GitHub <code>sites.json</code> 기준 · 활성 {active} / 전체 {sites.length}
+            GitHub <code>config/sites.json</code> 기준 · 활성 {active} / 전체 {sites.length}
           </p>
         </div>
         <Link className="btn btn-primary" href="/sites/add">

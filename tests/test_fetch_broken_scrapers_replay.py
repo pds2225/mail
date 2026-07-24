@@ -75,7 +75,7 @@ def test_kosme_parses_json_list():
 def test_broken_scraper_sites_have_valid_fetchers():
     """수정한 사이트들의 type 이 FETCHERS 에 실제 존재(오타·미등록 방지)."""
     import json
-    sites = json.loads((Path(__file__).resolve().parent.parent / "sites.json").read_text(encoding="utf-8"))
+    sites = json.loads((Path(__file__).resolve().parent.parent / "config" / "sites.json").read_text(encoding="utf-8"))
     by = {s.get("id"): s for s in sites}
     assert by["kotra_trade24"]["type"] == "kotra_biz_api"
     assert by["kosme"]["type"] == "kosme_api"

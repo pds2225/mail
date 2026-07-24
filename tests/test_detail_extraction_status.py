@@ -103,7 +103,7 @@ def test_enrich_worker_exception_keeps_failure_state(monkeypatch):
 
 
 def test_detail_failure_without_definitive_exclusion_goes_to_review():
-    groups = json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))
+    groups = json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))
     group = next(g for g in groups if g.get("active"))
     item = _item(
         title="제목만 있는 공고",

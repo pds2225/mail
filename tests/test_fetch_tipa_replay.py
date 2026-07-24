@@ -16,7 +16,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "tipa"
+FX = pathlib.Path(__file__).parent / "fixtures" / "tipa"
 LIST_URL = "https://www.tipa.or.kr/s040101/index/page/1"
 HOME_URL = "https://www.tipa.or.kr/"
 

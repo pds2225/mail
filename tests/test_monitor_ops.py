@@ -191,7 +191,7 @@ def test_execute_monitor_dry_run_flags(monkeypatch):
 
 
 def test_run_dry_run_writes_reports(tmp_path, monkeypatch):
-    monkeypatch.setattr("monitor.BASE_DIR", tmp_path)
+    monkeypatch.setattr("monitor.LOGS_DIR", tmp_path / "logs")
     monkeypatch.setattr("monitor.SEEN_IDS_PATH", tmp_path / "seen_ids.json")
     monkeypatch.setattr("monitor.fetch_site_coverage", lambda sites=None, **kw: [])
     monkeypatch.setattr(

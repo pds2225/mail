@@ -45,7 +45,7 @@ def _task_mentions(title: str, *needles: str) -> bool:
 
 def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
     """문서/규칙이 이미 요구사항을 충족하면 NOOP 완료."""
-    rules = _read("RULES.md")
+    rules = _read("docs/project/RULES.md")
     agents = _read("AGENTS.md")
     readme = _read("README.md")
     workflow = _read(".github/workflows/auto-dev-queue.yml")
@@ -115,7 +115,7 @@ def try_patch_force_done_docs(task_id: str, title: str) -> ExecResult | None:
     """FORCE_DONE / 허위 DONE 문서가 약하면 RULES §8에 한 줄 보강."""
     if not _task_mentions(title, "FORCE_DONE", "허위 DONE", "AWAITING_AGENT"):
         return None
-    rules_path = ROOT / "RULES.md"
+    rules_path = ROOT / "docs" / "project" / "RULES.md"
     text = rules_path.read_text(encoding="utf-8")
     if "AUTO_DEV_FORCE_DONE" in text and "AWAITING_AGENT" in text:
         return ExecResult("DONE_NOOP", "RULES에 FORCE_DONE/AWAITING_AGENT 이미 명시")
@@ -137,11 +137,15 @@ def try_patch_force_done_docs(task_id: str, title: str) -> ExecResult | None:
             " 허위 DONE 회귀 방지 |",
             1,
         )
-        blocked = _assert_not_protected(["RULES.md"])
+        blocked = _assert_not_protected(["docs/project/RULES.md"])
         if blocked:
             return blocked
         rules_path.write_text(text, encoding="utf-8")
-        return ExecResult("DONE_PATCHED", f"{task_id}: RULES에 FORCE_DONE 비상 규칙 추가", ["RULES.md"])
+        return ExecResult(
+            "DONE_PATCHED",
+            f"{task_id}: RULES에 FORCE_DONE 비상 규칙 추가",
+            ["docs/project/RULES.md"],
+        )
     return ExecResult("NEEDS_AGENT", "RULES 표 형식 불일치")
 
 
@@ -177,10 +181,14 @@ def execute_task(task_id: str, title: str, *, dry_run: bool = False) -> ExecResu
     if dry_run:
         # 패치 계열은 dry-run에서 NEEDS_AGENT/예상만
         if _task_mentions(title, "FORCE_DONE", "허위 DONE"):
-            rules = _read("RULES.md")
+            rules = _read("docs/project/RULES.md")
             if "AUTO_DEV_FORCE_DONE" in rules:
                 return ExecResult("DONE_NOOP", "dry-run: FORCE_DONE 문서 이미 존재")
-            return ExecResult("DONE_PATCHED", "dry-run: RULES 패치 예정(미적용)", ["RULES.md"])
+            return ExecResult(
+                "DONE_PATCHED",
+                "dry-run: RULES 패치 예정(미적용)",
+                ["docs/project/RULES.md"],
+            )
         if _task_mentions(title, "소진공", "중진공", "selector", "정책자금") and (
             "검토" in title or "확장" in title
         ):

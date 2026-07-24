@@ -15,11 +15,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from site_diagnostic import diagnose_all
+from mail_core.operations.site_diagnostic import diagnose_all
 
 
 def main() -> int:
-    sites_path = ROOT / "sites.json"
+    sites_path = ROOT / "config" / "sites.json"
     if not sites_path.exists():
         print(f"sites.json not found at {sites_path}", file=sys.stderr)
         return 2
@@ -32,7 +32,7 @@ def main() -> int:
         print("sites.json must be a list", file=sys.stderr)
         return 2
 
-    report = diagnose_all(sites, reports_dir=ROOT / "reports")
+    report = diagnose_all(sites, reports_dir=ROOT / "var" / "reports")
     print(f"Report written: {report}")
     return 0
 

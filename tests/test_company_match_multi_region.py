@@ -10,7 +10,7 @@ compute_match_score(item, company) 는 company.region.city 로 판정하는 '모
 """
 from __future__ import annotations
 
-import company_match as cm
+from mail_core.matching import company_match as cm
 
 
 def _comp(city, dist=""):

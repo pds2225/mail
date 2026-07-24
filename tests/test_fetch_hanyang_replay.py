@@ -15,7 +15,7 @@ import respx
 
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "hanyang"
+FX = pathlib.Path(__file__).parent / "fixtures" / "hanyang"
 API = "https://startup.hanyang.ac.kr/api/board/content"
 
 SCHEMA_KEYS = {

@@ -39,7 +39,7 @@ jobs:
       - name: 커버리지 baseline 복원(전날까지 이력)
         uses: actions/cache/restore@v4
         with:
-          path: coverage_baseline.json
+          path: var/state/coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
           restore-keys: |
             coverage-baseline-
@@ -69,10 +69,10 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: coverage_baseline.json
+          path: var/state/coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
 
-      # P0 수집누락 실행대장·알림 사본 보존. logs/ 는 .gitignore 대상이라 커밋되지 않으므로
+      # P0 수집누락 실행대장·알림 사본 보존. var/logs/는 .gitignore 대상이라 커밋되지 않으므로
       # 아티팩트로 남기지 않으면 러너 종료와 함께 사라진다("만들었는데 아무도 못 봄" 방지).
       - name: 소스 실행대장·P0 알림 아티팩트 업로드
         if: always()
@@ -80,10 +80,10 @@ jobs:
         with:
           name: source-coverage-${{ github.run_id }}
           path: |
-            logs/source_coverage_*.json
-            logs/source_coverage_*.md
-            logs/p0_collection_alert_*.md
-            logs/site_collection_coverage_report.md
+            var/logs/source_coverage_*.json
+            var/logs/source_coverage_*.md
+            var/logs/p0_collection_alert_*.md
+            var/logs/site_collection_coverage_report.md
           retention-days: 14
           if-no-files-found: ignore
 
@@ -103,7 +103,7 @@ jobs:
           # tier C=사람확인)에 누적한다 → 정확도 하네스가 '사람 정답 vs 우리 판정'을 대조.
           # 수집 실패는 발송·중복방지와 무관하므로 경고만 내고 계속한다(발송은 이미 끝났다).
           python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
-          git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json delivery_outbox.enc || true
+          git add -f var/state/seen_ids.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
           if git diff --staged --quiet; then
             echo "seen_ids·피드백 라벨 변경 없음 — 커밋 생략"; exit 0
           fi
@@ -124,31 +124,31 @@ jobs:
             # ★ 백업이 실패하면 절대 빈 값으로 대체하지 않는다 — 빈 배열로 union 하면 오늘 발송
             #   이력이 사라진다. 백업 실패 시엔 reset --hard 를 건너뛰어(로컬 seen_ids 원본 보존)
             #   이번 재시도만 넘긴다(데이터 유실 0; 최악의 경우 다음 실행에서 재수렴).
-            if ! cp -f seen_ids.json /tmp/local_seen_ids.json; then
+            if ! cp -f var/state/seen_ids.json /tmp/local_seen_ids.json; then
               echo "::warning::seen_ids 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀(오늘 이력 보존)"
               sleep 2; continue
             fi
             # 수신자별 delivery checkpoint/outbox 도 함께 보존한다. 이 둘을 잃으면 부분성공
             # 수신자에게 다시 보내거나 미전송 공고를 잃을 수 있다.
-            if [ -f delivery_state.json ] && ! cp -f delivery_state.json /tmp/local_delivery_state.json; then
+            if [ -f var/state/delivery_state.json ] && ! cp -f var/state/delivery_state.json /tmp/local_delivery_state.json; then
               echo "::warning::delivery_state 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
               sleep 2; continue
             fi
-            if [ -f delivery_outbox.enc ] && ! cp -f delivery_outbox.enc /tmp/local_delivery_outbox.enc; then
+            if [ -f var/outbox/delivery_outbox.enc ] && ! cp -f var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc; then
               echo "::warning::delivery_outbox 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
               sleep 2; continue
             fi
             git reset --hard origin/main
-            python scripts/merge_seen_ids.py seen_ids.json /tmp/local_seen_ids.json || true   # 원격 ∪ 우리
+            python scripts/merge_seen_ids.py var/state/seen_ids.json /tmp/local_seen_ids.json || true   # 원격 ∪ 우리
             if [ -f /tmp/local_delivery_state.json ]; then
-              python scripts/merge_delivery_state.py delivery_state.json /tmp/local_delivery_state.json || true
+              python scripts/merge_delivery_state.py var/state/delivery_state.json /tmp/local_delivery_state.json || true
             fi
             if [ -f /tmp/local_delivery_outbox.enc ]; then
-              python scripts/merge_delivery_outbox.py delivery_outbox.enc /tmp/local_delivery_outbox.enc || true
+              python scripts/merge_delivery_outbox.py var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc || true
             fi
             # 피드백 라벨: 하드리셋으로 파일이 원격본이 됨 → 오늘 O/X 를 멱등 재수집(원격 ∪ 오늘).
             python scripts/collect_feedback.py --days 60 || true
-            git add -f seen_ids.json data/golden/feedback_labels.jsonl delivery_state.json delivery_outbox.enc || true
+            git add -f var/state/seen_ids.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
             if git diff --staged --quiet; then
               echo "원격에 이미 반영됨 — 추가 커밋 불필요"; exit 0
             fi

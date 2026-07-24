@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       packetPaths: writtenPaths,
       packetMarkdown: markdown,
       prTitle: `feat(sites): add ${site.id} — ${site.name}`,
-      notice: "운영 sites.json 은 변경하지 않았습니다. PR 승인 후 반영하세요.",
+      notice: "운영 config/sites.json 은 변경하지 않았습니다. PR 승인 후 반영하세요.",
     });
   } catch (e) {
     return NextResponse.json(
