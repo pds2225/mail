@@ -357,8 +357,12 @@ FACTORY_KEYWORD_ALIASES = [
 
 FACTORY_REQUIRED_TERMS = [
     "공장등록증", "제조시설", "생산시설", "제조업 영위", "공장 보유",
-    "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
+    "공장보유", "공장 임차", "공장임차", "임대공장",
 ]
+# '입주기업'은 단독으로는 공장요건이 아니다 — 'AI 허브 신규 입주기업 모집'처럼 사무·보육
+# 공간 제공 공고가 흔하다(실측: 2026-07-24 '공장보유 필요' 오표기). 제조 문맥과 함께일 때만
+# 공장요건으로 본다(예: '산업단지 입주기업 대상').
+_FACTORY_TENANT_CONTEXT_TERMS = ("산업단지", "공장", "제조")
 
 APPLICATION_KEYWORDS = [
     "모집공고", "지원계획 공고", "참여기업 모집", "수요기업 모집", "신청접수",
@@ -510,6 +514,41 @@ NON_NOTICE_LINK_SCHEMES = ("tel:", "mailto:")
 NON_NOTICE_LINK_DOMAINS = (
     "instagram.com", "x.com", "twitter.com", "facebook.com", "youtube.com",
 )
+
+# ── [제목 앵커] '지원 기회'가 아닌 게시물 제외 (2026-07-24 발송사고 실측 유형) ──
+# 제목만 본다 — 본문 우연일치로 진짜 공고를 막지 않기 위함(NON_NOTICE_TITLES 와 동일 원칙).
+# guard_tokens: 제목에 이 토큰이 하나라도 있으면 차단하지 않는다(recall 안전장치).
+#   위원 모집은 제목에 '모집'이 본질적으로 들어가므로 guard 없이 정규식 정밀도로 거른다.
+_NON_GRANT_TITLE_RULES: list[tuple[str, re.Pattern, tuple[str, ...]]] = [
+    # 위원(사람) 위촉 — 기업 지원이 아님: "…기획위원(후보자) 모집공고", "평가위원 위촉/공모"
+    ("위원 모집", re.compile(
+        r"(?:기획|평가|심사|자문|운영|선정|전문|기술)\s*위원(?!회)"
+        r"\s*(?:\(\s*후보자?\s*\))?\s*(?:후보자?\s*)?(?:공개\s*)?(?:모집|위촉|공모)"
+    ), ()),
+    # 지자체 보도자료 — 목록행 마커('제공일자 YYYY-MM-DD 제공부서')가 제목에 섞인 경우 +
+    # [보도자료] 태그 제목. 모집·신청형 보도자료는 guard 로 살린다(recall).
+    ("보도자료", re.compile(
+        r"제공일[자시]\s*\d{4}-\d{2}-\d{2}\s*제공부서|\[?보도\s*자료\]?"
+    ), ("모집", "신청", "접수", "공모")),
+    # 사기·피싱 피해 예방 행정 안내 — "…사칭 …사기피해 예방 안내"
+    ("피해예방 안내", re.compile(
+        r"(?:사기\s*피해|보이스\s*피싱|스미싱|사칭|해킹).{0,20}(?:예방|주의|유의)"
+    ), ("모집", "신청", "접수", "공모")),
+]
+
+
+def non_grant_title_reason(item: dict) -> str:
+    """제목이 '지원 기회 아님'(위원 위촉·보도자료·피해예방 안내)이면 근거 라벨, 아니면 ""."""
+    title = norm(item.get("title", ""))
+    if not title:
+        return ""
+    for label, rx, guard_tokens in _NON_GRANT_TITLE_RULES:
+        if not rx.search(title):
+            continue
+        if guard_tokens and any(tok in title for tok in guard_tokens):
+            continue
+        return label
+    return ""
 
 
 def _normalize_title_key(title: Any) -> str:
@@ -738,11 +777,18 @@ def _valid_date(year: int, month: int, day: int):
 
 
 def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tuple[int, Any]]:
-    """공고 날짜 표현에서 날짜 후보를 원문 위치순으로 반환."""
+    """공고 날짜 표현에서 날짜 후보를 원문 위치순으로 반환.
+
+    ★이중매칭(가짜 연도) 방지: 완전연도 날짜("2025. 7. 22.")의 내부 구간을 축약패턴
+    ('YY.M.D / M.D)이 다시 매칭하면 'M.D'가 현재연도로 재해석돼 유령 날짜(2026-07-22)가
+    생긴다 — 만료 공고의 신청기간이 "2025-07-22 ~ 2026-08-05"처럼 1년짜리로 부풀어
+    closed 를 open 으로 오판(실측: 2026-07-24 발송사고). 이미 매칭된 구간과 겹치는
+    후속 패턴 매칭은 건너뛴다."""
     if not text:
         return []
     base_year = base_year or datetime.now(KST).year
     candidates: list[tuple[int, Any]] = []
+    taken_spans: list[tuple[int, int]] = []
     patterns = [
         (r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 1),
         (r"(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일", 1),
@@ -751,6 +797,8 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
     ]
     for pattern, year_mode in patterns:
         for m in re.finditer(pattern, text):
+            if any(m.start() < end and start < m.end() for start, end in taken_spans):
+                continue
             if year_mode is None:
                 year, month, day = base_year, int(m.group(1)), int(m.group(2))
             elif year_mode == 2000:
@@ -760,6 +808,7 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
             parsed = _valid_date(year, month, day)
             if parsed:
                 candidates.append((m.start(), parsed))
+                taken_spans.append((m.start(), m.end()))
     deduped: dict[Any, tuple[int, Any]] = {}
     for pos, parsed in candidates:
         deduped.setdefault(parsed, (pos, parsed))
@@ -777,6 +826,13 @@ def _parse_period_dates(segment: str, base_year: int | None = None) -> list[Any]
     ym = re.search(r"(\d{4})\s*년", segment)
     if ym:
         base_year = int(ym.group(1))
+    else:
+        # 'YYYY년' 표기가 없어도 구간 안에 완전연도 날짜("2025.07.22 ~ 8.5")가 있으면
+        # 그 연도를 축약(M.D) 날짜의 기준연도로 쓴다 — 현재연도로 오추론해 만료 기간을
+        # 미래로 되살리는 것 방지.
+        ym = re.search(r"(\d{4})\s*[.\-/]\s*\d{1,2}\s*[.\-/]", segment)
+        if ym:
+            base_year = int(ym.group(1))
     dates = [parsed for _, parsed in _parse_date_candidates(segment, base_year)]
     for m in re.finditer(r"(\d{1,2})\s*월\s*(\d{1,2})\s*일", segment):
         parsed = _valid_date(base_year, int(m.group(1)), int(m.group(2)))
@@ -2957,7 +3013,12 @@ def fetch_bizok(site: dict) -> list[dict]:
 
 
 def fetch_incheon_city(site: dict) -> list[dict]:
-    """인천광역시청 공고/고시: table 없이 a[href*='/view?repSeq='] 링크 목록."""
+    """인천광역시청 IC010205(보도자료) 게시판: a[href*='/view?repSeq='] 카드 목록.
+
+    ★카드 앵커에는 제목+요약+제공일자+제공부서가 통째로 들어있다 — 앵커 전체 텍스트를
+    제목으로 쓰면 본문 요약이 제목에 섞여 발송된다(실측: 2026-07-24 펜타포트 건).
+    strong.subject 에서 제목만 뽑고, 보드 성격(보도자료)을 제목에 명시해 하류 필터
+    (non_grant_title_reason·is_report_junk)가 '지원 기회 아님'을 식별하게 한다."""
     BASE = "https://www.incheon.go.kr"
     soup = _soup(site["url"])
     if not soup:
@@ -2973,9 +3034,12 @@ def fetch_incheon_city(site: dict) -> list[dict]:
         if rep_seq in seen:
             continue
         seen.add(rep_seq)
-        title = norm(a.get_text())
+        subject = a.select_one("strong.subject, .subject")
+        title = norm(subject.get_text()) if subject else norm(a.get_text())
         if not title or len(title) < 4:
             continue
+        if "보도자료" not in title:
+            title = f"[보도자료] {title}"
         link = href if href.startswith("http") else urljoin(BASE, href)
         parent = a.find_parent(["li", "tr", "div"])
         row_text = parent.get_text(" ", strip=True) if parent else ""
@@ -4350,7 +4414,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
     factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
     matched_keywords = _unique(matched_keywords + factory_keywords)
-    factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
+    factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS) or (
+        "입주기업" in text and any(t in text for t in _FACTORY_TENANT_CONTEXT_TERMS)
+    )
     factory_condition = bool(factory_keywords)
     service_hits = [kw for kw in GENERAL_SERVICE_EXCLUDE_KEYWORDS if kw in text]
     application_like = _application_like(text)
@@ -4379,6 +4445,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if nonnotice_hit:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
+    # [제목 앵커] 위원(사람) 위촉·보도자료·피해예방 행정안내 — 기업 '지원 기회'가 아님.
+    non_grant_hit = non_grant_title_reason(item)
+    if non_grant_hit:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append(non_grant_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
 
@@ -5361,10 +5435,15 @@ def _norm_url(u: str) -> str:
 
 def is_watchlisted(item: dict, watchlist: dict) -> bool:
     """공고가 워치리스트(키워드/제목 또는 URL)에 걸리는지. 걸리면 강제포함·강조 대상.
-    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text)."""
+    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text).
+
+    ★키워드는 제목·기관명만 본다(본문 제외). 워치 강제포함은 날짜·그룹 필터를 전부
+    우회하므로, 본문까지 보면 상세보강된 긴 본문의 우연일치(예: 신청제외 대상 항목의
+    '지식재산' 한 단어)로 1년 지난 만료 공고·행정 안내문까지 강제 발송된다
+    (실측: 2026-07-24 발송사고 — 2025년 방산 공고·사기예방 안내가 이 경로로 유입)."""
     kws = watchlist.get("keywords") or []
     if kws:
-        text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+        text = f"{item.get('title','')} {item.get('author','')}".lower()
         if any(_kw_in_text(text, k.lower()) for k in kws):
             return True
     nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
