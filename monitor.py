@@ -4819,6 +4819,100 @@ def _plain_text(s: str, limit: int = 1500) -> str:
     return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
+# 메일 '지원내용' 표시 전용 — 매칭/필터 텍스트는 건드리지 않는다.
+# 상세 추출 실패·셀렉터 오탐 시 description 에 nav/푸터 크롬이 통째로 실려
+# 메일이 읽히지 않던 문제(2026-07-24 예비창업 AI 메일)를 표시 단계에서 거른다.
+MAIL_SUPPORT_BLURB_LIMIT = 480
+_MAIL_CHROME_PHRASES: tuple[str, ...] = (
+    "회원가입", "로그인", "텍스트크기", "고객센터", "공직비리익명신고", "소극행정신고센터",
+    "개인정보처리방침", "영상정보처리기기", "이메일무단수집거부", "저작권정책",
+    "사전정보공표", "정보공개제도", "경영공시", "패밀리 사이트", "패밀리사이트",
+    "목록으로", "바로가기", "공유레이어", "스크랩", "주소복사", "페이스북",
+    "카카오스토리", "네이버블로그", "제로페이챌린지", "타기관소식",
+    "홈화면 >", "게시글 상세보기", "내용보기", "다운로드",
+    "Copyright", "All Rights Reserved", "ALL RIGHTS RESERVED",
+)
+_MAIL_CHROME_TAIL_RE = re.compile(
+    r"(?:대표전화|Fax\s*:|이메일\s*:|Copyright|ⓒ|개인정보처리방침).*$",
+    re.IGNORECASE,
+)
+
+
+def _anchor_mail_text_to_title(text: str, title: str) -> str:
+    """본문에 제목이 보이면 그 지점부터 쓴다 — 앞쪽 nav 메뉴 덤프를 건너뛴다."""
+    if not text or not title:
+        return text
+    key = re.sub(r"\s+", "", title)[:24]
+    if len(key) < 8:
+        return text
+    compact = re.sub(r"\s+", "", text)
+    idx = compact.find(key)
+    if idx < 0:
+        return text
+    seen = 0
+    for i, ch in enumerate(text):
+        if not ch.isspace():
+            if seen == idx:
+                return text[i:].lstrip()
+            seen += 1
+    return text
+
+
+def _strip_mail_chrome(text: str) -> str:
+    """사이트 공통 nav/푸터 문구를 메일 표시용으로만 제거한다."""
+    if not text:
+        return ""
+    s = text
+    for phrase in _MAIL_CHROME_PHRASES:
+        s = s.replace(phrase, " ")
+    s = _MAIL_CHROME_TAIL_RE.sub(" ", s)
+    s = re.sub(r"(?:\b[\w가-힣]{1,6}\b(?:\s*[/|>｜]\s*|\s+)){8,}", " ", s)
+    return re.sub(r"\s+", " ", s).strip(" ·|/<>")
+
+
+def mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """메일의 '지원내용' 한 줄. 크롬·과장을 거르고 짧고 읽히게 만든다.
+
+    우선순위: 정리된 description → support_field/target_field 보강.
+    description 이 크롬뿐이면 구조화 필드만, 둘 다 없으면 빈 문자열(줄 생략).
+    """
+    title = str(item.get("title") or "")
+    raw = str(item.get("description") or "")
+    plain = _plain_text(raw, limit=12000) if raw else ""
+    plain = _anchor_mail_text_to_title(plain, title)
+    cleaned = _strip_mail_chrome(plain)
+
+    structured_parts: list[str] = []
+    for key in ("support_field", "target_field"):
+        val = re.sub(r"\s+", " ", str(item.get(key) or "").strip())
+        if val and val not in structured_parts and val not in cleaned:
+            structured_parts.append(val)
+
+    chrome_heavy = bool(plain) and (len(cleaned) < 40 or len(cleaned) < len(plain) * 0.25)
+    if chrome_heavy and structured_parts:
+        return _plain_text(" · ".join(structured_parts), limit=limit)
+    if chrome_heavy and not cleaned:
+        return ""
+
+    if cleaned and structured_parts:
+        head = structured_parts[0]
+        if head not in cleaned and len(head) <= 40:
+            cleaned = f"{head} — {cleaned}"
+    elif not cleaned and structured_parts:
+        cleaned = " · ".join(structured_parts)
+
+    if cleaned and title:
+        t_compact = re.sub(r"\s+", "", title)
+        c_compact = re.sub(r"\s+", "", cleaned)
+        if c_compact.startswith(t_compact[:24]) and len(t_compact) >= 8:
+            # 제목 반복 제거(표시용)
+            cut = len(title) if cleaned.startswith(title[:12]) else 0
+            if cut:
+                cleaned = cleaned[cut:].lstrip(" -—|:")
+
+    return _plain_text(cleaned, limit=limit)
+
+
 def fallback_body(items: list[dict]) -> str:
     # 표시 정책: 사용자에게 필요한 정보만. HTML/내부코드·매칭키워드·스마트공장 등은 숨김.
     lines: list[str] = []
@@ -4838,7 +4932,7 @@ def fallback_body(items: list[dict]) -> str:
             continue
         lines.append(section_title)
         for it in section_items:
-            desc = _plain_text(it.get("description", ""))
+            desc = mail_support_blurb(it)
             block = [
                 "━━━━━━━━━━━━━━━━━━",
                 f"📌 {it.get('title') or '(제목없음)'}",
