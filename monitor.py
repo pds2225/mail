@@ -416,6 +416,9 @@ REPORT_JUNK_KEYWORDS = [
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
     "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    # 위원회 위원(사람) 모집 — 기업 지원기회가 아니다(2026-07-24 O/X 피드백: '기획위원(후보자) 모집공고').
+    # 기업 지원공고 제목에는 이 표현이 등장하지 않으므로 recall 손실 없이 제거 가능.
+    "기획위원", "자문위원", "심의위원", "검토위원", "선정위원", "평가위원단", "위원(후보자)",
 ]
 
 
@@ -423,6 +426,41 @@ def is_report_junk(item: dict) -> bool:
     """[원본전체] 보고 메일용 잡공고 판정. 제목에 위 표현이 있으면 True(지원 기회 아님)."""
     title = str(item.get("title", ""))
     return any(j in title for j in REPORT_JUNK_KEYWORDS)
+
+
+# ── 보도자료(press release) 판정 ─────────────────────────────────────────────
+# 배경(2026-07-24 O/X 피드백): 지자체 '공고/고시' 게시판에 섞인 보도자료
+#   (예: '인천 펜타포트 … 생성형 인공지능 최적화(GEO) 도입')가 그룹 추천에 올라왔다.
+#   본문에 '해외'·'글로벌' 같은 느슨한 신호가 있어 _application_like 가 True 로 오판했다.
+# 설계(누락 제로 우선): '제목에 모집성 토큰이 하나도 없고' + '보도자료 특유의 메타 마커가
+#   2개 이상'일 때만 True. 진짜 모집공고는 제목에 모집/공모/접수/신청/참가/지원사업 을 가지므로
+#   절대 걸리지 않는다(recall 보호). 마커 단독(1개)으로는 판정하지 않아 오차단을 막는다.
+PRESS_RELEASE_MARKERS = (
+    "보도자료", "제공일자", "제공부서", "제공일시", "배포일시", "배포일자",
+    "담당부서", "보도시점", "보도참고자료",
+)
+_OPPORTUNITY_TITLE_TOKENS = ("모집", "공모", "접수", "신청", "참가", "지원사업", "공고")
+
+
+def is_press_release(item: dict) -> bool:
+    """공고가 아닌 보도자료/홍보성 게시물이면 True. 제목·본문만 본다."""
+    title = str(item.get("title", ""))
+    if any(tok in title for tok in _OPPORTUNITY_TITLE_TOKENS):
+        return False
+    text = f"{title} {item.get('description', '')}"
+    hits = sum(1 for mk in PRESS_RELEASE_MARKERS if mk in text)
+    return hits >= 2
+
+
+def non_opportunity_reason(item: dict) -> str:
+    """지원 '기회'가 아닌 게시물(행정고지·잡공고·보도자료)이면 근거 문자열, 아니면 ""."""
+    if is_admin_noise(item):
+        return "행정고지"
+    if is_report_junk(item):
+        return "잡공고"
+    if is_press_release(item):
+        return "보도자료"
+    return ""
 
 
 EXCLUSION_RULES = [
@@ -4350,7 +4388,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
     factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
     matched_keywords = _unique(matched_keywords + factory_keywords)
-    factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
+    factory_req_hits = [term for term in FACTORY_REQUIRED_TERMS if term in text]
+    factory_required = bool(factory_req_hits)
+    # '입주기업' 단독(제조 문맥 없음)은 공장조건이 아니다 — AI 허브·창업보육·메이커스페이스 등
+    #   사무/보육 공간 입주까지 '공장보유 필요'로 잘못 표시되던 오탐 제거(2026-07-24 피드백).
+    if factory_required and set(factory_req_hits) <= {"입주기업"} and not any(
+        mk in text for mk in ("산업단지", "제조", "공장", "생산시설", "생산설비", "제조시설")
+    ):
+        factory_required = False
     factory_condition = bool(factory_keywords)
     service_hits = [kw for kw in GENERAL_SERVICE_EXCLUDE_KEYWORDS if kw in text]
     application_like = _application_like(text)
@@ -4380,6 +4425,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.append(nonnotice_hit)
         if notice_type == "unknown":
+            notice_type = "general_info"
+
+    # [비지원 게시물] 행정고지·잡공고(공지·결과·채용·위원모집 등)·보도자료 제외.
+    # 그동안 이 판정은 [원본전체] 메일에만 적용돼(execute_monitor), 그룹 추천에는 누락됐다.
+    # 여기서 함께 적용해 그룹 메일에도 동일한 방어를 건다(제목/본문 기반, 보수적 판정).
+    nonopp_hit = non_opportunity_reason(item)
+    if nonopp_hit:
+        reason_codes.append("NON_OPPORTUNITY_NOTICE")
+        excluded_keywords.append(nonopp_hit)
+        if notice_type in {"unknown", "application_notice"}:
             notice_type = "general_info"
 
     hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
@@ -4524,7 +4579,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     detail_failure_blockers = {
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
-        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
+        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "NON_OPPORTUNITY_NOTICE",
     }
     detail_failure_review = (
         detail_failure
@@ -5569,8 +5624,8 @@ def execute_monitor(
                 priority="high", tags="dart",
             )
 
-    # ⑤ 원본전체 메일 — 행정고지(주민등록·CCTV·입찰)+잡공고(공지·결과·채용·총회 등) 제외 후 출처·지역순 정렬
-    raw_items = [it for it in filtered_new if not is_admin_noise(it) and not is_report_junk(it)]
+    # ⑤ 원본전체 메일 — 행정고지(주민등록·CCTV·입찰)+잡공고(공지·결과·채용·위원모집)+보도자료 제외 후 출처·지역순 정렬
+    raw_items = [it for it in filtered_new if not non_opportunity_reason(it)]
     raw_dropped = len(filtered_new) - len(raw_items)
     if raw_dropped:
         log.info("원본전체 행정고지·잡공고 제외: %d건", raw_dropped)
