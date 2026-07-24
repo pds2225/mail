@@ -1083,6 +1083,80 @@ _DETAIL_FIELD_KEYS: dict[str, tuple[str, ...]] = {
     "region": ("region_field",),
 }
 
+_DETAIL_TABLE_MAX_TABLES = 20
+_DETAIL_TABLE_MAX_ROWS = 100
+_DETAIL_TABLE_MAX_CELLS = 20
+_DETAIL_TABLE_MAX_CELL_CHARS = 500
+_DETAIL_TABLE_MAX_CAPTION_CHARS = 200
+
+
+def _positive_table_span(value: Any) -> int:
+    """잘못된 rowspan/colspan은 기본값 1로 안전하게 정규화."""
+    try:
+        return max(1, int(str(value or "1").strip()))
+    except (TypeError, ValueError):
+        return 1
+
+
+def _table_cell_text(cell: Any, table: Any) -> str:
+    """중첩 표의 문자열을 바깥 셀 내용에 중복 합산하지 않는다."""
+    parts = [
+        str(node).strip()
+        for node in cell.find_all(string=True)
+        if str(node).strip() and node.find_parent("table") is table
+    ]
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+
+
+def _extract_detail_tables(soup: BeautifulSoup) -> dict[str, Any]:
+    """상세 HTML 표의 행·셀·병합 관계를 크기 제한이 있는 JSON으로 보존."""
+    source_tables = [
+        table for table in soup.find_all("table")
+        if table.find_parent("table") is None
+    ]
+    result: dict[str, Any] = {
+        "truncated": len(source_tables) > _DETAIL_TABLE_MAX_TABLES,
+        "tables": [],
+    }
+    for table in source_tables[:_DETAIL_TABLE_MAX_TABLES]:
+        direct_rows = [
+            row for row in table.find_all("tr")
+            if row.find_parent("table") is table
+        ]
+        table_truncated = len(direct_rows) > _DETAIL_TABLE_MAX_ROWS
+        rows: list[list[dict[str, Any]]] = []
+        for row in direct_rows[:_DETAIL_TABLE_MAX_ROWS]:
+            cells = row.find_all(("th", "td"), recursive=False)
+            if len(cells) > _DETAIL_TABLE_MAX_CELLS:
+                table_truncated = True
+            structured_row: list[dict[str, Any]] = []
+            for cell in cells[:_DETAIL_TABLE_MAX_CELLS]:
+                full_text = _table_cell_text(cell, table)
+                if len(full_text) > _DETAIL_TABLE_MAX_CELL_CHARS:
+                    table_truncated = True
+                structured_row.append({
+                    "text": full_text[:_DETAIL_TABLE_MAX_CELL_CHARS],
+                    "header": cell.name == "th",
+                    "rowspan": _positive_table_span(cell.get("rowspan")),
+                    "colspan": _positive_table_span(cell.get("colspan")),
+                })
+            if structured_row:
+                rows.append(structured_row)
+        if not rows:
+            continue
+        caption_node = table.find("caption", recursive=False)
+        caption = re.sub(
+            r"\s+", " ", caption_node.get_text(" ", strip=True)
+        ).strip() if caption_node else ""
+        if len(caption) > _DETAIL_TABLE_MAX_CAPTION_CHARS:
+            table_truncated = True
+        result["tables"].append({
+            "caption": caption[:_DETAIL_TABLE_MAX_CAPTION_CHARS],
+            "truncated": table_truncated,
+            "rows": rows,
+        })
+    return result
+
 
 def _extraction_evidence(value: Any) -> str:
     """메타에 남길 짧은 근거. 원문 전체나 오류/Secret은 기록하지 않는다."""
@@ -1141,9 +1215,9 @@ def _persist_detail_extraction_meta(item: dict) -> None:
             _RAW_STORE.update_meta_after_enrich(item)
 
 
-def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
+def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, Any]:
     """상세 페이지에서 본문·지역·신청기간 추출."""
-    result: dict[str, str] = {}
+    result: dict[str, Any] = {}
     if "k-startup.go.kr" in url:
         for tit in soup.select("p.tit"):
             label = norm(tit.get_text())
@@ -1193,6 +1267,9 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, str]:
         body = _extract_main_content(soup)
         if body:
             result["body"] = body[:12000]
+    detail_tables = _extract_detail_tables(soup)
+    if detail_tables["tables"]:
+        result["tables"] = detail_tables
     return result
 
 
@@ -1230,6 +1307,8 @@ def enrich_item_from_detail(item: dict) -> dict:
         return updated
     updated = {**item, "detail_enriched": True}
     detail_keys = set(fields)
+    if fields.get("tables"):
+        updated["detail_tables"] = fields["tables"]
     body = fields.get("body", "")
     if body:
         desc = (item.get("description") or "").strip()
