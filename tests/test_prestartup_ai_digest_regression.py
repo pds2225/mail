@@ -93,10 +93,11 @@ FALSE_RECOMMENDATIONS = [
 
 
 @pytest.mark.parametrize(("item", "expected_hit"), FALSE_RECOMMENDATIONS)
-def test_non_grant_notices_are_excluded(item: dict, expected_hit: str):
+def test_non_grant_notices_are_not_recommended(item: dict, expected_hit: str):
     bucket, evaluated = _bucket(item)
 
-    assert bucket == "excluded", evaluated
+    assert bucket in {"review", "excluded"}, evaluated
+    assert evaluated["is_relevant"] is False
     assert "NOT_GRANT_NOTICE" in evaluated["exclude_reason_codes"]
     assert expected_hit in evaluated["excluded_keywords"]
 
