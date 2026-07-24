@@ -360,11 +360,13 @@ FACTORY_REQUIRED_TERMS = [
     "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
 ]
 
+# 신청·모집 '성격' 판정용. ★산업·지역 키워드(글로벌/해외/베트남/화장품 등)는 여기 넣지 않는다.
+# 그 단어만으로 application_like=True 가 되면 보도자료·사기주의 안내가 그룹 추천으로 샌다
+# (2026-07-24 예비창업 AI 메일 FP). 산업 매칭은 GENERAL_INCLUDE_KEYWORD_ALIASES 가 담당.
 APPLICATION_KEYWORDS = [
     "모집공고", "지원계획 공고", "참여기업 모집", "수요기업 모집", "신청접수",
     "지원사업 공고", "해외전시회", "박람회", "전시회", "수출상담회",
-    "바이어 매칭", "마케팅 지원", "판로지원", "수출지원", "글로벌", "해외",
-    "베트남", "동남아", "화장품", "뷰티", "k-beauty", "소상공인", "지원금",
+    "바이어 매칭", "마케팅 지원", "판로지원", "수출지원", "소상공인", "지원금",
     "혁신바우처", "혁신 바우처", "수출바우처", "수출 바우처", "스마트공장",
     "스마트팩토리", "공정개선", "공정자동화", "설비개선", "구축 지원사업",
     "공모", "참가신청",
@@ -415,7 +417,9 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    "회원 모집", "모니터링단", "평가위원", "심사위원", "기획위원", "자문위원",
+    "멘토 모집", "운영위원", "강사 모집",
+    "사기피해", "허위구매", "사칭",
 ]
 
 
@@ -423,6 +427,45 @@ def is_report_junk(item: dict) -> bool:
     """[원본전체] 보고 메일용 잡공고 판정. 제목에 위 표현이 있으면 True(지원 기회 아님)."""
     title = str(item.get("title", ""))
     return any(j in title for j in REPORT_JUNK_KEYWORDS)
+
+
+# ── [제목 앵커] 지원 '기회'가 아닌 게시물 — 그룹 추천 경로 (2026-07-24 FP) ──
+# 배경: 예비창업 AI 메일에 ①기획위원 모집 ②사기피해 예방 안내 ③축제 보도자료가 섞여 나감.
+# ★non_notice_reason 과 달리 NOTICE_SIGNAL_TOKENS(모집·공고) 가드를 쓰지 않는다.
+#   '기획위원 모집공고'는 모집/공고가 있어도 기업 지원사업이 아니라 위원 위촉이다.
+# ★제목만 본다(본문 우연일치·nav 크롬으로 진짜 공고를 막지 않음). recall > precision.
+# 끄기: MONITOR_NO_NONGGRANT_FILTER=1
+NONGGRANT_FILTER_ENV = "MONITOR_NO_NONGGRANT_FILTER"
+
+# (근거 라벨, 제목 부분문자열) — 라벨은 excluded_keywords/리포트용.
+NON_GRANT_TITLE_MARKERS: tuple[tuple[str, str], ...] = (
+    ("기획위원", "기획위원"),
+    ("평가위원", "평가위원"),
+    ("심사위원", "심사위원"),
+    ("운영위원", "운영위원"),
+    ("자문위원", "자문위원"),
+    ("위원 위촉", "위원 위촉"),
+    ("위원위촉", "위원위촉"),
+    ("사기피해", "사기피해"),
+    ("허위구매", "허위구매"),
+    ("사칭", "사칭"),
+)
+
+
+def non_grant_opportunity_reason(item: dict) -> str:
+    """기업/예비창업자가 신청할 '지원 기회'가 아닌 제목이면 근거 문자열, 아니면 "".
+
+    제목만 본다. 위원 모집·사기주의 안내는 모집/공고 토큰이 있어도 차단한다.
+    """
+    if os.environ.get(NONGGRANT_FILTER_ENV) == "1":
+        return ""
+    title = str(item.get("title") or "")
+    if not title.strip():
+        return ""
+    for label, marker in NON_GRANT_TITLE_MARKERS:
+        if marker in title:
+            return label
+    return ""
 
 
 EXCLUSION_RULES = [
@@ -4382,6 +4425,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
+    # [제목 앵커] 지원 기회가 아닌 게시물(기획위원 모집·사기예방 안내 등).
+    # 모집/공고 토큰이 있어도 차단 — non_notice_reason 가드와 의도적으로 다름.
+    nongrant_hit = non_grant_opportunity_reason(item)
+    if nongrant_hit:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append(nongrant_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
@@ -4767,6 +4819,100 @@ def _plain_text(s: str, limit: int = 1500) -> str:
     return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
+# 메일 '지원내용' 표시 전용 — 매칭/필터 텍스트는 건드리지 않는다.
+# 상세 추출 실패·셀렉터 오탐 시 description 에 nav/푸터 크롬이 통째로 실려
+# 메일이 읽히지 않던 문제(2026-07-24 예비창업 AI 메일)를 표시 단계에서 거른다.
+MAIL_SUPPORT_BLURB_LIMIT = 480
+_MAIL_CHROME_PHRASES: tuple[str, ...] = (
+    "회원가입", "로그인", "텍스트크기", "고객센터", "공직비리익명신고", "소극행정신고센터",
+    "개인정보처리방침", "영상정보처리기기", "이메일무단수집거부", "저작권정책",
+    "사전정보공표", "정보공개제도", "경영공시", "패밀리 사이트", "패밀리사이트",
+    "목록으로", "바로가기", "공유레이어", "스크랩", "주소복사", "페이스북",
+    "카카오스토리", "네이버블로그", "제로페이챌린지", "타기관소식",
+    "홈화면 >", "게시글 상세보기", "내용보기", "다운로드",
+    "Copyright", "All Rights Reserved", "ALL RIGHTS RESERVED",
+)
+_MAIL_CHROME_TAIL_RE = re.compile(
+    r"(?:대표전화|Fax\s*:|이메일\s*:|Copyright|ⓒ|개인정보처리방침).*$",
+    re.IGNORECASE,
+)
+
+
+def _anchor_mail_text_to_title(text: str, title: str) -> str:
+    """본문에 제목이 보이면 그 지점부터 쓴다 — 앞쪽 nav 메뉴 덤프를 건너뛴다."""
+    if not text or not title:
+        return text
+    key = re.sub(r"\s+", "", title)[:24]
+    if len(key) < 8:
+        return text
+    compact = re.sub(r"\s+", "", text)
+    idx = compact.find(key)
+    if idx < 0:
+        return text
+    seen = 0
+    for i, ch in enumerate(text):
+        if not ch.isspace():
+            if seen == idx:
+                return text[i:].lstrip()
+            seen += 1
+    return text
+
+
+def _strip_mail_chrome(text: str) -> str:
+    """사이트 공통 nav/푸터 문구를 메일 표시용으로만 제거한다."""
+    if not text:
+        return ""
+    s = text
+    for phrase in _MAIL_CHROME_PHRASES:
+        s = s.replace(phrase, " ")
+    s = _MAIL_CHROME_TAIL_RE.sub(" ", s)
+    s = re.sub(r"(?:\b[\w가-힣]{1,6}\b(?:\s*[/|>｜]\s*|\s+)){8,}", " ", s)
+    return re.sub(r"\s+", " ", s).strip(" ·|/<>")
+
+
+def mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """메일의 '지원내용' 한 줄. 크롬·과장을 거르고 짧고 읽히게 만든다.
+
+    우선순위: 정리된 description → support_field/target_field 보강.
+    description 이 크롬뿐이면 구조화 필드만, 둘 다 없으면 빈 문자열(줄 생략).
+    """
+    title = str(item.get("title") or "")
+    raw = str(item.get("description") or "")
+    plain = _plain_text(raw, limit=12000) if raw else ""
+    plain = _anchor_mail_text_to_title(plain, title)
+    cleaned = _strip_mail_chrome(plain)
+
+    structured_parts: list[str] = []
+    for key in ("support_field", "target_field"):
+        val = re.sub(r"\s+", " ", str(item.get(key) or "").strip())
+        if val and val not in structured_parts and val not in cleaned:
+            structured_parts.append(val)
+
+    chrome_heavy = bool(plain) and (len(cleaned) < 40 or len(cleaned) < len(plain) * 0.25)
+    if chrome_heavy and structured_parts:
+        return _plain_text(" · ".join(structured_parts), limit=limit)
+    if chrome_heavy and not cleaned:
+        return ""
+
+    if cleaned and structured_parts:
+        head = structured_parts[0]
+        if head not in cleaned and len(head) <= 40:
+            cleaned = f"{head} — {cleaned}"
+    elif not cleaned and structured_parts:
+        cleaned = " · ".join(structured_parts)
+
+    if cleaned and title:
+        t_compact = re.sub(r"\s+", "", title)
+        c_compact = re.sub(r"\s+", "", cleaned)
+        if c_compact.startswith(t_compact[:24]) and len(t_compact) >= 8:
+            # 제목 반복 제거(표시용)
+            cut = len(title) if cleaned.startswith(title[:12]) else 0
+            if cut:
+                cleaned = cleaned[cut:].lstrip(" -—|:")
+
+    return _plain_text(cleaned, limit=limit)
+
+
 def fallback_body(items: list[dict]) -> str:
     # 표시 정책: 사용자에게 필요한 정보만. HTML/내부코드·매칭키워드·스마트공장 등은 숨김.
     lines: list[str] = []
@@ -4786,7 +4932,7 @@ def fallback_body(items: list[dict]) -> str:
             continue
         lines.append(section_title)
         for it in section_items:
-            desc = _plain_text(it.get("description", ""))
+            desc = mail_support_blurb(it)
             block = [
                 "━━━━━━━━━━━━━━━━━━",
                 f"📌 {it.get('title') or '(제목없음)'}",

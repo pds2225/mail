@@ -19,7 +19,8 @@ import monitor as m  # noqa: E402
 
 def test_is_report_junk_detects_notices():
     for t in ["2026년 우수기업 선정결과 발표", "신입 채용공고", "서포터즈 모집",
-              "정기총회 개최 안내", "낙찰 결과 공고", "운영위원 모집"]:
+              "정기총회 개최 안내", "낙찰 결과 공고", "운영위원 모집",
+              "AI 기획위원 모집공고", "사기피해 예방 안내"]:
         assert m.is_report_junk({"title": t}) is True, t
 
 
