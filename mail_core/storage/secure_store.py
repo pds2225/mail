@@ -9,11 +9,12 @@ from typing import Any
 
 from cryptography.fernet import Fernet, InvalidToken
 
-from state_store import atomic_write_bytes
+from mail_core.paths import REPO_ROOT, SECRETS_DIR
+
+from .state_store import atomic_write_bytes
 
 
-BASE_DIR = Path(__file__).resolve().parent
-SECRETS_DIR = BASE_DIR / "secrets"
+BASE_DIR = REPO_ROOT
 DEFAULT_KEY_PATH = SECRETS_DIR / "mail_private.key"
 KEY_ENV = "MAIL_PRIVATE_CONFIG_KEY"
 

@@ -5,18 +5,19 @@ import hashlib, json, re, subprocess, sys
 from pathlib import Path
 import streamlit as st
 import logging
-import private_config
-from state_store import atomic_write_json, load_json_with_recovery
+from mail_core.paths import CONFIG_DIR, REPORTS_DIR, STATE_DIR
+from mail_core.security import private_config
+from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 # Streamlit 초기화 경고 억제
 logging.getLogger("streamlit.runtime.scriptrunner.script_runner").setLevel(logging.ERROR)
 
 # ── 경로 ─────────────────────────────────────────────────────────────────────
-SITES_PATH    = Path("sites.json")
-GROUPS_PATH   = Path("groups.json")
-SETTINGS_PATH = Path("settings.json")
-SEEN_IDS_PATH = Path("seen_ids.json")
-WATCHLIST_PATH = Path("watchlist.json")
-COMPANIES_PATH = Path("companies.json")
+SITES_PATH    = CONFIG_DIR / "sites.json"
+GROUPS_PATH   = CONFIG_DIR / "groups.json"
+SETTINGS_PATH = CONFIG_DIR / "settings.json"
+SEEN_IDS_PATH = STATE_DIR / "seen_ids.json"
+WATCHLIST_PATH = CONFIG_DIR / "watchlist.json"
+COMPANIES_PATH = CONFIG_DIR / "companies.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 SITE_TYPES = {
@@ -551,7 +552,7 @@ with tab_review:
     st.subheader("🔍 공고 정확도 검수")
     st.caption("공고를 보낼 / 확인필요 / 제외로 분류합니다. 실제 메일 발송 없이 초안 파일만 생성합니다.")
 
-    review_dir = Path("reports/review")
+    review_dir = REPORTS_DIR / "review"
 
     btn_col1, btn_col2 = st.columns(2)
     with btn_col1:
@@ -559,7 +560,7 @@ with tab_review:
                      help="API/네트워크 불필요 — 내장 샘플 5건으로 즉시 검증"):
             with st.spinner("검수 중..."):
                 proc = subprocess.run(
-                    [sys.executable, "review_pipeline.py", "--sample"],
+                    [sys.executable, "-m", "mail_core.operations.review_pipeline", "--sample"],
                     capture_output=True, text=True, encoding="utf-8", errors="replace",
                 )
             if proc.returncode == 0:
@@ -573,7 +574,7 @@ with tab_review:
                      help="BIZINFO_API_KEY 등 환경변수 필요. 수십 초 소요."):
             with st.spinner("수집 및 검수 중... (수십 초 소요)"):
                 proc = subprocess.run(
-                    [sys.executable, "review_pipeline.py", "--collect"],
+                    [sys.executable, "-m", "mail_core.operations.review_pipeline", "--collect"],
                     capture_output=True, text=True, encoding="utf-8", errors="replace",
                 )
             if proc.returncode == 0:

@@ -56,7 +56,7 @@ FIXTURES = [
 
 
 def _grp() -> dict:
-    groups = json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))
+    groups = json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))
     return next(g for g in groups if g["id"] == "grp_ai_saas")
 
 

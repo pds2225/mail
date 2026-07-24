@@ -1,8 +1,8 @@
 # Auto Dev — L2 빈틈 인박스 (G1 게이트)
 
-> FP/FN·정확도 헌터가 찾은 결함을 여기 적는다.  
-> `approved: yes` 로 바꾼 뒤 `python3 scripts/decompose_defects.py --approve` 하면  
-> `TASKS.md` PENDING에 `loop:coding-fix` TASK가 추가된다.  
+> FP/FN·정확도 헌터가 찾은 결함을 여기 적는다.
+> `approved: yes` 로 바꾼 뒤 `python3 scripts/decompose_defects.py --approve` 하면
+> `docs/project/TASKS.md` PENDING에 `loop:coding-fix` TASK가 추가된다.
 > **승인 전 자동 코딩 금지** (`auto_dev/human_gates.md` G1).
 
 ## DEFECT-001

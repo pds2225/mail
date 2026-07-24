@@ -8,7 +8,7 @@
 | 필드 | 설명 |
 |------|------|
 | emails | 줄바꿈·쉼표·세미콜론 구분 목록 |
-| target | `group` (groups.json) 또는 `raw_all` (settings.json) |
+| target | `group` (config/groups.json) 또는 `raw_all` (config/settings.json) |
 | groupId | target=group 일 때 그룹 ID |
 
 ## 검증 결과 (예시 형식)
@@ -19,8 +19,8 @@
 
 ## PR 반영 방식
 
-1. `groups.json` 해당 그룹 `recipients` 배열에 추가 **또는**
-2. `settings.json` `raw_all_recipients` 에 추가
+1. `config/groups.json` 해당 그룹 `recipients` 배열에 추가 **또는**
+2. `config/settings.json` `raw_all_recipients` 에 추가
 3. dry-run으로 `recipient_audit` 확인
 4. **실제 메일 발송 테스트 금지**
 

@@ -26,9 +26,9 @@
         "recall_zero_gate"
       ],
       "memory": [
-        "auto_dev_state.json",
-        "TASKS.md",
-        "done_tasks.md|failed_tasks.md|blocked_tasks.md"
+        "var/state/auto_dev_state.json",
+        "docs/project/TASKS.md",
+        "docs/project/done_tasks.md|docs/project/failed_tasks.md|docs/project/blocked_tasks.md"
       ],
       "exit": {
         "success": ["verify_all_pass", "diff_committed_or_pr"],
@@ -61,8 +61,8 @@
         "no_regression_vs_base"
       ],
       "memory": [
-        "failed_tasks.md",
-        "auto_dev_state.json.retry_counts"
+        "docs/project/failed_tasks.md",
+        "var/state/auto_dev_state.json.retry_counts"
       ],
       "exit": {
         "success": ["gates_green"],
@@ -149,7 +149,7 @@
       "memory": [
         "docs/CUSTOMER_INTAKE.md",
         "docs/HANDOFF_PROMPT.md",
-        "groups.json direction notes"
+        "config/groups.json direction notes"
       ],
       "exit": {
         "success": ["vision_written_to_l2_assets"],

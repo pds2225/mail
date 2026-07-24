@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import net_guard as ng  # noqa: E402
+from mail_core.security import net_guard as ng  # noqa: E402
 
 
 def test_blocks_non_http_scheme():

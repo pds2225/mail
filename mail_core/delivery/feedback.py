@@ -28,11 +28,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote, unquote
 
-import feedback_token  # O/X 토큰 HMAC 서명·검증(#132, opt-in: MAIL_FEEDBACK_SECRET)
-from state_store import atomic_write_bytes_while_locked, locked_path
+from mail_core.paths import DATA_DIR
+from mail_core.storage.state_store import atomic_write_bytes_while_locked, locked_path
 
-BASE_DIR = Path(__file__).resolve().parent
-LABELS_PATH = BASE_DIR / "data" / "golden" / "feedback_labels.jsonl"
+from . import feedback_token  # O/X 토큰 HMAC 서명·검증(#132, opt-in: MAIL_FEEDBACK_SECRET)
+
+LABELS_PATH = DATA_DIR / "golden" / "feedback_labels.jsonl"
 
 SUBJECT_TAG = "[MAIL-FB]"
 # 메일 클라이언트가 제목 앞에 Re:/전달: 등을 붙여도 잡히게 search 사용.

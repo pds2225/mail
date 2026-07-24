@@ -32,6 +32,6 @@ export async function POST(req: Request) {
     validation,
     packetPath: "WORKS/RECIPIENT_UPDATE_PACKET.md",
     packetMarkdown: markdown,
-    notice: "groups.json / settings.json 은 변경하지 않았습니다.",
+    notice: "config/groups.json / config/settings.json 은 변경하지 않았습니다.",
   });
 }

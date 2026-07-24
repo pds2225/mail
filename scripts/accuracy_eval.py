@@ -23,7 +23,7 @@ if str(BASE_DIR) not in sys.path:
 if str(BASE_DIR / "scripts") not in sys.path:
     sys.path.insert(0, str(BASE_DIR / "scripts"))
 
-import company_match  # noqa: E402
+from mail_core.matching import company_match  # noqa: E402
 from run_company_match import _enrich_for_company  # noqa: E402  (인천고정 버그 수정 반영)
 
 # region_field 가 이 값들이면 기업 지역 무관하게 적격(타지역 아님) — region_FP 대상 아님

@@ -2,7 +2,7 @@
 
 ## 목적
 
-`targets/kstartup_20260623.txt`에 적힌 공고 제목만 K-Startup 모집중 목록에서 찾아 공고별 첨부파일을 내려받는다.
+`config/targets/kstartup_20260623.txt`에 적힌 공고 제목만 K-Startup 모집중 목록에서 찾아 공고별 첨부파일을 내려받는다.
 
 ## 실행 전 준비
 
@@ -48,7 +48,7 @@ D:\mail\downloads\kstartup\20260623\download_manifest.json
 ## 입력 파일
 
 ```text
-targets/kstartup_20260623.txt
+config/targets/kstartup_20260623.txt
 ```
 
 한 줄에 공고 제목 1개씩 적는다. 제목이 완전히 같지 않아도 유사도 0.72 이상이면 매칭한다.

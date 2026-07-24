@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import feedback_token as ft  # noqa: E402
-import feedback as fb  # noqa: E402
+from mail_core.delivery import feedback_token as ft  # noqa: E402
+from mail_core.delivery import feedback as fb  # noqa: E402
 
 SECRET = "test-secret-abc123"
 

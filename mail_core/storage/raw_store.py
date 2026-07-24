@@ -13,11 +13,13 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+from mail_core.paths import RAW_DIR
+
 log = logging.getLogger(__name__)
 
 KST = __import__("datetime").timezone(timedelta(hours=9), name="KST")
 
-DEFAULT_ROOT = Path(__file__).resolve().parent / "data" / "raw"
+DEFAULT_ROOT = RAW_DIR
 _SAFE_ID_RE = re.compile(r"[^\w.\-]+", re.UNICODE)
 
 

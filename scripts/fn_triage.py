@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 sys.path.insert(0, str(BASE_DIR / "scripts"))
 
-import company_match  # noqa: E402
+from mail_core.matching import company_match  # noqa: E402
 from accuracy_matrix import _load_items, _notice_key  # noqa: E402
 from run_company_match import _enrich_for_company  # noqa: E402
 

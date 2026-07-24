@@ -17,7 +17,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "bizinfo"
+FX = pathlib.Path(__file__).parent / "fixtures" / "bizinfo"
 BIZINFO_URL = "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do"
 
 # 9키 스키마 (monitor._item 반환 키)
@@ -199,7 +199,7 @@ def test_bizinfo_partial_collection_preserved_no_raise(monkeypatch):
 def test_bizinfo_hard_failure_classified_as_collect_fail(monkeypatch):
     """★ 사용자 버그 직결 회귀: 하드 실패가 커버리지에서 '수집실패'로 분류되고
     baseline(평소값)을 오염시키지 않는지 end-to-end 확인."""
-    import coverage_alert
+    from mail_core.operations import coverage_alert
 
     def _raiser(_site_arg):
         raise RuntimeError("기업마당 API 오류: 인증키")

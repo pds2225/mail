@@ -6,10 +6,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from secure_store import BASE_DIR, SecureStoreUnavailable, get_fernet, load_encrypted_json, save_encrypted_json
+from mail_core.paths import OUTBOX_DIR
+from mail_core.storage.secure_store import (
+    SecureStoreUnavailable,
+    get_fernet,
+    load_encrypted_json,
+    save_encrypted_json,
+)
 
 
-OUTBOX_PATH = BASE_DIR / "delivery_outbox.enc"
+OUTBOX_PATH = OUTBOX_DIR / "delivery_outbox.enc"
 
 
 def is_ready() -> bool:

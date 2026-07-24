@@ -30,11 +30,11 @@ from pathlib import Path
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST = timezone(timedelta(hours=9))
 ROOT = Path(__file__).resolve().parent.parent
-TASKS_PATH = ROOT / "TASKS.md"
-STATE_PATH = ROOT / "auto_dev_state.json"
-DONE_PATH = ROOT / "done_tasks.md"
-FAILED_PATH = ROOT / "failed_tasks.md"
-BLOCKED_PATH = ROOT / "blocked_tasks.md"
+TASKS_PATH = ROOT / "docs" / "project" / "TASKS.md"
+STATE_PATH = ROOT / "var" / "state" / "auto_dev_state.json"
+DONE_PATH = ROOT / "docs" / "project" / "done_tasks.md"
+FAILED_PATH = ROOT / "docs" / "project" / "failed_tasks.md"
+BLOCKED_PATH = ROOT / "docs" / "project" / "blocked_tasks.md"
 LOOPS_PATH = ROOT / "auto_dev" / "loops.json"
 
 PROTECTED_FILES = {"monitor.py", "streamlit_app.py", ".env", ".env.example"}
@@ -232,7 +232,7 @@ def preflight_check() -> list[str]:
             issues.append(f"TASKS.md에 ## {section} 섹션이 없습니다")
 
     # 3. RULES.md 존재
-    if not (ROOT / "RULES.md").exists():
+    if not (ROOT / "docs" / "project" / "RULES.md").exists():
         issues.append("RULES.md 파일이 없습니다")
 
     # 3b. Loop Engineering 작업 자산

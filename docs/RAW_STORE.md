@@ -45,7 +45,7 @@ D:\mail\data\raw\
 
 30일 × 신규 ~2000건/일 × meta ~2KB ≈ **수백 MB** 수준 (상세 HTML은 `MAX_DETAIL_ENRICH` 건수만큼만).
 
-## settings.json
+## config/settings.json
 
 ```json
 {

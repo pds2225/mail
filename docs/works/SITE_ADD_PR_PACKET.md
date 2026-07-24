@@ -5,7 +5,7 @@
 
 ## 수정 대상 파일
 
-- `sites.json`
+- `config/sites.json`
 
 ## 추가될 사이트 JSON (예시)
 
@@ -27,9 +27,9 @@
 ## diff 예시
 
 ```diff
---- a/sites.json
-+++ b/sites.json
-@@ sites.json에 1건 추가 @@
+--- a/config/sites.json
++++ b/config/sites.json
+@@ config/sites.json에 1건 추가 @@
 +  { "id": "example_tp", ... }
 ```
 

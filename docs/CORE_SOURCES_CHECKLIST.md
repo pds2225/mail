@@ -23,7 +23,7 @@ python scripts\core_sources_checklist.py --json
 
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
-| 1 | sites.json | `bizinfo` enabled, `type=bizinfo_api` |
+| 1 | config/sites.json | `bizinfo` enabled, `type=bizinfo_api` |
 | 2 | API 설정 | `api_page_unit`≥100, `api_max_pages`≥1 |
 | 3 | 상세 보강 | `bizinfo.go.kr` ∈ `DETAIL_ENRICH_HOSTS` |
 | 4 | 회귀 테스트 | `test_fetch_bizinfo_replay.py` |
@@ -38,7 +38,7 @@ python scripts\core_sources_checklist.py --json
 
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
-| 1 | sites.json | `kstartup` enabled, `type=kstartup_html` |
+| 1 | config/sites.json | `kstartup` enabled, `type=kstartup_html` |
 | 2 | 다페이지 | `max_pages`≥2 (공공 PBC010 + 민간 PBC020) |
 | 3 | 상세 보강 | `k-startup.go.kr` ∈ `DETAIL_ENRICH_HOSTS` |
 | 4 | 회귀 테스트 | `test_fetch_kstartup_replay.py` (공공+민간) |
@@ -52,7 +52,7 @@ python scripts\core_sources_checklist.py --json
 
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
-| 1 | sites.json | `nipa` enabled, `type=nipa_html` |
+| 1 | config/sites.json | `nipa` enabled, `type=nipa_html` |
 | 2 | 페이지 순회 | `max_pages` 상한 (전량 순회, 중복 시 종료) |
 | 3 | 상세 보강 | `nipa.kr` ∈ `DETAIL_ENRICH_HOSTS` |
 | 4 | 회귀 테스트 | `test_fetch_nipa_replay.py` (멀티페이지·중복종료) |

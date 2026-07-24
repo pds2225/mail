@@ -15,10 +15,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from secure_store import BASE_DIR, encrypt_json, decrypt_json, get_fernet
+from mail_core.paths import SECRETS_DIR
+from mail_core.storage.secure_store import decrypt_json, encrypt_json, get_fernet
 
 
-PRIVATE_DB_PATH = BASE_DIR / "secrets" / "mail_private.sqlite3"
+PRIVATE_DB_PATH = SECRETS_DIR / "mail_private.sqlite3"
 PRIVATE_ENV = "MAIL_PRIVATE_CONFIG_JSON"
 _TENANT_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
 

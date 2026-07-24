@@ -21,7 +21,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "kita"
+FX = pathlib.Path(__file__).parent / "fixtures" / "kita"
 KITA_URL = "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do"
 DETAIL = "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingView.do"
 

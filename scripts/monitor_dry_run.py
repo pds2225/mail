@@ -50,9 +50,9 @@ def _print_summary(public: dict, ru_groups: list[dict]) -> None:
             print(f"  [{g.get('name')}] {g.get('region_unknown_items')}건")
             for t in g.get("region_unknown_titles", []):
                 print(f"     - {t}")
-    print("Reports: logs/site_collection_coverage_report.md")
-    print("         logs/today_notice_missing_risk_report.md")
-    print("         logs/review_queue_YYYYMMDD.md")
+    print("Reports: var/logs/site_collection_coverage_report.md")
+    print("         var/logs/today_notice_missing_risk_report.md")
+    print("         var/logs/review_queue_YYYYMMDD.md")
 
 
 def main() -> int:
@@ -89,9 +89,9 @@ def main() -> int:
                 print(f"  [{g.get('name')}] {g.get('region_unknown_items')}건")
                 for t in g.get("region_unknown_titles", []):
                     print(f"     - {t}")
-        print("Reports: logs/site_collection_coverage_report.md")
-        print("         logs/today_notice_missing_risk_report.md")
-        print("         logs/review_queue_YYYYMMDD.md")
+        print("Reports: var/logs/site_collection_coverage_report.md")
+        print("         var/logs/today_notice_missing_risk_report.md")
+        print("         var/logs/review_queue_YYYYMMDD.md")
     return 0
 
 

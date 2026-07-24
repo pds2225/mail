@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 import accuracy_eval as ae  # noqa: E402
-import company_match as cm  # noqa: E402
+from mail_core.matching import company_match as cm  # noqa: E402
 import run_company_match as rcm  # noqa: E402
 
 # region_field(정답 지역)를 가진 합성 공고 — 명시 타지역 한정 + own + 전국 혼합

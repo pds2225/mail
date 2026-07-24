@@ -32,22 +32,31 @@ from urllib.parse import parse_qs, urlparse
 # ── 경로 설정 ────────────────────────────────────────────────────────────────
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORKSPACE = "/tmp/monitor_ws"
-_CONFIG_FILES = ("sites.json", "groups.json", "settings.json")
+_CONFIG_FILES = (
+    "sites.json",
+    "groups.json",
+    "settings.json",
+    "companies.json",
+    "watchlist.json",
+)
 
 
 def _setup_workspace() -> None:
     """읽기 전용 프로젝트 루트의 JSON 설정을 /tmp 작업공간으로 복사."""
     os.makedirs(WORKSPACE, exist_ok=True)
     for fname in _CONFIG_FILES:
-        src = os.path.join(ROOT, fname)
-        dst = os.path.join(WORKSPACE, fname)
+        src = os.path.join(ROOT, "config", fname)
+        dst = os.path.join(WORKSPACE, "config", fname)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
         if os.path.exists(src) and not os.path.exists(dst):
             shutil.copy(src, dst)
 
 
 # Lambda 초기화 시 한 번만 실행
 _setup_workspace()
-os.chdir(WORKSPACE)          # monitor.py의 상대경로(Path("sites.json") 등)가 /tmp/monitor_ws를 가리킴
+os.environ.setdefault("MAIL_CONFIG_DIR", os.path.join(WORKSPACE, "config"))
+os.environ.setdefault("MAIL_VAR_DIR", os.path.join(WORKSPACE, "var"))
+os.chdir(WORKSPACE)
 sys.path.insert(0, ROOT)     # monitor 모듈 임포트 경로 추가
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")

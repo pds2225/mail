@@ -8,13 +8,13 @@
       "title_keywords": ["README", "문서", "RULES", "AGENTS", "가이드", "정리"],
       "allowed_path_prefixes": [
         "README",
-        "RULES.md",
+        "docs/project/RULES.md",
         "AGENTS.md",
-        "TASKS.md",
+        "docs/project/TASKS.md",
         "docs/",
-        "done_tasks.md",
-        "failed_tasks.md",
-        "blocked_tasks.md"
+        "docs/project/done_tasks.md",
+        "docs/project/failed_tasks.md",
+        "docs/project/blocked_tasks.md"
       ]
     },
     "script_safe": {
@@ -27,13 +27,13 @@
       "tier": 2,
       "auto_merge_eligible": true,
       "title_keywords": ["테스트", "pytest", "회귀", "fixture", "replay"],
-      "allowed_path_prefixes": ["test_", "fixtures/", "conftest.py"]
+      "allowed_path_prefixes": ["tests/"]
     },
     "config_data": {
       "tier": 2,
       "auto_merge_eligible": false,
       "title_keywords": ["sites.json", "groups.json", "수신자", "사이트 추가", "설정"],
-      "allowed_path_prefixes": ["sites.json", "groups.json", "companies.json", "settings.json"]
+      "allowed_path_prefixes": ["config/"]
     },
     "core_logic": {
       "tier": 0,
@@ -47,9 +47,7 @@
       "auto_merge_eligible": false,
       "title_keywords": ["정확도", "accuracy", "recall", "오탐", "누락", "region_FP"],
       "allowed_path_prefixes": [
-        "company_match.py",
-        "region_clusters.py",
-        "scoring.py",
+        "mail_core/matching/",
         "data/golden/",
         "scripts/accuracy_"
       ]

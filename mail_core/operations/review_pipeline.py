@@ -6,9 +6,9 @@
   python review_pipeline.py --input data.json  # 기존 수집 JSON으로 검수
 
 결과 파일:
-  reports/review/YYYY-MM-DD_review.md    — 전체 검수 리포트 (보낼/확인필요/제외)
-  reports/review/YYYY-MM-DD_send.csv     — 보낼 공고 목록
-  reports/review/YYYY-MM-DD_mail_draft.txt — 메일 초안 (발송 금지)
+  var/reports/review/YYYY-MM-DD_review.md    — 전체 검수 리포트 (보낼/확인필요/제외)
+  var/reports/review/YYYY-MM-DD_send.csv     — 보낼 공고 목록
+  var/reports/review/YYYY-MM-DD_mail_draft.txt — 메일 초안 (발송 금지)
 
 금지:
   SMTP 호출 없음 — 실제 발송 절대 금지
@@ -25,9 +25,11 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from mail_core.paths import REPO_ROOT, REPORTS_DIR
+
 KST = timezone(timedelta(hours=9))
-BASE_DIR = Path(__file__).resolve().parent
-REVIEW_DIR = BASE_DIR / "reports" / "review"
+BASE_DIR = REPO_ROOT
+REVIEW_DIR = REPORTS_DIR / "review"
 
 # ── 분야 분류 규칙 (8개 카테고리) ────────────────────────────────────────────
 # 딕셔너리 순서대로 첫 매치를 반환하므로 우선순위를 고려해 정렬

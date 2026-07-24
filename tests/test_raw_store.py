@@ -17,7 +17,7 @@ for _k, _v in {
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from raw_store import RawStore, safe_notice_dirname  # noqa: E402
+from mail_core.storage.raw_store import RawStore, safe_notice_dirname  # noqa: E402
 
 
 def test_safe_notice_dirname():

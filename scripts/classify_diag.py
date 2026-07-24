@@ -69,7 +69,7 @@ def main() -> int:
         print(f"  {b:16s}: {c}")
 
     # 분류 결과 저장
-    out = ROOT / "reports" / "diag_classified.json"
+    out = ROOT / "var" / "reports" / "diag_classified.json"
     out.write_text(json.dumps({
         "ok": ok, "parse_empty": parse_empty, "connect_fail": connect_fail,
         "buckets": dict(buckets),

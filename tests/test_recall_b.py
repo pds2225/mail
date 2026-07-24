@@ -18,10 +18,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import monitor as m  # noqa: E402
-import company_match as cm  # noqa: E402
+from mail_core.matching import company_match as cm  # noqa: E402
 
-GROUPS = {g["id"]: g for g in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))}
-COMPANIES = {c["id"]: c for c in cm.load_companies(ROOT / "companies.json")}
+GROUPS = {g["id"]: g for g in json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))}
+COMPANIES = {c["id"]: c for c in cm.load_companies(ROOT / "config" / "companies.json")}
 
 AI_ADJACENT = [
     "머신러닝 기반 솔루션 지원 신청접수",

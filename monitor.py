@@ -1,6 +1,6 @@
 """수출·지원사업 모니터링 에이전트 v6
 기능: 수집 → 중복제거(주관기관 우선) → 날짜필터(D-1) → 그룹별 조건필터 → Claude요약 → 발송
-설정: sites.json / groups.json / settings.json / seen_ids.json
+설정: config/sites.json / config/groups.json / config/settings.json / var/state/seen_ids.json
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 # evaluate_notice(1차 필터) 통과분에 대해 기업 프로필(companies.json) 점수로
 # 정밀 컷오프. 모듈/파일이 없거나 비활성이면 기존 동작 그대로(하위호환).
 try:
-    from company_match import (
+    from mail_core.matching.company_match import (
         load_companies as _load_companies,
         match_for_company as _match_for_company,
     )
@@ -27,17 +27,17 @@ try:
 except ImportError:
     _CM_OK = False
 
-import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
-import delivery_outbox # 암호화된 수신자별 재시도 대기열(#113·#114·#115)
-import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
-import private_config  # 수신자·기업 이메일 분리와 tenant 경계(#96·#97·#149)
-import run_lock        # 로컬 실발송 단일 실행 가드(#17)
-from state_store import atomic_write_json, load_json_with_recovery
+from mail_core.delivery import outbox as delivery_outbox
+from mail_core.delivery import state as delivery_state
+from mail_core.operations import run_lock
+from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
+from mail_core.security import net_guard, private_config
+from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = REPO_ROOT
 
 try:
-    from raw_store import RawStore as _RawStore
+    from mail_core.storage.raw_store import RawStore as _RawStore
 except ImportError:
     _RawStore = None  # type: ignore[misc, assignment]
 
@@ -93,12 +93,12 @@ GMAIL_ADDRESS      = _require_env("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = _require_env("GMAIL_APP_PASSWORD")
 
 # ── 경로 ─────────────────────────────────────────────────────────────────────
-SITES_PATH    = BASE_DIR / "sites.json"
-GROUPS_PATH   = BASE_DIR / "groups.json"
-SETTINGS_PATH = BASE_DIR / "settings.json"
-SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
+SITES_PATH    = CONFIG_DIR / "sites.json"
+GROUPS_PATH   = CONFIG_DIR / "groups.json"
+SETTINGS_PATH = CONFIG_DIR / "settings.json"
+SEEN_IDS_PATH = STATE_DIR / "seen_ids.json"
 # (기준일·그룹·수신자) 단위 발송 멱등 상태 — 크래시/부분실패 후 재실행 시 중복발송 방지.
-DELIVERY_STATE_PATH = BASE_DIR / "delivery_state.json"
+DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -4084,7 +4084,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
     # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
     # company_match 와 단일 정본 공유). 비멤버는 아래 차단 로직으로.
-    from region_clusters import REGION_CLUSTER as _RC
+    from mail_core.matching.region_clusters import REGION_CLUSTER as _RC
     for _kwon, _members in _RC.items():
         if _kwon in app_text and ("비" + _kwon) not in app_text and any(r in _members for r in own_regions):
             return result("eligible", "eligible", [city or label], [])
@@ -4928,7 +4928,7 @@ _ONLY_TO: str = ""
 
 # 사용자 ⭕/❌ 피드백 루프(Tier C 골든 축적) — 모듈이 없어도 발송은 그대로(표시 전용).
 try:
-    import feedback as _feedback_mod
+    from mail_core.delivery import feedback as _feedback_mod
     _FEEDBACK_OK = True
 except Exception:  # noqa: BLE001
     _feedback_mod = None
@@ -5326,7 +5326,7 @@ def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "wa
 # ── 집중 모니터링 워치리스트 ──────────────────────────────────────────────────
 # 사용자가 준 키워드/제목 또는 URL 에 걸리는 공고는 날짜·그룹 필터를 우회해 강제 포함하고
 # 전용 메일 + 폰 푸시로 강조한다. '놓치면 안 되는 공고'를 절대 안 놓치기 위한 장치.
-WATCHLIST_PATH = BASE_DIR / "watchlist.json"
+WATCHLIST_PATH = CONFIG_DIR / "watchlist.json"
 
 
 def load_watchlist() -> dict:
@@ -5336,9 +5336,9 @@ def load_watchlist() -> dict:
         return {"keywords": [], "urls": [], "recipients": []}
     private_payload = private_config.load_private_payload()
     # 테스트/진단이 임시 watchlist 경로를 주입할 때는 운영 수신자 payload 를 섞지 않는다.
-    if private_payload and WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+    if private_payload and WATCHLIST_PATH.resolve() == (CONFIG_DIR / "watchlist.json").resolve():
         raw = private_config.merge_watchlist(raw, private_payload)
-    elif WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+    elif WATCHLIST_PATH.resolve() == (CONFIG_DIR / "watchlist.json").resolve():
         # 공개 운영 파일의 수신자는 무시한다. 암호화 payload 가 없는 상태에서는 발송하지 않는다.
         raw = {**raw, "recipients": []}
     normalized = {
@@ -5794,7 +5794,7 @@ def write_coverage_report(
     run_at: datetime | None = None,
 ) -> Path:
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "site_collection_coverage_report.md")
+    path = path or (LOGS_DIR / "site_collection_coverage_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     headers = [
         "사이트", "collector", "URL", "수집", "건수", "날짜파싱", "date_unknown",
@@ -5832,7 +5832,7 @@ def write_today_missing_risk_report(
     run_at: datetime | None = None,
 ) -> Path:
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "today_notice_missing_risk_report.md")
+    path = path or (LOGS_DIR / "today_notice_missing_risk_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     queue = result.get("date_review_queue") or []
     high = [it for it in queue if it.get("date_unknown_risk") == "높음"]
@@ -5865,7 +5865,7 @@ def write_review_queue_report(
 ) -> Path:
     run_at = run_at or datetime.now(KST)
     stamp = run_at.strftime("%Y%m%d")
-    path = path or (BASE_DIR / "logs" / f"review_queue_{stamp}.md")
+    path = path or (LOGS_DIR / f"review_queue_{stamp}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
         f"# Review queue — {run_at.strftime('%Y-%m-%d %H:%M KST')}",
@@ -5893,7 +5893,7 @@ def write_coverage_anomaly_report(
 ) -> Path:
     """수집 이상탐지 결과를 별도 마크다운으로 저장(dry-run 보고서)."""
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "coverage_anomaly_report.md")
+    path = path or (LOGS_DIR / "coverage_anomaly_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
         "# 수집 이상탐지",
@@ -5923,7 +5923,7 @@ def write_source_coverage_json(
 ) -> Path:
     """기계 판독용 실행대장. logs/source_coverage_YYYYMMDD.json"""
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.json")
+    path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return path
@@ -5933,10 +5933,10 @@ def write_source_coverage_md(
     payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
 ) -> Path:
     """관리자 확인용 실행대장 보고서. logs/source_coverage_YYYYMMDD.md"""
-    import coverage_alert as _ca  # noqa: PLC0415
+    from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.md")
+    path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_coverage_markdown(payload), encoding="utf-8")
     return path
@@ -5946,10 +5946,10 @@ def write_p0_collection_alert(
     payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
 ) -> Path:
     """P0 누락위험 알림 사본. logs/p0_collection_alert_YYYYMMDD.md"""
-    import coverage_alert as _ca  # noqa: PLC0415
+    from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"p0_collection_alert_{run_at:%Y%m%d}.md")
+    path = path or (LOGS_DIR / f"p0_collection_alert_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_p0_alert_markdown(payload), encoding="utf-8")
     return path
@@ -5972,7 +5972,7 @@ def run_source_coverage_audit(
     반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="OK").
     """
     try:
-        import coverage_alert as _ca  # noqa: PLC0415
+        from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
         run_at = run_at or datetime.now(KST)
         baseline = _ca.load_coverage_baseline()
@@ -6011,7 +6011,7 @@ def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) ->
     반환: 감지된 anomaly dict 리스트(없으면 빈 리스트).
     """
     try:
-        import coverage_alert as _ca  # noqa: PLC0415
+        from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
         baseline = _ca.load_coverage_baseline()
         anomalies = _ca.detect_coverage_anomalies(rows, baseline)
@@ -6302,7 +6302,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="발송·seen_ids 저장 없이 preview 및 logs/ 보고서 생성",
+        help="발송·seen_ids 저장 없이 preview 및 var/logs/ 보고서 생성",
     )
     parser.add_argument(
         "--skip-coverage-fetch",

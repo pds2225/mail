@@ -19,7 +19,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "semas_loan_ols"
+FX = pathlib.Path(__file__).parent / "fixtures" / "semas_loan_ols"
 SEARCH_URL = "https://ols.semas.or.kr/ols/man/SMAN051M/search.do"
 
 # 9키 스키마 (monitor._item 반환 키)
