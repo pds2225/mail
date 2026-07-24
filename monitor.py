@@ -360,11 +360,13 @@ FACTORY_REQUIRED_TERMS = [
     "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
 ]
 
+# 신청·모집 '성격' 판정용. ★산업·지역 키워드(글로벌/해외/베트남/화장품 등)는 여기 넣지 않는다.
+# 그 단어만으로 application_like=True 가 되면 보도자료·사기주의 안내가 그룹 추천으로 샌다
+# (2026-07-24 예비창업 AI 메일 FP). 산업 매칭은 GENERAL_INCLUDE_KEYWORD_ALIASES 가 담당.
 APPLICATION_KEYWORDS = [
     "모집공고", "지원계획 공고", "참여기업 모집", "수요기업 모집", "신청접수",
     "지원사업 공고", "해외전시회", "박람회", "전시회", "수출상담회",
-    "바이어 매칭", "마케팅 지원", "판로지원", "수출지원", "글로벌", "해외",
-    "베트남", "동남아", "화장품", "뷰티", "k-beauty", "소상공인", "지원금",
+    "바이어 매칭", "마케팅 지원", "판로지원", "수출지원", "소상공인", "지원금",
     "혁신바우처", "혁신 바우처", "수출바우처", "수출 바우처", "스마트공장",
     "스마트팩토리", "공정개선", "공정자동화", "설비개선", "구축 지원사업",
     "공모", "참가신청",
@@ -415,7 +417,9 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    "회원 모집", "모니터링단", "평가위원", "심사위원", "기획위원", "자문위원",
+    "멘토 모집", "운영위원", "강사 모집",
+    "사기피해", "허위구매", "사칭",
 ]
 
 
@@ -423,6 +427,45 @@ def is_report_junk(item: dict) -> bool:
     """[원본전체] 보고 메일용 잡공고 판정. 제목에 위 표현이 있으면 True(지원 기회 아님)."""
     title = str(item.get("title", ""))
     return any(j in title for j in REPORT_JUNK_KEYWORDS)
+
+
+# ── [제목 앵커] 지원 '기회'가 아닌 게시물 — 그룹 추천 경로 (2026-07-24 FP) ──
+# 배경: 예비창업 AI 메일에 ①기획위원 모집 ②사기피해 예방 안내 ③축제 보도자료가 섞여 나감.
+# ★non_notice_reason 과 달리 NOTICE_SIGNAL_TOKENS(모집·공고) 가드를 쓰지 않는다.
+#   '기획위원 모집공고'는 모집/공고가 있어도 기업 지원사업이 아니라 위원 위촉이다.
+# ★제목만 본다(본문 우연일치·nav 크롬으로 진짜 공고를 막지 않음). recall > precision.
+# 끄기: MONITOR_NO_NONGGRANT_FILTER=1
+NONGGRANT_FILTER_ENV = "MONITOR_NO_NONGGRANT_FILTER"
+
+# (근거 라벨, 제목 부분문자열) — 라벨은 excluded_keywords/리포트용.
+NON_GRANT_TITLE_MARKERS: tuple[tuple[str, str], ...] = (
+    ("기획위원", "기획위원"),
+    ("평가위원", "평가위원"),
+    ("심사위원", "심사위원"),
+    ("운영위원", "운영위원"),
+    ("자문위원", "자문위원"),
+    ("위원 위촉", "위원 위촉"),
+    ("위원위촉", "위원위촉"),
+    ("사기피해", "사기피해"),
+    ("허위구매", "허위구매"),
+    ("사칭", "사칭"),
+)
+
+
+def non_grant_opportunity_reason(item: dict) -> str:
+    """기업/예비창업자가 신청할 '지원 기회'가 아닌 제목이면 근거 문자열, 아니면 "".
+
+    제목만 본다. 위원 모집·사기주의 안내는 모집/공고 토큰이 있어도 차단한다.
+    """
+    if os.environ.get(NONGGRANT_FILTER_ENV) == "1":
+        return ""
+    title = str(item.get("title") or "")
+    if not title.strip():
+        return ""
+    for label, marker in NON_GRANT_TITLE_MARKERS:
+        if marker in title:
+            return label
+    return ""
 
 
 EXCLUSION_RULES = [
@@ -4379,6 +4422,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if nonnotice_hit:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
+    # [제목 앵커] 지원 기회가 아닌 게시물(기획위원 모집·사기예방 안내 등).
+    # 모집/공고 토큰이 있어도 차단 — non_notice_reason 가드와 의도적으로 다름.
+    nongrant_hit = non_grant_opportunity_reason(item)
+    if nongrant_hit:
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append(nongrant_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
 
