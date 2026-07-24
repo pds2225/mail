@@ -750,7 +750,10 @@
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "table tbody tr",
+      "title": "td.subject a span",
+      "link": "td.subject a",
+      "date": "td.date"
     },
     "note": "인천 뷰티기업 인프라구축 지원 [PC 실행 시 정상 접속]",
     "max_pages": 2
