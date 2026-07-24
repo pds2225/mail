@@ -355,9 +355,12 @@ FACTORY_KEYWORD_ALIASES = [
     ("입주기업", ["입주기업"]),
 ]
 
+# ※'입주기업'은 공장 신호가 아니다 — AI허브·창업보육센터 '입주기업 모집'에
+#   '공장보유 필요'가 오표시되던 원인(2026-07-24). 산업단지 입주 판정은
+#   ONLY_SPECIFIC_INDUSTRIAL_COMPLEX(산업단지+입주기업 동시 등장)가 따로 담당한다.
 FACTORY_REQUIRED_TERMS = [
     "공장등록증", "제조시설", "생산시설", "제조업 영위", "공장 보유",
-    "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
+    "공장보유", "공장 임차", "공장임차", "임대공장",
 ]
 
 APPLICATION_KEYWORDS = [
@@ -416,6 +419,7 @@ REPORT_JUNK_KEYWORDS = [
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
     "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    "기획위원", "자문위원", "전문위원",
 ]
 
 
@@ -442,6 +446,15 @@ EXCLUSION_RULES = [
     ]),
     ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
 ]
+
+# ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
+# '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
+# 제목만 보고 거른다. 본문의 '평가위원회 심의를 거쳐' 등 우연 언급으로 진짜 공고를
+# 막지 않도록 제목 앵커(title-only)로 보수적으로 판정한다(recall 원칙).
+_COMMITTEE_TITLE_RE = re.compile(
+    r"(?:기획|평가|심사|자문|운영|전문|선정)\s*위원(?:단|회)?"
+    r"\s*(?:\([^)]*\)\s*)?(?:후보자?\s*)?(?:모집|위촉|공모)"
+)
 
 # ── [제목 앵커] 비공고 정적 페이지 제외 (2026-07-20, 사용자 O/X 피드백: '사전정보공표' ❌) ──
 # 배경: 일부 소스의 리스트 셀렉터가 본문 게시판이 아니라 헤더/푸터/사이드 nav 의 <a> 를 통째로
@@ -711,6 +724,20 @@ def normalize_title(title: str) -> str:
     t = unicodedata.normalize("NFKC", title.lower())
     return re.sub(r"[\s\W]+", "", t)
 
+
+# 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
+# '… 모집 공고 file'·'… 모집 안내 새로운게시글' 처럼 제목이 오염된 채 발송되던 문제.
+_TITLE_BADGE_TAIL_RE = re.compile(
+    r"(?:\s+(?:file|new|hot|첨부파일|파일있음|새로운게시글|새글|인기글))+\s*$",
+    re.IGNORECASE,
+)
+
+
+def strip_title_badges(title: str) -> str:
+    """목록 앵커에 딸려온 아이콘 텍스트(file·새로운게시글 등)를 제목 끝에서 제거."""
+    t = re.sub(r"^\s*이미지\s*없음\s+", "", str(title or ""))
+    return _TITLE_BADGE_TAIL_RE.sub("", t).strip()
+
 def is_imminent(deadline: str) -> bool:
     """마감 문자열에 오늘~+7일 이내 날짜가 하나라도 있으면 임박(True).
 
@@ -749,8 +776,15 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
         (r"'?(\d{2})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 2000),
         (r"(?<![\d.])(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)(?![%％배억만천원조점])", None),
     ]
+    # 앞선(연도 포함) 패턴이 이미 차지한 원문 구간. 연도 생략 'M.D' 패턴이
+    # '2025. 7. 22.' 의 꼬리(' 7. 22')를 재매칭해 실행연도(예: 2026)로 오인하면,
+    # 작년 마감 공고의 마감일이 미래로 계산돼 '모집중'으로 오판된다(실사고 2026-07-24).
+    claimed_spans: list[tuple[int, int]] = []
     for pattern, year_mode in patterns:
+        pattern_spans: list[tuple[int, int]] = []
         for m in re.finditer(pattern, text):
+            if any(s < m.end() and m.start() < e for s, e in claimed_spans):
+                continue
             if year_mode is None:
                 year, month, day = base_year, int(m.group(1)), int(m.group(2))
             elif year_mode == 2000:
@@ -760,6 +794,8 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
             parsed = _valid_date(year, month, day)
             if parsed:
                 candidates.append((m.start(), parsed))
+                pattern_spans.append((m.start(), m.end()))
+        claimed_spans.extend(pattern_spans)
     deduped: dict[Any, tuple[int, Any]] = {}
     for pos, parsed in candidates:
         deduped.setdefault(parsed, (pos, parsed))
@@ -1029,10 +1065,22 @@ def _hangul_len(text: str) -> int:
     return sum(1 for ch in text if "가" <= ch <= "힣")
 
 
+def _nonlink_hangul_len(el: Any) -> int:
+    """블록의 한글 수에서 링크(<a>) 안 한글 수를 뺀 값 — 본문다움 지표.
+    nav/footer/사이트맵 블록은 텍스트가 거의 전부 링크라 이 값이 0에 가깝다."""
+    total = _hangul_len(el.get_text())
+    linked = sum(_hangul_len(a.get_text()) for a in el.find_all("a"))
+    return total - linked
+
+
 def _extract_main_content(soup: BeautifulSoup) -> str:
     """정부/기관 게시판 상세에서 본문 텍스트를 범용 추출.
-    ① 흔한 본문 컨테이너 후보 → ② 한글 텍스트가 가장 많은 블록 폴백.
-    (호스트별 파서가 없는 144개 리스트-온리 소스를 위한 범용 경로)"""
+    ① 흔한 본문 컨테이너 후보 → ② '링크 아닌 한글'이 가장 많은 블록 폴백.
+    (호스트별 파서가 없는 144개 리스트-온리 소스를 위한 범용 경로)
+
+    본문다움은 링크 밖 한글 수로 잰다. 전체 한글 수 기준이던 시절에는 메뉴·푸터
+    링크 덩어리(수백 개 기관 링크)가 '가장 한글 많은 블록'으로 뽑혀, 지원내용이
+    사이트 내비게이션 전문으로 채워진 메일이 나가던 실사고(2026-07-24)가 있었다."""
     for tag in soup.select(
         "script, style, nav, header, footer, aside, .lnb, .gnb, .snb, "
         ".paging, .btn_area, .search, .skip, .top_menu, .footer, .header"
@@ -1041,19 +1089,29 @@ def _extract_main_content(soup: BeautifulSoup) -> str:
             tag.decompose()
         except Exception:
             pass
-    node = soup.select_one(GENERIC_CONTENT_SELECTORS)
-    if node:
-        txt = node.get_text("\n", strip=True)
-        if _hangul_len(txt) >= 30:
-            return txt
-    # 폴백: 한글 텍스트가 가장 많은 블록(너무 큰 래퍼는 제외)
-    best, best_len = "", 0
+    # 순수 링크 목록(ul/ol 의 한글이 사실상 전부 <a> 안) = 메뉴·패밀리사이트·푸터 링크.
+    # 클래스명이 제각각인 사이트(nav 클래스 없음)에서도 내비게이션을 범용 제거한다.
+    for lst in soup.find_all(("ul", "ol")):
+        try:
+            total = _hangul_len(lst.get_text())
+            if (len(lst.find_all("li")) >= 5 and total >= 10
+                    and _nonlink_hangul_len(lst) <= total * 0.1):
+                lst.decompose()
+        except Exception:
+            pass
+    for node in soup.select(GENERIC_CONTENT_SELECTORS):
+        if _nonlink_hangul_len(node) >= 30:
+            return node.get_text("\n", strip=True)
+    # 폴백: 링크 아닌 한글이 가장 많은 블록(너무 큰 래퍼는 제외).
+    # 동점(>=)은 나중(더 깊은) 블록이 이긴다 — find_all 은 부모가 먼저 오므로,
+    # '메뉴(전부 링크)+본문'을 함께 감싼 래퍼 대신 본문만 담은 안쪽 블록이 선택된다.
+    best, best_score = None, 0
     for el in soup.find_all(("div", "td", "section", "article")):
         txt = el.get_text("\n", strip=True)
-        hl = _hangul_len(txt)
-        if hl > best_len and len(txt) < 20000:
-            best, best_len = txt, hl
-    return best if best_len >= 30 else ""
+        score = _nonlink_hangul_len(el)
+        if score >= max(best_score, 1) and len(txt) < 20000:
+            best, best_score = el, score
+    return best.get_text("\n", strip=True) if best is not None and best_score >= 30 else ""
 
 
 def _should_generic_enrich(item: dict, link: str) -> bool:
@@ -1884,6 +1942,10 @@ def fetch_myfair_legacy(site: dict) -> list[dict]:
     return fetch_myfair(site)
 
 
+# K-Startup 목록 카드의 값 라벨 span 접두어 — 이 앞까지가 (분류·)주관기관 영역이다.
+_KSTARTUP_SPAN_LABEL_PREFIXES = ("등록일자", "시작일자", "마감일자", "조회", "접수기간", "신청기간", "D-")
+
+
 def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_sn: set[str]) -> list[dict]:
     """K-Startup 목록 카드 파싱 — fetch_kstartup·다운로더 공통."""
     items: list[dict] = []
@@ -1891,7 +1953,7 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
     base_url = site["url"]
     for card in soup.select(".notice"):
         a = card.select_one("a")
-        title = norm(a.get_text() if a else "")
+        title = strip_title_badges(norm(a.get_text() if a else ""))
         if not title:
             continue
         sn = ""
@@ -1910,7 +1972,17 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
             seen_sn.add(sn)
         link = (f"{base_url}?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else base_url
         spans = card.select("span.list")
-        org = norm(spans[0].get_text()) if spans else ""
+        span_texts = [norm(sp.get_text()) for sp in spans]
+        # 주관기관 = 날짜/조회 라벨 span 직전의 마지막 텍스트 span.
+        # 카드에 따라 span.list[0] 이 사업분류('메이커 스페이스')나 제목 복제인 경우가
+        # 있어(실측 2026-07-24), '첫 span=기관' 가정은 지원기관 오표기를 만들었다.
+        org_cands: list[str] = []
+        for st in span_texts:
+            if any(st.startswith(p) for p in _KSTARTUP_SPAN_LABEL_PREFIXES):
+                break
+            if st and st != title:
+                org_cands.append(st)
+        org = org_cands[-1] if org_cands else (span_texts[0] if span_texts else "")
         dl = next((norm(sp.get_text().replace("마감일자", ""))
                    for sp in spans if "마감일자" in sp.get_text()), "")
         pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
@@ -2003,6 +2075,7 @@ def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[
         title = norm(a.get_text() if a else row.get_text())
         if title_selector:
             title = select_text(row, title_selector) or title
+        title = strip_title_badges(title)
         if not title: continue
         href = a.get("href", "") if a else ""
         # 상대경로·중복링크 판정은 '지금 읽고 있는 페이지' 기준이어야 2페이지 이후도 정확하다.
@@ -2957,34 +3030,40 @@ def fetch_bizok(site: dict) -> list[dict]:
 
 
 def fetch_incheon_city(site: dict) -> list[dict]:
-    """인천광역시청 공고/고시: table 없이 a[href*='/view?repSeq='] 링크 목록."""
-    BASE = "https://www.incheon.go.kr"
+    """인천광역시 고시/공고(announce.incheon.go.kr citynet) 목록 수집.
+
+    tr[onclick="viewData('sno','gbn')"] 행 = [번호, 제목, 부서, 게시일, 조회].
+    ※기존에 긁던 www.incheon.go.kr/IC010205 는 2026-07 현재 '보도자료' 게시판이라
+    음악축제 보도자료가 'AI' 키워드로 그룹 digest 에 오르던 오탐원이었다(실사고 2026-07-24).
+    상세 URL 은 목록 페이지의 viewData() 스크립트가 조립하는 주소를 그대로 재현한다."""
     soup = _soup(site["url"])
     if not soup:
         return []
     items, agg = [], site.get("is_aggregator", False)
     seen: set[str] = set()
-    for a in soup.find_all("a", href=re.compile(r"/IC010205/view\?repSeq=")):
-        href = a.get("href", "")
-        m = re.search(r"repSeq=([^&]+)", href)
+    for tr in soup.select("tr[onclick]"):
+        m = re.search(r"viewData\('([^']+)'\s*,\s*'([^']*)'\)", tr.get("onclick", ""))
         if not m:
             continue
-        rep_seq = m.group(1)
-        if rep_seq in seen:
+        sno, gbn = m.group(1), m.group(2)
+        if sno in seen:
             continue
-        seen.add(rep_seq)
-        title = norm(a.get_text())
+        seen.add(sno)
+        tds = tr.find_all("td")
+        if len(tds) < 4:
+            continue
+        title = strip_title_badges(norm(tds[1].get_text()))
         if not title or len(title) < 4:
             continue
-        link = href if href.startswith("http") else urljoin(BASE, href)
-        parent = a.find_parent(["li", "tr", "div"])
-        row_text = parent.get_text(" ", strip=True) if parent else ""
-        dates = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
-        posted = dates[0].replace(".", "-").replace("/", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
+        author = norm(tds[2].get_text()) or "인천광역시"
+        posted = extract_date_from_text(tds[3].get_text())
+        link = (
+            "http://announce.incheon.go.kr/citynet/jsp/sap/SAPGosiBizProcess.do"
+            f"?command=searchDetail&flag=gosiGL&svp=Y&sido=ic&sno={sno}&gosiGbn={gbn}"
+        )
         items.append(_item(
-            f"incheon_city_{rep_seq}", title, link, "인천광역시",
-            "", deadline, site["name"], posted, agg,
+            f"incheon_city_{sno}", title, link, author,
+            "", "", site["name"], posted, agg,
         ))
     log.info("%s: %d건", site["name"], len(items))
     return items
@@ -4382,6 +4461,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
+    # [제목 앵커] 위원(개인 전문가) 위촉·모집 공고 — 기업 대상 지원사업이 아니므로 제외.
+    committee_hit = _COMMITTEE_TITLE_RE.search(norm(item.get("title", "")))
+    if committee_hit:
+        reason_codes.append("COMMITTEE_RECRUITMENT")
+        excluded_keywords.append(committee_hit.group(0))
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
@@ -4524,7 +4611,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     detail_failure_blockers = {
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
-        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
+        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
     }
     detail_failure_review = (
         detail_failure
@@ -5361,10 +5448,15 @@ def _norm_url(u: str) -> str:
 
 def is_watchlisted(item: dict, watchlist: dict) -> bool:
     """공고가 워치리스트(키워드/제목 또는 URL)에 걸리는지. 걸리면 강제포함·강조 대상.
-    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text)."""
+    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text).
+
+    키워드는 '제목·주관기관'만 본다(워치리스트 설명 문구의 '키워드/제목' 그대로).
+    상세 보강된 본문(description)은 보지 않는다 — 6KB 본문·nav 잔여물에는 '지식재산'
+    같은 단어가 우연히 들어가('한국지식재산보호원' 등), 1년 지난 마감 공고까지
+    날짜필터를 우회해 그룹 digest 상단에 오르던 실사고(2026-07-24)의 원인이었다."""
     kws = watchlist.get("keywords") or []
     if kws:
-        text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+        text = f"{item.get('title','')} {item.get('author','')}".lower()
         if any(_kw_in_text(text, k.lower()) for k in kws):
             return True
     nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
