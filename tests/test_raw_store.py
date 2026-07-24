@@ -41,17 +41,32 @@ def test_save_meta_and_detail(tmp_path):
         "reason": "detail_parsed",
         "fields": {"region": {"status": "SUCCESS", "source": "detail", "evidence": "인천"}},
     }
+    detail_tables = {
+        "truncated": False,
+        "tables": [{
+            "caption": "지원 내용",
+            "truncated": False,
+            "rows": [[{
+                "text": "지원대상",
+                "header": True,
+                "rowspan": 1,
+                "colspan": 1,
+            }]],
+        }],
+    }
     store.update_meta_after_enrich({
         **item,
         "detail_enriched": True,
         "region_field": "인천",
         "detail_extraction": extraction,
+        "detail_tables": detail_tables,
     })
 
     meta = RawStore.load_meta("test_notice_1", root=tmp_path, run_day=date(2026, 6, 24))
     assert meta["title"] == "테스트 공고"
     assert meta["region_field"] == "인천"
     assert meta["detail_extraction"] == extraction
+    assert meta["detail_tables"] == detail_tables
     html = RawStore.load_detail_html("test_notice_1", root=tmp_path, run_day=date(2026, 6, 24))
     assert "본문" in (html or "")
 
