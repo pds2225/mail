@@ -177,3 +177,9 @@ def test_p2_korean_keyword_substring_still_matches_compound():
     grp = _group(or_keywords=["화장품"], priority_keywords=[], required_conditions={})
     s = scoring.compute_score(_item("화장품산업 활성화 공고"), grp)
     assert s["breakdown"]["or_hits"] == 1
+
+
+def test_and_keyword_groups_count_as_or_hits():
+    grp = _group(or_keywords=[], and_keyword_groups=[["AI", "창업"]], priority_keywords=[])
+    s = scoring.compute_score(_item("서울 AI 창업 지원사업 모집"), grp)
+    assert s["breakdown"]["or_hits"] == 1

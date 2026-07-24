@@ -84,6 +84,11 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
 
     priority_hits = _count_hits(text, group.get("priority_keywords") or [])
     or_hits = _count_hits(text, group.get("or_keywords") or [])
+    and_hits = sum(
+        1 for ag in (group.get("and_keyword_groups") or [])
+        if ag and all(_kw_hit(text, k) for k in ag)
+    )
+    or_hits += and_hits
     exclude_hits = _count_hits(text, group.get("exclude_keywords") or [])
 
     # or-키워드 군집 보너스: priority 가 없어도 관련 키워드가 다수면 적합 신호 (recall)

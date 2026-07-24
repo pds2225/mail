@@ -415,7 +415,8 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    "회원 모집", "모니터링단", "평가위원", "심사위원", "기획위원", "멘토 모집", "운영위원", "강사 모집",
+    "사칭", "사기피해", "허위구매", "음악축제", "보도자료",
 ]
 
 
@@ -4382,6 +4383,12 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
+    if is_report_junk(item):
+        reason_codes.append("NOT_GRANT_NOTICE")
+        excluded_keywords.append("report_junk_title")
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
@@ -4642,6 +4649,24 @@ def filter_for_group_with_diagnostics(items: list[dict], group: dict, today=None
     review.sort(key=_notice_sort_key)
     region_unknown.sort(key=_notice_sort_key)
     excluded.sort(key=lambda it: (",".join(it.get("exclude_reason_codes", [])), it.get("title", "")))
+
+    if group.get("score_threshold") is not None:
+        try:
+            from scoring import score_and_filter as _score_and_filter
+            scored = _score_and_filter(included, group)
+            passed_ids = {id(it) for it in scored["passed"]}
+            for it in included:
+                if id(it) not in passed_ids:
+                    excluded.append({
+                        **it,
+                        "exclude_reason_codes": _unique(
+                            (it.get("exclude_reason_codes") or []) + ["LOW_SCORE"]
+                        ),
+                    })
+            included = scored["passed"]
+        except Exception as exc:  # noqa: BLE001
+            log.warning("score_and_filter skipped for group '%s': %s", group.get("name"), exc)
+
     return {"included": included, "review": review, "region_unknown": region_unknown, "excluded": excluded}
 
 
