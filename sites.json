@@ -698,13 +698,13 @@
     "id": "incheon_city",
     "name": "인천광역시청 - 공고/고시",
     "type": "incheon_city_html",
-    "url": "https://www.incheon.go.kr/IC010205",
+    "url": "http://announce.incheon.go.kr/citynet/jsp/sap/SAPGosiBizProcess.do?command=searchList&flag=gosiGL&svp=Y&sido=ic",
     "enabled": true,
     "is_aggregator": false,
     "selectors": {
       "row": "table tbody tr"
     },
-    "note": "인천시 공식 공고 페이지 [PC 실행 시 정상 접속]"
+    "note": "인천시 고시/공고 조회 시스템 (기존 IC010205 는 보도자료 게시판이라 교체, 2026-07-24)"
   },
   {
     "id": "itp_notice",
