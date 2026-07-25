@@ -1,0 +1,63 @@
+name: Apply Notice Recovery
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-push:
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'fix/notice-recheck-version-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/notice-recheck-version-recovery
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Apply notice recovery patch
+        run: python .github/scripts/patch_notice_recovery.py
+
+      - name: Static checks
+        run: |
+          python -m compileall .
+          git diff --check
+
+      - name: Targeted regression tests
+        run: |
+          python -m pytest -q tests/test_notice_version_recovery.py tests/test_monitor_ops.py
+          python scripts/recall_zero_gate.py
+          python scripts/core_sources_checklist.py
+
+      - name: Full test suite
+        run: python -m pytest -q
+
+      - name: Commit clean implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/apply-notice-recovery.yml
+          rm -f .github/scripts/patch_notice_recovery.py
+          rmdir .github/scripts 2>/dev/null || true
+          git add monitor.py config/settings.json var/state/notice_versions.json \
+            scripts/merge_notice_versions.py tests/test_notice_version_recovery.py \
+            .github/workflows/monitor.yml
+          git commit -m "fix: 최근 3영업일 재조회와 공고 버전 복구"
+          git push origin HEAD:fix/notice-recheck-version-recovery
