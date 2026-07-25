@@ -12,5 +12,6 @@
   "raw_store_retention_days": 30,
   "raw_store_max_detail_bytes": 800000,
   "raw_store_gzip_detail": true,
-  "tenant_id": "default"
+  "tenant_id": "default",
+  "region_unknown_mail_limit": 10
 }

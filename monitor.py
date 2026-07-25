@@ -4843,8 +4843,7 @@ def mail_topic(items: list[dict]) -> str:
 
 
 def _plain_text(s: str, limit: int = 1500) -> str:
-    """HTML 태그·엔티티 제거 → 사용자용 평문(메일 본문에 코드/태그 노출 방지). 길면 자른다.
-    한도(limit)는 지원내용 본문이 조기에 잘리지 않도록 넉넉히 둔다."""
+    """HTML 태그·엔티티 제거 → 사용자용 평문. 길면 자른다."""
     if not s:
         return ""
     if "<" in s:
@@ -4854,53 +4853,115 @@ def _plain_text(s: str, limit: int = 1500) -> str:
     return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
+MAIL_SUPPORT_BLURB_LIMIT = 480
+REGION_UNKNOWN_MAIL_LIMIT = 10
+
+_MAIL_FOOTER_MARKERS = (
+    "개인정보처리방침", "영상정보처리기기", "이메일무단수집거부", "Copyright",
+    "이 페이지에서 제공하는 정보", "패밀리 사이트", "목록으로 바로가기",
+)
+_MAIL_NAV_TOKENS = (
+    "메인", "회원가입", "로그인", "고객센터", "재단소개", "인사말", "연 혁", "조직도",
+    "업무안내", "알림마당", "공지사항", "채용정보", "자료실", "홍보마당", "정보공개",
+)
+
+
+def _mail_clean_text(value: object, *, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """메일 표시용 텍스트 정제: HTML·Markdown·연락처·메뉴/푸터·긴 URL 제거."""
+    raw = str(value or "")
+    raw = re.sub(r"!\[[^\]]*\]\([^)]+\)", " ", raw)
+    raw = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", raw)
+    text = _plain_text(raw, limit=6000)
+    text = re.sub(r"https?://\S+", " ", text)
+    text = re.sub(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", " ", text)
+    text = re.sub(r"(?:\+?82[-. ]?)?0\d{1,2}[-. )]\d{3,4}[-. ]\d{4}", " ", text)
+    text = re.sub(r"(?:담당자|연락처|전화|이메일|팩스|fax|tel)\s*[:：]?\s*[^|·•]{0,45}", " ", text, flags=re.I)
+    for marker in _MAIL_FOOTER_MARKERS:
+        pos = text.find(marker)
+        if pos >= 80:
+            text = text[:pos]
+    nav_hits = sum(1 for token in _MAIL_NAV_TOKENS if token in text[:500])
+    if nav_hits >= 5:
+        anchors = [text.find(token) for token in ("지원대상", "사업내용", "지원내용", "모집개요", "신청자격", "☞")]
+        anchors = [pos for pos in anchors if pos >= 0]
+        if anchors:
+            text = text[min(anchors):]
+    text = re.sub(r"\s+", " ", text).strip(" -·•|/")
+    return (text[:limit].rstrip() + " …") if len(text) > limit else text
+
+
+def _mail_target_text(item: dict) -> str:
+    for key in ("target_field", "target_age_field", "business_age_text"):
+        value = _mail_clean_text(item.get(key), limit=180)
+        if value:
+            return value
+    return "공고문 확인"
+
+
+def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """구조화 지원내용을 우선하고, 없으면 상세본문을 모바일 길이로 정제한다."""
+    structured = _mail_clean_text(item.get("support_field"), limit=limit)
+    description = _mail_clean_text(item.get("description"), limit=limit)
+    candidate = structured if len(structured) >= 25 else description or structured
+    title = _mail_clean_text(item.get("title"), limit=200)
+    if title and candidate.startswith(title):
+        candidate = candidate[len(title):].lstrip(" :-·•")
+    return candidate or "상세 공고문 확인"
+
+
+def _mail_fit_reason(item: dict) -> str:
+    for key in ("fit_reason", "match_reason", "company_match_reason"):
+        value = _mail_clean_text(item.get(key), limit=160)
+        if value:
+            return value
+    types = [str(v) for v in (item.get("_types") or []) if str(v).strip()]
+    region = _region_label(item)
+    parts = []
+    if item.get("priority_keyword"):
+        parts.append("우선 검토 대상")
+    if types:
+        parts.append("·".join(types[:2]))
+    if region != "확인 필요" and not region.endswith("전체"):
+        parts.append(region)
+    return " / ".join(parts) or "그룹 조건과 일치"
+
+
 def fallback_body(items: list[dict]) -> str:
-    # 표시 정책: 사용자에게 필요한 정보만. HTML/내부코드·매칭키워드·스마트공장 등은 숨김.
+    """모바일 메일용 8줄 카드. 내부판정값·원문전체·연락처는 표시하지 않는다."""
     lines: list[str] = []
     items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
     if imminent:
-        lines += ["⚠️ 마감 임박 (7일 이내)"]
-        for it in imminent:
-            lines.append(f"- {it['title']} | 마감: {it['deadline']}")
+        lines.append("⚠️ 7일 이내 마감: " + ", ".join(
+            _mail_clean_text(it.get("title"), limit=45) for it in imminent[:5]
+        ))
         lines.append("")
     sections = [
-        ("1. 우선 추천 공고", [it for it in items if it.get("priority_keyword")]),
-        ("2. 일반 추천 공고", [it for it in items if not it.get("priority_keyword")]),
+        ("1. 우선 추천", [it for it in items if it.get("priority_keyword")]),
+        ("2. 일반 추천", [it for it in items if not it.get("priority_keyword")]),
     ]
     for section_title, section_items in sections:
         if not section_items:
             continue
         lines.append(section_title)
         for it in section_items:
-            desc = _plain_text(it.get("description", ""))
-            block = [
-                "━━━━━━━━━━━━━━━━━━",
-                f"📌 {it.get('title') or '(제목없음)'}",
-                f"• 지원기관: {it.get('author') or '미기재'}",
-                f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
-            ]
-            if desc:
-                block.append(f"• 지원내용: {desc}")
-            block.append(f"• 신청마감: {resolve_item_deadline(it) or '미기재'}")
-            region_label = _region_label(it)
-            if not region_label.endswith("전체"):     # 비제약('…전체')은 생략, 제약/확인필요만 표시
-                block.append(f"• 지역: {region_label}")
-            if it.get("factory_required") is True:
-                block.append("• 공장보유 필요")
-            notes = [n for n in (it.get("notes") or []) if n]
-            if notes:
-                block.append(f"• 확인: {' / '.join(notes)}")
-            block += [
-                f"• 등록일: {it.get('posted_date') or '날짜불명'}",
-                f"• 출처: {it.get('source') or '미기재'}",
-                f"• 🔗 {it.get('link') or '미기재'}",
-                "━━━━━━━━━━━━━━━━━━",
-            ]
-            lines += block
+            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
+            author = _mail_clean_text(it.get("author") or "미기재", limit=80)
+            types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
+            region = _region_label(it)
+            display_region = "제한 없음" if region.endswith("전체") else region
+            lines.extend([
+                "──────────────────",
+                f"📌 {title}",
+                f"• 기관: {author} | 유형: {types}",
+                f"• 대상: {_mail_target_text(it)}",
+                f"• 지원내용: {_mail_support_blurb(it)}",
+                f"• 마감: {resolve_item_deadline(it) or '미기재'} | 지역: {display_region}",
+                f"• 적합사유: {_mail_fit_reason(it)}",
+                f"• 원문: {it.get('link') or '미기재'}",
+            ])
         lines.append("")
     return "\n".join(lines).strip()
-
 
 def _region_label(item: dict) -> str:
     district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
@@ -4960,28 +5021,61 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
     return "\n".join(lines)
 
 
-def render_region_unknown(items: list[dict], limit: int = 30) -> str:
-    """지역 단서가 없어 자동분류 못 한 공고를 보고 메일 하단에 '확인 필요'로 첨부(누락 방지)."""
+def select_region_unknown_for_mail(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LIMIT) -> list[dict]:
+    """지원사업성이 확인된 지역미상만 우선순위순으로 최대 limit건 표시한다."""
+    clean = [it for it in items if not is_admin_noise(it) and not is_report_junk(it)]
+    clean = sorted(clean, key=lambda it: (
+        0 if it.get("priority_keyword") else 1,
+        _notice_sort_key(it),
+    ))
+    return clean[:max(0, int(limit))]
+
+
+def write_region_unknown_report(items: list[dict], group_name: str, *, run_at: datetime | None = None) -> Path | None:
+    """메일에서 생략된 지역미상 전체 목록을 관리자 로그로 저장한다."""
     if not items:
+        return None
+    run_at = run_at or datetime.now(KST)
+    slug = re.sub(r"[^0-9A-Za-z가-힣_-]+", "_", str(group_name or "group")).strip("_")[:50] or "group"
+    path = LOGS_DIR / f"region_unknown_{run_at:%Y%m%d}_{slug}.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"# 지역 미상 관리자 리포트 — {group_name}", "",
+        f"- 생성: {run_at.strftime('%Y-%m-%d %H:%M KST')}",
+        f"- 전체: {len(items)}건", "",
+    ]
+    for it in items:
+        lines.append(
+            f"- {it.get('title') or '(제목없음)'} | {it.get('author') or '미기재'} | "
+            f"마감 {resolve_item_deadline(it) or '미기재'} | {it.get('link') or ''}"
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LIMIT, *, total_count: int | None = None) -> str:
+    """메일에는 최대 10건만 표시하고 나머지는 관리자 리포트로 분리한다."""
+    if not items:
+        return ""
+    shown = select_region_unknown_for_mail(items, limit=limit)
+    total = len(items) if total_count is None else int(total_count)
+    if not shown:
         return ""
     lines = [
         "\n\n────────────────────────────────",
-        f"📍 지역 미상 — 확인 필요 ({len(items)}건)",
-        "  (지역 단서가 없어 우리 지역인지 자동 판단 못 함 — 놓치지 않도록 함께 첨부)",
+        f"📍 지역 미상 — 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
     ]
-    for it in items[:limit]:
-        lines.append(f"\n▸ {it.get('title') or '(제목없음)'}")
+    for it in shown:
+        lines.append(f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}")
         lines.append(
-            f"  기관: {it.get('author') or '미기재'}"
+            f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
             f" | 마감: {resolve_item_deadline(it) or '미기재'}"
-            f" | 등록: {it.get('posted_date') or '날짜불명'}"
         )
         if it.get("link"):
-            lines.append(f"  🔗 {it['link']}")
-    if len(items) > limit:
-        lines.append(f"\n외 {len(items) - limit}건")
+            lines.append(f"  원문: {it['link']}")
+    if total > len(shown):
+        lines.append(f"\n나머지 {total - len(shown)}건은 관리자 지역미상 리포트에 저장했습니다.")
     return "\n".join(lines)
-
 
 def claude_summarize(items: list[dict], group: dict) -> str:
     """Render the digest from collected fields only.
@@ -5730,6 +5824,10 @@ def execute_monitor(
         g_items = diagnostics["included"]
         review_items = diagnostics["review"]
         ru_items = diagnostics["region_unknown"]
+        ru_limit = int(settings.get("region_unknown_mail_limit", REGION_UNKNOWN_MAIL_LIMIT))
+        ru_mail_items = select_region_unknown_for_mail(ru_items, limit=ru_limit)
+        if ru_items:
+            write_region_unknown_report(ru_items, str(group.get("name") or "group"), run_at=now)
         excluded_items = diagnostics["excluded"]
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
@@ -5742,14 +5840,16 @@ def execute_monitor(
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
                 "matched_items": len(g_items),
                 "review_items": len(review_items),
-                "region_unknown_items": len(ru_items),
+                "region_unknown_items": len(ru_mail_items),
+            "region_unknown_total_items": len(ru_items),
+                "region_unknown_mail_items": len(ru_mail_items),
                 "excluded_items": len(excluded_items),
                 "sample_titles": [it.get("title") for it in g_items[:5]],
                 "review_titles": [it.get("title") for it in review_items[:5]],
                 "region_unknown_titles": [it.get("title") for it in ru_items[:5]],
                 "excluded_summary": render_excluded_summary(excluded_items),
             })
-        if not g_items and not ru_items:
+        if not g_items and not ru_mail_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
         sent_groups.append({
@@ -5795,10 +5895,14 @@ def execute_monitor(
                 f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
             )
             # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
-            region_unknown_block = render_region_unknown(ru_items)
+            region_unknown_block = render_region_unknown(
+                ru_mail_items, limit=ru_limit, total_count=len(ru_items),
+            )
             # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
             feedback_block = _render_feedback_block(g_items)
-            subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
+            subj_count = f"{len(g_items)}건" + (
+                f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""
+            )
             # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
             _gid = str(group.get("id") or group.get("name") or "grp")
             _recips = guard_group_recipients(
