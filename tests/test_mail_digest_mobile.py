@@ -36,7 +36,7 @@ def _item(idx=1, **extra):
 
 def test_mail_support_blurb_strips_noise_and_caps_length():
     text = m._mail_support_blurb(_item())
-    assert len(text) <= 482
+    assert len(text) <= 162
     assert "회원가입" not in text and "개인정보처리방침" not in text
     assert "test@example.com" not in text and "02-1234-5678" not in text
     assert "[신청](" not in text and "사업화 자금" in text
@@ -76,3 +76,18 @@ def test_mime_plain_and_html_render_same_clean_content():
     assert "사업화 자금" in plain and "사업화 자금" in html_part
     assert "&amp;amp;" not in html_part and '<a href="https://example.com/1">' in html_part
     assert "test@example.com" not in plain and "개인정보처리방침" not in html_part
+
+
+def test_mail_support_blurb_long_text_stays_within_one_mobile_screen():
+    item = _item(
+        support_field=(
+            "사업화 자금, 시제품 제작, 전문가 컨설팅, 국내외 판로개척, "
+            "홍보물 제작, 인증 취득, 시험분석 및 후속 투자연계를 지원합니다. " * 12
+        )
+    )
+    text = m._mail_support_blurb(item)
+    assert len(text) <= 162
+    assert text.endswith(" …")
+    body = m.fallback_body([item])
+    support_line = next(line for line in body.splitlines() if line.startswith("• 지원내용:"))
+    assert len(support_line.removeprefix("• 지원내용: ")) <= 162
