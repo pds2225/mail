@@ -16,10 +16,15 @@ text = text.replace(
     'assert "📌 2026년 AI 사업화 지원 & 참여기업 모집 새로운게시글" in body',
     'assert "📌 2026년 AI 사업화 지원 & 참여기업 모집" in body',
 )
+text = text.replace(
+    'f"📍 지역 확인 필요 — 메일 표시 {len(shown)}건 / 전체 {total}건",',
+    'f"📍 지역 미상 — 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",',
+)
 
 required = [
     'display_region = "제한 없음" if region.endswith("전체") else region',
     'title = strip_title_badges(',
+    '지역 미상 — 확인 필요',
 ]
 missing = [marker for marker in required if marker not in text]
 if missing:
