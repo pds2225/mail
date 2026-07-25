@@ -4853,7 +4853,7 @@ def _plain_text(s: str, limit: int = 1500) -> str:
     return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
-MAIL_SUPPORT_BLURB_LIMIT = 480
+MAIL_SUPPORT_BLURB_LIMIT = 160
 REGION_UNKNOWN_MAIL_LIMIT = 10
 
 _MAIL_FOOTER_MARKERS = (
@@ -4899,7 +4899,7 @@ def _mail_target_text(item: dict) -> str:
 
 
 def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
-    """구조화 지원내용을 우선하고, 없으면 상세본문을 모바일 길이로 정제한다."""
+    """구조화 지원내용을 우선하고, 모바일 한 화면 기준 160자로 제한한다."""
     structured = _mail_clean_text(item.get("support_field"), limit=limit)
     description = _mail_clean_text(item.get("description"), limit=limit)
     candidate = structured if len(structured) >= 25 else description or structured
