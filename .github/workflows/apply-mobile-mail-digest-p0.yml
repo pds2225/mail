@@ -48,7 +48,8 @@ jobs:
           }
 
           status=0
-          run_cmd python .github/scripts/patch_mail_digest_mobile.py || status=$?
+          run_cmd python .github/scripts/adjust_mobile_patch.py || status=$?
+          if [ "$status" -eq 0 ]; then run_cmd python .github/scripts/patch_mail_digest_mobile.py || status=$?; fi
           if [ "$status" -eq 0 ]; then run_cmd python -m compileall . || status=$?; fi
           if [ "$status" -eq 0 ]; then run_cmd git diff --check || status=$?; fi
           if [ "$status" -eq 0 ]; then
@@ -71,6 +72,7 @@ jobs:
           if [ "${{ steps.verify.outputs.status }}" = "0" ]; then
             rm -f .github/workflows/apply-mobile-mail-digest-p0.yml
             rm -f .github/scripts/patch_mail_digest_mobile.py
+            rm -f .github/scripts/adjust_mobile_patch.py
             rm -f var/logs/mobile_mail_patch_run.log
             rmdir .github/scripts 2>/dev/null || true
             git add -A
