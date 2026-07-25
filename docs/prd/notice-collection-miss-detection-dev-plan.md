@@ -2,12 +2,12 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 ID | `PRD-NOTICE-MISS-DETECT-v3.2` |
+| 문서 ID | `PRD-NOTICE-MISS-DETECT-v3.3` |
 | 작성일 | 2026-07-25 |
-| 상태 | Draft (비개발자 설명 + 빈정보 3상태 해결·재발방지 계획) |
+| 상태 | Draft (v3.3: 발송배선·이중탐지·파일럿·롤아웃·인수데모 보완) |
 | 근거 | 누락 4단계 분석 + `coverage_alert`/`detail_extraction` As-Is + 개발안 검토 |
 | 범위 원칙 | **P0 = 수집·추출 탐지·최소 복구**. 판정·기업·Claude는 **P1** |
-| 읽는 법 | **운영·기획** → §0~§0-B · **빈정보/상세읽기** → §5 · **개발 전체** → §2~§4 |
+| 읽는 법 | **운영·기획** → §0~§0-B · **빈정보** → §5 · **운영배선 보완** → §11 · **개발** → §2~§4 |
 
 ---
 
@@ -709,6 +709,136 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 
 ---
 
+## 11. 추가 보완 (v3.3) — 문서만으로는 구현이 막히는 빈틈
+
+§0~§10으로 **무엇을/왜/어떤 순서**는 충분하다.  
+아래는 코드에 꽂을 때 막히던 **배선·운영·인수** 빈틈이다. P0-Done(W0~W2)에 필수인 것과 P0-B/후에 해도 되는 것을 가른다.
+
+### 11.1 반드시 P0-Done에 넣을 것 (없으면 “발송 매트릭스”가 문구만 됨)
+
+#### A. FAILED 발송 보류 — 호출 위치·범위
+
+| 결정 | 내용 |
+|------|------|
+| **현황** | `run_source_coverage_audit`는 탐지·알림만 하고 **발송을 막지 않음**. `execute_monitor`와 타이밍이 어긋날 수 있음 |
+| **결정** | `execute_monitor` 초반(또는 send 직전)에 `run_status`/`send_hold`를 읽고, `FAILED`면 `allow_send`를 강제로 False |
+| **보류 범위** | 그룹 메일·워치리스트·원문일괄 **실발송만** 보류. dry-run·coverage 리포트·raw 저장·seen_ids(설정 따름)는 계속 |
+| **플래그** | `result["send_hold"]=True`, `result["send_hold_reason"]="RUN_FAILED"` |
+| **킬스위치** | `MONITOR_ALLOW_SEND_ON_FAILED=1` → 보류 해제(비상). 기본은 보류 |
+| **테스트** | FAILED payload → `allow_send` 실효 False 단언 (SMTP mock 미호출) |
+
+#### B. DEGRADED “정상 소스만 발송” — 필터 훅
+
+| 결정 | 내용 |
+|------|------|
+| **훅** | enrich 이후·그룹 필터 이전: `items = drop_items_from_p0_sources(items, p0_site_ids)` |
+| **규칙** | `risk_level==P0`인 `site_id`/`source` 소속 공고만 발송 후보에서 제외. P1은 발송 유지+리포트 |
+| **재시도 성공** | 해당 site_id를 P0 집합에서 제거 후 후보 복귀 |
+| **금지** | DEGRADED인데 필터 없이 전체 발송(=SUCCESS와 동일) 상태를 Done으로 치지 않음 |
+| **테스트** | 동일 런에 site A=P0·B=SUCCESS 아이템 → B만 send 후보 |
+
+#### C. 이중 탐지 권한 (레거시 vs 게이트)
+
+| 경로 | 역할 (확정) |
+|------|-------------|
+| `classify_sources` / `summarize_run_status` | **유일한** 발송보류·P0 등급·`recheck_site_ids`·ledger 권한 |
+| `detect_coverage_anomalies` | **보조 알림 문구**만. hold/등급을 뒤집지 않음 |
+| `update_coverage_baseline` | **classify 기준** `baseline_eligible`(SUCCESS만)로 갱신. anomaly 경로가 eligible을 넓히지 않음 |
+
+W0 ADR에 “Canonical detector = classify_*” 한 줄 고정.
+
+#### D. v1 운영 표면 = MD/JSON Only
+
+| 결정 | 내용 |
+|------|------|
+| P0-Done | Streamlit UI **불필요**. `source_coverage_*.md` + `miss_manual_queue.json` + ack는 **CLI 또는 파일 편집** |
+| W5 | Streamlit ack는 **선택**. 없어도 P0-Done |
+| 런북 | “큐 파일 위치 → resolution 값 → 저장” 5줄 절차를 `MONITOR_ENGINEERING_RUNBOOK`에 추가 |
+
+#### E. 파일럿 사이트 (detector_sites.json 초안 명단)
+
+W1 인수에 **실명**이 필요하다.
+
+| site_id (예시) | 정책 | 이유 |
+|----------------|------|------|
+| `bizinfo` | `p0_if_baseline`, drop 엄격, min_baseline 높음 | 대형 매일 |
+| `kstartup` | 동상 | 핵심 소스 |
+| `nipa` | 동상 | 핵심 소스 |
+| 지역/월간 1~2개 (sites.json에서 weekly성) | `warning` 또는 `expected_frequency=weekly` | 오경보 억제 대조군 |
+| TLS 자주 깨지는 후보 1개 | `ignore_env_tls` 검토 | E17 |
+
+초안 파일에 위 키를 넣고, 나머지는 `defaults`만.
+
+#### F. 인수 데모 스크립트 (pytest 외 1개)
+
+| 항목 | 내용 |
+|------|------|
+| 스크립트 | `scripts/miss_detect_acceptance.py` (네트워크 0, fixture rows) |
+| 시나리오 | (1) SUCCESS (2) DEGRADED+P0필터 (3) FAILED+send_hold (4) queue enqueue |
+| 출력 | exit 0 + `var/reports/miss_detect_acceptance_*.md` |
+| Done | P0-Done 게이트에 **스크립트 green** 추가 |
+
+### 11.2 P0-B(§5)와 같이 맞출 것
+
+#### G. `date_unknown_policy=recall` × 3상태
+
+| 필드/상황 | 취급 |
+|-----------|------|
+| 게시일 `NOT_SPECIFIED` | 기존 recall/date_unknown 정책 유지 (버리지 않음) |
+| 게시일 `PARSE_FAILED` / `DETAIL_FETCH_FAILED` | **recall include + detail_failure_review**. “미기재”로 위장 금지 |
+| 지역 `NOT_SPECIFIED` | unknown 버킷 **제외**, 전국/미지정 경로 |
+| 지역 실패 2종 | review 강제; 기존 `region_unknown` surface에는 **실패만** 매핑 |
+
+§5 Done에 “recall 설정 켠 채 매트릭스 테스트 1건” 추가.
+
+#### H. 알림 채널·소유
+
+| 등급 | 채널 (초기) | 소유 |
+|------|-------------|------|
+| 소스 P0 / DEGRADED | 기존 `alert_email` → `GMAIL_ADDRESS` 1통으로 **합본** (레거시 anomaly와 중복 발송 금지) | 운영 담당 |
+| 런 FAILED | 동일 메일 + 제목 `[FAILED][send_hold]` 최상단 | 운영 담당, **당일 확인** |
+| ntfy 등 | 선택. 없으면 메만으로 P0-Done 가능 | — |
+
+#### I. 보관·PII·git
+
+| 산출물 | 보관 | git |
+|--------|------|-----|
+| `source_run_ledger.jsonl` | 30일 롤링 | **ignore** (일별 coverage md는 기존 정책) |
+| `miss_manual_queue.json` | ack 후 90일 또는 완료분 archive | ignore (시크릿·실주소 금지) |
+| 큐/레저 내용 | title·url 가능. **수신자 이메일·API키 금지** | — |
+
+### 11.3 롤아웃 순서 (운영)
+
+```text
+Day 0  W0~W1 머지: detector 설정 + classify 권한 고정 + ledger
+       send_hold는 shadow만 (로그에 찍고 발송은 막지 않음)  ← MONITOR_SEND_HOLD_SHADOW=1
+Day 3  오경보 확인 후 shadow 해제, FAILED 실보류 ON
+Day 5  W2 remediator + manual_queue MD 런북
+Day 7+ W3(§5) 3상태 surface·가드
+언제든 MONITOR_ALLOW_SEND_ON_FAILED=1 / MONITOR_SEND_HOLD_SHADOW=1 로 롤백
+```
+
+### 11.4 P0-Done 게이트 추가분 (v3.3)
+
+기존 §6 게이트에 더한다:
+
+8. Canonical detector = `classify_*` (anomaly가 hold를 뒤집지 않음) 테스트  
+9. DEGRADED 시 P0 소스 아이템 발송 후보 제외 테스트  
+10. FAILED 시 send_hold → SMTP 미호출 테스트  
+11. `scripts/miss_detect_acceptance.py` green  
+12. `detector_sites.json`에 파일럿 실명 ≥5  
+13. v1 운영 = MD/JSON (Streamlit 없이도 큐 ack 절차 문서화)
+
+### 11.5 아직 일부러 안 넣는 것 (과보완 방지)
+
+- Streamlit 큐 UI, notice_lifecycle 전체, confirmed_healthy/장기 30평균  
+- P1 판정·기업·Claude, region_unknown 심볼 삭제  
+- ntfy 필수화, DB 도입  
+
+→ **문서 관점의 다음 작업은 여기까지면 충분. 다음은 W0 코드 착수.**
+
+---
+
 ## 변경 이력
 
 | 버전 | 일자 | 내용 |
@@ -718,3 +848,4 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 | v3 | 2026-07-25 | 검토 반영(P0-Done=W0~W2, W4 후순위, FAILED 수치, region 매핑), **전체 아키텍처 + 단계별 함수/로직/정의값** |
 | v3.1 | 2026-07-25 | **§0-B 비개발자용 설명** (왜/네 구간/신호/0건/FAQ/용어) + 읽는 법 안내 |
 | v3.2 | 2026-07-25 | **§5 빈 정보 3상태 해결·재발방지 개발계획** (F01~F06, W3-a~e, 가드·골든·Done) |
+| v3.3 | 2026-07-25 | **§11 추가 보완** — send_hold 배선, DEGRADED 필터, 이중탐지 권한, 파일럿, MD-only, 인수스크립트, recall×3상태, 롤아웃, PII |
