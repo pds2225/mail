@@ -1,5 +1,6 @@
 """실발송 메일 모바일 본문·지역미상·MIME 회귀 테스트."""
 # 실제 SMTP 발송 없이 최종 plain/HTML MIME 결과를 고정한다.
+# 지원내용은 모바일 한 화면 기준(160자 + 말줄임표)으로 제한한다.
 import os
 from email import message_from_bytes
 from pathlib import Path
