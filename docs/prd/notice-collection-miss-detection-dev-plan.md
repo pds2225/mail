@@ -2,12 +2,12 @@
 
 | 항목 | 내용 |
 |------|------|
-| 문서 ID | `PRD-NOTICE-MISS-DETECT-v3.1` |
+| 문서 ID | `PRD-NOTICE-MISS-DETECT-v3.2` |
 | 작성일 | 2026-07-25 |
-| 상태 | Draft (문서 산출 + 검토 반영 + 비개발자 설명) |
+| 상태 | Draft (비개발자 설명 + 빈정보 3상태 해결·재발방지 계획) |
 | 근거 | 누락 4단계 분석 + `coverage_alert`/`detail_extraction` As-Is + 개발안 검토 |
 | 범위 원칙 | **P0 = 수집·추출 탐지·최소 복구**. 판정·기업·Claude는 **P1** |
-| 읽는 법 | **운영·기획** → §0~§0-B · **개발** → §2 이후 |
+| 읽는 법 | **운영·기획** → §0~§0-B · **빈정보/상세읽기** → §5 · **개발 전체** → §2~§4 |
 
 ---
 
@@ -97,6 +97,9 @@ P0 Done은 **W0+W1+W2**로 자르고, W3는 P0-B, W4~W5는 P0-C(관측/운영)�
 | 원문에 원래 없음 | 전국 대상·상시모집처럼 **안 적힌 것이 정상** | 정상으로 두고 진행 가능 |
 | 읽기 실패 | 원문에는 있을 수 있는데 **우리가 못 뽑음** | 재시도·검수 유지 (함부로 “해당 없음” 처리 금지) |
 | 상세 페이지 접속 실패 | 링크는 있는데 **페이지를 못 열음** | 재시도·확인 대기열 |
+
+→ **이 세 가지가 섞이면** “원래 없는 공고”와 “시스템이 못 읽은 공고”를 같은 취급하게 되어 누락·오판이 재발한다.  
+**해결·재발방지 개발계획 전문은 §5.**
 
 ### 개발을 나눠 하는 이유 (일정·기대 효과)
 
@@ -450,14 +453,151 @@ W0에서 계약 테스트로 고정: classify상 SUCCESS가 아니면 ledger의 
 
 ---
 
-## 5. 우선순위 · WBS (재분할)
+## 5. 빈 정보 3상태 해결·재발방지 개발계획 (P0-B / W3)
+
+> 대상 문제: 「원문에 원래 없음 / 읽기 실패 / 상세 접속 실패」가 한 가지 “없음·미상”으로 섞이는 것.  
+> 티어: **P0-B** (수집 P0-Done W0~W2 다음). W0~W2와 같은 PR에 묶지 않는다.
+
+### 5.1 문제 (현상 → 피해)
+
+| ID | 현상 | 피해 |
+|----|------|------|
+| F01 | 빈 필드를 전부 `region_unknown`·빈문자열로 취급 | 전국 공고를 “미상”으로 검수에 넣거나, 반대로 추출실패를 “해당없음”으로 통과 |
+| F02 | 접속실패와 파싱실패 구분 없이 동일 제외/포함 | 재시도·대기열 대상을 못 가림 → 누락 방치 |
+| F03 | 메일/대시보드 문구가 “지역 미상” 단일 | 운영자가 원인(원문 vs 시스템)을 모름 → 잘못된 수동 조치 |
+| F04 | 추출 실패율이 소스 이상탐지에 미연결 | 목록은 정상인데 상세만 깨진 사이트를 놓침 |
+| F05 | 필수필드 과다(금액·신청방법까지) | 정상 공고를 실패로 오인 → 오경보·과다 review |
+| F06 | 회귀 테스트가 enrich 단위에만 있고 surface/게이트 계약 약함 | 리팩터 시 다시 단일화(혼동) 재발 |
+
+### 5.2 목표 상태 (해결 정의)
+
+| 상태 코드 | 의미(고정) | 판정·메일 취급 | 복구 |
+|-----------|------------|----------------|------|
+| `NOT_SPECIFIED` | 원문에 해당 정보 없음 | **정상 진행 가능** (지역이면 전국/미지정 허용 정책) | 불필요 |
+| `PARSE_FAILED` | 페이지는 열렸으나 필드 추출 실패 | **자동 제외 금지**, review 유지 | enrich 재시도 → 실패 시 추출실패 큐 |
+| `DETAIL_FETCH_FAILED` | 상세 URL 접근 실패 | **자동 제외 금지**, review 유지 | HTTP 재시도 → 실패 시 수동 큐 |
+| `SUCCESS` | 값 확보 | 정상 | — |
+
+표면 표시(운영·메일) — **`region_unknown` 삭제가 아니라 매핑**:
+
+| 내부 상태 | 운영/메일 라벨 (권장) |
+|-----------|----------------------|
+| `NOT_SPECIFIED` | `원문 미기재` (또는 `지역 제한 없음`) |
+| `PARSE_FAILED` | `추출 실패(검수)` |
+| `DETAIL_FETCH_FAILED` | `상세 접속 실패(재시도)` |
+| (레거시 호환) | 실패 2종만 기존 `region_unknown` 버킷에 매핑 가능. **`NOT_SPECIFIED`는 unknown 버킷에 넣지 않음** |
+
+```mermaid
+flowchart LR
+  empty["필드 값 비어 있음"] --> kind{"detail_extraction.status"}
+  kind -->|NOT_SPECIFIED| ok["정상 진행"]
+  kind -->|PARSE_FAILED| rev1["review 유지 + 재파싱"]
+  kind -->|DETAIL_FETCH_FAILED| rev2["review 유지 + HTTP 재시도"]
+  rev1 -->|실패| q1["extraction 큐"]
+  rev2 -->|실패| q2["manual 큐"]
+```
+
+### 5.3 해결 개발 (What to build)
+
+#### W3-a. 계약 고정 (혼동 금지 가드)
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | ✅ `_with_detail_extraction` · 🆕 `field_blank_kind(status)` · 🆕 `surface_label_for_field(status)` · 🆕 테스트 헬퍼 `assert_blank_states_disjoint` |
+| **로직** | enrich 경로에서 빈 값에 raw `""`만 남기고 status 생략 금지. 목록에 값이 있으면 `source=list`+SUCCESS 유지. |
+| **산출** | ADR 절(3상태+surface). `mail_core/operations/field_status.py` (순수, monitor import 없음) |
+
+#### W3-b. 판정·필터 경로 분리
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | 🔧 `filter_for_group_with_diagnostics` 진입부 · 🆕 `should_force_review_for_extraction(item)` |
+| **로직** | `PARSE_FAILED`/`DETAIL_FETCH_FAILED` → `detail_failure_review=True` 강제, **exclude 금지**. `NOT_SPECIFIED`만으로 exclude/unknown 버킷 금지. |
+| **테스트** | 동일 빈 region 문자열이라도 status만 바꾸면: NOT_SPECIFIED→포함 후보 가능 / PARSE·FETCH→review only |
+
+#### W3-c. 복구 루프 (추출 전용)
+
+| 상태 | 자동 | 실패 후 |
+|------|------|---------|
+| `DETAIL_FETCH_FAILED` | 상세 GET `auto_retry`(기본 2, backoff) | `miss_manual_queue` reason=`DETAIL_FETCH_FAILED` |
+| `PARSE_FAILED` | 동일 URL 재파싱 1회(셀렉터 변경 없음) | 큐 subtype=`PARSE_FAILED` |
+| `NOT_SPECIFIED` | 재시도 없음 | — |
+
+W2 remediator와 공유하되 **사유코드·큐 subtype으로 분리** (수집 P0와 추출 P0 혼동 방지).
+
+#### W3-d. 소스 단위 추출률 게이트
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | 🆕 `compute_extraction_rates(items)` · audit 후처리에 rates 주입 |
+| **정의값** | 판정필수 필드 기준 `parse_or_fetch_fail_rate ≥ 0.25` → 소스 PARTIAL+P1 `DETAIL_EXTRACT_RATE_LOW` / `≥ 0.50` → P0(사이트 정책으로 조절) |
+| **절대 필수** | title·url 결손 → 기존 스키마 P0와 정합 |
+| **금지** | 금액·신청방법 실패율로 P0 승격 금지 |
+
+#### W3-e. 운영 가시화
+
+| 산출 | 내용 |
+|------|------|
+| 일별 MD/JSON | 소스별 `not_specified` / `parse_failed` / `detail_fetch_failed` 건수·비율 |
+| 메일·digest | surface 3라벨. “지역 미상” 단일 문구 **신규 작성 금지** |
+| 런북 | 실패 2종 → 재시도·큐 ack; 미기재 → 조치 불필요 |
+
+### 5.4 재발방지 (Prevention)
+
+| 층 | 조치 | Done 증거 |
+|----|------|-----------|
+| **계약 테스트** | 3상태 × (포함/review/제외금지) 매트릭스 | `test_detail_extraction_status.py` 확장 + `test_field_blank_surface.py` |
+| **금지 가드** | `NOT_SPECIFIED` → `region_unknown` 버킷·exclude 진입 시 fail | 단언 테스트 |
+| **골든 HTML** | (a) 지역 문장→SUCCESS (b) 무지역→NOT_SPECIFIED (c) 빈 body→PARSE_FAILED (d) HTTP None→DETAIL_FETCH_FAILED | replay 테스트 |
+| **게이트 분리** | recall_zero_gate(판정) ≠ 추출률 게이트 | runbook 1절 |
+| **리뷰 규칙** | “빈 필드에 status 없이 `""`만 쓰지 말 것”, “unknown 단일화 금지” | RULES 또는 본 PRD 인용 |
+| **모니터링** | parse_failed+fetch_failed 비율 급증 알림(수집급감과 별도) | 추출 리포트 컬럼 |
+| **피드백** | false_alarm이 NOT_SPECIFIED 오분류면 골든 추가 | queue 절차 |
+
+### 5.5 W3 세부 WBS
+
+| Step | 산출 | 의존 |
+|------|------|------|
+| W3-a | `field_status.py` + ADR 매핑 + surface 라벨 | W0 enum 정합 |
+| W3-b | review 강제·NOT_SPECIFIED 비unknown 테스트 | W3-a |
+| W3-c | 추출 재시도·큐 subtype | W2 remediator |
+| W3-d | extraction_rates → 소스 리포트/사유코드 | W1 thresholds |
+| W3-e | 리포트·런북·digest 라벨 | W3-a~b |
+
+### 5.6 P0-B Done 게이트
+
+1. `pytest tests/test_detail_extraction_status.py tests/test_field_blank_surface.py -v` green  
+2. 동일 빈 region 값: status 3종 → **포함 후보 / review / review** 로 분기하는 테스트  
+3. `NOT_SPECIFIED`가 `region_unknown` 버킷·excluded에 들어가면 **실패**하는 가드 테스트  
+4. `DETAIL_FETCH_FAILED` 재시도 성공 시 review 해제(또는 enriched 성공) 경로 테스트  
+5. 소스 리포트에 `extraction_rates`(또는 동등) 존재  
+6. 메일/로그 신규 문구에 surface 3라벨 (단일 “미상” 신규 금지)  
+7. **P1 변경 없음**, **`region_unknown` 심볼 삭제 없음**
+
+### 5.7 비개발자용 — 이 계획이 끝나면
+
+| Before | After |
+|--------|--------|
+| “지역 없음”만 보임 | **원문에 없음 / 읽기 실패 / 접속 실패**가 구분됨 |
+| 실패 공고가 조용히 탈락하거나 과다 검수 | 실패는 **검수·재시도**, 원문 미기재는 **정상 진행** |
+| 배포 후 다시 섞임 | 자동 테스트가 **섞이면 PR/실행이 깨짐** |
+
+### 5.8 다음 실행 프롬프트 (P0-B)
+
+> §5 W3-a~b부터 착수: `mail_core/operations/field_status.py`(surface 매핑),  
+> `NOT_SPECIFIED`≠unknown 가드 테스트, review 강제 경로 보강.  
+> W3-c는 W2 remediator 이후. monitor 대량 수정·P1·region_unknown 삭제 금지.
+
+---
+
+## 6. 우선순위 · WBS (재분할)
 
 | Wave | 범위 | Done 증거 | 티어 |
 |------|------|-----------|------|
 | **W0** | ADR(enum+FAILED 수치), detector 초안, ledger 스키마/헬퍼, `OK→SUCCESS` alias, summarize FAILED | 단위테스트 + 파일 존재 | **P0-Done** |
 | **W1** | 사이트 threshold 주입, A=P0/B=warning 테스트, monitor audit 배선 | `test_coverage_p0` 분기 green | **P0-Done** |
 | **W2** | retry·manual_queue·recheck 소비, 상한 | 큐 생성/해제 테스트 | **P0-Done** |
-| **W3** | 추출률→소스 리포트, 필수계층, region 매핑 | detail+rate 테스트 | **P0-B** |
+| **W3** | **§5 전문** — 3상태 분리·surface·review 가드·추출 재시도·추출률 게이트·재발방지 테스트 | §5.6 Done 게이트 | **P0-B** |
 | **W4** | notice_lifecycle (선택) | 샘플 산출 | **P0-C 후순위** |
 | **W5** | 수동큐 ack UI 또는 MD 런북 | runbook 절 | **P0-C** |
 | **W6+** | Evaluate… 스키마 / 판정·기업·Claude | 별도 PRD | **P1** |
@@ -472,45 +612,51 @@ W0에서 계약 테스트로 고정: classify상 SUCCESS가 아니면 ledger의 
 6. baseline에 실패/P0일 미반영 회귀 유지  
 7. **P1 코드 변경 없음** / **`region_unknown` 삭제 없음** / **lifecycle 필수 아님**
 
-수치 KPI(98% 등)는 초기 Done에 넣지 않는다.
+수치 KPI(98% 등)는 초기 Done에 넣지 않는다.  
+**빈 정보 3상태 완료는 §5.6 (P0-B)** — P0-Done과 별도 체크리스트.
 
 ---
 
-## 6. 예상 문제 (요약)
+## 7. 예상 문제 (요약)
 
 E01~E20은 v2와 동일 기조. v3에서 강조:
 
 - **E12** lifecycle 폭증 → W4 후순위로 완화  
 - **E09** FAILED 수치 ADR 고정으로 완화  
 - **E13** P0-Done=W0~W2로 범위 재비대 방지  
+- **F01~F06** 빈 정보 혼동 → **§5**에서 해결·재발방지
 
 전문 표는 부록 A.
 
 ---
 
-## 7. KPI (관측용, Done 아님)
+## 8. KPI (관측용, Done 아님)
 
 | KPI | 목표(운영 가정) | 비고 |
 |-----|-----------------|------|
 | 활성 소스 실행률 | 100% | 하드에 가깝게 감시 |
 | 오경보율 | ≤15% | false_alarm / 알림 |
 | 수집 재현율 등 | ≥98% 등 | **2주 관측 후 ratchet** |
+| 추출실패를 미기재로 위장한 건수 | **0** (가드 테스트) | P0-B 하드 |
+| 판정필수 필드 PARSE+FETCH 실패율 | 관측 후 목표 설정 | 선택필드 제외 |
 
 ---
 
-## 8. Out of Scope
+## 9. Out of Scope
 
 - DB/DDL (JSON Schema)
 - Claude·기업승격·키워드 대량 확장
-- `region_unknown` 경로 삭제
+- `region_unknown` 경로 **삭제** (매핑·가드만)
 - W0에서의 confirmed_healthy / 장기 30평균
 - monitor/streamlit 대규모 리팩터
+- 금액·신청방법을 필수 P0 게이트에 포함
 
 ---
 
-## 9. 다음 실행 프롬프트
+## 10. 다음 실행 프롬프트
 
-> W0 착수: (1) 상태 enum ADR — Run FAILED 수치 `missing_ratio≥0.30` 또는 `missing≥5` 포함, `OK`≡`SUCCESS` alias (2) `source_run` JSONL 스키마 + `mail_core` 쓰기 헬퍼 (3) `config/detector_sites.json` 초안 (4) `summarize_run_status` FAILED 분기 + 단위테스트.  
+> **수집 P0:** W0 착수 — ADR(FAILED 수치), `source_run` JSONL 헬퍼, `detector_sites.json`, `summarize_run_status` FAILED.  
+> **추출 P0-B (본 §5):** W0~W2 이후 W3-a~b — `field_status` surface 매핑 + NOT_SPECIFIED≠unknown 가드.  
 > P1·lifecycle·confirmed_healthy·region_unknown 삭제·monitor 대량수정 금지.
 
 ---
@@ -525,8 +671,8 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 | E04 | 진성 0건 오경보 | baseline·zero_item_policy |
 | E05 | baseline 오염 | SUCCESS만 반영 |
 | E06 | 동일 임계 오경보 | detector_sites |
-| E07 | 미기재/파싱 혼동 | 3상태 + 매핑 |
-| E08 | 필수 과다 | 필드 계층 |
+| E07 | 미기재/파싱 혼동 | **§5 3상태 + surface + 가드** |
+| E08 | 필수 과다 | 필드 계층 (§5·§4) |
 | E09 | 발송 논쟁 | SUCCESS/DEGRADED/FAILED |
 | E10 | 탐지 후 미복구 | W2 remediation |
 | E11 | retry 폭풍 | 횟수·backoff·일일 상한 |
@@ -559,6 +705,7 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 | `detector_config.py` | `load_detector_config`, `thresholds_for_site` |
 | `source_run_ledger.py` | `append_source_run`, `iter_runs` |
 | `miss_remediation.py` | `plan_retries`, `retry_fetch_source`, `enqueue_manual`, `ack_manual`, `refetch_window` |
+| `field_status.py` | `field_blank_kind`, `surface_label_for_field`, `should_force_review_for_extraction`, `compute_extraction_rates` |
 
 ---
 
@@ -570,3 +717,4 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 | v2 | 2026-07-25 | As-Is·E01~E20·Done·W0 |
 | v3 | 2026-07-25 | 검토 반영(P0-Done=W0~W2, W4 후순위, FAILED 수치, region 매핑), **전체 아키텍처 + 단계별 함수/로직/정의값** |
 | v3.1 | 2026-07-25 | **§0-B 비개발자용 설명** (왜/네 구간/신호/0건/FAQ/용어) + 읽는 법 안내 |
+| v3.2 | 2026-07-25 | **§5 빈 정보 3상태 해결·재발방지 개발계획** (F01~F06, W3-a~e, 가드·골든·Done) |
