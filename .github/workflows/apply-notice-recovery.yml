@@ -47,18 +47,15 @@ jobs:
       - name: Full test suite
         run: python -m pytest -q
 
-      - name: Commit clean implementation
+      - name: Commit implementation without workflow changes
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm -f .github/workflows/apply-notice-recovery.yml
-          rm -f .github/scripts/patch_notice_recovery.py
-          rmdir .github/scripts 2>/dev/null || true
-          git status --short
-          git add -A
+          git checkout -- .github/workflows/monitor.yml
+          git add monitor.py config/settings.json scripts/merge_notice_versions.py \
+            tests/test_notice_version_recovery.py
           git add -f var/state/notice_versions.json
-          git status --short
           git commit -m "fix: 최근 3영업일 재조회와 공고 버전 복구"
           git push origin HEAD:fix/notice-recheck-version-recovery
