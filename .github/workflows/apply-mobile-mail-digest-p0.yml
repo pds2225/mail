@@ -77,7 +77,7 @@ jobs:
             git commit -m "fix: 모바일 메일 본문·지역미상 표시 품질 정상화"
           else
             printf '\nFAILED_STATUS=%s\n' "${{ steps.verify.outputs.status }}" >> var/logs/mobile_mail_patch_run.log
-            git add var/logs/mobile_mail_patch_run.log
+            git add -f var/logs/mobile_mail_patch_run.log
             git commit -m "test: record mobile mail digest patch failure"
           fi
           git push origin HEAD:fix/mobile-mail-digest-p0
