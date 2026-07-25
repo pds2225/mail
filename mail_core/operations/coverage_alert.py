@@ -261,6 +261,50 @@ SUSPICIOUS_CONTENT_MAX_RATE = 0.5  # 로그인·캡차·점검 화면이 절반 
 SPIKE_RATIO_P1 = 3.0        # 평소 중앙값의 3배 이상
 SPIKE_ABSOLUTE_EXCESS = 20  # 단, 절대 증가가 20건 이상일 때만 → P1
 
+# ── Run 상태 (ADR: docs/prd/adr-miss-detect-status-enums.md) ───────────────
+RUN_STATUS_SUCCESS = "SUCCESS"
+RUN_STATUS_DEGRADED = "DEGRADED"
+RUN_STATUS_FAILED = "FAILED"
+RUN_STATUS_OK = "OK"  # deprecated alias ≡ SUCCESS
+RUN_FAILED_MISSING_RATIO = 0.30
+RUN_FAILED_MISSING_ABS = 5
+
+
+def normalize_run_status(status: str | None) -> str:
+    """OK → SUCCESS. 그 외는 원문(빈 값은 SUCCESS 로 보지 않음)."""
+    value = str(status or "")
+    if value in (RUN_STATUS_OK, RUN_STATUS_SUCCESS):
+        return RUN_STATUS_SUCCESS
+    return value
+
+
+def is_run_failed(
+    exec_check: dict | None,
+    *,
+    missing_ratio: float = RUN_FAILED_MISSING_RATIO,
+    missing_abs: int = RUN_FAILED_MISSING_ABS,
+) -> bool:
+    """실행대장 붕괴·대량 미실행이면 True.
+
+    active_expected==0 이거나 exec_check 가 skip 이면 False (근거 없는 보류 금지).
+    """
+    check = exec_check if isinstance(exec_check, dict) else {}
+    if check.get("skipped"):
+        return False
+    active = int(check.get("active_expected", 0) or 0)
+    if active <= 0:
+        return False
+    missing_ids = list(check.get("missing_site_ids") or [])
+    missing_n = len(missing_ids)
+    if missing_n <= 0 and bool(check.get("ok", True)):
+        return False
+    if missing_n >= int(missing_abs):
+        return True
+    if missing_n / active >= float(missing_ratio):
+        return True
+    return False
+
+
 # 파서 계열 실패를 접속 실패와 구분하기 위한 단서(소문자 비교)
 _PARSER_ERROR_HINTS = (
     "attributeerror", "keyerror", "indexerror", "typeerror", "nonetype",
@@ -595,7 +639,12 @@ def verify_source_execution(sites: list[dict] | None, rows: list[dict]) -> dict:
 
 
 def summarize_run_status(source_reports: list[dict], exec_check: dict | None = None) -> dict:
-    """실행 전체 상태 요약. P0 가 1건이라도 있으면 DEGRADED (발송은 계속한다)."""
+    """실행 전체 상태 요약.
+
+    - FAILED: 실행대장 대량 미실행 → send_hold=True (실발송 보류는 W1에서 소비)
+    - DEGRADED: 일부 소스 P0 → 정상 소스 발송 계속 (필터는 W1)
+    - SUCCESS: P0 없음 (구 OK alias)
+    """
     exec_check = exec_check or {}
     reports = list(source_reports or []) + list(exec_check.get("missing_sources") or [])
     p0 = [r for r in reports if r.get("risk_level") == "P0"]
@@ -604,8 +653,19 @@ def summarize_run_status(source_reports: list[dict], exec_check: dict | None = N
     for r in reports:
         key = str(r.get("status") or "")
         status_counts[key] = status_counts.get(key, 0) + 1
+
+    failed = is_run_failed(exec_check)
+    if failed:
+        status = RUN_STATUS_FAILED
+    elif p0:
+        status = RUN_STATUS_DEGRADED
+    else:
+        status = RUN_STATUS_SUCCESS
+
     return {
-        "status": "DEGRADED" if p0 else "OK",
+        "status": status,
+        "send_hold": failed,
+        "send_hold_reason": "RUN_FAILED" if failed else "",
         "p0_count": len(p0),
         "p1_count": len(p1),
         "p0_sources": p0,
@@ -686,9 +746,14 @@ def build_coverage_payload(
     """기계 판독용 실행대장 payload. 산출물 JSON 의 스키마 정의처이기도 하다."""
     exec_check = exec_check or {}
     reports = list(source_reports or []) + list(exec_check.get("missing_sources") or [])
+    run_status = normalize_run_status(run_summary.get("status")) or RUN_STATUS_SUCCESS
+    send_hold = bool(run_summary.get("send_hold")) or run_status == RUN_STATUS_FAILED
     return {
         "generated_at": generated_at,
-        "run_status": run_summary.get("status", "OK"),
+        "run_status": run_status,
+        "send_hold": send_hold,
+        "send_hold_reason": run_summary.get("send_hold_reason") or (
+            "RUN_FAILED" if send_hold else ""),
         "active_expected": exec_check.get("active_expected", run_summary.get("active_expected", 0)),
         "executed": exec_check.get("executed", run_summary.get("executed", 0)),
         "execution_complete": bool(exec_check.get("ok", True)),
@@ -713,7 +778,15 @@ def _md_table(headers: list[str], rows: list[list]) -> str:
 def render_coverage_markdown(payload: dict) -> str:
     """관리자 확인용 실행대장 보고서. P0 가 있으면 최상단에 경고를 띄운다."""
     lines: list[str] = ["# 소스 수집 실행대장", ""]
-    if payload.get("run_status") == "DEGRADED":
+    run_status = normalize_run_status(payload.get("run_status"))
+    if run_status == RUN_STATUS_FAILED or payload.get("send_hold"):
+        lines += [
+            f"> ⛔ **전체상태 FAILED — 발송 보류(send_hold)** "
+            f"(P0 {payload.get('p0_count', 0)}건 / P1 {payload.get('p1_count', 0)}건)",
+            "> 실행대장이 크게 깨져 실발송을 보류하는 상태입니다 (W1 배선).",
+            "",
+        ]
+    elif run_status == RUN_STATUS_DEGRADED:
         lines += [
             f"> 🔴 **누락위험 경고 — 전체상태 DEGRADED** "
             f"(P0 {payload.get('p0_count', 0)}건 / P1 {payload.get('p1_count', 0)}건)",
@@ -772,9 +845,16 @@ def render_p0_alert_markdown(payload: dict) -> str:
     ]
     for s in p0:
         lines.append(f"- {describe_source_line(s)}")
+    hold = bool(payload.get("send_hold")) or (
+        normalize_run_status(payload.get("run_status")) == RUN_STATUS_FAILED)
+    send_note = (
+        "[FAILED][send_hold] 실발송 보류 상태."
+        if hold else
+        "정상 수집 공고 발송은 계속 진행됨."
+    )
     lines += [
         "",
-        "정상 수집 공고 발송은 계속 진행됨.",
+        send_note,
         "",
         f"재점검 대상: {', '.join(payload.get('recheck_site_ids') or []) or '-'}",
     ]
@@ -786,9 +866,17 @@ def format_p0_alert_message(payload: dict) -> str:
     p0 = [s for s in payload.get("sources", []) if s.get("risk_level") == "P0"]
     if not p0:
         return "P0 수집 누락 위험 없음"
-    head = (f"[P0 수집 누락 위험] 활성 소스 {payload.get('active_expected', 0)}개 중 "
+    hold = bool(payload.get("send_hold")) or (
+        normalize_run_status(payload.get("run_status")) == RUN_STATUS_FAILED)
+    tag = "[FAILED][send_hold] " if hold else ""
+    head = (f"{tag}[P0 수집 누락 위험] 활성 소스 {payload.get('active_expected', 0)}개 중 "
             f"{len(p0)}개 발생")
     body = [f"- {describe_source_line(s)}" for s in p0[:20]]
     if len(p0) > 20:
         body.append(f"... 외 {len(p0) - 20}건")
-    return head + "\n\n" + "\n".join(body) + "\n\n정상 수집 공고 발송은 계속 진행됨."
+    send_note = (
+        "실발송 보류(send_hold)."
+        if hold else
+        "정상 수집 공고 발송은 계속 진행됨."
+    )
+    return head + "\n\n" + "\n".join(body) + "\n\n" + send_note

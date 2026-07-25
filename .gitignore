@@ -15,6 +15,8 @@ monitor.run.lock
 *.lock
 state_backups/
 var/state/coverage_baseline.json
+var/state/source_run_ledger.jsonl
+var/state/miss_manual_queue.json
 var/state/state_backups/
 var/outbox/state_backups/
 var/logs/*

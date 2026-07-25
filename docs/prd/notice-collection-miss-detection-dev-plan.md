@@ -655,9 +655,10 @@ E01~E20은 v2와 동일 기조. v3에서 강조:
 
 ## 10. 다음 실행 프롬프트
 
-> **수집 P0:** W0 착수 — ADR(FAILED 수치), `source_run` JSONL 헬퍼, `detector_sites.json`, `summarize_run_status` FAILED.  
-> **추출 P0-B (본 §5):** W0~W2 이후 W3-a~b — `field_status` surface 매핑 + NOT_SPECIFIED≠unknown 가드.  
-> P1·lifecycle·confirmed_healthy·region_unknown 삭제·monitor 대량수정 금지.
+> **수집 P0:** W0 착수 — ADR(FAILED 수치 + Canonical=`classify_*`), `source_run` JSONL 헬퍼, `detector_sites.json`(§11.1 E 파일럿 실명), `summarize_run_status` FAILED.  
+> 이어서 W1~W2에서 §11.1 A·B (send_hold·P0 소스 발송 제외) + `scripts/miss_detect_acceptance.py`.  
+> **추출 P0-B (§5+§11.2 G):** W0~W2 이후 W3-a~b.  
+> P1·lifecycle·confirmed_healthy·region_unknown 삭제·monitor 대량수정·Streamlit 필수화 금지.
 
 ---
 

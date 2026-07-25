@@ -1,0 +1,64 @@
+{
+  "defaults": {
+    "zero_item_policy": "p0_if_baseline",
+    "drop_ratio_p0": 0.2,
+    "drop_ratio_p1": 0.5,
+    "drop_threshold": 0.8,
+    "minimum_baseline": 5,
+    "baseline_min_runs": 3,
+    "baseline_window_runs": 7,
+    "expected_frequency": "daily",
+    "auto_retry": 2,
+    "retry_backoff_sec": [60, 180],
+    "ignore_env_tls": false,
+    "date_parse_min_rate": 0.5,
+    "date_parse_drop_pp": 0.3,
+    "detail_link_min_rate": 0.5,
+    "valid_record_min_rate": 0.8,
+    "suspicious_content_max_rate": 0.5,
+    "spike_ratio_p1": 3.0,
+    "spike_absolute_excess": 20
+  },
+  "sites": {
+    "bizinfo": {
+      "zero_item_policy": "p0_if_baseline",
+      "drop_ratio_p0": 0.3,
+      "drop_threshold": 0.7,
+      "minimum_baseline": 20,
+      "expected_frequency": "daily"
+    },
+    "kstartup": {
+      "zero_item_policy": "p0_if_baseline",
+      "drop_ratio_p0": 0.3,
+      "minimum_baseline": 10,
+      "expected_frequency": "daily"
+    },
+    "nipa": {
+      "zero_item_policy": "p0_if_baseline",
+      "drop_ratio_p0": 0.25,
+      "minimum_baseline": 8,
+      "expected_frequency": "daily"
+    },
+    "kosme": {
+      "zero_item_policy": "p0_if_baseline",
+      "minimum_baseline": 5,
+      "expected_frequency": "daily"
+    },
+    "itp": {
+      "zero_item_policy": "warning",
+      "drop_ratio_p0": 0.15,
+      "minimum_baseline": 3,
+      "expected_frequency": "weekly"
+    },
+    "bizok_plan": {
+      "zero_item_policy": "warning",
+      "expected_frequency": "monthly",
+      "minimum_baseline": 1
+    },
+    "kotra_trade24": {
+      "zero_item_policy": "p0_if_baseline",
+      "ignore_env_tls": true,
+      "minimum_baseline": 5
+    }
+  }
+}
