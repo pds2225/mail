@@ -1,3 +1,5 @@
+\n$ python .github/scripts/adjust_mobile_patch.py
+adjusted mobile patch script
 \n$ python .github/scripts/patch_mail_digest_mobile.py
 patched monitor.py, config/settings.json, tests/test_mail_digest_mobile.py
 \n$ python -m compileall .
@@ -40,6 +42,7 @@ Listing './.git/refs/remotes'...
 Listing './.git/refs/tags'...
 Listing './.github'...
 Listing './.github/scripts'...
+Compiling './.github/scripts/adjust_mobile_patch.py'...
 Compiling './.github/scripts/patch_mail_digest_mobile.py'...
 Listing './.github/workflows'...
 Listing './.streamlit'...
@@ -250,61 +253,72 @@ Listing './web/app/sites/add'...
 Listing './web/lib'...
 \n$ git diff --check
 \n$ python -m pytest -q tests/test_mail_digest_mobile.py tests/test_mail_format.py tests/test_mail_body_truncation.py tests/test_feedback_loop.py
-.....F.....................F....                                         [100%]
+................................                                         [100%]
+32 passed in 0.60s
+\n$ python scripts/recall_zero_gate.py
+recall_zero_gate: PASS (5/5)
+  [OK] test_5field_casematrix.py 167 passed in 0.30s
+  [OK] test_seoul_ai_recall.py 15 passed in 0.13s
+  [OK] test_decision_matrix.py 60 passed in 0.18s
+  [OK] test_download_kstartup_targets.py 10 passed in 0.15s
+  [OK] scripts/seoul_ai_recall_check.py ['  [OK] seoul_compact_soji: rel=True reg=eligible', '  [OK] support_field_ai: rel=False reg=unknown', '  [OK] busan_block: rel=False reg=not_eligible']
+\n$ python scripts/core_sources_checklist.py
+core_sources_checklist: PASS (13/13)
+
+[OK] 기업마당 (bizinfo)
+  [OK] sites.json 활성·타입: enabled·type OK
+  [OK] 상세보강 대상: 상세보강 대상 (40건/실행)
+  [OK] API pageUnit×pages: API 500×4페이지
+  [OK] 회귀 test_fetch_bizinfo_replay.py: 11 passed in 0.42s
+  [OK] 회귀 test_bizinfo_detail_enrich.py: 2 passed in 0.67s
+
+[OK] K-Startup (kstartup)
+  [OK] sites.json 활성·타입: enabled·type OK
+  [OK] 상세보강 대상: 상세보강 대상 (40건/실행)
+  [OK] 다페이지 설정: max_pages=5
+  [OK] 회귀 test_fetch_kstartup_replay.py: 5 passed in 9.03s
+
+[OK] NIPA (nipa)
+  [OK] sites.json 활성·타입: enabled·type OK
+  [OK] 상세보강 대상: 상세보강 대상 (40건/실행)
+  [OK] 페이지순회 상한: max_pages=300 (전량순회 상한)
+  [OK] 회귀 test_fetch_nipa_replay.py: 6 passed in 3.01s
+\n$ python -m pytest -q
+........................................................................ [  7%]
+........................................................................ [ 14%]
+..........................sss.ss........................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 73%]
+........................................................................ [ 80%]
+........................................................................ [ 87%]
+.........................................F.............................. [ 95%]
+.................................................                        [100%]
 =================================== FAILURES ===================================
-______________ test_fallback_body_hides_html_and_internal_fields _______________
+______________________ test_render_region_unknown_section ______________________
 
-    def test_fallback_body_hides_html_and_internal_fields():
-        it = {
-            "id": "1", "title": "2026년 중소기업 AI 훈련 참여기업 모집",
-            "author": "고용노동부", "description": '<p>AI 도입 지원</p><p style="x">맞춤 컨설팅</p>',
-            "deadline": "2099-12-31", "source": "기업마당", "posted_date": "2026-06-12",
-            "is_aggregator": False, "_types": ["컨설팅·교육·상담"],
-            "matched_keywords": ["글로벌"], "priority_keywords": [], "priority_keyword": False,
-            "region_status": "eligible", "eligible_regions": [], "applicant_region_city": "서울특별시",
-        }
-        body = m.fallback_body([it])
-        # HTML/코드 노출 없음
-        assert "<p>" not in body and "style" not in body
-        # 내부정보 숨김
-        assert "매칭 키워드" not in body
-        assert "우선 키워드" not in body
-        assert "스마트공장 관련성" not in body
-        assert "글로벌" not in body          # 매칭키워드(캐럿글로벌 류) 노출 안 함
-        # 비제약 지역('서울특별시 전체')은 생략
->       assert "전체" not in body
-E       AssertionError: assert '전체' not in '2. 일반 추천\n─...담\n• 원문: 미기재'
-E         
-E         '전체' is contained here:
-E           지역: 서울특별시 전체
-E         ?           ++
-E           • 적합사유: 컨설팅·교육·상담
-E           • 원문: 미기재
+    def test_render_region_unknown_section():
+        items = [{"title": "지역없는 지원사업 공고", "author": "어떤기관",
+                  "deadline": "2026-12-31", "posted_date": "2026-06-18",
+                  "link": "https://example.com/a"}]
+        out = m.render_region_unknown(items)
+>       assert "지역 미상" in out and "확인 필요" in out
+E       AssertionError: assert ('지역 미상' in '\n\n────────────────────────────────\n📍 지역 확인 필요 — 메일 표시 1건 / 전체 1건\n\n▸ 지역없는 지원사업 공고\n  기관: 어떤기관 | 마감: 2026-12-31\n  원문: https://example.com/a')
 
-tests/test_mail_format.py:46: AssertionError
-__________________ test_monitor_block_can_be_disabled_by_env ___________________
+tests/test_region_unknown_policy.py:98: AssertionError
+=============================== warnings summary ===============================
+tests/test_admin_noise.py::test_execute_monitor_excludes_noise_from_raw_all
+tests/test_admin_noise.py::test_execute_monitor_excludes_noise_from_raw_all
+  /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/httpx/_models.py:408: DeprecationWarning: Use 'content=<...>' to upload raw bytes/text content.
+    headers, stream = encode_request(
 
-monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f004b54c790>
-
-    def test_monitor_block_can_be_disabled_by_env(monkeypatch):
-        items = [{"id": NID, "title": "공고"}]
->       assert "MAIL-FB" in monitor._render_feedback_block(items)
-E       AssertionError: assert 'MAIL-FB' in ''
-E        +  where '' = <function _render_feedback_block at 0x7f004b514e00>([{'id': 'PBLN_000000000092578', 'title': '공고'}])
-E        +    where <function _render_feedback_block at 0x7f004b514e00> = monitor._render_feedback_block
-
-tests/test_feedback_loop.py:144: AssertionError
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-FAILED tests/test_mail_format.py::test_fallback_body_hides_html_and_internal_fields - AssertionError: assert '전체' not in '2. 일반 추천\n─...담\n• 원문: 미기재'
-  
-  '전체' is contained here:
-    지역: 서울특별시 전체
-  ?           ++
-    • 적합사유: 컨설팅·교육·상담
-    • 원문: 미기재
-FAILED tests/test_feedback_loop.py::test_monitor_block_can_be_disabled_by_env - AssertionError: assert 'MAIL-FB' in ''
- +  where '' = <function _render_feedback_block at 0x7f004b514e00>([{'id': 'PBLN_000000000092578', 'title': '공고'}])
- +    where <function _render_feedback_block at 0x7f004b514e00> = monitor._render_feedback_block
-2 failed, 30 passed in 0.45s
+FAILED tests/test_region_unknown_policy.py::test_render_region_unknown_section - AssertionError: assert ('지역 미상' in '\n\n────────────────────────────────\n📍 지역 확인 필요 — 메일 표시 1건 / 전체 1건\n\n▸ 지역없는 지원사업 공고\n  기관: 어떤기관 | 마감: 2026-12-31\n  원문: https://example.com/a')
+1 failed, 979 passed, 5 skipped, 2 warnings in 32.07s
 
 FAILED_STATUS=1
