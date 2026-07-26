@@ -21,12 +21,21 @@ def test_build_list_params_uses_page_not_page_index():
 
 def test_class_plan_public_first_private_lower_cap():
     plan = kc.class_plan({
-        "max_pages_public": 30,
-        "max_pages_private": 10,
+        "max_pages_public": 200,
+        "max_pages_private": 100,
     })
     assert [p["clss"] for p in plan] == ["PBC010", "PBC020"]
-    assert plan[0]["label"] == "공공" and plan[0]["max_pages"] == 30
-    assert plan[1]["label"] == "민간" and plan[1]["max_pages"] == 10
+    assert plan[0]["label"] == "공공" and plan[0]["max_pages"] == 200
+    assert plan[1]["label"] == "민간" and plan[1]["max_pages"] == 100
+
+
+def test_defaults_are_high_safety_caps():
+    assert kc.DEFAULT_PUBLIC_MAX_PAGES >= 200
+    assert kc.DEFAULT_PRIVATE_MAX_PAGES >= 100
+    plan = kc.class_plan({})
+    assert plan[0]["max_pages"] >= 200
+    assert plan[1]["max_pages"] >= 100
+    assert plan[0]["max_pages"] > plan[1]["max_pages"]
 
 
 def test_class_plan_legacy_max_pages_maps_to_public():
@@ -72,6 +81,6 @@ def test_sites_json_public_priority_caps():
     import json
     sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text())}
     ks = sites["kstartup"]
-    assert int(ks["max_pages_public"]) >= 30
-    assert int(ks["max_pages_private"]) >= 8
+    assert int(ks["max_pages_public"]) >= 200
+    assert int(ks["max_pages_private"]) >= 100
     assert int(ks["max_pages_public"]) > int(ks["max_pages_private"])

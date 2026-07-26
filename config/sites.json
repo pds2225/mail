@@ -7,12 +7,12 @@
     "enabled": true,
     "is_aggregator": true,
     "api_page_unit": 500,
-    "api_max_pages": 6,
+    "api_max_pages": 20,
     "api_timeout": 30,
     "datagokr_num_rows": 500,
-    "datagokr_max_pages": 6,
+    "datagokr_max_pages": 20,
     "warmup_url": "https://www.bizinfo.go.kr/",
-    "note": "핵심소스 — API pageUnit 500×6 (상한 ~3000). 부가필드(지원분야·대상·지역) 구조화 승격. reqErr 시 로그 확인. 직결 WAF 시 DATA_GO_KR_KEY 폴백."
+    "note": "핵심소스 — API 500×20 안전캡(상한~10000). 빈/미달 페이지면 LAST_PAGE 종료. 부가필드 구조화. DATA_GO_KR_KEY 폴백."
   },
   {
     "id": "hanyang_startup",
@@ -31,11 +31,11 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "max_pages_public": 30,
-    "max_pages_private": 10,
+    "max_pages_public": 200,
+    "max_pages_private": 100,
     "view_count": 15,
     "empty_new_streak": 2,
-    "note": "핵심소스 — 진행중. 공공(PBC010) 우선 전량·민간(PBC020) 후순위. 페이지키=page(pageIndex 무효). 종료=신규0 연속2. 실측 공공15p/민간4p."
+    "note": "핵심소스 — 공공 우선·민간 후순위. page키 고정. 종료=신규0×2(상한은 안전캡 200/100). 실측 공공15p/민간4p."
   },
   {
     "id": "smes24",

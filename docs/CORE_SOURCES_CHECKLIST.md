@@ -24,7 +24,7 @@ python scripts\core_sources_checklist.py --json
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
 | 1 | config/sites.json | `bizinfo` enabled, `type=bizinfo_api` |
-| 2 | API 설정 | `api_page_unit`≥100, `api_max_pages`≥6 (핵심 수집 깊이) |
+| 2 | API 설정 | `api_page_unit`≥100, `api_max_pages`≥20 (안전캡, 미달페이지면 종료) |
 | 3 | 상세 보강 | `bizinfo.go.kr` ∈ `DETAIL_ENRICH_HOSTS`, 핵심 상세예산 우선 |
 | 4 | 회귀 테스트 | `test_fetch_bizinfo_replay.py` · `test_core_sources_specialize.py` |
 | 5 | 상세 파서 | `test_bizinfo_detail_enrich.py` (사업개요·신청기간) |
@@ -40,7 +40,7 @@ python scripts\core_sources_checklist.py --json
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
 | 1 | config/sites.json | `kstartup` enabled, `type=kstartup_html` |
-| 2 | 다페이지 | 공공 `max_pages_public`≥30 우선 → 민간 `max_pages_private`≥8 후순위. 키=`page` |
+| 2 | 다페이지 | 공공≥200 · 민간≥100 안전캡(공공 우선). 키=`page`. 종료=신규0×2 |
 | 3 | 상세 보강 | `k-startup.go.kr` ∈ `DETAIL_ENRICH_HOSTS`, 핵심 상세예산 우선 |
 | 4 | 회귀 테스트 | `test_fetch_kstartup_replay.py` (공공+민간) · `test_core_sources_specialize.py` |
 | 5 | 목록 분류 | 카드 flag → `support_field` 조기부여, `kstartup_class` |

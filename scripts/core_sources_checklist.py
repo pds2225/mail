@@ -103,8 +103,8 @@ def _check_bizinfo_api_config() -> tuple[bool, str]:
         return False, "bizinfo 없음"
     unit = int(site.get("api_page_unit", 0) or 0)
     pages = int(site.get("api_max_pages", 0) or 0)
-    if unit < 100 or pages < 6:
-        return False, f"api_page_unit={unit} api_max_pages={pages} (핵심 ≥100×6)"
+    if unit < 100 or pages < 20:
+        return False, f"api_page_unit={unit} api_max_pages={pages} (핵심 ≥100×20)"
     return True, f"API {unit}×{pages}페이지"
 
 
@@ -114,11 +114,11 @@ def _check_kstartup_pages() -> tuple[bool, str]:
         return False, "kstartup 없음"
     pub = int(site.get("max_pages_public") or site.get("max_pages") or 1)
     priv = int(site.get("max_pages_private") or 0)
-    if pub < 30:
-        return False, f"max_pages_public={pub} (실측~15p+여유 ≥30)"
-    if priv < 8:
-        return False, f"max_pages_private={priv} (후순위 ≥8)"
-    return True, f"공공≤{pub}p→민간≤{priv}p"
+    if pub < 200:
+        return False, f"max_pages_public={pub} (안전캡 ≥200, 종료는 신규0연속)"
+    if priv < 100:
+        return False, f"max_pages_private={priv} (후순위 안전캡 ≥100)"
+    return True, f"공공≤{pub}p→민간≤{priv}p (신규0×2 종료)"
 
 
 def _check_nipa_pagination_config() -> tuple[bool, str]:

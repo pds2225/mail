@@ -23,8 +23,9 @@ KSTARTUP_CLASS_ORDER: tuple[dict[str, Any], ...] = (
 )
 
 DEFAULT_VIEW_COUNT = 15
-DEFAULT_PUBLIC_MAX_PAGES = 30   # 실측 15p + 여유(목록 증가 대비)
-DEFAULT_PRIVATE_MAX_PAGES = 10  # 실측 4p + 여유, 후순위라 짧게
+# 안전캡만 — 실제 종료는 신규0 연속(empty_new_streak). 목록 폭증·페이지키 회귀에만 대비.
+DEFAULT_PUBLIC_MAX_PAGES = 200
+DEFAULT_PRIVATE_MAX_PAGES = 100
 DEFAULT_EMPTY_NEW_STREAK = 2    # 신규 0 연속 N회 → 종료
 
 
@@ -63,10 +64,8 @@ def class_plan(site: dict | None = None) -> list[dict[str, Any]]:
         site.get("max_pages_public")
         or (legacy if legacy > 0 else DEFAULT_PUBLIC_MAX_PAGES)
     )
-    private_max = int(
-        site.get("max_pages_private")
-        or min(DEFAULT_PRIVATE_MAX_PAGES, public_max)
-    )
+    # 민간은 후순위이되 상한은 독립 안전캡(기본 100). 명시값 없으면 기본값.
+    private_max = int(site.get("max_pages_private") or DEFAULT_PRIVATE_MAX_PAGES)
     view_count = int(site.get("view_count") or DEFAULT_VIEW_COUNT)
     streak = int(site.get("empty_new_streak") or DEFAULT_EMPTY_NEW_STREAK)
     plan: list[dict[str, Any]] = []

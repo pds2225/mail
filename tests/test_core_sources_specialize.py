@@ -105,10 +105,11 @@ def test_keyword_extra_parts_only_for_core():
 def test_sites_json_core_collection_depth():
     import json
     sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text())}
-    assert sites["bizinfo"]["api_max_pages"] >= 6
-    assert sites["bizinfo"].get("datagokr_max_pages", 0) >= 6
-    assert sites["kstartup"]["max_pages_public"] >= 30
-    assert sites["kstartup"]["max_pages_private"] >= 8
+    assert sites["bizinfo"]["api_max_pages"] >= 20
+    assert sites["bizinfo"].get("datagokr_max_pages", 0) >= 20
+    assert sites["kstartup"]["max_pages_public"] >= 200
+    assert sites["kstartup"]["max_pages_private"] >= 100
+    assert sites["kstartup"]["max_pages_public"] > sites["kstartup"]["max_pages_private"]
     import inspect
     import monitor as m
     src = inspect.getsource(m.fetch_kstartup)
