@@ -14,5 +14,7 @@
   "raw_store_gzip_detail": true,
   "tenant_id": "default",
   "region_unknown_mail_limit": 10,
-  "notice_versioning_enabled": true
+  "notice_versioning_enabled": true,
+  "filter_trace_sheet_id": "1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E",
+  "filter_trace_sheet_tab": "filter_trace"
 }

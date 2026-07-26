@@ -1,9 +1,9 @@
 """filter_trace → Google Sheets 누적 적립.
 
-환경변수:
-  FILTER_TRACE_SHEET_ID  또는 GOOGLE_SHEET_ID
+환경변수 (우선) / config/settings.json (폴백):
+  FILTER_TRACE_SHEET_ID  또는 GOOGLE_SHEET_ID  또는 settings.filter_trace_sheet_id
   GOOGLE_SERVICE_ACCOUNT_JSON_PATH  또는 GOOGLE_SERVICE_ACCOUNT_JSON
-  FILTER_TRACE_SHEET_TAB  (기본: filter_trace)
+  FILTER_TRACE_SHEET_TAB  (기본: filter_trace / settings.filter_trace_sheet_tab)
 
 시트 미설정·인증 실패 시 False 반환 (로컬 JSONL 폴백은 호출측).
 """
@@ -11,21 +11,49 @@ from __future__ import annotations
 
 import json
 import os
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 from mail_core.operations.filter_trace import SHEET_HEADERS, flatten_for_sheet
+
+_ROOT = Path(__file__).resolve().parents[2]
+_SETTINGS_PATH = _ROOT / "config" / "settings.json"
+
+# 운영 기본 시트 (env/settings 미설정 시 폴백). 공유·권한은 서비스 계정 기준.
+_DEFAULT_SHEET_ID = "1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E"
+_DEFAULT_TAB = "filter_trace"
+
+
+@lru_cache(maxsize=1)
+def _settings_sheet_cfg() -> dict[str, str]:
+    try:
+        raw = json.loads(_SETTINGS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(raw, dict):
+        return {}
+    return {
+        "sheet_id": str(raw.get("filter_trace_sheet_id") or raw.get("google_sheet_id") or "").strip(),
+        "tab": str(raw.get("filter_trace_sheet_tab") or "").strip(),
+    }
 
 
 def _sheet_id() -> str:
     return (
         os.environ.get("FILTER_TRACE_SHEET_ID", "").strip()
         or os.environ.get("GOOGLE_SHEET_ID", "").strip()
+        or _settings_sheet_cfg().get("sheet_id", "")
+        or _DEFAULT_SHEET_ID
     )
 
 
 def _tab_name() -> str:
-    return os.environ.get("FILTER_TRACE_SHEET_TAB", "filter_trace").strip() or "filter_trace"
+    return (
+        os.environ.get("FILTER_TRACE_SHEET_TAB", "").strip()
+        or _settings_sheet_cfg().get("tab", "")
+        or _DEFAULT_TAB
+    )
 
 
 def _service_account_info() -> dict[str, Any] | None:
@@ -45,6 +73,7 @@ def _service_account_info() -> dict[str, Any] | None:
     for cand in (
         Path("secrets/google_service_account.json"),
         Path("/workspace/secrets/google_service_account.json"),
+        _ROOT / "secrets" / "google_service_account.json",
     ):
         if cand.exists():
             return json.loads(cand.read_text(encoding="utf-8"))
@@ -53,6 +82,11 @@ def _service_account_info() -> dict[str, Any] | None:
 
 def sheet_configured() -> bool:
     return bool(_sheet_id() and _service_account_info())
+
+
+def sheet_url() -> str:
+    sid = _sheet_id()
+    return f"https://docs.google.com/spreadsheets/d/{sid}/edit" if sid else ""
 
 
 def _open_worksheet():
@@ -88,6 +122,38 @@ def _open_worksheet():
         if existing[0] != SHEET_HEADERS[0]:
             ws.insert_row(SHEET_HEADERS, index=1)
     return ws
+
+
+def ensure_filter_trace_tab() -> dict[str, Any]:
+    """탭·헤더만 보장. 결과: {ok, sheet_id, tab, url, error}."""
+    if not sheet_configured():
+        return {
+            "ok": False,
+            "sheet_id": _sheet_id(),
+            "tab": _tab_name(),
+            "url": sheet_url(),
+            "error": "sheet_not_configured",
+            "headers": SHEET_HEADERS,
+        }
+    try:
+        _open_worksheet()
+        return {
+            "ok": True,
+            "sheet_id": _sheet_id(),
+            "tab": _tab_name(),
+            "url": sheet_url(),
+            "error": "",
+            "headers": SHEET_HEADERS,
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "sheet_id": _sheet_id(),
+            "tab": _tab_name(),
+            "url": sheet_url(),
+            "error": type(exc).__name__ + ":" + str(exc)[:200],
+            "headers": SHEET_HEADERS,
+        }
 
 
 def append_traces_to_sheet(traces: list[dict[str, Any]]) -> dict[str, Any]:

@@ -61,6 +61,15 @@ def test_sheet_not_configured_returns_error(monkeypatch):
     monkeypatch.delenv("FILTER_TRACE_SHEET_ID", raising=False)
     monkeypatch.delenv("GOOGLE_SERVICE_ACCOUNT_JSON", raising=False)
     monkeypatch.delenv("GOOGLE_SERVICE_ACCOUNT_JSON_PATH", raising=False)
+    monkeypatch.setattr(sheet, "_service_account_info", lambda: None)
     out = sheet.append_traces_to_sheet([{"notice_id": "x", "stages": [], "source": {}}])
     assert out["ok"] is False
     assert out["error"] == "sheet_not_configured"
+    # 시트 ID는 설정/기본값으로 잡혀 있어도 SA 없으면 configured=False
+    assert out["sheet_id"]
+    assert "1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E" in sheet.sheet_url()
+
+
+def test_default_sheet_id_resolves():
+    assert sheet._sheet_id() == "1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E"
+    assert sheet._tab_name() == "filter_trace"
