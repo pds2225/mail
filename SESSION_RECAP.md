@@ -1,3 +1,39 @@
+## 🧾 세션 회고 — 2026-07-21 레포 구조 정리 + 제품 분리
+**주제:** D:\mail 폴더 구조 진단 → 잡파일 정리 → 테스트 이동 → customer_intake/loan 분리 → monitor.py 분할 계획
+
+### ✅ 한 일
+- 전에는 폴더를 열면 **파일 127개가 쏟아져** 정작 중요한 코드가 파묻혀 있었는데, 이제 **64개로 절반**이 됐고 테스트는 전부 `tests/` 폴더로 들어갔어요.
+- 전에는 자동 발송 감시 CI가 **새 경로를 몰라 조용히 깨질 뻔**했는데, 4곳을 같이 고쳐서 **새 구조에서도 실제로 돌아 통과**하는 걸 확인했어요.
+- 전에는 `customer_intake`(고객서류OCR)와 `loan`(정책자금점검)이 메일 폴더에 섞여 있어 **검색할 때마다 남의 코드가 걸렸는데**, 이제 각각 `D:\v_up`으로 이사시켜 메일 폴더가 깔끔해졌어요.
+- 전에는 임시파일·백업이 저절로 쌓였는데, 이제 **자동 차단(.gitignore)**이 걸려서 앞으로는 안 쌓여요.
+- `monitor.py` 6,420줄 분할을 위한 **상세 계획서**(5개 모듈·의존성·검증 전략)를 작성했어요.
+
+### 🧭 정한 것
+- `monitor.py` 분할은 **별도 세션에서** 하기로 — 리스크가 커서 충분한 시간이 필요.
+- `D:\v_up`을 customer_intake·loan의 **공통 이사 목적지**로 확정.
+
+### 📂 손댄 파일
+- `.gitignore` — 잡파일·백업·다운로드 자동 차단 규칙 추가
+- `tests/test_monitor.py` — customer_intake 전용 테스트 함수 1개 제거
+- `.github/workflows/test.yml` — `pytest tests/test_monitor.py` 경로 갱신
+- `scripts/loop_verify.py` — V2 unit gate 경로 갱신
+- `scripts/recall_zero_gate.py` — ROOT/"tests"/suite 경로 갱신
+- `scripts/core_sources_checklist.py` — ROOT/"tests"/rel 경로 갱신
+- `README.md` · `README.ko.md` — customer_intake·loan 이관 안내로 갱신
+- `SESSION_RECAP.md` — 회고 기록
+- `RESUME.md` — 이어가기 상태 저장
+
+### ⏭️ 다음 할 일
+- `monitor.py` 6,420줄 → 5개 모듈 분할 (계획서는 `docs/monitor-split-plan.md`에 작성됨)
+- 분할 후 **비개발자용 한글 코드 설명서** 5개 파일 작성
+- 잡파일 물리 삭제 (다른 세션 작업 중이라 보류 중)
+- 워크트리 껍데기 정리 (PC 재시작 후 자동)
+
+### 🔶 대기 중인 PR
+- PR #158 (loan 제거) — 워크플로 파일 삭제라 자동병합 불가, **"병합해" 확인 대기**
+
+---
+
 ## 🧾 세션 회고 — 2026-07-23 15:10
 **주제:** 흩어진 브랜치 정리부터, 꺼져 있던 공고 수집 사이트 되살리기, 그리고 "수집이 조용히 멈추면 바로 알려주는" 감시 기능까지
 
