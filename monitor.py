@@ -5527,6 +5527,12 @@ def load_watchlist() -> dict:
         "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
         "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
     }
+    for key in ("max_items", "url_max_age_days", "url_unknown_cap"):
+        if key in raw:
+            try:
+                normalized[key] = int(raw[key])
+            except (TypeError, ValueError):
+                pass
     if raw.get("tenant_id"):
         normalized["tenant_id"] = private_config.normalize_tenant_id(raw.get("tenant_id"))
     return normalized
@@ -5548,17 +5554,22 @@ def is_watchlisted(item: dict, watchlist: dict) -> bool:
     상세 보강된 본문(description)은 보지 않는다 — 6KB 본문·nav 잔여물에는 '지식재산'
     같은 단어가 우연히 들어가('한국지식재산보호원' 등), 1년 지난 마감 공고까지
     날짜필터를 우회해 그룹 digest 상단에 오르던 실사고(2026-07-24)의 원인이었다."""
+    return bool(watchlist_match_kind(item, watchlist))
+
+
+def watchlist_match_kind(item: dict, watchlist: dict) -> str:
+    """'' | 'keyword' | 'url' — 키워드가 URL보다 우선."""
     kws = watchlist.get("keywords") or []
     if kws:
         text = f"{item.get('title','')} {item.get('author','')}".lower()
         if any(_kw_in_text(text, k.lower()) for k in kws):
-            return True
+            return "keyword"
     nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
     if nurls:
         link = _norm_url(item.get("link") or item.get("url") or "")
         if link and any(link.startswith(n) or n in link for n in nurls):
-            return True
-    return False
+            return "url"
+    return ""
 
 
 def _post_run_alert(result: dict) -> None:
@@ -5672,6 +5683,39 @@ def execute_monitor(
         log.info("활성 그룹 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
 
+    target_date_early = previous_business_day(now, days_back)
+    # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
+    if effective_send and persist_seen:
+        try:
+            from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
+            _wl_early = load_watchlist()
+            _skip = should_skip_fetch_already_delivered(
+                target_date=str(target_date_early),
+                groups=groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+                delivery_path=DELIVERY_STATE_PATH,
+            )
+            if _skip.get("skip"):
+                log.info(
+                    "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
+                    _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
+                )
+                return _with_raw_store_stats({
+                    "ok": True,
+                    "mode": mode,
+                    "reason": "already_delivered",
+                    "skipped_fetch": True,
+                    "target_date": str(target_date_early),
+                    "mail_sent": 0,
+                    "collected": 0,
+                    "new_items": 0,
+                    "filtered_items": 0,
+                })
+        except Exception as e:
+            log.warning("발송완료 스킵 게이트 실패(무시·수집 계속): %s", e)
+
     if _RawStore is not None:
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
@@ -5716,11 +5760,25 @@ def execute_monitor(
             p0_dropped = []
 
     # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
+    # 게시판 URL 전량 매칭 폭발 방지: 날짜창·max_items 선별(2026-07-26 74건 사고)
     watchlist = load_watchlist()
-    watch_hits = (
-        [it for it in new_items if is_watchlisted(it, watchlist)]
-        if (watchlist["keywords"] or watchlist["urls"]) else []
-    )
+    watch_hits: list = []
+    if watchlist["keywords"] or watchlist["urls"]:
+        try:
+            from mail_core.matching.watchlist_select import (
+                select_watchlist_hits,
+                watchlist_limits_from_config,
+            )
+            limits = watchlist_limits_from_config(watchlist)
+            watch_hits = select_watchlist_hits(
+                new_items,
+                match_kind=lambda it: watchlist_match_kind(it, watchlist),
+                today=now.date(),
+                **limits,
+            )
+        except Exception as e:
+            log.warning("워치리스트 선별 실패 — 전체 매칭으로 폴백: %s", e)
+            watch_hits = [it for it in new_items if is_watchlisted(it, watchlist)]
     if watch_hits:
         log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
 
@@ -6673,6 +6731,36 @@ if __name__ == "__main__":
         else:
             # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
             # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
+            # 기준일 전량 멱등 완료면 커버리지·수집 전부 생략(주말 재실행 2h+ 낭비 방지).
+            if args.send and args.persist_seen:
+                try:
+                    from mail_core.delivery.skip_gate import (
+                        should_skip_fetch_already_delivered,
+                    )
+                    _settings_ee = load_settings()
+                    _groups_ee = load_groups()
+                    _wl_ee = load_watchlist()
+                    _td = previous_business_day(
+                        datetime.now(KST), int(_settings_ee.get("days_back", 1) or 1),
+                    )
+                    _skip_ee = should_skip_fetch_already_delivered(
+                        target_date=str(_td),
+                        groups=_groups_ee,
+                        settings=_settings_ee,
+                        watchlist=_wl_ee,
+                        include_raw_all=args.include_raw_all,
+                        delivery_path=DELIVERY_STATE_PATH,
+                    )
+                    if _skip_ee.get("skip"):
+                        log.info(
+                            "기준일 %s 발송 단위 %s개 멱등 완료 — 커버리지·수집·발송 생략",
+                            _skip_ee.get("target_date"), _skip_ee.get("units"),
+                        )
+                        raise SystemExit(0)
+                except SystemExit:
+                    raise
+                except Exception as e:
+                    log.warning("발송완료 early-exit 실패(무시·수집 계속): %s", e)
             _gate: dict = {}
             if not args.skip_coverage_fetch:
                 try:

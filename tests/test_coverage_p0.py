@@ -272,20 +272,24 @@ def test_classify_error_becomes_p0_row_not_exception():
 
 
 # ── §5-8. 기준선 없는 신규 사이트 / §5-9. 실제 0건인 정상 상황 ───────────────
-def test_new_site_zero_items_is_p1_baseline_insufficient():
+def test_new_site_zero_items_is_not_risky_without_baseline():
+    """기준선 없는 신규 0건은 위험 등급을 주지 않는다(오탐 방지)."""
     report = ca.classify_source_status(
         _row(item_count=0, posted_parsed_count=0, detail_link_ok_count=0), [])
-    assert report["status"] == ca.COLLECT_STATUS_ZERO_SUSPICIOUS
-    assert report["risk_level"] == "P1"
-    assert report["reason_codes"] == [ca.REASON_BASELINE_INSUFFICIENT]
+    assert report["status"] == ca.COLLECT_STATUS_SUCCESS
+    assert report["risk_level"] == ""
+    assert report["reason_codes"] == []
+    assert report["detail"].get("baseline_insufficient") is True
 
 
 def test_baseline_with_two_runs_is_insufficient():
     report = ca.classify_source_status(
         _row(item_count=0, posted_parsed_count=0, detail_link_ok_count=0),
         _history(n=2))
-    assert report["reason_codes"] == [ca.REASON_BASELINE_INSUFFICIENT]
+    assert report["status"] == ca.COLLECT_STATUS_SUCCESS
+    assert report["risk_level"] == ""
     assert report["baseline_n"] == 2
+    assert report["detail"].get("baseline_insufficient") is True
 
 
 def test_baseline_uses_last_seven_runs_median():

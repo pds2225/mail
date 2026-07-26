@@ -1,6 +1,7 @@
 {
   "defaults": {
     "zero_item_policy": "p0_if_baseline",
+    "fetch_failed_risk": "P1",
     "drop_ratio_p0": 0.2,
     "drop_ratio_p1": 0.5,
     "drop_threshold": 0.8,
@@ -22,6 +23,7 @@
   "sites": {
     "bizinfo": {
       "zero_item_policy": "p0_if_baseline",
+      "fetch_failed_risk": "P0",
       "drop_ratio_p0": 0.3,
       "drop_threshold": 0.7,
       "minimum_baseline": 20,
@@ -29,19 +31,42 @@
     },
     "kstartup": {
       "zero_item_policy": "p0_if_baseline",
+      "fetch_failed_risk": "P0",
       "drop_ratio_p0": 0.3,
       "minimum_baseline": 10,
       "expected_frequency": "daily"
     },
     "nipa": {
       "zero_item_policy": "p0_if_baseline",
+      "fetch_failed_risk": "P0",
       "drop_ratio_p0": 0.25,
       "minimum_baseline": 8,
       "expected_frequency": "daily"
     },
     "kosme": {
       "zero_item_policy": "p0_if_baseline",
+      "fetch_failed_risk": "P0",
       "minimum_baseline": 5,
+      "expected_frequency": "daily"
+    },
+    "mss": {
+      "fetch_failed_risk": "P0",
+      "expected_frequency": "daily"
+    },
+    "mafra": {
+      "fetch_failed_risk": "P0",
+      "expected_frequency": "daily"
+    },
+    "mof": {
+      "fetch_failed_risk": "P0",
+      "expected_frequency": "daily"
+    },
+    "molit": {
+      "fetch_failed_risk": "P0",
+      "expected_frequency": "daily"
+    },
+    "semas_announce": {
+      "fetch_failed_risk": "P0",
       "expected_frequency": "daily"
     },
     "itp": {
@@ -57,6 +82,7 @@
     },
     "kotra_trade24": {
       "zero_item_policy": "p0_if_baseline",
+      "fetch_failed_risk": "P0",
       "ignore_env_tls": true,
       "minimum_baseline": 5
     }
