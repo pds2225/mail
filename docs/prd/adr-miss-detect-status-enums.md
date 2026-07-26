@@ -51,6 +51,19 @@ P0 소스만 있고 실행대장은 완전하면 → `DEGRADED` (FAILED 아님).
 
 `SUCCESS` | `NOT_SPECIFIED` | `PARSE_FAILED` | `DETAIL_FETCH_FAILED`
 
+| 상태 | 표면 라벨(운영·메일) | region_unknown 버킷 |
+|------|----------------------|---------------------|
+| `NOT_SPECIFIED` | `원문 미기재` / 지역=`지역 제한 없음` | **금지** (전국·미지정 경로) |
+| `PARSE_FAILED` | `추출 실패(검수)` | 매핑 가능(레거시). 판정은 **review 강제·exclude 금지** |
+| `DETAIL_FETCH_FAILED` | `상세 접속 실패(재시도)` | 매핑 가능(레거시). 판정은 **review 강제·exclude 금지** |
+| `SUCCESS` | `확보` | — |
+
+구현: `mail_core/operations/field_status.py`
+(`field_blank_kind`, `surface_label_for_field`, `should_force_review_for_extraction`,
+`compute_extraction_rates`, `allow_region_unknown_bucket`).
+
+`region_unknown` 심볼/경로는 **삭제하지 않는다**. 실패 2종만 매핑 가능, NOT_SPECIFIED 는 진입 금지.
+
 ### 6. baseline_eligible
 
 classify 결과 소스 상태가 `SUCCESS`이고 risk_level이 비어 있을 때만 True.  

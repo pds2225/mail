@@ -3727,7 +3727,25 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
 
 
 def assess_date_unknown_risk(item: dict) -> str:
-    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음."""
+    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음.
+
+    W3 §11.2 G: 게시일/신청기간이 PARSE_FAILED·DETAIL_FETCH_FAILED 이면
+    '원문 미기재'로 위장하지 않고 높음(recall include + review)으로 올린다.
+    """
+    try:
+        from mail_core.operations import field_status as _fs  # noqa: PLC0415
+        extraction = item.get("detail_extraction") or {}
+        fields = extraction.get("fields") or {}
+        for key in ("application_period", "title"):
+            meta = fields.get(key) if isinstance(fields, dict) else None
+            st = _fs.field_blank_kind(
+                (meta or {}).get("status") if isinstance(meta, dict) else extraction.get("status"))
+            if st in _fs.FAILURE_STATUSES:
+                return "높음"
+        if _fs.field_blank_kind(extraction.get("status")) in _fs.FAILURE_STATUSES:
+            return "높음"
+    except Exception:
+        pass
     text = _notice_body_text(item)
     if any(kw in text for kw in APPLICATION_KEYWORDS):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
@@ -4712,9 +4730,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         and application_like
         and group_keyword_pass
     )
+    # W3/P0-B: 빈 정보 3상태 — 추출 실패는 review 강제, NOT_SPECIFIED 는 unknown 금지.
+    from mail_core.operations import field_status as _fs  # noqa: PLC0415
     detail_status = str(
         (item.get("detail_extraction") or {}).get("status") or "")
-    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES
+    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES or _fs.should_force_review_for_extraction(item)
     detail_failure_blockers = {
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
@@ -4724,6 +4744,32 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         detail_failure
         and not (set(reason_codes) & detail_failure_blockers)
     )
+    # 지역 필드 NOT_SPECIFIED(원문 미기재) → 전국/미지정 경로(eligible). unknown 버킷 금지.
+    region_extract_status = _fs.region_field_status(item)
+    if (
+        region_extract_status == _fs.NOT_SPECIFIED
+        and region_status == "unknown"
+        and district_status != "not_eligible"
+    ):
+        region_status = "eligible"
+        district_status = "eligible" if district_status == "unknown" else district_status
+        region_info = {
+            **region_info,
+            "region_status": region_status,
+            "district_status": district_status,
+        }
+        # REGION_UNKNOWN 사유가 있으면 제거(미기재≠미상).
+        reason_codes = [c for c in reason_codes if c != "REGION_UNKNOWN"]
+        hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+        # 재계산: 지역만 막혔던 경우 포함 후보 가능
+        is_relevant = (
+            not hard_reasons
+            and deadline_ok
+            and region_status == "eligible"
+            and district_status == "eligible"
+            and application_like
+            and group_keyword_pass
+        )
     review_needed = (
         not is_relevant
         and (
@@ -4736,8 +4782,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
     #  버리지 말고 '지역 미상' 버킷으로 보내 보고 메일 하단에 함께 첨부한다(누락 방지).
+    # W3: 추출 실패·NOT_SPECIFIED 는 이 버킷에 넣지 않는다(allow_region_unknown_bucket).
     region_unknown_review = (
-        region_status == "unknown"
+        _fs.allow_region_unknown_bucket(item)
+        and region_status == "unknown"
         and district_status != "not_eligible"
         and not is_relevant
         and deadline_ok
@@ -4765,7 +4813,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             + ", ".join(soft_excluded_keywords[:5])
         )
     if detail_failure_review:
-        notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+        surf = _fs.surface_label_for_field(
+            detail_status or region_extract_status, field="region")
+        if surf:
+            notes.append(f"{surf} — 원문 재확인 필요")
+        else:
+            notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+    elif region_extract_status == _fs.NOT_SPECIFIED:
+        notes.append(_fs.surface_label_for_field(_fs.NOT_SPECIFIED, field="region"))
 
     result.update({
         "is_relevant": is_relevant,
@@ -5170,10 +5225,21 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
         return ""
     lines = [
         "\n\n────────────────────────────────",
-        f"📍 지역 미상 — 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
+        f"📍 지역 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
     ]
     for it in shown:
-        lines.append(f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}")
+        try:
+            from mail_core.operations.field_status import (
+                region_field_status,
+                surface_label_for_field,
+            )
+            surf = surface_label_for_field(region_field_status(it), field="region")
+        except Exception:
+            surf = ""
+        title_line = f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}"
+        if surf:
+            title_line += f" [{surf}]"
+        lines.append(title_line)
         lines.append(
             f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
             f" | 마감: {resolve_item_deadline(it) or '미기재'}"
@@ -5850,6 +5916,30 @@ def execute_monitor(
 
     new_items = enrich_items(new_items)
 
+    # W3/P0-B: 추출 3상태 — 실패 큐 enqueue + 소스별 extraction_rates 집계
+    extraction_rates_by_site: dict = {}
+    extraction_retry_plan: list = []
+    try:
+        from mail_core.operations.field_status import (
+            compute_extraction_rates,
+            plan_extraction_retries,
+            write_extraction_rates_report,
+        )
+        from mail_core.operations.miss_remediation import enqueue_extraction_failures
+        by_site: dict[str, list] = {}
+        for it in new_items:
+            sid = str(it.get("site_id") or it.get("source") or "unknown")
+            by_site.setdefault(sid, []).append(it)
+        extraction_rates_by_site = {
+            sid: compute_extraction_rates(rows) for sid, rows in by_site.items()
+        }
+        enqueue_extraction_failures(new_items)
+        extraction_retry_plan = plan_extraction_retries(new_items)
+        write_extraction_rates_report(
+            extraction_rates_by_site, run_at=now)
+    except Exception as e:
+        log.warning("extraction_rates/queue 실패(무시): %s", e)
+
     # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
     p0_dropped: list = []
     gate_reports = gate.get("source_reports") or gate.get("p0_sources") or []
@@ -6159,6 +6249,8 @@ def execute_monitor(
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
+        "extraction_rates_by_site": extraction_rates_by_site,
+        "extraction_retry_plan_count": len(extraction_retry_plan),
     })
 
 
