@@ -2028,8 +2028,11 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 10) — 1페이지만 보면 page2+ 공고 누락.
-    max_pages = int(site.get("max_pages", 10))
+    # 공공(PBC010)·민간(PBC020) + 다페이지.
+    # ★페이지 파라미터는 `page` (실측 2026-07-26: `pageIndex`/`currentPage` 는 무시되어
+    #   1페이지가 반복 → seen_sn 으로 empty → 분류당 ~15건만 수집되던 누락 버그).
+    # viewCount 도 사이트 기본 15건/페이지로 고정되는 경우가 많아 상한은 페이지 수로 잡는다.
+    max_pages = int(site.get("max_pages", 20))
     items: list[dict] = []
     seen_sn: set[str] = set()
     referer = site.get("referer") or site["url"]
@@ -2040,8 +2043,11 @@ def fetch_kstartup(site: dict) -> list[dict]:
         empty_streak = 0
         for page in range(1, max_pages + 1):
             soup = _soup(site["url"], extra_headers=extra_hdr, params={
-                "schMenuId": "10090", "pageIndex": str(page), "viewCount": "100",
-                "pbancSttus": "ing", "pbancClssCd": clss,
+                "schMenuId": "10090",
+                "page": str(page),  # pageIndex 금지 — 서버가 무시함
+                "viewCount": str(int(site.get("view_count", 15) or 15)),
+                "pbancSttus": "ing",
+                "pbancClssCd": clss,
             })
             if not soup:
                 _stop_reason = "PAGE_FETCH_FAILED"

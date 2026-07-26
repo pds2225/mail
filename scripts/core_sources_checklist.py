@@ -113,8 +113,8 @@ def _check_kstartup_pages() -> tuple[bool, str]:
     if not site:
         return False, "kstartup 없음"
     mp = int(site.get("max_pages", 1) or 1)
-    if mp < 10:
-        return False, f"max_pages={mp} (핵심 다페이지 권장 ≥10)"
+    if mp < 20:
+        return False, f"max_pages={mp} (핵심 다페이지 권장 ≥20, 공공~15p 실측)"
     return True, f"max_pages={mp}"
 
 

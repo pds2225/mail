@@ -31,8 +31,9 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "max_pages": 10,
-    "note": "핵심소스 — 창업지원 공공(PBC010)+민간(PBC020) 다페이지. 목록 flag→support_field 조기부여, 상세보강 우선."
+    "max_pages": 20,
+    "view_count": 15,
+    "note": "핵심소스 — 진행중 공공(PBC010)+민간(PBC020). 페이지파라미터는 page( pageIndex 무효). 실측 공공~15p·민간~4p → max_pages 20."
   },
   {
     "id": "smes24",

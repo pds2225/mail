@@ -107,7 +107,15 @@ def test_sites_json_core_collection_depth():
     sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text())}
     assert sites["bizinfo"]["api_max_pages"] >= 6
     assert sites["bizinfo"].get("datagokr_max_pages", 0) >= 6
-    assert sites["kstartup"]["max_pages"] >= 10
+    assert sites["kstartup"]["max_pages"] >= 20
+    import inspect
+    import monitor as m
+    src = inspect.getsource(m.fetch_kstartup)
+    assert '"page"' in src
+    # 요청 파라미터로 pageIndex 를 넣지 않는다(주석 언급은 허용)
+    assert '"pageIndex"' not in src and "'pageIndex'" not in src
+    assert "pageIndex:" not in src
+    assert "pageIndex=" not in src
 
 
 def test_detector_core_stricter_than_defaults():

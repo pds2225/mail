@@ -139,9 +139,38 @@ def by_id_link(items, iid):
 
 @respx.mock
 def test_kstartup_fetches_multiple_pages_when_configured():
-    """max_pages>1 이면 pageIndex 2까지 요청(빈 페이지면 종료)."""
+    """max_pages>1 이면 page=2까지 요청(빈/중복이면 종료). pageIndex 금지."""
     _route_public_private()
     site = {**_site(), "max_pages": 2}
     items = monitor.fetch_kstartup(site)
     assert len(items) == 4
     assert len(respx.calls) >= 4  # PBC010 p1+p2 + PBC020 p1+p2 이상
+    # 요청 파라미터가 page 인지(pageIndex 회귀 방지)
+    for call in respx.calls:
+        q = str(call.request.url)
+        assert "pageIndex=" not in q
+        assert "page=" in q
+
+
+@respx.mock
+def test_kstartup_page_param_advances_unique_items():
+    """page=1/2 에 다른 HTML 이면 고유 건수가 합쳐진다(pageIndex 무시 버그 회귀 차단)."""
+    # page=1 공공 / page=2 공공(다른 sn) / 민간은 1페이지만
+    public1 = _load("kstartup_public.html")
+    # sn 1001,1002 → 2001 스타일로 바꾼 가짜 2페이지
+    public2 = public1.replace("1001", "3001").replace("1002", "3002")
+    private = _load("kstartup_private.html")
+
+    def _route(request):
+        q = str(request.url)
+        if "pbancClssCd=PBC020" in q:
+            return httpx.Response(200, html=private)
+        if "page=2" in q:
+            return httpx.Response(200, html=public2)
+        return httpx.Response(200, html=public1)
+
+    respx.get(KSTARTUP_URL).mock(side_effect=_route)
+    items = monitor.fetch_kstartup({**_site(), "max_pages": 3})
+    ids = {it["id"] for it in items}
+    assert "kstartup_1001" in ids and "kstartup_3001" in ids
+    assert len(ids) >= 6  # 공공 4 + 민간 고유
