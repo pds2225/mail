@@ -6173,13 +6173,34 @@ def run_source_coverage_audit(
         run_at = run_at or datetime.now(KST)
         baseline = _ca.load_coverage_baseline()
         page_stats = page_stats_snapshot()
-        reports = _ca.classify_sources(rows, baseline, page_stats=page_stats)
+        try:
+            from mail_core.operations import detector_config as _dc  # noqa: PLC0415
+            detector_cfg = _dc.load_detector_config()
+        except Exception:
+            detector_cfg = None
+        reports = _ca.classify_sources(
+            rows, baseline, page_stats=page_stats, detector_cfg=detector_cfg)
         exec_check = _ca.verify_source_execution(sites, rows)
         summary = _ca.summarize_run_status(reports, exec_check)
         payload = _ca.build_coverage_payload(
             rows, reports, summary, exec_check=exec_check,
             generated_at=run_at.strftime("%Y-%m-%d %H:%M KST"),
         )
+        # W1: 실행 판정 ledger append (실패해도 본작업 무영향)
+        try:
+            from mail_core.operations import source_run_ledger as _led  # noqa: PLC0415
+            run_id = _led.new_run_id()
+            recs = [
+                _led.build_ledger_record(
+                    run_id=run_id,
+                    source_report=rep,
+                    page_stat=(page_stats or {}).get(rep.get("site_id", "")),
+                )
+                for rep in reports
+            ]
+            _led.append_source_runs(recs)
+        except Exception:
+            pass
         files: dict[str, str] = {}
         if write_files:
             files["json"] = str(write_source_coverage_json(payload, run_at=run_at))

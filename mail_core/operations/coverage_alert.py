@@ -405,13 +405,22 @@ def classify_source_status(
     page_stat: dict | None = None,
     baseline_date_rate: float | None = None,
     thresholds: dict | None = None,
+    zero_item_policy: str = "p0_if_baseline",
 ) -> dict:
     """coverage row 1건 → 상태·사유코드·등급 판정 (순수·오프라인·네트워크 없음).
 
     상태는 배타(하나만), 사유코드는 누적(여러 개 가능). 판정 재료가 없으면
     사유코드를 부여하지 않는다(모르는 것을 위험으로 만들지 않는다 — 오탐 폭발 방지).
+
+    zero_item_policy:
+      - p0_if_baseline: 기준선 충분·0건 → P0 (기본)
+      - warning: 0건이어도 P1 만 (지역·월간 사이트)
+      - ignore_zero: 0건 사유 미부여 (SUCCESS, 남용 금지)
     """
     th = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
+    policy = str(zero_item_policy or "p0_if_baseline")
+    if policy not in {"p0_if_baseline", "warning", "ignore_zero"}:
+        policy = "p0_if_baseline"
     stats = baseline_stats(
         history,
         runs=int(th["baseline_window_runs"]),
@@ -426,6 +435,7 @@ def classify_source_status(
         "item_count": item_count,
         "baseline_median": median,
         "baseline_n": stats["n"],
+        "zero_item_policy": policy,
     }
 
     # ① 비활성/설정상 미수행 → SKIPPED (위험 아님)
@@ -445,13 +455,20 @@ def classify_source_status(
         detail["fetch_error"] = fetch_error[:200]
         return _source_report(row, COLLECT_STATUS_FAILED, reason_codes, stats, detail)
 
-    # ⑤⑥ 0건 — 기준선 유무로 갈린다
+    # ⑤⑥ 0건 — 정책·기준선에 따라 갈린다
     if item_count == 0:
+        if policy == "ignore_zero":
+            return _source_report(row, COLLECT_STATUS_SUCCESS, [], stats, detail)
         if stats["sufficient"] and (median or 0) >= 1:
-            reason_codes.append(REASON_ZERO_ITEMS_WITH_BASELINE)
-            detail["drop_rate"] = 1.0
+            if policy == "warning":
+                # 평소 수집되던 사이트라도 warning 정책이면 P1 만
+                reason_codes.append(REASON_BASELINE_INSUFFICIENT)
+                detail["drop_rate"] = 1.0
+                detail["zero_warning"] = True
+            else:
+                reason_codes.append(REASON_ZERO_ITEMS_WITH_BASELINE)
+                detail["drop_rate"] = 1.0
         else:
-            # 기준선이 없어 "원래 0건인 사이트"인지 사고인지 단정할 수 없다 → P1 로만
             reason_codes.append(REASON_BASELINE_INSUFFICIENT)
         return _source_report(
             row, COLLECT_STATUS_ZERO_SUSPICIOUS, reason_codes, stats, detail)
@@ -559,19 +576,34 @@ def classify_sources(
     *,
     page_stats: dict | None = None,
     thresholds: dict | None = None,
+    detector_cfg: dict | None = None,
 ) -> list[dict]:
-    """coverage rows 전체 판정. 한 사이트의 판정 실패가 나머지를 막지 않는다."""
+    """coverage rows 전체 판정. 한 사이트의 판정 실패가 나머지를 막지 않는다.
+
+    detector_cfg 가 있으면 사이트별 thresholds·zero_item_policy 를 병합한다 (W1).
+    """
+    from mail_core.operations.detector_config import (  # noqa: PLC0415
+        thresholds_for_site,
+        zero_item_policy_for_site,
+    )
+
     baseline = baseline if isinstance(baseline, dict) else {}
     page_stats = page_stats or {}
     reports: list[dict] = []
     for row in rows or []:
         site_id = row.get("site_id", "")
         try:
+            site_th = dict(thresholds or {})
+            policy = "p0_if_baseline"
+            if detector_cfg is not None:
+                site_th.update(thresholds_for_site(detector_cfg, site_id))
+                policy = zero_item_policy_for_site(detector_cfg, site_id)
             reports.append(classify_source_status(
                 row,
                 baseline.get(site_id),
                 page_stat=page_stats.get(site_id),
-                thresholds=thresholds,
+                thresholds=site_th,
+                zero_item_policy=policy,
             ))
         except Exception as exc:  # 판정 실패도 관측 대상이지 중단 사유가 아니다
             reports.append({
