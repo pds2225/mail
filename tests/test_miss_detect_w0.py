@@ -114,7 +114,7 @@ def test_detector_config_loads_pilots():
     assert dc.zero_item_policy_for_site(cfg, "bizinfo") == "p0_if_baseline"
     th_biz = dc.thresholds_for_site(cfg, "bizinfo")
     th_default = dc.thresholds_for_site(cfg, "unknown_site_xyz")
-    assert th_biz["drop_ratio_p0"] == pytest.approx(0.3)
+    assert th_biz["drop_ratio_p0"] == pytest.approx(0.35)
     assert "drop_ratio_p0" in th_default  # defaults
 
 

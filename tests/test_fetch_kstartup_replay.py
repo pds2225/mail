@@ -61,12 +61,15 @@ def test_kstartup_collects_public_and_private():
     #    민간의 sn=1001 카드는 공공과 중복 → seen_sn 으로 스킵 = 4건.
     assert len(items) == 4
 
-    # 스키마 불변: 모든 item 이 9키를 전부 보유
+    # 스키마 불변: 모든 item 이 9키를 전부 보유(핵심소스 구조화 부가키 허용)
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        assert SCHEMA_KEYS.issubset(set(it.keys()))
         # site dict 의 is_aggregator=False 가 그대로 반영
         assert it["is_aggregator"] is False
         assert it["source"] == "K-Startup"
+        assert it.get("core_source") == "kstartup"
+        assert it.get("support_field")  # 목록 flag → support_field
+        assert it.get("kstartup_class") in {"PBC010", "PBC020"}
 
 
 @respx.mock
@@ -136,9 +139,57 @@ def by_id_link(items, iid):
 
 @respx.mock
 def test_kstartup_fetches_multiple_pages_when_configured():
-    """max_pages>1 이면 pageIndex 2까지 요청(빈 페이지면 종료)."""
+    """공공 상한>1 이면 page=2까지 요청. pageIndex 금지. 공공→민간 순서."""
     _route_public_private()
-    site = {**_site(), "max_pages": 2}
+    site = {**_site(), "max_pages_public": 2, "max_pages_private": 2}
     items = monitor.fetch_kstartup(site)
     assert len(items) == 4
     assert len(respx.calls) >= 4  # PBC010 p1+p2 + PBC020 p1+p2 이상
+    for call in respx.calls:
+        q = str(call.request.url)
+        assert "pageIndex=" not in q
+        assert "page=" in q
+    # 첫 요청이 공공
+    first = str(respx.calls[0].request.url)
+    assert "pbancClssCd=PBC010" in first
+
+
+@respx.mock
+def test_kstartup_page_param_advances_unique_items():
+    """page=1/2 에 다른 HTML 이면 고유 건수가 합쳐진다(pageIndex 무시 버그 회귀 차단)."""
+    public1 = _load("kstartup_public.html")
+    public2 = public1.replace("1001", "3001").replace("1002", "3002")
+    private = _load("kstartup_private.html")
+
+    def _route(request):
+        q = str(request.url)
+        if "pbancClssCd=PBC020" in q:
+            return httpx.Response(200, html=private)
+        if "page=2" in q:
+            return httpx.Response(200, html=public2)
+        return httpx.Response(200, html=public1)
+
+    respx.get(KSTARTUP_URL).mock(side_effect=_route)
+    items = monitor.fetch_kstartup({
+        **_site(), "max_pages_public": 3, "max_pages_private": 2,
+    })
+    ids = {it["id"] for it in items}
+    assert "kstartup_1001" in ids and "kstartup_3001" in ids
+    assert len(ids) >= 6  # 공공 4 + 민간 고유
+
+
+@respx.mock
+def test_kstartup_stops_on_duplicate_streak_not_only_max():
+    """같은 HTML 반복(신규0)이면 max 전에 종료 — 중복 루프 방지."""
+    _route_public_private()  # 매 page 동일 픽스처 → 2페이지부터 신규0
+    site = {
+        **_site(),
+        "max_pages_public": 10,
+        "max_pages_private": 10,
+        "empty_new_streak": 2,
+    }
+    items = monitor.fetch_kstartup(site)
+    # 공공 2건 + 민간 고유 2건 (중복 sn 스킵)
+    assert len(items) == 4
+    # 10+10 전량 호출하지 않음 (연속 신규0 종료)
+    assert len(respx.calls) < 12

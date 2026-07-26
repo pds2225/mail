@@ -65,9 +65,10 @@ def test_bizinfo_extracts_expected_items():
     # is_aggregator: site dict 의 True 가 그대로 반영
     assert first["is_aggregator"] is True
 
-    # 5) 스키마 불변: 모든 item 이 9키를 전부 보유
+    # 5) 스키마 불변: 모든 item 이 9키를 전부 보유(핵심소스 구조화 부가키 허용)
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        assert SCHEMA_KEYS.issubset(set(it.keys()))
+        assert it.get("core_source") == "bizinfo"
 
 
 @respx.mock
@@ -112,7 +113,8 @@ def test_bizinfo_channel_item_branch():
     src = payload["channel"]["item"]
     assert items[0]["id"] == src["pblancId"]
     assert items[0]["title"] == src["pblancNm"]
-    assert set(items[0].keys()) == SCHEMA_KEYS
+    assert SCHEMA_KEYS.issubset(set(items[0].keys()))
+    assert items[0].get("core_source") == "bizinfo"
 
 
 @respx.mock

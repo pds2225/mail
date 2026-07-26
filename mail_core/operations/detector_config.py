@@ -83,3 +83,15 @@ def zero_item_policy_for_site(cfg: dict[str, Any] | None, site_id: str) -> str:
     if value not in {"p0_if_baseline", "warning", "ignore_zero"}:
         return "p0_if_baseline"
     return value
+
+
+def fetch_failed_risk_for_site(cfg: dict[str, Any] | None, site_id: str) -> str:
+    """접속 실패(FETCH_FAILED) 등급. P0|P1 (기본 P0 — 미설정 시 보수적).
+
+    지역·imported(imp_*) 소스의 만성 TLS/접속 실패가 매일 P0 37건 알림을
+    만들던 사고(2026-07-26) 대응: defaults 를 P1 로 두고 핵심 소스만 P0.
+    """
+    value = str(site_policy(cfg, site_id).get("fetch_failed_risk") or "P0").upper()
+    if value not in {"P0", "P1"}:
+        return "P0"
+    return value
