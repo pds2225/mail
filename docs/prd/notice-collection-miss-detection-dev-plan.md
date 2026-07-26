@@ -152,9 +152,9 @@ A. 1차 완료 = **이상 탐지 + 자동 재시도 + 사람 확인 목록**이 
 | **사이트별 민감도 (W1)** | ✅ 완료 | 같은 “오늘 0건”이라도 **기업마당은 긴급**, **연간·지역 사이트는 경고만** |
 | **자동 재시도·확인 목록·발송연결 (W2)** | ✅ 완료 | 전체가 크게 깨지면 **메일 발송 보류**, 일부만 이상이면 **정상 사이트 공고만 발송**, 이상 사이트는 **확인 대기열**에 쌓임 |
 | **오늘 메일 리뷰 후속 (ops)** | ✅ 완료 | P0 알림 요약·비핵심 접속실패는 경고(P1), 워치리스트 상한, 이미 보낸 날은 수집 생략, 기준선 부족 0건 오탐 제거 |
-| **상세 읽기 구분 (W3)** | 대기 | “원문에 없음 / 읽기 실패 / 접속 실패”를 화면에 다르게 표시 |
+| **상세 읽기 구분 (W3)** | ✅ 완료 | “원문 미기재 / 추출 실패(검수) / 상세 접속 실패(재시도)”가 구분됨. 실패는 **실제 enrich 재시도** 후 남은 분만 review·수동큐, 미기재는 전국/미지정 경로 |
 
-**한 줄:** 1차(P0-Done: W0~W2) + 오늘 메일 ops 개선까지 코드로 연결됐습니다. 운영에서는 로그의 정상/주의/보류와 `var/state/miss_manual_queue.json` 확인 목록을 보면 됩니다.
+**한 줄:** 1차(P0-Done: W0~W2) + ops + **W3(P0-B 빈 정보 3상태)** 까지 코드로 연결됐습니다. 운영에서는 로그의 정상/주의/보류와 `var/state/miss_manual_queue.json`(COLLECTION·PARSE_FAILED·DETAIL_FETCH_FAILED subtype)을 보면 됩니다.
 
 ### FAQ 추가
 
@@ -199,7 +199,7 @@ A. 매일 수십 건 나오는 대형 사이트와, 한 달에 한두 번인 사
 | W0 | **DONE (코드)** | ADR·detector·ledger·FAILED/send_hold·SUCCESS alias·테스트. thresholds 주입·send 실보류는 W1 |
 | W1 | **DONE (코드)** | detector thresholds·zero_item_policy 주입, A=P0/B=warning 테스트, audit 배선·ledger append. send 실보류·P0 아이템 필터는 W2 |
 | W2 | **DONE (코드)** | send_hold 실보류, P0 소스 아이템 제외, manual_queue·retry_plan. HTTP 재수집 실행은 plan만(호출측 확장 여지) |
-| W3 | PARTIAL | 필드 3상태 있음, 추출률→소스 게이트 없음 |
+| W3 | **DONE (코드)** | field_status surface·review 가드·extraction 큐 subtype·extraction_rates·digest 라벨 |
 | W4~W5 | MISSING | lifecycle·ack UI 없음 |
 
 ---
@@ -873,4 +873,5 @@ Day 7+ W3(§5) 3상태 surface·가드
 | v3.3-W0 | 2026-07-25 | **W0 코드 착수** — ADR, `detector_sites.json`, `detector_config`/`source_run_ledger`, Run FAILED+send_hold, 테스트 |
 | v3.3-W1 | 2026-07-26 | **W1 + 비개발자 진행현황** — zero_item_policy·thresholds 주입, A/B 분기 테스트, audit/ledger 배선 |
 | v3.3-W2 | 2026-07-26 | **W2** — send_hold 실보류, P0 소스 발송 제외, miss_manual_queue, 비개발자 진행 갱신 |
+| v3.3-W3 | 2026-07-26 | **W3/P0-B** — field_status surface·review 가드·extraction 큐 subtype·extraction_rates·digest 라벨·P1 NOT_SPECIFIED↔전국 정합 |
 | v3.3-ops | 2026-07-26 | **오늘 메일 리뷰 ops** — fetch_failed_risk·P0 digest, watchlist cap, already_delivered skip, baseline 부족 0건 비위험화 |

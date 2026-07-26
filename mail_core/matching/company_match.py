@@ -321,6 +321,20 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
             region_score = weights["region_nationwide"]
             region_status = "nationwide"
             reasons.append("전국 대상")
+    # P1×W3: 지역 필드 NOT_SPECIFIED(원문 미기재) + unknown → 전국/미지정으로 승격.
+    # 추출 실패(PARSE/FETCH)는 승격하지 않음(검수 유지).
+    if region_status == "unknown":
+        try:
+            from mail_core.operations.field_status import (
+                NOT_SPECIFIED,
+                region_field_status,
+            )
+            if region_field_status(item) == NOT_SPECIFIED:
+                region_score = weights["region_nationwide"]
+                region_status = "nationwide_not_specified"
+                reasons.append("지역 원문 미기재(제한 없음)")
+        except Exception:
+            pass
     score += region_score
 
     # 공장 조건

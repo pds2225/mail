@@ -250,3 +250,104 @@ def plan_retries(
             "attempt": 0,
         })
     return plans
+
+
+def enqueue_extraction_failures(
+    items: list[dict] | None,
+    path: Path | None = None,
+) -> int:
+    """추출 실패(PARSE/FETCH) 공고를 manual_queue 에 subtype 분리 enqueue.
+
+    수집 P0(COLLECTION)와 혼동하지 않도록 subtype=PARSE_FAILED|DETAIL_FETCH_FAILED.
+    NOT_SPECIFIED 는 큐에 넣지 않는다.
+    """
+    from mail_core.operations.field_status import (
+        DETAIL_FETCH_FAILED,
+        PARSE_FAILED,
+        plan_extraction_retries,
+    )
+
+    plans = plan_extraction_retries(items)
+    if not plans:
+        return 0
+    by_id = {
+        str(it.get("id") or ""): it
+        for it in (items or [])
+        if isinstance(it, dict) and it.get("id")
+    }
+    queue = load_manual_queue(path)
+    n = 0
+    for plan in plans:
+        iid = str(plan.get("item_id") or "")
+        subtype = str(plan.get("subtype") or "")
+        if subtype not in {PARSE_FAILED, DETAIL_FETCH_FAILED}:
+            continue
+        it = by_id.get(iid) or {}
+        sid = str(it.get("site_id") or it.get("source") or iid or "unknown")
+        items_q = list(queue.get("items") or [])
+        entry = {
+            "id": f"{sid}::{iid}::{subtype}:{_now_iso()}",
+            "site_id": sid,
+            "site_name": str(it.get("source") or it.get("site_name") or ""),
+            "notice_id": iid,
+            "notice_url": str(plan.get("url") or ""),
+            "reason_codes": [subtype],
+            "risk_level": "P1",
+            "subtype": subtype,
+            "note": str(it.get("title") or "")[:200],
+            "status": "open",
+            "created_at": _now_iso(),
+            "resolution": "",
+            "resolved_at": "",
+        }
+        replaced = False
+        for i, old in enumerate(items_q):
+            if (
+                old.get("site_id") == sid
+                and old.get("notice_id") == iid
+                and old.get("subtype") == subtype
+                and old.get("status") == "open"
+            ):
+                entry["id"] = old.get("id") or entry["id"]
+                entry["created_at"] = old.get("created_at") or entry["created_at"]
+                items_q[i] = entry
+                replaced = True
+                break
+        if not replaced:
+            items_q.append(entry)
+        queue = {"items": items_q}
+        n += 1
+    if n:
+        save_manual_queue(queue, path)
+    return n
+
+
+def apply_extraction_rate_to_reports(
+    reports: list[dict] | None,
+    rates_by_site: dict[str, dict] | None,
+) -> list[dict]:
+    """소스 리포트에 extraction_rates 를 주입하고 DETAIL_EXTRACT_RATE_LOW 를 반영."""
+    out: list[dict] = []
+    rates_by_site = rates_by_site or {}
+    for r in reports or []:
+        row = dict(r)
+        sid = str(row.get("site_id") or "")
+        rates = rates_by_site.get(sid)
+        if rates:
+            row["extraction_rates"] = rates
+            codes = list(row.get("reason_codes") or [])
+            for code in rates.get("reason_codes") or []:
+                if code not in codes:
+                    codes.append(code)
+            row["reason_codes"] = codes
+            # 기존 P0 를 낮추지 않음. 추출률만으로 P0 승격은 rates.risk_level 이 P0 일 때.
+            existing = str(row.get("risk_level") or "")
+            new_risk = str(rates.get("risk_level") or "")
+            if new_risk == "P0" and existing != "P0":
+                row["risk_level"] = "P0"
+            elif new_risk == "P1" and existing not in {"P0", "P1"}:
+                row["risk_level"] = "P1"
+                if row.get("status") == "SUCCESS":
+                    row["status"] = "PARTIAL"
+        out.append(row)
+    return out
