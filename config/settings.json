@@ -1,6 +1,6 @@
 {
   "date_filter_enabled": true,
-  "days_back": 1,
+  "days_back": 3,
   "include_date_unknown": false,
   "raw_all_enabled": true,
   "raw_all_recipients": [],
@@ -13,5 +13,6 @@
   "raw_store_max_detail_bytes": 800000,
   "raw_store_gzip_detail": true,
   "tenant_id": "default",
-  "region_unknown_mail_limit": 10
+  "region_unknown_mail_limit": 10,
+  "notice_versioning_enabled": true
 }
