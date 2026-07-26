@@ -6161,11 +6161,11 @@ def run_source_coverage_audit(
 ) -> dict:
     """활성 소스 실행 완전성·수집 품질을 P0/P1 로 판정하고 산출물·알림을 남긴다.
 
-    운영 게이트이지만 **발송을 막지 않는다** — P0 가 나와도 상태만 DEGRADED 로 표시하고
-    정상 수집분의 판정·발송은 그대로 계속된다. 전체를 try/except 로 감싸 이 감사 자체의
+    운영 게이트이지만 **소스 P0(DEGRADED)만으로는 발송을 막지 않는다**.
+    런 FAILED(send_hold) 실보류 배선은 W1. 전체를 try/except 로 감싸 이 감사 자체의
     실패가 본 작업(수집·발송)에 절대 전파되지 않게 한다.
 
-    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="OK").
+    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="SUCCESS").
     """
     try:
         from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
@@ -6187,15 +6187,17 @@ def run_source_coverage_audit(
             if summary.get("p0_count"):
                 files["p0_alert"] = str(write_p0_collection_alert(payload, run_at=run_at))
         if summary.get("p0_count") and allow_alert:
+            hold_tag = "[FAILED][send_hold] " if summary.get("send_hold") else ""
             alert_email(
-                f"[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
+                f"{hold_tag}[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
                 _ca.format_p0_alert_message(payload),
             )
         return {**summary, "payload": payload, "files": files}
     except Exception as e:  # 감사 실패는 절대 수집·발송을 막지 않는다
         log.warning("소스 커버리지 감사 실패(무시): %s", e)
-        return {"status": "OK", "p0_count": 0, "p1_count": 0, "p0_sources": [],
-                "p1_sources": [], "payload": {}, "files": {}, "audit_error": str(e)[:200]}
+        return {"status": "SUCCESS", "send_hold": False, "p0_count": 0, "p1_count": 0,
+                "p0_sources": [], "p1_sources": [], "payload": {}, "files": {},
+                "audit_error": str(e)[:200]}
 
 
 def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) -> list[dict]:
