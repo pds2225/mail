@@ -139,25 +139,25 @@ def by_id_link(items, iid):
 
 @respx.mock
 def test_kstartup_fetches_multiple_pages_when_configured():
-    """max_pages>1 이면 page=2까지 요청(빈/중복이면 종료). pageIndex 금지."""
+    """공공 상한>1 이면 page=2까지 요청. pageIndex 금지. 공공→민간 순서."""
     _route_public_private()
-    site = {**_site(), "max_pages": 2}
+    site = {**_site(), "max_pages_public": 2, "max_pages_private": 2}
     items = monitor.fetch_kstartup(site)
     assert len(items) == 4
     assert len(respx.calls) >= 4  # PBC010 p1+p2 + PBC020 p1+p2 이상
-    # 요청 파라미터가 page 인지(pageIndex 회귀 방지)
     for call in respx.calls:
         q = str(call.request.url)
         assert "pageIndex=" not in q
         assert "page=" in q
+    # 첫 요청이 공공
+    first = str(respx.calls[0].request.url)
+    assert "pbancClssCd=PBC010" in first
 
 
 @respx.mock
 def test_kstartup_page_param_advances_unique_items():
     """page=1/2 에 다른 HTML 이면 고유 건수가 합쳐진다(pageIndex 무시 버그 회귀 차단)."""
-    # page=1 공공 / page=2 공공(다른 sn) / 민간은 1페이지만
     public1 = _load("kstartup_public.html")
-    # sn 1001,1002 → 2001 스타일로 바꾼 가짜 2페이지
     public2 = public1.replace("1001", "3001").replace("1002", "3002")
     private = _load("kstartup_private.html")
 
@@ -170,7 +170,26 @@ def test_kstartup_page_param_advances_unique_items():
         return httpx.Response(200, html=public1)
 
     respx.get(KSTARTUP_URL).mock(side_effect=_route)
-    items = monitor.fetch_kstartup({**_site(), "max_pages": 3})
+    items = monitor.fetch_kstartup({
+        **_site(), "max_pages_public": 3, "max_pages_private": 2,
+    })
     ids = {it["id"] for it in items}
     assert "kstartup_1001" in ids and "kstartup_3001" in ids
     assert len(ids) >= 6  # 공공 4 + 민간 고유
+
+
+@respx.mock
+def test_kstartup_stops_on_duplicate_streak_not_only_max():
+    """같은 HTML 반복(신규0)이면 max 전에 종료 — 중복 루프 방지."""
+    _route_public_private()  # 매 page 동일 픽스처 → 2페이지부터 신규0
+    site = {
+        **_site(),
+        "max_pages_public": 10,
+        "max_pages_private": 10,
+        "empty_new_streak": 2,
+    }
+    items = monitor.fetch_kstartup(site)
+    # 공공 2건 + 민간 고유 2건 (중복 sn 스킵)
+    assert len(items) == 4
+    # 10+10 전량 호출하지 않음 (연속 신규0 종료)
+    assert len(respx.calls) < 12

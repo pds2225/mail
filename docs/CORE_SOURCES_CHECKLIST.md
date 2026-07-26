@@ -40,7 +40,7 @@ python scripts\core_sources_checklist.py --json
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
 | 1 | config/sites.json | `kstartup` enabled, `type=kstartup_html` |
-| 2 | 다페이지 | `max_pages`≥20, 파라미터 **`page`**(pageIndex 무효). 실측 공공~15p·민간~4p |
+| 2 | 다페이지 | 공공 `max_pages_public`≥30 우선 → 민간 `max_pages_private`≥8 후순위. 키=`page` |
 | 3 | 상세 보강 | `k-startup.go.kr` ∈ `DETAIL_ENRICH_HOSTS`, 핵심 상세예산 우선 |
 | 4 | 회귀 테스트 | `test_fetch_kstartup_replay.py` (공공+민간) · `test_core_sources_specialize.py` |
 | 5 | 목록 분류 | 카드 flag → `support_field` 조기부여, `kstartup_class` |

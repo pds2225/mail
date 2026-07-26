@@ -2028,52 +2028,94 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 공공(PBC010)·민간(PBC020) + 다페이지.
-    # ★페이지 파라미터는 `page` (실측 2026-07-26: `pageIndex`/`currentPage` 는 무시되어
-    #   1페이지가 반복 → seen_sn 으로 empty → 분류당 ~15건만 수집되던 누락 버그).
-    # viewCount 도 사이트 기본 15건/페이지로 고정되는 경우가 많아 상한은 페이지 수로 잡는다.
-    max_pages = int(site.get("max_pages", 20))
+    """K-Startup 진행중 공고 수집 — 공공 우선·민간 후순위·중복 안전.
+
+    페이지 키는 반드시 `page` (pageIndex 무효, 실측 2026-07-26).
+    종료는 '신규 0 연속 N회' + 분류별 max_pages 안전캡.
+    """
+    from mail_core.matching.kstartup_collect import (  # noqa: PLC0415
+        build_list_params,
+        class_plan,
+        merge_unique_items,
+        stop_reason_after_page,
+    )
+
+    plan = class_plan(site)
     items: list[dict] = []
     seen_sn: set[str] = set()
+    seen_ids: set[str] = set()
     referer = site.get("referer") or site["url"]
     extra_hdr = {"Referer": referer}
-    _pages_done, _stop_reason, _dup_pages = 0, "EMPTY_STREAK", 0
+    _pages_done = 0
+    _stop_reason = "OK"
+    _dup_pages = 0
+    per_class: dict[str, int] = {}
 
-    for clss in ("PBC010", "PBC020"):
-        empty_streak = 0
+    for step in plan:
+        clss = step["clss"]
+        label = step["label"]
+        max_pages = int(step["max_pages"])
+        view_count = int(step["view_count"])
+        streak_limit = int(step["empty_new_streak"])
+        empty_new_streak = 0
+        class_new = 0
+
         for page in range(1, max_pages + 1):
-            soup = _soup(site["url"], extra_headers=extra_hdr, params={
-                "schMenuId": "10090",
-                "page": str(page),  # pageIndex 금지 — 서버가 무시함
-                "viewCount": str(int(site.get("view_count", 15) or 15)),
-                "pbancSttus": "ing",
-                "pbancClssCd": clss,
-            })
+            soup = _soup(
+                site["url"],
+                extra_headers=extra_hdr,
+                params=build_list_params(page=page, clss=clss, view_count=view_count),
+            )
             if not soup:
                 _stop_reason = "PAGE_FETCH_FAILED"
                 break
+
+            # 카드 파싱(내부 seen_sn 으로 동일 sn 스킵) → 전역 id 병합
             page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
+            raw_count = len(page_items)
+            added, new_count = merge_unique_items(items, page_items, seen_ids)
             _pages_done += 1
-            if not page_items:
-                empty_streak += 1
+            class_new += new_count
+
+            if new_count == 0:
+                empty_new_streak += 1
+                if raw_count > 0:
+                    _dup_pages += 1
             else:
-                empty_streak = 0
-                items.extend(page_items)
-            if empty_streak >= 2:
-                _stop_reason = "EMPTY_STREAK"
+                empty_new_streak = 0
+
+            reason = stop_reason_after_page(
+                page=page,
+                max_pages=max_pages,
+                raw_count=raw_count,
+                new_count=new_count,
+                empty_new_streak=empty_new_streak,
+                streak_limit=streak_limit,
+            )
+            if reason:
+                _stop_reason = f"{clss}:{reason}"
                 break
-            if page >= max_pages:
-                _stop_reason = "MAX_PAGES_HIT"
+
+        per_class[label] = class_new
+        log.info("K-Startup %s: +%d건 (상한 %dp)", label, class_new, max_pages)
+
     try:
         _page_stat(
             site.get("id") or site.get("name") or "kstartup",
             pages_fetched=_pages_done,
             stop_reason=_stop_reason,
-            duplicate_page=_dup_pages > 0,
+            duplicate_page=_dup_pages >= 2,
+            items=len(items),
+            public_items=per_class.get("공공", 0),
+            private_items=per_class.get("민간", 0),
         )
     except Exception:
         pass
-    log.info("%s: %d건", site["name"], len(items))
+    log.info(
+        "%s: %d건 (공공 %d + 민간 %d)",
+        site["name"], len(items),
+        per_class.get("공공", 0), per_class.get("민간", 0),
+    )
     return items
 
 

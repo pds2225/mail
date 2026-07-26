@@ -31,9 +31,11 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "max_pages": 20,
+    "max_pages_public": 30,
+    "max_pages_private": 10,
     "view_count": 15,
-    "note": "핵심소스 — 진행중 공공(PBC010)+민간(PBC020). 페이지파라미터는 page( pageIndex 무효). 실측 공공~15p·민간~4p → max_pages 20."
+    "empty_new_streak": 2,
+    "note": "핵심소스 — 진행중. 공공(PBC010) 우선 전량·민간(PBC020) 후순위. 페이지키=page(pageIndex 무효). 종료=신규0 연속2. 실측 공공15p/민간4p."
   },
   {
     "id": "smes24",

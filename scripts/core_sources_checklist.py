@@ -112,10 +112,13 @@ def _check_kstartup_pages() -> tuple[bool, str]:
     site = _site_by_id("kstartup")
     if not site:
         return False, "kstartup 없음"
-    mp = int(site.get("max_pages", 1) or 1)
-    if mp < 20:
-        return False, f"max_pages={mp} (핵심 다페이지 권장 ≥20, 공공~15p 실측)"
-    return True, f"max_pages={mp}"
+    pub = int(site.get("max_pages_public") or site.get("max_pages") or 1)
+    priv = int(site.get("max_pages_private") or 0)
+    if pub < 30:
+        return False, f"max_pages_public={pub} (실측~15p+여유 ≥30)"
+    if priv < 8:
+        return False, f"max_pages_private={priv} (후순위 ≥8)"
+    return True, f"공공≤{pub}p→민간≤{priv}p"
 
 
 def _check_nipa_pagination_config() -> tuple[bool, str]:
