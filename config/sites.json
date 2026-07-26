@@ -7,10 +7,12 @@
     "enabled": true,
     "is_aggregator": true,
     "api_page_unit": 500,
-    "api_max_pages": 4,
+    "api_max_pages": 20,
     "api_timeout": 30,
+    "datagokr_num_rows": 500,
+    "datagokr_max_pages": 20,
     "warmup_url": "https://www.bizinfo.go.kr/",
-    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인. 직결이 러너 IP 차단(timeout) 시 DATA_GO_KR_KEY 있으면 data.go.kr 폴백."
+    "note": "핵심소스 — API 500×20 안전캡(상한~10000). 빈/미달 페이지면 LAST_PAGE 종료. 부가필드 구조화. DATA_GO_KR_KEY 폴백."
   },
   {
     "id": "hanyang_startup",
@@ -29,8 +31,11 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "max_pages": 5,
-    "note": "통합포털 - 창업지원 (공공+민간, 다페이지)"
+    "max_pages_public": 200,
+    "max_pages_private": 100,
+    "view_count": 15,
+    "empty_new_streak": 2,
+    "note": "핵심소스 — 공공 우선·민간 후순위. page키 고정. 종료=신규0×2(상한은 안전캡 200/100). 실측 공공15p/민간4p."
   },
   {
     "id": "smes24",

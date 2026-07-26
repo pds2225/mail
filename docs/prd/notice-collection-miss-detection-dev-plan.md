@@ -1,0 +1,877 @@
+# 공고 누락 탐지 체계 — 보완 개발계획서
+
+| 항목 | 내용 |
+|------|------|
+| 문서 ID | `PRD-NOTICE-MISS-DETECT-v3.3` |
+| 작성일 | 2026-07-25 |
+| 상태 | Draft (v3.3: 발송배선·이중탐지·파일럿·롤아웃·인수데모 보완) |
+| 근거 | 누락 4단계 분석 + `coverage_alert`/`detail_extraction` As-Is + 개발안 검토 |
+| 범위 원칙 | **P0 = 수집·추출 탐지·최소 복구**. 판정·기업·Claude는 **P1** |
+| 읽는 법 | **운영·기획** → §0~§0-B · **빈정보** → §5 · **운영배선 보완** → §11 · **개발** → §2~§4 |
+
+---
+
+## 0. 한 줄 결론
+
+핵심은 기능 신설이 아니라 **이미 있는 탐지 코어에 사이트 정책·런 FAILED·재시도/수동큐를 붙여 복구 루프를 닫는 것**이다.  
+P0 Done은 **W0+W1+W2**로 자르고, W3는 P0-B, W4~W5는 P0-C(관측/운영)로 분리한다.
+
+---
+
+## 0-B. 비개발자용 설명 (운영·기획)
+
+이 절만 읽어도 “무엇을, 왜, 어느 순서로” 하는지 파악할 수 있다. 코드·파일명은 참고용이며 **몰라도 된다**.
+
+### 이 시스템이 하는 일 (한 문장)
+
+정부·기관 사이트에 올라온 **지원사업 공고를 자동으로 모아 메일로 보내 주는 서비스**인데, 그중 **「공고가 있는데도 우리 쪽에 안 들어온 경우」를 빨리 발견하고 다시 가져오려는 안전장치**를 만드는 일이다.
+
+### 왜 필요한가
+
+지금은 “프로그램이 에러 없이 끝났다”와 “공고를 빠짐없이 모았다”가 구분되지 않을 수 있다.
+
+| 현장 상황 (예시) | 위험 |
+|------------------|------|
+| 사이트는 열리는데 점검·로그인 화면만 나옴 | 0건인데 “성공”으로 넘어감 |
+| 평소 30건 나오던 곳에서 오늘 2건만 수집 | 조용히 대부분 누락 |
+| 목록 1페이지만 읽고 끝냄 | 뒤 페이지 공고 전부 누락 |
+| 상세 페이지를 못 읽어 지역·마감이 비어 있음 | “원문에 없음”인지 “읽기 실패”인지 모름 → 잘못 걸러질 수 있음 |
+
+**이용자 입장 피해:** 신청 가능한 공고를 메일로 못 받음 → 기회 손실·신뢰 하락.
+
+### “누락”이 생기는 네 구간 (쉬운 비유)
+
+택배·서류 업무에 비유하면 이해하기 쉽다.
+
+| 구간 | 쉬운 말 | 지금 우선순위 |
+|------|---------|----------------|
+| ① 가져오기 | 사이트에서 공고 **목록**을 제대로 긁어왔는가 | **최우선 (P0)** |
+| ② 내용 읽기 | 각 공고 **상세**(마감·지역·대상)를 제대로 읽었는가 | **바로 다음 (P0)** |
+| ③ 골라내기 | 우리 그룹·기업에 **맞는 공고인지** 판단 | 나중 (P1) |
+| ④ 보내기 | 요약·메일에 **빠지지 않고** 실렸는가 | 나중 (P1) |
+
+비유: ①은 “창고에서 상자 가져오기”, ②는 “상자 안 라벨 읽기”, ③은 “우리 매장에 넣을지 고르기”, ④는 “손님에게 배달”.  
+**상자를 안 가져왔는데 배달만 예쁘게 만들면 소용없다** → 그래서 ①·②를 먼저 한다.
+
+### 전체 흐름 (비개발자용)
+
+```text
+[매일 자동 실행]
+   │
+   ├─ ① 등록된 사이트들에서 공고 목록 수집
+   ├─ ② “평소보다 적게 왔나? 사이트 빠졌나? 이상 화면인가?” 점검
+   │      ├─ 대부분 정상 → 메일 발송 진행
+   │      ├─ 일부만 이상 → 정상 사이트 공고는 보내고, 이상 사이트는 재시도·알림
+   │      └─ 전체가 크게 깨짐 → 메일 발송을 잠시 멈춤 (잘못된 발송 방지)
+   ├─ ③ 상세 내용 읽기 (실패해도 공고 자체를 함부로 버리지 않음)
+   └─ ④ (이후 과제) 적합성 판단 · 기업 추천 · AI 요약 · 메일 구성
+```
+
+### 신호가 울리면 무슨 뜻인가
+
+| 표시 | 쉬운 말 | 메일 | 운영자가 할 일 |
+|------|---------|------|----------------|
+| 정상 (SUCCESS) | 오늘 수집 문제 없음 | 평소대로 발송 | 없음 |
+| 주의 (DEGRADED) | **일부** 사이트만 이상 | **정상 사이트분은 발송** | 알림 확인 → 자동 재시도 결과 보기 → 안 되면 확인 대기열 처리 |
+| 중단 (FAILED) | 수집 체계가 **크게** 깨짐 | **발송 보류** | 즉시 원인 확인 (다수 사이트 미실행 등) |
+
+“P0” = **지금 당장 손봐야 하는 수집 사고** 신호.  
+“P1” = 중요하지만, **추천이 조금 틀리거나 요약이 아쉬운 수준** — 수집 사고와 같은 급으로 묶지 않는다.
+
+### “0건”이 나와도 무조건 사고는 아님
+
+| 경우 | 해석 |
+|------|------|
+| 평소에도 거의 안 나오는 지역·월간 사이트 | 오늘 0건일 수 있음 → 경고만 또는 며칠 지켜봄 |
+| 평소 매일 수십 건이던 대형 포털이 0건 | **사고 가능성 큼** → 최우선 알림 |
+| 사이트를 새로 켠 직후 | 비교할 “평소 수치”가 없음 → 바로 최고 경고하지 않음 |
+
+그래서 **사이트마다 민감도를 다르게** 둔다 (큰 포털은 엄격, 작은·드문 사이트는 느슨).
+
+### “정보가 비어 있음”의 세 가지 의미
+
+운영·메일 화면에서 “지역 없음”이 보일 때, 아래를 구분해야 한다.
+
+| 의미 | 쉬운 말 | 대처 |
+|------|---------|------|
+| 원문에 원래 없음 | 전국 대상·상시모집처럼 **안 적힌 것이 정상** | 정상으로 두고 진행 가능 |
+| 읽기 실패 | 원문에는 있을 수 있는데 **우리가 못 뽑음** | 재시도·검수 유지 (함부로 “해당 없음” 처리 금지) |
+| 상세 페이지 접속 실패 | 링크는 있는데 **페이지를 못 열음** | 재시도·확인 대기열 |
+
+→ **이 세 가지가 섞이면** “원래 없는 공고”와 “시스템이 못 읽은 공고”를 같은 취급하게 되어 누락·오판이 재발한다.  
+**해결·재발방지 개발계획 전문은 §5.**
+
+### 개발을 나눠 하는 이유 (일정·기대 효과)
+
+한 번에 “수집+추천+AI 요약”을 하면 **무엇이 고장 났는지** 모르고, 완료도 흐려진다.
+
+| 단계 | 끝나면 생기는 효과 (비개발자) |
+|------|-------------------------------|
+| **1차 완료 (W0~W2)** | “어느 사이트가 이상한지” 알림 + 자동 한두 번 다시 시도 + 사람이 확인할 목록 |
+| **2차 (상세 읽기)** | “못 읽은 공고”와 “원래 빈 공고”가 구분됨 → 잘못된 제외 감소 |
+| **나중 (추천·AI)** | 맞는 공고만 더 잘 골라 주고, 요약 실패로 공고가 사라지지 않게 함 |
+
+### 운영자가 앞으로 보게 될 것 (목표)
+
+1. **실행 요약:** 오늘 전체 정상 / 일부 주의 / 발송 보류  
+2. **이상 사이트 목록:** 평소 N건 → 오늘 M건, 이유(접속 실패·급감·이상한 화면 등)  
+3. **확인 대기열:** 자동 재시도로도 안 된 건 → `확인함` / `오경보` / `수정완료` 표시  
+4. (2차 이후) **상세 읽기 실패 비율**이 높은 사이트
+
+### 자주 묻는 질문
+
+**Q. 일부 사이트만 고장인데 메일 전체가 멈춤?**  
+A. 아니요. **일부만 이상(주의)** 이면 정상 사이트 공고는 보냅니다. **전체가 크게 깨질 때만** 발송을 잠시 멈춥니다.
+
+**Q. AI 요약이 안 되면 공고를 안 보내나?**  
+A. 이번 최우선 과제(P0)의 범위가 아닙니다. 나중 과제에서 **요약 실패여도 기본 양식으로 보내도록** 합니다.
+
+**Q. “추천이 많아지면” 누락이 준 것 아닌가?**  
+A. 추천을 느슨하게 하면 안 빠지는 대신 **안 맞는 공고가 늘어** 피로도가 커집니다. 누락 방지(수집)와 추천 품질은 **따로** 관리합니다.
+
+**Q. 완료됐다는 건 무엇을 말하나?**  
+A. 1차 완료 = **이상 탐지 + 자동 재시도 + 사람 확인 목록**이 실제로 동작하고, 자동 검사(테스트)를 통과한 상태.  
+“수집 재현율 98%” 같은 숫자는 **운영해 보며 나중에** 목표로 올립니다.
+
+### 용어 미니 사전
+
+| 용어 | 쉬운 말 |
+|------|---------|
+| 소스 / 사이트 | 공고를 가져오는 기관 웹사이트·API 하나 |
+| 기준선 (baseline) | 그 사이트의 **평소 수집 건수** (최근 정상 실행 기준) |
+| 급감 | 평소보다 갑자기 훨씬 적게 수집됨 |
+| 실행대장 | 오늘 **어떤 사이트를 돌렸는지** 적어 둔 점검표 |
+| 수동(확인) 큐 | 자동으로 안 고쳐져 **사람이 볼 목록** |
+| P0 / P1 | 긴급도. P0=수집 사고, P1=추천·요약 등 다음 과제 |
+
+### 지금 어디까지 됐나 (진행 현황 · 비개발자)
+
+| 단계 | 상태 | 운영자가 체감하는 것 |
+|------|------|----------------------|
+| **준비 (W0)** | ✅ 완료 | 시스템이 “정상 / 주의 / 발송보류”를 **구분해서 기록**할 수 있게 됨. 큰 포털·작은 지역사이트를 **다른 민감도**로 둘 설정 파일도 준비됨 |
+| **사이트별 민감도 (W1)** | ✅ 완료 | 같은 “오늘 0건”이라도 **기업마당은 긴급**, **연간·지역 사이트는 경고만** |
+| **자동 재시도·확인 목록·발송연결 (W2)** | ✅ 완료 | 전체가 크게 깨지면 **메일 발송 보류**, 일부만 이상이면 **정상 사이트 공고만 발송**, 이상 사이트는 **확인 대기열**에 쌓임 |
+| **오늘 메일 리뷰 후속 (ops)** | ✅ 완료 | P0 알림 요약·비핵심 접속실패는 경고(P1), 워치리스트 상한, 이미 보낸 날은 수집 생략, 기준선 부족 0건 오탐 제거 |
+| **상세 읽기 구분 (W3)** | ✅ 완료 | “원문 미기재 / 추출 실패(검수) / 상세 접속 실패(재시도)”가 구분됨. 실패는 **실제 enrich 재시도** 후 남은 분만 review·수동큐, 미기재는 전국/미지정 경로 |
+
+**한 줄:** 1차(P0-Done: W0~W2) + ops + **W3(P0-B 빈 정보 3상태)** 까지 코드로 연결됐습니다. 운영에서는 로그의 정상/주의/보류와 `var/state/miss_manual_queue.json`(COLLECTION·PARSE_FAILED·DETAIL_FETCH_FAILED subtype)을 보면 됩니다.
+
+### FAQ 추가
+
+**Q. W0가 끝났는데 메일이 달라졌나?**  
+A. 크게 달라지지 않는 것이 정상입니다. 내부 상태·로그가 정교해진 것이고, **메일 발송을 막는 동작은 아직 조심스럽게(다음 단계) 연결**합니다.
+
+**Q. 왜 사이트마다 기준이 다르나?**  
+A. 매일 수십 건 나오는 대형 사이트와, 한 달에 한두 번인 사이트를 같은 “0건=사고”로 보면 **거짓 경보**가 폭발합니다. 큰 곳은 엄격, 드문 곳은 느슨하게 둡니다.
+
+→ 기술 상세(아키텍처·함수·상수)는 **§3~§4** 참고.
+
+---
+
+## 1. 문제 정의
+
+| 구분 | 발생 지점 | 우선순위 |
+|------|-----------|----------|
+| 원천 수집 누락 | 접속·목록·페이지네이션 | **P0-A** (W0~W2) |
+| 정보 추출 누락 | 상세보강·필드 의미 | **P0-B** (W3) |
+| 판정 누락 | 그룹·기업 | **P1** |
+| 전달 누락 | 요약·메일 | **P1** |
+
+> 프로그램이 오류 없이 종료된 것과 공고를 빠짐없이 수집한 것은 다르다.
+
+---
+
+## 2. 개발안 검토 반영 (v3 변경점)
+
+| # | 검토 의견 | 계획 반영 |
+|---|-----------|-----------|
+| 1 | P0 Done에 W2~W5 일괄 포함 → 범위 재비대 | **P0-Done = W0+W1+W2만**. W3=P0-B, W4~W5=P0-C |
+| 2 | `notice_lifecycle.jsonl`은 초기 필수 아님 | W4 **후순위**. 당분간 `source_coverage`+`detail_extraction`+raw_store |
+| 3 | `confirmed_healthy`·장기 30평균은 W0 금지 | §7 강화는 **W2 이후 옵션**. W0는 기존 SUCCESS 필터 계약 테스트 고정 |
+| 4 | `region_unknown` 삭제는 과다 | Done에서 **삭제 금지**. 1차는 **매핑 테이블**만 |
+| 5 | 런 FAILED 기준 모호 | ADR에 수치 고정: `exec_ok==false` **또는** `missing/active ≥ 0.30`(또는 missing≥5) |
+| 6 | KPI 98%/95%를 초기 Done에 쓰지 말 것 | Done = **pytest 계약**. 수치 KPI는 운영 관측 후 ratchet |
+
+### As-Is 갭 요약
+
+| Wave | 상태 | 핵심 갭 |
+|------|------|---------|
+| W0 | **DONE (코드)** | ADR·detector·ledger·FAILED/send_hold·SUCCESS alias·테스트. thresholds 주입·send 실보류는 W1 |
+| W1 | **DONE (코드)** | detector thresholds·zero_item_policy 주입, A=P0/B=warning 테스트, audit 배선·ledger append. send 실보류·P0 아이템 필터는 W2 |
+| W2 | **DONE (코드)** | send_hold 실보류, P0 소스 아이템 제외, manual_queue·retry_plan. HTTP 재수집 실행은 plan만(호출측 확장 여지) |
+| W3 | **DONE (코드)** | field_status surface·review 가드·extraction 큐 subtype·extraction_rates·digest 라벨 |
+| W4~W5 | MISSING | lifecycle·ack UI 없음 |
+
+---
+
+## 3. 전체 아키텍처
+
+### 3.1 파이프라인 (런타임)
+
+```mermaid
+flowchart TB
+  subgraph CFG["설정"]
+    SITES["config/sites.json"]
+    DET["config/detector_sites.json<br/>(W0 신규)"]
+    GROUPS["config/groups.json"]
+  end
+
+  subgraph FETCH["① Fetch — 원천 수집"]
+    FA["fetch_all / collectors"]
+    PS["_page_stat / page_stats_snapshot"]
+    COV["fetch_site_coverage → coverage rows"]
+  end
+
+  subgraph DETECT["② Detect — 누락 탐지 게이트"]
+    VER["verify_source_execution"]
+    CLS["classify_sources<br/>(+ per-site thresholds)"]
+    SUM["summarize_run_status<br/>SUCCESS|DEGRADED|FAILED"]
+    BASE["update_coverage_baseline<br/>(eligible only)"]
+  end
+
+  subgraph REM["③ Remediate — 복구 (W2)"]
+    RTY["auto_retry + backoff"]
+    WIN["window refetch<br/>(recheck_site_ids)"]
+    MQ["miss_manual_queue"]
+  end
+
+  subgraph ENRICH["④ Enrich / Normalize — 추출 (P0-B)"]
+    EN["enrich_items / enrich_item_from_detail"]
+    DX["_with_detail_extraction<br/>SUCCESS|NOT_SPECIFIED|PARSE_FAILED|DETAIL_FETCH_FAILED"]
+    RATE["extraction_rates → source PARTIAL/P0 (W3)"]
+  end
+
+  subgraph P1["⑤⑥⑦ P1 — 본 P0 Done 제외"]
+    EV["evaluate_notice"]
+    CM["company_match"]
+    SM["Claude / template summarize"]
+    DL["send_to_list / delivery_state"]
+  end
+
+  subgraph STORE["상태·산출물"]
+    BL["var/state/coverage_baseline.json"]
+    LED["var/state/source_run_ledger.jsonl (W0)"]
+    QF["var/state/miss_manual_queue.json (W2)"]
+    LOG["var/logs/source_coverage_YYYYMMDD.*"]
+    RAW["var/raw/ … detail_extraction"]
+  end
+
+  SITES --> FA
+  DET --> CLS
+  FA --> PS --> COV
+  COV --> VER --> CLS --> SUM
+  CLS --> BASE --> BL
+  SUM --> LED
+  SUM --> LOG
+  SUM -->|P0 sources| RTY
+  RTY -->|fail| MQ --> QF
+  RTY -->|need window| WIN
+  SUM -->|DEGRADED| EN
+  SUM -->|FAILED| HOLD["발송 보류"]
+  FA --> EN --> DX --> RATE
+  DX --> RAW
+  EN --> EV --> CM --> SM --> DL
+  GROUPS --> EV
+```
+
+### 3.2 발송 매트릭스 (소스 P0 ≠ 런 중단)
+
+```mermaid
+stateDiagram-v2
+  [*] --> SUCCESS: 활성소스 정상·SKIPPED만
+  [*] --> DEGRADED: 일부 소스 P0/PARTIAL
+  [*] --> FAILED: 실행대장 붕괴·대량 미실행
+
+  SUCCESS --> SendAll: 정상 발송
+  DEGRADED --> SendHealthy: 정상 소스만 발송 + 알림 + remediate
+  FAILED --> HoldSend: 발송 보류 + 즉시 알림
+```
+
+| Run 상태 | 조건(ADR 고정) | 발송 |
+|----------|----------------|------|
+| `SUCCESS` (alias: 기존 `OK`) | P0=0 이고 `exec_ok` | 전체 |
+| `DEGRADED` | P0≥1 이고 FAILED 조건 아님 | 정상 소스만 |
+| `FAILED` | `exec_ok==false` **또는** `missing_count/active_expected ≥ 0.30` **또는** `missing_count ≥ 5` | **보류** |
+
+### 3.3 모듈 배치 (어디를 고치나)
+
+| 계층 | 경로 | 역할 |
+|------|------|------|
+| 설정 | `config/sites.json`, `config/detector_sites.json` | 활성 소스·탐지 정책 |
+| 탐지 순수로직 | `mail_core/operations/coverage_alert.py` | classify/verify/summarize/baseline |
+| 복구 (신규) | `mail_core/operations/miss_remediation.py` | retry·queue·ack |
+| 레저 (신규) | `mail_core/operations/source_run_ledger.py` | JSONL append |
+| 오케스트레이션 | `monitor.py` (훅 최소) | fetch→audit→enrich→(P1)→send |
+| 테스트 | `tests/test_coverage_p0.py` 등 | 계약 |
+
+**보호:** `monitor.py` 대량 수정 금지. 로직은 `mail_core/`, monitor는 호출 1~수 줄.
+
+---
+
+## 4. 단계별 함수 · 로직 · 정의값
+
+범례: ✅ 기존 / 🔧 확장 / 🆕 신규 / ⏸ P1(스키마만)
+
+---
+
+### Stage 0 — 설정 로드
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | ✅ `load_sites()` · ✅ `load_groups()` · ✅ `load_settings()` · 🆕 `load_detector_config(path) → {defaults, sites}` · 🆕 `thresholds_for_site(cfg, site_id) → dict` |
+| **로직** | `defaults` ← `detector_sites.defaults` ← 사이트 오버라이드 merge. 없는 site_id는 defaults만. |
+| **정의값** | 파일: `config/detector_sites.json`. 키: `zero_item_policy`, `drop_threshold`(급감 비율=1−잔존비), `drop_ratio_p0`(코드 잔존비, 기본 0.2), `minimum_baseline`, `baseline_min_runs`, `expected_frequency`, `auto_retry`, `retry_backoff_sec`, `ignore_env_tls` |
+
+`zero_item_policy` 값:
+
+| 값 | 0건 동작 |
+|----|----------|
+| `p0_if_baseline` | 기준선 충분·median≥1 → P0 (기본) |
+| `warning` | P1만 |
+| `ignore_zero` | 사유 미부여 (남용 금지) |
+
+---
+
+### Stage 1 — Fetch (원천 수집)
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | ✅ collectors (`fetch_bizinfo`, `fetch_html_generic`, …) · ✅ `_page_stat` / `page_stats_snapshot` / `reset_page_stats` · ✅ `fetch_site_coverage` · ✅ `stable_id` |
+| **로직** | enabled 소스만 실행 → items + coverage row. page_stat에 `stop_reason`/`duplicate_page` 기록. 실패해도 다른 소스 계속. |
+| **정의값** | `stop_reason`: `SINGLE_PAGE` \| `EMPTY_PAGE` \| `MAX_PAGES_HIT`. 킬스위치 `MONITOR_NO_PAGE_STATS=1`. coverage row 핵심 필드: `site_id`, `enabled`, `collector_fn`, `fetch_success`, `fetch_error`, `item_count`, `date_unknown_count`, `detail_link_ok_count`, `valid_record_count`, `suspicious_content_count` |
+
+**소스 상태 enum (Fetch 판정 결과, Stage 2에서 부여):**
+
+```
+SUCCESS | PARTIAL | FAILED | SKIPPED | ZERO_SUSPICIOUS
+```
+
+상수: `COLLECT_STATUS_*` (`coverage_alert.py`)
+
+---
+
+### Stage 2 — Detect (누락 게이트)
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | ✅ `baseline_stats` · ✅ `classify_source_status` · ✅ `classify_sources` · ✅ `verify_source_execution` · ✅ `summarize_run_status` 🔧 · ✅ `grade_for` · ✅ `build_coverage_payload` · ✅ `detect_coverage_anomalies`(레거시 알림, 게이트와 분리) · 🆕 `append_source_run_ledger` |
+| **배선** | ✅ `run_source_coverage_audit` 🔧 (`thresholds=` / detector 주입, FAILED 시 send-hold 플래그) |
+
+**로직 (classify_source_status 요약):**
+
+1. disabled → `SKIPPED`
+2. unknown collector / 미실행 → `FAILED` + `SOURCE_NOT_EXECUTED` (P0)
+3. `!fetch_success` → `FETCH_FAILED` 또는 `_PARSER_ERROR_HINTS`면 `PARSER_FAILED` (P0)
+4. item_count==0 → 기준선 충분이면 `ZERO_ITEMS_WITH_BASELINE`(P0), 아니면 `BASELINE_INSUFFICIENT`(P1); policy=`warning`이면 P1로 강등
+5. valid_record_rate < 0.8 → `SCHEMA_VALIDATION_FAILED` (P0)
+6. suspicious_content_rate ≥ 0.5 → `CONTENT_VALIDATION_FAILED` (P0)
+7. count/median < drop_ratio_p0 → `COLLECTION_DROP_HIGH` (P0); soft band는 P1
+8. duplicate_page → `DUPLICATE_PAGE_LOOP` (P0); MAX_PAGES_HIT → `PAGINATION_INCOMPLETE` (P1)
+9. 날짜·상세링크 비율 저하 → P1 사유
+10. 사유 있으면 `PARTIAL`, 없으면 `SUCCESS`
+
+**정의값 (DEFAULT_THRESHOLDS / 상수):**
+
+| 상수 | 값 | 의미 |
+|------|-----|------|
+| `BASELINE_WINDOW_RUNS` | 7 | 최근 정상 N회 |
+| `BASELINE_MIN_RUNS` | 3 | 미만이면 기준선 부족 |
+| `DROP_RATIO_P0` | 0.2 | 잔존 &lt;20% → P0 급감 |
+| `DROP_RATIO_P1` | 0.5 | 잔존 &lt;50% → soft P1 |
+| `DATE_PARSE_MIN_RATE` | 0.5 | 게시일 파싱률 |
+| `DATE_PARSE_DROP_PP` | 0.3 | 대비 하락 p.p. |
+| `DETAIL_LINK_MIN_RATE` | 0.5 | 상세링크 비율 |
+| `VALID_RECORD_MIN_RATE` | 0.8 | 스키마 정상 비율 |
+| `SUSPICIOUS_CONTENT_MAX_RATE` | 0.5 | 로그인/캡차/점검 |
+| `SPIKE_RATIO_P1` | 3.0 | 급증 배수 |
+| `SPIKE_ABSOLUTE_EXCESS` | 20 | 급증 절대건수 |
+| `RUN_FAILED_MISSING_RATIO` 🆕 | 0.30 | 런 FAILED |
+| `RUN_FAILED_MISSING_ABS` 🆕 | 5 | 런 FAILED |
+
+**사유코드:**
+
+- P0: `SOURCE_NOT_EXECUTED`, `FETCH_FAILED`, `PARSER_FAILED`, `ZERO_ITEMS_WITH_BASELINE`, `COLLECTION_DROP_HIGH`, `DUPLICATE_PAGE_LOOP`, `CONTENT_VALIDATION_FAILED`, `SCHEMA_VALIDATION_FAILED`
+- P1: `DATE_PARSE_RATE_LOW`, `PAGINATION_INCOMPLETE`, `DETAIL_LINK_RATE_LOW`, `BASELINE_INSUFFICIENT`, `COLLECTION_SPIKE_HIGH`
+
+**baseline 로직 (`update_coverage_baseline`):**  
+`fetch_success`이고 anomaly/pollution 아닌 날만 append. window 기본 14.  
+W0에서 계약 테스트로 고정: classify상 SUCCESS가 아니면 ledger의 `baseline_eligible=false`.  
+`confirmed_healthy`·장기 30평균은 **W2 이후 옵션** (W0 금지).
+
+---
+
+### Stage 3 — Remediate (복구) — W2, P0-Done 포함
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | 🆕 `plan_retries(p0_sources, detector_cfg)` · 🆕 `retry_fetch_source(site, attempt)` · 🆕 `enqueue_manual(queue, entry)` · 🆕 `ack_manual(queue, id, resolution)` · 🆕 `refetch_window(site_id, since_date)` · 🔧 `recheck_site_ids` 소비 |
+| **로직** | P0(FETCH/PARSER/CONTENT) → `auto_retry`회 backoff → 성공 시 risk 해제·알림 resolved / 실패 시 manual_queue. 급감·0건은 window refetch 후보. 일일 사이트당 retry 상한. |
+| **정의값** | `auto_retry` 기본 2, `retry_backoff_sec` `[60,180]`, queue resolution: `ack`\|`false_alarm`\|`fixed`. 파일: `var/state/miss_manual_queue.json` |
+
+---
+
+### Stage 4 — Enrich / Normalize (정보 추출) — P0-B / W3
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | ✅ `enrich_items` · ✅ `enrich_item_from_detail` · ✅ `_parse_detail_from_page` · ✅ `_with_detail_extraction` · ✅ `_persist_detail_extraction_meta` · 🆕 `compute_extraction_rates(items) → {absolute_ok, decision_ok, parse_failed_rate, detail_fetch_failed_rate}` · 🆕 `map_region_surface(field_status) → digest label` (unknown **매핑**, 삭제 아님) |
+| **로직** | 상세 GET 실패 → 전 필드 `DETAIL_FETCH_FAILED`. 본문 있음·값 없음 → 성공 런이면 `NOT_SPECIFIED`, 아니면 `PARSE_FAILED`. 실패 공고는 **제외 금지·review 유지**. W3에서 소스 단위 추출률을 classify에 연결. |
+| **정의값** | `EXTRACTION_SUCCESS="SUCCESS"`, `NOT_SPECIFIED`, `PARSE_FAILED`, `DETAIL_FETCH_FAILED`. `_DETAIL_FAILURE_STATUSES`. `MAX_DETAIL_ENRICH`, `DETAIL_ENRICH_WORKERS=10` |
+
+**필수필드 계층:**
+
+| 계층 | 항목 | 실패 시 |
+|------|------|---------|
+| 절대 | 공고명, 기관(또는 소스), URL | 스키마 P0 |
+| 판정 | 접수상태/상시, 대상 힌트, 지역 또는 `NOT_SPECIFIED` | review, 자동제외 금지 |
+| 선택 | 금액, 신청방법, 세부일정 | 모니터링만 |
+
+**region_unknown 매핑 (삭제 금지):**
+
+| detail field status | surface |
+|---------------------|---------|
+| `NOT_SPECIFIED` | region 미지정(원문) |
+| `PARSE_FAILED` / `DETAIL_FETCH_FAILED` | region 미상(추출실패) → 기존 `region_unknown` 버킷과 매핑 가능 |
+
+---
+
+### Stage 5 — Evaluate / Company / Summarize / Delivery — P1 (Done 제외)
+
+| 단계 | 함수 (기존) | P0 취급 |
+|------|-------------|--------|
+| Evaluate | `evaluate_notice`, `classify_region_for_group` | ⏸ 스키마 예약만 |
+| Company | `company_match.compute_match_score` 등 | ⏸ |
+| Summarize | Claude 경로 / 템플릿 | 실패해도 공고 제외 금지 (P1-C) |
+| Delivery | `send_to_list`, `delivery_state` | 런 FAILED면 보류 플래그만 P0 |
+
+---
+
+### Stage 6 — 산출물·관측
+
+| 구분 | 내용 |
+|------|------|
+| **함수** | ✅ `write_source_coverage_json/md` · ✅ `write_p0_collection_alert` · ✅ `render_*` · 🆕 ledger writer · (W5) queue MD/UI |
+| **경로** | `var/state/coverage_baseline.json`, `source_run_ledger.jsonl`, `miss_manual_queue.json`, `var/logs/source_coverage_YYYYMMDD.*`, `var/raw/` |
+
+**source_run JSONL 1행 스키마 (W0):**
+
+```json
+{
+  "run_id": "20260725T090000Z",
+  "site_id": "nipa",
+  "status": "PARTIAL",
+  "risk_level": "P0",
+  "reason_codes": ["COLLECTION_DROP_HIGH"],
+  "item_count": 4,
+  "baseline_median": 24,
+  "page_stat": {"stop_reason": "MAX_PAGES_HIT"},
+  "extraction_rates": null,
+  "retry": {"attempt": 0, "max": 2},
+  "baseline_eligible": false
+}
+```
+
+---
+
+## 5. 빈 정보 3상태 해결·재발방지 개발계획 (P0-B / W3)
+
+> 대상 문제: 「원문에 원래 없음 / 읽기 실패 / 상세 접속 실패」가 한 가지 “없음·미상”으로 섞이는 것.  
+> 티어: **P0-B** (수집 P0-Done W0~W2 다음). W0~W2와 같은 PR에 묶지 않는다.
+
+### 5.1 문제 (현상 → 피해)
+
+| ID | 현상 | 피해 |
+|----|------|------|
+| F01 | 빈 필드를 전부 `region_unknown`·빈문자열로 취급 | 전국 공고를 “미상”으로 검수에 넣거나, 반대로 추출실패를 “해당없음”으로 통과 |
+| F02 | 접속실패와 파싱실패 구분 없이 동일 제외/포함 | 재시도·대기열 대상을 못 가림 → 누락 방치 |
+| F03 | 메일/대시보드 문구가 “지역 미상” 단일 | 운영자가 원인(원문 vs 시스템)을 모름 → 잘못된 수동 조치 |
+| F04 | 추출 실패율이 소스 이상탐지에 미연결 | 목록은 정상인데 상세만 깨진 사이트를 놓침 |
+| F05 | 필수필드 과다(금액·신청방법까지) | 정상 공고를 실패로 오인 → 오경보·과다 review |
+| F06 | 회귀 테스트가 enrich 단위에만 있고 surface/게이트 계약 약함 | 리팩터 시 다시 단일화(혼동) 재발 |
+
+### 5.2 목표 상태 (해결 정의)
+
+| 상태 코드 | 의미(고정) | 판정·메일 취급 | 복구 |
+|-----------|------------|----------------|------|
+| `NOT_SPECIFIED` | 원문에 해당 정보 없음 | **정상 진행 가능** (지역이면 전국/미지정 허용 정책) | 불필요 |
+| `PARSE_FAILED` | 페이지는 열렸으나 필드 추출 실패 | **자동 제외 금지**, review 유지 | enrich 재시도 → 실패 시 추출실패 큐 |
+| `DETAIL_FETCH_FAILED` | 상세 URL 접근 실패 | **자동 제외 금지**, review 유지 | HTTP 재시도 → 실패 시 수동 큐 |
+| `SUCCESS` | 값 확보 | 정상 | — |
+
+표면 표시(운영·메일) — **`region_unknown` 삭제가 아니라 매핑**:
+
+| 내부 상태 | 운영/메일 라벨 (권장) |
+|-----------|----------------------|
+| `NOT_SPECIFIED` | `원문 미기재` (또는 `지역 제한 없음`) |
+| `PARSE_FAILED` | `추출 실패(검수)` |
+| `DETAIL_FETCH_FAILED` | `상세 접속 실패(재시도)` |
+| (레거시 호환) | 실패 2종만 기존 `region_unknown` 버킷에 매핑 가능. **`NOT_SPECIFIED`는 unknown 버킷에 넣지 않음** |
+
+```mermaid
+flowchart LR
+  empty["필드 값 비어 있음"] --> kind{"detail_extraction.status"}
+  kind -->|NOT_SPECIFIED| ok["정상 진행"]
+  kind -->|PARSE_FAILED| rev1["review 유지 + 재파싱"]
+  kind -->|DETAIL_FETCH_FAILED| rev2["review 유지 + HTTP 재시도"]
+  rev1 -->|실패| q1["extraction 큐"]
+  rev2 -->|실패| q2["manual 큐"]
+```
+
+### 5.3 해결 개발 (What to build)
+
+#### W3-a. 계약 고정 (혼동 금지 가드)
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | ✅ `_with_detail_extraction` · 🆕 `field_blank_kind(status)` · 🆕 `surface_label_for_field(status)` · 🆕 테스트 헬퍼 `assert_blank_states_disjoint` |
+| **로직** | enrich 경로에서 빈 값에 raw `""`만 남기고 status 생략 금지. 목록에 값이 있으면 `source=list`+SUCCESS 유지. |
+| **산출** | ADR 절(3상태+surface). `mail_core/operations/field_status.py` (순수, monitor import 없음) |
+
+#### W3-b. 판정·필터 경로 분리
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | 🔧 `filter_for_group_with_diagnostics` 진입부 · 🆕 `should_force_review_for_extraction(item)` |
+| **로직** | `PARSE_FAILED`/`DETAIL_FETCH_FAILED` → `detail_failure_review=True` 강제, **exclude 금지**. `NOT_SPECIFIED`만으로 exclude/unknown 버킷 금지. |
+| **테스트** | 동일 빈 region 문자열이라도 status만 바꾸면: NOT_SPECIFIED→포함 후보 가능 / PARSE·FETCH→review only |
+
+#### W3-c. 복구 루프 (추출 전용)
+
+| 상태 | 자동 | 실패 후 |
+|------|------|---------|
+| `DETAIL_FETCH_FAILED` | 상세 GET `auto_retry`(기본 2, backoff) | `miss_manual_queue` reason=`DETAIL_FETCH_FAILED` |
+| `PARSE_FAILED` | 동일 URL 재파싱 1회(셀렉터 변경 없음) | 큐 subtype=`PARSE_FAILED` |
+| `NOT_SPECIFIED` | 재시도 없음 | — |
+
+W2 remediator와 공유하되 **사유코드·큐 subtype으로 분리** (수집 P0와 추출 P0 혼동 방지).
+
+#### W3-d. 소스 단위 추출률 게이트
+
+| 항목 | 내용 |
+|------|------|
+| **함수** | 🆕 `compute_extraction_rates(items)` · audit 후처리에 rates 주입 |
+| **정의값** | 판정필수 필드 기준 `parse_or_fetch_fail_rate ≥ 0.25` → 소스 PARTIAL+P1 `DETAIL_EXTRACT_RATE_LOW` / `≥ 0.50` → P0(사이트 정책으로 조절) |
+| **절대 필수** | title·url 결손 → 기존 스키마 P0와 정합 |
+| **금지** | 금액·신청방법 실패율로 P0 승격 금지 |
+
+#### W3-e. 운영 가시화
+
+| 산출 | 내용 |
+|------|------|
+| 일별 MD/JSON | 소스별 `not_specified` / `parse_failed` / `detail_fetch_failed` 건수·비율 |
+| 메일·digest | surface 3라벨. “지역 미상” 단일 문구 **신규 작성 금지** |
+| 런북 | 실패 2종 → 재시도·큐 ack; 미기재 → 조치 불필요 |
+
+### 5.4 재발방지 (Prevention)
+
+| 층 | 조치 | Done 증거 |
+|----|------|-----------|
+| **계약 테스트** | 3상태 × (포함/review/제외금지) 매트릭스 | `test_detail_extraction_status.py` 확장 + `test_field_blank_surface.py` |
+| **금지 가드** | `NOT_SPECIFIED` → `region_unknown` 버킷·exclude 진입 시 fail | 단언 테스트 |
+| **골든 HTML** | (a) 지역 문장→SUCCESS (b) 무지역→NOT_SPECIFIED (c) 빈 body→PARSE_FAILED (d) HTTP None→DETAIL_FETCH_FAILED | replay 테스트 |
+| **게이트 분리** | recall_zero_gate(판정) ≠ 추출률 게이트 | runbook 1절 |
+| **리뷰 규칙** | “빈 필드에 status 없이 `""`만 쓰지 말 것”, “unknown 단일화 금지” | RULES 또는 본 PRD 인용 |
+| **모니터링** | parse_failed+fetch_failed 비율 급증 알림(수집급감과 별도) | 추출 리포트 컬럼 |
+| **피드백** | false_alarm이 NOT_SPECIFIED 오분류면 골든 추가 | queue 절차 |
+
+### 5.5 W3 세부 WBS
+
+| Step | 산출 | 의존 |
+|------|------|------|
+| W3-a | `field_status.py` + ADR 매핑 + surface 라벨 | W0 enum 정합 |
+| W3-b | review 강제·NOT_SPECIFIED 비unknown 테스트 | W3-a |
+| W3-c | 추출 재시도·큐 subtype | W2 remediator |
+| W3-d | extraction_rates → 소스 리포트/사유코드 | W1 thresholds |
+| W3-e | 리포트·런북·digest 라벨 | W3-a~b |
+
+### 5.6 P0-B Done 게이트
+
+1. `pytest tests/test_detail_extraction_status.py tests/test_field_blank_surface.py -v` green  
+2. 동일 빈 region 값: status 3종 → **포함 후보 / review / review** 로 분기하는 테스트  
+3. `NOT_SPECIFIED`가 `region_unknown` 버킷·excluded에 들어가면 **실패**하는 가드 테스트  
+4. `DETAIL_FETCH_FAILED` 재시도 성공 시 review 해제(또는 enriched 성공) 경로 테스트  
+5. 소스 리포트에 `extraction_rates`(또는 동등) 존재  
+6. 메일/로그 신규 문구에 surface 3라벨 (단일 “미상” 신규 금지)  
+7. **P1 변경 없음**, **`region_unknown` 심볼 삭제 없음**
+
+### 5.7 비개발자용 — 이 계획이 끝나면
+
+| Before | After |
+|--------|--------|
+| “지역 없음”만 보임 | **원문에 없음 / 읽기 실패 / 접속 실패**가 구분됨 |
+| 실패 공고가 조용히 탈락하거나 과다 검수 | 실패는 **검수·재시도**, 원문 미기재는 **정상 진행** |
+| 배포 후 다시 섞임 | 자동 테스트가 **섞이면 PR/실행이 깨짐** |
+
+### 5.8 다음 실행 프롬프트 (P0-B)
+
+> §5 W3-a~b부터 착수: `mail_core/operations/field_status.py`(surface 매핑),  
+> `NOT_SPECIFIED`≠unknown 가드 테스트, review 강제 경로 보강.  
+> W3-c는 W2 remediator 이후. monitor 대량 수정·P1·region_unknown 삭제 금지.
+
+---
+
+## 6. 우선순위 · WBS (재분할)
+
+| Wave | 범위 | Done 증거 | 티어 |
+|------|------|-----------|------|
+| **W0** | ADR(enum+FAILED 수치), detector 초안, ledger 스키마/헬퍼, `OK→SUCCESS` alias, summarize FAILED | 단위테스트 + 파일 존재 | **P0-Done** |
+| **W1** | 사이트 threshold 주입, A=P0/B=warning 테스트, monitor audit 배선 | `test_coverage_p0` 분기 green | **P0-Done** |
+| **W2** | retry·manual_queue·recheck 소비, 상한 | 큐 생성/해제 테스트 | **P0-Done** |
+| **W3** | **§5 전문** — 3상태 분리·surface·review 가드·추출 재시도·추출률 게이트·재발방지 테스트 | §5.6 Done 게이트 | **P0-B** |
+| **W4** | notice_lifecycle (선택) | 샘플 산출 | **P0-C 후순위** |
+| **W5** | 수동큐 ack UI 또는 MD 런북 | runbook 절 | **P0-C** |
+| **W6+** | Evaluate… 스키마 / 판정·기업·Claude | 별도 PRD | **P1** |
+
+### P0-Done 게이트 (W0+W1+W2만)
+
+1. `pytest tests/test_coverage_p0.py` (+ W0/W1/W2 신규) green  
+2. 동일 0건 → 사이트 A=P0, B=warning 분기  
+3. P0 시 manual_queue(또는 동등) enqueue  
+4. 재시도 성공 시 risk 해제 경로  
+5. Run `SUCCESS`/`DEGRADED`/`FAILED` + FAILED 시 발송 보류 플래그  
+6. baseline에 실패/P0일 미반영 회귀 유지  
+7. **P1 코드 변경 없음** / **`region_unknown` 삭제 없음** / **lifecycle 필수 아님**
+
+수치 KPI(98% 등)는 초기 Done에 넣지 않는다.  
+**빈 정보 3상태 완료는 §5.6 (P0-B)** — P0-Done과 별도 체크리스트.
+
+---
+
+## 7. 예상 문제 (요약)
+
+E01~E20은 v2와 동일 기조. v3에서 강조:
+
+- **E12** lifecycle 폭증 → W4 후순위로 완화  
+- **E09** FAILED 수치 ADR 고정으로 완화  
+- **E13** P0-Done=W0~W2로 범위 재비대 방지  
+- **F01~F06** 빈 정보 혼동 → **§5**에서 해결·재발방지
+
+전문 표는 부록 A.
+
+---
+
+## 8. KPI (관측용, Done 아님)
+
+| KPI | 목표(운영 가정) | 비고 |
+|-----|-----------------|------|
+| 활성 소스 실행률 | 100% | 하드에 가깝게 감시 |
+| 오경보율 | ≤15% | false_alarm / 알림 |
+| 수집 재현율 등 | ≥98% 등 | **2주 관측 후 ratchet** |
+| 추출실패를 미기재로 위장한 건수 | **0** (가드 테스트) | P0-B 하드 |
+| 판정필수 필드 PARSE+FETCH 실패율 | 관측 후 목표 설정 | 선택필드 제외 |
+
+---
+
+## 9. Out of Scope
+
+- DB/DDL (JSON Schema)
+- Claude·기업승격·키워드 대량 확장
+- `region_unknown` 경로 **삭제** (매핑·가드만)
+- W0에서의 confirmed_healthy / 장기 30평균
+- monitor/streamlit 대규모 리팩터
+- 금액·신청방법을 필수 P0 게이트에 포함
+
+---
+
+## 10. 다음 실행 프롬프트
+
+> **수집 P0:** W0 착수 — ADR(FAILED 수치 + Canonical=`classify_*`), `source_run` JSONL 헬퍼, `detector_sites.json`(§11.1 E 파일럿 실명), `summarize_run_status` FAILED.  
+> 이어서 W1~W2에서 §11.1 A·B (send_hold·P0 소스 발송 제외) + `scripts/miss_detect_acceptance.py`.  
+> **추출 P0-B (§5+§11.2 G):** W0~W2 이후 W3-a~b.  
+> P1·lifecycle·confirmed_healthy·region_unknown 삭제·monitor 대량수정·Streamlit 필수화 금지.
+
+---
+
+## 부록 A. 예상 문제 E01~E20
+
+| ID | 문제 | 해결 |
+|----|------|------|
+| E01 | HTTP200 위장 실패 | suspicious_content P0 |
+| E02 | 첫 페이지만 | page_stat / MAX_PAGES |
+| E03 | 급감 미탐지 | baseline + drop_ratio |
+| E04 | 진성 0건 오경보 | baseline·zero_item_policy |
+| E05 | baseline 오염 | SUCCESS만 반영 |
+| E06 | 동일 임계 오경보 | detector_sites |
+| E07 | 미기재/파싱 혼동 | **§5 3상태 + surface + 가드** |
+| E08 | 필수 과다 | 필드 계층 (§5·§4) |
+| E09 | 발송 논쟁 | SUCCESS/DEGRADED/FAILED |
+| E10 | 탐지 후 미복구 | W2 remediation |
+| E11 | retry 폭풍 | 횟수·backoff·일일 상한 |
+| E12 | 로그 폭증 | W4 후순위·요약만 |
+| E13 | P0 범위 혼입 | Done=W0~W2 |
+| E14 | 키워드 FP | P1 |
+| E15 | 승격 남발 | P1 |
+| E16 | 이중 판정 | 게이트=classify만 |
+| E17 | ENV TLS 오경보 | ENV_TLS / ignore_env_tls |
+| E18 | 보호파일 | mail_core 중심 |
+| E19 | 허위 DONE | pytest 게이트 |
+| E20 | recall 게이트 혼동 | 문서 분리 |
+
+---
+
+## 부록 B. 함수 치트시트 (파일별)
+
+### `mail_core/operations/coverage_alert.py` ✅
+
+`load/save_coverage_baseline`, `baseline_stats`, `detect_coverage_anomalies`, `update_coverage_baseline`, `classify_source_status`, `classify_sources`, `verify_source_execution`, `summarize_run_status`, `grade_for`, `build_coverage_payload`, `describe_*`, `render_*`
+
+### `monitor.py` ✅ (훅만 확장)
+
+`fetch_site_coverage`, `run_source_coverage_audit`, `write_source_coverage_*`, `write_p0_collection_alert`, `_page_stat`, `enrich_items`, `enrich_item_from_detail`, `_with_detail_extraction`, `execute_monitor`, (`evaluate_notice` 이하 P1)
+
+### 신규 예정 `mail_core/operations/`
+
+| 모듈 | 함수 |
+|------|------|
+| `detector_config.py` | `load_detector_config`, `thresholds_for_site` |
+| `source_run_ledger.py` | `append_source_run`, `iter_runs` |
+| `miss_remediation.py` | `plan_retries`, `retry_fetch_source`, `enqueue_manual`, `ack_manual`, `refetch_window` |
+| `field_status.py` | `field_blank_kind`, `surface_label_for_field`, `should_force_review_for_extraction`, `compute_extraction_rates` |
+
+---
+
+## 11. 추가 보완 (v3.3) — 문서만으로는 구현이 막히는 빈틈
+
+§0~§10으로 **무엇을/왜/어떤 순서**는 충분하다.  
+아래는 코드에 꽂을 때 막히던 **배선·운영·인수** 빈틈이다. P0-Done(W0~W2)에 필수인 것과 P0-B/후에 해도 되는 것을 가른다.
+
+### 11.1 반드시 P0-Done에 넣을 것 (없으면 “발송 매트릭스”가 문구만 됨)
+
+#### A. FAILED 발송 보류 — 호출 위치·범위
+
+| 결정 | 내용 |
+|------|------|
+| **현황** | `run_source_coverage_audit`는 탐지·알림만 하고 **발송을 막지 않음**. `execute_monitor`와 타이밍이 어긋날 수 있음 |
+| **결정** | `execute_monitor` 초반(또는 send 직전)에 `run_status`/`send_hold`를 읽고, `FAILED`면 `allow_send`를 강제로 False |
+| **보류 범위** | 그룹 메일·워치리스트·원문일괄 **실발송만** 보류. dry-run·coverage 리포트·raw 저장·seen_ids(설정 따름)는 계속 |
+| **플래그** | `result["send_hold"]=True`, `result["send_hold_reason"]="RUN_FAILED"` |
+| **킬스위치** | `MONITOR_ALLOW_SEND_ON_FAILED=1` → 보류 해제(비상). 기본은 보류 |
+| **테스트** | FAILED payload → `allow_send` 실효 False 단언 (SMTP mock 미호출) |
+
+#### B. DEGRADED “정상 소스만 발송” — 필터 훅
+
+| 결정 | 내용 |
+|------|------|
+| **훅** | enrich 이후·그룹 필터 이전: `items = drop_items_from_p0_sources(items, p0_site_ids)` |
+| **규칙** | `risk_level==P0`인 `site_id`/`source` 소속 공고만 발송 후보에서 제외. P1은 발송 유지+리포트 |
+| **재시도 성공** | 해당 site_id를 P0 집합에서 제거 후 후보 복귀 |
+| **금지** | DEGRADED인데 필터 없이 전체 발송(=SUCCESS와 동일) 상태를 Done으로 치지 않음 |
+| **테스트** | 동일 런에 site A=P0·B=SUCCESS 아이템 → B만 send 후보 |
+
+#### C. 이중 탐지 권한 (레거시 vs 게이트)
+
+| 경로 | 역할 (확정) |
+|------|-------------|
+| `classify_sources` / `summarize_run_status` | **유일한** 발송보류·P0 등급·`recheck_site_ids`·ledger 권한 |
+| `detect_coverage_anomalies` | **보조 알림 문구**만. hold/등급을 뒤집지 않음 |
+| `update_coverage_baseline` | **classify 기준** `baseline_eligible`(SUCCESS만)로 갱신. anomaly 경로가 eligible을 넓히지 않음 |
+
+W0 ADR에 “Canonical detector = classify_*” 한 줄 고정.
+
+#### D. v1 운영 표면 = MD/JSON Only
+
+| 결정 | 내용 |
+|------|------|
+| P0-Done | Streamlit UI **불필요**. `source_coverage_*.md` + `miss_manual_queue.json` + ack는 **CLI 또는 파일 편집** |
+| W5 | Streamlit ack는 **선택**. 없어도 P0-Done |
+| 런북 | “큐 파일 위치 → resolution 값 → 저장” 5줄 절차를 `MONITOR_ENGINEERING_RUNBOOK`에 추가 |
+
+#### E. 파일럿 사이트 (detector_sites.json 초안 명단)
+
+W1 인수에 **실명**이 필요하다.
+
+| site_id (예시) | 정책 | 이유 |
+|----------------|------|------|
+| `bizinfo` | `p0_if_baseline`, drop 엄격, min_baseline 높음 | 대형 매일 |
+| `kstartup` | 동상 | 핵심 소스 |
+| `nipa` | 동상 | 핵심 소스 |
+| 지역/월간 1~2개 (sites.json에서 weekly성) | `warning` 또는 `expected_frequency=weekly` | 오경보 억제 대조군 |
+| TLS 자주 깨지는 후보 1개 | `ignore_env_tls` 검토 | E17 |
+
+초안 파일에 위 키를 넣고, 나머지는 `defaults`만.
+
+#### F. 인수 데모 스크립트 (pytest 외 1개)
+
+| 항목 | 내용 |
+|------|------|
+| 스크립트 | `scripts/miss_detect_acceptance.py` (네트워크 0, fixture rows) |
+| 시나리오 | (1) SUCCESS (2) DEGRADED+P0필터 (3) FAILED+send_hold (4) queue enqueue |
+| 출력 | exit 0 + `var/reports/miss_detect_acceptance_*.md` |
+| Done | P0-Done 게이트에 **스크립트 green** 추가 |
+
+### 11.2 P0-B(§5)와 같이 맞출 것
+
+#### G. `date_unknown_policy=recall` × 3상태
+
+| 필드/상황 | 취급 |
+|-----------|------|
+| 게시일 `NOT_SPECIFIED` | 기존 recall/date_unknown 정책 유지 (버리지 않음) |
+| 게시일 `PARSE_FAILED` / `DETAIL_FETCH_FAILED` | **recall include + detail_failure_review**. “미기재”로 위장 금지 |
+| 지역 `NOT_SPECIFIED` | unknown 버킷 **제외**, 전국/미지정 경로 |
+| 지역 실패 2종 | review 강제; 기존 `region_unknown` surface에는 **실패만** 매핑 |
+
+§5 Done에 “recall 설정 켠 채 매트릭스 테스트 1건” 추가.
+
+#### H. 알림 채널·소유
+
+| 등급 | 채널 (초기) | 소유 |
+|------|-------------|------|
+| 소스 P0 / DEGRADED | 기존 `alert_email` → `GMAIL_ADDRESS` 1통으로 **합본** (레거시 anomaly와 중복 발송 금지) | 운영 담당 |
+| 런 FAILED | 동일 메일 + 제목 `[FAILED][send_hold]` 최상단 | 운영 담당, **당일 확인** |
+| ntfy 등 | 선택. 없으면 메만으로 P0-Done 가능 | — |
+
+#### I. 보관·PII·git
+
+| 산출물 | 보관 | git |
+|--------|------|-----|
+| `source_run_ledger.jsonl` | 30일 롤링 | **ignore** (일별 coverage md는 기존 정책) |
+| `miss_manual_queue.json` | ack 후 90일 또는 완료분 archive | ignore (시크릿·실주소 금지) |
+| 큐/레저 내용 | title·url 가능. **수신자 이메일·API키 금지** | — |
+
+### 11.3 롤아웃 순서 (운영)
+
+```text
+Day 0  W0~W1 머지: detector 설정 + classify 권한 고정 + ledger
+       send_hold는 shadow만 (로그에 찍고 발송은 막지 않음)  ← MONITOR_SEND_HOLD_SHADOW=1
+Day 3  오경보 확인 후 shadow 해제, FAILED 실보류 ON
+Day 5  W2 remediator + manual_queue MD 런북
+Day 7+ W3(§5) 3상태 surface·가드
+언제든 MONITOR_ALLOW_SEND_ON_FAILED=1 / MONITOR_SEND_HOLD_SHADOW=1 로 롤백
+```
+
+### 11.4 P0-Done 게이트 추가분 (v3.3)
+
+기존 §6 게이트에 더한다:
+
+8. Canonical detector = `classify_*` (anomaly가 hold를 뒤집지 않음) 테스트  
+9. DEGRADED 시 P0 소스 아이템 발송 후보 제외 테스트  
+10. FAILED 시 send_hold → SMTP 미호출 테스트  
+11. `scripts/miss_detect_acceptance.py` green  
+12. `detector_sites.json`에 파일럿 실명 ≥5  
+13. v1 운영 = MD/JSON (Streamlit 없이도 큐 ack 절차 문서화)
+
+### 11.5 아직 일부러 안 넣는 것 (과보완 방지)
+
+- Streamlit 큐 UI, notice_lifecycle 전체, confirmed_healthy/장기 30평균  
+- P1 판정·기업·Claude, region_unknown 심볼 삭제  
+- ntfy 필수화, DB 도입  
+
+→ **문서 관점의 다음 작업은 여기까지면 충분. 다음은 W0 코드 착수.**
+
+---
+
+## 변경 이력
+
+| 버전 | 일자 | 내용 |
+|------|------|------|
+| v1 | (선행) | P0/P1 분리 초안 |
+| v2 | 2026-07-25 | As-Is·E01~E20·Done·W0 |
+| v3 | 2026-07-25 | 검토 반영(P0-Done=W0~W2, W4 후순위, FAILED 수치, region 매핑), **전체 아키텍처 + 단계별 함수/로직/정의값** |
+| v3.1 | 2026-07-25 | **§0-B 비개발자용 설명** (왜/네 구간/신호/0건/FAQ/용어) + 읽는 법 안내 |
+| v3.2 | 2026-07-25 | **§5 빈 정보 3상태 해결·재발방지 개발계획** (F01~F06, W3-a~e, 가드·골든·Done) |
+| v3.3 | 2026-07-25 | **§11 추가 보완** — send_hold 배선, DEGRADED 필터, 이중탐지 권한, 파일럿, MD-only, 인수스크립트, recall×3상태, 롤아웃, PII |
+| v3.3-W0 | 2026-07-25 | **W0 코드 착수** — ADR, `detector_sites.json`, `detector_config`/`source_run_ledger`, Run FAILED+send_hold, 테스트 |
+| v3.3-W1 | 2026-07-26 | **W1 + 비개발자 진행현황** — zero_item_policy·thresholds 주입, A/B 분기 테스트, audit/ledger 배선 |
+| v3.3-W2 | 2026-07-26 | **W2** — send_hold 실보류, P0 소스 발송 제외, miss_manual_queue, 비개발자 진행 갱신 |
+| v3.3-W3 | 2026-07-26 | **W3/P0-B** — field_status surface·review 가드·extraction 큐 subtype·extraction_rates·digest 라벨·P1 NOT_SPECIFIED↔전국 정합 |
+| v3.3-ops | 2026-07-26 | **오늘 메일 리뷰 ops** — fetch_failed_risk·P0 digest, watchlist cap, already_delivered skip, baseline 부족 0건 비위험화 |

@@ -158,6 +158,9 @@ ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 KSTARTUP_FIELD_TO_TYPE = {
     "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
     "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
+    "팁스": "지원금/바우처", "tips": "지원금/바우처",
+    "수출": "지원금/바우처", "글로벌": "지원금/바우처",
+    "투자": "투자",
     "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
 }
 
@@ -1628,12 +1631,27 @@ def enrich_item_from_detail(item: dict) -> dict:
 
 def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict]:
     """신규 공고 중 상세 보강이 필요한 항목을 HTTP 상세 조회(동시 처리).
-    ① 전용 호스트(구조화 파서) ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
-    specialized = [
-        it for it in items
-        if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
-        and not it.get("detail_enriched")
-    ][:limit]
+    ① 전용 호스트(구조화 파서) — 기업마당·K-Startup 은 별도 예산·최근게시 우선
+    ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
+    try:
+        from mail_core.matching.core_sources import (
+            CORE_MAX_DETAIL_ENRICH,
+            OTHER_SPECIALIZED_DETAIL_ENRICH,
+            select_detail_enrich_targets,
+        )
+        specialized = select_detail_enrich_targets(
+            items,
+            specialized_hosts=DETAIL_ENRICH_HOSTS,
+            core_limit=int(os.environ.get("MONITOR_CORE_DETAIL_ENRICH", CORE_MAX_DETAIL_ENRICH)),
+            other_limit=min(int(limit), OTHER_SPECIALIZED_DETAIL_ENRICH),
+            today=datetime.now(KST).date(),
+        )
+    except Exception:
+        specialized = [
+            it for it in items
+            if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
+            and not it.get("detail_enriched")
+        ][:limit]
     generic: list[dict] = []
     if GENERIC_DETAIL_ENRICH_ENABLED:
         spec_ids = {it["id"] for it in specialized}
@@ -1878,13 +1896,19 @@ def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
         posted = posted[:10]
     if not posted:
         posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-    return _item(
+    item = _item(
         iid, ttl, lnk,
         norm(it.get("jrsdInsttNm", it.get("author", ""))),
         norm(it.get("bsnsSumryCn", it.get("description", ""))),
         norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
         site_name, posted, agg,
     )
+    try:
+        from mail_core.matching.core_sources import attach_bizinfo_structured
+        return attach_bizinfo_structured(item, it)
+    except Exception:
+        item["core_source"] = "bizinfo"
+        return item
 
 
 def _fetch_bizinfo_direct(site: dict) -> list[dict]:
@@ -2175,39 +2199,110 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
         pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
         posted = extract_date_from_text(pm.group(1)) if pm else ""
         flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        flag_text = norm(flag.get_text()) if flag else ""
         iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title + org)}"
-        items.append(_item(iid, title, link, org,
-                           norm(flag.get_text()) if flag else "", dl,
-                           site["name"], posted, agg))
+        item = _item(iid, title, link, org,
+                     flag_text, dl,
+                     site["name"], posted, agg)
+        try:
+            from mail_core.matching.core_sources import attach_kstartup_list_structured
+            item = attach_kstartup_list_structured(
+                item, flag_text=flag_text, clss=clss)
+        except Exception:
+            item["core_source"] = "kstartup"
+        items.append(item)
     return items
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 5) — 1페이지만 보면 page2+ 공고 누락.
-    max_pages = int(site.get("max_pages", 5))
+    """K-Startup 진행중 공고 수집 — 공공 우선·민간 후순위·중복 안전.
+
+    페이지 키는 반드시 `page` (pageIndex 무효, 실측 2026-07-26).
+    종료는 '신규 0 연속 N회' + 분류별 max_pages 안전캡.
+    """
+    from mail_core.matching.kstartup_collect import (  # noqa: PLC0415
+        build_list_params,
+        class_plan,
+        merge_unique_items,
+        stop_reason_after_page,
+    )
+
+    plan = class_plan(site)
     items: list[dict] = []
     seen_sn: set[str] = set()
+    seen_ids: set[str] = set()
     referer = site.get("referer") or site["url"]
     extra_hdr = {"Referer": referer}
+    _pages_done = 0
+    _stop_reason = "OK"
+    _dup_pages = 0
+    per_class: dict[str, int] = {}
 
-    for clss in ("PBC010", "PBC020"):
-        empty_streak = 0
+    for step in plan:
+        clss = step["clss"]
+        label = step["label"]
+        max_pages = int(step["max_pages"])
+        view_count = int(step["view_count"])
+        streak_limit = int(step["empty_new_streak"])
+        empty_new_streak = 0
+        class_new = 0
+
         for page in range(1, max_pages + 1):
-            soup = _soup(site["url"], extra_headers=extra_hdr, params={
-                "schMenuId": "10090", "pageIndex": str(page), "viewCount": "100",
-                "pbancSttus": "ing", "pbancClssCd": clss,
-            })
+            soup = _soup(
+                site["url"],
+                extra_headers=extra_hdr,
+                params=build_list_params(page=page, clss=clss, view_count=view_count),
+            )
             if not soup:
+                _stop_reason = "PAGE_FETCH_FAILED"
                 break
+
+            # 카드 파싱(내부 seen_sn 으로 동일 sn 스킵) → 전역 id 병합
             page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
-            if not page_items:
-                empty_streak += 1
+            raw_count = len(page_items)
+            added, new_count = merge_unique_items(items, page_items, seen_ids)
+            _pages_done += 1
+            class_new += new_count
+
+            if new_count == 0:
+                empty_new_streak += 1
+                if raw_count > 0:
+                    _dup_pages += 1
             else:
-                empty_streak = 0
-                items.extend(page_items)
-            if empty_streak >= 2:
+                empty_new_streak = 0
+
+            reason = stop_reason_after_page(
+                page=page,
+                max_pages=max_pages,
+                raw_count=raw_count,
+                new_count=new_count,
+                empty_new_streak=empty_new_streak,
+                streak_limit=streak_limit,
+            )
+            if reason:
+                _stop_reason = f"{clss}:{reason}"
                 break
-    log.info("%s: %d건", site["name"], len(items))
+
+        per_class[label] = class_new
+        log.info("K-Startup %s: +%d건 (상한 %dp)", label, class_new, max_pages)
+
+    try:
+        _page_stat(
+            site.get("id") or site.get("name") or "kstartup",
+            pages_fetched=_pages_done,
+            stop_reason=_stop_reason,
+            duplicate_page=_dup_pages >= 2,
+            items=len(items),
+            public_items=per_class.get("공공", 0),
+            private_items=per_class.get("민간", 0),
+        )
+    except Exception:
+        pass
+    log.info(
+        "%s: %d건 (공공 %d + 민간 %d)",
+        site["name"], len(items),
+        per_class.get("공공", 0), per_class.get("민간", 0),
+    )
     return items
 
 
@@ -3801,7 +3896,25 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
 
 
 def assess_date_unknown_risk(item: dict) -> str:
-    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음."""
+    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음.
+
+    W3 §11.2 G: 게시일/신청기간이 PARSE_FAILED·DETAIL_FETCH_FAILED 이면
+    '원문 미기재'로 위장하지 않고 높음(recall include + review)으로 올린다.
+    """
+    try:
+        from mail_core.operations import field_status as _fs  # noqa: PLC0415
+        extraction = item.get("detail_extraction") or {}
+        fields = extraction.get("fields") or {}
+        for key in ("application_period", "title"):
+            meta = fields.get(key) if isinstance(fields, dict) else None
+            st = _fs.field_blank_kind(
+                (meta or {}).get("status") if isinstance(meta, dict) else extraction.get("status"))
+            if st in _fs.FAILURE_STATUSES:
+                return "높음"
+        if _fs.field_blank_kind(extraction.get("status")) in _fs.FAILURE_STATUSES:
+            return "높음"
+    except Exception:
+        pass
     text = _notice_body_text(item)
     if any(kw in text for kw in APPLICATION_KEYWORDS):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
@@ -3896,6 +4009,13 @@ def classify_support_type(item: dict) -> list[str]:
         for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
             if kw in sf and bucket not in matched:
                 matched.append(bucket)
+        try:
+            from mail_core.matching.core_sources import map_category_to_support_types
+            for bucket in map_category_to_support_types(sf):
+                if bucket not in matched:
+                    matched.append(bucket)
+        except Exception:
+            pass
         # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
         #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
         #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
@@ -3917,6 +4037,11 @@ def _keyword_match_text(item: dict) -> str:
         item.get("support_field", ""),
         item.get("target_field", ""),
     ]
+    try:
+        from mail_core.matching.core_sources import keyword_extra_parts
+        parts.extend(keyword_extra_parts(item))
+    except Exception:
+        pass
     return norm(" ".join(p for p in parts if p)).lower()
 
 
@@ -4774,9 +4899,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         and application_like
         and group_keyword_pass
     )
+    # W3/P0-B: 빈 정보 3상태 — 추출 실패는 review 강제, NOT_SPECIFIED 는 unknown 금지.
+    from mail_core.operations import field_status as _fs  # noqa: PLC0415
     detail_status = str(
         (item.get("detail_extraction") or {}).get("status") or "")
-    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES
+    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES or _fs.should_force_review_for_extraction(item)
     detail_failure_blockers = {
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
@@ -4786,6 +4913,32 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         detail_failure
         and not (set(reason_codes) & detail_failure_blockers)
     )
+    # 지역 필드 NOT_SPECIFIED(원문 미기재) → 전국/미지정 경로(eligible). unknown 버킷 금지.
+    region_extract_status = _fs.region_field_status(item)
+    if (
+        region_extract_status == _fs.NOT_SPECIFIED
+        and region_status == "unknown"
+        and district_status != "not_eligible"
+    ):
+        region_status = "eligible"
+        district_status = "eligible" if district_status == "unknown" else district_status
+        region_info = {
+            **region_info,
+            "region_status": region_status,
+            "district_status": district_status,
+        }
+        # REGION_UNKNOWN 사유가 있으면 제거(미기재≠미상).
+        reason_codes = [c for c in reason_codes if c != "REGION_UNKNOWN"]
+        hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+        # 재계산: 지역만 막혔던 경우 포함 후보 가능
+        is_relevant = (
+            not hard_reasons
+            and deadline_ok
+            and region_status == "eligible"
+            and district_status == "eligible"
+            and application_like
+            and group_keyword_pass
+        )
     review_needed = (
         not is_relevant
         and (
@@ -4798,8 +4951,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
     #  버리지 말고 '지역 미상' 버킷으로 보내 보고 메일 하단에 함께 첨부한다(누락 방지).
+    # W3: 추출 실패·NOT_SPECIFIED 는 이 버킷에 넣지 않는다(allow_region_unknown_bucket).
     region_unknown_review = (
-        region_status == "unknown"
+        _fs.allow_region_unknown_bucket(item)
+        and region_status == "unknown"
         and district_status != "not_eligible"
         and not is_relevant
         and deadline_ok
@@ -4827,7 +4982,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             + ", ".join(soft_excluded_keywords[:5])
         )
     if detail_failure_review:
-        notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+        surf = _fs.surface_label_for_field(
+            detail_status or region_extract_status, field="region")
+        if surf:
+            notes.append(f"{surf} — 원문 재확인 필요")
+        else:
+            notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+    elif region_extract_status == _fs.NOT_SPECIFIED:
+        notes.append(_fs.surface_label_for_field(_fs.NOT_SPECIFIED, field="region"))
 
     result.update({
         "is_relevant": is_relevant,
@@ -5234,10 +5396,21 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
         return ""
     lines = [
         "\n\n────────────────────────────────",
-        f"📍 지역 미상 — 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
+        f"📍 지역 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
     ]
     for it in shown:
-        lines.append(f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}")
+        try:
+            from mail_core.operations.field_status import (
+                region_field_status,
+                surface_label_for_field,
+            )
+            surf = surface_label_for_field(region_field_status(it), field="region")
+        except Exception:
+            surf = ""
+        title_line = f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}"
+        if surf:
+            title_line += f" [{surf}]"
+        lines.append(title_line)
         lines.append(
             f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
             f" | 마감: {resolve_item_deadline(it) or '미기재'}"
@@ -5698,6 +5871,12 @@ def load_watchlist() -> dict:
         "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
         "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
     }
+    for key in ("max_items", "url_max_age_days", "url_unknown_cap"):
+        if key in raw:
+            try:
+                normalized[key] = int(raw[key])
+            except (TypeError, ValueError):
+                pass
     if raw.get("tenant_id"):
         normalized["tenant_id"] = private_config.normalize_tenant_id(raw.get("tenant_id"))
     return normalized
@@ -5719,17 +5898,22 @@ def is_watchlisted(item: dict, watchlist: dict) -> bool:
     상세 보강된 본문(description)은 보지 않는다 — 6KB 본문·nav 잔여물에는 '지식재산'
     같은 단어가 우연히 들어가('한국지식재산보호원' 등), 1년 지난 마감 공고까지
     날짜필터를 우회해 그룹 digest 상단에 오르던 실사고(2026-07-24)의 원인이었다."""
+    return bool(watchlist_match_kind(item, watchlist))
+
+
+def watchlist_match_kind(item: dict, watchlist: dict) -> str:
+    """'' | 'keyword' | 'url' — 키워드가 URL보다 우선."""
     kws = watchlist.get("keywords") or []
     if kws:
         text = f"{item.get('title','')} {item.get('author','')}".lower()
         if any(_kw_in_text(text, k.lower()) for k in kws):
-            return True
+            return "keyword"
     nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
     if nurls:
         link = _norm_url(item.get("link") or item.get("url") or "")
         if link and any(link.startswith(n) or n in link for n in nurls):
-            return True
-    return False
+            return "url"
+    return ""
 
 
 def _post_run_alert(result: dict) -> None:
@@ -5781,10 +5965,31 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     global _DRAFT_MODE, _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
-    _ALLOW_SMTP_SEND = allow_send
+
+    gate = collection_gate if isinstance(collection_gate, dict) else {}
+    send_hold = bool(gate.get("send_hold"))
+    try:
+        from mail_core.operations.miss_remediation import effective_allow_send
+        effective_send, hold_reason = effective_allow_send(
+            allow_send, send_hold=send_hold)
+    except Exception:
+        effective_send, hold_reason = allow_send, "gate_import_error"
+    if allow_send and not effective_send:
+        log.warning(
+            "RUN FAILED send_hold — 실발송 보류 (reason=%s, run_status=%s)",
+            hold_reason, gate.get("run_status"),
+        )
+    elif allow_send and send_hold and effective_send:
+        log.warning(
+            "send_hold 이지만 발송 허용 (reason=%s) — shadow/override",
+            hold_reason,
+        )
+
+    _ALLOW_SMTP_SEND = effective_send
     _ALLOW_PERSIST_SEEN = persist_seen
     _DRAFT_MODE = draft_mode
     _DRAFT_OK = 0
@@ -5795,11 +6000,10 @@ def execute_monitor(
     _LAST_SEND_ERR = ""
     _RAW_STORE = None
 
-    # deliver: 실제 발송(allow_send) 또는 초안 생성(draft_mode)이면 디제스트 본문을 실제로
-    # 만들어 전달한다. draft_mode 는 _DRAFT_MODE 를 통해 send_to_list 가 초안으로 우회한다.
-    deliver = allow_send or draft_mode
+    # deliver: 실제 발송(effective_send) 또는 초안 생성(draft_mode)
+    deliver = effective_send or draft_mode
     now = datetime.now(KST)
-    mode = "send" if allow_send else ("draft" if draft_mode else "preview")
+    mode = "send" if effective_send else ("draft" if draft_mode else "preview")
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
     sites    = load_sites()
@@ -5810,7 +6014,7 @@ def execute_monitor(
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
     # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         if not delivery_outbox.is_ready():
             raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
         retry_pending_outbox()
@@ -5822,6 +6026,39 @@ def execute_monitor(
     if not groups:
         log.info("활성 그룹 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+
+    target_date_early = previous_business_day(now, days_back)
+    # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
+    if effective_send and persist_seen:
+        try:
+            from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
+            _wl_early = load_watchlist()
+            _skip = should_skip_fetch_already_delivered(
+                target_date=str(target_date_early),
+                groups=groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+                delivery_path=DELIVERY_STATE_PATH,
+            )
+            if _skip.get("skip"):
+                log.info(
+                    "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
+                    _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
+                )
+                return _with_raw_store_stats({
+                    "ok": True,
+                    "mode": mode,
+                    "reason": "already_delivered",
+                    "skipped_fetch": True,
+                    "target_date": str(target_date_early),
+                    "mail_sent": 0,
+                    "collected": 0,
+                    "new_items": 0,
+                    "filtered_items": 0,
+                })
+        except Exception as e:
+            log.warning("발송완료 스킵 게이트 실패(무시·수집 계속): %s", e)
 
     if _RawStore is not None:
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
@@ -5853,12 +6090,91 @@ def execute_monitor(
         for it in new_items:
             _RAW_STORE.save_item_meta(it)
 
+    # W3-c: 이미 enrich된 처리대상에 FETCH/PARSE 재시도 + 추출률·큐 (main 병합)
+    extraction_rates_by_site: dict = {}
+    extraction_retry_plan: list = []
+    extraction_retry_stats: dict = {}
+    try:
+        from mail_core.operations.field_status import (
+            compute_extraction_rates,
+            plan_extraction_retries,
+            run_extraction_retries,
+            write_extraction_rates_report,
+        )
+        from mail_core.operations.miss_remediation import enqueue_extraction_failures
+
+        _sleep_raw = os.environ.get("MONITOR_EXTRACTION_RETRY_SLEEP", "")
+        if _sleep_raw == "0":
+            _backoff = (0, 0)
+            _sleep_fn = lambda _s: None  # noqa: E731
+        else:
+            _backoff = (60, 180)
+            _sleep_fn = None
+        new_items, extraction_retry_stats = run_extraction_retries(
+            new_items,
+            enrich_item_from_detail,
+            backoff_sec=_backoff,
+            sleep_fn=_sleep_fn,
+        )
+        if extraction_retry_stats.get("attempted"):
+            log.info(
+                "추출 재시도: planned=%s attempted=%s recovered=%s still_failed=%s",
+                extraction_retry_stats.get("planned"),
+                extraction_retry_stats.get("attempted"),
+                extraction_retry_stats.get("recovered"),
+                extraction_retry_stats.get("still_failed"),
+            )
+
+        by_site: dict[str, list] = {}
+        for it in new_items:
+            sid = str(it.get("site_id") or it.get("source") or "unknown")
+            by_site.setdefault(sid, []).append(it)
+        extraction_rates_by_site = {
+            sid: compute_extraction_rates(rows) for sid, rows in by_site.items()
+        }
+        enqueue_extraction_failures(new_items)
+        extraction_retry_plan = plan_extraction_retries(new_items)
+        write_extraction_rates_report(
+            extraction_rates_by_site, run_at=now)
+    except Exception as e:
+        log.warning("extraction_rates/retry/queue 실패(무시): %s", e)
+
+    # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
+    p0_dropped: list = []
+    gate_reports = gate.get("source_reports") or gate.get("p0_sources") or []
+    if gate_reports:
+        try:
+            from mail_core.operations.miss_remediation import drop_items_from_p0_sources
+            new_items, p0_dropped = drop_items_from_p0_sources(new_items, gate_reports)
+            if p0_dropped:
+                log.warning(
+                    "P0 소스 공고 %d건 발송 후보에서 제외 (site P0 필터)",
+                    len(p0_dropped),
+                )
+        except Exception as e:
+            log.warning("P0 소스 필터 실패(무시): %s", e)
+            p0_dropped = []
+
     # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
+    # 게시판 URL 전량 매칭 폭발 방지: 날짜창·max_items 선별(2026-07-26 74건 사고)
     watchlist = load_watchlist()
-    watch_hits = (
-        [it for it in new_items if is_watchlisted(it, watchlist)]
-        if (watchlist["keywords"] or watchlist["urls"]) else []
-    )
+    watch_hits: list = []
+    if watchlist["keywords"] or watchlist["urls"]:
+        try:
+            from mail_core.matching.watchlist_select import (
+                select_watchlist_hits,
+                watchlist_limits_from_config,
+            )
+            limits = watchlist_limits_from_config(watchlist)
+            watch_hits = select_watchlist_hits(
+                new_items,
+                match_kind=lambda it: watchlist_match_kind(it, watchlist),
+                today=now.date(),
+                **limits,
+            )
+        except Exception as e:
+            log.warning("워치리스트 선별 실패 — 전체 매칭으로 폴백: %s", e)
+            watch_hits = [it for it in new_items if is_watchlisted(it, watchlist)]
     if watch_hits:
         log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
 
@@ -5926,7 +6242,7 @@ def execute_monitor(
                     for i, it in enumerate(watch_hits, 1)
                 )
                 wl_subject = f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})"
-                if allow_send and persist_seen:
+                if effective_send and persist_seen:
                     deliver_with_outbox(
                         wl_subject, wl_body, wl_recipients,
                         date=str(target_date),
@@ -5962,7 +6278,7 @@ def execute_monitor(
             f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지·잡공고 {raw_dropped}건 제외)\n\n"
         ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         raw_subject = f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건"
-        if allow_send and persist_seen:
+        if effective_send and persist_seen:
             deliver_with_outbox(
                 raw_subject, body_raw, settings["raw_all_recipients"],
                 date=str(target_date),
@@ -6026,7 +6342,7 @@ def execute_monitor(
         if _demoted:
             review_items = review_items + _demoted
             log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
-        if not allow_send:
+        if not deliver:
             preview_groups.append({
                 "name": group.get("name"),
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
@@ -6102,7 +6418,7 @@ def execute_monitor(
             )
             _subject = f"[{group.get('name')}] {subj_count} ({date_str})"
             _body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
-            if allow_send and persist_seen:
+            if effective_send and persist_seen:
                 deliver_with_outbox(
                     _subject, _body, _recips,
                     date=str(target_date),
@@ -6121,7 +6437,7 @@ def execute_monitor(
                 )
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         seen_ids = persist_completed_outbox(seen_ids)
         commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
     log.info("=== 완료 ===")
@@ -6138,18 +6454,25 @@ def execute_monitor(
         "changed_items": changed_count,
         "date_window": window_label,
         "filtered_items": len(filtered_new),
+        "p0_source_items_dropped": len(p0_dropped),
+        "send_hold": bool(send_hold),
+        "send_hold_reason": hold_reason if send_hold else "",
+        "run_status": gate.get("run_status") or "",
         "date_matched_count": len(date_matched) if settings.get("date_filter_enabled", True) else len(filtered_new),
         "date_unknown_items": len(date_unknown),
         "date_review_queue": date_review_queue,
         "date_review_queue_count": len(date_review_queue),
         "date_excluded_count": len(date_excluded),
         "final_mail_target_count": final_mail_count,
-        "mail_sent": bool(allow_send and _ALLOW_SMTP_SEND),
+        "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
         "draft_failed": _DRAFT_FAIL,
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
+        "extraction_rates_by_site": extraction_rates_by_site,
+        "extraction_retry_plan_count": len(extraction_retry_plan),
+        "extraction_retry_stats": extraction_retry_stats,
     })
 
 
@@ -6157,6 +6480,7 @@ def main(
     allow_send: bool = False,
     include_raw_all: bool = False,
     persist_seen: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -6164,6 +6488,7 @@ def main(
         allow_send=allow_send,
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
+        collection_gate=collection_gate,
     )
     _post_run_alert(result)
     return result
@@ -6357,11 +6682,11 @@ def run_source_coverage_audit(
 ) -> dict:
     """활성 소스 실행 완전성·수집 품질을 P0/P1 로 판정하고 산출물·알림을 남긴다.
 
-    운영 게이트이지만 **발송을 막지 않는다** — P0 가 나와도 상태만 DEGRADED 로 표시하고
-    정상 수집분의 판정·발송은 그대로 계속된다. 전체를 try/except 로 감싸 이 감사 자체의
+    운영 게이트이지만 **소스 P0(DEGRADED)만으로는 발송을 막지 않는다**.
+    런 FAILED(send_hold) 실보류 배선은 W1. 전체를 try/except 로 감싸 이 감사 자체의
     실패가 본 작업(수집·발송)에 절대 전파되지 않게 한다.
 
-    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="OK").
+    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="SUCCESS").
     """
     try:
         from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
@@ -6369,13 +6694,34 @@ def run_source_coverage_audit(
         run_at = run_at or datetime.now(KST)
         baseline = _ca.load_coverage_baseline()
         page_stats = page_stats_snapshot()
-        reports = _ca.classify_sources(rows, baseline, page_stats=page_stats)
+        try:
+            from mail_core.operations import detector_config as _dc  # noqa: PLC0415
+            detector_cfg = _dc.load_detector_config()
+        except Exception:
+            detector_cfg = None
+        reports = _ca.classify_sources(
+            rows, baseline, page_stats=page_stats, detector_cfg=detector_cfg)
         exec_check = _ca.verify_source_execution(sites, rows)
         summary = _ca.summarize_run_status(reports, exec_check)
         payload = _ca.build_coverage_payload(
             rows, reports, summary, exec_check=exec_check,
             generated_at=run_at.strftime("%Y-%m-%d %H:%M KST"),
         )
+        # W1: 실행 판정 ledger append (실패해도 본작업 무영향)
+        try:
+            from mail_core.operations import source_run_ledger as _led  # noqa: PLC0415
+            run_id = _led.new_run_id()
+            recs = [
+                _led.build_ledger_record(
+                    run_id=run_id,
+                    source_report=rep,
+                    page_stat=(page_stats or {}).get(rep.get("site_id", "")),
+                )
+                for rep in reports
+            ]
+            _led.append_source_runs(recs)
+        except Exception:
+            pass
         files: dict[str, str] = {}
         if write_files:
             files["json"] = str(write_source_coverage_json(payload, run_at=run_at))
@@ -6383,15 +6729,17 @@ def run_source_coverage_audit(
             if summary.get("p0_count"):
                 files["p0_alert"] = str(write_p0_collection_alert(payload, run_at=run_at))
         if summary.get("p0_count") and allow_alert:
+            hold_tag = "[FAILED][send_hold] " if summary.get("send_hold") else ""
             alert_email(
-                f"[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
+                f"{hold_tag}[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
                 _ca.format_p0_alert_message(payload),
             )
         return {**summary, "payload": payload, "files": files}
     except Exception as e:  # 감사 실패는 절대 수집·발송을 막지 않는다
         log.warning("소스 커버리지 감사 실패(무시): %s", e)
-        return {"status": "OK", "p0_count": 0, "p1_count": 0, "p0_sources": [],
-                "p1_sources": [], "payload": {}, "files": {}, "audit_error": str(e)[:200]}
+        return {"status": "SUCCESS", "send_hold": False, "p0_count": 0, "p1_count": 0,
+                "p0_sources": [], "p1_sources": [], "payload": {}, "files": {},
+                "audit_error": str(e)[:200]}
 
 
 def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) -> list[dict]:
@@ -6622,6 +6970,7 @@ def run_dry_run(
     coverage_rows: list[dict] = []
     coverage_anomalies: list[dict] = []
     coverage_audit: dict = {}
+    collection_gate: dict = {}
     if fetch_coverage:
         all_sites = load_json(SITES_PATH, [])
         reset_page_stats()
@@ -6631,12 +6980,31 @@ def run_dry_run(
         coverage_audit = run_source_coverage_audit(
             coverage_rows, all_sites, allow_alert=allow_coverage_alert,
         )
+        try:
+            from mail_core.operations.miss_remediation import (
+                enqueue_p0_from_reports,
+                plan_retries,
+            )
+            reports = (coverage_audit.get("payload") or {}).get("sources") or (
+                coverage_audit.get("p0_sources") or [])
+            enqueue_p0_from_reports(reports)
+            coverage_audit["retry_plan"] = plan_retries(
+                coverage_audit.get("p0_sources") or [])
+        except Exception as e:
+            log.warning("manual_queue/retry_plan 실패(무시): %s", e)
         coverage_anomalies = run_coverage_anomaly_check(
             coverage_rows, allow_alert=allow_coverage_alert,
         )
+        collection_gate = {
+            "send_hold": bool(coverage_audit.get("send_hold")),
+            "run_status": coverage_audit.get("status") or "",
+            "source_reports": (coverage_audit.get("payload") or {}).get("sources") or [],
+            "p0_sources": coverage_audit.get("p0_sources") or [],
+        }
 
     result = execute_monitor(
-        allow_send=False, include_raw_all=False, persist_seen=False, draft_mode=draft_mode,
+        allow_send=False, include_raw_all=False, persist_seen=False,
+        draft_mode=draft_mode, collection_gate=collection_gate,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -6644,9 +7012,10 @@ def run_dry_run(
         k: v for k, v in coverage_audit.items() if k not in ("payload",)
     }
     # 최상위 스칼라로 승격 — API 응답 요약(_result_summary)이 스칼라만 통과시키기 때문
-    result["run_status"] = coverage_audit.get("status", "OK")
+    result["run_status"] = coverage_audit.get("status") or result.get("run_status") or "SUCCESS"
     result["collection_p0_count"] = int(coverage_audit.get("p0_count", 0) or 0)
     result["collection_p1_count"] = int(coverage_audit.get("p1_count", 0) or 0)
+    result["send_hold"] = bool(collection_gate.get("send_hold"))
     result["recipient_audit"] = {
         g.get("name"): validate_recipients(g.get("recipients", []))
         for g in load_groups()
@@ -6781,28 +7150,84 @@ if __name__ == "__main__":
                 summary.get("seen_ids_file_changed"),
             )
         else:
-            # 실발송 경로에서도 커버리지 이상탐지(모니터링) 유지 — 평소 수집되던 사이트가
-            # 0건/급감/실패 시 PC 이메일 알림(누락 방지, PR #123). --coverage-alert 일 때만.
-            if args.coverage_alert and not args.skip_coverage_fetch:
+            # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
+            # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
+            # 기준일 전량 멱등 완료면 커버리지·수집 전부 생략(주말 재실행 2h+ 낭비 방지).
+            if args.send and args.persist_seen:
+                try:
+                    from mail_core.delivery.skip_gate import (
+                        should_skip_fetch_already_delivered,
+                    )
+                    _settings_ee = load_settings()
+                    _groups_ee = load_groups()
+                    _wl_ee = load_watchlist()
+                    _td = previous_business_day(
+                        datetime.now(KST), int(_settings_ee.get("days_back", 1) or 1),
+                    )
+                    _skip_ee = should_skip_fetch_already_delivered(
+                        target_date=str(_td),
+                        groups=_groups_ee,
+                        settings=_settings_ee,
+                        watchlist=_wl_ee,
+                        include_raw_all=args.include_raw_all,
+                        delivery_path=DELIVERY_STATE_PATH,
+                    )
+                    if _skip_ee.get("skip"):
+                        log.info(
+                            "기준일 %s 발송 단위 %s개 멱등 완료 — 커버리지·수집·발송 생략",
+                            _skip_ee.get("target_date"), _skip_ee.get("units"),
+                        )
+                        raise SystemExit(0)
+                except SystemExit:
+                    raise
+                except Exception as e:
+                    log.warning("발송완료 early-exit 실패(무시·수집 계속): %s", e)
+            _gate: dict = {}
+            if not args.skip_coverage_fetch:
                 try:
                     _all_sites = load_json(SITES_PATH, [])
                     reset_page_stats()
                     _cov_rows = fetch_site_coverage(_all_sites)
-                    # P0 감사 — 활성 소스 미실행·수집실패·급감을 즉시 알린다.
-                    # 발송을 막지 않는다: 아래 main() 은 결과와 무관하게 그대로 실행된다.
-                    _audit = run_source_coverage_audit(_cov_rows, _all_sites, allow_alert=True)
-                    if _audit.get("status") == "DEGRADED":
+                    _audit = run_source_coverage_audit(
+                        _cov_rows, _all_sites, allow_alert=bool(args.coverage_alert),
+                    )
+                    _status = _audit.get("status") or ""
+                    if _status == "FAILED" or _audit.get("send_hold"):
                         log.warning(
-                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (발송은 계속 진행)",
+                            "수집 상태 FAILED — send_hold (P0 %s / P1 %s)",
                             _audit.get("p0_count"), _audit.get("p1_count"),
                         )
-                    run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    elif _status == "DEGRADED":
+                        log.warning(
+                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (정상 소스만 발송)",
+                            _audit.get("p0_count"), _audit.get("p1_count"),
+                        )
+                    try:
+                        from mail_core.operations.miss_remediation import (
+                            enqueue_p0_from_reports,
+                            plan_retries,
+                        )
+                        _reports = (_audit.get("payload") or {}).get("sources") or (
+                            _audit.get("p0_sources") or [])
+                        enqueue_p0_from_reports(_reports)
+                        _audit["retry_plan"] = plan_retries(_audit.get("p0_sources") or [])
+                    except Exception as e:
+                        log.warning("manual_queue 갱신 실패(무시): %s", e)
+                    if args.coverage_alert:
+                        run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    _gate = {
+                        "send_hold": bool(_audit.get("send_hold")),
+                        "run_status": _status,
+                        "source_reports": (_audit.get("payload") or {}).get("sources") or [],
+                        "p0_sources": _audit.get("p0_sources") or [],
+                    }
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             main(
                 allow_send=args.send,
                 include_raw_all=args.include_raw_all,
                 persist_seen=args.persist_seen,
+                collection_gate=_gate,
             )
     except Exception as e:
         log.exception("치명적 오류: %s", e)

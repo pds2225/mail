@@ -261,6 +261,50 @@ SUSPICIOUS_CONTENT_MAX_RATE = 0.5  # 로그인·캡차·점검 화면이 절반 
 SPIKE_RATIO_P1 = 3.0        # 평소 중앙값의 3배 이상
 SPIKE_ABSOLUTE_EXCESS = 20  # 단, 절대 증가가 20건 이상일 때만 → P1
 
+# ── Run 상태 (ADR: docs/prd/adr-miss-detect-status-enums.md) ───────────────
+RUN_STATUS_SUCCESS = "SUCCESS"
+RUN_STATUS_DEGRADED = "DEGRADED"
+RUN_STATUS_FAILED = "FAILED"
+RUN_STATUS_OK = "OK"  # deprecated alias ≡ SUCCESS
+RUN_FAILED_MISSING_RATIO = 0.30
+RUN_FAILED_MISSING_ABS = 5
+
+
+def normalize_run_status(status: str | None) -> str:
+    """OK → SUCCESS. 그 외는 원문(빈 값은 SUCCESS 로 보지 않음)."""
+    value = str(status or "")
+    if value in (RUN_STATUS_OK, RUN_STATUS_SUCCESS):
+        return RUN_STATUS_SUCCESS
+    return value
+
+
+def is_run_failed(
+    exec_check: dict | None,
+    *,
+    missing_ratio: float = RUN_FAILED_MISSING_RATIO,
+    missing_abs: int = RUN_FAILED_MISSING_ABS,
+) -> bool:
+    """실행대장 붕괴·대량 미실행이면 True.
+
+    active_expected==0 이거나 exec_check 가 skip 이면 False (근거 없는 보류 금지).
+    """
+    check = exec_check if isinstance(exec_check, dict) else {}
+    if check.get("skipped"):
+        return False
+    active = int(check.get("active_expected", 0) or 0)
+    if active <= 0:
+        return False
+    missing_ids = list(check.get("missing_site_ids") or [])
+    missing_n = len(missing_ids)
+    if missing_n <= 0 and bool(check.get("ok", True)):
+        return False
+    if missing_n >= int(missing_abs):
+        return True
+    if missing_n / active >= float(missing_ratio):
+        return True
+    return False
+
+
 # 파서 계열 실패를 접속 실패와 구분하기 위한 단서(소문자 비교)
 _PARSER_ERROR_HINTS = (
     "attributeerror", "keyerror", "indexerror", "typeerror", "nonetype",
@@ -361,13 +405,29 @@ def classify_source_status(
     page_stat: dict | None = None,
     baseline_date_rate: float | None = None,
     thresholds: dict | None = None,
+    zero_item_policy: str = "p0_if_baseline",
+    fetch_failed_risk: str = "P0",
 ) -> dict:
     """coverage row 1건 → 상태·사유코드·등급 판정 (순수·오프라인·네트워크 없음).
 
     상태는 배타(하나만), 사유코드는 누적(여러 개 가능). 판정 재료가 없으면
     사유코드를 부여하지 않는다(모르는 것을 위험으로 만들지 않는다 — 오탐 폭발 방지).
+
+    zero_item_policy:
+      - p0_if_baseline: 기준선 충분·0건 → P0 (기본)
+      - warning: 0건이어도 P1 만 (지역·월간 사이트)
+      - ignore_zero: 0건 사유 미부여 (SUCCESS, 남용 금지)
+
+    fetch_failed_risk:
+      - P0/P1: 접속 실패(FETCH_FAILED) 등급. 파서 실패는 항상 P0.
     """
     th = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
+    policy = str(zero_item_policy or "p0_if_baseline")
+    if policy not in {"p0_if_baseline", "warning", "ignore_zero"}:
+        policy = "p0_if_baseline"
+    fail_risk = str(fetch_failed_risk or "P0").upper()
+    if fail_risk not in {"P0", "P1"}:
+        fail_risk = "P0"
     stats = baseline_stats(
         history,
         runs=int(th["baseline_window_runs"]),
@@ -382,6 +442,8 @@ def classify_source_status(
         "item_count": item_count,
         "baseline_median": median,
         "baseline_n": stats["n"],
+        "zero_item_policy": policy,
+        "fetch_failed_risk": fail_risk,
     }
 
     # ① 비활성/설정상 미수행 → SKIPPED (위험 아님)
@@ -397,20 +459,32 @@ def classify_source_status(
     if not fetch_success or fetch_error:
         low = fetch_error.lower()
         is_parser = any(hint in low for hint in _PARSER_ERROR_HINTS)
-        reason_codes.append(REASON_PARSER_FAILED if is_parser else REASON_FETCH_FAILED)
+        if is_parser:
+            reason_codes.append(REASON_PARSER_FAILED)
+        else:
+            reason_codes.append(REASON_FETCH_FAILED)
+            detail["risk_override"] = fail_risk
         detail["fetch_error"] = fetch_error[:200]
         return _source_report(row, COLLECT_STATUS_FAILED, reason_codes, stats, detail)
 
-    # ⑤⑥ 0건 — 기준선 유무로 갈린다
+    # ⑤⑥ 0건 — 정책·기준선에 따라 갈린다
     if item_count == 0:
+        if policy == "ignore_zero":
+            return _source_report(row, COLLECT_STATUS_SUCCESS, [], stats, detail)
         if stats["sufficient"] and (median or 0) >= 1:
-            reason_codes.append(REASON_ZERO_ITEMS_WITH_BASELINE)
-            detail["drop_rate"] = 1.0
-        else:
-            # 기준선이 없어 "원래 0건인 사이트"인지 사고인지 단정할 수 없다 → P1 로만
-            reason_codes.append(REASON_BASELINE_INSUFFICIENT)
-        return _source_report(
-            row, COLLECT_STATUS_ZERO_SUSPICIOUS, reason_codes, stats, detail)
+            if policy == "warning":
+                # 평소 수집되던 사이트라도 warning 정책이면 P1 만
+                reason_codes.append(REASON_BASELINE_INSUFFICIENT)
+                detail["drop_rate"] = 1.0
+                detail["zero_warning"] = True
+            else:
+                reason_codes.append(REASON_ZERO_ITEMS_WITH_BASELINE)
+                detail["drop_rate"] = 1.0
+            return _source_report(
+                row, COLLECT_STATUS_ZERO_SUSPICIOUS, reason_codes, stats, detail)
+        # 기준선 부족: 0건을 '이상'으로 보지 않는다(오탐·P1 폭주 방지)
+        detail["baseline_insufficient"] = True
+        return _source_report(row, COLLECT_STATUS_SUCCESS, [], stats, detail)
 
     # ⑦~⑭ 수집은 됐지만 품질 이상 — 누적 판정
     if "valid_record_count" in row:
@@ -483,6 +557,7 @@ def _source_report(
 
     등급 조정: 50~79% 급감(drop_p1)·게시일 파싱률 30%p 하락(date_parse_drop_p1)은
     사유코드는 P0 계열과 같지만 스펙상 P1 이므로, 다른 P0 사유가 없을 때 P1 로 낮춘다.
+    FETCH_FAILED 는 사이트 정책(fetch_failed_risk)으로 P0/P1 을 고른다.
     """
     grade = grade_for(reason_codes)
     soft_p1 = detail.get("drop_p1") or detail.get("date_parse_drop_p1")
@@ -493,6 +568,10 @@ def _source_report(
             grade = "P1"
     elif not grade and soft_p1:
         grade = "P1"
+    # 접속 실패만 있을 때 사이트별 등급 오버라이드(만성 지역소스 노이즈 축소)
+    if (reason_codes == [REASON_FETCH_FAILED]
+            and detail.get("risk_override") in {"P0", "P1"}):
+        grade = detail["risk_override"]
     return {
         "site_id": row.get("site_id", ""),
         "site_name": row.get("site_name", ""),
@@ -515,19 +594,38 @@ def classify_sources(
     *,
     page_stats: dict | None = None,
     thresholds: dict | None = None,
+    detector_cfg: dict | None = None,
 ) -> list[dict]:
-    """coverage rows 전체 판정. 한 사이트의 판정 실패가 나머지를 막지 않는다."""
+    """coverage rows 전체 판정. 한 사이트의 판정 실패가 나머지를 막지 않는다.
+
+    detector_cfg 가 있으면 사이트별 thresholds·zero_item_policy·fetch_failed_risk 를 병합한다.
+    """
+    from mail_core.operations.detector_config import (  # noqa: PLC0415
+        fetch_failed_risk_for_site,
+        thresholds_for_site,
+        zero_item_policy_for_site,
+    )
+
     baseline = baseline if isinstance(baseline, dict) else {}
     page_stats = page_stats or {}
     reports: list[dict] = []
     for row in rows or []:
         site_id = row.get("site_id", "")
         try:
+            site_th = dict(thresholds or {})
+            policy = "p0_if_baseline"
+            fail_risk = "P0"
+            if detector_cfg is not None:
+                site_th.update(thresholds_for_site(detector_cfg, site_id))
+                policy = zero_item_policy_for_site(detector_cfg, site_id)
+                fail_risk = fetch_failed_risk_for_site(detector_cfg, site_id)
             reports.append(classify_source_status(
                 row,
                 baseline.get(site_id),
                 page_stat=page_stats.get(site_id),
-                thresholds=thresholds,
+                thresholds=site_th,
+                zero_item_policy=policy,
+                fetch_failed_risk=fail_risk,
             ))
         except Exception as exc:  # 판정 실패도 관측 대상이지 중단 사유가 아니다
             reports.append({
@@ -595,7 +693,12 @@ def verify_source_execution(sites: list[dict] | None, rows: list[dict]) -> dict:
 
 
 def summarize_run_status(source_reports: list[dict], exec_check: dict | None = None) -> dict:
-    """실행 전체 상태 요약. P0 가 1건이라도 있으면 DEGRADED (발송은 계속한다)."""
+    """실행 전체 상태 요약.
+
+    - FAILED: 실행대장 대량 미실행 → send_hold=True (실발송 보류는 W1에서 소비)
+    - DEGRADED: 일부 소스 P0 → 정상 소스 발송 계속 (필터는 W1)
+    - SUCCESS: P0 없음 (구 OK alias)
+    """
     exec_check = exec_check or {}
     reports = list(source_reports or []) + list(exec_check.get("missing_sources") or [])
     p0 = [r for r in reports if r.get("risk_level") == "P0"]
@@ -604,8 +707,19 @@ def summarize_run_status(source_reports: list[dict], exec_check: dict | None = N
     for r in reports:
         key = str(r.get("status") or "")
         status_counts[key] = status_counts.get(key, 0) + 1
+
+    failed = is_run_failed(exec_check)
+    if failed:
+        status = RUN_STATUS_FAILED
+    elif p0:
+        status = RUN_STATUS_DEGRADED
+    else:
+        status = RUN_STATUS_SUCCESS
+
     return {
-        "status": "DEGRADED" if p0 else "OK",
+        "status": status,
+        "send_hold": failed,
+        "send_hold_reason": "RUN_FAILED" if failed else "",
         "p0_count": len(p0),
         "p1_count": len(p1),
         "p0_sources": p0,
@@ -686,9 +800,14 @@ def build_coverage_payload(
     """기계 판독용 실행대장 payload. 산출물 JSON 의 스키마 정의처이기도 하다."""
     exec_check = exec_check or {}
     reports = list(source_reports or []) + list(exec_check.get("missing_sources") or [])
+    run_status = normalize_run_status(run_summary.get("status")) or RUN_STATUS_SUCCESS
+    send_hold = bool(run_summary.get("send_hold")) or run_status == RUN_STATUS_FAILED
     return {
         "generated_at": generated_at,
-        "run_status": run_summary.get("status", "OK"),
+        "run_status": run_status,
+        "send_hold": send_hold,
+        "send_hold_reason": run_summary.get("send_hold_reason") or (
+            "RUN_FAILED" if send_hold else ""),
         "active_expected": exec_check.get("active_expected", run_summary.get("active_expected", 0)),
         "executed": exec_check.get("executed", run_summary.get("executed", 0)),
         "execution_complete": bool(exec_check.get("ok", True)),
@@ -713,7 +832,15 @@ def _md_table(headers: list[str], rows: list[list]) -> str:
 def render_coverage_markdown(payload: dict) -> str:
     """관리자 확인용 실행대장 보고서. P0 가 있으면 최상단에 경고를 띄운다."""
     lines: list[str] = ["# 소스 수집 실행대장", ""]
-    if payload.get("run_status") == "DEGRADED":
+    run_status = normalize_run_status(payload.get("run_status"))
+    if run_status == RUN_STATUS_FAILED or payload.get("send_hold"):
+        lines += [
+            f"> ⛔ **전체상태 FAILED — 발송 보류(send_hold)** "
+            f"(P0 {payload.get('p0_count', 0)}건 / P1 {payload.get('p1_count', 0)}건)",
+            "> 실행대장이 크게 깨져 실발송을 보류하는 상태입니다 (W1 배선).",
+            "",
+        ]
+    elif run_status == RUN_STATUS_DEGRADED:
         lines += [
             f"> 🔴 **누락위험 경고 — 전체상태 DEGRADED** "
             f"(P0 {payload.get('p0_count', 0)}건 / P1 {payload.get('p1_count', 0)}건)",
@@ -759,24 +886,69 @@ def render_coverage_markdown(payload: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def digest_p0_sources(
+    p0: list[dict],
+    *,
+    max_named: int = 12,
+) -> tuple[list[dict], list[str]]:
+    """P0 목록을 알림용으로 축약. (표시할 소스, 요약 꼬리 문구).
+
+    imp_* 등 동일 접두 대량 실패는 'imp_* N건' 한 줄로 접는다.
+    """
+    if not p0:
+        return [], []
+    named: list[dict] = []
+    prefix_counts: dict[str, int] = {}
+    for report in p0:
+        sid = str(report.get("site_id") or "")
+        if sid.startswith("imp_"):
+            prefix_counts["imp_*"] = prefix_counts.get("imp_*", 0) + 1
+            continue
+        named.append(report)
+    named = named[: max(0, int(max_named))]
+    tails = [
+        f"{prefix} 접속실패 {count}건 (상세는 실행대장)"
+        for prefix, count in sorted(prefix_counts.items())
+        if count
+    ]
+    omitted = len(p0) - len(named) - sum(prefix_counts.values())
+    if omitted > 0:
+        tails.append(f"그 외 {omitted}건")
+    return named, tails
+
+
 def render_p0_alert_markdown(payload: dict) -> str:
     """P0 전용 알림 본문. 이메일·폰 알림과 같은 내용을 파일로도 남긴다."""
     p0 = [s for s in payload.get("sources", []) if s.get("risk_level") == "P0"]
     if not p0:
         return "# P0 수집 누락 위험\n\n_해당 없음_\n"
+    named, tails = digest_p0_sources(p0)
     lines = [
         "# [P0 수집 누락 위험]",
         "",
         f"활성 소스 {payload.get('active_expected', 0)}개 중 {len(p0)}개 발생",
         "",
     ]
-    for s in p0:
+    for s in named:
         lines.append(f"- {describe_source_line(s)}")
+    for tail in tails:
+        lines.append(f"- {tail}")
+    hold = bool(payload.get("send_hold")) or (
+        normalize_run_status(payload.get("run_status")) == RUN_STATUS_FAILED)
+    send_note = (
+        "[FAILED][send_hold] 실발송 보류 상태."
+        if hold else
+        "정상 수집 공고 발송은 계속 진행됨."
+    )
+    # 재점검 대상은 명명 소스 + 요약(전체 id 나열 폭주 방지)
+    recheck = [s.get("site_id", "") for s in named if s.get("site_id")]
+    if not recheck:
+        recheck = list(payload.get("recheck_site_ids") or [])[:12]
     lines += [
         "",
-        "정상 수집 공고 발송은 계속 진행됨.",
+        send_note,
         "",
-        f"재점검 대상: {', '.join(payload.get('recheck_site_ids') or []) or '-'}",
+        f"재점검 대상: {', '.join(recheck) or '-'}",
     ]
     return "\n".join(lines) + "\n"
 
@@ -786,9 +958,17 @@ def format_p0_alert_message(payload: dict) -> str:
     p0 = [s for s in payload.get("sources", []) if s.get("risk_level") == "P0"]
     if not p0:
         return "P0 수집 누락 위험 없음"
-    head = (f"[P0 수집 누락 위험] 활성 소스 {payload.get('active_expected', 0)}개 중 "
+    hold = bool(payload.get("send_hold")) or (
+        normalize_run_status(payload.get("run_status")) == RUN_STATUS_FAILED)
+    tag = "[FAILED][send_hold] " if hold else ""
+    head = (f"{tag}[P0 수집 누락 위험] 활성 소스 {payload.get('active_expected', 0)}개 중 "
             f"{len(p0)}개 발생")
-    body = [f"- {describe_source_line(s)}" for s in p0[:20]]
-    if len(p0) > 20:
-        body.append(f"... 외 {len(p0) - 20}건")
-    return head + "\n\n" + "\n".join(body) + "\n\n정상 수집 공고 발송은 계속 진행됨."
+    named, tails = digest_p0_sources(p0, max_named=10)
+    body = [f"- {describe_source_line(s)}" for s in named]
+    body.extend(f"- {t}" for t in tails)
+    send_note = (
+        "실발송 보류(send_hold)."
+        if hold else
+        "정상 수집 공고 발송은 계속 진행됨."
+    )
+    return head + "\n\n" + "\n".join(body) + "\n\n" + send_note

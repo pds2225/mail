@@ -74,7 +74,7 @@ def test_audit_writes_no_p0_file_when_healthy(sandbox):
     tmp, sent = sandbox
     result = m.run_source_coverage_audit([_row()], [{"id": "nipa", "enabled": True}],
                                          allow_alert=True)
-    assert result["status"] == "OK"
+    assert result["status"] == "SUCCESS"
     day = m.datetime.now(m.KST).strftime("%Y%m%d")
     assert (tmp / "logs" / f"source_coverage_{day}.json").exists()
     assert not (tmp / "logs" / f"p0_collection_alert_{day}.md").exists()
@@ -93,7 +93,7 @@ def test_audit_never_raises_even_when_internals_fail(sandbox, monkeypatch):
     monkeypatch.setattr(ca, "classify_sources",
                         lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
     result = m.run_source_coverage_audit([_row()], [{"id": "nipa", "enabled": True}])
-    assert result["status"] == "OK"       # 실패해도 DEGRADED 로 오판하지 않는다
+    assert result["status"] == "SUCCESS"  # 실패해도 DEGRADED/FAILED 로 오판하지 않는다
     assert result["p0_count"] == 0
     assert "audit_error" in result
 
