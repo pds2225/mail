@@ -265,6 +265,82 @@ def enrichment_clears_review(item: dict[str, Any] | None) -> bool:
     return status in {EXTRACTION_SUCCESS, NOT_SPECIFIED}
 
 
+def run_extraction_retries(
+    items: list[dict[str, Any]] | None,
+    enrich_fn,
+    *,
+    fetch_auto_retry: int = 2,
+    parse_auto_retry: int = 1,
+    backoff_sec: tuple[int, ...] | list[int] = (0, 0),
+    sleep_fn=None,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """추출 실패 공고에 대해 enrich_fn 을 재호출한다.
+
+    - DETAIL_FETCH_FAILED: 최대 fetch_auto_retry 회
+    - PARSE_FAILED: 최대 parse_auto_retry 회
+    - NOT_SPECIFIED: 재시도 없음
+    성공(enrichment_clears_review) 시 해당 아이템을 교체하고 중단.
+    sleep_fn 기본은 time.sleep. 테스트에서는 no-op 전달.
+    """
+    import time
+
+    rows = [dict(it) if isinstance(it, dict) else it for it in (items or [])]
+    by_id = {
+        str(it.get("id") or ""): idx
+        for idx, it in enumerate(rows)
+        if isinstance(it, dict) and it.get("id")
+    }
+    sleeper = sleep_fn if sleep_fn is not None else time.sleep
+    plans = plan_extraction_retries(
+        rows,
+        fetch_auto_retry=fetch_auto_retry,
+        parse_auto_retry=parse_auto_retry,
+        backoff_sec=backoff_sec,
+    )
+    attempted = 0
+    recovered = 0
+    still_failed = 0
+    for plan in plans:
+        iid = str(plan.get("item_id") or "")
+        idx = by_id.get(iid)
+        if idx is None:
+            continue
+        current = rows[idx]
+        max_attempts = int(plan.get("max_attempts") or 1)
+        delays = list(plan.get("backoff_sec") or [])
+        recovered_this = False
+        for attempt in range(max_attempts):
+            attempted += 1
+            if attempt > 0 and delays:
+                delay = delays[min(attempt - 1, len(delays) - 1)]
+                if delay and delay > 0:
+                    try:
+                        sleeper(float(delay))
+                    except Exception:
+                        pass
+            try:
+                updated = enrich_fn(dict(current))
+            except Exception:
+                updated = current
+            if not isinstance(updated, dict):
+                updated = current
+            current = updated
+            rows[idx] = current
+            if enrichment_clears_review(current):
+                recovered += 1
+                recovered_this = True
+                break
+        if not recovered_this:
+            still_failed += 1
+    stats = {
+        "planned": len(plans),
+        "attempted": attempted,
+        "recovered": recovered,
+        "still_failed": still_failed,
+    }
+    return rows, stats
+
+
 def write_extraction_rates_report(
     rates_by_site: dict[str, dict[str, Any]] | None,
     *,

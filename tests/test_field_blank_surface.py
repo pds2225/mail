@@ -107,6 +107,74 @@ def test_enrichment_clears_review_after_success():
     assert fs.enrichment_clears_review(ok) is True
 
 
+def test_run_extraction_retries_recovers_fetch_failure():
+    """DETAIL_FETCH_FAILED 재시도 성공 시 아이템이 교체되고 recovered 증가."""
+    calls = {"n": 0}
+
+    def enrich(item):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return {
+                **item,
+                "detail_extraction": {"status": fs.DETAIL_FETCH_FAILED},
+                "detail_enriched": False,
+            }
+        return {
+            **item,
+            "detail_enriched": True,
+            "detail_extraction": {
+                "status": fs.EXTRACTION_SUCCESS,
+                "fields": {"region": {"status": fs.NOT_SPECIFIED}},
+            },
+        }
+
+    items = [{
+        "id": "n1",
+        "link": "https://example.go.kr/1",
+        "title": "t",
+        "detail_extraction": {"status": fs.DETAIL_FETCH_FAILED},
+    }]
+    out, stats = fs.run_extraction_retries(
+        items, enrich, fetch_auto_retry=2, backoff_sec=(0, 0), sleep_fn=lambda _s: None,
+    )
+    assert stats["planned"] == 1
+    assert stats["recovered"] == 1
+    assert stats["still_failed"] == 0
+    assert fs.enrichment_clears_review(out[0]) is True
+    assert calls["n"] == 2  # 1차 실패 후 2차 성공
+
+
+def test_run_extraction_retries_skips_not_specified_and_queues_only_failures():
+    items = [
+        {
+            "id": "ok",
+            "link": "https://x",
+            "detail_extraction": {"status": fs.NOT_SPECIFIED},
+        },
+        {
+            "id": "bad",
+            "link": "https://y",
+            "detail_extraction": {"status": fs.PARSE_FAILED},
+        },
+    ]
+    calls = []
+
+    def enrich(item):
+        calls.append(item["id"])
+        return {
+            **item,
+            "detail_extraction": {"status": fs.PARSE_FAILED},
+        }
+
+    out, stats = fs.run_extraction_retries(
+        items, enrich, parse_auto_retry=1, backoff_sec=(0,), sleep_fn=lambda _s: None,
+    )
+    assert "ok" not in calls
+    assert calls == ["bad"]
+    assert stats["still_failed"] == 1
+    assert out[0]["detail_extraction"]["status"] == fs.NOT_SPECIFIED
+
+
 def test_enqueue_extraction_failures_subtypes(tmp_path):
     path = tmp_path / "q.json"
     items = [

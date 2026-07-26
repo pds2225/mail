@@ -5916,16 +5916,42 @@ def execute_monitor(
 
     new_items = enrich_items(new_items)
 
-    # W3/P0-B: 추출 3상태 — 실패 큐 enqueue + 소스별 extraction_rates 집계
+    # W3-c: DETAIL_FETCH/PARSE 실패분 실제 HTTP·재파싱 재시도 (계획만 세우지 않고 실행)
     extraction_rates_by_site: dict = {}
     extraction_retry_plan: list = []
+    extraction_retry_stats: dict = {}
     try:
         from mail_core.operations.field_status import (
             compute_extraction_rates,
             plan_extraction_retries,
+            run_extraction_retries,
             write_extraction_rates_report,
         )
         from mail_core.operations.miss_remediation import enqueue_extraction_failures
+
+        # 테스트/CI: MONITOR_EXTRACTION_RETRY_SLEEP=0 이면 backoff 생략
+        _sleep_raw = os.environ.get("MONITOR_EXTRACTION_RETRY_SLEEP", "")
+        if _sleep_raw == "0":
+            _backoff = (0, 0)
+            _sleep_fn = lambda _s: None  # noqa: E731
+        else:
+            _backoff = (60, 180)
+            _sleep_fn = None
+        new_items, extraction_retry_stats = run_extraction_retries(
+            new_items,
+            enrich_item_from_detail,
+            backoff_sec=_backoff,
+            sleep_fn=_sleep_fn,
+        )
+        if extraction_retry_stats.get("attempted"):
+            log.info(
+                "추출 재시도: planned=%s attempted=%s recovered=%s still_failed=%s",
+                extraction_retry_stats.get("planned"),
+                extraction_retry_stats.get("attempted"),
+                extraction_retry_stats.get("recovered"),
+                extraction_retry_stats.get("still_failed"),
+            )
+
         by_site: dict[str, list] = {}
         for it in new_items:
             sid = str(it.get("site_id") or it.get("source") or "unknown")
@@ -5933,12 +5959,13 @@ def execute_monitor(
         extraction_rates_by_site = {
             sid: compute_extraction_rates(rows) for sid, rows in by_site.items()
         }
+        # 재시도 후에도 남은 실패분만 큐에 적재
         enqueue_extraction_failures(new_items)
         extraction_retry_plan = plan_extraction_retries(new_items)
         write_extraction_rates_report(
             extraction_rates_by_site, run_at=now)
     except Exception as e:
-        log.warning("extraction_rates/queue 실패(무시): %s", e)
+        log.warning("extraction_rates/retry/queue 실패(무시): %s", e)
 
     # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
     p0_dropped: list = []
@@ -6251,6 +6278,7 @@ def execute_monitor(
         "preview_groups": preview_groups,
         "extraction_rates_by_site": extraction_rates_by_site,
         "extraction_retry_plan_count": len(extraction_retry_plan),
+        "extraction_retry_stats": extraction_retry_stats,
     })
 
 
