@@ -5610,10 +5610,31 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     global _DRAFT_MODE, _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
-    _ALLOW_SMTP_SEND = allow_send
+
+    gate = collection_gate if isinstance(collection_gate, dict) else {}
+    send_hold = bool(gate.get("send_hold"))
+    try:
+        from mail_core.operations.miss_remediation import effective_allow_send
+        effective_send, hold_reason = effective_allow_send(
+            allow_send, send_hold=send_hold)
+    except Exception:
+        effective_send, hold_reason = allow_send, "gate_import_error"
+    if allow_send and not effective_send:
+        log.warning(
+            "RUN FAILED send_hold — 실발송 보류 (reason=%s, run_status=%s)",
+            hold_reason, gate.get("run_status"),
+        )
+    elif allow_send and send_hold and effective_send:
+        log.warning(
+            "send_hold 이지만 발송 허용 (reason=%s) — shadow/override",
+            hold_reason,
+        )
+
+    _ALLOW_SMTP_SEND = effective_send
     _ALLOW_PERSIST_SEEN = persist_seen
     _DRAFT_MODE = draft_mode
     _DRAFT_OK = 0
@@ -5624,11 +5645,10 @@ def execute_monitor(
     _LAST_SEND_ERR = ""
     _RAW_STORE = None
 
-    # deliver: 실제 발송(allow_send) 또는 초안 생성(draft_mode)이면 디제스트 본문을 실제로
-    # 만들어 전달한다. draft_mode 는 _DRAFT_MODE 를 통해 send_to_list 가 초안으로 우회한다.
-    deliver = allow_send or draft_mode
+    # deliver: 실제 발송(effective_send) 또는 초안 생성(draft_mode)
+    deliver = effective_send or draft_mode
     now = datetime.now(KST)
-    mode = "send" if allow_send else ("draft" if draft_mode else "preview")
+    mode = "send" if effective_send else ("draft" if draft_mode else "preview")
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
     sites    = load_sites()
@@ -5639,7 +5659,7 @@ def execute_monitor(
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
     # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         if not delivery_outbox.is_ready():
             raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
         retry_pending_outbox()
@@ -5678,6 +5698,22 @@ def execute_monitor(
             _RAW_STORE.save_item_meta(it)
 
     new_items = enrich_items(new_items)
+
+    # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
+    p0_dropped: list = []
+    gate_reports = gate.get("source_reports") or gate.get("p0_sources") or []
+    if gate_reports:
+        try:
+            from mail_core.operations.miss_remediation import drop_items_from_p0_sources
+            new_items, p0_dropped = drop_items_from_p0_sources(new_items, gate_reports)
+            if p0_dropped:
+                log.warning(
+                    "P0 소스 공고 %d건 발송 후보에서 제외 (site P0 필터)",
+                    len(p0_dropped),
+                )
+        except Exception as e:
+            log.warning("P0 소스 필터 실패(무시): %s", e)
+            p0_dropped = []
 
     # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
     watchlist = load_watchlist()
@@ -5738,7 +5774,7 @@ def execute_monitor(
                     for i, it in enumerate(watch_hits, 1)
                 )
                 wl_subject = f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})"
-                if allow_send and persist_seen:
+                if effective_send and persist_seen:
                     deliver_with_outbox(
                         wl_subject, wl_body, wl_recipients,
                         date=str(target_date),
@@ -5774,7 +5810,7 @@ def execute_monitor(
             f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지·잡공고 {raw_dropped}건 제외)\n\n"
         ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         raw_subject = f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건"
-        if allow_send and persist_seen:
+        if effective_send and persist_seen:
             deliver_with_outbox(
                 raw_subject, body_raw, settings["raw_all_recipients"],
                 date=str(target_date),
@@ -5834,7 +5870,7 @@ def execute_monitor(
         if _demoted:
             review_items = review_items + _demoted
             log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
-        if not allow_send:
+        if not deliver:
             preview_groups.append({
                 "name": group.get("name"),
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
@@ -5910,7 +5946,7 @@ def execute_monitor(
             )
             _subject = f"[{group.get('name')}] {subj_count} ({date_str})"
             _body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
-            if allow_send and persist_seen:
+            if effective_send and persist_seen:
                 deliver_with_outbox(
                     _subject, _body, _recips,
                     date=str(target_date),
@@ -5929,7 +5965,7 @@ def execute_monitor(
                 )
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         seen_ids = persist_completed_outbox(seen_ids)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
@@ -5942,13 +5978,17 @@ def execute_monitor(
         "dedup_removed": dedup_removed,
         "new_items": len(new_items),
         "filtered_items": len(filtered_new),
+        "p0_source_items_dropped": len(p0_dropped),
+        "send_hold": bool(send_hold),
+        "send_hold_reason": hold_reason if send_hold else "",
+        "run_status": gate.get("run_status") or "",
         "date_matched_count": len(date_matched) if settings.get("date_filter_enabled", True) else len(filtered_new),
         "date_unknown_items": len(date_unknown),
         "date_review_queue": date_review_queue,
         "date_review_queue_count": len(date_review_queue),
         "date_excluded_count": len(date_excluded),
         "final_mail_target_count": final_mail_count,
-        "mail_sent": bool(allow_send and _ALLOW_SMTP_SEND),
+        "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
         "draft_failed": _DRAFT_FAIL,
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
@@ -5961,6 +6001,7 @@ def main(
     allow_send: bool = False,
     include_raw_all: bool = False,
     persist_seen: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -5968,6 +6009,7 @@ def main(
         allow_send=allow_send,
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
+        collection_gate=collection_gate,
     )
     _post_run_alert(result)
     return result
@@ -6449,6 +6491,7 @@ def run_dry_run(
     coverage_rows: list[dict] = []
     coverage_anomalies: list[dict] = []
     coverage_audit: dict = {}
+    collection_gate: dict = {}
     if fetch_coverage:
         all_sites = load_json(SITES_PATH, [])
         reset_page_stats()
@@ -6458,12 +6501,31 @@ def run_dry_run(
         coverage_audit = run_source_coverage_audit(
             coverage_rows, all_sites, allow_alert=allow_coverage_alert,
         )
+        try:
+            from mail_core.operations.miss_remediation import (
+                enqueue_p0_from_reports,
+                plan_retries,
+            )
+            reports = (coverage_audit.get("payload") or {}).get("sources") or (
+                coverage_audit.get("p0_sources") or [])
+            enqueue_p0_from_reports(reports)
+            coverage_audit["retry_plan"] = plan_retries(
+                coverage_audit.get("p0_sources") or [])
+        except Exception as e:
+            log.warning("manual_queue/retry_plan 실패(무시): %s", e)
         coverage_anomalies = run_coverage_anomaly_check(
             coverage_rows, allow_alert=allow_coverage_alert,
         )
+        collection_gate = {
+            "send_hold": bool(coverage_audit.get("send_hold")),
+            "run_status": coverage_audit.get("status") or "",
+            "source_reports": (coverage_audit.get("payload") or {}).get("sources") or [],
+            "p0_sources": coverage_audit.get("p0_sources") or [],
+        }
 
     result = execute_monitor(
-        allow_send=False, include_raw_all=False, persist_seen=False, draft_mode=draft_mode,
+        allow_send=False, include_raw_all=False, persist_seen=False,
+        draft_mode=draft_mode, collection_gate=collection_gate,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -6471,9 +6533,10 @@ def run_dry_run(
         k: v for k, v in coverage_audit.items() if k not in ("payload",)
     }
     # 최상위 스칼라로 승격 — API 응답 요약(_result_summary)이 스칼라만 통과시키기 때문
-    result["run_status"] = coverage_audit.get("status", "OK")
+    result["run_status"] = coverage_audit.get("status") or result.get("run_status") or "SUCCESS"
     result["collection_p0_count"] = int(coverage_audit.get("p0_count", 0) or 0)
     result["collection_p1_count"] = int(coverage_audit.get("p1_count", 0) or 0)
+    result["send_hold"] = bool(collection_gate.get("send_hold"))
     result["recipient_audit"] = {
         g.get("name"): validate_recipients(g.get("recipients", []))
         for g in load_groups()
@@ -6608,28 +6671,54 @@ if __name__ == "__main__":
                 summary.get("seen_ids_file_changed"),
             )
         else:
-            # 실발송 경로에서도 커버리지 이상탐지(모니터링) 유지 — 평소 수집되던 사이트가
-            # 0건/급감/실패 시 PC 이메일 알림(누락 방지, PR #123). --coverage-alert 일 때만.
-            if args.coverage_alert and not args.skip_coverage_fetch:
+            # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
+            # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
+            _gate: dict = {}
+            if not args.skip_coverage_fetch:
                 try:
                     _all_sites = load_json(SITES_PATH, [])
                     reset_page_stats()
                     _cov_rows = fetch_site_coverage(_all_sites)
-                    # P0 감사 — 활성 소스 미실행·수집실패·급감을 즉시 알린다.
-                    # 발송을 막지 않는다: 아래 main() 은 결과와 무관하게 그대로 실행된다.
-                    _audit = run_source_coverage_audit(_cov_rows, _all_sites, allow_alert=True)
-                    if _audit.get("status") == "DEGRADED":
+                    _audit = run_source_coverage_audit(
+                        _cov_rows, _all_sites, allow_alert=bool(args.coverage_alert),
+                    )
+                    _status = _audit.get("status") or ""
+                    if _status == "FAILED" or _audit.get("send_hold"):
                         log.warning(
-                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (발송은 계속 진행)",
+                            "수집 상태 FAILED — send_hold (P0 %s / P1 %s)",
                             _audit.get("p0_count"), _audit.get("p1_count"),
                         )
-                    run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    elif _status == "DEGRADED":
+                        log.warning(
+                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (정상 소스만 발송)",
+                            _audit.get("p0_count"), _audit.get("p1_count"),
+                        )
+                    try:
+                        from mail_core.operations.miss_remediation import (
+                            enqueue_p0_from_reports,
+                            plan_retries,
+                        )
+                        _reports = (_audit.get("payload") or {}).get("sources") or (
+                            _audit.get("p0_sources") or [])
+                        enqueue_p0_from_reports(_reports)
+                        _audit["retry_plan"] = plan_retries(_audit.get("p0_sources") or [])
+                    except Exception as e:
+                        log.warning("manual_queue 갱신 실패(무시): %s", e)
+                    if args.coverage_alert:
+                        run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    _gate = {
+                        "send_hold": bool(_audit.get("send_hold")),
+                        "run_status": _status,
+                        "source_reports": (_audit.get("payload") or {}).get("sources") or [],
+                        "p0_sources": _audit.get("p0_sources") or [],
+                    }
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             main(
                 allow_send=args.send,
                 include_raw_all=args.include_raw_all,
                 persist_seen=args.persist_seen,
+                collection_gate=_gate,
             )
     except Exception as e:
         log.exception("치명적 오류: %s", e)
