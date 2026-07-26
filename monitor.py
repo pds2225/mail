@@ -157,6 +157,9 @@ ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 KSTARTUP_FIELD_TO_TYPE = {
     "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
     "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
+    "팁스": "지원금/바우처", "tips": "지원금/바우처",
+    "수출": "지원금/바우처", "글로벌": "지원금/바우처",
+    "투자": "투자",
     "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
 }
 
@@ -1441,12 +1444,27 @@ def enrich_item_from_detail(item: dict) -> dict:
 
 def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict]:
     """신규 공고 중 상세 보강이 필요한 항목을 HTTP 상세 조회(동시 처리).
-    ① 전용 호스트(구조화 파서) ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
-    specialized = [
-        it for it in items
-        if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
-        and not it.get("detail_enriched")
-    ][:limit]
+    ① 전용 호스트(구조화 파서) — 기업마당·K-Startup 은 별도 예산·최근게시 우선
+    ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
+    try:
+        from mail_core.matching.core_sources import (
+            CORE_MAX_DETAIL_ENRICH,
+            OTHER_SPECIALIZED_DETAIL_ENRICH,
+            select_detail_enrich_targets,
+        )
+        specialized = select_detail_enrich_targets(
+            items,
+            specialized_hosts=DETAIL_ENRICH_HOSTS,
+            core_limit=int(os.environ.get("MONITOR_CORE_DETAIL_ENRICH", CORE_MAX_DETAIL_ENRICH)),
+            other_limit=min(int(limit), OTHER_SPECIALIZED_DETAIL_ENRICH),
+            today=datetime.now(KST).date(),
+        )
+    except Exception:
+        specialized = [
+            it for it in items
+            if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
+            and not it.get("detail_enriched")
+        ][:limit]
     generic: list[dict] = []
     if GENERIC_DETAIL_ENRICH_ENABLED:
         spec_ids = {it["id"] for it in specialized}
@@ -1691,13 +1709,19 @@ def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
         posted = posted[:10]
     if not posted:
         posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-    return _item(
+    item = _item(
         iid, ttl, lnk,
         norm(it.get("jrsdInsttNm", it.get("author", ""))),
         norm(it.get("bsnsSumryCn", it.get("description", ""))),
         norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
         site_name, posted, agg,
     )
+    try:
+        from mail_core.matching.core_sources import attach_bizinfo_structured
+        return attach_bizinfo_structured(item, it)
+    except Exception:
+        item["core_source"] = "bizinfo"
+        return item
 
 
 def _fetch_bizinfo_direct(site: dict) -> list[dict]:
@@ -1988,20 +2012,29 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
         pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
         posted = extract_date_from_text(pm.group(1)) if pm else ""
         flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        flag_text = norm(flag.get_text()) if flag else ""
         iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title + org)}"
-        items.append(_item(iid, title, link, org,
-                           norm(flag.get_text()) if flag else "", dl,
-                           site["name"], posted, agg))
+        item = _item(iid, title, link, org,
+                     flag_text, dl,
+                     site["name"], posted, agg)
+        try:
+            from mail_core.matching.core_sources import attach_kstartup_list_structured
+            item = attach_kstartup_list_structured(
+                item, flag_text=flag_text, clss=clss)
+        except Exception:
+            item["core_source"] = "kstartup"
+        items.append(item)
     return items
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 5) — 1페이지만 보면 page2+ 공고 누락.
-    max_pages = int(site.get("max_pages", 5))
+    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 10) — 1페이지만 보면 page2+ 공고 누락.
+    max_pages = int(site.get("max_pages", 10))
     items: list[dict] = []
     seen_sn: set[str] = set()
     referer = site.get("referer") or site["url"]
     extra_hdr = {"Referer": referer}
+    _pages_done, _stop_reason, _dup_pages = 0, "EMPTY_STREAK", 0
 
     for clss in ("PBC010", "PBC020"):
         empty_streak = 0
@@ -2011,15 +2044,29 @@ def fetch_kstartup(site: dict) -> list[dict]:
                 "pbancSttus": "ing", "pbancClssCd": clss,
             })
             if not soup:
+                _stop_reason = "PAGE_FETCH_FAILED"
                 break
             page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
+            _pages_done += 1
             if not page_items:
                 empty_streak += 1
             else:
                 empty_streak = 0
                 items.extend(page_items)
             if empty_streak >= 2:
+                _stop_reason = "EMPTY_STREAK"
                 break
+            if page >= max_pages:
+                _stop_reason = "MAX_PAGES_HIT"
+    try:
+        _page_stat(
+            site.get("id") or site.get("name") or "kstartup",
+            pages_fetched=_pages_done,
+            stop_reason=_stop_reason,
+            duplicate_page=_dup_pages > 0,
+        )
+    except Exception:
+        pass
     log.info("%s: %d건", site["name"], len(items))
     return items
 
@@ -3727,6 +3774,13 @@ def classify_support_type(item: dict) -> list[str]:
         for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
             if kw in sf and bucket not in matched:
                 matched.append(bucket)
+        try:
+            from mail_core.matching.core_sources import map_category_to_support_types
+            for bucket in map_category_to_support_types(sf):
+                if bucket not in matched:
+                    matched.append(bucket)
+        except Exception:
+            pass
         # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
         #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
         #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
@@ -3748,6 +3802,11 @@ def _keyword_match_text(item: dict) -> str:
         item.get("support_field", ""),
         item.get("target_field", ""),
     ]
+    try:
+        from mail_core.matching.core_sources import keyword_extra_parts
+        parts.extend(keyword_extra_parts(item))
+    except Exception:
+        pass
     return norm(" ".join(p for p in parts if p)).lower()
 
 

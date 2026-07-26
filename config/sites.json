@@ -7,10 +7,12 @@
     "enabled": true,
     "is_aggregator": true,
     "api_page_unit": 500,
-    "api_max_pages": 4,
+    "api_max_pages": 6,
     "api_timeout": 30,
+    "datagokr_num_rows": 500,
+    "datagokr_max_pages": 6,
     "warmup_url": "https://www.bizinfo.go.kr/",
-    "note": "통합포털 — API pageUnit 500×4 (상한 ~1500). reqErr 시 로그 확인. 직결이 러너 IP 차단(timeout) 시 DATA_GO_KR_KEY 있으면 data.go.kr 폴백."
+    "note": "핵심소스 — API pageUnit 500×6 (상한 ~3000). 부가필드(지원분야·대상·지역) 구조화 승격. reqErr 시 로그 확인. 직결 WAF 시 DATA_GO_KR_KEY 폴백."
   },
   {
     "id": "hanyang_startup",
@@ -29,8 +31,8 @@
     "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
     "enabled": true,
     "is_aggregator": false,
-    "max_pages": 5,
-    "note": "통합포털 - 창업지원 (공공+민간, 다페이지)"
+    "max_pages": 10,
+    "note": "핵심소스 — 창업지원 공공(PBC010)+민간(PBC020) 다페이지. 목록 flag→support_field 조기부여, 상세보강 우선."
   },
   {
     "id": "smes24",

@@ -24,16 +24,25 @@
     "bizinfo": {
       "zero_item_policy": "p0_if_baseline",
       "fetch_failed_risk": "P0",
-      "drop_ratio_p0": 0.3,
-      "drop_threshold": 0.7,
+      "drop_ratio_p0": 0.35,
+      "drop_threshold": 0.65,
       "minimum_baseline": 20,
+      "baseline_min_runs": 3,
+      "valid_record_min_rate": 0.95,
+      "date_parse_min_rate": 0.8,
+      "detail_link_min_rate": 0.9,
       "expected_frequency": "daily"
     },
     "kstartup": {
       "zero_item_policy": "p0_if_baseline",
       "fetch_failed_risk": "P0",
-      "drop_ratio_p0": 0.3,
-      "minimum_baseline": 10,
+      "drop_ratio_p0": 0.35,
+      "drop_threshold": 0.65,
+      "minimum_baseline": 15,
+      "baseline_min_runs": 3,
+      "valid_record_min_rate": 0.95,
+      "date_parse_min_rate": 0.8,
+      "detail_link_min_rate": 0.9,
       "expected_frequency": "daily"
     },
     "nipa": {

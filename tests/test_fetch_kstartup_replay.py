@@ -61,12 +61,15 @@ def test_kstartup_collects_public_and_private():
     #    민간의 sn=1001 카드는 공공과 중복 → seen_sn 으로 스킵 = 4건.
     assert len(items) == 4
 
-    # 스키마 불변: 모든 item 이 9키를 전부 보유
+    # 스키마 불변: 모든 item 이 9키를 전부 보유(핵심소스 구조화 부가키 허용)
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        assert SCHEMA_KEYS.issubset(set(it.keys()))
         # site dict 의 is_aggregator=False 가 그대로 반영
         assert it["is_aggregator"] is False
         assert it["source"] == "K-Startup"
+        assert it.get("core_source") == "kstartup"
+        assert it.get("support_field")  # 목록 flag → support_field
+        assert it.get("kstartup_class") in {"PBC010", "PBC020"}
 
 
 @respx.mock

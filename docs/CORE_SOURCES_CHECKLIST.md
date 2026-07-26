@@ -24,11 +24,12 @@ python scripts\core_sources_checklist.py --json
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
 | 1 | config/sites.json | `bizinfo` enabled, `type=bizinfo_api` |
-| 2 | API 설정 | `api_page_unit`≥100, `api_max_pages`≥1 |
-| 3 | 상세 보강 | `bizinfo.go.kr` ∈ `DETAIL_ENRICH_HOSTS` |
-| 4 | 회귀 테스트 | `test_fetch_bizinfo_replay.py` |
+| 2 | API 설정 | `api_page_unit`≥100, `api_max_pages`≥6 (핵심 수집 깊이) |
+| 3 | 상세 보강 | `bizinfo.go.kr` ∈ `DETAIL_ENRICH_HOSTS`, 핵심 상세예산 우선 |
+| 4 | 회귀 테스트 | `test_fetch_bizinfo_replay.py` · `test_core_sources_specialize.py` |
 | 5 | 상세 파서 | `test_bizinfo_detail_enrich.py` (사업개요·신청기간) |
-| 6 | live (선택) | 수집 ≥100건, `bizinfo.go.kr` 상세링크 다수 |
+| 6 | 구조화 분류 | API 부가필드 → `support_field`/`target_field`/`region_field` 승격 |
+| 7 | live (선택) | 수집 ≥100건, `bizinfo.go.kr` 상세링크 다수 |
 
 **미완(v2):** API JSON 원문 저장, HTML 중복 소스 완전 제거 검증
 
@@ -39,10 +40,11 @@ python scripts\core_sources_checklist.py --json
 | # | 항목 | 완성 기준 |
 |---|------|-----------|
 | 1 | config/sites.json | `kstartup` enabled, `type=kstartup_html` |
-| 2 | 다페이지 | `max_pages`≥2 (공공 PBC010 + 민간 PBC020) |
-| 3 | 상세 보강 | `k-startup.go.kr` ∈ `DETAIL_ENRICH_HOSTS` |
-| 4 | 회귀 테스트 | `test_fetch_kstartup_replay.py` (공공+민간) |
-| 5 | live (선택) | 수집 ≥10건, k-startup 링크 존재 |
+| 2 | 다페이지 | `max_pages`≥10 (공공 PBC010 + 민간 PBC020) |
+| 3 | 상세 보강 | `k-startup.go.kr` ∈ `DETAIL_ENRICH_HOSTS`, 핵심 상세예산 우선 |
+| 4 | 회귀 테스트 | `test_fetch_kstartup_replay.py` (공공+민간) · `test_core_sources_specialize.py` |
+| 5 | 목록 분류 | 카드 flag → `support_field` 조기부여, `kstartup_class` |
+| 6 | live (선택) | 수집 ≥10건, k-startup 링크 존재 |
 
 **미완(v2):** 외부「사업안내 바로가기」첨부 추적을 monitor 본선 통합
 

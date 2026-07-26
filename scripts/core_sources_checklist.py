@@ -87,7 +87,14 @@ def _check_enrich_host(spec: SourceSpec) -> tuple[bool, str]:
 
     if spec.enrich_host not in m.DETAIL_ENRICH_HOSTS:
         return False, f"DETAIL_ENRICH_HOSTS에 {spec.enrich_host} 없음"
-    return True, f"상세보강 대상 ({m.MAX_DETAIL_ENRICH}건/실행)"
+    try:
+        from mail_core.matching.core_sources import CORE_MAX_DETAIL_ENRICH
+        core_budget = CORE_MAX_DETAIL_ENRICH
+    except Exception:
+        core_budget = m.MAX_DETAIL_ENRICH
+    return True, (
+        f"상세보강 대상 (핵심≤{core_budget}/기타≤{m.MAX_DETAIL_ENRICH}건)"
+    )
 
 
 def _check_bizinfo_api_config() -> tuple[bool, str]:
@@ -96,8 +103,8 @@ def _check_bizinfo_api_config() -> tuple[bool, str]:
         return False, "bizinfo 없음"
     unit = int(site.get("api_page_unit", 0) or 0)
     pages = int(site.get("api_max_pages", 0) or 0)
-    if unit < 100 or pages < 1:
-        return False, f"api_page_unit={unit} api_max_pages={pages}"
+    if unit < 100 or pages < 6:
+        return False, f"api_page_unit={unit} api_max_pages={pages} (핵심 ≥100×6)"
     return True, f"API {unit}×{pages}페이지"
 
 
@@ -106,8 +113,8 @@ def _check_kstartup_pages() -> tuple[bool, str]:
     if not site:
         return False, "kstartup 없음"
     mp = int(site.get("max_pages", 1) or 1)
-    if mp < 2:
-        return False, f"max_pages={mp} (민간·공공 다페이지 권장 ≥2)"
+    if mp < 10:
+        return False, f"max_pages={mp} (핵심 다페이지 권장 ≥10)"
     return True, f"max_pages={mp}"
 
 
