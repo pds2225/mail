@@ -25,7 +25,10 @@ describe("url reachability probe", () => {
   });
 
   it("accepts 405 from HEAD without retrying GET", async () => {
-    const fetchMock = vi.fn(async () => new Response("", { status: 405 }));
+    const fetchMock = vi.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) =>
+        new Response("", { status: 405 }),
+    );
     globalThis.fetch = fetchMock as typeof fetch;
 
     await expect(probeUrlReachable("https://example.com/notices", 1000)).resolves.toBe(true);
