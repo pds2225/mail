@@ -14,6 +14,7 @@ type Site = {
 
 export default function SitesPage() {
   const [sites, setSites] = useState<Site[]>([]);
+  const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +30,14 @@ export default function SitesPage() {
   }, []);
 
   const active = sites.filter((s) => s.enabled !== false).length;
+  const normalizedQuery = query.trim().toLowerCase();
+  const filtered = normalizedQuery
+    ? sites.filter((site) =>
+        [site.id, site.name, site.url, site.type].some((value) =>
+          String(value || "").toLowerCase().includes(normalizedQuery),
+        ),
+      )
+    : sites;
 
   return (
     <div>
@@ -50,7 +59,29 @@ export default function SitesPage() {
         <div className="empty">등록된 사이트가 없습니다.</div>
       )}
 
-      {sites.slice(0, 80).map((s) => (
+      {!loading && sites.length ? (
+        <div className="field card-tight">
+          <label className="label" htmlFor="site-search">
+            사이트 검색
+          </label>
+          <input
+            id="site-search"
+            className="input"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="이름, ID, URL, 수집 방식"
+          />
+          <p className="hint">
+            검색 결과 {filtered.length}건 · 모든 사이트는 검색 후 편집할 수 있습니다.
+          </p>
+        </div>
+      ) : null}
+
+      {!loading && sites.length > 0 && filtered.length === 0 ? (
+        <div className="empty">검색 결과가 없습니다.</div>
+      ) : null}
+
+      {filtered.slice(0, 80).map((s) => (
         <div key={s.id} className="site-row">
           <div className="site-main">
             <div className="site-name">
@@ -62,13 +93,16 @@ export default function SitesPage() {
             </div>
           </div>
           <span className={s.enabled !== false ? "badge badge-green" : "badge badge-gray"}>
-            {s.enabled !== false ? "활성" : "비활성"}
+              {s.enabled !== false ? "활성" : "비활성"}
           </span>
+          <Link className="btn btn-secondary btn-small" href={`/sites/${encodeURIComponent(s.id)}/edit`}>
+            편집
+          </Link>
         </div>
       ))}
 
-      {sites.length > 80 && (
-        <p className="stat">… 외 {sites.length - 80}건 (UI 표시 제한)</p>
+      {filtered.length > 80 && (
+        <p className="stat">… 외 {filtered.length - 80}건 (검색어로 범위를 좁혀 주세요)</p>
       )}
     </div>
   );

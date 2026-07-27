@@ -94,7 +94,7 @@ def main() -> int:
     if args.json:
         print(json.dumps(out, ensure_ascii=False, indent=2))
     else:
-        print(f"서울/AI recall check — {out['passed']}/{len(rows)} pass")
+        print(f"서울/AI recall check - {out['passed']}/{len(rows)} pass")
         for r in rows:
             mark = "OK" if r["status"] == "pass" else "NG"
             print(f"  [{mark}] {r['id']}: rel={r['is_relevant']} reg={r['region']}")

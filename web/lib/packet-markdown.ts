@@ -1,6 +1,6 @@
 import type { SiteRecord } from "./site-types";
 import type { SiteValidationResult } from "./site-validation";
-import { jsonPatchSnippet } from "./site-patch";
+import { changedSiteFields, jsonPatchSnippet } from "./site-patch";
 import { maskEmail } from "./recipient-validation";
 
 export function buildSiteAddPacket(params: {
@@ -75,14 +75,88 @@ ${validation.warnings.length ? validation.warnings.map((w) => `- [WARN] ${w.fiel
 `;
 }
 
+export function buildSiteUpdatePacket(params: {
+  branch: string;
+  before: SiteRecord;
+  after: SiteRecord;
+  validation: SiteValidationResult;
+  urlReachable: boolean | null;
+}): string {
+  const { branch, before, after, validation, urlReachable } = params;
+  const changed = changedSiteFields(before, after);
+
+  return `# SITE_UPDATE_PR_PACKET
+
+생성 시각: ${new Date().toISOString()}
+브랜치 제안: \`${branch}\`
+
+## 수정 대상
+
+- 파일: \`config/sites.json\`
+- 사이트: \`${before.id}\` (${before.name})
+- 변경 필드: ${changed.length ? changed.map((field) => `\`${field}\``).join(", ") : "(변경 없음)"}
+
+## 변경 전
+
+\`\`\`json
+${JSON.stringify(before, null, 2)}
+\`\`\`
+
+## 변경 후
+
+\`\`\`json
+${JSON.stringify(after, null, 2)}
+\`\`\`
+
+## 검증 요약
+
+| 항목 | 결과 |
+|------|------|
+| collector 등록 | ${validation.checks.collectorRegistered ? "OK" : "FAIL"} |
+| URL 접근 테스트 | ${urlReachable === null ? "미실행" : urlReachable ? "OK" : "FAIL"} |
+| date_unknown 위험 | ${validation.checks.dateUnknownRisk} |
+| dry-run 가능 | ${validation.checks.dryRunReady ? "예" : "아니오"} |
+
+## 오류 / 경고
+
+${validation.errors.length ? validation.errors.map((e) => `- [ERROR] ${e.field}: ${e.message}`).join("\n") : "- 없음"}
+
+${validation.warnings.length ? validation.warnings.map((w) => `- [WARN] ${w.field}: ${w.message}`).join("\n") : ""}
+
+## PR 제목 (초안)
+
+\`chore(sites): update ${before.id} — ${after.name}\`
+
+## 검증
+
+- [ ] \`python3 scripts/monitor_dry_run.py --skip-coverage-fetch\`
+- [ ] 해당 사이트 collector 수집 결과 확인
+- [ ] 실제 메일 발송 없음 (dry-run)
+
+## 승인 필요
+
+1. 변경 전/후 JSON 검토
+2. PR merge (자동 merge 금지)
+3. 운영 cron/Actions는 별도 승인
+`;
+}
+
 export function buildRecipientPacket(params: {
   target: "group" | "raw_all";
   groupId?: string;
   groupName?: string;
   added: string[];
+  removed?: string[];
+  beforeCount?: number;
+  afterCount?: number;
   validation: ReturnType<typeof import("./recipient-validation").validateRecipients>;
 }): string {
   const masked = params.validation.masked.join(", ") || "(없음)";
+  const removed = params.removed || [];
+  const countSummary =
+    typeof params.beforeCount === "number" && typeof params.afterCount === "number"
+      ? `- 수신자 수: ${params.beforeCount}건 → ${params.afterCount}건`
+      : "";
   return `# RECIPIENT_UPDATE_PACKET
 
 생성 시각: ${new Date().toISOString()}
@@ -90,12 +164,17 @@ export function buildRecipientPacket(params: {
 
 ## 추가 요청 이메일 (마스킹)
 
-${params.added.map((e) => `- ${maskEmail(e)}`).join("\n")}
+${params.added.length ? params.added.map((e) => `- ${maskEmail(e)}`).join("\n") : "- 없음"}
+
+## 제거 요청 이메일 (마스킹)
+
+${removed.length ? removed.map((e) => `- ${maskEmail(e)}`).join("\n") : "- 없음"}
 
 ## 검증 결과
 
 - valid: ${params.validation.valid.length}건
 - rejected: ${params.validation.rejected.length}건
+${countSummary}
 
 ${params.validation.rejected.map((r) => `- rejected: ${maskEmail(r.value)} (${r.reason})`).join("\n") || ""}
 
