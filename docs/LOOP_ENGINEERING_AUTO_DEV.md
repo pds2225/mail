@@ -148,7 +148,7 @@ Mail 시스템의 실패 모드는 “한 번 잘못 짠 프롬프트”보다 �
 
 | 요소 | 내용 |
 |------|------|
-| 트리거 | `docs/project/TASKS.md` PENDING 1건 / GHA daily 09:00 KST |
+| 트리거 | `docs/project/TASKS.md` PENDING 1건 / GHA `workflow_dispatch` (daily 09:00 schedule은 현재 비활성) |
 | 실행 | 허용 파일만 수정하는 에이전트 세션 (Cloud Agent / 로컬) |
 | 검증 | `loop_verify.py` → unit + recall(+ core sources if scoped) |
 | 상태 | TASK → DONE/FAILED/BLOCKED, state.json, PR 링크 |
@@ -199,7 +199,7 @@ Mail 시스템의 실패 모드는 “한 번 잘못 짠 프롬프트”보다 �
 ## 7. 실행 아키텍처
 
 ```
-GitHub Actions (cron/dispatch)
+GitHub Actions (workflow_dispatch; cron은 현재 비활성)
         │
         ▼
 scripts/auto_dev_queue.py          ← 오케스트레이터(큐·상태·안전)
