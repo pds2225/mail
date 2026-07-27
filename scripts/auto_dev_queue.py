@@ -71,7 +71,15 @@ def _load_executor():
 # ── 유틸 ─────────────────────────────────────────────────────────────────────
 
 def log(msg: str) -> None:
-    print(f"[auto-dev-queue] {msg}")
+    line = f"[auto-dev-queue] {msg}"
+    try:
+        print(line)
+    except UnicodeEncodeError:
+        # Windows PowerShell commonly uses cp949, which cannot encode the
+        # emoji markers used by queue progress messages. Preserve readable
+        # Korean text and replace only unsupported presentation characters.
+        encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+        print(line.encode(encoding, errors="replace").decode(encoding))
 
 
 def write_summary(text: str) -> None:
@@ -92,6 +100,8 @@ def load_state() -> dict:
 
 
 def save_state(state: dict) -> None:
+    if DRY_RUN:
+        return
     state["last_run"] = datetime.now(KST).isoformat()
     STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
