@@ -90,6 +90,60 @@ def test_select_detail_enrich_prioritizes_core_and_recent():
     assert len(selected) == 5  # core 3 + other 2
 
 
+def test_detail_enrich_balances_core_sources_instead_of_starving_one():
+    items = [
+        {
+            "id": f"bizinfo_{i}",
+            "link": "https://www.bizinfo.go.kr/b",
+            "posted_date": "2026-07-25",
+            "core_source": "bizinfo",
+        }
+        for i in range(10)
+    ] + [
+        {
+            "id": f"kstartup_{i}",
+            "link": "https://www.k-startup.go.kr/k",
+            "posted_date": "2026-07-20",
+            "core_source": "kstartup",
+        }
+        for i in range(10)
+    ]
+    selected = cs.select_detail_enrich_targets(
+        items,
+        specialized_hosts=("bizinfo.go.kr", "k-startup.go.kr"),
+        core_limit=6,
+        other_limit=0,
+        today=date(2026, 7, 26),
+    )
+    ids = [it["id"] for it in selected]
+    assert sum(i.startswith("bizinfo_") for i in ids) == 3
+    assert sum(i.startswith("kstartup_") for i in ids) == 3
+
+
+def test_kita_old_login_link_is_rewritten_and_selected_as_priority():
+    item = {
+        "id": "kita_202607035",
+        "link": (
+            "https://www.kita.net/asocBiz/asocBiz/"
+            "asocBizOngoingView.do?sn=202607035"
+        ),
+        "posted_date": "2026-07-21",
+    }
+    selected = cs.select_detail_enrich_targets(
+        [item],
+        specialized_hosts=("bizinfo.go.kr", "k-startup.go.kr", "nipa.kr"),
+        core_limit=0,
+        other_limit=1,
+        today=date(2026, 7, 26),
+    )
+    assert selected == [item]
+    assert item["link"] == (
+        "https://www.kita.net/asocBiz/asocBiz/"
+        "asocBizOngoingDetail.do?bizAltkey=202607035"
+    )
+    assert cs.priority_source_id(item) == "kita"
+
+
 def test_keyword_extra_parts_only_for_core():
     core = {
         "core_source": "kstartup",
@@ -104,7 +158,10 @@ def test_keyword_extra_parts_only_for_core():
 
 def test_sites_json_core_collection_depth():
     import json
-    sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text())}
+    sites = {
+        s["id"]: s
+        for s in json.loads((ROOT / "config/sites.json").read_text(encoding="utf-8"))
+    }
     assert sites["bizinfo"]["api_max_pages"] >= 20
     assert sites["bizinfo"].get("datagokr_max_pages", 0) >= 20
     assert sites["kstartup"]["max_pages_public"] >= 200

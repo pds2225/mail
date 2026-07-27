@@ -39,6 +39,24 @@
       "drift_signals": ["기업마당 또는 K-Startup 사례 삭제", "공공·민간 경로 축소"]
     },
     {
+      "id": "source_field_quality_gate",
+      "path": "scripts/source_field_quality_gate.py",
+      "role": "기업마당·K-Startup·NIPA·KITA 상세필드 측정과 반복결함 학습",
+      "drift_signals": ["4대 소스 축소", "본문 필드 제거", "반복 fingerprint 승격 제거"]
+    },
+    {
+      "id": "source_field_quality_model",
+      "path": "mail_core/operations/source_field_quality.py",
+      "role": "필드별 읽기율·baseline·반복 결함 상태",
+      "drift_signals": ["history 미사용", "원문을 history에 저장"]
+    },
+    {
+      "id": "monitor_runtime",
+      "path": "scripts/monitor_runtime.py",
+      "role": "보호 파일 비수정 상세 DOM 호환 엔트리포인트",
+      "drift_signals": ["monitor.py 우회 발송 동작 추가", "품질 계측 fatal 전환"]
+    },
+    {
       "id": "prestartup_digest_regression",
       "path": "tests/test_prestartup_ai_digest_regression.py",
       "role": "예비창업 AI 실수신 정·오추천 회귀",

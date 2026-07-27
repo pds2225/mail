@@ -11,8 +11,10 @@
 """
 from __future__ import annotations
 
+import re
 from datetime import date, timedelta
 from typing import Any, Iterable
+from urllib.parse import parse_qs, urlencode, urlsplit, urlunsplit
 
 CORE_SOURCE_IDS = frozenset({"bizinfo", "kstartup"})
 CORE_SOURCE_HOSTS = ("bizinfo.go.kr", "k-startup.go.kr")
@@ -20,11 +22,24 @@ CORE_SOURCE_MARKERS = (
     "기업마당", "bizinfo", "k-startup", "kstartup", "K-Startup",
 )
 
-# 상세 보강 예산 — 핵심은 넓게, 그 외 전용호스트는 기존 40 유지
-CORE_MAX_DETAIL_ENRICH = 150
+# 상세 보강 예산 — 기업마당/K-Startup이 한 예산을 독점하지 않도록 소스별
+# round-robin으로 나눈다. 400이면 현재 K-Startup 진행공고 약 200건을 모두
+# 읽으면서 기업마당도 같은 수만큼 보강할 수 있다.
+CORE_MAX_DETAIL_ENRICH = 400
 OTHER_SPECIALIZED_DETAIL_ENRICH = 40
 # 최근 게시분 우선 보강(메일 대상에 가까운 공고)
 CORE_ENRICH_RECENT_DAYS = 21
+
+# monitor.py의 전용 파서 목록과 별개로, 상세본문을 반드시 확인해야 하는 전국
+# 종합공고 소스. KITA는 목록이 예전 로그인 전용 URL을 내므로 공개 상세 URL로
+# 정규화한 뒤 범용 본문 파서를 태운다.
+PRIORITY_SOURCE_IDS = ("bizinfo", "kstartup", "nipa", "kita")
+PRIORITY_DETAIL_HOSTS = (
+    "bizinfo.go.kr",
+    "k-startup.go.kr",
+    "nipa.kr",
+    "kita.net",
+)
 
 # 기업마당 API(직결·data.go.kr)에서 종종 오는 부가필드 → 구조화 키
 # 픽스처에는 없을 수 있으나, 실응답에 있으면 상세 fetch 전에 분류에 쓴다.
@@ -166,6 +181,85 @@ def _enrich_sort_key(item: dict, today: date) -> tuple:
     return (recent, age if age >= 0 else 10**6, _norm(item.get("id")))
 
 
+def priority_source_id(item: dict | None) -> str:
+    """전국 종합공고 핵심 소스 ID를 링크·item id·메타에서 안정적으로 판별."""
+    if not isinstance(item, dict):
+        return ""
+    declared = _norm(item.get("core_source") or item.get("site_id")).lower()
+    if declared in PRIORITY_SOURCE_IDS:
+        return declared
+    link = _norm(item.get("link") or item.get("url")).lower()
+    iid = _norm(item.get("id")).lower()
+    source = _norm(item.get("source")).lower()
+    if "bizinfo.go.kr" in link or iid.startswith(("pbln_", "bizinfo_")) or "기업마당" in source:
+        return "bizinfo"
+    if "k-startup.go.kr" in link or iid.startswith("kstartup_") or "k-startup" in source:
+        return "kstartup"
+    if "nipa.kr" in link or iid.startswith("nipa_") or "정보통신산업진흥원" in source:
+        return "nipa"
+    if "kita.net" in link or iid.startswith("kita_") or "무역협회" in source:
+        return "kita"
+    return ""
+
+
+def canonical_detail_link(item: dict | None) -> str:
+    """로그인 전용 KITA 구 URL을 공개 상세 URL로 교정하고 나머지는 유지."""
+    if not isinstance(item, dict):
+        return ""
+    link = _norm(item.get("link") or item.get("url"))
+    if "kita.net" not in link.lower():
+        return link
+    try:
+        parts = urlsplit(link)
+        if not re.search(r"/asocBizOngoingView\.do$", parts.path, re.I):
+            return link
+        sn = (parse_qs(parts.query).get("sn") or [""])[0].strip()
+        if not sn:
+            return link
+        path = re.sub(
+            r"/asocBizOngoingView\.do$",
+            "/asocBizOngoingDetail.do",
+            parts.path,
+            flags=re.I,
+        )
+        return urlunsplit((parts.scheme, parts.netloc, path, urlencode({"bizAltkey": sn}), ""))
+    except (TypeError, ValueError):
+        return link
+
+
+def _balanced_take(
+    buckets: dict[str, list[dict]],
+    limit: int,
+    *,
+    preferred_order: tuple[str, ...] = (),
+) -> list[dict]:
+    """한 소스가 예산을 독점하지 않게 소스별 한 건씩 round-robin 선택."""
+    remaining = max(0, int(limit))
+    if not remaining:
+        return []
+    order = [key for key in preferred_order if buckets.get(key)]
+    order.extend(sorted(key for key in buckets if key not in order and buckets.get(key)))
+    offsets = {key: 0 for key in order}
+    selected: list[dict] = []
+    while remaining and order:
+        progressed = False
+        for key in list(order):
+            rows = buckets.get(key) or []
+            pos = offsets[key]
+            if pos >= len(rows):
+                order.remove(key)
+                continue
+            selected.append(rows[pos])
+            offsets[key] = pos + 1
+            remaining -= 1
+            progressed = True
+            if not remaining:
+                break
+        if not progressed:
+            break
+    return selected
+
+
 def select_detail_enrich_targets(
     items: list[dict],
     *,
@@ -174,24 +268,44 @@ def select_detail_enrich_targets(
     other_limit: int = OTHER_SPECIALIZED_DETAIL_ENRICH,
     today: date | None = None,
 ) -> list[dict]:
-    """전용 호스트 상세보강 대상 — 핵심 소스 우선·최근게시 우선·예산 분리."""
+    """전국 종합공고 상세보강 대상 — 소스 균형·최근게시 우선·예산 분리.
+
+    이 함수는 선택 과정에서 KITA의 구 로그인 URL만 공개 상세 URL로 교정한다.
+    item dict 자체를 바꾸는 이유는 호출측이 반환된 객체를 그대로 상세조회하기
+    때문이다.
+    """
     today = today or date.today()
     hosts = tuple(specialized_hosts or ())
-    core: list[dict] = []
-    other: list[dict] = []
+    eligible_hosts = tuple(dict.fromkeys((*hosts, *PRIORITY_DETAIL_HOSTS)))
+    core_buckets: dict[str, list[dict]] = {}
+    other_buckets: dict[str, list[dict]] = {}
     for it in items or []:
         if not it or it.get("detail_enriched"):
             continue
+        canonical = canonical_detail_link(it)
+        if canonical and canonical != _norm(it.get("link") or it.get("url")):
+            it["link"] = canonical
         link = _norm(it.get("link") or it.get("url")).lower()
-        if not any(h in link for h in hosts):
+        if not any(h in link for h in eligible_hosts):
             continue
-        if is_core_source_item(it) or any(h in link for h in CORE_SOURCE_HOSTS):
-            core.append(it)
+        source_id = priority_source_id(it)
+        if source_id in CORE_SOURCE_IDS:
+            core_buckets.setdefault(source_id, []).append(it)
         else:
-            other.append(it)
-    core.sort(key=lambda it: _enrich_sort_key(it, today))
-    other.sort(key=lambda it: _enrich_sort_key(it, today))
-    return core[: max(0, int(core_limit))] + other[: max(0, int(other_limit))]
+            other_buckets.setdefault(source_id or "other", []).append(it)
+    for bucket in (*core_buckets.values(), *other_buckets.values()):
+        bucket.sort(key=lambda it: _enrich_sort_key(it, today))
+    core = _balanced_take(
+        core_buckets,
+        core_limit,
+        preferred_order=("bizinfo", "kstartup"),
+    )
+    other = _balanced_take(
+        other_buckets,
+        other_limit,
+        preferred_order=("nipa", "kita", "other"),
+    )
+    return core + other
 
 
 def keyword_extra_parts(item: dict) -> list[str]:

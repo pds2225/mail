@@ -44,6 +44,17 @@ jobs:
           restore-keys: |
             coverage-baseline-
 
+      # 필드별 읽기율과 반복 실패 fingerprint를 실행 간 유지한다. 기업마당·K-Startup은
+      # 첫 실패부터 P0, NIPA·KITA는 동일 결함 2회면 P1→P0로 올린다.
+      # 정상 중앙값보다 20%p 급락해도 회귀로 판정한다.
+      - name: 핵심소스 필드품질 학습이력 복원
+        uses: actions/cache/restore@v4
+        with:
+          path: var/state/source_field_quality_history.json
+          key: source-field-quality-${{ github.run_id }}
+          restore-keys: |
+            source-field-quality-
+
       - name: 공고 digest 자동발송 (+커버리지 이상탐지·크래시 알림)
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
@@ -63,7 +74,7 @@ jobs:
         # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
         # --coverage-alert: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
-        run: python monitor.py --send --persist-seen --coverage-alert
+        run: python scripts/monitor_runtime.py --send --persist-seen --coverage-alert
 
       - name: 커버리지 baseline 저장(다음 실행 비교용)
         if: always()
@@ -71,6 +82,13 @@ jobs:
         with:
           path: var/state/coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
+
+      - name: 핵심소스 필드품질 학습이력 저장
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: var/state/source_field_quality_history.json
+          key: source-field-quality-${{ github.run_id }}
 
       # P0 수집누락 실행대장·알림 사본 보존. var/logs/는 .gitignore 대상이라 커밋되지 않으므로
       # 아티팩트로 남기지 않으면 러너 종료와 함께 사라진다("만들었는데 아무도 못 봄" 방지).
@@ -84,6 +102,8 @@ jobs:
             var/logs/source_coverage_*.md
             var/logs/p0_collection_alert_*.md
             var/logs/site_collection_coverage_report.md
+            var/logs/source_field_quality_latest.json
+            var/logs/source_field_quality_latest.md
           retention-days: 14
           if-no-files-found: ignore
 
