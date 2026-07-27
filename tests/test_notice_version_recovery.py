@@ -55,3 +55,76 @@ def test_version_advances_only_after_versioned_delivery(monkeypatch, tmp_path):
     assert pending["x"].get("delivered_hash") != "newhash"
     delivered = m.commit_notice_versions(pending, update, {"x", "x@v2"})
     assert delivered["x"]["delivered_hash"] == "newhash" and delivered["x"]["version"] == 2
+
+
+def test_detail_fetch_failure_does_not_create_false_updated():
+    """재조회 중 상세 FETCH 실패로 필드가 비어도 @vN 재발송하지 않는다."""
+    before = item("fail", "2026-07-20")
+    snap = m._notice_version_snapshot(before)
+    versions = {
+        "fail": {
+            "version": 1,
+            "list_hash": m._notice_list_hash(before),
+            "delivered_hash": m._notice_snapshot_hash(snap),
+            "delivered_snapshot": snap,
+            "observed_hash": m._notice_snapshot_hash(snap),
+        }
+    }
+    thin = item(
+        "fail",
+        "2026-07-20",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        detail_extraction={"status": "DETAIL_FETCH_FAILED"},
+    )
+    thin.pop("application_period", None)
+    deliverable, updates = m.classify_notice_versions([thin], {"fail"}, versions)
+    assert deliverable == []
+    assert updates["fail"].get("unreliable_observe") is True
+    assert updates["fail"]["delivery_id"] == "fail"
+
+
+def test_missing_delivered_hash_seeds_instead_of_version_bump():
+    """observed만 있고 delivered_hash가 없는 seen 공고는 @v2가 아니라 seed."""
+    source = item("pending", "2026-07-24")
+    snap = m._notice_version_snapshot(source)
+    versions = {
+        "pending": {
+            "list_hash": m._notice_list_hash(source),
+            "observed_hash": m._notice_snapshot_hash(snap),
+            "observed_snapshot": snap,
+            "pending_delivery_id": "pending",
+            "last_seen_at": "2026-07-27T10:00:00+09:00",
+        }
+    }
+    deliverable, updates = m.classify_notice_versions([source], {"pending"}, versions)
+    assert deliverable == []
+    assert updates["pending"].get("seed_only") is True
+
+
+def test_real_deadline_extension_still_versions_after_reliable_enrich():
+    """추출 성공 상태의 실제 마감 연장은 계속 @vN 재발송한다."""
+    before = item("extend2", "2026-07-20", deadline="2026-07-25")
+    snap = m._notice_version_snapshot(before)
+    versions = {
+        "extend2": {
+            "version": 1,
+            "list_hash": m._notice_list_hash(before),
+            "delivered_hash": m._notice_snapshot_hash(snap),
+            "delivered_snapshot": snap,
+            "observed_hash": m._notice_snapshot_hash(snap),
+        }
+    }
+    after = item(
+        "extend2",
+        "2026-07-20",
+        deadline="2026-08-10",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    deliverable, updates = m.classify_notice_versions([after], {"extend2"}, versions)
+    assert deliverable[0]["_change_type"] == "EXTENDED"
+    assert deliverable[0]["_delivery_id"] == "extend2@v2"
+    assert updates["extend2"]["version"] == 2
