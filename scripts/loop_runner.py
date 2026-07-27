@@ -148,5 +148,5 @@ if __name__ == "__main__":
         print("usage: loop_runner.py TASK-XXX 'task title'", file=sys.stderr)
         sys.exit(2)
     r = run_task(sys.argv[1], " ".join(sys.argv[2:]))
-    print(json.dumps({"status": r.status, "reason": r.reason, "profile": r.profile}, ensure_ascii=False))
+    print(json.dumps({"status": r.status, "reason": r.reason, "profile": r.profile}, ensure_ascii=True))
     sys.exit(0 if r.status in ("DONE", "AGENT_REQUIRED", "SKIPPED") else 1)
