@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loop verification entrypoint — Auto Dev L1 검증 단일 진입점.
 
-eval_rubric.md 의 V1–V3(및 옵션 V6)를 실행한다.
+eval_rubric.md 의 V1–V3·V9(및 옵션 V6)를 실행한다.
 Secret 값은 출력하지 않는다.
 
 Usage:
@@ -135,6 +135,14 @@ def check_recall() -> dict:
 def check_core_sources() -> dict:
     r = _run([sys.executable, "scripts/core_sources_checklist.py"], timeout=600)
     return {"id": "V6", "name": "core_sources_checklist", **r}
+
+
+def check_source_field_quality() -> dict:
+    r = _run(
+        [sys.executable, "scripts/source_field_quality_gate.py", "--offline"],
+        timeout=300,
+    )
+    return {"id": "V9", "name": "source_field_quality_gate", **r}
 
 
 def check_work_asset_presence() -> dict:
@@ -293,6 +301,7 @@ def run_verify(
     else:
         checks.append(check_protected_files(base_ref))
         checks.append(check_unit())
+        checks.append(check_source_field_quality())
         if not quick:
             checks.append(check_recall())
         if with_core_sources:
@@ -302,7 +311,7 @@ def run_verify(
         checks.append(check_loops_schema())
 
     # Fatal: V* and D1/D2; D3 issues fatal; D4 warn only
-    fatal_ids = {"V1", "V2", "V3", "V6", "D1", "D2", "D3", "D5"}
+    fatal_ids = {"V1", "V2", "V3", "V6", "V9", "D1", "D2", "D3", "D5"}
     ok = True
     for c in checks:
         if c.get("id") in fatal_ids and not c.get("ok", False):
