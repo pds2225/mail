@@ -30,6 +30,7 @@ WORK_ASSETS = (
     "docs/project/RULES.md",
     "docs/project/TASKS.md",
     ".github/workflows/auto-dev-queue.yml",
+    "auto_dev/work_assets.json",
     "auto_dev/loop_config.json",
     "auto_dev/loops.json",
     "auto_dev/eval_rubric.md",
@@ -137,12 +138,27 @@ def check_core_sources() -> dict:
 
 
 def check_work_asset_presence() -> dict:
-    missing = [p for p in WORK_ASSETS if not (ROOT / p).exists()]
+    paths = set(WORK_ASSETS)
+    issues: list[str] = []
+    registry_path = ROOT / "auto_dev" / "work_assets.json"
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        for asset in registry.get("assets", []):
+            path = asset.get("path") if isinstance(asset, dict) else None
+            if isinstance(path, str) and path.strip():
+                paths.add(path.strip())
+            else:
+                issues.append("work_assets.json contains an asset without a valid path")
+    except (OSError, json.JSONDecodeError) as e:
+        issues.append(str(e))
+
+    missing = [p for p in sorted(paths) if not (ROOT / p).exists()]
     return {
         "id": "D1",
         "name": "work_assets_present",
-        "ok": len(missing) == 0,
+        "ok": not missing and not issues,
         "missing": missing,
+        "issues": issues,
     }
 
 
