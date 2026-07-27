@@ -23,6 +23,17 @@ DEFAULT_INBOX = ROOT / "auto_dev" / "defects_inbox.md"
 KST = timezone(timedelta(hours=9))
 
 
+def _configure_console_output() -> None:
+    """Replace characters unsupported by the active Windows console codec."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure:
+            try:
+                reconfigure(errors="replace")
+            except (OSError, ValueError):
+                pass
+
+
 def parse_defects(text: str) -> list[dict]:
     """간단 포맷:
     ## DEFECT-001
@@ -79,6 +90,7 @@ def insert_pending(tasks_text: str, lines: list[str]) -> str:
 
 
 def main() -> int:
+    _configure_console_output()
     parser = argparse.ArgumentParser()
     parser.add_argument("--inbox", type=Path, default=DEFAULT_INBOX)
     parser.add_argument(
