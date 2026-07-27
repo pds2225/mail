@@ -267,7 +267,7 @@ def main() -> int:
     )
 
     if args.json:
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(json.dumps(result, ensure_ascii=True, indent=2))
     else:
         print(f"[loop_verify] mode={result['mode']} ok={result['ok']}")
         for c in result["checks"]:
