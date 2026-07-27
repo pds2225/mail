@@ -54,6 +54,8 @@ def _run(cmd: list[str], timeout: int = 600) -> dict:
         cwd=ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         env=_env_for_tests(),
         timeout=timeout,
     )
