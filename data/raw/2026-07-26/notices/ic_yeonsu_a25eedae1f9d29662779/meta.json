@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:36",
+  "notice_id": "ic_yeonsu_a25eedae1f9d29662779",
+  "title": "[송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118944&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n[송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램\n작성자\n연수구립도서관\n작성일\n2026년 7월 22일\n조회수\n56\n담당부서\n연수구립도서관\n전화번호\n032-749-8267\n첨부파일\n(홍보포스터_QR)내_삶의_방패가_되는_철학.jpg (\n0.39MB)\n(\n청소년을 위한\n)\n내 삶의 방패가 되는 철학\n◯\n운영일시\n: 2026\n년\n8\n월\n11\n일\n(\n화\n) 10\n시\n~11\n시\n50\n분\n◯\n운영장소\n:\n송도국제도서관 국제아트홀\n◯\n모집대상\n:\n중\n·\n고등학생\n100\n명\n◯\n강 연 자\n:\n안광복\n(\n서울중동고 철학 교사\n)\n교육신청하러 가기(클릭)\n목록\n이전글\n장마, 태풍 이후 풍수해 감염병 주의!\n다음글\n성홍열 감염병 예방수칙 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118944&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 [송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램 작성자 연수구립도서관 작성일 2026년 7월 22일 조회수 56 담당부서 연수구립도서관 전화번호 032-749-8267 첨부파"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

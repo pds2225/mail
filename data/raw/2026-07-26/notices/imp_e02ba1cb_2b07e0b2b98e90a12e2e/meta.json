@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:28",
+  "notice_id": "imp_e02ba1cb_2b07e0b2b98e90a12e2e",
+  "title": "[이노비즈협회] 국제 ISO 인증심사원 양성과정 교육생 모집 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=221&keyfield_s=&search_word_s=&cpage=2&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[이노비즈협회] 국제 ISO 인증심사원 양성과정 교육생 모집 안내\n작성일자\n2026.05.29\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\nISO교육신청서_260526.hwpx\nISO교육_Final.png\n목록\n이노비즈협회에서 국제ISO 인증심사원 양성과정 교육을 진행합니다 💙\nISO 인증심사원 자격 취득에 관심있는 누구나 신청 가능하오니\n많은 관심 바랍니다 🙌🏻\n이전글\n[시흥시청] 「2026년 2차 착한가격업소·명품점포 방문 이벤트」 안내\n다음글\n[서울경제진흥원] \t「CES 2027 서울통합관(SBA관,구로G밸리관)」참가기업 모집 안내",
+  "deadline": "",
+  "posted_date": "2026-05-29",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[이노비즈협회] 국제 ISO 인증심사원 양성과정 교육생 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=221&keyfield_s=&search_word_s=&cpage=2&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[이노비즈협회] 국제 ISO 인증심사원 양성과정 교육생 모집 안내 작성일자 2026.05.29 담당부서 홍보실 문의처 공고문 참조 첨부파일 ISO교육신청서_260526.hwpx ISO교육_Final.png 목록 이노비즈협회에서 국제ISO 인증심사원 양성과정 교육을 진행합니다 💙 ISO "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[시흥시청] 「2026년 2차 착한가격업소·명품점포 방문 이벤트」 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[서울경제진흥원] 「CES 2027 서울통합관(SBA관,구로G밸리관)」참가기업 모집 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:09",
+  "notice_id": "imp_761f4e5f_ec54280285bd788e6217",
+  "title": "5·18 나눔과 연대의 정신으로, 오월광주 사회적경제 가치마켓 개최",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2898&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2026.05.12\n조회수\n326회\n접수기간\n2026-05-15 ~ 2026-05-17\n부서\n기업성장팀\n문의처\n062-531-6667\n관련링크\n본문\n5·18 나눔과 연대의 정신으로,\n오월광주 사회적경제 가치마켓 개최\n오월광주 사회적경제 가치마켓은\n5·18민중항쟁의 핵심가치인 '연대\n·\n협동\n·나눔'의 정신을 실천하는 장터입니다.\n단순한 소비를 넘어 사회적가치를 실천하는 사회적경제기업과\n가치소비를 만나보세요.\n○\n일시 : 2026. 5. 15.(금) ~ 17.(일) 13:00-20:00\n○\n장소 : 국립아시아문화전당 플라자브릿지\n✔ 사회적경제기업 제품 판매·체험\n✔ 가치소비 캠페인\n✔ 시민참여 이벤트\n시민과 함께하는 가치소비,\n오월의 정신을 담은 연대의 장으로 초대합니다.\n오월의 광장에서\n가치 있는 소비로 함께해주세요!\n첨부파일\n이전글\n2026년 사회적경제 교육 : 소셜 창업랩\n다음글\n광주사회적경제지원센터 신규직원 채용 최종합격자 공고",
+  "deadline": "2026-05-15 ~ 2026-05-17",
+  "posted_date": "2026-05-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-15",
+    "end": "2026-05-17",
+    "display": "2026-05-15 ~ 2026-05-17",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "5·18 나눔과 연대의 정신으로, 오월광주 사회적경제 가치마켓 개최"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2898&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2026.05.12 조회수 326회 접수기간 2026-05-15 ~ 2026-05-17 부서 기업성장팀 문의처 062-531-6667 관련링크 본문 5·18 나눔과 연대의 정신으로, 오월광주 사회적경제 가치마켓 개최 오월광주 사회적경제 가치마켓은 5·18민중항쟁의 핵"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-15 ~ 2026-05-17"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

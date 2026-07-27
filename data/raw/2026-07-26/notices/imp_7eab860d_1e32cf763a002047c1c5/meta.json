@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:29",
+  "notice_id": "imp_7eab860d_1e32cf763a002047c1c5",
+  "title": "울산 청년 웰스테이 지원사업 추가 모집 연장 공고",
+  "link": "https://www.ubpi.or.kr/sub/?mcode=0403010000&no=3508",
+  "source": "울산일자리경제진흥원",
+  "author": "",
+  "description": "울산 청년 웰스테이 지원사업 추가 모집 연장 공고\n조회\n67\n기업지원부\n2026-07-24 11:04:16\n첨부파일\n2026년 울산 청년 웰스테이 지원사업 추가모집 공고(8월).hwp (\nSize\n: 311 Kbyte /\nDown\n: 27)\n업종코드-표준산업분류 연계표(웰스테이).xlsx (\nSize\n: 331 Kbyte /\nDown\n: 8)\n〔\n공고 제\n2026-163\n호\n〕\n2026\n년 울산 청년 웰스테이 지원사업 추가모집 공고\n지역 중소기업의 인력난 해소 및 청년 근로자 정주여건 개선을 위해 다음과 같이 울산청년 웰스테이 지원사업을 시행하고자 추가 모집을 실시합니다.\n2026.  7.  24.\n울산경제일자리진흥원장",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "울산 청년 웰스테이 지원사업 추가 모집 연장 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ubpi.or.kr/sub/?mcode=0403010000&no=3508"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "울산 청년 웰스테이 지원사업 추가 모집 연장 공고 조회 67 기업지원부 2026-07-24 11:04:16 첨부파일 2026년 울산 청년 웰스테이 지원사업 추가모집 공고(8월).hwp ( Size : 311 Kbyte / Down : 27) 업종코드-표준산업분류 연계표(웰스테이).xls"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

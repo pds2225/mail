@@ -20,7 +20,7 @@ export function buildSiteAddPacket(params: {
 
 ## 수정 대상 파일
 
-- \`sites.json\` (${existingCount}건 → ${existingCount + 1}건)
+- \`config/sites.json\` (${existingCount}건 → ${existingCount + 1}건)
 
 ## 추가될 사이트 JSON
 
@@ -65,7 +65,7 @@ ${validation.warnings.length ? validation.warnings.map((w) => `- [WARN] ${w.fiel
 
 ## 사용자 승인 필요 지점
 
-1. sites.json 변경 내용 검토
+1. config/sites.json 변경 내용 검토
 2. PR merge (자동 merge 금지)
 3. 운영 cron/Actions는 별도 승인
 
@@ -86,7 +86,7 @@ export function buildRecipientPacket(params: {
   return `# RECIPIENT_UPDATE_PACKET
 
 생성 시각: ${new Date().toISOString()}
-대상: ${params.target === "group" ? `groups.json → ${params.groupName || params.groupId}` : "settings.json → raw_all_recipients"}
+대상: ${params.target === "group" ? `config/groups.json → ${params.groupName || params.groupId}` : "config/settings.json → raw_all_recipients"}
 
 ## 추가 요청 이메일 (마스킹)
 
@@ -101,7 +101,7 @@ ${params.validation.rejected.map((r) => `- rejected: ${maskEmail(r.value)} (${r.
 
 ## PR 반영 방식
 
-1. \`groups.json\` 또는 \`settings.json\` 수동/PR 반영
+1. \`config/groups.json\` 또는 \`config/settings.json\` 수동/PR 반영
 2. 실제 메일 발송 테스트 금지 — dry-run만
 
 ## 승인 필요

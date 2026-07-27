@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:32",
+  "notice_id": "imp_5200845a_525cd12cfccf09293bf1",
+  "title": "2026년 주민등록 사실조사 안내",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982862",
+  "source": "김포시청",
+  "author": "",
+  "description": "2026년 주민등록 사실조사 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n2026년 주민등록 사실조사 안내\n담당부서\n민원여권과\n2026 주민등록 사실조사 실시 안내\n○ 비대면조사: 2026. 7. 20. ~ 9. 7.\n- 정부24 앱 ‘주민등록 사실조사’ 배너 접속\n※ 비대면 사실조사에 참여했더라도 중점조사 대상이 포함된 세대는 방문조사 실시\n○ 방문조사: 2026. 9. 8. ~ 11. 9.\n- 비대면조사 미참여 세대 이‧통장 방문 및 담당 공무원 확인조사\n파일\nmp4 문서\n260702_2026 주민등록 사실조사 안내 영상.mp4\npng 문서\n주민등록 사실조사 포스터.png\n미리보기\n조회수\n317\n작성일\n2026.07.21\n목록\n이전글\n2027 미국 라스베가스 소비자 전자제품 전시회（CES2027） 경기도관 참가기업 모집공고 안내\n다음글\n개인정보 보호 활용 기술 대상 모집 공고",
+  "deadline": "",
+  "posted_date": "2026-07-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 주민등록 사실조사 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982862"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 주민등록 사실조사 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 2026년 주민등록 사실조사 안내 담당부서 민원여권과 2026 주민등록 사실조사 실시 안내 ○ 비대면조사: 2026. 7. 20. ~ 9. 7. - 정부24 앱 ‘주민등록 사실조사’ 배"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "2026년 주민등록 사실조사 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 주민등록 사실조사 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "민원여권과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "mp4 문서 260702_2026 주민등록 사실조사 안내 영상.mp4 png 문서 주민등록 사실조사 포스터.png 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "317",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.21",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

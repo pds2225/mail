@@ -1,0 +1,103 @@
+{
+  "saved_at": "2026-07-26 19:32:30",
+  "notice_id": "motie_547360352729a52662a7",
+  "title": "2026년도 산업통상부-삼성전자 기술나눔 공고",
+  "link": "https://www.motie.go.kr/kor/article/ATCL2826a2625/71232/view",
+  "source": "산업통상자원부",
+  "author": "",
+  "description": "2026년도 산업통상부-삼성전자 기술나눔 공고\n공고번호\n2026-509\n담당자\n강승구\n담당부서\n산업기술시장과\n연락처\n044-203-4506\n등록일\n2026-07-22\n조회수\n1,017\n첨부파일\n2026년도 산업통상부-삼성전자 기술나눔 공고문.hwpx [111.3 KB]\n바로보기\n2. 2026년 삼성전자 기술나눔 목록(202건).xlsx [69.3 KB]\n바로보기\n산업통상부 공고 제\n2026\n-\n509\n호\n2026\n년도 산업통상부\n-\n삼성전자 기술나눔 공고\n대기업이 보유한 특허기술을 중소기업 등으로 무상이전하여\n기술혁신과 민간\n-\n공공부문 협력 강화에 기여하고자 다음과 같이\n기술나눔을\n공고하오니 참여하고자 하는 기업은 아래 절차에 따라 신청하여\n주시기 바랍니다\n.\n2026. 7. 22\n산업통상부 장관\n목록\n이전글\n2026년도 한·이스라엘 국제공동기술개발사업  신규 과제 통합 공고  - 라이트하우스 프로그램 재공고\n다음글\n2026년 「국가첨단전략산업 소부장 중소·중견기업 투자지원금」사업시행 2차 공고\n만족도 조사\n이 페이지에서 제공하는 정보에 만족하셨습니까?\n매우만족\n만족\n보통\n불만족\n매우불만족\n등록하기",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년도 산업통상부-삼성전자 기술나눔 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.motie.go.kr/kor/article/ATCL2826a2625/71232/view"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년도 산업통상부-삼성전자 기술나눔 공고 공고번호 2026-509 담당자 강승구 담당부서 산업기술시장과 연락처 044-203-4506 등록일 2026-07-22 조회수 1,017 첨부파일 2026년도 산업통상부-삼성전자 기술나눔 공고문.hwpx [111.3 KB] 바로보기 2. 2"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "산업통상부 공고 제 2026 - 509 호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2026 년도 산업통상부 - 삼성전자 기술나눔 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "saved_at": "2026-07-26 19:32:11",
+  "notice_id": "PBLN_000000000124698",
+  "title": "[부산] 2026년 2차 소규모사업장 작업환경개선 지원사업 모집 재공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124698",
+  "source": "기업마당(Bizinfo)",
+  "author": "부산광역시",
+  "description": "<p>부산노동권익센터에서 부산 소재 소규모사업장의 회복지원 및 건강하고 쾌적한 일터 환경 등 근무환경 개선을 위한 ‘소규모사업장 작업환경개선 지원사업’을 추진합니다. 이에 따른 참여 업체를 모집 하오니 많은 신청 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞ 부산소재 소규모(고용노동자 10인 이하)사업장, 사업자등록증 필수</p><p style=\"line-height: 1.8;\">- 작업환경측정 또는 근골유해요인조사 대상 업체로 측정/조사 경험이 없는&nbsp;사업장</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;작업환경측정 또는 근골격계유해요인조사 이후 결과에 따른 환경개선지원</p><p style=\"line-height: 1.8;\">- 작업환경측정 또는 근골유해요인조사, 업체별 최대 175만원</p>\n부산노동권익센터에서 부산 소재 소규모사업장의 회복지원 및 건강하고 쾌적한 일터 환경 등 근무환경 개선을 위한 ‘소규모사업장 작업환경개선 지원사업’을 추진합니다. 이에 따른 참여 업체를 모집 하오니 많은 신청 바랍니다. ☞ 부산소재 소규모(고용노동자 10인 이하)사업장, 사업자등록증 필수 - 작업환경측정 또는 근골유해요인조사 대상 업체로 측정/조사 경험이 없는 사업장 ☞ 작업환경측정 또는 근골격계유해요인조사 이후 결과에 따른 환경개선지원 - 작업환경측정 또는 근골유해요인조사, 업체별 최대 175만원",
+  "deadline": "2026-07-10 ~ 2026-07-30",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-10",
+    "end": "2026-07-30",
+    "display": "2026-07-10 ~ 2026-07-30",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[부산] 2026년 2차 소규모사업장 작업환경개선 지원사업 모집 재공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "부산광역시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124698"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>부산노동권익센터에서 부산 소재 소규모사업장의 회복지원 및 건강하고 쾌적한 일터 환경 등 근무환경 개선을 위한 ‘소규모사업장 작업환경개선 지원사업’을 추진합니다. 이에 따른 참여 업체를 모집 하오니 많은 신청 바랍니다.</p><p><br></p><p style=\"line-height"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-10 ~ 2026-07-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#고용노동자 10인 이하",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#근골유해요인조사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부산노동권익센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#작업환경측정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#작업환경개선",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부산광역시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#소규모사업장",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제조업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#인력",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "부산광역시"
+}

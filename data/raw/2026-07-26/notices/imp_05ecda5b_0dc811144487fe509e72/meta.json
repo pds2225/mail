@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:06",
+  "notice_id": "imp_05ecda5b_0dc811144487fe509e72",
+  "title": "서울시 사회적경제지원센터 카카오톡 공식 소통방 오픈!",
+  "link": "https://sehub.net/archives/2156720",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "사회적경제 공지\n서울시 사회적경제지원센터 카카오톡 공식 소통방 오픈!\n2026-07-10\n조회 : 123\n댓글 :\n0\n주최/주관 : 관리자\n제목을-입력해주세요.-2.png\n제목을-입력해주세요.-3_1.png\n제목을-입력해주세요.-1-1.png\n제목을-입력해주세요.-3.pdf\n카카오톡-QR-2.png\n서울시사회적경제지원센터 공식 카카오 오픈채팅방 오픈!\n사경센터 지원사업 정보, 이제 직접 찾지 마세요! 지원공고, 행사, 주요 소식을 카카오 오픈채팅방 하나에서 바로 확인하실 수 있습니다^^\n알람 걱정 없음: 센터 발송 전용으로 운영되어 불필요한 알람이 없습니다.\n*원스톱 확인: 흩어진 정보를 한곳에서!\n** 지금 바로 입장하기\nhttps://open.kakao.com/o/gva4OBoh\n첨부파일\n제목을 입력해주세요. (3)\n(159 kB)\n제목을 입력해주세요. (2)\n제목을 입력해주세요. (3)_1\n제목을 입력해주세요. (1)\n제목을 입력해주세요. (3)\n카카오톡 QR (2)\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "",
+  "posted_date": "2026-07-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "서울시 사회적경제지원센터 카카오톡 공식 소통방 오픈!"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2156720"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사회적경제 공지 서울시 사회적경제지원센터 카카오톡 공식 소통방 오픈! 2026-07-10 조회 : 123 댓글 : 0 주최/주관 : 관리자 제목을-입력해주세요.-2.png 제목을-입력해주세요.-3_1.png 제목을-입력해주세요.-1-1.png 제목을-입력해주세요.-3.pdf 카카오톡-Q"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,142 @@
+{
+  "saved_at": "2026-07-26 19:37:25",
+  "notice_id": "imp_0b8206bd_433af22e7e711ef2c42a",
+  "title": "2026년 남양주시 어린이・사회복지급식관리지원센터 직원 채용 공고",
+  "link": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88087",
+  "source": "남양주시청",
+  "author": "",
+  "description": "2026년 남양주시 어린이・사회복지급식관리지원센터 직원 채용 공고\n시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공\n고시공고번호\n남양주시 공고 제2026-1634호\n공고기간\n2026-07-24 ~ 2026-08-31\n담당부서\n위생과\n내용\n남양주시 어린이・사회복지급식관리지원센터 직원 채용을 아래와 같이 공고합니다.\n■ 접수기간 : 2026. 7. 24.(금) 10:00 ~ 8. 12.(수) 24:00까지\n■ 채용인원 : 팀장(육아휴직대체자) 1명\n■ 접수방법 : 이메일 접수 (이메일 : gngn9911@naver.com)\n■ 제출서류 : 이력서 1부, 자기소개서 1부, 개인정보 수집・이용 동의서 1부\n1) 응시서류는 PDF파일로 통합하여 제출\n2) 파일제목 : [지원자성명]_[팀장(대체)]_남양주시어린이・사회복지급식관리지원센터 직원채용 응시서류\n3) 이메일제목 : [지원자성명]_남양주시어린이・사회복지급식관리지원센터 직원채용 응시서류\n■ 문의처 : 채용담당자 ☎031-594-2210/070-4137-4533\n첨부파일\n2026년 1차(팀장_자격완화) 채용 재공고(안).hwpx\n내려받기\n미리보기\n목록",
+  "deadline": "2026-07-24 ~ 2026-08-12",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-24",
+    "end": "2026-08-12",
+    "display": "2026-07-24 ~ 2026-08-12",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 남양주시 어린이・사회복지급식관리지원센터 직원 채용 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88087"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 남양주시 어린이・사회복지급식관리지원센터 직원 채용 공고 시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공 고시공고번호 남양주시 공고 제2026-1634호 공고기간 2026-07-24 ~ 2026-08-31 담당부서 위생과 내용 남양주시 어린이"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-24 ~ 2026-08-12"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "남양주시 공고 제2026-1634호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공고기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24 ~ 2026-08-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "위생과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "남양주시 어린이・사회복지급식관리지원센터 직원 채용을 아래와 같이 공고합니다. ■ 접수기간 : 2026. 7. 24.(금) 10:00 ~ 8. 12.(수) 24:00까지 ■ 채용인원 : 팀장(육아휴직대체자) 1명 ■ 접수방법 : 이메일 접수 (이메일 : gngn9911@naver.com) ■ 제출서류 : 이력서 1부, 자기소개서 1부, 개인정보 수집・이용 동의서 1부 1) 응시서류는 PDF파일로 통합하여 제출 2) 파일제목 : [지원자성명]_[팀장(대체)]_남양주시어린이・사회복지급식관리지원센터 직원채용 응시서류 3) 이메일제목 : [지원자성명]_남양주시어린이・사회복지급식관리지원센터 직원채용 응시서류 ■ 문의처 : 채용담당자 ☎031-594-2210/070-4137-4533",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 1차(팀장_자격완화) 채용 재공고(안).hwpx 내려받기 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

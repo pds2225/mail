@@ -1,0 +1,251 @@
+{
+  "saved_at": "2026-07-26 19:38:37",
+  "notice_id": "imp_8998eef2_50784351473a461452e6",
+  "title": "2026년 제2차 경영관리지원사업 선정 심사 결과 안내",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=575&page=1",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "2026년 제2차 경영관리지원사업 선정 심사 결과 안내\n광주광역자활센터\n작성일\n2026-07-10\n조회수\n15\n1.\n2026년 제2차 경영관리지원사업\n신청 자활기업 및 자활근로사업단에 대한 심사를 진행하\n였\n으며,\n선정 결과를\n아래와 같이 안내합니다.\n가. 사 업 명: 2026년 제2차 경영관리지원사업\n나. 지원대상: 자활기업 및\n자활근로사업단\n다. 지원분야:\n경영지원 및 법인전환 등 16개 분야 컨설팅 지원\n라. 선정대상: 총 4개\n구 분\n소속\n수진기업 명\n지원 분야\n지원 횟수\n지원 금액\n(단위: 원)\n1\n서구\n찬찬찬\n창업 전 종합\n15회\n5,250,000\n2\n세차&새차\n기술관리\n10회\n3,500,000\n3\n서구상무\n앙호두(쌍촌점)\n경영전략\n5회\n1,750,000\n4\n북구동신\n파송송엄마손\n마케팅\n10회\n3,000,000\n마. 향후일정: 컨설턴트 매칭 후 각 수진기업 담당자와 일정 조율\n바. 관련문의:\n광주광역자활센터 사업지원부(☎070-4044-8575)\n목록\n이전글\n청년 금융특화서비스 금융교육2차(4기~6기) 안내\n다음글\n2026년 제2차 경영관리지원사업 공고 안내\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2026-07-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 제2차 경영관리지원사업 선정 심사 결과 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=575&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 제2차 경영관리지원사업 선정 심사 결과 안내 광주광역자활센터 작성일 2026-07-10 조회수 15 1. 2026년 제2차 경영관리지원사업 신청 자활기업 및 자활근로사업단에 대한 심사를 진행하 였 으며, 선정 결과를 아래와 같이 안내합니다. 가. 사 업 명: 2026년 제2차"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "구 분",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "소속",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "수진기업 명",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지원 분야",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지원 횟수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지원 금액 (단위: 원)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "1",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "서구",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "찬찬찬",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "창업 전 종합",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "15회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "5,250,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세차&새차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기술관리",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "10회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "3,500,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "3",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "서구상무",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "앙호두(쌍촌점)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "경영전략",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "5회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,750,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "북구동신",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "파송송엄마손",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "마케팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "10회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "3,000,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

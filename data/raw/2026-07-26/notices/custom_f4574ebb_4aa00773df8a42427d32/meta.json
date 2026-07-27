@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:34:04",
+  "notice_id": "custom_f4574ebb_4aa00773df8a42427d32",
+  "title": "사업안내",
+  "link": "https://www.gokams.or.kr/04_exchange/business03.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n사업안내\n예술현장 성장기반 조성\n예술산업 인력·기업 육성 및 예술산업 금융지원 등 예술의 산업화 추진을 통한 예술산업 생태계 기반 조성과 미래 성장동력을 확보하고자 합니다.\n예술산업 인력양성\n예술기업 성장 지원\n예술산업 금융지원\n예술산업 인력양성\n예술산업 (예비)종사자를 대상으로 맞춤형 교육과 일자리 정보를 제공하며, 예술산업 인력이 성장할 수 있는 기반을 구축하고 있습니다.\n예술산업아카데미\n예술산업의 지속 가능한 성장을 위해 예술기업·단체의 경영 활성화, 취·창업 지원을 아우르는 현장 맞춤형 교육을 추진하고 있습니다.\n아트모아(Ar+more)\n예술산업 분야의 기업·채용 정보와 예술산업 (예비)종사자가 필요한 역량을 갖출 수 있도록 다양한 교육을 제공하고 있습니다.\n문의처 ㅣ\n예술경제본부 인재개발팀\n02-708-2239, 2215, 2211\n예술기업 성장 지원\n혁신적이고 다양한 예술분야 사업모델 발굴과 예술기업의 지속가능한 경영을 위하여 성장단계에 맞춘 교육·컨설팅과 사업자금, 투자 등 자원 연계 기회를 제공함으로써 기업 성장 지원\n예비창업(기초단계) 지원\n실질적인 사업을 위한 시장검증, 사업모델 수립을 위한 창업 전문 보육 지원\n초기창업 지원\n예술기업 사업모델의 안정적 사업 구축을 위한 사업자금과 예술특화 및 맞춤형 멘토링, 컨설팅 등 지원\n창업도약 지원\n예술기업의 성장과 사업 확장을 위한 사업자금과 개별 맞춤 컨설팅, 투자유치 등 성장지원을 위한 외부자원 연계 지원\n성장도약(스케일업) 지원\n예술기업 후속 투자 및 판로 확대 등 스케일업을 위한 외부자원 연계 지원\n문의처 ㅣ\n예술경제본부 기업육성팀\n02-708-2291, 2295, 2235, 2249, 2223\n예술산업 금융지원\n예술분야 사업자를 대상으로 사업확장과 지속 운영을 위한 융자·보증 금융지원을 통해 예술산업 미래 경쟁력을 강화합니다.\n융자지원\n시설 개·보수, 신작개발 등 사업 확장에 필요한 자금을 금융기관(은행)을 통해 낮은 금리로 이용할 수 있도록 지원합니다.\n보증지원\n성장 가능성이 높으나 담보력이 부족한 예술산업 분야 기업이 보증기관의 보증을 통해 금융기관(은행) 대출을 이용할 수 있도록 지원합니다.\n문의처 ㅣ\n예술경제본부 금융지원팀\n02-2098-2906, 02-708-2270, 2277",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "사업안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/04_exchange/business03.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 사업안내 예술현장 성장기반 조성 예술산업 인력·기업 육성 및 예술산업 금융지원 등 예술의 산업화 추진을 통한 예술산업 생태계 기반 조성과 미래 성장동력을 확보하고자 합니다. 예술산업 인력양성 예술기업 성장 지원 예술산업 금융지원 예술산업 인력양성 예술산업 (예비)종사자를 대상으"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

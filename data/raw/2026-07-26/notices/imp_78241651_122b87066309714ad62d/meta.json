@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:36:12",
+  "notice_id": "imp_78241651_122b87066309714ad62d",
+  "title": "[일반] 2026년 데이터 ON 고양 빅데이터 아카데미 참여자 모집 공고",
+  "link": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4843&make=&search=&type=&apply_no=&table_name=notice&page=1",
+  "source": "고양산업진흥원",
+  "author": "",
+  "description": "KOR\nENG\nJPN\nCHN\nARB\n검색 폼\nSEARCH\n검색\n[일반] 2026년 데이터 ON 고양 빅데이터 아카데미 참여자 모집 공고\n상세\n작성자\n관리자\n등록일\n2026-07-23\n조회수\n79\n첨부파일\n[ 2026년\n데이터 ON 고양 빅데이터 아카데미\n​ 참여자 모집]\n​\n❍\n일    시\n(\n기초\n-1\n차\n)\n2026\n년\n8\n월\n14\n일\n(\n금\n), 14:00~16:00\n(\n기초\n-2\n차\n)\n2026\n년\n8\n월\n21\n일\n(\n금\n), 14:00~16:00\n(\n심화\n-\n온라인사업자 대상\n)\n2026\n년\n8\n월\n27\n일\n(\n목\n), 14:00~16:00\n(\n심화\n-\n오프라인사업자 대상\n)\n2026\n년\n8\n월\n28\n일\n(\n금\n), 14:00~16:00\n❍\n장    소\n:\n고양스마트시티센터 오픈랩\n8\n층 강의장\n❍\n교육대상\n:\n관내 중소기업 및 소상공인\n(\n대표 및 실무자\n),\n시민\n,\n학생 등\n❍\n인    원\n:\n회차당\n20\n명 내외\n(\n중복 신청 가능\n,\n선착순 마감\n)\n❍\n모집기간\n:\n2026\n년\n7\n월\n24\n일\n(\n금\n) 09:00 ~ 8\n월\n13\n일\n(\n목\n) 17:00\n까지\n❍\n신청방법\n:\n구글폼을 통한 아카데미 참여 신청서 작성\n(\nhttps://forms.gle/AhC9QYHow8kHa54S9\n)\n​\n목록\nList\n이전글\n등록된 글이 없습니다.\n다음글\n2026년 혁신 창업 스타트업 챌린지 참가기업 모집 선정 결과 공고\n콘텐츠 관리부서 :\nESG경영팀\n연락처 :\n031-960-7810\n진흥원 소개\n개인정보처리방침\n영상정보처리기기 운영관리방침\n채용비리 익명신고센터\n오시는길\n대표번호 : 031.960.7810\n사업자번호 : 128-82-08631\n경기도 고양시 일산동구 태극로 60 (장항동) 14층\nFax : 031.960.7819\nCopyright©2020 gipa.or.kr     ALL RIGHTS RESERVED.",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[일반] 2026년 데이터 ON 고양 빅데이터 아카데미 참여자 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4843&make=&search=&type=&apply_no=&table_name=notice&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "KOR ENG JPN CHN ARB 검색 폼 SEARCH 검색 [일반] 2026년 데이터 ON 고양 빅데이터 아카데미 참여자 모집 공고 상세 작성자 관리자 등록일 2026-07-23 조회수 79 첨부파일 [ 2026년 데이터 ON 고양 빅데이터 아카데미 ​ 참여자 모집] ​ ❍ 일 시 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "79",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

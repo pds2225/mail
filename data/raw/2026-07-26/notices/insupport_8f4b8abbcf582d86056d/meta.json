@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:44",
+  "notice_id": "insupport_8f4b8abbcf582d86056d",
+  "title": "2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고",
+  "link": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=767&page=2",
+  "source": "인천소상공인종합지원센터",
+  "author": "",
+  "description": "[금융복지지원팀] 2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고 상세보기\n[금융복지지원팀] 2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고\n조회\n2117\n금융복지지원\n2026-02-27 09:52:37\n파일\n2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고문.pdf (\nSize\n: 77 Kbyte /\nDown\n: 0)\n상담사 신청서류(양식).hwp (\nSize\n: 107 Kbyte /\nDown\n: 0)\n2026년 상담사 인력 풀 신청",
+  "deadline": "",
+  "posted_date": "2026-02-27",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=767&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[금융복지지원팀] 2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고 상세보기 [금융복지지원팀] 2026년 재무코칭(재정,스트레스분야) 상담사 인력 풀 모집 공고 조회 2117 금융복지지원 2026-02-27 09:52:37 파일 2026년 재무코칭(재정,스트레스분야) 상"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:23",
+  "notice_id": "imp_60bf007e_57b441b4842057dd0e34",
+  "title": "「2026 제조로봇 도입지원 해외진출지원 사업」참가 기업(자) 모집 공고",
+  "link": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29423",
+  "source": "경기테크노파크",
+  "author": "",
+  "description": "공지사항\n공지사항\nHOME\n공고ㆍ안내\n공지사항\n공지사항\n지역기술혁신의 산실, 지식산업 창조의 요람\n「2026 제조로봇 도입지원 해외진출지원 사업」참가 기업(자) 모집 공고\n번호 :\n29423\n작성자 :\n제조로봇팀\n작성일 :\n2026-05-29\n조회수 :\n548\n홈페이지 :\nhttp://\n첨부파일 :\ngtp260529_jGsi.hwp\ngtp260529_9CX1.hwp\n경기테크노파크 공고 제2026 - 123호\n「2026 제조로봇 도입지원 해외진출지원 사업」참가 기업(자) 모집 공고\n제조로봇 기업의 전시회 참관 및 해외 네트워크를 통해 수출 및 협업 활성화에 필요한 다양한 지식과 노하우를 체득할 수 있도록 「2026 제조로봇 도입지원 해외진출지원 사업」을 지원하오니 많은 참여 바랍니다.\n2026. 5. 29.\n(재)경기테크노파크 원장\n페이스북으로 이동\nx로 이동\n다음글\n이전글\n목록",
+  "deadline": "",
+  "posted_date": "2026-05-29",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「2026 제조로봇 도입지원 해외진출지원 사업」참가 기업(자) 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29423"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 HOME 공고ㆍ안내 공지사항 공지사항 지역기술혁신의 산실, 지식산업 창조의 요람 「2026 제조로봇 도입지원 해외진출지원 사업」참가 기업(자) 모집 공고 번호 : 29423 작성자 : 제조로봇팀 작성일 : 2026-05-29 조회수 : 548 홈페이지 : http://"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:21",
+  "notice_id": "imp_2418665a_3951a8ca9c4214174984",
+  "title": "2026-01-0102 반도체대전(SEDEX) 2026 대전공동관 참가기업 모집 공고",
+  "link": "https://pms.dips.or.kr/pdfviewer/web/viewer.html?file=/pbanc/broPQ9fa4FN0z6F41782173384043.pdf#view=FitV&pagemode=thumbs&page=1",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "",
+  "deadline": "2026-07-10",
+  "posted_date": "2026-01-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": null,
+  "detail_extraction": {
+    "status": "PARSE_FAILED",
+    "reason": "no_extractable_detail",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-01-0102 반도체대전(SEDEX) 2026 대전공동관 참가기업 모집 공고"
+      },
+      "organizer": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://pms.dips.or.kr/pdfviewer/web/viewer.html?file=/pbanc/broPQ9fa4FN0z6F41782173384043.pdf#view=FitV&pagemode=thumbs&page=1"
+      },
+      "description": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-10"
+      },
+      "target": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,6 +1,10 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import os
+from pathlib import Path
+
+RUNTIME_ROOT = Path("/tmp/monitor_ws")
+os.environ.setdefault("MAIL_VAR_DIR", str(RUNTIME_ROOT / "var"))
 
 REQUIRED_ENV_KEYS = [
     "GMAIL_ADDRESS",
@@ -81,5 +85,4 @@ class handler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt, *args):
         pass  # suppress default access log
-
 

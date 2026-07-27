@@ -1,0 +1,86 @@
+{
+  "saved_at": "2026-07-26 19:38:56",
+  "notice_id": "imp_1cc848c7_165870460ecd19491463",
+  "title": "디지털 랩온어칩 실용화 플랫폼 구축사업(3차년) 기술지원과제 (예비)시험검사 참여기업 모집 추가 재공고",
+  "link": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=363",
+  "source": "원주의료기기산업진흥원",
+  "author": "",
+  "description": "사업공고 안내\n[시험분석]\n디지털 랩온어칩 실용화 플랫폼 구축사업(3차년) 기술지원과제 (예비)시험검사 참여기업 모집 추가 재공고\n신청기간\n2026-06-04 ~ 2026-06-26\n신청자격\n국내 체외진단 의료기기 산업분야 제조기업\n공고번호\n260057\n진행상태\n접수마감\n담당부서/담당자\n기획2팀 / 신민주 전임연구원\n신청서류\n2026년[랩온어칩]기술지원과제(예비)시험검사 추가모집 재공고문 및 신청서류.zip\n「\n2026\n년 바이오산업 기반구축사업\n「2026년 바이오산업 기반구축사업」\n[디지털 랩온어칩 실용화 플랫폼 구축사업]\n기술지원과제 (예비)시험검사 참여기업 모집 추가 재공고\n(\n재\n)\n원주의료기기산업진흥원은 체외진단 산업기술 혁신을 위해 랩온어칩 및 데이터\n·\n인공지능\n,\n체외진단 기업의 진단 플랫폼의 디지털화를 위해\n2026\n년\n「\n바이오산업 기반구축사업\n(\n디지털 랩온어칩 실용화 플랫폼 구축 사업\n)\n」\n기술지원과제\n(\n시험검사\n)\n의 참여기업 모집을 아래와 같이 추가로 재공고하오니 희망하시는 기업의 많은 참여바랍니다\n.\n1\n사업개요\n가\n.\n사 업 명\n:\n바이오산업 기반구축사업\n(\n디지털 랩온어칩 실용화 플랫폼 구축 사업\n)\n나\n.\n사업목적\n:\n체외진단 산업기술 혁신을 위해 랩온어칩 및 데이터\n·\n인공지능 융합시스템\n·\n장비를 구축하고 체외진단 기업의 진단 플랫폼의 디지털화를 지원\n다\n.\n수행기관\n:\n(\n재\n)\n원주의료기기산업진흥원\n라\n.\n수행기간\n:\n협약 체결일로부터\n~ 2026\n년\n10\n월\n30\n일\n(\n금\n)\n까지\n마\n.\n지원대상\n:\n국내 체외진단 의료기기 산업분야 제조기업\n바\n.\n세부내용\n:\n-\n지원사업 신청서 및 세부내용 첨부파일 참조\n「\n2026\n년 바이오산업 기반구축사업\n「\n2026\n년 바이오산업 기반구축사업\n(\n디지털 랩온어칩 실용화 플랫폼 구축사업\n)\n」\n-\n기술지원과제\n((\n예비\n)\n시험검사\n)\n참여기업 모집 추가 재공고\n-\n접수가 마감되었습니다.",
+  "deadline": "2026-06-04 ~ 2026-06-26",
+  "posted_date": "2026-06-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-04",
+    "end": "2026-06-26",
+    "display": "2026-06-04 ~ 2026-06-26",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "디지털 랩온어칩 실용화 플랫폼 구축사업(3차년) 기술지원과제 (예비)시험검사 참여기업 모집 추가 재공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=363"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 안내 [시험분석] 디지털 랩온어칩 실용화 플랫폼 구축사업(3차년) 기술지원과제 (예비)시험검사 참여기업 모집 추가 재공고 신청기간 2026-06-04 ~ 2026-06-26 신청자격 국내 체외진단 의료기기 산업분야 제조기업 공고번호 260057 진행상태 접수마감 담당부서/담당자"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-04 ~ 2026-06-26"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "1",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "사업개요",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "saved_at": "2026-07-26 19:33:26",
+  "notice_id": "ema_ef9ad6c0d4c89423bf6d",
+  "title": "인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고~ 2025.09.05(금) 18",
+  "link": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&idx=61931",
+  "source": "인천수출경영자협의회",
+  "author": "",
+  "description": "인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고~ 2025.09.05(금) 18:00\n관리자\n2025-09-01 10:07:00\nhit\n328\n220.121.96.230\n제목 : [인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고\n신청 기간: 2025.08.28(목) 00:00 ~ 2025.09.05(금) 18:00\n> 자세한 사항\n바로가기\n사업개요\n□ 추진목적\n베트남 기업방문, 교류를 통하여 베트남-인천기업의 상호 기술 협력, 이전, 동남아시아 시장 진출(Out(In)-Bound) 체계 마련하고자 함\n지원분야\n및 대상\n□ 교류개요\n◦ (교류기간) 2025. 10. 20.(월) ~ 10. 24.(금), 3박 5일\n◦ (교류장소) 베트남 하노이, 타이응우옌 성\n◦ (모집규모) 인천소재 중소(제조)기업 8개사 내외\n- 전기, 전자, 정보통신 분야 원천 기술, 관련 제품, 서비스가 시장에 출시되어 있는 기업, 베트남 진출 목적 기업 등\n◦ (지원사항) 현지 차량 및 통역, 기업·기관 탐방지원, 개인경비 일부 등 50% 내외 지원\n지원조건\n및 내용\n◦ (주요프로그램)\n- 전기전자분야 베트남 현지 기관 및 기업과의 네트워크 구축\n- 한-베트남 기업 간 기술사업화 및 기술교류를 위한 오프라인 대면(개별방문) 기술상담과 기술협상\n및 후속 논의 실시\n- 인천기업의 베트남 진출과 기술수출 지원 강화를 위해 현지 협력기관 발굴, 근접 지원\n및 기술협력 네트워크 구축 추진\n일차\n주요 일정\n1일차\n【출국】인천 → 베트남 하노이\n【기관방문】 KOTRA하노이 무역관(현지현황 안내)\n2일차\n【기술교류】 기술교류 간담회(참여기업 대상 현지기업 방문)\n* 참여기업 당 3∼ 4개 기업 방문\n3일차\n【기술교류】 FPT 소프트웨어 주식회사, 삼성 R&D 센터\n【기관방문&교류】 베트남 국가혁신센터(NIC) 방문\n4일차\n【지자체 기술교류회】 타이응우옌 성 소재 기업 교류\n【기관방문】 코리아스타트업 지원센터 등\n【출국】베트남 하노이 출발\n5일차\n【귀국】하노이 → 인천, 해산\n신청방법\n□ 신청방법 * 접수 후 유선전화 혹은 이메일 연락 요망하며 접수 누락시 인천TP 귀책사유 없음\n◦ (모집기간) 2025. 9. 5.(금) 18:00까지\n◦ (접수방법)\n- 담당자 이메일 접수 (ghkang@itp.or.kr)\n게시글 공유\nURL복사\nTwitter\nFacebook\n출력\n목록",
+  "deadline": "2025-09-05 ~ 2026-09-05",
+  "posted_date": "2025-09-05",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2025-09-05",
+    "end": "2026-09-05",
+    "display": "2025-09-05 ~ 2026-09-05",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고~ 2025.09.05(금) 18"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&id"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고~ 2025.09.05(금) 18:00 관리자 2025-09-01 10:07:00 hit 328 220.121.96.230 제목 : [인천테크노파크]2025년 베트남 기술교류 참여기업 모집공고 신청 기간: 2025.08.28(목)"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2025-09-05 ~ 2026-09-05"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "주요 일정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "1일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "【출국】인천 → 베트남 하노이 【기관방문】 KOTRA하노이 무역관(현지현황 안내)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "【기술교류】 기술교류 간담회(참여기업 대상 현지기업 방문) * 참여기업 당 3∼ 4개 기업 방문",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "3일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "【기술교류】 FPT 소프트웨어 주식회사, 삼성 R&D 센터 【기관방문&교류】 베트남 국가혁신센터(NIC) 방문",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "【지자체 기술교류회】 타이응우옌 성 소재 기업 교류 【기관방문】 코리아스타트업 지원센터 등 【출국】베트남 하노이 출발",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "5일차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "【귀국】하노이 → 인천, 해산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

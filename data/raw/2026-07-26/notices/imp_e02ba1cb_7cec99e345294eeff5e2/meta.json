@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:23",
+  "notice_id": "imp_e02ba1cb_7cec99e345294eeff5e2",
+  "title": "[인천창조경제혁신센터] 「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=259&keyfield_s=&search_word_s=&cpage=1&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[인천창조경제혁신센터]  「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집\n작성일자\n2026.07.24\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n2026 빅웨이브 글로벌(일본4차)-츄가이제약 밋업 계획(안)_대외용.pdf\n목록\n이전글\n[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내\n다음글\n[고양산업진흥원 ] K-하이테크플랫폼 8월 재직자 훈련 <생성형 AI 교육> 안내",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[인천창조경제혁신센터] 「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=259&keyfield_s=&search_word_s=&cpage=1&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[인천창조경제혁신센터] 「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집 작성일자 2026.07.24 담당부서 홍보실 문의처 공고문 참조 첨부파일 2026 빅웨이브 글로벌(일본4차)-츄가이제약 밋업 계획(안)_대외용.pdf 목록 이전글 [시흥시의회] 의회 소식지(제52호) 발행"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[고양산업진흥원 ] K-하이테크플랫폼 8월 재직자 훈련 <생성형 AI 교육> 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

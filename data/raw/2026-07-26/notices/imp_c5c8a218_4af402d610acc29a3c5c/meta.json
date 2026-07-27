@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:18",
+  "notice_id": "imp_c5c8a218_4af402d610acc29a3c5c",
+  "title": "광주경영자총협회 공고 제2025-2호 서류 전형 합격자 통보",
+  "link": "http://www.gjef.or.kr/ko/28/view?SEQ=105&page=1",
+  "source": "광주경영자총협회",
+  "author": "",
+  "description": "광주경영자총협회 공고 제2025-2호 서류 전형 합격자 통보\n운영자\n날짜\n2025-05-23\n조회수\n245\n목록\n이전글\n2025 노사문화 유공 정부포상 후보자 공모 안내\n다음글\n광주경영자총협회 공고 제2025 - 3호 일자리 사업 채용 최종 합격자 안내\n공지사항 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2025-05-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "광주경영자총협회 공고 제2025-2호 서류 전형 합격자 통보"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjef.or.kr/ko/28/view?SEQ=105&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "광주경영자총협회 공고 제2025-2호 서류 전형 합격자 통보 운영자 날짜 2025-05-23 조회수 245 목록 이전글 2025 노사문화 유공 정부포상 후보자 공모 안내 다음글 광주경영자총협회 공고 제2025 - 3호 일자리 사업 채용 최종 합격자 안내 공지사항 게시글 상세 폼"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

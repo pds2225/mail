@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:40",
+  "notice_id": "keiti_0b6d368ee54819514b96",
+  "title": "[기술평가결과]2026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역 기술평가 결과 알림",
+  "link": "https://www.keiti.re.kr/site/keiti/ex/board/View.do?cbIdx=277&bcIdx=40782",
+  "source": "한국환경산업기술원(KEITI)",
+  "author": "",
+  "description": "○ 조달청 입찰공고 번호 :R26BK01602461-0002026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.자세한 사항은\n[기술평가결과]2026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역 기술평가 결과 알림\n등록부서\n기획운영실\n등록일\n2026-07-24\n조회수\n57\n첨부파일\n제안서평가 결과(홈페이지공고).hwp\n○ 조달청 입찰공고 번호 :R26BK01602461-000\n2026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.\n자세한 사항은 조달청 나라장터 홈페이지를 참고하시기 바랍니다.",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[기술평가결과]2026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역 기술평가 결과 알림"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.keiti.re.kr/site/keiti/ex/board/View.do?cbIdx=277&bcIdx=40782"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "○ 조달청 입찰공고 번호 :R26BK01602461-0002026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.자세한 사항은 [기술평가결과]2026년 창업·벤처 녹색융합클러스터 입주기업 실태조사 용역 기술평가 결과 알림 등록부서 기획"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

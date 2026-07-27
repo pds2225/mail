@@ -1,0 +1,141 @@
+{
+  "saved_at": "2026-07-26 19:35:15",
+  "notice_id": "semas_announce_8e2f8ccf1193b91e94b5",
+  "title": "2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고",
+  "link": "https://www.semas.or.kr/web/board/webBoardView.kmdc?b_idx=54157&bCd=1&pNm=BOA0101",
+  "source": "소상공인시장진흥공단 - 사업공고",
+  "author": "",
+  "description": "알림마당\n공지사항\n양도담보물공매\n사업공고\n유관공고\n채용정보\n공단 인재상\n직원채용\n친인척 채용현황\n보도/설명\n보도자료\n설명자료\n안전게시판\n전국 소상공인지원센터\n서울지역\n강원지역\n경기북부지역\n경기남부지역\n대전세종충남지역\n대구경북지역\n부산울산지역\n광주전남제주지역\n평일 09:00 ~ 18:00\n중소기업통합콜센터\n1357\n소진공 통합콜센터\n1533-0100\n업무\n부서\n공지사항\n알림마당\n공지사항\n제목\n2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고\n조회수\n652\n등록자\n관리자\n등록일\n2026-05-14\n첨부파일1\n첨부파일2\n첨부파일3\n2026년 해외 온라인 플랫폼 물류지원 사업 수행기관 모집공고.hwp\n(서식) 해외 온라인 플랫폼 물류지원_수행기관_사업계획서.hwp\n(서식)해외 온라인 플랫폼 물류단가표.xlsx\n2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고\n2026년 해외 온라인 플랫폼 물류지원사업에 참여할 수행기관을 모집합니다.\n□ 사업개요 : 해외쇼핑몰 활용 소상공인의 수출 물류 부담 경감\n□ 지원대상 : 소상공인 200개사\n□ 지원규모 : 1개사, 13억원\n□ 신청서류 : [붙임] 참고\n2026년 05월 15일\n소상공인시장진흥공단 이사장\n※ 문의처\n※\n- 사업문의 : 온라인판로팀(042-363-7825,7826)\n- 접수처 : 전자우편(global.semas.or.kr)\n- 시스템 문의(오류 등) : 1644-5302\n목록\n열람하신 정보에 만족하십니까?\n매우만족\n만족\n보통\n불만족\n매우불만족\n평가하기",
+  "deadline": "",
+  "posted_date": "2026-05-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.semas.or.kr/web/board/webBoardView.kmdc?b_idx=54157&bCd=1&pNm=BOA0101"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "알림마당 공지사항 양도담보물공매 사업공고 유관공고 채용정보 공단 인재상 직원채용 친인척 채용현황 보도/설명 보도자료 설명자료 안전게시판 전국 소상공인지원센터 서울지역 강원지역 경기북부지역 경기남부지역 대전세종충남지역 대구경북지역 부산울산지역 광주전남제주지역 평일 09:00 ~ 18:00"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "652",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-05-14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일1 첨부파일2 첨부파일3",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 해외 온라인 플랫폼 물류지원 사업 수행기관 모집공고.hwp (서식) 해외 온라인 플랫폼 물류지원_수행기관_사업계획서.hwp (서식)해외 온라인 플랫폼 물류단가표.xlsx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "2026년 해외 온라인 플랫폼 물류지원사업 수행기관 모집공고 2026년 해외 온라인 플랫폼 물류지원사업에 참여할 수행기관을 모집합니다. □ 사업개요 : 해외쇼핑몰 활용 소상공인의 수출 물류 부담 경감 □ 지원대상 : 소상공인 200개사 □ 지원규모 : 1개사, 13억원 □ 신청서류 : [붙임] 참고 2026년 05월 15일 소상공인시장진흥공단 이사장 ※ 문의처 ※ - 사업문의 : 온라인판로팀(042-363-7825,7826) - 접수처 : 전자우편(global.semas.or.kr) - 시스템 문의(오류 등) : 1644-5302",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

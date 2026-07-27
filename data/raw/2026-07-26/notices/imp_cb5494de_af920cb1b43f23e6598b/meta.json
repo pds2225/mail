@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:51",
+  "notice_id": "imp_cb5494de_af920cb1b43f23e6598b",
+  "title": "[4월아카데미] 개정 노동조합법 시행이후 현장노사관계 변화",
+  "link": "http://www.geea.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=notice&search_key=&key=&page=2&idx=239554",
+  "source": "경북북부경영자협회",
+  "author": "",
+  "description": "회원사광장\n경총 공지사항\n회원사 소통의 장\n노동동향\n노무법률센터, Q&A\n회원서비스, 가입\n자료실\n일학습병행\n경총 공지사항\n공지사항\n[4월아카데미] 개정 노동조합법 시행이후 현장노사관계 변화\n2026-04-01 15:02:45\n관리자 \t\t\t\n\t\t\t\t\t\t\t<\n>\n조회수 250\n121.180.208.21\n[4월아카데미]개정노동조합법시행이후현장노사관계변화(기업).pdf\n[File size:190KB]\nhttp://www.geea.or.kr/bbs/notice/239554\n제 목\n4\n월 인사노무아카데미 개최 및 참석의 건\n1.\n귀 사의 무궁한 발전을 기원하오며\n,\n항상 본 경협 사업에 대한 관심과 참여에\n진심으로 감사드립니다\n.\n2.\n지난\n3\n월\n10\n일 노동조합법이 시행됨에 따라 사용자 범위 확대와 산업현장에서 발생할 수 있는 하청노조의 교섭요구 사례와 단체교섭 주요체크포인트를 살펴보고\n,\n개정 노조법의 주요이슈에 대한 기업의 대응방안 세미나를 개최하오니 귀사의 참여를 바랍니다\n.\n◇\n아 래\n◇\n가\n.\n일 시\n: 2026.4.14.(\n화\n) 13:40~16:00\n나\n.\n장 소\n:\n대운빌딩\n1\n층 대회의실\n*\n포항시 남구 희망대로\n711\n다\n.\n참석대상\n:\n인사노무관리 부서장 및 담당\n50\n명내외\n라\n.\n참 가 비\n:\n회원사\n-\n무료 비회원사\n- 50,000\n원\n/1\n인당\n마\n.\n주제 및 강사\n:\n붙임 참조\n붙임\n4\n월 인사노무아카데미 세부계획\n1\n부\n.\n끝\n.\n[신중년 일자리 지원사업]경력인재 활용 수혜기업 모집 공고(1차)\n[2026 시군특화] 포항지역 거주 청년 구직자 무료 취업특강_2회차\n목록\n프린트\n﻿",
+  "deadline": "",
+  "posted_date": "2026-04-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[4월아카데미] 개정 노동조합법 시행이후 현장노사관계 변화"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.geea.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=notice&search_key=&key=&page=2&idx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "회원사광장 경총 공지사항 회원사 소통의 장 노동동향 노무법률센터, Q&A 회원서비스, 가입 자료실 일학습병행 경총 공지사항 공지사항 [4월아카데미] 개정 노동조합법 시행이후 현장노사관계 변화 2026-04-01 15:02:45 관리자 < > 조회수 250 121.180.208.21 [4"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

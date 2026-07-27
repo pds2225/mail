@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:19",
+  "notice_id": "imp_c5c8a218_c34c304bb48c12fa7dbf",
+  "title": "(수정공고)광주경영자총협회 공고 제2025-1호 일자리 사업 직원 채용 공고",
+  "link": "http://www.gjef.or.kr/ko/28/view?SEQ=103&page=2",
+  "source": "광주경영자총협회",
+  "author": "",
+  "description": "(수정공고)광주경영자총협회 공고 제2025-1호 일자리 사업 직원 채용 공고\n운영자\n날짜\n2025-05-16\n조회수\n423\n첨부파일\n2025년 직원 채용 공고문.hwp\n[size : 501.0 KB]\n[다운로드 : 65]\n목록\n이전글\n[안내] 육아휴직 대체인력 근로자 지원사업\n다음글\n2025 노사문화 유공 정부포상 후보자 공모 안내\n공지사항 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2025-05-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(수정공고)광주경영자총협회 공고 제2025-1호 일자리 사업 직원 채용 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjef.or.kr/ko/28/view?SEQ=103&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "(수정공고)광주경영자총협회 공고 제2025-1호 일자리 사업 직원 채용 공고 운영자 날짜 2025-05-16 조회수 423 첨부파일 2025년 직원 채용 공고문.hwp [size : 501.0 KB] [다운로드 : 65] 목록 이전글 [안내] 육아휴직 대체인력 근로자 지원사업 다음글 2"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

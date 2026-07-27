@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:36",
+  "notice_id": "kodit_a3fdcc54930888935d7b",
+  "title": "홈플러스(주) 피해기업 특례보증 안내",
+  "link": "https://www.kodit.co.kr/kodit/na/ntt/selectNttInfo.do?mi=2638&bbsId=148&nttSn=4921950",
+  "source": "신용보증기금(KODIT)",
+  "author": "",
+  "description": "공지사항\nSNS 공유\n페이스북 공유\n네이버 블로그 공유\n카카오톡 공유\n인쇄\n홈플러스(주) 피해기업 특례보증 안내\n작성자\n신용보증기금\n등록일\n2026.07.08\n홈플러스(주)\n피해기업 특례보증 안내\n피해기업 예시\n홈플러스(주)로부터 납품·판매 대금을 정산받지 못한 기업 등\n문의방법\n평일 업무시간 ( 09:00 ~ 18:00 )\n고객센터 : 1588-6565\n업무 외 시간\n홈페이지 ‘소통참여 - 질의응답 - 무엇이든 물어보세요’\n바로가기\nON-Biz를 통해 24시간 보증신청 가능하오니, 담당자 배정 후 업무 가능 시간에 순차적으로 상담 드리겠습니다. 감사합니다.\n목록\n다음글\n2026년 하반기 신용보증기금 체험형 청년인턴 채용\n이전글\n신용보증기금「AI 활용 업무혁신 특화 컨설팅」 지원 대상 기업 모집 공고\n메뉴 전체보기\n닫기",
+  "deadline": "",
+  "posted_date": "2026-07-08",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "홈플러스(주) 피해기업 특례보증 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.kodit.co.kr/kodit/na/ntt/selectNttInfo.do?mi=2638&bbsId=148&nttSn=4921950"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 SNS 공유 페이스북 공유 네이버 블로그 공유 카카오톡 공유 인쇄 홈플러스(주) 피해기업 특례보증 안내 작성자 신용보증기금 등록일 2026.07.08 홈플러스(주) 피해기업 특례보증 안내 피해기업 예시 홈플러스(주)로부터 납품·판매 대금을 정산받지 못한 기업 등 문의방법 평일 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

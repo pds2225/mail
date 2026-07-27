@@ -1,0 +1,740 @@
+[
+  {
+    "site_id": "bizinfo",
+    "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1578
+  },
+  {
+    "site_id": "kstartup",
+    "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 860
+  },
+  {
+    "site_id": "smes24",
+    "url": "https://www.smes.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1296
+  },
+  {
+    "site_id": "subsidy24",
+    "url": "https://www.gov.kr/portal/subsidy",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 733
+  },
+  {
+    "site_id": "ntis",
+    "url": "https://www.ntis.go.kr/rndgate/eg/un/ra/mng.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1609
+  },
+  {
+    "site_id": "iris",
+    "url": "https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituListView.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2438
+  },
+  {
+    "site_id": "g2b",
+    "url": "https://www.g2b.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1000
+  },
+  {
+    "site_id": "mss",
+    "url": "https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1561
+  },
+  {
+    "site_id": "msit",
+    "url": "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112",
+    "status": "fail",
+    "http_code": 403,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 875
+  },
+  {
+    "site_id": "motie",
+    "url": "https://www.motie.go.kr/kor/article/ATCL2826a2625",
+    "status": "empty",
+    "http_code": 200,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 968
+  },
+  {
+    "site_id": "moel",
+    "url": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubList.do",
+    "status": "fail",
+    "http_code": 405,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 656
+  },
+  {
+    "site_id": "mafra",
+    "url": "https://www.mafra.go.kr/bbs/mafra/68/artclList.do",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 765
+  },
+  {
+    "site_id": "mof",
+    "url": "https://www.mof.go.kr/article/list.do?menuKey=971&boardKey=10",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 812
+  },
+  {
+    "site_id": "mcst",
+    "url": "https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp",
+    "status": "fail",
+    "http_code": 403,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 781
+  },
+  {
+    "site_id": "moef",
+    "url": "https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028",
+    "status": "empty",
+    "http_code": 200,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 875
+  },
+  {
+    "site_id": "molit",
+    "url": "https://www.molit.go.kr/USR/BORD0201/m_69/lst.jsp",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1405
+  },
+  {
+    "site_id": "nipa",
+    "url": "https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 984
+  },
+  {
+    "site_id": "kiat",
+    "url": "https://www.kiat.or.kr/front/user/board/boardList.do?bbsId=BBS_0000011",
+    "status": "fail",
+    "http_code": 404,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 781
+  },
+  {
+    "site_id": "keit",
+    "url": "https://www.keit.re.kr/notice/noticeList.do",
+    "status": "fail",
+    "http_code": 404,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 703
+  },
+  {
+    "site_id": "kotra",
+    "url": "https://www.kotra.or.kr/kp/biz/notificationList.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 905
+  },
+  {
+    "site_id": "kosme",
+    "url": "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 797
+  },
+  {
+    "site_id": "semas",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=BBS_0000009",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 733
+  },
+  {
+    "site_id": "semas_loan_ols",
+    "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 843
+  },
+  {
+    "site_id": "kised",
+    "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 672
+  },
+  {
+    "site_id": "kocca_pims",
+    "url": "https://www.kocca.kr/kocca/pims/list.do?menuNo=204104",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1030
+  },
+  {
+    "site_id": "kocca_bbs",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0158960.do?menuNo=204392",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 938
+  },
+  {
+    "site_id": "ksure",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1311
+  },
+  {
+    "site_id": "kibo",
+    "url": "https://www.kibo.or.kr/main/kor/bbs/bbs.do?bbsId=BBSMSTR_000000000036",
+    "status": "fail",
+    "http_code": 404,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 921
+  },
+  {
+    "site_id": "kodit",
+    "url": "https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1125
+  },
+  {
+    "site_id": "kvic",
+    "url": "https://www.kvic.or.kr/vcms/contents/view.do?contentsNo=5050101",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 719
+  },
+  {
+    "site_id": "khidi",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU02096",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1453
+  },
+  {
+    "site_id": "keiti",
+    "url": "https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1843
+  },
+  {
+    "site_id": "ketep",
+    "url": "https://www.ketep.re.kr/businessAcment/list?menuId=MENU002080200000000",
+    "status": "fail",
+    "http_code": 400,
+    "items_count": 0,
+    "error_type": null,
+    "elapsed_ms": 2078
+  },
+  {
+    "site_id": "foodpolis",
+    "url": "https://www.foodpolis.kr/foodpolis/bbs/list.do?bbsId=FS_02",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 811
+  },
+  {
+    "site_id": "kidp",
+    "url": "https://www.kidp.or.kr/?menuno=918&act=list",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1468
+  },
+  {
+    "site_id": "rdcdp",
+    "url": "https://www.rdcdp.or.kr/index.do?menu_id=00000746",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1156
+  },
+  {
+    "site_id": "sba",
+    "url": "https://www.sba.seoul.kr/kr/sbcu31l1",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1203
+  },
+  {
+    "site_id": "gbsa",
+    "url": "https://pms.gbsa.or.kr/info/pblanc/pblancList.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 875
+  },
+  {
+    "site_id": "itp",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=13",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2438
+  },
+  {
+    "site_id": "bepa",
+    "url": "https://www.bepa.kr/kor/view.do?no=1508",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 750
+  },
+  {
+    "site_id": "djtp",
+    "url": "https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1702
+  },
+  {
+    "site_id": "myfair",
+    "url": "https://myfair.co/support-program-list",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 891
+  },
+  {
+    "site_id": "kita",
+    "url": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 858
+  },
+  {
+    "site_id": "smtech",
+    "url": "https://www.smtech.go.kr/front/ifg/no/notice02_list.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 969
+  },
+  {
+    "site_id": "gtp",
+    "url": "https://pms.gtp.or.kr/web/business/webBusinessList.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1593
+  },
+  {
+    "site_id": "gsp",
+    "url": "https://www.gsp.or.kr/supportProject/UVSL0001.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1046
+  },
+  {
+    "site_id": "ccei_biz",
+    "url": "https://ccei.creativekorea.or.kr/service/business_list.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 640
+  },
+  {
+    "site_id": "ccei_evt",
+    "url": "https://ccei.creativekorea.or.kr/service/event_list.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 656
+  },
+  {
+    "site_id": "seoultp",
+    "url": "https://www.seoultp.or.kr/user/nd19746.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 5485
+  },
+  {
+    "site_id": "kovwa",
+    "url": "https://kovwa.or.kr/94",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1000
+  },
+  {
+    "site_id": "ppi",
+    "url": "https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1875
+  },
+  {
+    "site_id": "kocca_general",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1608
+  },
+  {
+    "site_id": "data_go",
+    "url": "https://www.data.go.kr/",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 734
+  },
+  {
+    "site_id": "gov24",
+    "url": "https://www.gov.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 641
+  },
+  {
+    "site_id": "bizok",
+    "url": "https://bizok.incheon.go.kr/open_content/support.do",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 983
+  },
+  {
+    "site_id": "bizok_plan",
+    "url": "https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 672
+  },
+  {
+    "site_id": "incheon_city",
+    "url": "https://www.incheon.go.kr/IC010205",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1968
+  },
+  {
+    "site_id": "itp_notice",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=15",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2421
+  },
+  {
+    "site_id": "ifez",
+    "url": "https://www.ifez.go.kr/main/pst/list.do?pst_id=noti03",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2296
+  },
+  {
+    "site_id": "incheoncci",
+    "url": "https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 703
+  },
+  {
+    "site_id": "ema",
+    "url": "https://www.ema.or.kr/bbs/support",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1093
+  },
+  {
+    "site_id": "insupport",
+    "url": "http://www.insupport.or.kr/sub/?mcode=0404010000",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1453
+  },
+  {
+    "site_id": "icgf",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 703
+  },
+  {
+    "site_id": "ic_junggu",
+    "url": "https://www.icjg.go.kr/krcm01b",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 936
+  },
+  {
+    "site_id": "ic_donggu",
+    "url": "https://www.icdonggu.go.kr/",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 750
+  },
+  {
+    "site_id": "ic_michuhol",
+    "url": "https://www.michuhol.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1313
+  },
+  {
+    "site_id": "ic_yeonsu",
+    "url": "https://www.yeonsu.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 921
+  },
+  {
+    "site_id": "ic_namdong",
+    "url": "https://www.namdong.go.kr/",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 1093
+  },
+  {
+    "site_id": "ic_bupyeong",
+    "url": "https://www.bpyeong.go.kr/",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 859
+  },
+  {
+    "site_id": "ic_gyeyang",
+    "url": "https://www.gyeyang.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1156
+  },
+  {
+    "site_id": "ic_seo",
+    "url": "https://www.seo.incheon.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2014
+  },
+  {
+    "site_id": "ic_ganghwa",
+    "url": "https://www.ganghwa.go.kr/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2125
+  },
+  {
+    "site_id": "ic_ongjin",
+    "url": "https://www.ongjin.go.kr/",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 2281
+  },
+  {
+    "site_id": "kotra_trade24",
+    "url": "https://www.kotra.or.kr/bigList/20000020753",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2562
+  },
+  {
+    "site_id": "semas_announce",
+    "url": "https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc",
+    "status": "fail",
+    "http_code": null,
+    "items_count": 0,
+    "error_type": "connect_error",
+    "elapsed_ms": 9922
+  },
+  {
+    "site_id": "khidi_kbeauty",
+    "url": "https://www.khidi.or.kr/board?menuId=MENU01108",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2202
+  },
+  {
+    "site_id": "connectworks",
+    "url": "https://works.connect24.kr/search_result.php?org=인천테크노파크",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1016
+  },
+  {
+    "site_id": "rndcircle",
+    "url": "https://app.rndcircle.io/gov-grant",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1218
+  },
+  {
+    "site_id": "thevc",
+    "url": "https://thevc.kr/grants",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1578
+  },
+  {
+    "site_id": "bizcube",
+    "url": "https://bizcube-sol.com/",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 875
+  },
+  {
+    "site_id": "itp_marketing",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=36",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 2235
+  },
+  {
+    "site_id": "custom_f4574ebb",
+    "url": "https://www.gokams.or.kr/01_news/notice_list.aspx",
+    "status": "ok",
+    "http_code": 200,
+    "items_count": 1,
+    "error_type": null,
+    "elapsed_ms": 1139
+  }
+]

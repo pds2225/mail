@@ -50,7 +50,7 @@ def main() -> int:
     logging.getLogger().setLevel(logging.CRITICAL)
     norm = monitor.norm
 
-    cls = json.loads((ROOT / "reports" / "diag_classified.json").read_text(encoding="utf-8"))
+    cls = json.loads((ROOT / "var" / "reports" / "diag_classified.json").read_text(encoding="utf-8"))
     targets = cls["parse_empty"]
     print(f"보강 대상(parse_empty): {len(targets)}개", flush=True)
 
@@ -108,7 +108,7 @@ def main() -> int:
         print(f"  {c:3d}  {sel}")
 
     if write:
-        sites = json.loads((ROOT / "sites.json").read_text(encoding="utf-8"))
+        sites = json.loads((ROOT / "config" / "sites.json").read_text(encoding="utf-8"))
         by_id = {s["id"]: s for s in sites}
         n = 0
         skipped_default = 0
@@ -123,7 +123,7 @@ def main() -> int:
             sel["row"] = r["sel"]
             n += 1
         print(f"  (기본값 셀렉터라 스킵: {skipped_default}건)")
-        (ROOT / "sites.json").write_text(
+        (ROOT / "config" / "sites.json").write_text(
             json.dumps(sites, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"\n[WRITE] selectors.row 주입 {n}건 → sites.json 갱신")
     else:
@@ -131,7 +131,7 @@ def main() -> int:
         for r in found[:12]:
             print(f"  {r['id']} | dated={r['dated']} cnt={r['cnt']} | {r['sel']} | {r['name'][:20]}")
 
-    (ROOT / "reports" / "autofill_recs.json").write_text(
+    (ROOT / "var" / "reports" / "autofill_recs.json").write_text(
         json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
     return 0
 

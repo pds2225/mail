@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:52",
+  "notice_id": "imp_1a8d8b8d_779baa2c5f896b43e078",
+  "title": "건설공사 안전점검 수행기관 지정 공고문(녹전동974-21외6필지, 영천시 )",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8664&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n건설공사 안전점검 수행기관 지정 공고문(녹전동974-21외6필지, 영천시 )\n2026-07-24 09:21:51\n작성자\n강나은\n조회\n19\n분류\n파일\n1. 건설공사 안전점검 수행기관 지정 공고문(녹전동 974-21 외6필지).hwp\n바로보기\n2. 건설공사 안전점검 수행기관 평가기준 및 배점 평가방법.hwp\n바로보기\n3. 건설공사 안전점검 수행기관 등록명부.hwp\n바로보기\n4. 안전점검비용 산출내역.pdf\n바로보기\n대구경북경제자유구역 내 녹전동974-21 외6필지 신축공사와 관련하여 「건설공사 안전관리 업무수행 지침」제18조에 따라 안전점검 수행기관 지정 신청서가 제출되어 붙임과 같이 \"안전점검 수행기관 지정\"공고합니다.\n목록\nprev\n이전글이 없습니다.\nnext\n수성알파시티 처분신청부지 매각 공고\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "건설공사 안전점검 수행기관 지정 공고문(녹전동974-21외6필지, 영천시 )"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8664&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 건설공사 안전점검 수행기관 지정 공고문(녹전동974-21외6필지, 영천시 ) 2026-07-24 09:21:51 작성자 강나은 조회 19 분류 파일 1. 건설공사 안전점검 수행기관 지정 공고문(녹전동 974-21 외6필지).hwp 바로보기 2. 건설공사 안전점검 수행기관 평가기준 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

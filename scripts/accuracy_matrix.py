@@ -33,9 +33,9 @@ for p in (BASE_DIR, BASE_DIR / "scripts"):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-import company_match  # noqa: E402
+from mail_core.matching import company_match  # noqa: E402
 import monitor  # noqa: E402
-import feedback  # noqa: E402 (사용자 O/X 피드백 = Tier C 사람 정답)
+from mail_core.delivery import feedback  # noqa: E402 (사용자 O/X 피드백 = Tier C 사람 정답)
 from run_company_match import _enrich_for_company  # noqa: E402 (#15 인천고정 버그 수정 반영)
 
 # region_field 가 이 값이면 기업 지역 무관하게 적격(타지역 아님)

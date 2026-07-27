@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:33:40",
+  "notice_id": "ic_yeonsu_a65adad44b8474154dac",
+  "title": "2026년 송도건강생활지원센터 만성질환예방 건강강좌 「침묵의 살인자 고혈압, 이해와 관리」 교육 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118956&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n2026년 송도건강생활지원센터 만성질환예방 건강강좌 「침묵의 살인자 고혈압, 이해와 관리」 교육 안내\n작성자\n송도건강생활지원센터\n작성일\n2026년 7월 23일\n조회수\n85\n담당부서\n송도건강생활지원센터\n전화번호\n032-749-6918\n첨부파일\n8월안내문.jpg (\n0.11MB)\n2026년 송도건강생활지원센터 만성질환예방 건강강좌\n「침묵의 살인자 고혈압, 이해와 관리」\n교육 안내\n송도건강생활지원센터에서 2026년 만성질환예방 건강강좌「침묵의 살인자 고혈압, 이해와 관리」교육 운영을 아래와 같이 안내하오니, 관심있으신 주민 분들의 많은 참여바랍니다.\n가. 운영일시 : 2026. 8. 12.(수) 14:00 ~ 15:00\n나. 접수기간 : 2026. 7. 27.(월) ~ 8. 7.(금)\n다. 접수방법 : 연수문화포털\n[\n인천광역시 연수구 문화포털(\n인천광역시 연수구 문화포털\n)]\n인터넷 접수 15명/선착순접수\n* 유선 및 방문 접수 15명\n라. 대      상 : 연수구 주민 30명\n마. 강      사 : 인천의료원 이창민간호사\n바. 내      용\n- 고혈압의 정의\n- 고혈압의 원인 및 합병증\n- 고혈압 관리방법 등\n사. 비      용 : 무료\n아. 문      의 : 보건사업팀(☎032-749-6918)\n목록\n이전글\n워크온 연수구 공식 커뮤니티 회원 모집 안내\n다음글\n[송도국제도서관] <대학생 멘토가 들려주는 전공 이야기> 프로그램 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "2026-07-27 ~ 2026-08-07",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-27",
+    "end": "2026-08-07",
+    "display": "2026-07-27 ~ 2026-08-07",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 송도건강생활지원센터 만성질환예방 건강강좌 「침묵의 살인자 고혈압, 이해와 관리」 교육 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118956&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 2026년 송도건강생활지원센터 만성질환예방 건강강좌 「침묵의 살인자 고혈압, 이해와 관리」 교육 안내 작성자 송도건강생활지원센터 작성일 2026년 7월 23일 조회수 85 담당부서 송도건강생활지원센터"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-27 ~ 2026-08-07"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

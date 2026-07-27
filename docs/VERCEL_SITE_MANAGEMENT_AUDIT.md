@@ -20,28 +20,28 @@
 
 | 기능 | 상태 |
 |------|------|
-| 사이트 목록 (읽기) | ✅ `/sites` — `GET /api/config` → `sites.json` |
+| 사이트 목록 (읽기) | ✅ `/sites` — `GET /api/config` → `config/sites.json` |
 | 사이트 추가 폼 | ✅ `/sites/add` |
 | 검증 버튼 | ✅ `POST /api/sites/validate` |
 | PR 패킷 생성 | ✅ `POST /api/sites/packet` |
-| 운영 `sites.json` 직접 쓰기 | ❌ 의도적 비활성 (승인 후 PR만) |
+| 운영 `config/sites.json` 직접 쓰기 | ❌ 의도적 비활성 (승인 후 PR만) |
 
 ## 저장 지속성
 
 | 환경 | 동작 |
 |------|------|
-| 로컬 `npm run dev` | 패킷 생성 시 `WORKS/SITE_ADD_PR_PACKET.md`, `docs/SITE_ADD_PR_PACKET.md` 기록 가능 |
+| 로컬 `npm run dev` | 패킷 생성 시 `docs/works/SITE_ADD_PR_PACKET.md`, `docs/SITE_ADD_PR_PACKET.md` 기록 가능 |
 | Vercel Serverless | FS 읽기 전용일 수 있음 → **API 응답 `packetMarkdown` 복사**가 1차 수단 |
 | 운영 설정 | GitHub merge 후에만 반영 |
 
-**결론:** Vercel UI만으로 운영 `sites.json`이 바뀌지 않음 — 지속성 문제(이전 HTML UI)는 해소됨.
+**결론:** Vercel UI만으로 운영 `config/sites.json`이 바뀌지 않음 — 지속성 문제(이전 HTML UI)는 해소됨.
 
 ## GitHub 설정 파일 반영 가능 여부
 
 - **1차:** PR 패킷 마크다운 + JSON 스니펫 (수동/에이전트 PR)
 - **2차 (NEEDS_USER):** `GITHUB_TOKEN` in Vercel env → 브랜치 생성 · 파일 수정 · Draft PR (자동 merge 금지)
 
-원본 데이터: 레포 루트 `sites.json`, `groups.json`, `settings.json`.
+원본 데이터: 레포 루트 `config/sites.json`, `config/groups.json`, `config/settings.json`.
 
 ## 현재 문제점 / 제한
 

@@ -1,0 +1,169 @@
+{
+  "saved_at": "2026-07-26 19:37:16",
+  "notice_id": "imp_c7fa8056_c5d0f04878dcac1a8217",
+  "title": "담배소매업 폐업 및 소매인 지정신청 공고",
+  "link": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75068&pageIndex=1&searchCnd=40900000000&cate_cd=1",
+  "source": "김포시청",
+  "author": "",
+  "description": "고시공고 게시물 내용\n고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표\n고시공고구분\n공고(일반공고)\n조회수\n60\n고시공고번호\n김포시 공고 제2026-2059호\n등록일\n2026-07-24\n담당부서\n지역경제과\n제목\n담배소매업 폐업 및 소매인 지정신청 공고\n담배사업법 제22조의2, 같은 법 시행규칙 제7조의2 및 제14조제3항에 따라 담배소매업 폐업사항과 폐업장소 인근 지역의 담배소매인 지정신청을 다음과 같이 공고합니다.\n○ 공고장소 : [시 홈페이지][게시판]\n붙임  공고문 1부.  끝.\n첨부파일\nhwpx 문서\n공고문(담배소매업 폐업 및 소매인지정신청 공고).hwpx\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "담배소매업 폐업 및 소매인 지정신청 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75068&pageIndex=1&searchCnd=40900000000&cate_cd=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표 고시공고구분 공고(일반공고) 조회수 60 고시공고번호 김포시 공고 제2026-2059호 등록일 2026-07-24 담당부서 지역경제과 제목 담배소매업 폐업 및 소매인 지정신청 공고 담배"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고구분",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고(일반공고)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "60",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김포시 공고 제2026-2059호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지역경제과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "담배소매업 폐업 및 소매인 지정신청 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "담배사업법 제22조의2, 같은 법 시행규칙 제7조의2 및 제14조제3항에 따라 담배소매업 폐업사항과 폐업장소 인근 지역의 담배소매인 지정신청을 다음과 같이 공고합니다. ○ 공고장소 : [시 홈페이지][게시판] 붙임 공고문 1부. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "hwpx 문서 공고문(담배소매업 폐업 및 소매인지정신청 공고).hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

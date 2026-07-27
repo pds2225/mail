@@ -25,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-import company_match  # noqa: E402
+from mail_core.matching import company_match  # noqa: E402
 
 KST = timezone(timedelta(hours=9))
-REPORT_DIR = BASE_DIR / "reports" / "company_match"
+REPORT_DIR = BASE_DIR / "var" / "reports" / "company_match"
 
 # 네트워크/API 없이 동작하는 샘플 공고 (monitor item 형태 + 한국어 dict 혼용)
 SAMPLE_ITEMS: list[dict[str, Any]] = [

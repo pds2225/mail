@@ -16,7 +16,7 @@ os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 os.environ.setdefault("MAIL_FEEDBACK_SECRET", "feedback-loop-test-secret")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import feedback  # noqa: E402
+from mail_core.delivery import feedback  # noqa: E402
 import monitor  # noqa: E402
 
 NID = "PBLN_000000000092578"

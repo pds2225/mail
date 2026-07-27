@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:37",
+  "notice_id": "imp_8998eef2_51a68d7fe68a3b1d2193",
+  "title": "청년 금융특화서비스 금융교육2차(4기~6기) 안내",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=576&page=1",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "청년 금융특화서비스 금융교육2차(4기~6기) 안내\n광주광역자활센터\n작성일\n2026-06-29\n조회수\n17\n목록\n이전글\n청년 금융특화서비스 재무상담 1기 모집\n다음글\n2026년 제2차 경영관리지원사업 선정 심사 결과 안내\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2026-06-29",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "청년 금융특화서비스 금융교육2차(4기~6기) 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=576&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "청년 금융특화서비스 금융교육2차(4기~6기) 안내 광주광역자활센터 작성일 2026-06-29 조회수 17 목록 이전글 청년 금융특화서비스 재무상담 1기 모집 다음글 2026년 제2차 경영관리지원사업 선정 심사 결과 안내 센터소식 게시글 상세 폼"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

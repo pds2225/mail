@@ -1,0 +1,485 @@
+{
+  "saved_at": "2026-07-26 19:34:02",
+  "notice_id": "custom_f4574ebb_bac56075052067bc8692",
+  "title": "공모ㆍ기금ㆍ행사",
+  "link": "https://www.gokams.or.kr/01_news/event_list.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n알림/소식\n공모ㆍ기금ㆍ행사\n공모ㆍ기금ㆍ행사 및 일자리 정보는 예술경영웹진 뉴스레터에 게재될 수 있습니다.\n게시판 성격에 맞지 않는 글은 임의로 삭제될 수 있습니다.\n개인정보(성명, 주민등록번호, 계좌번호 등)가 포함된 게시글은 임의로 삭제될 수 있습니다.\n제목\n내용\n공모ㆍ기금ㆍ행사 목록\n23206\nAbyss's 어비스 창작음악공연\n서울프린지페스티벌, 안콘텐츠랩\n2026-08-21\n6\n23205\n김효훈 개인전 《무명의 정원》\n김효훈\n2026-07-24 ~ 07-30\n6\n23204\nARTMODE 프로젝트 무용수 모집(발레)\n아트모드\n2026-07-25 ~ 08-07\n34\n23203\n(재)세종문화회관 꿈의숲아트센터 홍보 및 공연장 운영 코디네이터 모집 공고\n세종문화회관 꿈의숲아트센터\n2026-07-20 ~ 07-31\n42\n23202\n[스페이스K 서울 전시] 카우스: 친구, 그리고 이웃\n스페이스K 서울\n2026-07-23 ~ 12-27\n39\n23201\n[무용워크숍] 2026 춘천공연예술제 러너스하이 움직임 워크숍 - 몰입을 위한 반복\n사단법인 텐스푼\n2026-08-12\n65\n23200\n[축제소개] 2026 춘천공연예술제 8.11.(화) ~ 8.15.(토)\n사단법인텐스푼\n2026-08-11 ~ 08-15\n148\n23199\n[광명문화재단] 시민 도시기록가 모집\n광명문화재단\n2026-07-13 ~ 07-30\n78\n23198\nAI가 대신 못할 나만의 '문화예술 솔루션' 기획하고, 스펙 차별점 쌓을 사람 주목!🔥\n서대문구청\n2026-08-03 ~ 08-27\n115\n23197\n[파라다이스 아트랩 워크룸] 8월 워크숍 프로그램 오픈!\n파라다이스문화재단\n2026-08-06 ~ 08-08\n118\n1\n현재페이지\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+  "deadline": "",
+  "posted_date": "2026-08-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "공모ㆍ기금ㆍ행사"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/01_news/event_list.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 알림/소식 공모ㆍ기금ㆍ행사 공모ㆍ기금ㆍ행사 및 일자리 정보는 예술경영웹진 뉴스레터에 게재될 수 있습니다. 게시판 성격에 맞지 않는 글은 임의로 삭제될 수 있습니다. 개인정보(성명, 주민등록번호, 계좌번호 등)가 포함된 게시글은 임의로 삭제될 수 있습니다. 제목 내용 공모ㆍ기금ㆍ"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공모ㆍ기금ㆍ행사 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23206",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "Abyss's 어비스 창작음악공연",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "서울프린지페스티벌, 안콘텐츠랩",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-21",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "6",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23205",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김효훈 개인전 《무명의 정원》",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김효훈",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24 ~ 07-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "6",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23204",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "ARTMODE 프로젝트 무용수 모집(발레)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "아트모드",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-25 ~ 08-07",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "34",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23203",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(재)세종문화회관 꿈의숲아트센터 홍보 및 공연장 운영 코디네이터 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세종문화회관 꿈의숲아트센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-20 ~ 07-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "42",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23202",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[스페이스K 서울 전시] 카우스: 친구, 그리고 이웃",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "스페이스K 서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23 ~ 12-27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "39",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23201",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[무용워크숍] 2026 춘천공연예술제 러너스하이 움직임 워크숍 - 몰입을 위한 반복",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "사단법인 텐스푼",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "65",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23200",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[축제소개] 2026 춘천공연예술제 8.11.(화) ~ 8.15.(토)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "사단법인텐스푼",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-11 ~ 08-15",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "148",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23199",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[광명문화재단] 시민 도시기록가 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광명문화재단",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-13 ~ 07-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "78",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23198",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "AI가 대신 못할 나만의 '문화예술 솔루션' 기획하고, 스펙 차별점 쌓을 사람 주목!🔥",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "서대문구청",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-03 ~ 08-27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "115",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "23197",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[파라다이스 아트랩 워크룸] 8월 워크숍 프로그램 오픈!",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "파라다이스문화재단",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-06 ~ 08-08",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "118",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

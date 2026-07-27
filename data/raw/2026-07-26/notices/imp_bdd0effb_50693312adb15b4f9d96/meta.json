@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:34:29",
+  "notice_id": "imp_bdd0effb_50693312adb15b4f9d96",
+  "title": "[ICT이노베이션스퀘어확산] 소외계층청년 디지털 맞춤교육 모집",
+  "link": "https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=570",
+  "source": "강릉과학산업진흥원",
+  "author": "",
+  "description": "페이지 정보\n작성자\nGSIPA\n댓글\n0건\n조회\n2,325회\n작성일\n26-03-30 16:31\n목록\n본문\n관련링크\nhttps://lms.ictcog.or.kr/\n1890회 연결\n이전글\n[NIPA] AI 챔피언·루키 대회 홍보\n26.03.30\n다음글\n2026년「첨단 융복합 기술 기반 바이오 소재 제품화 및 양산화 지원」 사업 기업지원 공고\n26.03.25",
+  "deadline": "",
+  "posted_date": "2026-03-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[ICT이노베이션스퀘어확산] 소외계층청년 디지털 맞춤교육 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=570"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성자 GSIPA 댓글 0건 조회 2,325회 작성일 26-03-30 16:31 목록 본문 관련링크 https://lms.ictcog.or.kr/ 1890회 연결 이전글 [NIPA] AI 챔피언·루키 대회 홍보 26.03.30 다음글 2026년「첨단 융복합 기술 기반 바이오"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

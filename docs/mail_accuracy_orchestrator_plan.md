@@ -3,7 +3,7 @@
 # mail 추천 정확도 향상 오케스트레이터(accuracy-harness) — 통합 실행 계획서
 
 > **상태: 계획서만 (코드 미수정).** 4개 관점(현황진단·아키텍처·측정체계·로드맵)을 읽기·분석 기반으로 종합. 모든 경로는 절대경로(D:\mail\…). 실제 구현은 별도 작업 브랜치에서 PR 경유.
-> **검증 완료(이 세션):** #15 버그 실재(run_company_match.py:133 `evaluate_notice(it)` group 없음) / 2026-06-25 골든풀 874공고·region_field 23건만 채워짐(851건 null) / `_count_hits` substring(company_match.py:128) vs scoring.py 단어경계 비대칭 / `_METRO_FAMILY` 양쪽 중복(monitor.py:199, company_match.py:133) / `explicit_nationwide` 거친 substring(monitor.py:2591) / `exclude_penalty=-60`(company_match.py:61) — **전부 사실 확인.**
+> **검증 완료(이 세션):** #15 버그 실재(run_company_match.py:133 `evaluate_notice(it)` group 없음) / 2026-06-25 골든풀 874공고·region_field 23건만 채워짐(851건 null) / `_count_hits` substring(mail_core/matching/company_match.py:128) vs mail_core/matching/scoring.py 단어경계 비대칭 / `_METRO_FAMILY` 양쪽 중복(monitor.py:199, mail_core/matching/company_match.py:133) / `explicit_nationwide` 거친 substring(monitor.py:2591) / `exclude_penalty=-60`(mail_core/matching/company_match.py:61) — **전부 사실 확인.**
 
 ---
 
@@ -15,7 +15,7 @@
 - **불변 원칙(이 도메인의 헌법):**
   1. **recall 1순위(평생목표):** 지역 단서 전무 → 버리지 말고 `REGION_UNKNOWN`(미상 surface). "확실한 타지역"만 제외. `test_region_unknown_policy.py` 5/5 green이 **모든 단계 차단 게이트**.
   2. **대칭 원칙:** company_match(기업단위) ↔ monitor(그룹단위)가 같은 공고에 같은 verdict.
-  3. **앱 핵심파일(monitor.py·streamlit_app.py) 직접수정 최소화:** 가능하면 보조모듈·company_match·groups.json/companies.json 데이터로 해결. 핵심파일 수정은 사람 승인 게이트 필수(AGENTS.md RULES).
+  3. **앱 핵심파일(monitor.py·streamlit_app.py) 직접수정 최소화:** 가능하면 보조모듈·`mail_core/matching/company_match.py`·`config/groups.json`·`config/companies.json` 데이터로 해결. 핵심파일 수정은 사람 승인 게이트 필수(AGENTS.md RULES).
   4. **검증된 함수 재사용:** `_applicant_restricted_regions`·`_resolve_applicant_region_scope`·`_applicant_target_text`·`_short_region`·`_other_region_block`(이번 PR #111~114로 확립).
   5. **안전:** SMTP 발송 금지(드라이런 전용)·수신자 마스킹·Secret 미출력·main 직접 push 금지·위험9종 자동병합 금지.
 
@@ -31,12 +31,12 @@
 |---|---|---|---|---|
 | **P0-1** | **#15 run_company_match가 evaluate_notice를 group 없이 호출 → 인천 고정 오염** | precision+recall 전방위 | run_company_match.py:133, monitor.py(group 없으면 인천 classify) | 인천 외 全기업 추천이 인천 적격성으로 1차 오염 |
 | **P0-2** | **권역 일반화 미완(경상/호남/충청권 — 현재 수도권만 처리)** | precision+recall | company_match._METRO_FAMILY만 분기, `_REGION_CLUSTER` 부재 | 비수도권 권역 한정 공고가 타지역 기업에 누출 / 권역=적격 케이스 환원 못함 |
-| **P1-1** | **채점엔진 이원화(ASCII 단어경계 비대칭)** | precision | company_match.py:128 substring vs scoring.py 단어경계 | 영어약어(AI·MES·ERP·DX) 기업일수록 오추천↑ |
+| **P1-1** | **채점엔진 이원화(ASCII 단어경계 비대칭)** | precision | mail_core/matching/company_match.py:128 substring vs mail_core/matching/scoring.py 단어경계 | 영어약어(AI·MES·ERP·DX) 기업일수록 오추천↑ |
 | **P1-2** | **#14 `_other_region_block` explicit_nationwide 거친 substring 면제** | precision | monitor.py:2591 `"전국" in title` | '[부산] 전국행사(부산한정)'이 '전국'으로 누출 |
-| **P1-3** | **exclude -60 + substring 오매칭** | recall | company_match.py:61,128,311 | 제외어 substring 1히트로 적합공고 0점 추락 |
+| **P1-3** | **exclude -60 + substring 오매칭** | recall | mail_core/matching/company_match.py:61,128,311 | 제외어 substring 1히트로 적합공고 0점 추락 |
 | **P1-4** | **마감 unknown 누출 + open-term 우회** | precision | classify_deadline_status(monitor.py) / company_match `_hard_excluded`는 "closed"만 차단 | 마감/미상 공고가 추천 노출 |
 | **P2-1** | dedup substring 오병합 | recall | dedup_items(monitor.py) | 적격 공고 소실 |
-| **P2-2** | 공장/수출 비대칭 페널티(공장 미스매치 -20, 수출은 보너스만) | recall | company_match.py:284-297 | 비제조 기업 과소평가 |
+| **P2-2** | 공장/수출 비대칭 페널티(공장 미스매치 -20, 수출은 보너스만) | recall | mail_core/matching/company_match.py:284-297 | 비제조 기업 과소평가 |
 
 **(B) 측정 자산 현황(실측)**
 
@@ -85,8 +85,8 @@
 | 에이전트 | 모델 | 역할 | 입력 | 출력 |
 |---|---|---|---|---|
 | **mail-acc-coverage-sentinel** (S0) | sonnet | 측정 전 데이터 건전성 확인 | `data/raw/{date}/`, baseline | `s0_coverage.json{ok,anomalies,blocking}`. high-severity→**중단+ntfy** |
-| **mail-acc-truth-curator** (S1) | opus | 3-tier 정답지 집결. **라벨 없는 건 추측 라벨링 금지** | meta.json, 테스트매트릭스, groups/companies.json | `labels/golden.jsonl`(L1, append-only) + `s1_weak_labels.json`(L2) |
-| **mail-acc-match-runner** (S2) | sonnet | 874 × (그룹전체+기업전체) **두 경로 동시 채점**. ★group **명시 전달**(#15 회피) | raw, groups/companies.json, s1라벨 | `matrix.json{group결정,기업결정,region_status,score,breakdown,약라벨,자기모순플래그}` |
+| **mail-acc-truth-curator** (S1) | opus | 3-tier 정답지 집결. **라벨 없는 건 추측 라벨링 금지** | meta.json, 테스트매트릭스, `config/groups.json`·`config/companies.json` | `labels/golden.jsonl`(L1, append-only) + `s1_weak_labels.json`(L2) |
+| **mail-acc-match-runner** (S2) | sonnet | 874 × (그룹전체+기업전체) **두 경로 동시 채점**. ★group **명시 전달**(#15 회피) | raw, `config/groups.json`·`config/companies.json`, s1라벨 | `matrix.json{group결정,기업결정,region_status,score,breakdown,약라벨,자기모순플래그}` |
 | **mail-acc-fp-hunter** (S3a) | opus | 오탐 색출(타지역인데 추천) | matrix, 약라벨 | `s3_fp.json` |
 | **mail-acc-fn-hunter** (S3b) | opus | 누락 색출(적격인데 차단·저점) | matrix, 약라벨 | `s3_fn.json` |
 | **mail-acc-fix-architect** (S4) | opus | 승인된 빈틈마다 최소수정 + 새 회귀테스트(작성). 한 PR=한 빈틈클러스터 | s3_defects(승인분), 소스 | 패치(브랜치) + 회귀테스트 + `s4_plan.md` |
@@ -191,11 +191,11 @@ D:\mail\test_accuracy_regression.py         (CI 회귀 가드)
 - **P0-2 권역 일반화:** `_REGION_CLUSTER` 매핑 신설(수도권/충청권/호남권/경상권(영남)/강원권/제주권). company_match 권역 분기를 수도권 전용→일반 권역으로 확장(`kwon_notice`=권역토큰∧own∉권역→차단, `kwon_eligible`=own∈권역→적격). **차단을 좁게**(매핑 없는 모호 광역은 차단 제외 — 누출보다 누락이 더 큰 위반). 보일러플레이트(개최지/문의처)는 `_strip_contact_spans` 후 판정. 매트릭스 4권역행 추가(충청/호남/경상 PASS·BLOCK + 문의처면제).
 
 ### P1 — 정밀화·구조 통합 (같은 주)
-- **P1-1 채점엔진 비대칭 제거:** company_match `_count_hits`의 ASCII 키워드(AI·MES·ERP·SaaS·DX)에 scoring.py와 **동일한 단어경계 매칭** 도입(영어약어 오매칭 차단). 한글 키워드는 substring 유지. → 그룹/기업 채점 일치.
+- **P1-1 채점엔진 비대칭 제거:** company_match `_count_hits`의 ASCII 키워드(AI·MES·ERP·SaaS·DX)에 mail_core/matching/scoring.py와 **동일한 단어경계 매칭** 도입(영어약어 오매칭 차단). 한글 키워드는 substring 유지. → 그룹/기업 채점 일치.
 - **P1-2 #14 explicit_nationwide 정밀화:** `_other_region_block` 면제를 본체와 대칭으로. **보수적 1차안:** substring 면제는 두되 `_applicant_restricted_regions`가 타지역 강신호로 잡히면 면제 취소(restricted 우선). nationwide-교체(`_resolve_applicant_region_scope`)는 P2 전수측정 후 결정.
 - **P1-3 exclude 과민 완화:** -60 단일 가중치 + substring 오매칭 점검. exclude도 ASCII 단어경계 적용 검토, 가중치 균형 재조정은 전수측정으로 영향 확인 후.
 - **P1-4 마감 누수:** `classify_deadline_status` unknown·open-term 우회 점검. company_match `_hard_excluded`가 unknown을 어떻게 다룰지 측정 후 결정(recall 영향 큼).
-- **P1-5 권역↔광역 매핑 단일 정본화:** P0-2의 `_REGION_CLUSTER`를 공용 모듈(`region_clusters.py` 신규)로 올려 monitor·company_match가 **한 소스** 공유(drift 방지). `test_region_cluster_parity`로 두 경로 verdict 일치 박기. ★company_match는 monitor를 top-level import 안 함이 원칙 → **별도 파일**로 둬 순환 import 회피.
+- **P1-5 권역↔광역 매핑 단일 정본화:** P0-2의 `_REGION_CLUSTER`를 공용 모듈(`mail_core/matching/region_clusters.py` 신규)로 올려 monitor·company_match가 **한 소스** 공유(drift 방지). `test_region_cluster_parity`로 두 경로 verdict 일치 박기. ★company_match는 monitor를 top-level import 안 함이 원칙 → **별도 파일**로 둬 순환 import 회피.
 
 ### P2 — 측정 자산 CI 영구화 (지속)
 - **P2-1 전수 회귀 하네스 상설화:** `test_accuracy_regression.py`(가칭)가 `labels/golden.jsonl` 읽어 전수검사→**region_FP==0 ∧ FN후보==0** 단언, precision은 baseline 대비 ≥ 단언. `baseline_metrics.json` ratchet(좋아지면 갱신, 나빠지면 빨강). **단독 foreground 실행**(MEMORY: mail pytest 동시실행 MemoryError 거짓실패 회피).
@@ -229,7 +229,7 @@ D:\mail\test_accuracy_regression.py         (CI 회귀 가드)
 | **라벨러=채점기 순환**(공허한 100%) | Tier B는 문자열 최소규칙만, 점수·가중치 로직 미사용. 라벨러와 판정기 코드경로 완전 분리 |
 | **권역 매핑 과함→정당공고 누락** | **차단을 좁게**(모호 광역 제외) 1차, P2 전수측정으로 확장 결정. 누출<누락 원칙 |
 | **#14 면제 과하게 좁힘→전국공고 누락** | restricted-우선(보수적) 1차 채택, nationwide-교체는 전수측정 후 |
-| **리팩토링 순환 import**(P1-5) | `region_clusters.py` 별도 파일, 지연 import 없이 양쪽 사용 |
+| **리팩토링 순환 import**(P1-5) | `mail_core/matching/region_clusters.py` 별도 파일, 지연 import 없이 양쪽 사용 |
 | **전수검사 시간**(874×N) | S2 `run_in_background` + 캐시. 테스트는 **단독 foreground**(MemoryError 회피) |
 | **두 경로 통합 비용** | match-runner가 어댑터 책임(핵심파일 미수정, 보조모듈) |
 | **합성 케이스 편향**(FN헌터 권역) | 약라벨 실데이터 케이스 점진 병행 |

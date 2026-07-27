@@ -1,6 +1,6 @@
 """수출·지원사업 모니터링 에이전트 v6
 기능: 수집 → 중복제거(주관기관 우선) → 날짜필터(D-1) → 그룹별 조건필터 → Claude요약 → 발송
-설정: sites.json / groups.json / settings.json / seen_ids.json
+설정: config/sites.json / config/groups.json / config/settings.json / var/state/seen_ids.json
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 # evaluate_notice(1차 필터) 통과분에 대해 기업 프로필(companies.json) 점수로
 # 정밀 컷오프. 모듈/파일이 없거나 비활성이면 기존 동작 그대로(하위호환).
 try:
-    from company_match import (
+    from mail_core.matching.company_match import (
         load_companies as _load_companies,
         match_for_company as _match_for_company,
     )
@@ -27,17 +27,17 @@ try:
 except ImportError:
     _CM_OK = False
 
-import delivery_state  # 발송 멱등 상태((기준일·그룹·수신자) 단위 체크포인트)
-import delivery_outbox # 암호화된 수신자별 재시도 대기열(#113·#114·#115)
-import net_guard       # 아웃바운드 SSRF 가드(사설/내부 IP·비 http(s) 차단)
-import private_config  # 수신자·기업 이메일 분리와 tenant 경계(#96·#97·#149)
-import run_lock        # 로컬 실발송 단일 실행 가드(#17)
-from state_store import atomic_write_json, load_json_with_recovery
+from mail_core.delivery import outbox as delivery_outbox
+from mail_core.delivery import state as delivery_state
+from mail_core.operations import run_lock
+from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
+from mail_core.security import net_guard, private_config
+from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = REPO_ROOT
 
 try:
-    from raw_store import RawStore as _RawStore
+    from mail_core.storage.raw_store import RawStore as _RawStore
 except ImportError:
     _RawStore = None  # type: ignore[misc, assignment]
 
@@ -93,12 +93,13 @@ GMAIL_ADDRESS      = _require_env("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = _require_env("GMAIL_APP_PASSWORD")
 
 # ── 경로 ─────────────────────────────────────────────────────────────────────
-SITES_PATH    = BASE_DIR / "sites.json"
-GROUPS_PATH   = BASE_DIR / "groups.json"
-SETTINGS_PATH = BASE_DIR / "settings.json"
-SEEN_IDS_PATH = BASE_DIR / "seen_ids.json"
+SITES_PATH    = CONFIG_DIR / "sites.json"
+GROUPS_PATH   = CONFIG_DIR / "groups.json"
+SETTINGS_PATH = CONFIG_DIR / "settings.json"
+SEEN_IDS_PATH = STATE_DIR / "seen_ids.json"
+NOTICE_VERSIONS_PATH = STATE_DIR / "notice_versions.json"
 # (기준일·그룹·수신자) 단위 발송 멱등 상태 — 크래시/부분실패 후 재실행 시 중복발송 방지.
-DELIVERY_STATE_PATH = BASE_DIR / "delivery_state.json"
+DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
@@ -157,6 +158,9 @@ ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 KSTARTUP_FIELD_TO_TYPE = {
     "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
     "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
+    "팁스": "지원금/바우처", "tips": "지원금/바우처",
+    "수출": "지원금/바우처", "글로벌": "지원금/바우처",
+    "투자": "투자",
     "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
 }
 
@@ -355,9 +359,12 @@ FACTORY_KEYWORD_ALIASES = [
     ("입주기업", ["입주기업"]),
 ]
 
+# ※'입주기업'은 공장 신호가 아니다 — AI허브·창업보육센터 '입주기업 모집'에
+#   '공장보유 필요'가 오표시되던 원인(2026-07-24). 산업단지 입주 판정은
+#   ONLY_SPECIFIC_INDUSTRIAL_COMPLEX(산업단지+입주기업 동시 등장)가 따로 담당한다.
 FACTORY_REQUIRED_TERMS = [
     "공장등록증", "제조시설", "생산시설", "제조업 영위", "공장 보유",
-    "공장보유", "공장 임차", "공장임차", "임대공장", "입주기업",
+    "공장보유", "공장 임차", "공장임차", "임대공장",
 ]
 
 APPLICATION_KEYWORDS = [
@@ -416,6 +423,7 @@ REPORT_JUNK_KEYWORDS = [
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
     "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    "기획위원", "자문위원", "전문위원",
 ]
 
 
@@ -442,6 +450,15 @@ EXCLUSION_RULES = [
     ]),
     ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
 ]
+
+# ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
+# '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
+# 제목만 보고 거른다. 본문의 '평가위원회 심의를 거쳐' 등 우연 언급으로 진짜 공고를
+# 막지 않도록 제목 앵커(title-only)로 보수적으로 판정한다(recall 원칙).
+_COMMITTEE_TITLE_RE = re.compile(
+    r"(?:기획|평가|심사|자문|운영|전문|선정)\s*위원(?:단|회)?"
+    r"\s*(?:\([^)]*\)\s*)?(?:후보자?\s*)?(?:모집|위촉|공모)"
+)
 
 # ── [제목 앵커] 비공고 정적 페이지 제외 (2026-07-20, 사용자 O/X 피드백: '사전정보공표' ❌) ──
 # 배경: 일부 소스의 리스트 셀렉터가 본문 게시판이 아니라 헤더/푸터/사이드 nav 의 <a> 를 통째로
@@ -706,10 +723,210 @@ def save_json(path: Path, data) -> None:
         log.error("파일 저장 실패 %s: %s", path, e)
         raise
 
+
+_NOTICE_VERSION_MATERIAL_FIELDS = frozenset({
+    "title", "deadline", "application_period", "target", "support", "region",
+})
+
+
+def _notice_date_fields(item: dict) -> dict[str, str]:
+    """게시일·등록일·수정일을 별도 표준 필드로 보존한다."""
+    return {
+        "published_at": str(item.get("published_at") or item.get("posted_date") or "").strip()[:10],
+        "registered_at": str(item.get("registered_at") or item.get("registered_date") or item.get("reg_date") or "").strip()[:10],
+        "updated_at": str(item.get("updated_at") or item.get("updated_date") or item.get("modified_at") or "").strip()[:10],
+    }
+
+
+def _notice_version_snapshot(item: dict) -> dict[str, str]:
+    period = item.get("application_period") or {}
+    return {
+        "title": strip_title_badges(norm(item.get("title"))),
+        "author": norm(item.get("author")),
+        "deadline": resolve_item_deadline(item),
+        "application_period": str(period.get("display") or "").strip(),
+        "target": norm(item.get("target_field") or item.get("target_age_field")),
+        "support": _mail_clean_text(item.get("support_field") or item.get("description") or "", limit=600),
+        "region": norm(item.get("region_field")),
+        **_notice_date_fields(item),
+    }
+
+
+def _notice_snapshot_hash(snapshot: dict[str, str]) -> str:
+    raw = json.dumps(snapshot, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _notice_list_hash(item: dict) -> str:
+    return _notice_snapshot_hash({
+        "title": strip_title_badges(norm(item.get("title"))),
+        "author": norm(item.get("author")),
+        "deadline": norm(item.get("deadline")),
+        "link": norm(item.get("link")),
+        **_notice_date_fields(item),
+    })
+
+
+def load_notice_versions() -> dict[str, dict]:
+    raw = load_json(NOTICE_VERSIONS_PATH, {})
+    return {str(k): v for k, v in raw.items() if isinstance(v, dict)} if isinstance(raw, dict) else {}
+
+
+def save_notice_versions(versions: dict[str, dict]) -> None:
+    if not _ALLOW_PERSIST_SEEN or os.environ.get("MONITOR_NO_PERSIST_SEEN") == "1":
+        log.info("notice_versions 저장 생략 (persist_seen=False)")
+        return
+    ordered = dict(sorted(
+        versions.items(), key=lambda pair: str(pair[1].get("last_seen_at") or ""), reverse=True,
+    )[:10000])
+    save_json(NOTICE_VERSIONS_PATH, ordered)
+
+
+def _delivery_notice_id(item: dict) -> str:
+    return str(item.get("_delivery_id") or item.get("id") or "")
+
+
+def _recent_recheck_dates(now: datetime, days_back: int) -> set:
+    return {previous_business_day(now, offset) for offset in range(1, max(1, int(days_back or 1)) + 1)}
+
+
+def _item_recent_for_recheck(item: dict, now: datetime, days_back: int) -> bool:
+    targets = _recent_recheck_dates(now, days_back)
+    oldest, today = min(targets), now.date()
+    for value in _notice_date_fields(item).values():
+        if not value:
+            continue
+        try:
+            parsed = datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if parsed in targets or (oldest < parsed < today and parsed.weekday() >= 5):
+            return True
+    return False
+
+
+def select_notice_version_candidates(items: list[dict], seen_ids: set[str], versions: dict[str, dict], *, now: datetime, days_back: int) -> list[dict]:
+    """신규·최근 N영업일·목록변경·미전달 변경만 상세보강 대상으로 고른다."""
+    selected: list[dict] = []
+    for item in items:
+        iid = str(item.get("id") or "")
+        if not iid:
+            continue
+        if iid not in seen_ids:
+            selected.append(item)
+            continue
+        previous = versions.get(iid)
+        if previous is None:
+            if _item_recent_for_recheck(item, now, days_back):
+                selected.append({**item, "_version_seed_only": True})
+            continue
+        pending = bool(previous.get("observed_hash") and previous.get("observed_hash") != previous.get("delivered_hash"))
+        if pending or _notice_list_hash(item) != previous.get("list_hash") or _item_recent_for_recheck(item, now, days_back):
+            selected.append(item)
+    return selected
+
+
+def _snapshot_changed_fields(before: dict, after: dict) -> list[str]:
+    return sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+
+
+def _latest_date_from_text(value: str):
+    dates = [parsed for _pos, parsed in _parse_date_candidates(str(value or ""))]
+    return max(dates) if dates else None
+
+
+def _classify_notice_change(before: dict, after: dict) -> str:
+    if "재공고" in str(after.get("title") or "") and "재공고" not in str(before.get("title") or ""):
+        return "REANNOUNCED"
+    old_deadline = _latest_date_from_text(str(before.get("application_period") or before.get("deadline") or ""))
+    new_deadline = _latest_date_from_text(str(after.get("application_period") or after.get("deadline") or ""))
+    if new_deadline and (old_deadline is None or new_deadline > old_deadline):
+        return "EXTENDED"
+    return "UPDATED"
+
+
+def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:
+    deliverable: list[dict] = []
+    updates: dict[str, dict] = {}
+    now_iso = datetime.now(KST).isoformat()
+    for source in items:
+        item = {**source, **_notice_date_fields(source)}
+        iid = str(item.get("id") or "")
+        if not iid:
+            continue
+        snapshot = _notice_version_snapshot(item)
+        current_hash = _notice_snapshot_hash(snapshot)
+        previous = versions.get(iid)
+        base = {"snapshot": snapshot, "content_hash": current_hash, "list_hash": _notice_list_hash(item), "last_seen_at": now_iso}
+        if iid not in seen_ids:
+            version = max(1, int((previous or {}).get("version", 0) or 0))
+            deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
+            updates[iid] = {**base, "version": version, "delivery_id": iid}
+            continue
+        if previous is None or item.get("_version_seed_only"):
+            updates[iid] = {**base, "version": 1, "delivery_id": iid, "seed_only": True}
+            continue
+        old_snapshot = previous.get("delivered_snapshot") or {}
+        old_hash = str(previous.get("delivered_hash") or "")
+        changed = _snapshot_changed_fields(old_snapshot, snapshot)
+        material = sorted(set(changed) & _NOTICE_VERSION_MATERIAL_FIELDS)
+        if current_hash == old_hash or not material:
+            updates[iid] = {**base, "version": int(previous.get("version", 1) or 1), "delivery_id": str(previous.get("delivery_id") or iid)}
+            continue
+        version = int(previous.get("version", 1) or 1) + 1
+        change_type = _classify_notice_change(old_snapshot, snapshot)
+        delivery_id = f"{iid}@v{version}"
+        deliverable.append({**item, "_change_type": change_type, "_notice_version": version, "_delivery_id": delivery_id, "_changed_fields": material})
+        updates[iid] = {**base, "version": version, "delivery_id": delivery_id, "change_type": change_type, "changed_fields": material}
+    return deliverable, updates
+
+
+def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], seen_ids: set[str], *, now: datetime | None = None) -> dict[str, dict]:
+    now = now or datetime.now(KST)
+    merged = {str(k): dict(v) for k, v in versions.items() if isinstance(v, dict)}
+    for iid, update in updates.items():
+        record = dict(merged.get(iid) or {})
+        record.update({
+            "list_hash": update.get("list_hash", ""),
+            "observed_hash": update.get("content_hash", ""),
+            "observed_snapshot": update.get("snapshot", {}),
+            "last_seen_at": update.get("last_seen_at") or now.isoformat(),
+            "pending_delivery_id": update.get("delivery_id", ""),
+        })
+        delivery_id = str(update.get("delivery_id") or iid)
+        if update.get("seed_only") or delivery_id in seen_ids:
+            record.update({
+                "version": int(update.get("version", record.get("version", 1)) or 1),
+                "delivery_id": delivery_id,
+                "delivered_hash": update.get("content_hash", ""),
+                "delivered_snapshot": update.get("snapshot", {}),
+                "last_delivered_at": now.isoformat(),
+                "change_type": update.get("change_type") or record.get("change_type") or "NEW",
+                "pending_delivery_id": "",
+            })
+        merged[iid] = record
+    save_notice_versions(merged)
+    return merged
+
+
 def normalize_title(title: str) -> str:
     """중복 판별용 제목 정규화: 소문자 + 특수문자/공백 제거"""
     t = unicodedata.normalize("NFKC", title.lower())
     return re.sub(r"[\s\W]+", "", t)
+
+
+# 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
+# '… 모집 공고 file'·'… 모집 안내 새로운게시글' 처럼 제목이 오염된 채 발송되던 문제.
+_TITLE_BADGE_TAIL_RE = re.compile(
+    r"(?:\s+(?:file|new|hot|첨부파일|파일있음|새로운게시글|새글|인기글))+\s*$",
+    re.IGNORECASE,
+)
+
+
+def strip_title_badges(title: str) -> str:
+    """목록 앵커에 딸려온 아이콘 텍스트(file·새로운게시글 등)를 제목 끝에서 제거."""
+    t = re.sub(r"^\s*이미지\s*없음\s+", "", str(title or ""))
+    return _TITLE_BADGE_TAIL_RE.sub("", t).strip()
 
 def is_imminent(deadline: str) -> bool:
     """마감 문자열에 오늘~+7일 이내 날짜가 하나라도 있으면 임박(True).
@@ -749,8 +966,15 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
         (r"'?(\d{2})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 2000),
         (r"(?<![\d.])(\d{1,2})\s*[.]\s*(\d{1,2})\.?(?!\d)(?![%％배억만천원조점])", None),
     ]
+    # 앞선(연도 포함) 패턴이 이미 차지한 원문 구간. 연도 생략 'M.D' 패턴이
+    # '2025. 7. 22.' 의 꼬리(' 7. 22')를 재매칭해 실행연도(예: 2026)로 오인하면,
+    # 작년 마감 공고의 마감일이 미래로 계산돼 '모집중'으로 오판된다(실사고 2026-07-24).
+    claimed_spans: list[tuple[int, int]] = []
     for pattern, year_mode in patterns:
+        pattern_spans: list[tuple[int, int]] = []
         for m in re.finditer(pattern, text):
+            if any(s < m.end() and m.start() < e for s, e in claimed_spans):
+                continue
             if year_mode is None:
                 year, month, day = base_year, int(m.group(1)), int(m.group(2))
             elif year_mode == 2000:
@@ -760,6 +984,8 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
             parsed = _valid_date(year, month, day)
             if parsed:
                 candidates.append((m.start(), parsed))
+                pattern_spans.append((m.start(), m.end()))
+        claimed_spans.extend(pattern_spans)
     deduped: dict[Any, tuple[int, Any]] = {}
     for pos, parsed in candidates:
         deduped.setdefault(parsed, (pos, parsed))
@@ -1029,10 +1255,22 @@ def _hangul_len(text: str) -> int:
     return sum(1 for ch in text if "가" <= ch <= "힣")
 
 
+def _nonlink_hangul_len(el: Any) -> int:
+    """블록의 한글 수에서 링크(<a>) 안 한글 수를 뺀 값 — 본문다움 지표.
+    nav/footer/사이트맵 블록은 텍스트가 거의 전부 링크라 이 값이 0에 가깝다."""
+    total = _hangul_len(el.get_text())
+    linked = sum(_hangul_len(a.get_text()) for a in el.find_all("a"))
+    return total - linked
+
+
 def _extract_main_content(soup: BeautifulSoup) -> str:
     """정부/기관 게시판 상세에서 본문 텍스트를 범용 추출.
-    ① 흔한 본문 컨테이너 후보 → ② 한글 텍스트가 가장 많은 블록 폴백.
-    (호스트별 파서가 없는 144개 리스트-온리 소스를 위한 범용 경로)"""
+    ① 흔한 본문 컨테이너 후보 → ② '링크 아닌 한글'이 가장 많은 블록 폴백.
+    (호스트별 파서가 없는 144개 리스트-온리 소스를 위한 범용 경로)
+
+    본문다움은 링크 밖 한글 수로 잰다. 전체 한글 수 기준이던 시절에는 메뉴·푸터
+    링크 덩어리(수백 개 기관 링크)가 '가장 한글 많은 블록'으로 뽑혀, 지원내용이
+    사이트 내비게이션 전문으로 채워진 메일이 나가던 실사고(2026-07-24)가 있었다."""
     for tag in soup.select(
         "script, style, nav, header, footer, aside, .lnb, .gnb, .snb, "
         ".paging, .btn_area, .search, .skip, .top_menu, .footer, .header"
@@ -1041,19 +1279,29 @@ def _extract_main_content(soup: BeautifulSoup) -> str:
             tag.decompose()
         except Exception:
             pass
-    node = soup.select_one(GENERIC_CONTENT_SELECTORS)
-    if node:
-        txt = node.get_text("\n", strip=True)
-        if _hangul_len(txt) >= 30:
-            return txt
-    # 폴백: 한글 텍스트가 가장 많은 블록(너무 큰 래퍼는 제외)
-    best, best_len = "", 0
+    # 순수 링크 목록(ul/ol 의 한글이 사실상 전부 <a> 안) = 메뉴·패밀리사이트·푸터 링크.
+    # 클래스명이 제각각인 사이트(nav 클래스 없음)에서도 내비게이션을 범용 제거한다.
+    for lst in soup.find_all(("ul", "ol")):
+        try:
+            total = _hangul_len(lst.get_text())
+            if (len(lst.find_all("li")) >= 5 and total >= 10
+                    and _nonlink_hangul_len(lst) <= total * 0.1):
+                lst.decompose()
+        except Exception:
+            pass
+    for node in soup.select(GENERIC_CONTENT_SELECTORS):
+        if _nonlink_hangul_len(node) >= 30:
+            return node.get_text("\n", strip=True)
+    # 폴백: 링크 아닌 한글이 가장 많은 블록(너무 큰 래퍼는 제외).
+    # 동점(>=)은 나중(더 깊은) 블록이 이긴다 — find_all 은 부모가 먼저 오므로,
+    # '메뉴(전부 링크)+본문'을 함께 감싼 래퍼 대신 본문만 담은 안쪽 블록이 선택된다.
+    best, best_score = None, 0
     for el in soup.find_all(("div", "td", "section", "article")):
         txt = el.get_text("\n", strip=True)
-        hl = _hangul_len(txt)
-        if hl > best_len and len(txt) < 20000:
-            best, best_len = txt, hl
-    return best if best_len >= 30 else ""
+        score = _nonlink_hangul_len(el)
+        if score >= max(best_score, 1) and len(txt) < 20000:
+            best, best_score = el, score
+    return best.get_text("\n", strip=True) if best is not None and best_score >= 30 else ""
 
 
 def _should_generic_enrich(item: dict, link: str) -> bool:
@@ -1383,12 +1631,27 @@ def enrich_item_from_detail(item: dict) -> dict:
 
 def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict]:
     """신규 공고 중 상세 보강이 필요한 항목을 HTTP 상세 조회(동시 처리).
-    ① 전용 호스트(구조화 파서) ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
-    specialized = [
-        it for it in items
-        if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
-        and not it.get("detail_enriched")
-    ][:limit]
+    ① 전용 호스트(구조화 파서) — 기업마당·K-Startup 은 별도 예산·최근게시 우선
+    ② 리스트-온리(본문 미수집) 범용 보강 — 접수기간·지원금·성격 최대 복구."""
+    try:
+        from mail_core.matching.core_sources import (
+            CORE_MAX_DETAIL_ENRICH,
+            OTHER_SPECIALIZED_DETAIL_ENRICH,
+            select_detail_enrich_targets,
+        )
+        specialized = select_detail_enrich_targets(
+            items,
+            specialized_hosts=DETAIL_ENRICH_HOSTS,
+            core_limit=int(os.environ.get("MONITOR_CORE_DETAIL_ENRICH", CORE_MAX_DETAIL_ENRICH)),
+            other_limit=min(int(limit), OTHER_SPECIALIZED_DETAIL_ENRICH),
+            today=datetime.now(KST).date(),
+        )
+    except Exception:
+        specialized = [
+            it for it in items
+            if any(h in (it.get("link") or "") for h in DETAIL_ENRICH_HOSTS)
+            and not it.get("detail_enriched")
+        ][:limit]
     generic: list[dict] = []
     if GENERIC_DETAIL_ENRICH_ENABLED:
         spec_ids = {it["id"] for it in specialized}
@@ -1633,13 +1896,19 @@ def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
         posted = posted[:10]
     if not posted:
         posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
-    return _item(
+    item = _item(
         iid, ttl, lnk,
         norm(it.get("jrsdInsttNm", it.get("author", ""))),
         norm(it.get("bsnsSumryCn", it.get("description", ""))),
         norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
         site_name, posted, agg,
     )
+    try:
+        from mail_core.matching.core_sources import attach_bizinfo_structured
+        return attach_bizinfo_structured(item, it)
+    except Exception:
+        item["core_source"] = "bizinfo"
+        return item
 
 
 def _fetch_bizinfo_direct(site: dict) -> list[dict]:
@@ -1884,6 +2153,10 @@ def fetch_myfair_legacy(site: dict) -> list[dict]:
     return fetch_myfair(site)
 
 
+# K-Startup 목록 카드의 값 라벨 span 접두어 — 이 앞까지가 (분류·)주관기관 영역이다.
+_KSTARTUP_SPAN_LABEL_PREFIXES = ("등록일자", "시작일자", "마감일자", "조회", "접수기간", "신청기간", "D-")
+
+
 def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_sn: set[str]) -> list[dict]:
     """K-Startup 목록 카드 파싱 — fetch_kstartup·다운로더 공통."""
     items: list[dict] = []
@@ -1891,7 +2164,7 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
     base_url = site["url"]
     for card in soup.select(".notice"):
         a = card.select_one("a")
-        title = norm(a.get_text() if a else "")
+        title = strip_title_badges(norm(a.get_text() if a else ""))
         if not title:
             continue
         sn = ""
@@ -1910,45 +2183,126 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
             seen_sn.add(sn)
         link = (f"{base_url}?pbancClssCd={clss}&schM=view&pbancSn={sn}") if sn else base_url
         spans = card.select("span.list")
-        org = norm(spans[0].get_text()) if spans else ""
+        span_texts = [norm(sp.get_text()) for sp in spans]
+        # 주관기관 = 날짜/조회 라벨 span 직전의 마지막 텍스트 span.
+        # 카드에 따라 span.list[0] 이 사업분류('메이커 스페이스')나 제목 복제인 경우가
+        # 있어(실측 2026-07-24), '첫 span=기관' 가정은 지원기관 오표기를 만들었다.
+        org_cands: list[str] = []
+        for st in span_texts:
+            if any(st.startswith(p) for p in _KSTARTUP_SPAN_LABEL_PREFIXES):
+                break
+            if st and st != title:
+                org_cands.append(st)
+        org = org_cands[-1] if org_cands else (span_texts[0] if span_texts else "")
         dl = next((norm(sp.get_text().replace("마감일자", ""))
                    for sp in spans if "마감일자" in sp.get_text()), "")
         pm = re.search(r"등록일자\s*([\d.\-]{8,10})", card.get_text(" ", strip=True))
         posted = extract_date_from_text(pm.group(1)) if pm else ""
         flag = card.select_one(".flag:not(.day):not(.flag_agency)")
+        flag_text = norm(flag.get_text()) if flag else ""
         iid = f"kstartup_{sn}" if sn else f"kstartup_{stable_id(title + org)}"
-        items.append(_item(iid, title, link, org,
-                           norm(flag.get_text()) if flag else "", dl,
-                           site["name"], posted, agg))
+        item = _item(iid, title, link, org,
+                     flag_text, dl,
+                     site["name"], posted, agg)
+        try:
+            from mail_core.matching.core_sources import attach_kstartup_list_structured
+            item = attach_kstartup_list_structured(
+                item, flag_text=flag_text, clss=clss)
+        except Exception:
+            item["core_source"] = "kstartup"
+        items.append(item)
     return items
 
 
 def fetch_kstartup(site: dict) -> list[dict]:
-    # 공공(PBC010)·민간(PBC020) + 다페이지(기본 5) — 1페이지만 보면 page2+ 공고 누락.
-    max_pages = int(site.get("max_pages", 5))
+    """K-Startup 진행중 공고 수집 — 공공 우선·민간 후순위·중복 안전.
+
+    페이지 키는 반드시 `page` (pageIndex 무효, 실측 2026-07-26).
+    종료는 '신규 0 연속 N회' + 분류별 max_pages 안전캡.
+    """
+    from mail_core.matching.kstartup_collect import (  # noqa: PLC0415
+        build_list_params,
+        class_plan,
+        merge_unique_items,
+        stop_reason_after_page,
+    )
+
+    plan = class_plan(site)
     items: list[dict] = []
     seen_sn: set[str] = set()
+    seen_ids: set[str] = set()
     referer = site.get("referer") or site["url"]
     extra_hdr = {"Referer": referer}
+    _pages_done = 0
+    _stop_reason = "OK"
+    _dup_pages = 0
+    per_class: dict[str, int] = {}
 
-    for clss in ("PBC010", "PBC020"):
-        empty_streak = 0
+    for step in plan:
+        clss = step["clss"]
+        label = step["label"]
+        max_pages = int(step["max_pages"])
+        view_count = int(step["view_count"])
+        streak_limit = int(step["empty_new_streak"])
+        empty_new_streak = 0
+        class_new = 0
+
         for page in range(1, max_pages + 1):
-            soup = _soup(site["url"], extra_headers=extra_hdr, params={
-                "schMenuId": "10090", "pageIndex": str(page), "viewCount": "100",
-                "pbancSttus": "ing", "pbancClssCd": clss,
-            })
+            soup = _soup(
+                site["url"],
+                extra_headers=extra_hdr,
+                params=build_list_params(page=page, clss=clss, view_count=view_count),
+            )
             if not soup:
+                _stop_reason = "PAGE_FETCH_FAILED"
                 break
+
+            # 카드 파싱(내부 seen_sn 으로 동일 sn 스킵) → 전역 id 병합
             page_items = _kstartup_cards_from_soup(soup, clss, site, seen_sn)
-            if not page_items:
-                empty_streak += 1
+            raw_count = len(page_items)
+            added, new_count = merge_unique_items(items, page_items, seen_ids)
+            _pages_done += 1
+            class_new += new_count
+
+            if new_count == 0:
+                empty_new_streak += 1
+                if raw_count > 0:
+                    _dup_pages += 1
             else:
-                empty_streak = 0
-                items.extend(page_items)
-            if empty_streak >= 2:
+                empty_new_streak = 0
+
+            reason = stop_reason_after_page(
+                page=page,
+                max_pages=max_pages,
+                raw_count=raw_count,
+                new_count=new_count,
+                empty_new_streak=empty_new_streak,
+                streak_limit=streak_limit,
+            )
+            if reason:
+                _stop_reason = f"{clss}:{reason}"
                 break
-    log.info("%s: %d건", site["name"], len(items))
+
+        per_class[label] = class_new
+        log.info("K-Startup %s: +%d건 (상한 %dp)", label, class_new, max_pages)
+
+    try:
+        _page_stat(
+            site.get("id") or site.get("name") or "kstartup",
+            pages_fetched=_pages_done,
+            stop_reason=_stop_reason,
+            duplicate_page=_dup_pages >= 2,
+            items=len(items),
+            public_items=per_class.get("공공", 0),
+            private_items=per_class.get("민간", 0),
+        )
+    except Exception:
+        pass
+    log.info(
+        "%s: %d건 (공공 %d + 민간 %d)",
+        site["name"], len(items),
+        per_class.get("공공", 0), per_class.get("민간", 0),
+    )
     return items
 
 
@@ -2003,6 +2357,7 @@ def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[
         title = norm(a.get_text() if a else row.get_text())
         if title_selector:
             title = select_text(row, title_selector) or title
+        title = strip_title_badges(title)
         if not title: continue
         href = a.get("href", "") if a else ""
         # 상대경로·중복링크 판정은 '지금 읽고 있는 페이지' 기준이어야 2페이지 이후도 정확하다.
@@ -2957,34 +3312,40 @@ def fetch_bizok(site: dict) -> list[dict]:
 
 
 def fetch_incheon_city(site: dict) -> list[dict]:
-    """인천광역시청 공고/고시: table 없이 a[href*='/view?repSeq='] 링크 목록."""
-    BASE = "https://www.incheon.go.kr"
+    """인천광역시 고시/공고(announce.incheon.go.kr citynet) 목록 수집.
+
+    tr[onclick="viewData('sno','gbn')"] 행 = [번호, 제목, 부서, 게시일, 조회].
+    ※기존에 긁던 www.incheon.go.kr/IC010205 는 2026-07 현재 '보도자료' 게시판이라
+    음악축제 보도자료가 'AI' 키워드로 그룹 digest 에 오르던 오탐원이었다(실사고 2026-07-24).
+    상세 URL 은 목록 페이지의 viewData() 스크립트가 조립하는 주소를 그대로 재현한다."""
     soup = _soup(site["url"])
     if not soup:
         return []
     items, agg = [], site.get("is_aggregator", False)
     seen: set[str] = set()
-    for a in soup.find_all("a", href=re.compile(r"/IC010205/view\?repSeq=")):
-        href = a.get("href", "")
-        m = re.search(r"repSeq=([^&]+)", href)
+    for tr in soup.select("tr[onclick]"):
+        m = re.search(r"viewData\('([^']+)'\s*,\s*'([^']*)'\)", tr.get("onclick", ""))
         if not m:
             continue
-        rep_seq = m.group(1)
-        if rep_seq in seen:
+        sno, gbn = m.group(1), m.group(2)
+        if sno in seen:
             continue
-        seen.add(rep_seq)
-        title = norm(a.get_text())
+        seen.add(sno)
+        tds = tr.find_all("td")
+        if len(tds) < 4:
+            continue
+        title = strip_title_badges(norm(tds[1].get_text()))
         if not title or len(title) < 4:
             continue
-        link = href if href.startswith("http") else urljoin(BASE, href)
-        parent = a.find_parent(["li", "tr", "div"])
-        row_text = parent.get_text(" ", strip=True) if parent else ""
-        dates = re.findall(r"\d{4}[.\-/]\d{2}[.\-/]\d{2}", row_text)
-        posted = dates[0].replace(".", "-").replace("/", "-") if dates else ""
-        deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
+        author = norm(tds[2].get_text()) or "인천광역시"
+        posted = extract_date_from_text(tds[3].get_text())
+        link = (
+            "http://announce.incheon.go.kr/citynet/jsp/sap/SAPGosiBizProcess.do"
+            f"?command=searchDetail&flag=gosiGL&svp=Y&sido=ic&sno={sno}&gosiGbn={gbn}"
+        )
         items.append(_item(
-            f"incheon_city_{rep_seq}", title, link, "인천광역시",
-            "", deadline, site["name"], posted, agg,
+            f"incheon_city_{sno}", title, link, author,
+            "", "", site["name"], posted, agg,
         ))
     log.info("%s: %d건", site["name"], len(items))
     return items
@@ -3496,34 +3857,20 @@ def dedup_items(items: list[dict]) -> list[dict]:
 # ══════════════════════════════════════════════════════════════════
 
 def partition_posted_dates(
-    items: list[dict], days_back: int = 1, max_age_days: int | None = None,
+    items: list[dict], days_back: int = 3, max_age_days: int | None = None,
     now_dt: datetime | None = None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
-    """
-    posted_date 기준 분류.
-    반환: (대상기간 확정, 날짜불명, 그 외 날짜·파싱실패 제외)
-
-    대상기간 = 직전영업일(target) + 그 직후 ~ 오늘 사이의 주말(토/일).
-    매일 도는 cron 이 '직전영업일' 하루만 잡으면, 토·일에 게시된 공고는 어떤
-    실행일의 직전영업일과도 일치하지 않아 영구 누락된다(주말 recall 손실). 그래서
-    직전영업일 직후의 토·일 게시물도 함께 포함한다(평일 실행은 단일일=기존 동작 동일).
-
-    max_age_days 가 지정되면, 게시일이 오늘 기준 그 일수보다 오래된 공고는
-    '옛날 공고'로 간주해 강제 제외(_excluded_reason="too_old"). None 이면 미적용.
-    """
+    """최근 N영업일과 그 사이 주말 게시물을 재조회한다."""
     now = now_dt or datetime.now(KST)
-    target = previous_business_day(now, days_back)
-    today = now.date()
+    target_dates = _recent_recheck_dates(now, days_back)
+    oldest, newest, today = min(target_dates), max(target_dates), now.date()
     matched, unknown, excluded = [], [], []
 
     def _in_window(d) -> bool:
-        if d == target:
-            return True
-        # 직전영업일 직후 ~ 오늘 이전의 주말(토/일) 게시물도 포함 (주말 누락 방지)
-        return target < d < today and d.weekday() >= 5
+        return d in target_dates or (oldest < d < today and d.weekday() >= 5)
 
     for it in items:
-        pd = it.get("posted_date", "").strip()
+        pd = str(it.get("published_at") or it.get("posted_date") or "").strip()
         if not pd:
             unknown.append(it)
             continue
@@ -3534,15 +3881,11 @@ def partition_posted_dates(
             continue
         if max_age_days is not None and (today - item_date).days > max_age_days:
             excluded.append({**it, "_excluded_posted_date": pd[:10], "_excluded_reason": "too_old"})
-            continue
-        if _in_window(item_date):
+        elif _in_window(item_date):
             matched.append(it)
         else:
             excluded.append({**it, "_excluded_posted_date": pd[:10]})
-    log.info(
-        "날짜분류(직전영업일-%d, target=%s, today=%s): 확정 %d / 날짜불명 %d / 제외 %d",
-        days_back, target, today, len(matched), len(unknown), len(excluded),
-    )
+    log.info("날짜분류(최근 %d영업일, %s~%s): 확정 %d / 날짜불명 %d / 제외 %d", days_back, oldest, newest, len(matched), len(unknown), len(excluded))
     return matched, unknown, excluded
 
 
@@ -3553,7 +3896,25 @@ def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list
 
 
 def assess_date_unknown_risk(item: dict) -> str:
-    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음."""
+    """날짜불명 공고의 오늘 누락 위험도: 낮음 / 중간 / 높음.
+
+    W3 §11.2 G: 게시일/신청기간이 PARSE_FAILED·DETAIL_FETCH_FAILED 이면
+    '원문 미기재'로 위장하지 않고 높음(recall include + review)으로 올린다.
+    """
+    try:
+        from mail_core.operations import field_status as _fs  # noqa: PLC0415
+        extraction = item.get("detail_extraction") or {}
+        fields = extraction.get("fields") or {}
+        for key in ("application_period", "title"):
+            meta = fields.get(key) if isinstance(fields, dict) else None
+            st = _fs.field_blank_kind(
+                (meta or {}).get("status") if isinstance(meta, dict) else extraction.get("status"))
+            if st in _fs.FAILURE_STATUSES:
+                return "높음"
+        if _fs.field_blank_kind(extraction.get("status")) in _fs.FAILURE_STATUSES:
+            return "높음"
+    except Exception:
+        pass
     text = _notice_body_text(item)
     if any(kw in text for kw in APPLICATION_KEYWORDS):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
@@ -3648,6 +4009,13 @@ def classify_support_type(item: dict) -> list[str]:
         for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
             if kw in sf and bucket not in matched:
                 matched.append(bucket)
+        try:
+            from mail_core.matching.core_sources import map_category_to_support_types
+            for bucket in map_category_to_support_types(sf):
+                if bucket not in matched:
+                    matched.append(bucket)
+        except Exception:
+            pass
         # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
         #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
         #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
@@ -3669,6 +4037,11 @@ def _keyword_match_text(item: dict) -> str:
         item.get("support_field", ""),
         item.get("target_field", ""),
     ]
+    try:
+        from mail_core.matching.core_sources import keyword_extra_parts
+        parts.extend(keyword_extra_parts(item))
+    except Exception:
+        pass
     return norm(" ".join(p for p in parts if p)).lower()
 
 
@@ -4084,7 +4457,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
     # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
     # company_match 와 단일 정본 공유). 비멤버는 아래 차단 로직으로.
-    from region_clusters import REGION_CLUSTER as _RC
+    from mail_core.matching.region_clusters import REGION_CLUSTER as _RC
     for _kwon, _members in _RC.items():
         if _kwon in app_text and ("비" + _kwon) not in app_text and any(r in _members for r in own_regions):
             return result("eligible", "eligible", [city or label], [])
@@ -4382,6 +4755,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
+    # [제목 앵커] 위원(개인 전문가) 위촉·모집 공고 — 기업 대상 지원사업이 아니므로 제외.
+    committee_hit = _COMMITTEE_TITLE_RE.search(norm(item.get("title", "")))
+    if committee_hit:
+        reason_codes.append("COMMITTEE_RECRUITMENT")
+        excluded_keywords.append(committee_hit.group(0))
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     hard_service_hits, soft_service_hits = _split_exclusion_hits(item, "INFO_SESSION", service_hits)
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
@@ -4518,18 +4899,46 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         and application_like
         and group_keyword_pass
     )
+    # W3/P0-B: 빈 정보 3상태 — 추출 실패는 review 강제, NOT_SPECIFIED 는 unknown 금지.
+    from mail_core.operations import field_status as _fs  # noqa: PLC0415
     detail_status = str(
         (item.get("detail_extraction") or {}).get("status") or "")
-    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES
+    detail_failure = detail_status in _DETAIL_FAILURE_STATUSES or _fs.should_force_review_for_extraction(item)
     detail_failure_blockers = {
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
-        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY",
+        "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
     }
     detail_failure_review = (
         detail_failure
         and not (set(reason_codes) & detail_failure_blockers)
     )
+    # 지역 필드 NOT_SPECIFIED(원문 미기재) → 전국/미지정 경로(eligible). unknown 버킷 금지.
+    region_extract_status = _fs.region_field_status(item)
+    if (
+        region_extract_status == _fs.NOT_SPECIFIED
+        and region_status == "unknown"
+        and district_status != "not_eligible"
+    ):
+        region_status = "eligible"
+        district_status = "eligible" if district_status == "unknown" else district_status
+        region_info = {
+            **region_info,
+            "region_status": region_status,
+            "district_status": district_status,
+        }
+        # REGION_UNKNOWN 사유가 있으면 제거(미기재≠미상).
+        reason_codes = [c for c in reason_codes if c != "REGION_UNKNOWN"]
+        hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
+        # 재계산: 지역만 막혔던 경우 포함 후보 가능
+        is_relevant = (
+            not hard_reasons
+            and deadline_ok
+            and region_status == "eligible"
+            and district_status == "eligible"
+            and application_like
+            and group_keyword_pass
+        )
     review_needed = (
         not is_relevant
         and (
@@ -4542,8 +4951,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
     #  버리지 말고 '지역 미상' 버킷으로 보내 보고 메일 하단에 함께 첨부한다(누락 방지).
+    # W3: 추출 실패·NOT_SPECIFIED 는 이 버킷에 넣지 않는다(allow_region_unknown_bucket).
     region_unknown_review = (
-        region_status == "unknown"
+        _fs.allow_region_unknown_bucket(item)
+        and region_status == "unknown"
         and district_status != "not_eligible"
         and not is_relevant
         and deadline_ok
@@ -4571,7 +4982,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             + ", ".join(soft_excluded_keywords[:5])
         )
     if detail_failure_review:
-        notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+        surf = _fs.surface_label_for_field(
+            detail_status or region_extract_status, field="region")
+        if surf:
+            notes.append(f"{surf} — 원문 재확인 필요")
+        else:
+            notes.append("상세정보 추출 실패 — 원문 재확인 필요")
+    elif region_extract_status == _fs.NOT_SPECIFIED:
+        notes.append(_fs.surface_label_for_field(_fs.NOT_SPECIFIED, field="region"))
 
     result.update({
         "is_relevant": is_relevant,
@@ -4756,8 +5174,7 @@ def mail_topic(items: list[dict]) -> str:
 
 
 def _plain_text(s: str, limit: int = 1500) -> str:
-    """HTML 태그·엔티티 제거 → 사용자용 평문(메일 본문에 코드/태그 노출 방지). 길면 자른다.
-    한도(limit)는 지원내용 본문이 조기에 잘리지 않도록 넉넉히 둔다."""
+    """HTML 태그·엔티티 제거 → 사용자용 평문. 길면 자른다."""
     if not s:
         return ""
     if "<" in s:
@@ -4767,53 +5184,117 @@ def _plain_text(s: str, limit: int = 1500) -> str:
     return (s[:limit].rstrip() + " …") if len(s) > limit else s
 
 
+MAIL_SUPPORT_BLURB_LIMIT = 160
+REGION_UNKNOWN_MAIL_LIMIT = 10
+
+_MAIL_FOOTER_MARKERS = (
+    "개인정보처리방침", "영상정보처리기기", "이메일무단수집거부", "Copyright",
+    "이 페이지에서 제공하는 정보", "패밀리 사이트", "목록으로 바로가기",
+)
+_MAIL_NAV_TOKENS = (
+    "메인", "회원가입", "로그인", "고객센터", "재단소개", "인사말", "연 혁", "조직도",
+    "업무안내", "알림마당", "공지사항", "채용정보", "자료실", "홍보마당", "정보공개",
+)
+
+
+def _mail_clean_text(value: object, *, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """메일 표시용 텍스트 정제: HTML·Markdown·연락처·메뉴/푸터·긴 URL 제거."""
+    raw = str(value or "")
+    raw = re.sub(r"!\[[^\]]*\]\([^)]+\)", " ", raw)
+    raw = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", raw)
+    text = _plain_text(raw, limit=6000)
+    text = re.sub(r"https?://\S+", " ", text)
+    text = re.sub(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", " ", text)
+    text = re.sub(r"(?:\+?82[-. ]?)?0\d{1,2}[-. )]\d{3,4}[-. ]\d{4}", " ", text)
+    text = re.sub(r"(?:담당자|연락처|전화|이메일|팩스|fax|tel)\s*[:：]?\s*[^|·•]{0,45}", " ", text, flags=re.I)
+    for marker in _MAIL_FOOTER_MARKERS:
+        pos = text.find(marker)
+        if pos >= 80:
+            text = text[:pos]
+    nav_hits = sum(1 for token in _MAIL_NAV_TOKENS if token in text[:500])
+    if nav_hits >= 5:
+        anchors = [text.find(token) for token in ("지원대상", "사업내용", "지원내용", "모집개요", "신청자격", "☞")]
+        anchors = [pos for pos in anchors if pos >= 0]
+        if anchors:
+            text = text[min(anchors):]
+    text = re.sub(r"\s+", " ", text).strip(" -·•|/")
+    return (text[:limit].rstrip() + " …") if len(text) > limit else text
+
+
+def _mail_target_text(item: dict) -> str:
+    for key in ("target_field", "target_age_field", "business_age_text"):
+        value = _mail_clean_text(item.get(key), limit=180)
+        if value:
+            return value
+    return "공고문 확인"
+
+
+def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
+    """구조화 지원내용을 우선하고, 모바일 한 화면 기준 160자로 제한한다."""
+    structured = _mail_clean_text(item.get("support_field"), limit=limit)
+    description = _mail_clean_text(item.get("description"), limit=limit)
+    candidate = structured if len(structured) >= 25 else description or structured
+    title = _mail_clean_text(item.get("title"), limit=200)
+    if title and candidate.startswith(title):
+        candidate = candidate[len(title):].lstrip(" :-·•")
+    return candidate or "상세 공고문 확인"
+
+
+def _mail_fit_reason(item: dict) -> str:
+    for key in ("fit_reason", "match_reason", "company_match_reason"):
+        value = _mail_clean_text(item.get(key), limit=160)
+        if value:
+            return value
+    types = [str(v) for v in (item.get("_types") or []) if str(v).strip()]
+    region = _region_label(item)
+    parts = []
+    if item.get("priority_keyword"):
+        parts.append("우선 검토 대상")
+    if types:
+        parts.append("·".join(types[:2]))
+    if region != "확인 필요" and not region.endswith("전체"):
+        parts.append(region)
+    return " / ".join(parts) or "그룹 조건과 일치"
+
+
 def fallback_body(items: list[dict]) -> str:
-    # 표시 정책: 사용자에게 필요한 정보만. HTML/내부코드·매칭키워드·스마트공장 등은 숨김.
+    """모바일 메일용 8줄 카드. 내부판정값·원문전체·연락처는 표시하지 않는다."""
     lines: list[str] = []
     items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
     if imminent:
-        lines += ["⚠️ 마감 임박 (7일 이내)"]
-        for it in imminent:
-            lines.append(f"- {it['title']} | 마감: {it['deadline']}")
+        lines.append("⚠️ 7일 이내 마감: " + ", ".join(
+            _mail_clean_text(it.get("title"), limit=45) for it in imminent[:5]
+        ))
         lines.append("")
     sections = [
-        ("1. 우선 추천 공고", [it for it in items if it.get("priority_keyword")]),
-        ("2. 일반 추천 공고", [it for it in items if not it.get("priority_keyword")]),
+        ("1. 우선 추천", [it for it in items if it.get("priority_keyword")]),
+        ("2. 일반 추천", [it for it in items if not it.get("priority_keyword")]),
     ]
     for section_title, section_items in sections:
         if not section_items:
             continue
         lines.append(section_title)
         for it in section_items:
-            desc = _plain_text(it.get("description", ""))
-            block = [
-                "━━━━━━━━━━━━━━━━━━",
-                f"📌 {it.get('title') or '(제목없음)'}",
-                f"• 지원기관: {it.get('author') or '미기재'}",
-                f"• 지원유형: {' · '.join(it.get('_types', ['미분류']))}",
-            ]
-            if desc:
-                block.append(f"• 지원내용: {desc}")
-            block.append(f"• 신청마감: {resolve_item_deadline(it) or '미기재'}")
-            region_label = _region_label(it)
-            if not region_label.endswith("전체"):     # 비제약('…전체')은 생략, 제약/확인필요만 표시
-                block.append(f"• 지역: {region_label}")
-            if it.get("factory_required") is True:
-                block.append("• 공장보유 필요")
-            notes = [n for n in (it.get("notes") or []) if n]
-            if notes:
-                block.append(f"• 확인: {' / '.join(notes)}")
-            block += [
-                f"• 등록일: {it.get('posted_date') or '날짜불명'}",
-                f"• 출처: {it.get('source') or '미기재'}",
-                f"• 🔗 {it.get('link') or '미기재'}",
-                "━━━━━━━━━━━━━━━━━━",
-            ]
-            lines += block
+            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
+            _badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(it.get("_change_type"), "")
+            title = _badge + title
+            author = _mail_clean_text(it.get("author") or "미기재", limit=80)
+            types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
+            region = _region_label(it)
+            display_region = "제한 없음" if region.endswith("전체") else region
+            lines.extend([
+                "──────────────────",
+                f"📌 {title}",
+                f"• 기관: {author} | 유형: {types}",
+                f"• 대상: {_mail_target_text(it)}",
+                f"• 지원내용: {_mail_support_blurb(it)}",
+                f"• 마감: {resolve_item_deadline(it) or '미기재'} | 지역: {display_region}",
+                f"• 적합사유: {_mail_fit_reason(it)}",
+                f"• 원문: {it.get('link') or '미기재'}",
+            ])
         lines.append("")
     return "\n".join(lines).strip()
-
 
 def _region_label(item: dict) -> str:
     district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
@@ -4873,28 +5354,72 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
     return "\n".join(lines)
 
 
-def render_region_unknown(items: list[dict], limit: int = 30) -> str:
-    """지역 단서가 없어 자동분류 못 한 공고를 보고 메일 하단에 '확인 필요'로 첨부(누락 방지)."""
+def select_region_unknown_for_mail(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LIMIT) -> list[dict]:
+    """지원사업성이 확인된 지역미상만 우선순위순으로 최대 limit건 표시한다."""
+    clean = [it for it in items if not is_admin_noise(it) and not is_report_junk(it)]
+    clean = sorted(clean, key=lambda it: (
+        0 if it.get("priority_keyword") else 1,
+        _notice_sort_key(it),
+    ))
+    return clean[:max(0, int(limit))]
+
+
+def write_region_unknown_report(items: list[dict], group_name: str, *, run_at: datetime | None = None) -> Path | None:
+    """메일에서 생략된 지역미상 전체 목록을 관리자 로그로 저장한다."""
     if not items:
+        return None
+    run_at = run_at or datetime.now(KST)
+    slug = re.sub(r"[^0-9A-Za-z가-힣_-]+", "_", str(group_name or "group")).strip("_")[:50] or "group"
+    path = LOGS_DIR / f"region_unknown_{run_at:%Y%m%d}_{slug}.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"# 지역 미상 관리자 리포트 — {group_name}", "",
+        f"- 생성: {run_at.strftime('%Y-%m-%d %H:%M KST')}",
+        f"- 전체: {len(items)}건", "",
+    ]
+    for it in items:
+        lines.append(
+            f"- {it.get('title') or '(제목없음)'} | {it.get('author') or '미기재'} | "
+            f"마감 {resolve_item_deadline(it) or '미기재'} | {it.get('link') or ''}"
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LIMIT, *, total_count: int | None = None) -> str:
+    """메일에는 최대 10건만 표시하고 나머지는 관리자 리포트로 분리한다."""
+    if not items:
+        return ""
+    shown = select_region_unknown_for_mail(items, limit=limit)
+    total = len(items) if total_count is None else int(total_count)
+    if not shown:
         return ""
     lines = [
         "\n\n────────────────────────────────",
-        f"📍 지역 미상 — 확인 필요 ({len(items)}건)",
-        "  (지역 단서가 없어 우리 지역인지 자동 판단 못 함 — 놓치지 않도록 함께 첨부)",
+        f"📍 지역 확인 필요 (메일 표시 {len(shown)}건 / 전체 {total}건)",
     ]
-    for it in items[:limit]:
-        lines.append(f"\n▸ {it.get('title') or '(제목없음)'}")
+    for it in shown:
+        try:
+            from mail_core.operations.field_status import (
+                region_field_status,
+                surface_label_for_field,
+            )
+            surf = surface_label_for_field(region_field_status(it), field="region")
+        except Exception:
+            surf = ""
+        title_line = f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}"
+        if surf:
+            title_line += f" [{surf}]"
+        lines.append(title_line)
         lines.append(
-            f"  기관: {it.get('author') or '미기재'}"
+            f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
             f" | 마감: {resolve_item_deadline(it) or '미기재'}"
-            f" | 등록: {it.get('posted_date') or '날짜불명'}"
         )
         if it.get("link"):
-            lines.append(f"  🔗 {it['link']}")
-    if len(items) > limit:
-        lines.append(f"\n외 {len(items) - limit}건")
+            lines.append(f"  원문: {it['link']}")
+    if total > len(shown):
+        lines.append(f"\n나머지 {total - len(shown)}건은 관리자 지역미상 리포트에 저장했습니다.")
     return "\n".join(lines)
-
 
 def claude_summarize(items: list[dict], group: dict) -> str:
     """Render the digest from collected fields only.
@@ -4928,7 +5453,7 @@ _ONLY_TO: str = ""
 
 # 사용자 ⭕/❌ 피드백 루프(Tier C 골든 축적) — 모듈이 없어도 발송은 그대로(표시 전용).
 try:
-    import feedback as _feedback_mod
+    from mail_core.delivery import feedback as _feedback_mod
     _FEEDBACK_OK = True
 except Exception:  # noqa: BLE001
     _feedback_mod = None
@@ -5326,7 +5851,7 @@ def alert_ntfy(title: str, message: str, priority: str = "high", tags: str = "wa
 # ── 집중 모니터링 워치리스트 ──────────────────────────────────────────────────
 # 사용자가 준 키워드/제목 또는 URL 에 걸리는 공고는 날짜·그룹 필터를 우회해 강제 포함하고
 # 전용 메일 + 폰 푸시로 강조한다. '놓치면 안 되는 공고'를 절대 안 놓치기 위한 장치.
-WATCHLIST_PATH = BASE_DIR / "watchlist.json"
+WATCHLIST_PATH = CONFIG_DIR / "watchlist.json"
 
 
 def load_watchlist() -> dict:
@@ -5336,9 +5861,9 @@ def load_watchlist() -> dict:
         return {"keywords": [], "urls": [], "recipients": []}
     private_payload = private_config.load_private_payload()
     # 테스트/진단이 임시 watchlist 경로를 주입할 때는 운영 수신자 payload 를 섞지 않는다.
-    if private_payload and WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+    if private_payload and WATCHLIST_PATH.resolve() == (CONFIG_DIR / "watchlist.json").resolve():
         raw = private_config.merge_watchlist(raw, private_payload)
-    elif WATCHLIST_PATH.resolve() == (BASE_DIR / "watchlist.json").resolve():
+    elif WATCHLIST_PATH.resolve() == (CONFIG_DIR / "watchlist.json").resolve():
         # 공개 운영 파일의 수신자는 무시한다. 암호화 payload 가 없는 상태에서는 발송하지 않는다.
         raw = {**raw, "recipients": []}
     normalized = {
@@ -5346,6 +5871,12 @@ def load_watchlist() -> dict:
         "urls": [str(u).strip() for u in (raw.get("urls") or []) if str(u).strip()],
         "recipients": [str(r).strip() for r in (raw.get("recipients") or []) if str(r).strip()],
     }
+    for key in ("max_items", "url_max_age_days", "url_unknown_cap"):
+        if key in raw:
+            try:
+                normalized[key] = int(raw[key])
+            except (TypeError, ValueError):
+                pass
     if raw.get("tenant_id"):
         normalized["tenant_id"] = private_config.normalize_tenant_id(raw.get("tenant_id"))
     return normalized
@@ -5361,18 +5892,28 @@ def _norm_url(u: str) -> str:
 
 def is_watchlisted(item: dict, watchlist: dict) -> bool:
     """공고가 워치리스트(키워드/제목 또는 URL)에 걸리는지. 걸리면 강제포함·강조 대상.
-    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text)."""
+    ASCII 키워드(IP 등)는 단어경계 매칭으로 'equipment' 같은 오매칭 방지(_kw_in_text).
+
+    키워드는 '제목·주관기관'만 본다(워치리스트 설명 문구의 '키워드/제목' 그대로).
+    상세 보강된 본문(description)은 보지 않는다 — 6KB 본문·nav 잔여물에는 '지식재산'
+    같은 단어가 우연히 들어가('한국지식재산보호원' 등), 1년 지난 마감 공고까지
+    날짜필터를 우회해 그룹 digest 상단에 오르던 실사고(2026-07-24)의 원인이었다."""
+    return bool(watchlist_match_kind(item, watchlist))
+
+
+def watchlist_match_kind(item: dict, watchlist: dict) -> str:
+    """'' | 'keyword' | 'url' — 키워드가 URL보다 우선."""
     kws = watchlist.get("keywords") or []
     if kws:
-        text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')}".lower()
+        text = f"{item.get('title','')} {item.get('author','')}".lower()
         if any(_kw_in_text(text, k.lower()) for k in kws):
-            return True
+            return "keyword"
     nurls = [n for n in (_norm_url(u) for u in (watchlist.get("urls") or [])) if n]
     if nurls:
         link = _norm_url(item.get("link") or item.get("url") or "")
         if link and any(link.startswith(n) or n in link for n in nurls):
-            return True
-    return False
+            return "url"
+    return ""
 
 
 def _post_run_alert(result: dict) -> None:
@@ -5424,10 +5965,31 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     global _DRAFT_MODE, _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
-    _ALLOW_SMTP_SEND = allow_send
+
+    gate = collection_gate if isinstance(collection_gate, dict) else {}
+    send_hold = bool(gate.get("send_hold"))
+    try:
+        from mail_core.operations.miss_remediation import effective_allow_send
+        effective_send, hold_reason = effective_allow_send(
+            allow_send, send_hold=send_hold)
+    except Exception:
+        effective_send, hold_reason = allow_send, "gate_import_error"
+    if allow_send and not effective_send:
+        log.warning(
+            "RUN FAILED send_hold — 실발송 보류 (reason=%s, run_status=%s)",
+            hold_reason, gate.get("run_status"),
+        )
+    elif allow_send and send_hold and effective_send:
+        log.warning(
+            "send_hold 이지만 발송 허용 (reason=%s) — shadow/override",
+            hold_reason,
+        )
+
+    _ALLOW_SMTP_SEND = effective_send
     _ALLOW_PERSIST_SEEN = persist_seen
     _DRAFT_MODE = draft_mode
     _DRAFT_OK = 0
@@ -5438,22 +6000,21 @@ def execute_monitor(
     _LAST_SEND_ERR = ""
     _RAW_STORE = None
 
-    # deliver: 실제 발송(allow_send) 또는 초안 생성(draft_mode)이면 디제스트 본문을 실제로
-    # 만들어 전달한다. draft_mode 는 _DRAFT_MODE 를 통해 send_to_list 가 초안으로 우회한다.
-    deliver = allow_send or draft_mode
+    # deliver: 실제 발송(effective_send) 또는 초안 생성(draft_mode)
+    deliver = effective_send or draft_mode
     now = datetime.now(KST)
-    mode = "send" if allow_send else ("draft" if draft_mode else "preview")
+    mode = "send" if effective_send else ("draft" if draft_mode else "preview")
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
     sites    = load_sites()
     groups   = load_groups()
     settings = load_settings()
     seen_ids = load_seen_ids()
-    days_back = settings.get("days_back", 1)
+    days_back = max(1, int(settings.get("days_back", 3) or 3))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
     # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         if not delivery_outbox.is_ready():
             raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
         retry_pending_outbox()
@@ -5465,6 +6026,39 @@ def execute_monitor(
     if not groups:
         log.info("활성 그룹 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+
+    target_date_early = previous_business_day(now, days_back)
+    # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
+    if effective_send and persist_seen:
+        try:
+            from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
+            _wl_early = load_watchlist()
+            _skip = should_skip_fetch_already_delivered(
+                target_date=str(target_date_early),
+                groups=groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+                delivery_path=DELIVERY_STATE_PATH,
+            )
+            if _skip.get("skip"):
+                log.info(
+                    "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
+                    _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
+                )
+                return _with_raw_store_stats({
+                    "ok": True,
+                    "mode": mode,
+                    "reason": "already_delivered",
+                    "skipped_fetch": True,
+                    "target_date": str(target_date_early),
+                    "mail_sent": 0,
+                    "collected": 0,
+                    "new_items": 0,
+                    "filtered_items": 0,
+                })
+        except Exception as e:
+            log.warning("발송완료 스킵 게이트 실패(무시·수집 계속): %s", e)
 
     if _RawStore is not None:
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
@@ -5480,30 +6074,114 @@ def execute_monitor(
     deduped = dedup_items(all_items)
     dedup_removed = len(all_items) - len(deduped)
 
-    # ③ 신규 필터 (seen_ids)
-    new_items = [it for it in deduped if it["id"] and it["id"] not in seen_ids]
-    log.info("신규(미발송): %d건 / 전체: %d건", len(new_items), len(deduped))
+    # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
+    notice_versions = load_notice_versions()
+    version_candidates = select_notice_version_candidates(
+        deduped, seen_ids, notice_versions, now=now, days_back=days_back,
+    )
+    enriched_candidates = enrich_items(version_candidates)
+    new_items, notice_version_updates = classify_notice_versions(enriched_candidates, seen_ids, notice_versions)
+    brand_new_count = sum(1 for it in new_items if it.get("_change_type") == "NEW")
+    changed_count = len(new_items) - brand_new_count
+    log.info("처리대상: 신규 %d / 중요변경 %d / 버전검사 %d", brand_new_count, changed_count, len(version_candidates))
 
     if _RAW_STORE is not None:
-        _RAW_STORE.begin_run(
-            collected=len(all_items), deduped=len(deduped), new_items=len(new_items),
-        )
+        _RAW_STORE.begin_run(collected=len(all_items), deduped=len(deduped), new_items=len(new_items))
         for it in new_items:
             _RAW_STORE.save_item_meta(it)
 
-    new_items = enrich_items(new_items)
+    # W3-c: 이미 enrich된 처리대상에 FETCH/PARSE 재시도 + 추출률·큐 (main 병합)
+    extraction_rates_by_site: dict = {}
+    extraction_retry_plan: list = []
+    extraction_retry_stats: dict = {}
+    try:
+        from mail_core.operations.field_status import (
+            compute_extraction_rates,
+            plan_extraction_retries,
+            run_extraction_retries,
+            write_extraction_rates_report,
+        )
+        from mail_core.operations.miss_remediation import enqueue_extraction_failures
+
+        _sleep_raw = os.environ.get("MONITOR_EXTRACTION_RETRY_SLEEP", "")
+        if _sleep_raw == "0":
+            _backoff = (0, 0)
+            _sleep_fn = lambda _s: None  # noqa: E731
+        else:
+            _backoff = (60, 180)
+            _sleep_fn = None
+        new_items, extraction_retry_stats = run_extraction_retries(
+            new_items,
+            enrich_item_from_detail,
+            backoff_sec=_backoff,
+            sleep_fn=_sleep_fn,
+        )
+        if extraction_retry_stats.get("attempted"):
+            log.info(
+                "추출 재시도: planned=%s attempted=%s recovered=%s still_failed=%s",
+                extraction_retry_stats.get("planned"),
+                extraction_retry_stats.get("attempted"),
+                extraction_retry_stats.get("recovered"),
+                extraction_retry_stats.get("still_failed"),
+            )
+
+        by_site: dict[str, list] = {}
+        for it in new_items:
+            sid = str(it.get("site_id") or it.get("source") or "unknown")
+            by_site.setdefault(sid, []).append(it)
+        extraction_rates_by_site = {
+            sid: compute_extraction_rates(rows) for sid, rows in by_site.items()
+        }
+        enqueue_extraction_failures(new_items)
+        extraction_retry_plan = plan_extraction_retries(new_items)
+        write_extraction_rates_report(
+            extraction_rates_by_site, run_at=now)
+    except Exception as e:
+        log.warning("extraction_rates/retry/queue 실패(무시): %s", e)
+
+    # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
+    p0_dropped: list = []
+    gate_reports = gate.get("source_reports") or gate.get("p0_sources") or []
+    if gate_reports:
+        try:
+            from mail_core.operations.miss_remediation import drop_items_from_p0_sources
+            new_items, p0_dropped = drop_items_from_p0_sources(new_items, gate_reports)
+            if p0_dropped:
+                log.warning(
+                    "P0 소스 공고 %d건 발송 후보에서 제외 (site P0 필터)",
+                    len(p0_dropped),
+                )
+        except Exception as e:
+            log.warning("P0 소스 필터 실패(무시): %s", e)
+            p0_dropped = []
 
     # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
+    # 게시판 URL 전량 매칭 폭발 방지: 날짜창·max_items 선별(2026-07-26 74건 사고)
     watchlist = load_watchlist()
-    watch_hits = (
-        [it for it in new_items if is_watchlisted(it, watchlist)]
-        if (watchlist["keywords"] or watchlist["urls"]) else []
-    )
+    watch_hits: list = []
+    if watchlist["keywords"] or watchlist["urls"]:
+        try:
+            from mail_core.matching.watchlist_select import (
+                select_watchlist_hits,
+                watchlist_limits_from_config,
+            )
+            limits = watchlist_limits_from_config(watchlist)
+            watch_hits = select_watchlist_hits(
+                new_items,
+                match_kind=lambda it: watchlist_match_kind(it, watchlist),
+                today=now.date(),
+                **limits,
+            )
+        except Exception as e:
+            log.warning("워치리스트 선별 실패 — 전체 매칭으로 폴백: %s", e)
+            watch_hits = [it for it in new_items if is_watchlisted(it, watchlist)]
     if watch_hits:
         log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
 
     # ④ 날짜 필터 (직전 영업일)
-    target_date = previous_business_day(now, days_back)
+    recheck_dates = sorted(_recent_recheck_dates(now, days_back))
+    target_date = recheck_dates[0]
+    window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
     date_str    = now.strftime("%m/%d")
 
     include_unknown = settings.get("include_date_unknown", False)
@@ -5534,6 +6212,18 @@ def execute_monitor(
         date_unknown = []
         date_excluded = []
 
+    # 같은 ID의 중요 변경은 게시일이 과거여도 재처리한다. 여전히 마감된 단순수정은 제외.
+    _filtered_ids = {_delivery_notice_id(it) for it in filtered_new}
+    for it in new_items:
+        if it.get("_change_type") not in {"EXTENDED", "REANNOUNCED", "UPDATED"}:
+            continue
+        if classify_deadline_status(it, now.date()) == "closed":
+            continue
+        did = _delivery_notice_id(it)
+        if did and did not in _filtered_ids:
+            filtered_new.append({**it, "_forced_change_reprocess": True})
+            _filtered_ids.add(did)
+
     # 워치리스트 매칭분 강제포함 — 날짜필터로 빠졌어도 '절대 안 놓침'
     if watch_hits:
         _wl_seen = {it["id"] for it in filtered_new}
@@ -5552,13 +6242,13 @@ def execute_monitor(
                     for i, it in enumerate(watch_hits, 1)
                 )
                 wl_subject = f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})"
-                if allow_send and persist_seen:
+                if effective_send and persist_seen:
                     deliver_with_outbox(
                         wl_subject, wl_body, wl_recipients,
                         date=str(target_date),
                         tenant=str(watchlist.get("tenant_id") or settings.get("tenant_id") or "default"),
                         group="watchlist",
-                        notice_ids=[str(it.get("id") or "") for it in watch_hits],
+                        notice_ids=[_delivery_notice_id(it) for it in watch_hits],
                     )
                 else:
                     send_to_list(wl_subject, wl_body, wl_recipients)
@@ -5583,23 +6273,25 @@ def execute_monitor(
         raw_topic = mail_topic(raw_items)
         body_raw = (
             f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-            f"기준일자: {target_date} (직전영업일) 공고\n"
+            f"재조회범위: {window_label} (최근 {days_back}영업일)\n"
             f"전체수집: {len(all_items)}건 → 중복제거: {dedup_removed}건 → 신규: {len(new_items)}건\n"
             f"날짜필터 후 발송대상: {len(raw_items)}건 (행정고지·잡공고 {raw_dropped}건 제외)\n\n"
         ) + render_all(raw_items, dedup_removed, len(date_unknown), include_unknown)
         raw_subject = f"[원본전체] {raw_topic} ({date_str}) — {len(raw_items)}건"
-        if allow_send and persist_seen:
+        if effective_send and persist_seen:
             deliver_with_outbox(
                 raw_subject, body_raw, settings["raw_all_recipients"],
                 date=str(target_date),
                 tenant=str(settings.get("tenant_id") or "default"),
                 group="raw_all",
-                notice_ids=[str(it.get("id") or "") for it in raw_items],
+                notice_ids=[_delivery_notice_id(it) for it in raw_items],
             )
         else:
             send_to_list(raw_subject, body_raw, settings["raw_all_recipients"])
 
     if not filtered_new:
+        if persist_seen and _ALLOW_PERSIST_SEEN:
+            commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
         log.info("처리 대상 없음. 종료.")
         return _with_raw_store_stats({
             "ok": True,
@@ -5607,6 +6299,8 @@ def execute_monitor(
             "collected": len(all_items),
             "deduped": len(deduped),
             "new_items": len(new_items),
+            "brand_new_items": brand_new_count,
+            "changed_items": changed_count,
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
             "date_review_queue": date_review_queue,
@@ -5638,26 +6332,32 @@ def execute_monitor(
         g_items = diagnostics["included"]
         review_items = diagnostics["review"]
         ru_items = diagnostics["region_unknown"]
+        ru_limit = int(settings.get("region_unknown_mail_limit", REGION_UNKNOWN_MAIL_LIMIT))
+        ru_mail_items = select_region_unknown_for_mail(ru_items, limit=ru_limit)
+        if ru_items:
+            write_region_unknown_report(ru_items, str(group.get("name") or "group"), run_at=now)
         excluded_items = diagnostics["excluded"]
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
         if _demoted:
             review_items = review_items + _demoted
             log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
-        if not allow_send:
+        if not deliver:
             preview_groups.append({
                 "name": group.get("name"),
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
                 "matched_items": len(g_items),
                 "review_items": len(review_items),
-                "region_unknown_items": len(ru_items),
+                "region_unknown_items": len(ru_mail_items),
+            "region_unknown_total_items": len(ru_items),
+                "region_unknown_mail_items": len(ru_mail_items),
                 "excluded_items": len(excluded_items),
                 "sample_titles": [it.get("title") for it in g_items[:5]],
                 "review_titles": [it.get("title") for it in review_items[:5]],
                 "region_unknown_titles": [it.get("title") for it in ru_items[:5]],
                 "excluded_summary": render_excluded_summary(excluded_items),
             })
-        if not g_items and not ru_items:
+        if not g_items and not ru_mail_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
         sent_groups.append({
@@ -5691,7 +6391,7 @@ def execute_monitor(
                 )
             header  = (
                 f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-                f"기준일자: {target_date} (직전영업일) 공고\n"
+                f"재조회범위: {window_label} (최근 {days_back}영업일)\n"
                 f"그룹: {group.get('name')}\n"
                 f"지역: {', '.join(req_rgns) or '전국'}\n"
                 f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
@@ -5703,10 +6403,14 @@ def execute_monitor(
                 f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
             )
             # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
-            region_unknown_block = render_region_unknown(ru_items)
+            region_unknown_block = render_region_unknown(
+                ru_mail_items, limit=ru_limit, total_count=len(ru_items),
+            )
             # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
             feedback_block = _render_feedback_block(g_items)
-            subj_count = f"{len(g_items)}건" + (f"+지역미상 {len(ru_items)}건" if ru_items else "")
+            subj_count = f"{len(g_items)}건" + (
+                f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""
+            )
             # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
             _gid = str(group.get("id") or group.get("name") or "grp")
             _recips = guard_group_recipients(
@@ -5714,13 +6418,13 @@ def execute_monitor(
             )
             _subject = f"[{group.get('name')}] {subj_count} ({date_str})"
             _body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
-            if allow_send and persist_seen:
+            if effective_send and persist_seen:
                 deliver_with_outbox(
                     _subject, _body, _recips,
                     date=str(target_date),
                     tenant=str(group.get("tenant_id") or "default"),
                     group=_gid,
-                    notice_ids=[str(it.get("id") or "") for it in (g_items + ru_items)],
+                    notice_ids=[_delivery_notice_id(it) for it in (g_items + ru_mail_items)],
                 )
             else:
                 send_to_list(_subject, _body, _recips)
@@ -5733,8 +6437,9 @@ def execute_monitor(
                 )
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
-    if allow_send and persist_seen:
+    if effective_send and persist_seen:
         seen_ids = persist_completed_outbox(seen_ids)
+        commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
     final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
@@ -5745,19 +6450,29 @@ def execute_monitor(
         "deduped": len(deduped),
         "dedup_removed": dedup_removed,
         "new_items": len(new_items),
+        "brand_new_items": brand_new_count,
+        "changed_items": changed_count,
+        "date_window": window_label,
         "filtered_items": len(filtered_new),
+        "p0_source_items_dropped": len(p0_dropped),
+        "send_hold": bool(send_hold),
+        "send_hold_reason": hold_reason if send_hold else "",
+        "run_status": gate.get("run_status") or "",
         "date_matched_count": len(date_matched) if settings.get("date_filter_enabled", True) else len(filtered_new),
         "date_unknown_items": len(date_unknown),
         "date_review_queue": date_review_queue,
         "date_review_queue_count": len(date_review_queue),
         "date_excluded_count": len(date_excluded),
         "final_mail_target_count": final_mail_count,
-        "mail_sent": bool(allow_send and _ALLOW_SMTP_SEND),
+        "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
         "draft_failed": _DRAFT_FAIL,
         "seen_ids_persisted": bool(persist_seen and _ALLOW_PERSIST_SEEN),
         "sent_groups": sent_groups,
         "preview_groups": preview_groups,
+        "extraction_rates_by_site": extraction_rates_by_site,
+        "extraction_retry_plan_count": len(extraction_retry_plan),
+        "extraction_retry_stats": extraction_retry_stats,
     })
 
 
@@ -5765,6 +6480,7 @@ def main(
     allow_send: bool = False,
     include_raw_all: bool = False,
     persist_seen: bool = False,
+    collection_gate: dict | None = None,
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -5772,6 +6488,7 @@ def main(
         allow_send=allow_send,
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
+        collection_gate=collection_gate,
     )
     _post_run_alert(result)
     return result
@@ -5794,7 +6511,7 @@ def write_coverage_report(
     run_at: datetime | None = None,
 ) -> Path:
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "site_collection_coverage_report.md")
+    path = path or (LOGS_DIR / "site_collection_coverage_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     headers = [
         "사이트", "collector", "URL", "수집", "건수", "날짜파싱", "date_unknown",
@@ -5832,7 +6549,7 @@ def write_today_missing_risk_report(
     run_at: datetime | None = None,
 ) -> Path:
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "today_notice_missing_risk_report.md")
+    path = path or (LOGS_DIR / "today_notice_missing_risk_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     queue = result.get("date_review_queue") or []
     high = [it for it in queue if it.get("date_unknown_risk") == "높음"]
@@ -5865,7 +6582,7 @@ def write_review_queue_report(
 ) -> Path:
     run_at = run_at or datetime.now(KST)
     stamp = run_at.strftime("%Y%m%d")
-    path = path or (BASE_DIR / "logs" / f"review_queue_{stamp}.md")
+    path = path or (LOGS_DIR / f"review_queue_{stamp}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
         f"# Review queue — {run_at.strftime('%Y-%m-%d %H:%M KST')}",
@@ -5893,7 +6610,7 @@ def write_coverage_anomaly_report(
 ) -> Path:
     """수집 이상탐지 결과를 별도 마크다운으로 저장(dry-run 보고서)."""
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / "coverage_anomaly_report.md")
+    path = path or (LOGS_DIR / "coverage_anomaly_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
         "# 수집 이상탐지",
@@ -5923,7 +6640,7 @@ def write_source_coverage_json(
 ) -> Path:
     """기계 판독용 실행대장. logs/source_coverage_YYYYMMDD.json"""
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.json")
+    path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return path
@@ -5933,10 +6650,10 @@ def write_source_coverage_md(
     payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
 ) -> Path:
     """관리자 확인용 실행대장 보고서. logs/source_coverage_YYYYMMDD.md"""
-    import coverage_alert as _ca  # noqa: PLC0415
+    from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"source_coverage_{run_at:%Y%m%d}.md")
+    path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_coverage_markdown(payload), encoding="utf-8")
     return path
@@ -5946,10 +6663,10 @@ def write_p0_collection_alert(
     payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
 ) -> Path:
     """P0 누락위험 알림 사본. logs/p0_collection_alert_YYYYMMDD.md"""
-    import coverage_alert as _ca  # noqa: PLC0415
+    from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
     run_at = run_at or datetime.now(KST)
-    path = path or (BASE_DIR / "logs" / f"p0_collection_alert_{run_at:%Y%m%d}.md")
+    path = path or (LOGS_DIR / f"p0_collection_alert_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_p0_alert_markdown(payload), encoding="utf-8")
     return path
@@ -5965,25 +6682,46 @@ def run_source_coverage_audit(
 ) -> dict:
     """활성 소스 실행 완전성·수집 품질을 P0/P1 로 판정하고 산출물·알림을 남긴다.
 
-    운영 게이트이지만 **발송을 막지 않는다** — P0 가 나와도 상태만 DEGRADED 로 표시하고
-    정상 수집분의 판정·발송은 그대로 계속된다. 전체를 try/except 로 감싸 이 감사 자체의
+    운영 게이트이지만 **소스 P0(DEGRADED)만으로는 발송을 막지 않는다**.
+    런 FAILED(send_hold) 실보류 배선은 W1. 전체를 try/except 로 감싸 이 감사 자체의
     실패가 본 작업(수집·발송)에 절대 전파되지 않게 한다.
 
-    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="OK").
+    반환: summarize_run_status() 결과 + {"payload", "files"} (실패 시 status="SUCCESS").
     """
     try:
-        import coverage_alert as _ca  # noqa: PLC0415
+        from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
         run_at = run_at or datetime.now(KST)
         baseline = _ca.load_coverage_baseline()
         page_stats = page_stats_snapshot()
-        reports = _ca.classify_sources(rows, baseline, page_stats=page_stats)
+        try:
+            from mail_core.operations import detector_config as _dc  # noqa: PLC0415
+            detector_cfg = _dc.load_detector_config()
+        except Exception:
+            detector_cfg = None
+        reports = _ca.classify_sources(
+            rows, baseline, page_stats=page_stats, detector_cfg=detector_cfg)
         exec_check = _ca.verify_source_execution(sites, rows)
         summary = _ca.summarize_run_status(reports, exec_check)
         payload = _ca.build_coverage_payload(
             rows, reports, summary, exec_check=exec_check,
             generated_at=run_at.strftime("%Y-%m-%d %H:%M KST"),
         )
+        # W1: 실행 판정 ledger append (실패해도 본작업 무영향)
+        try:
+            from mail_core.operations import source_run_ledger as _led  # noqa: PLC0415
+            run_id = _led.new_run_id()
+            recs = [
+                _led.build_ledger_record(
+                    run_id=run_id,
+                    source_report=rep,
+                    page_stat=(page_stats or {}).get(rep.get("site_id", "")),
+                )
+                for rep in reports
+            ]
+            _led.append_source_runs(recs)
+        except Exception:
+            pass
         files: dict[str, str] = {}
         if write_files:
             files["json"] = str(write_source_coverage_json(payload, run_at=run_at))
@@ -5991,15 +6729,17 @@ def run_source_coverage_audit(
             if summary.get("p0_count"):
                 files["p0_alert"] = str(write_p0_collection_alert(payload, run_at=run_at))
         if summary.get("p0_count") and allow_alert:
+            hold_tag = "[FAILED][send_hold] " if summary.get("send_hold") else ""
             alert_email(
-                f"[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
+                f"{hold_tag}[P0 수집 누락 위험] {summary['p0_count']}개 소스 — 확인 필요",
                 _ca.format_p0_alert_message(payload),
             )
         return {**summary, "payload": payload, "files": files}
     except Exception as e:  # 감사 실패는 절대 수집·발송을 막지 않는다
         log.warning("소스 커버리지 감사 실패(무시): %s", e)
-        return {"status": "OK", "p0_count": 0, "p1_count": 0, "p0_sources": [],
-                "p1_sources": [], "payload": {}, "files": {}, "audit_error": str(e)[:200]}
+        return {"status": "SUCCESS", "send_hold": False, "p0_count": 0, "p1_count": 0,
+                "p0_sources": [], "p1_sources": [], "payload": {}, "files": {},
+                "audit_error": str(e)[:200]}
 
 
 def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) -> list[dict]:
@@ -6011,7 +6751,7 @@ def run_coverage_anomaly_check(rows: list[dict], *, allow_alert: bool = True) ->
     반환: 감지된 anomaly dict 리스트(없으면 빈 리스트).
     """
     try:
-        import coverage_alert as _ca  # noqa: PLC0415
+        from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
         baseline = _ca.load_coverage_baseline()
         anomalies = _ca.detect_coverage_anomalies(rows, baseline)
@@ -6230,6 +6970,7 @@ def run_dry_run(
     coverage_rows: list[dict] = []
     coverage_anomalies: list[dict] = []
     coverage_audit: dict = {}
+    collection_gate: dict = {}
     if fetch_coverage:
         all_sites = load_json(SITES_PATH, [])
         reset_page_stats()
@@ -6239,12 +6980,31 @@ def run_dry_run(
         coverage_audit = run_source_coverage_audit(
             coverage_rows, all_sites, allow_alert=allow_coverage_alert,
         )
+        try:
+            from mail_core.operations.miss_remediation import (
+                enqueue_p0_from_reports,
+                plan_retries,
+            )
+            reports = (coverage_audit.get("payload") or {}).get("sources") or (
+                coverage_audit.get("p0_sources") or [])
+            enqueue_p0_from_reports(reports)
+            coverage_audit["retry_plan"] = plan_retries(
+                coverage_audit.get("p0_sources") or [])
+        except Exception as e:
+            log.warning("manual_queue/retry_plan 실패(무시): %s", e)
         coverage_anomalies = run_coverage_anomaly_check(
             coverage_rows, allow_alert=allow_coverage_alert,
         )
+        collection_gate = {
+            "send_hold": bool(coverage_audit.get("send_hold")),
+            "run_status": coverage_audit.get("status") or "",
+            "source_reports": (coverage_audit.get("payload") or {}).get("sources") or [],
+            "p0_sources": coverage_audit.get("p0_sources") or [],
+        }
 
     result = execute_monitor(
-        allow_send=False, include_raw_all=False, persist_seen=False, draft_mode=draft_mode,
+        allow_send=False, include_raw_all=False, persist_seen=False,
+        draft_mode=draft_mode, collection_gate=collection_gate,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -6252,9 +7012,10 @@ def run_dry_run(
         k: v for k, v in coverage_audit.items() if k not in ("payload",)
     }
     # 최상위 스칼라로 승격 — API 응답 요약(_result_summary)이 스칼라만 통과시키기 때문
-    result["run_status"] = coverage_audit.get("status", "OK")
+    result["run_status"] = coverage_audit.get("status") or result.get("run_status") or "SUCCESS"
     result["collection_p0_count"] = int(coverage_audit.get("p0_count", 0) or 0)
     result["collection_p1_count"] = int(coverage_audit.get("p1_count", 0) or 0)
+    result["send_hold"] = bool(collection_gate.get("send_hold"))
     result["recipient_audit"] = {
         g.get("name"): validate_recipients(g.get("recipients", []))
         for g in load_groups()
@@ -6302,7 +7063,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="발송·seen_ids 저장 없이 preview 및 logs/ 보고서 생성",
+        help="발송·seen_ids 저장 없이 preview 및 var/logs/ 보고서 생성",
     )
     parser.add_argument(
         "--skip-coverage-fetch",
@@ -6389,28 +7150,84 @@ if __name__ == "__main__":
                 summary.get("seen_ids_file_changed"),
             )
         else:
-            # 실발송 경로에서도 커버리지 이상탐지(모니터링) 유지 — 평소 수집되던 사이트가
-            # 0건/급감/실패 시 PC 이메일 알림(누락 방지, PR #123). --coverage-alert 일 때만.
-            if args.coverage_alert and not args.skip_coverage_fetch:
+            # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
+            # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
+            # 기준일 전량 멱등 완료면 커버리지·수집 전부 생략(주말 재실행 2h+ 낭비 방지).
+            if args.send and args.persist_seen:
+                try:
+                    from mail_core.delivery.skip_gate import (
+                        should_skip_fetch_already_delivered,
+                    )
+                    _settings_ee = load_settings()
+                    _groups_ee = load_groups()
+                    _wl_ee = load_watchlist()
+                    _td = previous_business_day(
+                        datetime.now(KST), int(_settings_ee.get("days_back", 1) or 1),
+                    )
+                    _skip_ee = should_skip_fetch_already_delivered(
+                        target_date=str(_td),
+                        groups=_groups_ee,
+                        settings=_settings_ee,
+                        watchlist=_wl_ee,
+                        include_raw_all=args.include_raw_all,
+                        delivery_path=DELIVERY_STATE_PATH,
+                    )
+                    if _skip_ee.get("skip"):
+                        log.info(
+                            "기준일 %s 발송 단위 %s개 멱등 완료 — 커버리지·수집·발송 생략",
+                            _skip_ee.get("target_date"), _skip_ee.get("units"),
+                        )
+                        raise SystemExit(0)
+                except SystemExit:
+                    raise
+                except Exception as e:
+                    log.warning("발송완료 early-exit 실패(무시·수집 계속): %s", e)
+            _gate: dict = {}
+            if not args.skip_coverage_fetch:
                 try:
                     _all_sites = load_json(SITES_PATH, [])
                     reset_page_stats()
                     _cov_rows = fetch_site_coverage(_all_sites)
-                    # P0 감사 — 활성 소스 미실행·수집실패·급감을 즉시 알린다.
-                    # 발송을 막지 않는다: 아래 main() 은 결과와 무관하게 그대로 실행된다.
-                    _audit = run_source_coverage_audit(_cov_rows, _all_sites, allow_alert=True)
-                    if _audit.get("status") == "DEGRADED":
+                    _audit = run_source_coverage_audit(
+                        _cov_rows, _all_sites, allow_alert=bool(args.coverage_alert),
+                    )
+                    _status = _audit.get("status") or ""
+                    if _status == "FAILED" or _audit.get("send_hold"):
                         log.warning(
-                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (발송은 계속 진행)",
+                            "수집 상태 FAILED — send_hold (P0 %s / P1 %s)",
                             _audit.get("p0_count"), _audit.get("p1_count"),
                         )
-                    run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    elif _status == "DEGRADED":
+                        log.warning(
+                            "수집 상태 DEGRADED — P0 %s건/P1 %s건 (정상 소스만 발송)",
+                            _audit.get("p0_count"), _audit.get("p1_count"),
+                        )
+                    try:
+                        from mail_core.operations.miss_remediation import (
+                            enqueue_p0_from_reports,
+                            plan_retries,
+                        )
+                        _reports = (_audit.get("payload") or {}).get("sources") or (
+                            _audit.get("p0_sources") or [])
+                        enqueue_p0_from_reports(_reports)
+                        _audit["retry_plan"] = plan_retries(_audit.get("p0_sources") or [])
+                    except Exception as e:
+                        log.warning("manual_queue 갱신 실패(무시): %s", e)
+                    if args.coverage_alert:
+                        run_coverage_anomaly_check(_cov_rows, allow_alert=True)
+                    _gate = {
+                        "send_hold": bool(_audit.get("send_hold")),
+                        "run_status": _status,
+                        "source_reports": (_audit.get("payload") or {}).get("sources") or [],
+                        "p0_sources": _audit.get("p0_sources") or [],
+                    }
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             main(
                 allow_send=args.send,
                 include_raw_all=args.include_raw_all,
                 persist_seen=args.persist_seen,
+                collection_gate=_gate,
             )
     except Exception as e:
         log.exception("치명적 오류: %s", e)

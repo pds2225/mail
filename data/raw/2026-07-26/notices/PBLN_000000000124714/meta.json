@@ -1,0 +1,201 @@
+{
+  "saved_at": "2026-07-26 19:32:03",
+  "notice_id": "PBLN_000000000124714",
+  "title": "[전남광주] 2026년 JCEP 콘텐츠기업 엑셀러레이팅 프로그램 참가기업 모집 재공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124714",
+  "source": "기업마당(Bizinfo)",
+  "author": "전남광주통합특별시",
+  "description": "<p>전남정보문화산업진흥원은 도내 콘텐츠 기업의 성장단계 진입과 시장 도약을 지원하기 위해 비즈니스 컨설팅, 투자 연계 및 네트워킹 등 스케일업 프로그램을 운영하고자 「2026 JCEP 콘텐츠기업 엑셀러레이팅 프로그램」 참가기업을 다음과 같이 모집하오니 많은 관심과 참여 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;도내 콘텐츠 IP 보유기업 및 관련 기술력을 보유한 콘텐츠 기업</p><p><br></p><p style=\"line-height: 1.8;\">☞ 기업진단, IR 솔루션 컨설팅, IR 데모데이, 기타 지원&nbsp;</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참조&nbsp;</p>\n전남정보문화산업진흥원은 도내 콘텐츠 기업의 성장단계 진입과 시장 도약을 지원하기 위해 비즈니스 컨설팅, 투자 연계 및 네트워킹 등 스케일업 프로그램을 운영하고자 「2026 JCEP 콘텐츠기업 엑셀러레이팅 프로그램」 참가기업을 다음과 같이 모집하오니 많은 관심과 참여 바랍니다. ☞ 도내 콘텐츠 IP 보유기업 및 관련 기술력을 보유한 콘텐츠 기업 ☞ 기업진단, IR 솔루션 컨설팅, IR 데모데이, 기타 지원 ※ 자세한 지원내용 공고문 참조",
+  "deadline": "2026-07-22 ~ 2026-08-07",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-22",
+    "end": "2026-08-07",
+    "display": "2026-07-22 ~ 2026-08-07",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전남광주] 2026년 JCEP 콘텐츠기업 엑셀러레이팅 프로그램 참가기업 모집 재공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "전남광주통합특별시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124714"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>전남정보문화산업진흥원은 도내 콘텐츠 기업의 성장단계 진입과 시장 도약을 지원하기 위해 비즈니스 컨설팅, 투자 연계 및 네트워킹 등 스케일업 프로그램을 운영하고자 「2026 JCEP 콘텐츠기업 엑셀러레이팅 프로그램」 참가기업을 다음과 같이 모집하오니 많은 관심과 참여 바랍니다.</p"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-22 ~ 2026-08-07"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#Deck자료제작",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#IR솔루션",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전남광주통합특별시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#트레이닝",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전남정보문화산업진흥원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기업진단",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전문가상담",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#데모데이",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#콘텐츠기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#네트워킹",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#엑셀러레이팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#컨설팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#멘토링",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "전남광주통합특별시"
+}

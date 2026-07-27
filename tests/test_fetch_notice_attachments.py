@@ -223,7 +223,7 @@ def test_gather_excludes_site_manual():
 # footer 의 사이트 공통 인증 PDF(KSQI·웹접근성) 2개를 받았으며, 제목도 footer 라벨
 # "한국산업의 서비스 품질우수 기업" 으로 오인했다.
 
-KAMCO_FX = Path(__file__).parent.parent / "fixtures" / "notice_attachments" / "kamco_view.html"
+KAMCO_FX = Path(__file__).parent / "fixtures" / "notice_attachments" / "kamco_view.html"
 KAMCO_URL = "https://www.kamco.or.kr/portal/bbs/view.do?mId=0701010000&ptIdx=380&bIdx=27606"
 
 

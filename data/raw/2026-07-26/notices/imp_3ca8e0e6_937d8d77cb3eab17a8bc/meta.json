@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:32",
+  "notice_id": "imp_3ca8e0e6_937d8d77cb3eab17a8bc",
+  "title": "「2026 광주콘텐츠코리아랩」국내 전시회(광주 ACE Fair) 참가 지원 모집 공고",
+  "link": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32088&tag=&nPage=1",
+  "source": "광주정보문화산업진흥원",
+  "author": "",
+  "description": "주요알림\n0\n건\n주요알림\n알림건수 : 총\n0\n건\n닫기\n오늘하루열지않기\n알림마당\n알림마당\n사업공고\n글자 크게\n글자 작게\n공유하기\n페이스북\n트위터\n밴드\n카카오스토리\nURL복사\n닫기\n인쇄\n「2026 광주콘텐츠코리아랩」국내 전시회(광주 ACE Fair) 참가 지원 모집 공고\n작성일\n2026.07.14 09:16\n조회수\n1,227\n접수기간\n2026.07.14 ~ 2026.07.24\n담당자\n고은강\n담당자 연락처\n062-610-2966\n담당자 이메일\ngckl@gicon.or.kr\n공지기간\n2026.07.14 ~ 2026.07.24\n광주콘텐츠코리아랩 국내 전시회(광주 ACE Fair) 참가 지원 모집 공고\n○ 지원규모 : 총 3개 사(팀)\n○ 모집대상 : 2024~2026년 광주콘텐츠코리아랩 지원사업 수혜 기업\n○ 접수기간 : 2026. 7. 14.(화) ~ 7. 24.(금) 10:00\n○ 지원내용 : 2026 광주 ACE Fair 전시회 참가 지원('광주에이스페어' 참여)\n○ 행사개최 : 2026. 9. 10.(목) ~ 9. 13.(일) (4일간 진행)\n○ 제출서류\n- 참가신청서 및 활동계획서(필수)\n- 양식 내 붙임1,2,3,4(필수) 붙임5(해당시) 제출\n○ 관련문의: 콘텐츠기반팀 고은강 선임(062-610-2966)\n※ 세부지원조건, 자세한 내용 등 아래 공고문 참조\n첨부파일\n모집공고문 1부.pdf\n(168.07KB / 다운로드 206회)\n다운로드\n참가신청서 및 붙임서류 1부.hwp\n(81KB / 다운로드 36회)\n다운로드\n목록보기\n이전글\n「2026 지역특화콘텐츠개발지원사업」 2026 차이나 라이선싱 엑스포 공동관 참가기업 모집 공고\n다음글\nCES2027 전남광주통합특별시 공동관 참가기업 선정 결과 공고\n콘텐츠 만족도 조사\n콘텐츠 만족도 조사\n이 페이지에서 제공하는 정보에 대하여 만족하십니까?\n평균\n4.00\n점\n205\n명 참여\n매우만족\n만족\n보통\n불만족\n매우불만족\n0\n/100\n퀵 전체열기\n추진사업\n주요사업안내\n시설대관\n장비대여\n교육신청\n기업정보\n전문가등록",
+  "deadline": "2026-07-14 ~ 2026-07-24",
+  "posted_date": "2026-07-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-14",
+    "end": "2026-07-24",
+    "display": "2026-07-14 ~ 2026-07-24",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「2026 광주콘텐츠코리아랩」국내 전시회(광주 ACE Fair) 참가 지원 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32088&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "주요알림 0 건 주요알림 알림건수 : 총 0 건 닫기 오늘하루열지않기 알림마당 알림마당 사업공고 글자 크게 글자 작게 공유하기 페이스북 트위터 밴드 카카오스토리 URL복사 닫기 인쇄 「2026 광주콘텐츠코리아랩」국내 전시회(광주 ACE Fair) 참가 지원 모집 공고 작성일 2026.0"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-14 ~ 2026-07-24"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

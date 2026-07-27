@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:17",
+  "notice_id": "imp_28ff1a60_b48e958c46e0432079f8",
+  "title": "2027년 신규과제 공모 기술수요조사 안내(지역맞춤형 재난안전 문제해결 기술개발 지원..",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13266&tag=&nPage=1",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n2027년 신규과제 공모 기술수요조사 안내(지역맞춤형 재난안전 문제해결 기술개발 지원사업)\n작성자\n배*준\n작성일\n2026/06/09 11:22\n조회수\n446\n지역맞춤형 재난안전 문제해결 기술개발 지원사업 2027년 신규과제 공모 기술수요조사 안내\n귀 기관(사)의 무궁한 발전을 기원합니다.\n행정안전부에서는 지방정부의 재난안전 문제발굴 및 문제해결 지원을 위하여 매년 “지역 맞춤형 재난안전 문제해결 기술개발 신규과제 공모”를 추진하고 있습니다.\n이에 대전광역시에서는 2027년 재난안전 연구개발 공모사업에 대비하여 대덕구 문평동 공장화재 등 반복되는 산업단지 화재 문제 해결을 위한 재난안전 R&D 과제를 발굴 하고자 하오니 관심있는 기업 및 연구기관의 많은 참여 바랍니다.\n<기술수요조사>\n○ 조사기간 : 2026. 6. 9(화). ~ 2026. 6. 22(월).\n○ 조사대상 : 관내 기업, 연구기관 등\n○ 해결과제 : 산업단지 화재 예방‧대비‧대응 등 산업단지 화재 관련 기술개발\n※ 접수된 기술수요는 2027년 행정안전부 「지역맞춤형 재난안전 문제해결 기술개발」 공모사업에 지역 현안 해결을 위한 과제 발굴 및 제안에 활용되며,\n대전광역시에서 사업 적합성, 시급성, 실현 가능성 등을 종합 검토해 1~2개 과제를 최종 선정하여 공모 신청할 계획\n○ 문 의 처 : 대전테크노파크 지역산업육성실 배병준 팀장 (bjbae@djtp.or.kr / 042-930-2930)\n붙임 1. 지역맞춤형 재난안전 문제해결 기술개발 공모관련 기술 수요조사(양식포함)\n2. (참고자료) 2026년 공모 추진계획\n260608-참고자료-지역맞춤형 재난안전 문제해결 기술개발 '26년 신규과제 공모 추진계획.pdf\n260608-(수정)지역맞춤형 재난안전 문제해결 기술개발 공모관련 기술 수요조사(안)-대전시.hwp\r\n\t\t\t\t\t\t\t\t\t[1.44MB]\n260608-참고자료-지역맞춤형 재난안전 문제해결 기술개발 '26년 신규과제 공모 추진계획.pdf\r\n\t\t\t\t\t\t\t\t\t[297.6KB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-06-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2027년 신규과제 공모 기술수요조사 안내(지역맞춤형 재난안전 문제해결 기술개발 지원.."
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13266&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 2027년 신규과제 공모 기술수요조사 안내(지역맞춤형 재난"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

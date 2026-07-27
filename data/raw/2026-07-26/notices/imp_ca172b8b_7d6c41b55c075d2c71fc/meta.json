@@ -1,0 +1,151 @@
+{
+  "saved_at": "2026-07-26 19:37:40",
+  "notice_id": "imp_ca172b8b_7d6c41b55c075d2c71fc",
+  "title": "[공고] 2025년 일터혁신 우수기업 선정 공고",
+  "link": "https://www.kwpi.or.kr/home/sub?menukey=7311&mode=view&dsn=1770103856-489-577&page=2",
+  "source": "노사발전재단 일터혁신플랫폼",
+  "author": "",
+  "description": "HOME\n뉴스·소식\n공지사항\n공고\n공고\n공고\n공고\n행사\n기타\nSNS 공유영역 펼치기\nX\n페이스북\n블로그\n카카오톡\nSNS 공유영역 닫기\n인쇄하기\n[공고] 2025년 일터혁신 우수기업 선정 공고 게시물 상세보기\n[공고] 2025년 일터혁신 우수기업 선정 공고\n등록일\n2025-11-10\n조회\n992\n첨부파일\n목록\n2025년 일터혁신 우수기업 2차 심사 결과_1.png\n(123 KB)\n다음글\n2025년 일터혁신 컨퍼런스 개최\n이전글\n2025년 일터혁신 우수기업 선정 심사 일정 및 발표자료 제출 관련 사전 안내\n목록",
+  "deadline": "",
+  "posted_date": "2025-11-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 2025년 일터혁신 우수기업 선정 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.kwpi.or.kr/home/sub?menukey=7311&mode=view&dsn=1770103856-489-577&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 뉴스·소식 공지사항 공고 공고 공고 공고 행사 기타 SNS 공유영역 펼치기 X 페이스북 블로그 카카오톡 SNS 공유영역 닫기 인쇄하기 [공고] 2025년 일터혁신 우수기업 선정 공고 게시물 상세보기 [공고] 2025년 일터혁신 우수기업 선정 공고 등록일 2025-11-10 조회"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "[공고] 2025년 일터혁신 우수기업 선정 공고 게시물 상세보기",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "[공고] 2025년 일터혁신 우수기업 선정 공고",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 6
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-11-10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            },
+            {
+              "text": "조회",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "992",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일 목록",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025년 일터혁신 우수기업 2차 심사 결과_1.png (123 KB)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 5
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 6
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025년 일터혁신 컨퍼런스 개최",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 5
+            }
+          ],
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025년 일터혁신 우수기업 선정 심사 일정 및 발표자료 제출 관련 사전 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 5
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

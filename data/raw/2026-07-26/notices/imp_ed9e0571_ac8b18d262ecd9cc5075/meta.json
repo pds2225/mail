@@ -1,0 +1,184 @@
+{
+  "saved_at": "2026-07-26 19:37:09",
+  "notice_id": "imp_ed9e0571_ac8b18d262ecd9cc5075",
+  "title": "2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고",
+  "link": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4174&cpage=2&rows=10&condition=&keyword=&show=&cat=",
+  "source": "기업 SOS",
+  "author": "",
+  "description": "제목\n2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고\n공개여부\n공개\n작성자\n최현재\n등록일\n2026-05-27\n2026년도 하남시 중소기업 육성기금(융자금) 2차접수에 대하여 다음과 같이 알려드립니다.\n1. 사 업 명 : 2026년 하남시 중소기업육성기금(융자금) 지원(2차)\n2. 모집기간 : 2026. 5. 13.(수) ~ 5. 27.(수)\n3. 지원대상 : 하남시 소재 중소기업\n4. 사업예산 : 14억원(기업당 최대 2억원 한도)\n5. 융자조건\n가. 금리 : 연 2.0%\n나. 상환조건 : 2년 거치 2년 균분상환 (2월, 5월, 8월, 11월)\n6. 신청방법 : 하남시청 투자유치과 방문 접수 및 우편 접수\n7. 문 의 처 : 하남시청 투자유치과(☎031-790-5503)\n※ 세부사항 : 붙임 공고문 참조\n파일\n전체 다운로드\n2026년도 하남시 중소기업육성기금(융자금) 2차 접수 공고.pdf",
+  "deadline": "2026-05-13 ~ 2026-05-27",
+  "posted_date": "2026-05-27",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-13",
+    "end": "2026-05-27",
+    "display": "2026-05-13 ~ 2026-05-27",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4174&cpage=2&rows=10&condition=&keyword=&show=&cat="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고 공개여부 공개 작성자 최현재 등록일 2026-05-27 2026년도 하남시 중소기업 육성기금(융자금) 2차접수에 대하여 다음과 같이 알려드립니다. 1. 사 업 명 : 2026년 하남시 중소기업육성기금(융자금) 지원(2차)"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-13 ~ 2026-05-27"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공개여부",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공개",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "최현재",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-05-27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2026년도 하남시 중소기업 육성기금(융자금) 2차접수에 대하여 다음과 같이 알려드립니다. 1. 사 업 명 : 2026년 하남시 중소기업육성기금(융자금) 지원(2차) 2. 모집기간 : 2026. 5. 13.(수) ~ 5. 27.(수) 3. 지원대상 : 하남시 소재 중소기업 4. 사업예산 : 14억원(기업당 최대 2억원 한도) 5. 융자조건 가. 금리 : 연 2.0% 나. 상환조건 : 2년 거치 2년 균분상환 (2월, 5월, 8월, 11월) 6. 신청방법 : 하남시청 투자유치과 방문 접수 및 우편 접수 7. 문 의 처 : 하남시청 투자유치과(☎031-790-5503) ※ 세부사항 : 붙임 공고문 참조",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전체 다운로드 2026년도 하남시 중소기업육성기금(융자금) 2차 접수 공고.pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "이전,다음 게시물 목록을 볼 수 있습니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(군포시)「2026년 하반기 국내전시회 개별참가 지원사업」 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안산시] 2026 일본 FIW 안산시 참관단 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

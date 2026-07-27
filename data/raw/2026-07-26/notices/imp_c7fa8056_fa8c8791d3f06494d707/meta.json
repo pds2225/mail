@@ -1,0 +1,169 @@
+{
+  "saved_at": "2026-07-26 19:37:20",
+  "notice_id": "imp_c7fa8056_fa8c8791d3f06494d707",
+  "title": "주민등록신고 불일치자 직권조치 결과 공고",
+  "link": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75042&pageIndex=2&searchCnd=40900000000&cate_cd=1",
+  "source": "김포시청",
+  "author": "",
+  "description": "고시공고 게시물 내용\n고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표\n고시공고구분\n공고(일반공고)\n조회수\n64\n고시공고번호\n김포시 운양동 공고 제2026-36호\n등록일\n2026-07-23\n담당부서\n운양동\n제목\n주민등록신고 불일치자 직권조치 결과 공고\n주민등록 신고의무 불이행자에 대하여 주민등록법 제20조제7항 및 동법 시행령 제31조에 따라 직권조치하고 아래와 같이 공고합니다.\n1. 대상자 : 이○남(김포한강11로)\n2. 내용 : 무단전출거주불명등록(2026. 7. 16.)\n3. 공고기간 : 2026. 7. 23. ~ 8. 10.(18일간)\n4. 공고장소 : 김포시 홈페이지 및 운양동 행정복지센터 게시판\n붙임 직권조치결과 공고문 1부.  끝.\n첨부파일\npdf 문서\n20260723 직권조치결과공고문.pdf\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "주민등록신고 불일치자 직권조치 결과 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75042&pageIndex=2&searchCnd=40900000000&cate_cd=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표 고시공고구분 공고(일반공고) 조회수 64 고시공고번호 김포시 운양동 공고 제2026-36호 등록일 2026-07-23 담당부서 운양동 제목 주민등록신고 불일치자 직권조치 결과 공고 주민"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고구분",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고(일반공고)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "64",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김포시 운양동 공고 제2026-36호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "운양동",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "주민등록신고 불일치자 직권조치 결과 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "주민등록 신고의무 불이행자에 대하여 주민등록법 제20조제7항 및 동법 시행령 제31조에 따라 직권조치하고 아래와 같이 공고합니다. 1. 대상자 : 이○남(김포한강11로) 2. 내용 : 무단전출거주불명등록(2026. 7. 16.) 3. 공고기간 : 2026. 7. 23. ~ 8. 10.(18일간) 4. 공고장소 : 김포시 홈페이지 및 운양동 행정복지센터 게시판 붙임 직권조치결과 공고문 1부. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "pdf 문서 20260723 직권조치결과공고문.pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

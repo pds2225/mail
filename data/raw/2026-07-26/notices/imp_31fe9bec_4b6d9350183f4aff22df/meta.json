@@ -1,0 +1,99 @@
+{
+  "saved_at": "2026-07-26 19:37:57",
+  "notice_id": "imp_31fe9bec_4b6d9350183f4aff22df",
+  "title": "[대전고용복지+센터]우주국방 지역 특화산업 수요데이 행사",
+  "link": "https://djhrd.or.kr/sub0101/view/id/1307",
+  "source": "대전지역인적자원개발위원회",
+  "author": "",
+  "description": "훈련접수\n오시는 길\n위로 가기\n알림마당\n>\n알림마당 >\n공지사항 >\n공지사항\n공지사항\n보도자료\n뉴스레터\n알림마당 > 공지사항\n알림마당 > 공지사항의 작성자, 작성일, 조회수, 내용 등의 항목에 관한 표입니다.\n[대전고용복지+센터]우주국방 지역 특화산업 수요데이 행사\n작성자\n관리자\n작성일시\n2026-05-18\n조회수\n95\n붙임_1_5월_우주국방_수요데이_포스터.jpg\n(4.0 MB)\n붙임_2_5월_우주국방_수요데이_참여기업_명단.pdf\n(234.3 KB)\n붙임_3_26년_5월_우주국방_수요데이_참여기업_세부구인정보.pdf\n(949.5 KB)\n붙임_4_26년_5월_우주국방_수요데이_안내문.pdf\n(87.8 KB)\n붙임_5._구직신청고용24_구직신청_안내문.pdf\n(282.8 KB)",
+  "deadline": "",
+  "posted_date": "2026-05-18",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[대전고용복지+센터]우주국방 지역 특화산업 수요데이 행사"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djhrd.or.kr/sub0101/view/id/1307"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "훈련접수 오시는 길 위로 가기 알림마당 > 알림마당 > 공지사항 > 공지사항 공지사항 보도자료 뉴스레터 알림마당 > 공지사항 알림마당 > 공지사항의 작성자, 작성일, 조회수, 내용 등의 항목에 관한 표입니다. [대전고용복지+센터]우주국방 지역 특화산업 수요데이 행사 작성자 관리자 작성일"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 알림마당 > 공지사항의 작성자, 작성일, 조회수, 내용 등의 항목에 관한 표입니다.",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "[대전고용복지+센터]우주국방 지역 특화산업 수요데이 행사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자 관리자 작성일시 2026-05-18 조회수 95",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "<div class=\"bbs-social\"> <div class=\"socialbox\"> <a href=\"@twitter\" class=\"social\"><img src=\"../images/board/popup-sns-twitter.gif\" title=\"트위터\"></a> <a href=\"@facebook\" class=\"social\"><img src=\"../images/board/popup-sns-facebook.gif\" title=\"페이스북\"></a> <a href=\"@kakaostory\" class=\"social\"><img src=\"../images/board/popup-sns-kakao.gif\" title=\"카카오스토리\"></a> <a href=\"@kakao\" class=\"social\"><img src=\"../images/board/popup-sns-talk.gif\" title=\"카카오톡\"></a> <a href=\"@pinterest\" class=\"social\"><img src=\"..",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "붙임_1_5월_우주국방_수요데이_포스터.jpg (4.0 MB) 붙임_2_5월_우주국방_수요데이_참여기업_명단.pdf (234.3 KB) 붙임_3_26년_5월_우주국방_수요데이_참여기업_세부구인정보.pdf (949.5 KB) 붙임_4_26년_5월_우주국방_수요데이_안내문.pdf (87.8 KB) 붙임_5._구직신청고용24_구직신청_안내문.pdf (282.8 KB)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

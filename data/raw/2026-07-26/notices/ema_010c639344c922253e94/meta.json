@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:29",
+  "notice_id": "ema_010c639344c922253e94",
+  "title": "한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내(2025.07.17 ~ photo file",
+  "link": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&idx=61691",
+  "source": "인천수출경영자협의회",
+  "author": "",
+  "description": "한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내(2025.07.17 ~ 2025.08.08\n관리자\n2025-07-08 09:41:00\nhit\n1406\n220.121.96.230\n제목: [한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내\n>>자세한 사항\n바로가기\n2025년도 무역의 날 수출의 탑 및 포상 신청 안내\nshare\n담당본부\n무역진흥본부\n담당부서\n무역정책지원실\n사업기간\n2025.07.17 ~ 2025.08.08\n게시글 공유\nURL복사\nTwitter\nFacebook\n출력\n(붙임1)특수유공자부문및추천기관현황.hwpx\n79,872byte\n(붙임2)단체표창수출지원사업추진실적양식(예시).hwpx\n36,352byte\n(붙임3)수출실적의기준및확인및제출서류.hwpx\n98,304byte\n2025년도무역의날유공자포상요령공고(안).hwpx\n36,864byte\n목록",
+  "deadline": "2025-07-08",
+  "posted_date": "2025-07-17",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내(2025.07.17 ~ photo file"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&id"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내(2025.07.17 ~ 2025.08.08 관리자 2025-07-08 09:41:00 hit 1406 220.121.96.230 제목: [한국무역협회]2025년도 무역의 날 수출의 탑 및 포상 신청 안내 >>자세한 사항 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2025-07-08"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

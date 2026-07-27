@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:27",
+  "notice_id": "moel_f84cf8608218998f4778",
+  "title": "[공고] 외국인근로자 지역정착 지원사업 운영 자치단체 추가 모집 공모",
+  "link": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100222",
+  "source": "고용노동부",
+  "author": "",
+  "description": "고용노동부\n국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라!\n정보공개\n국고보조사업\n국고보조사업 공모현황입니다.\n제목\n[공고]외국인근로자 지역정착 지원사업 운영 자치단체 추가 모집 공모\n담당부서\n외국인력담당관\n전화번호\n044-202-7155\n담당자\n이규민\n등록일\n2026-01-06\n고용노동부 공고 제2026-14호\n2026년 「외국인근로자 지역정착 지원사업」운영 자치단체 추가모집 공모 계획을 붙임과 같이 공고합니다.\n첨부\n2026년 외국인근로자 지역정착 지원사업 운영 자치단체 추가모집 시행공고.hwpx\n다운로드\n바로보기\n이전글\n2026년 가사서비스종합지원센터 수행기관 선정 입찰 공고(수정)\n다음글\n2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고\n목록",
+  "deadline": "",
+  "posted_date": "2026-01-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 외국인근로자 지역정착 지원사업 운영 자치단체 추가 모집 공모"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100222"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고용노동부 국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라! 정보공개 국고보조사업 국고보조사업 공모현황입니다. 제목 [공고]외국인근로자 지역정착 지원사업 운영 자치단체 추가 모집 공모 담당부서 외국인력담당관 전화번호 044-202-7155 담당자 이규민 등록일 2026-01-"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:22",
+  "notice_id": "imp_60bf007e_d1e79c8bc90d6b26e781",
+  "title": "『2026년 경기도 제조로봇 도입지원 사업』 제조로봇ㆍAI 융합 실증지원 사업 공고",
+  "link": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29432",
+  "source": "경기테크노파크",
+  "author": "",
+  "description": "공지사항\n공지사항\nHOME\n공고ㆍ안내\n공지사항\n공지사항\n지역기술혁신의 산실, 지식산업 창조의 요람\n『2026년 경기도 제조로봇 도입지원 사업』 제조로봇ㆍAI 융합 실증지원 사업 공고\n번호 :\n29432\n작성자 :\n제조로봇팀\n작성일 :\n2026-06-04\n조회수 :\n801\n홈페이지 :\nhttp://\n첨부파일 :\ngtp260604_oNa6.hwp\ngtp260604_VLn2.hwp\ngtp260604_9456.hwp\ngtp260604_uQQB.hwp\n경기테크노파크 공고 제2026-130호\n『2026년 경기도 제조로봇 도입지원 사업』\n제조로봇ㆍAI 융합 실증지원 사업 공고\n경기도와 (재)경기테크노파크가 도내 제조업의 혁신 촉진과 생산성 향상을 위해 추진하는 「2026년 제조로봇 도입지원 사업」 제조로봇ㆍAI 융합 실증지원을 다음과 같이 공고하오니 많은 참여 바랍니다.\n2026. 6. 4.\n(재)경기테크노파크 원장\n페이스북으로 이동\nx로 이동\n다음글\n이전글\n목록",
+  "deadline": "",
+  "posted_date": "2026-06-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "『2026년 경기도 제조로봇 도입지원 사업』 제조로봇ㆍAI 융합 실증지원 사업 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29432"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 HOME 공고ㆍ안내 공지사항 공지사항 지역기술혁신의 산실, 지식산업 창조의 요람 『2026년 경기도 제조로봇 도입지원 사업』 제조로봇ㆍAI 융합 실증지원 사업 공고 번호 : 29432 작성자 : 제조로봇팀 작성일 : 2026-06-04 조회수 : 801 홈페이지 : h"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:28",
+  "notice_id": "imp_e02ba1cb_74d969c43d567b0def16",
+  "title": "[경기도] 「2026년 경기도 5070 일자리 박람회 with 하나 JOB 매칭 페스타」 개최 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=223&keyfield_s=&search_word_s=&cpage=2&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[경기도] 「2026년 경기도 5070 일자리 박람회 with 하나 JOB 매칭 페스타」 개최 안내\n작성일자\n2026.06.09\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n(붙임) 2026년 경기도 5070 일자리박람회 with 하나 JOB 매칭 페스타.jpg\n목록\n이전글\n[콘텐츠진흥원] 2026년 콘텐츠 법률서비스 지원사업 안내\n다음글\n[시흥시청] 「2026년 2차 착한가격업소·명품점포 방문 이벤트」 안내",
+  "deadline": "",
+  "posted_date": "2026-06-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[경기도] 「2026년 경기도 5070 일자리 박람회 with 하나 JOB 매칭 페스타」 개최 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=223&keyfield_s=&search_word_s=&cpage=2&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[경기도] 「2026년 경기도 5070 일자리 박람회 with 하나 JOB 매칭 페스타」 개최 안내 작성일자 2026.06.09 담당부서 홍보실 문의처 공고문 참조 첨부파일 (붙임) 2026년 경기도 5070 일자리박람회 with 하나 JOB 매칭 페스타.jpg 목록 이전글 [콘텐츠진흥"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[콘텐츠진흥원] 2026년 콘텐츠 법률서비스 지원사업 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[시흥시청] 「2026년 2차 착한가격업소·명품점포 방문 이벤트」 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

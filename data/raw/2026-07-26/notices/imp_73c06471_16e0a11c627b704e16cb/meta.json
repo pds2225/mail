@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:04",
+  "notice_id": "imp_73c06471_16e0a11c627b704e16cb",
+  "title": "2026 경북형 사회적경제 창업학교 수기공모전[7.10(금) 12:00까지]",
+  "link": "http://gbse.or.kr/HOME/gbse/sub.htm?mode=view&mv_data=aWR4PTMzODYmc3RhcnRQYWdlPTAmbGlzdE5vPTk4MCZ0YWJsZT1leF9iYnNfZGF0YV9nYnNlJm5hdl9jb2RlPWdiczE1NjY5NzkzMTgmY29kZT1OMkp1TnNuYU14bW0mc2VhcmNoX2l0ZW09JnNlYXJjaF9vcmRlcj0mb3JkZXJfbGlzdD0mbGlzdF9zY2FsZT0mdmlld19sZXZlbD0mdmlld19jYXRlPSZ2aWV3X2NhdGUyPQ==||",
+  "source": "경상북도사회적경제지원센터",
+  "author": "",
+  "description": "HOME\n알림마당\n공지사항\nb\n공지사항\n2026 경북형 사회적경제 창업학교 수기공모전[7.10(금) 12:00까지]\n등록일\n2026-07-07\n작성자\n경북사경센터\n조회수\n444\n경상북도 사회적경제지원센터에서는 경북형 사회적경제 창업학교 수기공모전을 진행할 예정입니다.\n이에 참가자분들의 수기를 접수하고 있사오니, 많은 참여바랍니다.\n1. 공모명: 2026 경북형 사회적경제 창업학교 수기공모전\n2. 접수기간:\n2026. 7. 10.(금) 12:00까지 접수\n3. 집필대상:\n2026 경북형 사회적경제 창업학교 참가자\n4. 공모주제 및 내용: 창업학교에 관한 자유주제(아래 예시 참고)\n- 창업학교에 참가하면서 느낀 점\n- 창업학교 수업을 들으면서 알게된 사회적경제\n- 같이 참여한 참가자(동기)분들에게 하고 싶은 이야기\n- 앞으로의 포부 등\n5. 접수방법: 원고 작성 후 이메일 접수 gbsecenter@daum.net\n6. 혜택: 상패 증정 및 [최종 선정 3개 수기 경상북도 사회적경제 웹진 탑재]\n7. 수기참고\n-\n2021~2025년 창업학 수기\nhttps://buly.kr/2UlIfV1\n8. 문의: 053-850-4891~4892\n[수기공모 신청서] 2026 경북형 사회적경제 창업학교.hwp\n목록",
+  "deadline": "2026-07-10",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-10",
+    "end": "2026-07-10",
+    "display": "2026-07-10",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 경북형 사회적경제 창업학교 수기공모전[7.10(금) 12:00까지]"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://gbse.or.kr/HOME/gbse/sub.htm?mode=view&mv_data=aWR4PTMzODYmc3RhcnRQYWdlPTAmbGlzdE5vPTk4MCZ0YWJsZT1leF9iYnNfZGF0YV9nYnNlJm5hdl9jb2RlPWdiczE1NjY5NzkzMTgmY2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 알림마당 공지사항 b 공지사항 2026 경북형 사회적경제 창업학교 수기공모전[7.10(금) 12:00까지] 등록일 2026-07-07 작성자 경북사경센터 조회수 444 경상북도 사회적경제지원센터에서는 경북형 사회적경제 창업학교 수기공모전을 진행할 예정입니다. 이에 참가자분들의 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-10"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

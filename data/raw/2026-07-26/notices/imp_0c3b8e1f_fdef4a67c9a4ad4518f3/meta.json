@@ -1,0 +1,75 @@
+{
+  "saved_at": "2026-07-26 19:37:44",
+  "notice_id": "imp_0c3b8e1f_fdef4a67c9a4ad4518f3",
+  "title": "2026�� ����ǽ� �Ʒ�(�ôϾ����Ͻ�)������� �ǽ� �ȳ�",
+  "link": "http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3069&m=01&s_no=1&Return_URL=%2FHome%2Fboard%2Fdefault%2Easp%3Fv%3D1%26s%5Fno%3D1%26m%3D01",
+  "source": "대구경영자총협회",
+  "author": "",
+  "description": "",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026�� ����ǽ� �Ʒ�(�ôϾ����Ͻ�)������� �ǽ� �ȳ�"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3069&m=01&s_no=1&Return_URL=%2FHome%2Fboard%2Fdefault%2Easp%3Fv%3D1%26s%5Fno%3D1%26m%3D01"
+      },
+      "description": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "������ �� ��ư",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

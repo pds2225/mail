@@ -1,0 +1,301 @@
+{
+  "saved_at": "2026-07-26 19:32:11",
+  "notice_id": "PBLN_000000000124701",
+  "title": "모두의 판로 입점을 원하는 모든 희망기업 상품 공개모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124701",
+  "source": "기업마당(Bizinfo)",
+  "author": "중소벤처기업부",
+  "description": "<p>공영홈쇼핑에서 중소기업ㆍ소상공인ㆍ농어민생산자를 대상으로&nbsp;「모두의 판로 입점을 원하는 모든 희망기업 상품 공개모집」을 실시 하오니 많은 관심과 신청 바랍니다.&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 중소기업ㆍ소상공인ㆍ농어민생산자</p><p style=\"line-height: 1.8;\">-&nbsp;TV홈쇼핑을 통한 판로 확대를 원하는 기업의 상품</p><p style=\"line-height: 1.8;\">-&nbsp;지역로컬브랜드로 전국적 판매 확대를 원하는 기업의 상품</p><p style=\"line-height: 1.8;\">-&nbsp;인구감소지역 소재 기업 또는 원재료 사용 제조기업의 상품</p><p style=\"line-height: 1.8;\">※ 자세한 지원대상 공고문 참조&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 소비자상품평가위원회에서 합격한 상품에 한해 실질적 판로기획 지원</p><p style=\"line-height: 1.8;\">- 1차 : 온라인몰(공영샵), 라이브커머스(공영라방)를 통한 상품화 코칭 및 판매지원활동 지원</p><p style=\"line-height: 1.8;\">- 2차 : 시즌성을 고려하여 순차적으로 TV 방송편성 지원</p>\n공영홈쇼핑에서 중소기업ㆍ소상공인ㆍ농어민생산자를 대상으로 「모두의 판로 입점을 원하는 모든 희망기업 상품 공개모집」을 실시 하오니 많은 관심과 신청 바랍니다. ☞ 중소기업ㆍ소상공인ㆍ농어민생산자 - TV홈쇼핑을 통한 판로 확대를 원하는 기업의 상품 - 지역로컬브랜드로 전국적 판매 확대를 원하는 기업의 상품 - 인구감소지역 소재 기업 또는 원재료 사용 제조기업의 상품 ※ 자세한 지원대상 공고문 참조 ☞ 소비자상품평가위원회에서 합격한 상품에 한해 실질적 판로기획 지원 - 1차 : 온라인몰(공영샵), 라이브커머스(공영라방)를 통한 상품화 코칭 및 판매지원활동 지원 - 2차 : 시즌성을 고려하여 순차적으로 TV 방송편성 지원",
+  "deadline": "2026-07-22 ~ 2026-08-21",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-22",
+    "end": "2026-08-21",
+    "display": "2026-07-22 ~ 2026-08-21",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "모두의 판로 입점을 원하는 모든 희망기업 상품 공개모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "중소벤처기업부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124701"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>공영홈쇼핑에서 중소기업ㆍ소상공인ㆍ농어민생산자를 대상으로&nbsp;「모두의 판로 입점을 원하는 모든 희망기업 상품 공개모집」을 실시 하오니 많은 관심과 신청 바랍니다.&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 중소기업ㆍ소상공인ㆍ농어민"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-22 ~ 2026-08-21"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#지역로컬브랜드",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#친환경제품",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#스마트전환",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#원재료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#혁신기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#코칭",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#TV홈쇼핑",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#공영홈쇼핑",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#온라인몰",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#라이브커머스",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#창업기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제조기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#중소벤처기업부",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#제주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#강원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#세종",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#울산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#인천",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#대구",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#내수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "중소벤처기업부"
+}

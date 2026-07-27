@@ -1,0 +1,132 @@
+{
+  "saved_at": "2026-07-26 19:38:56",
+  "notice_id": "imp_1cc848c7_881252e58a9afd40ba88",
+  "title": "강원의료기기전시회(GMES 2026) 우수 제조기업 포상 대상 모집 공고(~7/24)",
+  "link": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=367",
+  "source": "원주의료기기산업진흥원",
+  "author": "",
+  "description": "사업공고 안내\n[시장진출 및 마케팅]\n강원의료기기전시회(GMES 2026) 우수 제조기업 포상 대상 모집 공고(~7/24)\n신청기간\n2026-06-30 ~ 2026-07-24\n신청자격\nGMES 2026 참가기업\n공고번호\n260061\n진행상태\n접수마감\n담당부서/담당자\n글로벌마케팅팀 / 박시은 전임연구원\n신청서류\n붙임. 강원의료기기전시회(GMES) 참가 우수 제조기업 포상 공고문.zip\n우리 재단은 ‘강원의료기기전시회(GMES)’에 참가하여 초청 바이어와의 실질적인 수출 성과가 발생하여,\n강원 의료기기 산업 발전에 기여한 기업을 발굴하여 포상하고자 하오니 많은 신청 바랍니다.\nㅇ (포 상 명) 강원의료기기전시회(GMES) 우수 제조기업\nㅇ (포상규모) 3개사\nㅇ (포상대상) GMES에 참가하여 매칭된 바이어와 수출 실적이 높은 기업(단, 강원 소재 기업에 한함, 수출 실적은 2025년부터 2026년 6월까지 발생한 실적에 한함)\nㅇ (포상내용)\n구 분\n포상내용\n비고\n포상\n·\n강원특별차지도지사 표창\n(1\n개사\n)\n·\n원주시장 표창\n(2\n개사\n)\n※\n수출액이 가장 큰 기업 도지사 표창 수여\n포상\n혜택\n·\n재단이 추진하는 국내\n·\n외 전시회 공동관 차년도 참가비\n(\n원화 납부액으로\n,\n공사비\n)\n1\n회 면제\n· (\n해당전시회\n)\n서울\nKIMES 2027,\n원주\nGMES 2026,\n홍콩\nCosmoprof Asia 2026,\n독일\nMEDICA 2026,\n두바이\nWHX 2027\n· GMES 2026\n전시장 로비 내 홍보패널 설치\n※\n출품료\n(\n외화\n)\n는 지원 불가\n전시회명\n지원 한도\nKIMES\n2\n부스\nGMES\nCosmoprof Asia\n1\n부스\nMEDICA\nWHX\nㅇ (선정방법) 2025년 매출액 기준 구간별로 나누어 선정, GMES 참가 바이어와의 수출 실적이 높은 기업 선정\n* (수출실적 산출기간: 2025 1. 1. ~ 2026. 6. 30.)\nㅇ (신청기간) 공고일 ~\n2026. 7. 24.(금)\nㅇ (신청방법) 신청서류 구비하여 담당자 이메일(pse@wmit.or.kr)로 제출\nㅇ (문의) 글로벌마케팅팀 박시은 전임(pse@wmit.or.kr, 033-760-6139)\n접수가 마감되었습니다.",
+  "deadline": "2026-06-30 ~ 2026-07-24",
+  "posted_date": "2026-06-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-30",
+    "end": "2026-07-24",
+    "display": "2026-06-30 ~ 2026-07-24",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "강원의료기기전시회(GMES 2026) 우수 제조기업 포상 대상 모집 공고(~7/24)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=367"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 안내 [시장진출 및 마케팅] 강원의료기기전시회(GMES 2026) 우수 제조기업 포상 대상 모집 공고(~7/24) 신청기간 2026-06-30 ~ 2026-07-24 신청자격 GMES 2026 참가기업 공고번호 260061 진행상태 접수마감 담당부서/담당자 글로벌마케팅팀 / 박"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-30 ~ 2026-07-24"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "구 분",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "포상내용",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "비고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "포상",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "· 강원특별차지도지사 표창 (1 개사 ) · 원주시장 표창 (2 개사 )",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "※ 수출액이 가장 큰 기업 도지사 표창 수여",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "포상 혜택",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "· 재단이 추진하는 국내 · 외 전시회 공동관 차년도 참가비 ( 원화 납부액으로 , 공사비 ) 1 회 면제 · ( 해당전시회 ) 서울 KIMES 2027, 원주 GMES 2026, 홍콩 Cosmoprof Asia 2026, 독일 MEDICA 2026, 두바이 WHX 2027 · GMES 2026 전시장 로비 내 홍보패널 설치",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "※ 출품료 ( 외화 ) 는 지원 불가",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

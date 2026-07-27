@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:45",
+  "notice_id": "insupport_d551d06791fbe9e731fa",
+  "title": "[마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감)",
+  "link": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=834&page=2",
+  "source": "인천소상공인종합지원센터",
+  "author": "",
+  "description": "[생애주기지원팀] [마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감) 상세보기\n[생애주기지원팀] [마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감)\n조회\n5027\n생애주기지원\n2026-06-17 10:00:09\n파일\n홈페이지 게시.png\n소상공인 경영환경개선 지원 공고문(축약).pdf (\nSize\n: 182 Kbyte /\nDown\n: 0)\n소상공인 경영환경개선 지원 공고문(상세).pdf (\nSize\n: 417 Kbyte /\nDown\n: 0)\n소상공인 경영환경개선 지원 관련 서식.hwp (\nSize\n: 240 Kbyte /\nDown\n: 0)\n신청 접수 바로가기",
+  "deadline": "",
+  "posted_date": "2026-06-17",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=834&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[생애주기지원팀] [마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감) 상세보기 [생애주기지원팀] [마감] 2026년 소상공인 경영환경개선 지원사업 공고(6/30일 18시 마감) 조회 5027 생애주기지원 2026-06-17 10:00:09 파일 홈페이지 게시"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

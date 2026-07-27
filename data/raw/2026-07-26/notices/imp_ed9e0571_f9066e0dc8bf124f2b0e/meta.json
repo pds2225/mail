@@ -1,0 +1,179 @@
+{
+  "saved_at": "2026-07-26 19:37:11",
+  "notice_id": "imp_ed9e0571_f9066e0dc8bf124f2b0e",
+  "title": "[안산시] 2026년 기업지원 시책안내 책자 배포",
+  "link": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4171&cpage=2&rows=10&condition=&keyword=&show=&cat=",
+  "source": "기업 SOS",
+  "author": "",
+  "description": "제목\n[안산시] 2026년 기업지원 시책안내 책자 배포\n공개여부\n공개\n작성자\n이서윤\n등록일\n2026-05-22\n2026년 안산시 중소기업 지원시책 책자를 붙임과 같이 게시합니다.\n책자는 자금지원 / 창업 및혁신성장 사업화 지원 / 첨단제조 및 로봇기술 혁신 지원사업 / 기업민원 처리 등\n실질적으로 기업 지원에 도움이 될 수 있도록 각 부서 및 유관기관(경기테크노파크 등)의 지원 내용을 포함하고 있습니다.\n사업별 지원대상, 시기, 절차 등을 참고하시어 기업 경영에 도움이 되시길 바랍니다.\n사업별 문의사항은 각 사업별 하단 문의처를, 기타 문의사항은 기업지원팀 기업애로 담당(031-481-2624)로 전화 주시기 바랍니다.\n감사합니다.\n파일\n전체 다운로드\n2026 중소기업 지원시책(최종).pdf",
+  "deadline": "",
+  "posted_date": "2026-05-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[안산시] 2026년 기업지원 시책안내 책자 배포"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4171&cpage=2&rows=10&condition=&keyword=&show=&cat="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 [안산시] 2026년 기업지원 시책안내 책자 배포 공개여부 공개 작성자 이서윤 등록일 2026-05-22 2026년 안산시 중소기업 지원시책 책자를 붙임과 같이 게시합니다. 책자는 자금지원 / 창업 및혁신성장 사업화 지원 / 첨단제조 및 로봇기술 혁신 지원사업 / 기업민원 처리 등"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안산시] 2026년 기업지원 시책안내 책자 배포",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공개여부",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공개",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "이서윤",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-05-22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2026년 안산시 중소기업 지원시책 책자를 붙임과 같이 게시합니다. 책자는 자금지원 / 창업 및혁신성장 사업화 지원 / 첨단제조 및 로봇기술 혁신 지원사업 / 기업민원 처리 등 실질적으로 기업 지원에 도움이 될 수 있도록 각 부서 및 유관기관(경기테크노파크 등)의 지원 내용을 포함하고 있습니다. 사업별 지원대상, 시기, 절차 등을 참고하시어 기업 경영에 도움이 되시길 바랍니다. 사업별 문의사항은 각 사업별 하단 문의처를, 기타 문의사항은 기업지원팀 기업애로 담당(031-481-2624)로 전화 주시기 바랍니다. 감사합니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전체 다운로드 2026 중소기업 지원시책(최종).pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "이전,다음 게시물 목록을 볼 수 있습니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안산시] 2026 일본 FIW 안산시 참관단 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[의정부시] 2026년 의정부시 기업 공감 맞춤형 핵심직무과정 참여기업 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

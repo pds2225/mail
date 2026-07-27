@@ -15,7 +15,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import coverage_alert as ca  # noqa: E402
+from mail_core.operations import coverage_alert as ca  # noqa: E402
 
 
 def _row(**kw) -> dict:
@@ -272,20 +272,24 @@ def test_classify_error_becomes_p0_row_not_exception():
 
 
 # ── §5-8. 기준선 없는 신규 사이트 / §5-9. 실제 0건인 정상 상황 ───────────────
-def test_new_site_zero_items_is_p1_baseline_insufficient():
+def test_new_site_zero_items_is_not_risky_without_baseline():
+    """기준선 없는 신규 0건은 위험 등급을 주지 않는다(오탐 방지)."""
     report = ca.classify_source_status(
         _row(item_count=0, posted_parsed_count=0, detail_link_ok_count=0), [])
-    assert report["status"] == ca.COLLECT_STATUS_ZERO_SUSPICIOUS
-    assert report["risk_level"] == "P1"
-    assert report["reason_codes"] == [ca.REASON_BASELINE_INSUFFICIENT]
+    assert report["status"] == ca.COLLECT_STATUS_SUCCESS
+    assert report["risk_level"] == ""
+    assert report["reason_codes"] == []
+    assert report["detail"].get("baseline_insufficient") is True
 
 
 def test_baseline_with_two_runs_is_insufficient():
     report = ca.classify_source_status(
         _row(item_count=0, posted_parsed_count=0, detail_link_ok_count=0),
         _history(n=2))
-    assert report["reason_codes"] == [ca.REASON_BASELINE_INSUFFICIENT]
+    assert report["status"] == ca.COLLECT_STATUS_SUCCESS
+    assert report["risk_level"] == ""
     assert report["baseline_n"] == 2
+    assert report["detail"].get("baseline_insufficient") is True
 
 
 def test_baseline_uses_last_seven_runs_median():
@@ -337,7 +341,8 @@ def test_summary_is_degraded_when_any_p0():
 def test_summary_is_ok_when_all_healthy():
     reports = ca.classify_sources([_row(site_id="a")], {"a": _history()})
     summary = ca.summarize_run_status(reports, {})
-    assert summary["status"] == "OK"
+    assert summary["status"] == ca.RUN_STATUS_SUCCESS
+    assert summary["send_hold"] is False
     assert summary["p0_count"] == 0 and summary["p1_count"] == 0
 
 
@@ -346,7 +351,9 @@ def test_summary_includes_missing_sources_from_exec_check():
     rows = [_row(site_id="a")]
     check = ca.verify_source_execution(sites, rows)
     summary = ca.summarize_run_status(ca.classify_sources(rows, {"a": _history()}), check)
-    assert summary["status"] == "DEGRADED"
+    # 1/2 missing ≥ 30% → FAILED (ADR)
+    assert summary["status"] == ca.RUN_STATUS_FAILED
+    assert summary["send_hold"] is True
     assert "gone" in summary["recheck_site_ids"]
 
 
@@ -363,7 +370,8 @@ def test_payload_and_markdown_contain_required_fields():
     payload = ca.build_coverage_payload(rows, reports, summary, exec_check=check,
                                         generated_at="2026-07-23 08:00 KST")
 
-    assert payload["run_status"] == "DEGRADED"
+    assert payload["run_status"] == ca.RUN_STATUS_FAILED
+    assert payload["send_hold"] is True
     assert payload["active_expected"] == 2 and payload["executed"] == 1
     assert payload["execution_complete"] is False
     source = next(s for s in payload["sources"] if s["site_id"] == "a")
@@ -372,13 +380,13 @@ def test_payload_and_markdown_contain_required_fields():
         assert key in source
 
     md = ca.render_coverage_markdown(payload)
-    assert "DEGRADED" in md and "누락위험" in md
+    assert "FAILED" in md and "send_hold" in md
     assert "사라진소스" in md          # 미실행 소스도 보고서에 나타난다
     assert "P0" in md
 
     alert = ca.render_p0_alert_markdown(payload)
     assert "P0 수집 누락 위험" in alert
-    assert "정상 수집 공고 발송은 계속 진행됨" in alert
+    assert "send_hold" in alert or "보류" in alert
 
 
 def test_p0_alert_message_omits_meaningless_count_for_failed_source():

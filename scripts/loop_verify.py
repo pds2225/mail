@@ -26,8 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 KST = timezone(timedelta(hours=9))
 PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
 WORK_ASSETS = (
-    "RULES.md",
-    "TASKS.md",
+    "docs/project/RULES.md",
+    "docs/project/TASKS.md",
     "auto_dev/loops.json",
     "auto_dev/eval_rubric.md",
     "auto_dev/exit_conditions.md",
@@ -161,7 +161,7 @@ def check_loops_schema() -> dict:
 
 
 def check_tasks_structure() -> dict:
-    path = ROOT / "TASKS.md"
+    path = ROOT / "docs" / "project" / "TASKS.md"
     if not path.exists():
         return {"id": "D3", "name": "tasks_structure", "ok": False, "issues": ["TASKS.md missing"]}
     text = path.read_text(encoding="utf-8")
@@ -188,7 +188,7 @@ def check_tasks_structure() -> dict:
 
 def check_pending_backlog() -> dict:
     """드리프트: PENDING 과다 적체는 L2 개입 신호."""
-    path = ROOT / "TASKS.md"
+    path = ROOT / "docs" / "project" / "TASKS.md"
     text = path.read_text(encoding="utf-8") if path.exists() else ""
     import re
 

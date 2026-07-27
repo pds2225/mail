@@ -13,7 +13,7 @@ from playwright.sync_api import sync_playwright
 
 KST = timezone(timedelta(hours=9))
 URL = "https://thevc.kr/grants"
-OUT = Path(__file__).resolve().parent.parent / "logs" / "poc_thevc_result.json"
+OUT = Path(__file__).resolve().parent.parent / "var" / "logs" / "poc_thevc_result.json"
 MAX_SAMPLE = 10
 
 

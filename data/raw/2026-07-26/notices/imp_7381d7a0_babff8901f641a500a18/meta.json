@@ -1,0 +1,103 @@
+{
+  "saved_at": "2026-07-26 19:39:02",
+  "notice_id": "imp_7381d7a0_babff8901f641a500a18",
+  "title": "[필독] 노쇼사기 조심하세요!",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=412241&searchCtgry=&searchKrwd=&pageIndex=2&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n[필독] 노쇼사기 조심하세요!\n핫이슈\n내용\n관공서, 유명인을 사칭하여 자영업자를 대상으로 하는 '노쇼사기'가 급증하고 있습니다.\n* 노쇼사기란? 단체 예약을 미끼로 고가 물품을 대신 사게 한 뒤, 예약 당일 나타나지 않는 신종 사기를 뜻합니다.\n[노쇼사기 예방법]\n1. 예약자 신분 확인\n2. 해당 기관, 사무실에 직접 연락\n3. 선결재 또는 예약금 요구하기\n노쇼사기 범죄로 인해 피해가 발생하지 않도록 예방하시기 바랍니다.\n사진 확대보기\n파일\njpg 파일\n노쇼사기 예방 포스터.jpg\n미리보기\n(파일크기 : 1.8MB,\n다운로드 : 121회)\n목록",
+  "deadline": "",
+  "posted_date": "2025-09-02",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[필독] 노쇼사기 조심하세요!"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=412241&searchCtgry=&searchKrwd=&pageIndex=2&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 [필독] 노쇼사기 조심하세요! 핫이슈 내용 관공서, 유명인을 사칭하여 자영업자를 대상으로 하는 '노쇼사기'가 급증하고 있습니다. * 노쇼사기란? 단체 예약을 미끼로 고가 물품을 대신 사게 한 뒤, 예약 당일 나타나지"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "[필독] 노쇼사기 조심하세요! 핫이슈",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관공서, 유명인을 사칭하여 자영업자를 대상으로 하는 '노쇼사기'가 급증하고 있습니다. * 노쇼사기란? 단체 예약을 미끼로 고가 물품을 대신 사게 한 뒤, 예약 당일 나타나지 않는 신종 사기를 뜻합니다. [노쇼사기 예방법] 1. 예약자 신분 확인 2. 해당 기관, 사무실에 직접 연락 3. 선결재 또는 예약금 요구하기 노쇼사기 범죄로 인해 피해가 발생하지 않도록 예방하시기 바랍니다. 사진 확대보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "jpg 파일 노쇼사기 예방 포스터.jpg 미리보기 (파일크기 : 1.8MB, 다운로드 : 121회)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

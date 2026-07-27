@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:09",
+  "notice_id": "imp_761f4e5f_4c8eed532a9d59cf10b8",
+  "title": "「수의계약」체결 내역 (2026년 4월)",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2901&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2026.05.15\n조회수\n220회\n접수기간\n2026-05-01 ~ 2026-05-31\n부서\n경영전략팀\n문의처\n062-531-6667~8\n관련링크\n본문\n2026년 광주사회적경제지원센터 수의계약 체결 내역입니다.(2026. 4. 30. 기준)\n첨부파일\n광주사회적경제지원센터 수의계약 내역2026년 4월.pdf\n다운로드\n이전글\n2026년 4월 사회적경제기업 현황 및 신규기업 안내\n다음글\n2026년 사회적경제 교육 : 소셜 창업랩",
+  "deadline": "2026-05-01 ~ 2026-05-31",
+  "posted_date": "2026-05-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-01",
+    "end": "2026-05-31",
+    "display": "2026-05-01 ~ 2026-05-31",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「수의계약」체결 내역 (2026년 4월)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2901&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2026.05.15 조회수 220회 접수기간 2026-05-01 ~ 2026-05-31 부서 경영전략팀 문의처 062-531-6667~8 관련링크 본문 2026년 광주사회적경제지원센터 수의계약 체결 내역입니다.(2026. 4. 30. 기준) 첨부파일 광주사회적경제지원"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-01 ~ 2026-05-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

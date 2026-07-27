@@ -1,0 +1,353 @@
+{
+  "saved_at": "2026-07-26 19:34:03",
+  "notice_id": "custom_f4574ebb_1ca75b63b2957b79d642",
+  "title": "온라인 참가신청",
+  "link": "https://www.gokams.or.kr/02_apply/event_apply_list.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n지원/신청\n온라인 참가 신청\n교육·행사 내용, 기간, 장소 등을 꼭 확인하시기 바랍니다.\n비밀번호 오류 시 접수메일 확인 또는 담당자에게 문의하여 주시기 바랍니다.\n제목\n내용\n온라인 참가신청 전체보기 목록\n2026 뮤지컬 창작진 글로벌 아카데미 참가 신청\n2026-08-13 ~ 12-23\n2026-07-31\n2026 예술기업 지원사업 설명회 안내\n2026-02-24\n2026-02-19\n2025 공연예술조사(2024년 기준) 보고서 신청 접수(선착순)\n2026-02-03 ~ 02-13\n2026-02-13\n2025 K-뮤지컬 지원사업 결과공유회 참가자 모집\n2025-12-12\n2025-12-10\n2025 미술시장조사(2024년 기준) 보고서 신청 접수\n2025-11-24 ~ 11-28\n2025-11-21\n2026년 공연예술 지역유통 지원사업 사업설명회 안내\n2025-10-18\n2025-10-17\n2025 예술기업 지원사업 설명회\n2025-02-14\n2025-02-12\n2025 예술기업 지원사업 설명회\n2025-02-14\n2025-02-12\n2024 미술시장조사(2023년 기준) 보고서 신청 접수\n2025-01-13 ~ 01-17\n2025-01-17\n2024 공연예술조사(2023년 기준) 보고서 신청 접수(선착순)\n2024-12-02 ~ 12-13\n2024-12-13\n1\n현재페이지\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+  "deadline": "",
+  "posted_date": "2026-08-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "온라인 참가신청"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/02_apply/event_apply_list.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 지원/신청 온라인 참가 신청 교육·행사 내용, 기간, 장소 등을 꼭 확인하시기 바랍니다. 비밀번호 오류 시 접수메일 확인 또는 담당자에게 문의하여 주시기 바랍니다. 제목 내용 온라인 참가신청 전체보기 목록 2026 뮤지컬 창작진 글로벌 아카데미 참가 신청 2026-08-13 ~"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "온라인 참가신청 전체보기 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026 뮤지컬 창작진 글로벌 아카데미 참가 신청",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-13 ~ 12-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026 예술기업 지원사업 설명회 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 공연예술조사(2024년 기준) 보고서 신청 접수(선착순)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-03 ~ 02-13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 K-뮤지컬 지원사업 결과공유회 참가자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-12-12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-12-10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 미술시장조사(2024년 기준) 보고서 신청 접수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-11-24 ~ 11-28",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-11-21",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 공연예술 지역유통 지원사업 사업설명회 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-10-18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-10-17",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 예술기업 지원사업 설명회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-02-14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-02-12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 예술기업 지원사업 설명회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-02-14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-02-12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024 미술시장조사(2023년 기준) 보고서 신청 접수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-01-13 ~ 01-17",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-01-17",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024 공연예술조사(2023년 기준) 보고서 신청 접수(선착순)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-02 ~ 12-13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

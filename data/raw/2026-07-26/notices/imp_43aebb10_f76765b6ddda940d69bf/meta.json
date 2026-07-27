@@ -1,0 +1,164 @@
+{
+  "saved_at": "2026-07-26 19:38:13",
+  "notice_id": "imp_43aebb10_f76765b6ddda940d69bf",
+  "title": "[2026-060호]2026년 세종 지역특화 프로젝트 레전드50+2.0 기업진단 및 컨설팅 참여기업 모집",
+  "link": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1987",
+  "source": "세종테크노파크",
+  "author": "",
+  "description": "페이지 정보\n작성자\n세종테크노파크\n댓글\n0건\n조회\n153회\n작성일\n26-07-22 16:43\n사업분야\n기업지원(레전드50+2.0)\n접수기간\n2026-07-23 ~ 2026-08-10\n주관기관명\n(재)세종테크노파크\n시행기관명\n(재)세종테크노파크\n담당자명\n신유철 전임연구원\n담당자메일\nyc0326@sjtp.or.kr\n담당자 연락처\n044-850-2144\n본문\n첨부파일\n[붙임] 2026년 세종 지역특화 프로젝트 레전드 50 2.0 기업진단 및 컨설팅 참여 기업모집 공고문.hwp\n(83.5K)\n36회 다운로드 | DATE : 2026-07-22 16:43:23\n[붙임] 사업신청서.hwp\n(87.5K)\n14회 다운로드 | DATE : 2026-07-22 16:43:23\n목록\n이전글\n[2026-061호] 2026년 세종테크노파크 본관동 입주기업 비즈니스 고도화 지원 프로그램 참여기업 모집 2차 공고\n26.07.22\n다음글\n2026년 세종 성장사다리지원사업 연계 성장브릿지(정부과제 기획지원)사업 공고\n26.07.18",
+  "deadline": "2026-07-23 ~ 2026-08-10",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-10",
+    "display": "2026-07-23 ~ 2026-08-10",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[2026-060호]2026년 세종 지역특화 프로젝트 레전드50+2.0 기업진단 및 컨설팅 참여기업 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1987"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성자 세종테크노파크 댓글 0건 조회 153회 작성일 26-07-22 16:43 사업분야 기업지원(레전드50+2.0) 접수기간 2026-07-23 ~ 2026-08-10 주관기관명 (재)세종테크노파크 시행기관명 (재)세종테크노파크 담당자명 신유철 전임연구원 담당자메일 yc0"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-10"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사업분야",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기업지원(레전드50+2.0)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23 ~ 2026-08-10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "주관기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(재)세종테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "시행기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(재)세종테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "신유철 전임연구원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "담당자메일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "yc0326@sjtp.or.kr",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자 연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "044-850-2144",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

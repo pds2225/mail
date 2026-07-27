@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:40",
+  "notice_id": "ic_yeonsu_a5b16f1e7d2464615bc4",
+  "title": "수영장 염소가스 사고 예방 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118966&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n수영장 염소가스 사고 예방 안내\n작성자\n환경보전과\n작성일\n2026년 7월 23일\n조회수\n58\n담당부서\n환경보전과\n전화번호\n032-749-7913\n첨부파일\n수영장_염소가스_사고_예방_홍보자료.pdf (\n1.87MB)\n미리보기\n'소독제와 pH조절제가 혼합되면 유족성 염소가스가 발생합니다!'\n'두 물질이 혼합도지 않도록 각각의 용기 확인 후 주입하세요!'\n◎ 안전관리 대책\n1. 작업 전 : 시설표기 확인 - MSDS확인 - 물질 별 분리보관 여부 확인 - 교육 실시\n2. 직업 중 : 개인보호구 착용 - 용기 주입구 확인\n3. 작업 후 :  취급 시설 관리 - 건강상태 확인\n◎ 안전관리 대책 준수\n1. 오주입 방지를 위한 시설 표기 명확화\n2. 작업 시 모니터링 및 관리 강화\n◈ 유해화학물질 누출 사고 발생 시 즉시 대피 후 119 또는 화학물질안전원(043-830-4120~4122)으로 즉시 신고해 주세요.\n자세한 내용은 첨부된 자료를 참고해주시기 바랍니다.\n목록\n이전글\n[동춘2동 주민자치회] <2026 에코한마당> 아나바다 부스 참여자 모집\n다음글\n「2026년도 연수구 건축 아이디어 콘테스트」 참가 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "수영장 염소가스 사고 예방 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118966&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 수영장 염소가스 사고 예방 안내 작성자 환경보전과 작성일 2026년 7월 23일 조회수 58 담당부서 환경보전과 전화번호 032-749-7913 첨부파일 수영장_염소가스_사고_예방_홍보자료.pdf ("
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,133 @@
+{
+  "saved_at": "2026-07-26 19:38:01",
+  "notice_id": "imp_d8f131f3_e916a53dc764e3934279",
+  "title": "[중소기업 육성기금_구매조건자금] 2026년 하반기 구매조건 생산지원자금 지원 공고",
+  "link": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0138&menuKey=TOfnnvp207",
+  "source": "대전일자리경제진흥원",
+  "author": "",
+  "description": "사업공고\n사업공고\n홈\n지원사업 안내\n사업공고\n사업공고\n공유하기\n페이스북\nX\n블로그\n카카오톡\n링크복사\n닫기\n인쇄\n공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수\n공고명\n[중소기업 육성기금_구매조건자금] 2026년 하반기 구매조건 생산지원자금 지원 공고\n접수기간\n2026-07-27 ~ 2026-12-31\n공고담당자\n기업혁신성장팀 | 박미영\n연락처\n042-380-3081\n조회수\n42\n기타사항\n※ 구매조건 생산지원자금은 대전시가 직접대출하거나 보증서를 발급하는 사업이 아니며, 분기별 공공자금관리기금 대출금리를 적용하여 대출이 실행되는 자금입니다.\n※ 분기별 변동금리\n(2026년 3분기 금리 : 3.67%(변동 기준 7.10~ 10.9 / 2026년 2분기 금리 : 3.26% (변동 기준 4.10 ~ 7.9) / 2026년 1분기 금리 : 2.83% (변동기준 1.10 ~ 4.9))\n-\n분기별 공공자금 관리기금 대출금리\n: 공공자금관리기금(기재부 %)-차감금리(0.93%)+취급수수료(0.8%)\n※ 본 자금은 신규 대출에 한해 지원되며, 기존 대출 상환 및 대환대출은 불가합니다.\n※ 구매조건 생산지원자금은 제품제조에 필요한 자재구매비용에 대한 지원이며, 명세서와 계약서 및 견적서의 내용은 일치해야 합니다.\n※ 예산 소진 시 신청이 완료되더라도 지원이 취소될 수 있습니다.\n※ 신청 전 공고문 및 유의사항을 반드시 확인하시기 바랍니다.\n※ 기업정보 및 연락처 등 신청 정보를 정확히 입력해 주시기 바랍니다.\n※ 추천서 발급 안내(문자·이메일) 수신 후 마이페이지에서 추천서를 출력하여 은행에 제출하시기 바랍니다.\n※ 처리기간은 신청일로부터 약 20일 소요되며, 보완 여부에 따라 변동될 수 있습니다.\n※ 자금 실행 완료 후 타은행으로 변경(대환) 불가합니다.\n첨부파일\n2026년 하반기 중소기업 구매조건 생산지원자금 지원 공고문(신청서 포함).hwpx\n(106,978 byte)\n구매조건생산자금 유의사항.hwp\n(88,576 byte)\n사업신청\n목록",
+  "deadline": "2026-07-27 ~ 2026-12-31",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[중소기업 육성기금_구매조건자금] 2026년 하반기 구매조건 생산지원자금 지원 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0138&menuKey=TOfnnvp207"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 사업공고 홈 지원사업 안내 사업공고 사업공고 공유하기 페이스북 X 블로그 카카오톡 링크복사 닫기 인쇄 공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수 공고명 [중소기업 육성기금_구매조건자금] 2026년 하반기 구매조건 생산지원자금 지원 공고 접수기간 2026-07-"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-27 ~ 2026-12-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "공고명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[중소기업 육성기금_구매조건자금] 2026년 하반기 구매조건 생산지원자금 지원 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-27 ~ 2026-12-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기업혁신성장팀 | 박미영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "042-380-3081",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "42",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

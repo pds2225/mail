@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:09",
+  "notice_id": "imp_05ecda5b_821256c56bf1f0c19d2e",
+  "title": "[강동구] 고덕강일 7·8단지 사회적기업 공간 입주기업 모집 재공고 (~7.27.)",
+  "link": "https://sehub.net/archives/2156743",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "사회적경제 공지\n[강동구] 고덕강일 7·8단지 사회적기업 공간 입주기업 모집 재공고 (~7.27.)\n2026-07-13\n조회 : 67\n댓글 :\n0\n주최/주관 : 강동구/강동구 사회적경제지원센터\n문의 전화 : 02-3425-9334\n문의 메일 : kdkim@gd.go.kr\n관련링크 :\nhttps://gdse.org/notice/?mod=document&uid=1086#kboard-document\n강동구-고덕강일-7-8단지-사회적기업-공간-입주기업-모집-재공고문.hwp\n등-별지서식.hwp\n자세한 내용은 첨부파일의 공고문 또는 원문 링크 접속 후 확인해주시기 바랍니다.\n첨부파일\n강동구-고덕강일-7-8단지-사회적기업-공간-입주기업-모집-재공고문\n(65 kB)\n등-별지서식\n(77 kB)\n강동구-고덕강일-7-8단지-사회적기업-공간-입주기업-모집-재공고문\n등-별지서식\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "2026-07-27",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[강동구] 고덕강일 7·8단지 사회적기업 공간 입주기업 모집 재공고 (~7.27.)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2156743"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사회적경제 공지 [강동구] 고덕강일 7·8단지 사회적기업 공간 입주기업 모집 재공고 (~7.27.) 2026-07-13 조회 : 67 댓글 : 0 주최/주관 : 강동구/강동구 사회적경제지원센터 문의 전화 : 02-3425-9334 문의 메일 : kdkim@gd.go.kr 관련링크 : h"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-27"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

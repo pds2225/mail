@@ -1,0 +1,163 @@
+{
+  "saved_at": "2026-07-26 19:39:11",
+  "notice_id": "imp_3c273d70_5c75f7a4213a1abbdeae",
+  "title": "2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내",
+  "link": "https://www.innobiz.net/company/company1_view.asp?Seq=426&Page=2&SearchKey=&SearchValue=",
+  "source": "이노비즈협회(사)중소기업기술혁신",
+  "author": "",
+  "description": "Global leader\n미래지향적인 기술혁신기업 이노비즈와 함께하세요!\n공지사항\n>\n기업마당\n>\n공지사항\n공지사항 상세보기\n제목\n2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내\n작성자\n관리자\n등록일\n2026-04-15\n첨부파일\n2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내\n오는 11월 개최되는 '2026 중소기업 기술·경영 혁신대전(K-INNOSHOW 2026)'과 관련하여, 중소벤처기업부에서 「기술혁신 유공자 포상」 후보자를 모집하오니 관련 기업 및 기관의 많은 관심과 신청 바랍니다.\n1. 포상 분야 및 대상\n기술혁신 분야: 기술혁신 분야 중소기업 임직원 (총 57점 규모)\n기술협력(단체/개인(대학/연구기관)) 분야: 대학·연구기관 관계자 및 단체 (총 20점* 규모)\n* 단체/개인(대학/연구기관)부문, 개인(지원기관) 부문 포함 총 20점 규모\n2. 신청 기간\n2026. 04. 15(수) ~ 05. 14(목) 18:00까지 (제출기한 엄수)\n3. 추진 절차\n1차 서면평가 ➔ 2차 현장평가 ➔ 3차 종합평가(대면)\n4. 상세 안내 및 접수 링크 [공지사항 확인]\n중소벤처기업부 :\n바로보기\n이노비즈협회 :\n바로보기\n[분야별 포상 신청]\n기술혁신(개인) 분야 신청:\n링크 바로가기\n기술협력(단체/개인(대학/연구기관)) 분야 신청:\n링크 바로가기\n5. 문의처\n이노비즈협회 신선혜 과장 (031-628-9683, shinsugar@innobiz.or.kr) / 박선호 주임 (031-628-9674, shpark01@innobiz.or.kr)\n감사합니다.\n다음 게시물 목록\n이전글\n「기술혁신형 중소기업(Inno-Biz) 제도 운영규정」 일부개정(안) 행정예고\n다음글\n지역별 관할 지방중소벤처기업청 안내\n목록",
+  "deadline": "",
+  "posted_date": "2026-04-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.innobiz.net/company/company1_view.asp?Seq=426&Page=2&SearchKey=&SearchValue="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "Global leader 미래지향적인 기술혁신기업 이노비즈와 함께하세요! 공지사항 > 기업마당 > 공지사항 공지사항 상세보기 제목 2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내 작성자 관리자 등록일 2026-04-15 첨부파일 2026년 중소기업 기술혁신 유공자 포상 후보자"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공지사항 상세보기",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-04-15",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내 오는 11월 개최되는 '2026 중소기업 기술·경영 혁신대전(K-INNOSHOW 2026)'과 관련하여, 중소벤처기업부에서 「기술혁신 유공자 포상」 후보자를 모집하오니 관련 기업 및 기관의 많은 관심과 신청 바랍니다. 1. 포상 분야 및 대상 기술혁신 분야: 기술혁신 분야 중소기업 임직원 (총 57점 규모) 기술협력(단체/개인(대학/연구기관)) 분야: 대학·연구기관 관계자 및 단체 (총 20점* 규모) * 단체/개인(대학/연구기관)부문, 개인(지원기관) 부문 포함 총 20점 규모 2. 신청 기간 2026. 04. 15(수) ~ 05. 14(목) 18:00까지 (제출기한 엄수) 3. 추진 절차 1차 서면평가 ➔ 2차 현장평가 ➔ 3차 종합평가(대면) 4. 상세 안내 및 접수 링크 [공지사항 확인] 중소벤처기업부 : 바로보기 이노비즈협회 : 바로보기 [분야별 포상 신청] 기술혁신(개인) 분야 신청: 링크 바로가기 기술협력(단체/",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "다음 게시물 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「기술혁신형 중소기업(Inno-Biz) 제도 운영규정」 일부개정(안) 행정예고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지역별 관할 지방중소벤처기업청 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

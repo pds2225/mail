@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:27",
+  "notice_id": "ema_61916504aa186b92b07b",
+  "title": "인천테크노파크]2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원",
+  "link": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&idx=61881",
+  "source": "인천수출경영자협의회",
+  "author": "",
+  "description": "인천테크노파크]2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원 공고\n관리자\n2025-08-13 10:12:00\nhit\n252\n220.121.96.230\n제목 : [\n인천테크노파크]\n2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원 공고\n신청 기간 :\n2025.08.11(월) 10:00 ~ 2025.12.26(금) 18:00\n>> 자세한 사항\n바로가기\n■ 2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원공고\n지원목적 : 인천시 소재 제조업 중소기업 대상 저리의 시설투자자금 융자를 통한 제조업의 생산성 향상 및 생산기반 조성을 위한\n직접대출 및 보증이 아님으로\n대출가능여부는 사전에 업체가 은행에 직접 확인해야 합니다.\n자세한 사항은 첨부파일 내\n공고문\n을 필히 확인하시길 바랍니다.\n-\n신청기간 : 2025.\n8. 11.(월) 10:00\n~ 재원 소진시\n(하반기 공고)\n-\n신청방법 : 온라인 신청(BizOK)\n-\n신청방법 : 회원가입 - 기업정보등록 - 등록증/인증서 내 서류 등록 - 자금신청 (매뉴얼 참고)\n-\n자금신청 유의사항\nㆍ\n세부 지원자금 체크 : 기계, 기계우대(스마트공장도입기업), 공장/연구소\nㆍ\n기계공장확보자금은 한개의 접수페이지에서 신청하며, 기계자금과 공장자금 2건을 신청할 경우\n각각의 자금으로 2번 신청해야함\nㆍ\n사용계획서 : 상단 첨부파일에서 소정양식 다운로드하여 작성(필수)\nㆍ\n기업정보관리 등록증/인증서 정보에서 업로드하지 못한 서류는 신청시 첨부\n게시글 공유\nURL복사\nTwitter\nFacebook\n출력\n목록",
+  "deadline": "",
+  "posted_date": "2025-08-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "인천테크노파크]2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=2&id"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "인천테크노파크]2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원 공고 관리자 2025-08-13 10:12:00 hit 252 220.121.96.230 제목 : [ 인천테크노파크] 2025년 중소기업육성자금 구조고도화자금(기계, 공장 확보자금)_하반기 지원 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

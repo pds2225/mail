@@ -1,0 +1,184 @@
+{
+  "saved_at": "2026-07-26 19:37:08",
+  "notice_id": "imp_ed9e0571_ad957c1fd11f38df3421",
+  "title": "[안양시] 2026년 안양시 우수기업 선정 안내",
+  "link": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4179&cpage=2&rows=10&condition=&keyword=&show=&cat=",
+  "source": "기업 SOS",
+  "author": "",
+  "description": "제목\n[안양시] 2026년 안양시 우수기업 선정 안내\n공개여부\n공개\n작성자\n김아름\n등록일\n2026-06-08\n[2026년도 안양시 우수기업 선정]\n1. 접수기간: 2026. 6. 15.(월) ~ 7. 24.(금)  ※접수 마감일 18시까지 도착분에 한함\n2. 대상기업: 제조업, 지식서비스산업, 벤처기업\n3. 신청요건\n가) 매출액 50억원 이상, 종업원수 20명 이상(2025.12월말 기준)\n나) 관내 사업기간 2년 이상(공고일 기준)\n다) 세금(국세, 지방세) 및 과태료(세외수입) 완납(접수마감일까지)\n4. 우수기업 인센티브\n가) 중소기업육성자금 이자차액보전 우대 지원(0.5% 가산)\n나) 지방세 세무조사 유예(3년)\n다) 市 기업지원시책 및 사업 참여시 우대(5점)\n라) 市 공영주차장 이용시 주차요금 감면(대표자명의 차량 1대)\n마) 우수기업 인증서 수여 및 인증판 부착\n5. 제출처: (우)14053 경기도 안양시 동안구 시민대로235, 안양시청 7층 기업경제과\n6. 문 의: 안양시 기업경제과(☎031-8045-2552)\n파일\n전체 다운로드\n2026년 안양시 우수기업 선정 공고문.hwpx",
+  "deadline": "2026-06-15 ~ 2026-07-24",
+  "posted_date": "2026-06-08",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-15",
+    "end": "2026-07-24",
+    "display": "2026-06-15 ~ 2026-07-24",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[안양시] 2026년 안양시 우수기업 선정 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4179&cpage=2&rows=10&condition=&keyword=&show=&cat="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 [안양시] 2026년 안양시 우수기업 선정 안내 공개여부 공개 작성자 김아름 등록일 2026-06-08 [2026년도 안양시 우수기업 선정] 1. 접수기간: 2026. 6. 15.(월) ~ 7. 24.(금) ※접수 마감일 18시까지 도착분에 한함 2. 대상기업: 제조업, 지식서비스"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-15 ~ 2026-07-24"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안양시] 2026년 안양시 우수기업 선정 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공개여부",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공개",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김아름",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-08",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "[2026년도 안양시 우수기업 선정] 1. 접수기간: 2026. 6. 15.(월) ~ 7. 24.(금) ※접수 마감일 18시까지 도착분에 한함 2. 대상기업: 제조업, 지식서비스산업, 벤처기업 3. 신청요건 가) 매출액 50억원 이상, 종업원수 20명 이상(2025.12월말 기준) 나) 관내 사업기간 2년 이상(공고일 기준) 다) 세금(국세, 지방세) 및 과태료(세외수입) 완납(접수마감일까지) 4. 우수기업 인센티브 가) 중소기업육성자금 이자차액보전 우대 지원(0.5% 가산) 나) 지방세 세무조사 유예(3년) 다) 市 기업지원시책 및 사업 참여시 우대(5점) 라) 市 공영주차장 이용시 주차요금 감면(대표자명의 차량 1대) 마) 우수기업 인증서 수여 및 인증판 부착 5. 제출처: (우)14053 경기도 안양시 동안구 시민대로235, 안양시청 7층 기업경제과 6. 문 의: 안양시 기업경제과(☎031-8045-2552)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전체 다운로드 2026년 안양시 우수기업 선정 공고문.hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "이전,다음 게시물 목록을 볼 수 있습니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(광명시) 광명시 기업전략설명회 개최 (6.16.)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[용인시] 『2026년 하반기 국내전시회 개별참가 지원사업 참가기업 모집』안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

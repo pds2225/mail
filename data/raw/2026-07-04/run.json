@@ -1,0 +1,58 @@
+[
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 15:13:43",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 15:26:31",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 18:21:02",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 18:54:54",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 19:58:57",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 20:11:34",
+    "collected": 5299,
+    "deduped": 4671,
+    "new_items": 1328
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 21:40:20",
+    "collected": 6722,
+    "deduped": 6037,
+    "new_items": 2692
+  },
+  {
+    "run_day": "2026-07-04",
+    "started_at": "2026-07-04 21:42:56",
+    "collected": 6722,
+    "deduped": 6037,
+    "new_items": 2691
+  }
+]

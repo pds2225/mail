@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:29",
+  "notice_id": "moel_ef767ba1eee641bae3bc",
+  "title": "[공고] 2026년 취약노동자 교육 및 법률구조상담 지원사업 자치단체 공모",
+  "link": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20251201699",
+  "source": "고용노동부",
+  "author": "",
+  "description": "고용노동부\n국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라!\n정보공개\n국고보조사업\n국고보조사업 공모현황입니다.\n제목\n[공고]2026년 취약노동자 교육 및 법률구조상담 지원사업 자치단체 공모\n담당부서\n노사협력정책과\n전화번호\n044-202-7635\n담당자\n최건희\n등록일\n2025-12-30\n고용노동부 공고 제2025-498호\n2026년 취약노동자 교육 및 법률구조상담 지원사업 자치단체 공모를 아래와 같이 공고하오니 많은 참여 바랍니다.\n<2026년 취약노동자 교육 및 법률구조상담 지원사업 개요>\n□ 지원사업 대상기관: 교육 및 법률구조상담을 운영하고자 하는 지방자치단체\n□ 신청기간 및 방법\nㅇ 신청기간: ’25. 12. 30. (화) ~ ’26. 1.23. (금) 18:00까지\nㅇ 신청방법: 신청서 및 구비서류를 작성하여 공문 제출\nㅇ 접 수 처: 고용노동부 노사협력정책과 (☎044-202-7635)\n□ 선정결과: 선정된 지자체에 개별 통보('26년 2월중)\n□ 사업 수행: 매년 보조금 교부결정시 ~ 12월까지\n□ 사업설명회* 개최: 모든 지방자치단체에 안내 공문 기송부(12.22)\n* 장소(오송 H호텔) / 일시('26.1.8.)\n※ 보조금 지원, 선정절차 등 보다 상세한 내용은 첨부자료를 참고하여 주시기 바랍니다.\n첨부\n★공고문_2026년 취약노동자 교육 및 법률구조상담 지원사업.pdf\n다운로드\n바로보기\n★첨부1. 사업신청서_2026년 취약노동자 교육 및 법률구조상담 지원사업.hwp\n다운로드\n바로보기\n★첨부2. 운영지침_2026년 취약노동자 교육 및 법률구조상담 지원사업.hwp\n다운로드\n바로보기\n이전글\n2026년 지역상생형 일터조성 프로젝트 사업 공모 공고\n다음글\n2026년 가사서비스종합지원센터 수행기관 선정 입찰 공고(수정)\n목록",
+  "deadline": "",
+  "posted_date": "2025-12-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 2026년 취약노동자 교육 및 법률구조상담 지원사업 자치단체 공모"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20251201699"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고용노동부 국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라! 정보공개 국고보조사업 국고보조사업 공모현황입니다. 제목 [공고]2026년 취약노동자 교육 및 법률구조상담 지원사업 자치단체 공모 담당부서 노사협력정책과 전화번호 044-202-7635 담당자 최건희 등록일 2025-"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

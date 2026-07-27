@@ -1,0 +1,301 @@
+{
+  "saved_at": "2026-07-26 19:32:08",
+  "notice_id": "PBLN_000000000124707",
+  "title": "2026년 중국 섬서성 환경보호산업 시장진출 지원사업 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124707",
+  "source": "기업마당(Bizinfo)",
+  "author": "산업통상부",
+  "description": "<p>대한무역투자진흥공사에서「2026년 중국 섬서성 환경보호산업 시장진출 지원사업」을 공고하오니 관심있는 기업에 많은 관심과 참여를 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;석탄/마그네슘 자동 채굴설비, 공장설비, 가공설비, 친환경 제품 관련 기업</p><p style=\"line-height: 1.8;\">※ 주요 품목 : 탄소배출, 음식물처리, 고체폐기물, 수처리 분야 등</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;환경보호기술기업 로드쇼, 1:1 상담회 및 전시회 참가 지원</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참조</p>\n대한무역투자진흥공사에서「2026년 중국 섬서성 환경보호산업 시장진출 지원사업」을 공고하오니 관심있는 기업에 많은 관심과 참여를 바랍니다. ☞ 석탄/마그네슘 자동 채굴설비, 공장설비, 가공설비, 친환경 제품 관련 기업 ※ 주요 품목 : 탄소배출, 음식물처리, 고체폐기물, 수처리 분야 등 ☞ 환경보호기술기업 로드쇼, 1:1 상담회 및 전시회 참가 지원 ※ 자세한 지원내용 공고문 참조",
+  "deadline": "2026-07-23 ~ 2026-08-07",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-07",
+    "display": "2026-07-23 ~ 2026-08-07",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 중국 섬서성 환경보호산업 시장진출 지원사업 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "산업통상부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124707"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>대한무역투자진흥공사에서「2026년 중국 섬서성 환경보호산업 시장진출 지원사업」을 공고하오니 관심있는 기업에 많은 관심과 참여를 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;석탄/마그네슘 자동 채굴설비, 공장설비, 가공설비, 친"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-07"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#중국환경",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#중국친환경",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#위린",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#섬서성",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#산업통상부",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#시안",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#한국관",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#탄소저감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대한무역투자진흥공사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#에너지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전시회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#친환경",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#환경산업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#제주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#강원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#세종",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#울산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#인천",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#대구",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#수출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "산업통상부"
+}

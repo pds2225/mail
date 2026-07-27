@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:24",
+  "notice_id": "ema_547a62735ec0e7c92ab6",
+  "title": "[2026년 중소기업 지원사업 설명회(1/15) 유관기관 수출 합동설명회(1/29)",
+  "link": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=&idx=62743",
+  "source": "인천수출경영자협의회",
+  "author": "",
+  "description": "[2026년 중소기업 지원사업 설명회(1/15) 유관기관 수출 합동설명회(1/29)\n관리자\n2026-01-13 10:51:00\nhit\n407\n220.121.96.230\n[2026년 중소기업 지원사업설명회]\n일시: 2026년 1월 15일(목) 14시 /인천지방중소벤처기업청 대강당\n[2026년 유관기관 합동 수출지원사업 설명회]\n일시: 2026년 1월 27일(화) 14시/인천지방중소벤처기업청 대강당\nhttps://www.mss.go.kr/site/incheon/ex/bbs/View.do?cbIdx=246&bcIdx=1064750\n게시글 공유\nURL복사\nTwitter\nFacebook\n출력\n목록",
+  "deadline": "",
+  "posted_date": "2026-01-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[2026년 중소기업 지원사업 설명회(1/15) 유관기관 수출 합동설명회(1/29)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ema.or.kr/bbs_shop/read.htm?me_popup=&auto_frame=&cate_sub_idx=0&search_first_subject=&list_mode=board&board_code=support&search_key=&key=&page=&idx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[2026년 중소기업 지원사업 설명회(1/15) 유관기관 수출 합동설명회(1/29) 관리자 2026-01-13 10:51:00 hit 407 220.121.96.230 [2026년 중소기업 지원사업설명회] 일시: 2026년 1월 15일(목) 14시 /인천지방중소벤처기업청 대강당 [202"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

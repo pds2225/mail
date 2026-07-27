@@ -1,0 +1,83 @@
+{
+  "saved_at": "2026-07-26 19:33:36",
+  "notice_id": "ic_yeonsu_46b8b29a35def9368d86",
+  "title": "성홍열 감염병 예방수칙 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118945&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n성홍열 감염병 예방수칙 안내\n작성자\n감염병관리과\n작성일\n2026년 7월 22일\n조회수\n39\n담당부서\n감염병관리과\n전화번호\n032-749-8055\n첨부파일\n성홍열_감염병_예방수칙.jpg (\n0.18MB)\n[\n성홍열\n(\n제\n2\n급 법정 감염병\n) ]\n○\n정   의\n:\nA\n군 베타 용혈성 연쇄구균의 발열성 외독소에 의한                 급성 발열성 질환\n○\n감염경로\n-\n환자와 보균자의\n호흡기 분비물과 직접 접촉\n-\n환자와 보균자의\n호흡기 분비물과 손이나 물건을 통한 간접 접촉\n○\n잠 복 기\n:\n1 ~ 7\n일\n(\n평균\n2 ~ 5\n일\n)\n○\n호발대상\n: 5 ~ 15\n세에 주로 발생\n○\n주요 증상\n-\n고열\n(39~40\n℃\n)\n과 인후통으로 시작해서 두통\n,\n구토\n,\n복통 등\n-\n발진\n:\n발열\n12~48\n시간 후 입주위를 제외한\n전신으로 퍼짐\n-\n딸기 혀\n:\n처음에는 회백색으로 덮였다가\n2~3\n일 후 붉은색을 띠고\n돌기가 두드러지는 딸기 모양으로 변함\n-\n붉은 얼굴\n:\n얼굴은 홍조를 띠나 입 주변은 창백\n○\n치료\n:\n항생제 치료\n※\n항생제 치료\n시작 후 최소\n24\n시간까지 등원\n(\n등교\n)\n중지\n<\n성홍열 감염병\n예방수칙\n>\n○\n예방 백신 없음\n※\n개인위생이 최선의 예방 방법\n○\n올바른 손씻기\n-\n흐르는 물에 비누를 이용하여\n30\n초 이상 손 씻기\n-\n등교\n(\n등원\n)\n시\n,\n화장실 다녀온 후\n,\n놀이 후\n,\n식사 전\n·\n후\n,\n하원\n(\n하교\n)\n시\n○\n기침예절\n-\n기침이나 재채기 할때는 옷소매 및 휴지로 입과 코를 가리고 하기\n-\n발열과 호흡기 증상이 있을 때는 마스크 쓰기\n○\n식기구\n,\n담요\n,\n수건 등 개인용품 공유하지 않기\n○\n의심증상 발생 시 신속하게 의료기관 방문하여 진료 받기\n목록\n이전글\n[송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램\n다음글\n2026년 저소득층 기저귀·조제분유 지원사업 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "성홍열 감염병 예방수칙 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118945&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 성홍열 감염병 예방수칙 안내 작성자 감염병관리과 작성일 2026년 7월 22일 조회수 39 담당부서 감염병관리과 전화번호 032-749-8055 첨부파일 성홍열_감염병_예방수칙.jpg ( 0.18MB"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "< 성홍열 감염병 예방수칙 >",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "○ 예방 백신 없음 ※ 개인위생이 최선의 예방 방법 ○ 올바른 손씻기 - 흐르는 물에 비누를 이용하여 30 초 이상 손 씻기 - 등교 ( 등원 ) 시 , 화장실 다녀온 후 , 놀이 후 , 식사 전 · 후 , 하원 ( 하교 ) 시 ○ 기침예절 - 기침이나 재채기 할때는 옷소매 및 휴지로 입과 코를 가리고 하기 - 발열과 호흡기 증상이 있을 때는 마스크 쓰기 ○ 식기구 , 담요 , 수건 등 개인용품 공유하지 않기 ○ 의심증상 발생 시 신속하게 의료기관 방문하여 진료 받기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

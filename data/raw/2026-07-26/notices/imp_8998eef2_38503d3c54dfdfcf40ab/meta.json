@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:40",
+  "notice_id": "imp_8998eef2_38503d3c54dfdfcf40ab",
+  "title": "2026년 자활기업 「 사업장 시설개선 지원사업 」 공모 안내",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=559&page=2",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "2026년 자활기업 「 사업장 시설개선 지원사업 」 공모 안내\n광주광역자활센터\n작성일\n2026-03-23\n조회수\n106\n첨부파일\n2026년「자활기업 사업장 시설개선」지원사업 공모 안내.pdf\n[size : 1.2 MB]\n[다운로드 : 43]\n- (신설 ) 2026년「 사업장 시설개선 」지원사업  을 아래와 같이 공모하오니 자활기업은 붙임\n문서를 참고하여 적극 응모하여 주시기 바라며, 본 사업의 신청이 원활하게 진행 될 수있도록 유관\n기관의 많은 관심과 협조를 요청드립니다.\n1. 사 업 명: 2026년「자활기업 사업장 시설개선」지원사업\n2. 추진목적: 사업장 개선을 통한 이용자의 안전한 근로 환경 확보\n3. 운영방식: 개발원 직접 운영(연 1회 공모)\n4. 지원대상: 신청일자 기준 안전시설 개선이 필요한 자활기업\n5. 지원목표: 자활기업 30개소 지원\n6. 지원내용: 안전 관련 위험요소에 대한 시설개선 비용 지원 기업당 ( 3천만원 ) 이내\n7. 지원 항목\n- 안전장치 설치 및 작업 환경 개선 비용\n- 안전 장구 구입\n8. 문의 및 접수: 한국자활복지개발원 성장지원부 박경자 주임\n(T.02-3415-6989 /E.pkj7574@kdissw.or.kr)\n목록\n이전글\n2026년 공공기관 입점지원 공모사업 선정 결과 안내\n다음글\n2026년 가치세사몰 입점 공모사업 공고\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2026-03-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 자활기업 「 사업장 시설개선 지원사업 」 공모 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=559&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 자활기업 「 사업장 시설개선 지원사업 」 공모 안내 광주광역자활센터 작성일 2026-03-23 조회수 106 첨부파일 2026년「자활기업 사업장 시설개선」지원사업 공모 안내.pdf [size : 1.2 MB] [다운로드 : 43] - (신설 ) 2026년「 사업장 시설개선 」"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

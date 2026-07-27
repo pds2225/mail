@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:25",
+  "notice_id": "imp_0b8206bd_a09d1058b02b3219b7a1",
+  "title": "무단전출자에 대한 주민등록 직권조치 결과 공고(김O나)",
+  "link": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88095",
+  "source": "남양주시청",
+  "author": "",
+  "description": "무단전출자에 대한 주민등록 직권조치 결과 공고(김O나)\n시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공\n고시공고번호\n남양주시 별내동 생활자치과 공고 제2026-57호\n공고기간\n2026-07-24 ~ 2026-08-14\n담당부서\n생활자치과\n내용\n주민등록법 제20조(사실조사와 직권조치)제7항과 같은 법 시행령 제31조(직권조치사실의 통지와 공고)에 따라 무단전출자에 대한 주민등록 직권조치(거주불명등록)결과를 아래와 같이 공고합니다.\n1. 직권조치 공고기간: 2026. 7. 24. ~ 2026. 8. 14.(21일간)\n2. 직권조치 대상자: 김O나\n3. 공고내용: 무단전출 거주불명등록 직권조치\n4. 공고방법: 별내행정복지센터 게시판 및 홈페이지 게시\n붙임  직권조치결과공고문 1부.  끝.\n첨부파일\n직권조치결과공고문(김O나).pdf\n내려받기\n미리보기\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "무단전출자에 대한 주민등록 직권조치 결과 공고(김O나)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88095"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "무단전출자에 대한 주민등록 직권조치 결과 공고(김O나) 시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공 고시공고번호 남양주시 별내동 생활자치과 공고 제2026-57호 공고기간 2026-07-24 ~ 2026-08-14 담당부서 생활자치과 내용 주민등록"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "남양주시 별내동 생활자치과 공고 제2026-57호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공고기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24 ~ 2026-08-14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "생활자치과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "주민등록법 제20조(사실조사와 직권조치)제7항과 같은 법 시행령 제31조(직권조치사실의 통지와 공고)에 따라 무단전출자에 대한 주민등록 직권조치(거주불명등록)결과를 아래와 같이 공고합니다. 1. 직권조치 공고기간: 2026. 7. 24. ~ 2026. 8. 14.(21일간) 2. 직권조치 대상자: 김O나 3. 공고내용: 무단전출 거주불명등록 직권조치 4. 공고방법: 별내행정복지센터 게시판 및 홈페이지 게시 붙임 직권조치결과공고문 1부. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "직권조치결과공고문(김O나).pdf 내려받기 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

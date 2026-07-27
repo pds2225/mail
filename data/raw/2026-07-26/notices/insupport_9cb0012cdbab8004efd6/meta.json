@@ -1,0 +1,127 @@
+{
+  "saved_at": "2026-07-26 19:33:49",
+  "notice_id": "insupport_9cb0012cdbab8004efd6",
+  "title": "[마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고",
+  "link": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=802&page=2",
+  "source": "인천소상공인종합지원센터",
+  "author": "",
+  "description": "[상권활성화팀] [마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고 상세보기\n[상권활성화팀] [마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고\n조회\n789\n상권활성화\n2026-04-13 09:00:00\n파일\n골목상권 공동체 활성화 지원사업 수정 공고문.pdf (\nSize\n: 170 Kbyte /\nDown\n: 0)\n붙임4. 골목상권 공동체 육성 및 활성화 지원사업 관련 서식.hwp (\nSize\n: 194 Kbyte /\nDown\n: 0)\n※ 수정 내용 ※\n내용\n당초\n변경\n신청 및 접수 주소\n인천광역시 미추홀구 석정로\n229,\n제물포스마트타운\n6\n층\n인천광역시 서구 봉오재\n3\n로\n140, 4\n층\n인천소상공인종합지원센터\n(\n인천신용보증재단\n)\n선정 심사 발표자료 제출 및 발표 일정\n-\n발표자료 제출\n: 2026. 5. 28.(\n목\n)\n선정 심사\nPT\n발표\n: 2026. 6. 11.(\n목\n)\n※ 수정\n사유\n:\n센터 주소 이전에 따른 지원사업 신청 및 접수 주소 변경\n,\n선정 심사 관련 일정 조율\n○\n사 업 명\n:\n골목상권 공동체 활성화 지원사업\n○\n사업기간\n: 2026\n년\n3\n월\n~ 11\n월\n○\n지원대상\n:\n인천소재 골목상권 공동체\n*\n제외\n:\n대규모\n·\n준대규모 점포\n,\n전통시장\n, (\n골목형\n)\n상점가\n,\n상권활성화구역\n,\n군\n·\n구 및 타기관 수혜 단체\n(2026\n년\n)\n○\n지원규모\n: 10\n개소\n○\n지원내용 : 공동마케팅 및 환경개선\n○\n신청 및 접수기간\n:\n2026\n년\n3\n월\n12\n일\n(\n목\n) ~ 5\n월\n28\n일\n(\n목\n)\n○\n신청 및 접수방법\n:\n방문 접수",
+  "deadline": "",
+  "posted_date": "2026-04-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=802&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[상권활성화팀] [마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고 상세보기 [상권활성화팀] [마감]2026년 골목상권 공동체 활성화 지원사업 모집 수정 공고 조회 789 상권활성화 2026-04-13 09:00:00 파일 골목상권 공동체 활성화 지원사업 수정 공고문.pd"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "내용",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "당초",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "변경",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "신청 및 접수 주소",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "인천광역시 미추홀구 석정로 229, 제물포스마트타운 6 층",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "인천광역시 서구 봉오재 3 로 140, 4 층 인천소상공인종합지원센터 ( 인천신용보증재단 )",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "선정 심사 발표자료 제출 및 발표 일정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "-",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "발표자료 제출 : 2026. 5. 28.( 목 ) 선정 심사 PT 발표 : 2026. 6. 11.( 목 )",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:16",
+  "notice_id": "imp_28ff1a60_1c16914d8773f655475e",
+  "title": "레전드 과학자 사이언스 콘서트 2회",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13298&tag=&nPage=1",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n레전드 과학자 사이언스 콘서트 2회\n작성자\n서*교\n작성일\n2026/06/30 14:37\n조회수\n225\n제목: 레전드 과학자 사이언스 콘서트 2회\n주제: 양자컴퓨터, 왜 세상을 뒤흔드는가?  (표준연 양자컴퓨팅연구단 이용호 단장)\n일시: 2026년 7월 16일(목) 18시30분~20시30분\n장소: 한국표준과학연구원(대전 유성구 가정로 267)\n대상: 학생, 학부모, 과학기술인 및 시민 누구나(참가비 무료)\n참가신청(구글폼): https://docs.google.com/forms/d/e/1FAIpQLSd0nq-EDFXXCrCoIdm0rKHQV7PZgHyM74LelhTNewg1FOdasQ/viewform\n기타사항: 건물 출입보안으로 사전신청자에 한해 차량번호 접수 및 정확한 장소 안내 예정\n레전드과학자사이언스콘서트 2회차.pdf\n레전드과학자사이언스콘서트 2회차.pdf\r\n\t\t\t\t\t\t\t\t\t[2.99MB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-06-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "레전드 과학자 사이언스 콘서트 2회"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13298&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 레전드 과학자 사이언스 콘서트 2회 작성자 서*교 작성일 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

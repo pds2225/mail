@@ -16,7 +16,7 @@ os.environ.setdefault("GMAIL_ADDRESS", "me@test.com")
 os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import monitor as m  # noqa: E402
-import coverage_alert as ca  # noqa: E402
+from mail_core.operations import coverage_alert as ca  # noqa: E402
 
 
 class _FakeSMTP:

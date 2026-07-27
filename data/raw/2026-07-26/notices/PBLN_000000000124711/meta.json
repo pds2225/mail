@@ -1,0 +1,173 @@
+{
+  "saved_at": "2026-07-26 19:32:07",
+  "notice_id": "PBLN_000000000124711",
+  "title": "[전북] 2026년 지역 R&D IP 전략지원 사업 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124711",
+  "source": "기업마당(Bizinfo)",
+  "author": "지식재산처",
+  "description": "<p>지역 R&amp;D 사업의 효율화를 지원하고, 유망기술 도출 및 핵심특허 선점을 위한 IP 전략수립을 지원하는「지역 R&amp;D IP 전략지원 사업」의 지원기업을 다음과 같이 모집합니다.</p><p><br></p><p>☞&nbsp;전북지역 R&amp;D 과제에 선정된 전북소재 중소기업 (「중소기업 기본법」 제2조에 의거)</p><p><br></p><p>☞&nbsp;환경분석ㆍ특허검색, 핵심특허 분석,&nbsp;IP 전략 수립 지원</p>\n지역 R&D 사업의 효율화를 지원하고, 유망기술 도출 및 핵심특허 선점을 위한 IP 전략수립을 지원하는「지역 R&D IP 전략지원 사업」의 지원기업을 다음과 같이 모집합니다. ☞ 전북지역 R&D 과제에 선정된 전북소재 중소기업 (「중소기업 기본법」 제2조에 의거) ☞ 환경분석ㆍ특허검색, 핵심특허 분석, IP 전략 수립 지원",
+  "deadline": "2026-07-16 ~ 2026-07-31",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-16",
+    "end": "2026-07-31",
+    "display": "2026-07-16 ~ 2026-07-31",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전북] 2026년 지역 R&D IP 전략지원 사업 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "지식재산처"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124711"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>지역 R&amp;D 사업의 효율화를 지원하고, 유망기술 도출 및 핵심특허 선점을 위한 IP 전략수립을 지원하는「지역 R&amp;D IP 전략지원 사업」의 지원기업을 다음과 같이 모집합니다.</p><p><br></p><p>☞&nbsp;전북지역 R&amp;D 과제에 선정된 전북소재 중"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-16 ~ 2026-07-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#지식재산처",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#핵심특허",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전북특별자치도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#환경분석",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전북지식재산센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#IP",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#R&D",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#특허",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#중소기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기술",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "지식재산처"
+}

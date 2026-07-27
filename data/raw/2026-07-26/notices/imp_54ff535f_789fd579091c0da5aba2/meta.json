@@ -1,0 +1,153 @@
+{
+  "saved_at": "2026-07-26 19:35:29",
+  "notice_id": "imp_54ff535f_789fd579091c0da5aba2",
+  "title": "[인천테크노파크] 직원채용 공고",
+  "link": "https://www.gntp.or.kr/board/detail/new/20745",
+  "source": "경남테크노파크",
+  "author": "",
+  "description": "메인\n회원가입\n로그인\n텍스트크기\n고객센터\n공직비리익명신고(TP)\n공직비리익명신고(경상남도)\n소극행정신고센터\n국가인적자원개발컨소시엄\n재단소개\n인사말\n연 혁\n비 전\n조직도\n재단현황\n업무안내\nCI소개\n약 도\n부서안내\n정책기획단\n기업지원단\n미래자동차본부\n지능기계본부\n우주항공본부\n조선해양본부\n나노융합본부\n에너지바이오본부\n방위산업본부\n경영지원실\n경남인공지능혁신본부\n윤리경영실\n지원사업\n지원사업신청\n스마트공장지원\n기관별지원사업안내\n입주지원\n재단본부\n미래자동차본부\n지능기계본부\n우주항공본부\n경남인공지능혁신본부\n에너지바이오본부\n나노융합본부\n조선해양본부\n방위산업본부\n장비지원\n장비지원\n지속가능경영\nESG경영\n인권경영\n윤리경영\n알림마당\n새소식\nTP언론보도\n보도자료\n입찰정보\n공지사항\n채용정보\n자료실\n홍보마당\n제로페이챌린지\n타기관소식\n입주공고\n정보공개\n정보공개제도 안내\n사전정보공표\n경영공시\n고객센터\n공직비리익명신고\n알림마당\n새소식\nTP언론보도\n보도자료\n입찰정보\n공지사항\n채용정보\n자료실\n홍보마당\n제로페이챌린지\n타기관소식\n홈화면\n>\n타기관소식\n>\n게시글 상세보기\n타기관소식\n제목\n[인천테크노파크] 직원채용 공고\n■\n담당자정보\n사업 담당자\n정미현\n부서\n인사총무팀\n직급\n사원\n연락처\n이메일\nmh7711@gntp.or.kr\n목록으로 바로가기\n개인정보처리방침\n｜\n영상정보처리기기설치운영관리방침\n｜\n이메일무단수집거부\n｜\n유관기관배너목록\n｜\n고객센터\n패밀리 사이트\n경상남도 해외마케팅 사업지원시스템\n경남연구장비지원시스템\n경남테크노파크 국가인적자원개발컨소시엄\n경남창원과학기술정보서비스\n경남항공부품수출지원단\n경남테크노파크 버추얼개발기술지원 플랫폼\n전국 TP 사이트\n강원테크노파크\n경기테크노파크\n경기대진TP\n경북테크노파크\n광주테크노파크\n대구테크노파크\n대전테크노파크\n부산테크노파크\n인천테크노파크\n울산테크노파크\n서울테크노파크\n전남테크노파크\n전북테크노파크\n제주테크노파크\n충남테크노파크\n충북테크노파크\n포항테크노파크\n경남 창원시 \t의창구 창원대로 18번길 22 (팔용동)\n대표전화 1688-3360   |   팩스 055)262-9669   |   이메일 gntp@gntp.or.kr\nCopyright ⓒ 2014 재단법인 경남테크노파크 all rights reserved.",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[인천테크노파크] 직원채용 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gntp.or.kr/board/detail/new/20745"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "메인 회원가입 로그인 텍스트크기 고객센터 공직비리익명신고(TP) 공직비리익명신고(경상남도) 소극행정신고센터 국가인적자원개발컨소시엄 재단소개 인사말 연 혁 비 전 조직도 재단현황 업무안내 CI소개 약 도 부서안내 정책기획단 기업지원단 미래자동차본부 지능기계본부 우주항공본부 조선해양본부 나"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[인천테크노파크] 직원채용 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사업 담당자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "정미현",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "부서",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "인사총무팀",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "직급",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "사원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "연락처",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "이메일",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "mh7711@gntp.or.kr",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

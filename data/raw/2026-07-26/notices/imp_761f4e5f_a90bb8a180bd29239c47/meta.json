@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:07",
+  "notice_id": "imp_761f4e5f_a90bb8a180bd29239c47",
+  "title": "2026 중국 유통망 입점 지원사업 참여기업 선정 결과 공고",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2908&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2026.06.19\n조회수\n78회\n접수기간\n2026-06-19 ~ 2026-06-19\n부서\n기업성장팀\n문의처\n062-531-6667(내선2)\n관련링크\n본문\n광주사회적경제지원센터 공고 제2026-38호\n[KOTRA, 소상공인‧사회적경제기업 수출지원사업]\n2026 중국 유통망 입점 지원사업\n참여기업 선정 결과 공고\n「2026 KOTRA 중국 유통망 입점 지원사업」 참여기업 선정 결과를 다음과 같이 공고합니다.\n2026.  6.  19.\n광주사회적경제지원센터장\n첨부파일\n2026 중국 유통망 입점 지원사업 참여기업 선정 결과 공고문.pdf\n다운로드\n이전글\n2026년 광주사회적경제지원센터 신규직원 채용 서류전형 합격자 공고\n다음글\n「수의계약」체결 내역 (2026년 5월)",
+  "deadline": "2026-06-19",
+  "posted_date": "2026-06-19",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-19",
+    "end": "2026-06-19",
+    "display": "2026-06-19",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 중국 유통망 입점 지원사업 참여기업 선정 결과 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2908&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2026.06.19 조회수 78회 접수기간 2026-06-19 ~ 2026-06-19 부서 기업성장팀 문의처 062-531-6667(내선2) 관련링크 본문 광주사회적경제지원센터 공고 제2026-38호 [KOTRA, 소상공인‧사회적경제기업 수출지원사업] 2026 중국 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-19"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

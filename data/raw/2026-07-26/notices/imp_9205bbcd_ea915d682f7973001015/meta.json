@@ -1,0 +1,763 @@
+{
+  "saved_at": "2026-07-26 19:35:44",
+  "notice_id": "imp_9205bbcd_ea915d682f7973001015",
+  "title": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고",
+  "link": "http://kbef.or.kr/zbxe/support1/3103",
+  "source": "경북경영자총협회",
+  "author": "",
+  "description": "2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.hwp\n2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.pdf\n2026년_글로벌 관세 등 수출피해기업 고용유지지원사업_추가공고 신청서.hwp\n2026년_글로벌 관세 등 수출피해기업 고용유지지원사업_추가공고 신청서.pdf\n[별첨] 근로자고용정보현황 증빙 서류 발급 안내.pdf",
+  "deadline": "",
+  "posted_date": "2026-05-18",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://kbef.or.kr/zbxe/support1/3103"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.hwp 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.pdf 2026년_글로벌 관세 등 수출피해기업 고용유지지원사업_추가공고 신청서.hwp 2026년_글로벌 관세 등 수출피해기"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "Atachment",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "첨부 ' 11 '",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문005.jpg , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문001.jpg , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문002.jpg , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문003.jpg , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문004.jpg , 2026년_글로벌 관세 등 수출피해기업 고용유지지원사업_추가공고 신청서.hwp , 2026년_글로벌 관세 등 수출피해기업 고용유지지원사업_추가공고 신청서.pdf , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.hwp , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문.hwp , 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고문",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "List of Articles",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "날짜",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회 수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시마이스터멘토단 중소기업 맞춤형 기술지원 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "4213",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시마이스터멘토단 자영업 숙련기술지도 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "4000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "»",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "25721",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 중소기업AI훈련확산센터 AI훈련 로드맵 컨설팅 참여기업 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "28695",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "34165",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시 청년근로자 지역정착 행복원룸 사업 협약원룸 목록(7/8)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "15363",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 버팀이음사업 임금체불 피해 근로자 생계비 지원자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "39663",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 신중년 근로자 생활안정 지원사업 참여자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "41112",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 청년일자리도약장려금사업 참여기업 및 채용자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "37940",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 워라벨+4.5 프로젝트 사업 참여기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.11",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "43657",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 구미시 청년근로자 지역정착 행복원룸사업 참여자 모집(원룸소유주/청년근로자)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "40590",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 기업성장혁신부 사업 평가위원 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.05",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "42643",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집]2026년 현장실습훈련지원사업 (구 시니어인턴십)사업 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.02.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "45552",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 중소기업 기숙사 임차지원 사업 참여 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.01.20",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "47170",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "201",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2026년 구미시마이스터멘토단 자영업 숙련기술지도 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.06.22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "7432",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "200",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2026년 구미시마이스터멘토단 중소기업 맞춤형 기술지원 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.06.22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "7256",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "199",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 산업안전환경 개선사업 선정결과 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.06.01",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "4782",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "198",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 광역이음프로젝트 모빌리티분야 청년이음 고용서비스 지원(초광역 박람회) 용역 수행업체 모집 재공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "6141",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "197",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 광역이음프로젝트 모빌리티분야 청년이음 고용서비스 지원(초광역 박람회) 용역 수행업체 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.11",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "8088",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "196",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2026년 산업안전환경 개선사업 산업안전 정밀진단 용역업체 및 현장심사 외부전문가 모집 재공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "23479",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "195",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2026년 산업안전환경 개선사업 산업안전 정밀진단 용역업체 및 현장심사 외부전문가 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "20552",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "194",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 지역혁신프로젝트 권역별 네트워크기반 고용서비스 지원사업 잡페어 용역 수행업체 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "12773",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "193",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026 경상북도 노사 상생 협력 우수기업 벤치마킹 』 진행업체 입찰 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.26",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "11980",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "192",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감]2026년도 구미시 신중년 사회공헌활동지원사업(봉사활동) 참여자모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "22867",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "191",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감]2026년도 구미시 신중년 사회공헌활동지원사업(봉사활동) 참여기관모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "22057",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

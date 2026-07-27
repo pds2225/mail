@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:40",
+  "notice_id": "imp_5200845a_afa45dbae05231723d78",
+  "title": "제16회 지방행정의 달인 후보자 공적 공개검증",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=980898",
+  "source": "김포시청",
+  "author": "",
+  "description": "제16회 지방행정의 달인 후보자 공적 공개검증 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n제16회 지방행정의 달인 후보자 공적 공개검증\n담당부서\n총무과\n제16회 지방행정의 달인 선발과 관련하여 김포시에서 후보자로 추천한 대상자에 대한 공적을 붙임과 같이 게시하오니, 공적 내용에 대한 이의가 있는 경우 다음과 같이 의견을 제시하여 주시기 바랍니다.\n- 공개기간 : 2026. 7. 6.（월） ~ 7. 20.（월） 18:00까지\n- 의견제시 기간 : 2026년 7월 20일 18:00까지\n- 의견제시 방법 : 김포시 총무과 담당자 메일（siniya825@korea.kr）로 의견 제출\n＜기타안내사항＞\n- 제출된 의견은 작성자의 실명, 연락처, 구체적 사유를 명시한 의견에 한하여 자체조사 등을 실시하여 공적심사에 활용할 예정이며, 별도로 회신하지 않습니다.\n- 붙임 명단은 확정명단이 아니며, 공개검증, 결격사유 조회 및 공적심사 등을 통해 변경될 수 있습니다.\n※ 붙임  제16회 지방행정의 달인 후보자 공적 요약서\n파일\nhwpx 문서\n지방행정의 달인 후보자 공적 요약서.hwpx\n미리보기\n조회수\n338\n작성일\n2026.07.06\n목록\n이전글\n2026년 중소기업 맞춤형 역량강화 지원사업 DX전환 3차 세미나 알림\n다음글\n청년지원센터 8월 프로그램 참여자 모집",
+  "deadline": "",
+  "posted_date": "2026-07-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "제16회 지방행정의 달인 후보자 공적 공개검증"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=980898"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제16회 지방행정의 달인 후보자 공적 공개검증 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 제16회 지방행정의 달인 후보자 공적 공개검증 담당부서 총무과 제16회 지방행정의 달인 선발과 관련하여 김포시에서 후보자로 추천한 대상자에 대한 공적을 붙임과 같이 게시하오"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "제16회 지방행정의 달인 후보자 공적 공개검증 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "제16회 지방행정의 달인 후보자 공적 공개검증",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "총무과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "hwpx 문서 지방행정의 달인 후보자 공적 요약서.hwpx 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "338",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

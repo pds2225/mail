@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:49",
+  "notice_id": "imp_695dd267_522c8a8ad2ff8c74fd91",
+  "title": "용인시 반도체 기업 채용 연계 지원 안내(2026년 반도체 산업 전문인력 양성 교육 연계)(상시)",
+  "link": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7184",
+  "source": "용인시산업진흥원",
+  "author": "",
+  "description": "사업공지\n창업지원팀\n2025-06-10T09:49:10+09:00\n사업공지\n입찰공고\n채용공고\n용인시 반도체 기업 채용 연계 지원 안내(2026년 반도체 산업 전문인력 양성 교육 연계)(상시)\n작성자\n전략산업팀\n작성일\n2026-04-30 15:40\n조회\n692\n첨부파일\n포스터용인시-반도체-기업-채용-연계지원.jpg\n좋아요\n0\n싫어요\n0\n인쇄\n▶ 신청 바로가기\n«\n2026년 경기남부 소공인 공동관 모집(한국 전자전, ~5/15(금) 17시까지)\n2026년 공동장비 활용 활성화 인프라 활용 교육 「3D프린터 및 3D스캐너 마스터 과정」 교육생 모집공고(마감)\n»\n목록보기\nPowered by KBoard",
+  "deadline": "2026-04-30",
+  "posted_date": "2026-04-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "용인시 반도체 기업 채용 연계 지원 안내(2026년 반도체 산업 전문인력 양성 교육 연계)(상시)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7184"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공지 창업지원팀 2025-06-10T09:49:10+09:00 사업공지 입찰공고 채용공고 용인시 반도체 기업 채용 연계 지원 안내(2026년 반도체 산업 전문인력 양성 교육 연계)(상시) 작성자 전략산업팀 작성일 2026-04-30 15:40 조회 692 첨부파일 포스터용인시-반도체"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-04-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

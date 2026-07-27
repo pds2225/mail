@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:52",
+  "notice_id": "imp_1a8d8b8d_07c0bc262781bf2d24ea",
+  "title": "2025회계연도 결산 승인 고시",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8568&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n2025회계연도 결산 승인 고시\n2026-05-15 11:13:16\n작성자\n이승목\n조회\n128\n분류\n파일\n2025회계연도 결산 승인 고시.pdf\n바로보기\n대구경북경제자유구역청의 2025회계연도 결산 승인 결과를 붙임과 같이 고시합니다.\n목록\nprev\n수성알파시티 처분신청부지 매각 공고\nnext\n대구경북경제자유구역청 분양가심사위원회 위원 공개모집 공고\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2026-05-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2025회계연도 결산 승인 고시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8568&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 2025회계연도 결산 승인 고시 2026-05-15 11:13:16 작성자 이승목 조회 128 분류 파일 2025회계연도 결산 승인 고시.pdf 바로보기 대구경북경제자유구역청의 2025회계연도 결산 승인 결과를 붙임과 같이 고시합니다. 목록 prev 수성알파시티 처분신청부지 매각 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

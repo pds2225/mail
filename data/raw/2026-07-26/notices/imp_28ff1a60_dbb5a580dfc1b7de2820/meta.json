@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:19",
+  "notice_id": "imp_28ff1a60_dbb5a580dfc1b7de2820",
+  "title": "(행사) 레전드 과학자 사이언스 콘서트 1회",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13246&tag=&nPage=2",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n(행사) 레전드 과학자 사이언스 콘서트 1회\n작성자\n서*교\n작성일\n2026/05/28 10:42\n조회수\n365\n제목: 레전드 과학자 사이언스 콘서트 1회\n주제: 남극탐험기-40년 극지 탐험가가 들려주는 생생한 기록\n일시: 2026년 6월 25일(목) 18시30분~20시30분\n장소: 과학카페 쿠아(대전 유성구 신성로61번안길 53)\n대상: 학생, 학부모, 과학기술인 및 시민 누구나(참가비 무료)\n참가신청(구글폼):  https://docs.google.com/forms/d/e/1FAIpQLSd0nq-EDFXXCrCoIdm0rKHQV7PZgHyM74LelhTNewg1FOdasQ/viewform\n레전드사이언스콘서트_1회차_홈페이지용.pdf\n레전드사이언스콘서트_1회차_홈페이지용.pdf\r\n\t\t\t\t\t\t\t\t\t[703.43KB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-05-28",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(행사) 레전드 과학자 사이언스 콘서트 1회"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13246&tag=&nPage=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 (행사) 레전드 과학자 사이언스 콘서트 1회 작성자 서*교"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,119 @@
+{
+  "saved_at": "2026-07-26 19:34:59",
+  "notice_id": "imp_e947a8cf_4f8db74c7a6d3f595ca1",
+  "title": "[경기RSC]2025년 경기지역 산업구조변화대응 등 특화훈련 훈련기관 및 훈련과정 2차 공모 산업·직종 안내",
+  "link": "https://www.gghrd.or.kr/board/notice.php?ptype=view&idx=2757&page=2&code=notice",
+  "source": "경기지역인적자원개발위원회",
+  "author": "",
+  "description": "공지사항\n게시물 상세\n[공지] [경기RSC]2025년 경기지역 산업구조변화대응 등 특화훈련 훈련기관 및 훈련과정 2차 공모 산업·직종 안내\n작성자 : 경기RSC(gghrd2000@gghrd.or.kr)\n작성일 : 2025.04.22\n조회수 : 651\n2025년 경기지역 산업구조변화대응 등 특화훈련사업\n훈련기관 및 훈련과정 2차 공모 산업·직종을 안내드리오니 사업 참여에 참고하시기 바랍니다.\n이전글\n[제2025-005호]2025년 산업구조변화대응 등 특화훈련 경기지역 훈련공급기관 및 훈련과정 2차 공모\n다음글\n[제2025-004호] 경기지역인적자원개발위원회 인력양성팀 전담자 채용 공고\n리스트",
+  "deadline": "2025-04-22",
+  "posted_date": "2025-04-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[경기RSC]2025년 경기지역 산업구조변화대응 등 특화훈련 훈련기관 및 훈련과정 2차 공모 산업·직종 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gghrd.or.kr/board/notice.php?ptype=view&idx=2757&page=2&code=notice"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 게시물 상세 [공지] [경기RSC]2025년 경기지역 산업구조변화대응 등 특화훈련 훈련기관 및 훈련과정 2차 공모 산업·직종 안내 작성자 : 경기RSC(gghrd2000@gghrd.or.kr) 작성일 : 2025.04.22 조회수 : 651 2025년 경기지역 산업구조변화대응 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2025-04-22"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "게시물 상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "[공지] [경기RSC]2025년 경기지역 산업구조변화대응 등 특화훈련 훈련기관 및 훈련과정 2차 공모 산업·직종 안내",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "작성자 : 경기RSC(gghrd2000@gghrd.or.kr) 작성일 : 2025.04.22 조회수 : 651",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "2025년 경기지역 산업구조변화대응 등 특화훈련사업 훈련기관 및 훈련과정 2차 공모 산업·직종을 안내드리오니 사업 참여에 참고하시기 바랍니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[제2025-005호]2025년 산업구조변화대응 등 특화훈련 경기지역 훈련공급기관 및 훈련과정 2차 공모",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[제2025-004호] 경기지역인적자원개발위원회 인력양성팀 전담자 채용 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

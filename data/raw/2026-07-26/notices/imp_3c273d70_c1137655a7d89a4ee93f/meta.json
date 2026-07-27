@@ -1,0 +1,163 @@
+{
+  "saved_at": "2026-07-26 19:39:11",
+  "notice_id": "imp_3c273d70_c1137655a7d89a4ee93f",
+  "title": "지역별 관할 지방중소벤처기업청 안내",
+  "link": "https://www.innobiz.net/company/company1_view.asp?Seq=425&Page=2&SearchKey=&SearchValue=",
+  "source": "이노비즈협회(사)중소기업기술혁신",
+  "author": "",
+  "description": "Global leader\n미래지향적인 기술혁신기업 이노비즈와 함께하세요!\n공지사항\n>\n기업마당\n>\n공지사항\n공지사항 상세보기\n제목\n지역별 관할 지방중소벤처기업청 안내\n작성자\n관리자\n등록일\n2026-04-06\n첨부파일\n2025 행정업무운영 편람(1).hwpx\n지역별 관할 지방중소벤처기업청 안내\n이노비즈 확인 신청 및 관리(재발급)를 위해 소재지별 관할 기관을 확인하시기 바랍니다.\n지역\n관할 지방중소벤처기업청\n비고 (상세 관할구역)\n서울\n서울지방중소벤처기업청\n-\n경기\n경기지방중소벤처기업청\n-\n경기 북부\n경기지방중소벤처기업청 경기북부사무소\n가평, 고양, 구리, 남양주, 동두천, 양주, 연천, 의정부, 파주, 포천\n인천\n인천지방중소벤처기업청\n-\n부산\n부산지방중소벤처기업청\n-\n울산\n울산지방중소벤처기업청\n-\n경남\n경남지방중소벤처기업청\n-\n대구 / 경북\n대구·경북지방중소벤처기업청\n-\n광주 / 전남 / 제주\n광주·전남지방중소벤처기업청\n-\n전북\n전북지방중소벤처기업청\n-\n대전 / 세종\n대전·세종지방중소벤처기업청\n-\n충남\n충남지방중소벤처기업청\n-\n충북\n충북지방중소벤처기업청\n-\n강원\n강원지방중소벤처기업청\n-\n▶ 중소벤처기업부 연락처/주소 상세페이지 바로가기\n다음 게시물 목록\n이전글\n2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내\n다음글\n[WISET] 2026년 과학기술분야 R&D 대체인력 활용 지원사업 2차 모집(~4/13(월))\n목록",
+  "deadline": "",
+  "posted_date": "2026-04-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "지역별 관할 지방중소벤처기업청 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.innobiz.net/company/company1_view.asp?Seq=425&Page=2&SearchKey=&SearchValue="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "Global leader 미래지향적인 기술혁신기업 이노비즈와 함께하세요! 공지사항 > 기업마당 > 공지사항 공지사항 상세보기 제목 지역별 관할 지방중소벤처기업청 안내 작성자 관리자 등록일 2026-04-06 첨부파일 2025 행정업무운영 편람(1).hwpx 지역별 관할 지방중소벤처기업청"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공지사항 상세보기",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지역별 관할 지방중소벤처기업청 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-04-06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025 행정업무운영 편람(1).hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "지역별 관할 지방중소벤처기업청 안내 이노비즈 확인 신청 및 관리(재발급)를 위해 소재지별 관할 기관을 확인하시기 바랍니다. ▶ 중소벤처기업부 연락처/주소 상세페이지 바로가기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "다음 게시물 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 중소기업 기술혁신 유공자 포상 후보자 모집 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[WISET] 2026년 과학기술분야 R&D 대체인력 활용 지원사업 2차 모집(~4/13(월))",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

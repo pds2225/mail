@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:49",
+  "notice_id": "imp_0533ff15_fa2ad158c388483cc2cb",
+  "title": "2026 DGFEZ 매거진 제작, DM발송 용역 제안서 평가위원회 심의결과 게시",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8482&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n2026 DGFEZ 매거진 제작, DM발송 용역 제안서 평가위원회 심의결과 게시\n2026-02-06 09:24:13\n작성자\n유치홍보과\n조회\n355\n분류\n파일\n2026 DGFEZ 매거진 용역 기술능력평가 결과(정성).pdf\n바로보기\n2026 DGFEZ 매거진 제작, DM발송 용역 제안서 평가위원회 심의결과를 아래 붙임과 같이 게시합니다.\n[제안서평가위원회 개요]\n- 일시 : 2026. 2. 5.(목) 14:00~\n- 장소 : 대구경북경제자유구역청 5층 대회의실\n- 참여 : 2개 업체\n목록\nprev\n2026년 입주기업 국내전시회 지원사업 참여 기업 모집 공고\nnext\n2026 DGFEZ SNS 채널 운영 용역 제안서 평가위원회 심의결과 게시\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2026-02-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 DGFEZ 매거진 제작, DM발송 용역 제안서 평가위원회 심의결과 게시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8482&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 2026 DGFEZ 매거진 제작, DM발송 용역 제안서 평가위원회 심의결과 게시 2026-02-06 09:24:13 작성자 유치홍보과 조회 355 분류 파일 2026 DGFEZ 매거진 용역 기술능력평가 결과(정성).pdf 바로보기 2026 DGFEZ 매거진 제작, DM발송 용역 제"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

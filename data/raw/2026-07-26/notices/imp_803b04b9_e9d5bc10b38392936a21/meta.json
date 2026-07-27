@@ -1,0 +1,218 @@
+{
+  "saved_at": "2026-07-26 19:36:38",
+  "notice_id": "imp_803b04b9_e9d5bc10b38392936a21",
+  "title": "광주첨단 AX실증산단구축사업(2차년도) 제조 AX 멘토링 수혜기업 모집 공고",
+  "link": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2215&ctg01=01,02,03,04,05,06,09,07,08,10,11,12&ctg02=01,02,06&ctg03=05,07,12,14&pageIndex=2&pageUnit=30&searchKeyword=",
+  "source": "광주테크노파크",
+  "author": "",
+  "description": "사업공고\n홈\n홈\n공고·안내\n사업공고\n광주첨단 AX실증산단구축사업(2차년도) 제조 AX 멘토링 수혜기업 모집 공고\n지원분류\n산업구분\n>  자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타\n지원분야\n>  R&D/비R&D/기타\n지원프로그램\n>  컨설팅/공정개선(스마트공장)/인프라구축/기타\n지원규모\n접수기간\n2026-06-30 ~ 2026-07-16\n접수마감\n사업기간\n2026-07-01 ~ 2026-11-30\n담당부서\n광주테크노파크\n총괄담당자\n사업담당자\n박래열\r\n\t\t\t\t\t (062-602-7123)\n사업목적\n산업단지 입주기업과 AX어드바이저간 매칭을 통해 기업수준 확인하고 솔루션 제공하여 문제해결 및 중장기적 AX 확산\n사업내용\n첨부파일\n덧붙임1.제조AX멘토링기업모집공고문.pdf\n덧붙임2.제조AX멘토링신청서(양식).hwpx\n목록",
+  "deadline": "2026-06-30 ~ 2026-07-16",
+  "posted_date": "2026-06-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-30",
+    "end": "2026-07-16",
+    "display": "2026-06-30 ~ 2026-07-16",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "광주첨단 AX실증산단구축사업(2차년도) 제조 AX 멘토링 수혜기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2215&ctg01=01,02,03,04,05,06,09,07,08,10,11,12&ctg02=01,02,06&ctg03=05,07,12,14&pageIndex=2&pageUnit=30"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 홈 홈 공고·안내 사업공고 광주첨단 AX실증산단구축사업(2차년도) 제조 AX 멘토링 수혜기업 모집 공고 지원분류 산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타 지원분야 > R&D/비R&D/기타 지원프로그램 > 컨설팅/공정개선("
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-30 ~ 2026-07-16"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원분류",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타 지원분야 > R&D/비R&D/기타 지원프로그램 > 컨설팅/공정개선(스마트공장)/인프라구축/기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원규모",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-30 ~ 2026-07-16 접수마감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-01 ~ 2026-11-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "총괄담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박래열 (062-602-7123)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업목적",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업단지 입주기업과 AX어드바이저간 매칭을 통해 기업수준 확인하고 솔루션 제공하여 문제해결 및 중장기적 AX 확산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "덧붙임1.제조AX멘토링기업모집공고문.pdf 덧붙임2.제조AX멘토링신청서(양식).hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

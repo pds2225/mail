@@ -1,0 +1,218 @@
+{
+  "saved_at": "2026-07-26 19:36:38",
+  "notice_id": "imp_803b04b9_bacade5feceab154a317",
+  "title": "『2026년 맞춤형 예비창업가 발굴ㆍ육성사업』 - 기술이전 예비창업가 사업화자금지원 추가모집 공고(2차)",
+  "link": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2213&ctg01=01,02,03,04,05,06,09,07,08,10,11,12&ctg02=05&ctg03=01,02,05,09,14&pageIndex=2&pageUnit=30&searchKeyword=",
+  "source": "광주테크노파크",
+  "author": "",
+  "description": "사업공고\n홈\n홈\n공고·안내\n사업공고\n『2026년 맞춤형 예비창업가 발굴ㆍ육성사업』 - 기술이전 예비창업가 사업화자금지원 추가모집 공고(2차)\n지원분류\n산업구분\n>  자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타\n지원분야\n>  창업지원\n지원프로그램\n>  시제품제작/마케팅/컨설팅/핵심기술개발/기타\n지원규모\n25,000\r\n\t\t\t\t\t천원\n접수기간\n2026-06-26 ~ 2026-07-21\n접수마감\n사업기간\n2026-08-01 ~ 2026-10-30\n담당부서\n총괄담당자\n박장곤 선임\r\n\t\t\t\t\t (062-239-9613)\n사업담당자\n박지성 전임\r\n\t\t\t\t\t (062-239-9619)\n사업목적\n공고기간 연장 ~ 7월 21일 화요일 14시까지\n공공의 미활용 우수 기술을 이전하고 사업화 지원을 통해 기술창업 활성화\n사업내용\n첨부파일\n붙임2.기술이전예비창업가지원사업추가모집공고문(2차)_연장.pdf\n붙임1~4일체.zip\n붙임5-1.우수기술및유망기술소개자료.zip\n붙임5-2.우수기술및유망기술소개자료.zip\n붙임6~7일체.zip\n목록",
+  "deadline": "2026-06-26 ~ 2026-07-21",
+  "posted_date": "2026-06-26",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-26",
+    "end": "2026-07-21",
+    "display": "2026-06-26 ~ 2026-07-21",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "『2026년 맞춤형 예비창업가 발굴ㆍ육성사업』 - 기술이전 예비창업가 사업화자금지원 추가모집 공고(2차)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2213&ctg01=01,02,03,04,05,06,09,07,08,10,11,12&ctg02=05&ctg03=01,02,05,09,14&pageIndex=2&pageUnit=30&se"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 홈 홈 공고·안내 사업공고 『2026년 맞춤형 예비창업가 발굴ㆍ육성사업』 - 기술이전 예비창업가 사업화자금지원 추가모집 공고(2차) 지원분류 산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타 지원분야 > 창업지원 지원프로그램 > "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-26 ~ 2026-07-21"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원분류",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/디자인/문화콘텐츠/드론/ICT/기타 지원분야 > 창업지원 지원프로그램 > 시제품제작/마케팅/컨설팅/핵심기술개발/기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원규모",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "25,000 천원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-26 ~ 2026-07-21 접수마감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-08-01 ~ 2026-10-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "총괄담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박장곤 선임 (062-239-9613)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박지성 전임 (062-239-9619)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업목적",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고기간 연장 ~ 7월 21일 화요일 14시까지 공공의 미활용 우수 기술을 이전하고 사업화 지원을 통해 기술창업 활성화",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "붙임2.기술이전예비창업가지원사업추가모집공고문(2차)_연장.pdf 붙임1~4일체.zip 붙임5-1.우수기술및유망기술소개자료.zip 붙임5-2.우수기술및유망기술소개자료.zip 붙임6~7일체.zip",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

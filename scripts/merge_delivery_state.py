@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import delivery_state  # noqa: E402
+from mail_core.delivery import state as delivery_state  # noqa: E402
 
 
 def main() -> int:

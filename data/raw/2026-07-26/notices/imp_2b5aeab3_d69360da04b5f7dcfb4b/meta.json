@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:22",
+  "notice_id": "imp_2b5aeab3_d69360da04b5f7dcfb4b",
+  "title": "[광주 인공지능사관학교 AI 도약과정 위탁운영] 제안서 평가위원(후보자) 공개 모집 공고",
+  "link": "https://gj.riia.or.kr/board/businessAnnouncement/view/0626caf3-502a-11f1-ad2e-4dc88fba84f9",
+  "source": "광주지역산업진흥원",
+  "author": "",
+  "description": "사업공고\n주요정보\n진흥원소개\n주요정보\n자료정보\n교육정보\n고객센터\n사업공고\n공지사항\n사업공고\n우수사례집\n채용공고\n입찰공고\n프린터\n링크\n공유하기\n닫기\n페이스북\n트위터\n블로그\n밴드\n[광주 인공지능사관학교 AI 도약과정 위탁운영] 제안서 평가위원(후보자) 공개 모집 공고\n작성일\n2026.05.15 15:48:04\n조회\n892\n첨부\n광주 인공지능사관학교 AI 도약과정 위탁운영 제안서 평가위원(후보자) 공개 모집 공고문.hwp\n첨부\n붙임. 광주 인공지능사관학교 AI 도약과정 위탁운영 제안서 평가위원(후보자) 등록 신청 제출서류.hwp\nclose\n목록\n이 페이지에서 제공하는 정보에 대하여 만족하십니까?\n매우만족\n만족\n보통\n불만족\n매우불만족\n의견등록",
+  "deadline": "2026-05-15",
+  "posted_date": "2026-05-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[광주 인공지능사관학교 AI 도약과정 위탁운영] 제안서 평가위원(후보자) 공개 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://gj.riia.or.kr/board/businessAnnouncement/view/0626caf3-502a-11f1-ad2e-4dc88fba84f9"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 주요정보 진흥원소개 주요정보 자료정보 교육정보 고객센터 사업공고 공지사항 사업공고 우수사례집 채용공고 입찰공고 프린터 링크 공유하기 닫기 페이스북 트위터 블로그 밴드 [광주 인공지능사관학교 AI 도약과정 위탁운영] 제안서 평가위원(후보자) 공개 모집 공고 작성일 2026.05."
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-05-15"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

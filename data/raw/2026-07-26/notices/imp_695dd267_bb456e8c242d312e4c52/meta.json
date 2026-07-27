@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:51",
+  "notice_id": "imp_695dd267_bb456e8c242d312e4c52",
+  "title": "2026년 용인IP지원센터 운영 IP 컨설팅 통합 공고(상시)",
+  "link": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7068",
+  "source": "용인시산업진흥원",
+  "author": "",
+  "description": "사업공지\n창업지원팀\n2025-06-10T09:49:10+09:00\n사업공지\n입찰공고\n채용공고\n2026년 용인IP지원센터 운영 IP 컨설팅 통합 공고(상시)\n작성자\n사업화지원팀\n작성일\n2026-03-12 11:06\n조회\n869\n첨부파일\n붙임1.-2026년-용인-IP지원센터-IP-컨설팅-통합공고.pdf\n붙임2.-2026년-용인-IP지원센터-IP-컨설팅찾아가는-컨설팅-사업-신청서.hwp\n용인IP-지원센터-운영-사업-포스터.png\n좋아요\n0\n싫어요\n0\n인쇄\n구글폼 접수\nhttps://docs.google.com/forms/d/e/1FAIpQLSdgbTQJiWIu6-8GTQKLej5gIHMlzoqwMA8R-IFLmRWd4jECnA/viewform?usp=header\n«\n2026년 1인 창조기업 지원센터 제2차 신규 입주기업 모집(~3/25(수))\n'메가 FTA시대, FTA체결시장 마케팅 교육' 참가기업 모집 안내(3. 26.목, 10:00 ~ 17:00)\n»\n목록보기\nPowered by KBoard",
+  "deadline": "2026-03-12",
+  "posted_date": "2026-03-12",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 용인IP지원센터 운영 IP 컨설팅 통합 공고(상시)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7068"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공지 창업지원팀 2025-06-10T09:49:10+09:00 사업공지 입찰공고 채용공고 2026년 용인IP지원센터 운영 IP 컨설팅 통합 공고(상시) 작성자 사업화지원팀 작성일 2026-03-12 11:06 조회 869 첨부파일 붙임1.-2026년-용인-IP지원센터-IP-컨설팅-통"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-03-12"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

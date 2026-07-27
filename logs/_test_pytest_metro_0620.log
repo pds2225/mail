@@ -1,0 +1,11 @@
+
+=================================== ERRORS ====================================
+__________________ ERROR collecting test_goyang_precision.py __________________
+test_goyang_precision.py:31: in <module>
+    GOYANG = GROUPS["grp_goyang"]
+             ^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'grp_goyang'
+=========================== short test summary info ===========================
+ERROR test_goyang_precision.py - KeyError: 'grp_goyang'
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 1.83s

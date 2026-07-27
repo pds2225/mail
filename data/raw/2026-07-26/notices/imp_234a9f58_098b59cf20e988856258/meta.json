@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:28",
+  "notice_id": "imp_234a9f58_098b59cf20e988856258",
+  "title": "[인자위 공고 제2026-06호] 2026년도 광주지역인적자원개발위원회 신규 직원(일자리창출 선임) 채용 재…",
+  "link": "https://www.gwangjuhrd.or.kr/user2/board/view/board_cd/5010/wr_no/258/board_cd/5010",
+  "source": "광주지역인적자원개발위원회",
+  "author": "",
+  "description": "위원회 활동\nHOME\n위원회 활동\n위원회소개\n주요사업\n연구·보고서\n위원회활동\n홍보자료실\n공지사항\n공지사항\n사진으로 보는 위원회 활동\n언론보도\n공지사항\n[인자위 공고 제2026-06호] 2026년도 광주지역인적자원개발위원회 신규 직원(일자리창출 선임) 채용 재공고\n운영자   2026-04-20\n첨부파일\n(채용공고) 2026_인자위 사무국 전담자(일자리창출팀 선임급) 채용 재공고.pdf : 0.28 M\n,\n채용양식(입사지원서 등 4종_광주인자위).hwp : 0.05 M\n,\nnext >\n[인자위 공고 제2026-05호] 2026년도「산업구조변화대응 등 특화훈련」제2차 광주지역…\n< prev\n[인자위 공고 제2026-07호] 2026년도 제2차 산업구조변화대응 등 특화훈련사업 훈련…\n목록\n전체메뉴 닫기\n위원회소개\n인사말\n위원회소개\n위원회 구성\n분과위원회 및 협의체\n사무국 소개\n찾아오시는길\n주요사업\n지역·산업맞춤형인력양성사업\n산업구조 변화대응등 특화훈련사업\n지역·산업맞춤형일자리지원사업\n연구·보고서\n연구·보고서\n위원회 활동\n공지사항\n사진으로 보는 위원회 활동\n언론보도\n홍보자료실\n뉴스레터\n공모전\n자료실",
+  "deadline": "2026-04-20",
+  "posted_date": "2026-04-20",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[인자위 공고 제2026-06호] 2026년도 광주지역인적자원개발위원회 신규 직원(일자리창출 선임) 채용 재…"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gwangjuhrd.or.kr/user2/board/view/board_cd/5010/wr_no/258/board_cd/5010"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "위원회 활동 HOME 위원회 활동 위원회소개 주요사업 연구·보고서 위원회활동 홍보자료실 공지사항 공지사항 사진으로 보는 위원회 활동 언론보도 공지사항 [인자위 공고 제2026-06호] 2026년도 광주지역인적자원개발위원회 신규 직원(일자리창출 선임) 채용 재공고 운영자 2026-04-2"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-04-20"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

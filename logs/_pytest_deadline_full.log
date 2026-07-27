@@ -1,0 +1,58 @@
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+........................................................................ [ 32%]
+..............................................F......................... [ 42%]
+........................................................................ [ 53%]
+........................................................................ [ 64%]
+........................................................................ [ 75%]
+........................................................................ [ 85%]
+........................................................................ [ 96%]
+.......................                                                  [100%]
+================================== FAILURES ===================================
+___________ test_run_coverage_anomaly_check_no_network_no_real_file ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000016ECE774350>
+tmp_path = WindowsPath('C:/Users/Public/Documents/ESTsoft/CreatorTemp/pytest-of-ekth3/pytest-1366/test_run_coverage_anomaly_chec0')
+
+    def test_run_coverage_anomaly_check_no_network_no_real_file(monkeypatch, tmp_path):
+        """run_coverage_anomaly_check: ntfy 모킹으로 네트워크 0, baseline 을 tmp 로 격리."""
+        import monitor as m
+    
+        # baseline 입출력을 tmp 파일로 격리 (실제 coverage_baseline.json 오염 금지)
+        import json as _json
+        bpath = tmp_path / "cb.json"
+    
+        def _load(*a, **k):
+            return _json.loads(bpath.read_text(encoding="utf-8")) if bpath.exists() else {}
+    
+        def _save(data, *a, **k):
+            bpath.write_text(_json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    
+        monkeypatch.setattr(ca, "load_coverage_baseline", _load)
+        monkeypatch.setattr(ca, "save_coverage_baseline", _save)
+    
+        # 실제 이메일 발송 차단 + 호출 캡처 (알림은 폰 ntfy → PC 이메일로 전환됨)
+        calls = []
+        monkeypatch.setattr(m, "alert_email", lambda *a, **k: calls.append((a, k)))
+    
+        # 사전 baseline: a 는 평소 5~7건
+        _save({"a": [5, 6, 5, 7]})
+    
+        rows = [_row("a", item_count=0)]  # 오늘 0건 → high
+        anomalies = m.run_coverage_anomaly_check(rows, allow_alert=True)
+    
+        assert len(anomalies) == 1 and anomalies[0]["severity"] == "high"
+        assert len(calls) == 1  # high 1건 → PC(이메일) 알림 1회
+        # baseline 갱신: 0건 급락은 fetch_success=True 여도 정상으로 학습하지 않음(오염 방지)
+        assert _load()["a"] == [5, 6, 5, 7]
+        # 실제 파일은 건드리지 않음
+>       assert not (m.BASE_DIR / "coverage_baseline.json").exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (WindowsPath('D:/mail') / 'coverage_baseline.json').exists
+E        +      where WindowsPath('D:/mail') = <module 'monitor' from 'D:\\mail\\monitor.py'>.BASE_DIR
+
+test_coverage_alert.py:231: AssertionError
+=========================== short test summary info ===========================
+FAILED test_coverage_alert.py::test_run_coverage_anomaly_check_no_network_no_real_file
+1 failed, 670 passed in 157.10s (0:02:37)

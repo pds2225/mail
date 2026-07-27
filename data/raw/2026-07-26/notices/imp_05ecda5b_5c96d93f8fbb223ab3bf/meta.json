@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:08",
+  "notice_id": "imp_05ecda5b_5c96d93f8fbb223ab3bf",
+  "title": "[한살림생산자연합회] 2026년도 한살림 귀촌 탐색과정 ‘한살림 농촌 탐구생활’ 참가자 모집 안내",
+  "link": "https://sehub.net/archives/2156814",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "사회적경제 공지\n[한살림생산자연합회] 2026년도 한살림 귀촌 탐색과정 ‘한살림 농촌 탐구생활’ 참가자 모집 안내\n2026-07-21\n조회 : 48\n댓글 :\n0\n주최/주관 : (사)한살림생산자연합회\n문의 전화 : 010-2323-2934\n문의 메일 : kdj@hansalim.or.kr\n관련링크 :\nhttps://www.farmhansalim.or.kr/24/?idx=172283293&bmode=view\n2026_한살림_귀촌탐색과정_-참가자_모집공고카드뉴스.pdf\n한살림 농촌 탐구생활 참가자 모집 안내\n한살림생산자연합회는 2026년도 귀촌 탐색과정 「한살림 농촌 탐구생활」 참가자를 모집합니다.\n「한살림 농촌 탐구생활」은 한살림 생산지에서 2박 3일 동안 머물며 생산자의 일상과 농촌의 삶을 가까이 경험해 보는 귀농·귀촌 탐색 프로그램입니다.\n농사 체험을 넘어 생산자와 함께 밥을 나누고, 지역 공동체를 만나며, 농촌에서 살아가는 다양한 가능성을 함께 찾아가는 시간입니다.\n막연했던 귀농·귀촌의 고민을 한살림 생산자와 이야기하고, 나에게 맞는 삶의 방향을 그려보고 싶은 분들의 많은 참여를 기다립니다.\n“농촌을 방문하는 시간을 넘어, 한살림 생산지와 관계 맺고 함께 살아가는 첫걸음에 여러분을 초대합니다.”\n2026년 7월 21일\n한살림생산자연합회 드림\n📌 자세한 모집 내용 및 지역, 공동체 안내는 한살림생산자연합회 홈페이지에서 확인해 주세요.\n▶\n참가 신청 바로가기\n(\n링크 클릭\n)\n첨부파일\n2026_한살림_귀촌탐색과정_-참가자_모집공고카드뉴스\n(16 MB)\n2026_한살림_귀촌탐색과정_-참가자_모집공고카드뉴스\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "",
+  "posted_date": "2026-07-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[한살림생산자연합회] 2026년도 한살림 귀촌 탐색과정 ‘한살림 농촌 탐구생활’ 참가자 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2156814"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사회적경제 공지 [한살림생산자연합회] 2026년도 한살림 귀촌 탐색과정 ‘한살림 농촌 탐구생활’ 참가자 모집 안내 2026-07-21 조회 : 48 댓글 : 0 주최/주관 : (사)한살림생산자연합회 문의 전화 : 010-2323-2934 문의 메일 : kdj@hansalim.or.kr "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

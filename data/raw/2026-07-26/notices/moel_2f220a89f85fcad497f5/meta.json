@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:27",
+  "notice_id": "moel_2f220a89f85fcad497f5",
+  "title": "[공고] 2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고",
+  "link": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100460",
+  "source": "고용노동부",
+  "author": "",
+  "description": "고용노동부\n국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라!\n정보공개\n국고보조사업\n국고보조사업 공모현황입니다.\n제목\n[공고]2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고\n담당부서\n일·가정양립 지원 TF\n전화번호\n044-202-7474\n담당자\n박찬민\n등록일\n2026-01-12\n고용노동부 공고 제2026-29호\n2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고\n- 2026년도 인재채움뱅크, 인재채움 전용관 사업의 운영기관을 붙임과 같이 선정하여 공고합니다.\n2026. 1. 12. 고용노동부 장관\n첨부\n2026년 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고.hwp\n다운로드\n바로보기\n이전글\n외국인근로자 지역정착 지원사업 운영 자치단체 추가 모집 공모\n다음글\n2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 공고\n목록",
+  "deadline": "",
+  "posted_date": "2026-01-12",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100460"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고용노동부 국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라! 정보공개 국고보조사업 국고보조사업 공모현황입니다. 제목 [공고]2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고 담당부서 일·가정양립 지원 TF 전화번호 044-202-7474 담당자 박찬민 등록일"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

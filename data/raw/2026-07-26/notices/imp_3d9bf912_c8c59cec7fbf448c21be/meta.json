@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:11",
+  "notice_id": "imp_3d9bf912_c8c59cec7fbf448c21be",
+  "title": "2026년 「사회적경제기업 성장 도약 지원사업」 모집공고",
+  "link": "https://www.sjepa.or.kr/news-announcement/view/id/1171",
+  "source": "세종일자리경제진흥원",
+  "author": "",
+  "description": "2026년  「사회적경제기업 성장 도약 지원사업」  모집공고\n경제육성팀\n2026.05.18.\n904\n＊ 신청 링크\n:\n따사누리 지원사업공고\n(\nhttps://www.dsnuri.com/dsnuri/biz/bbs/11/moveBbsNttDetail.do?nttSn=911\n)\n첨부파일\n붙임1_2026년_사회적경제기업_성장_도약_지원사업_모집공고.pdf\n335.8 KB\n붙임2_(서식1)_사업신청서_및_붙임_서식.hwp\n58.0 KB\n붙임3_(서식2)_수행계획서.hwp\n122.5 KB\n2026_사회적경제기업_성장_도약_지원사업_(배너).png\n949.0 KB\n전체 다운로드\n이전글\n2026년 충북·세종마을기업 판매전 모집공고\n다음글\n2026년 마을기업부스 운영지원사업 심사 결과 및 최종 선정기업 공고\n목록",
+  "deadline": "2026-05-18",
+  "posted_date": "2026-05-19",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 「사회적경제기업 성장 도약 지원사업」 모집공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sjepa.or.kr/news-announcement/view/id/1171"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 「사회적경제기업 성장 도약 지원사업」 모집공고 경제육성팀 2026.05.18. 904 ＊ 신청 링크 : 따사누리 지원사업공고 ( https://www.dsnuri.com/dsnuri/biz/bbs/11/moveBbsNttDetail.do?nttSn=911 ) 첨부파일 붙임1_"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-05-18"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

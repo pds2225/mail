@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:37:49",
+  "notice_id": "imp_0533ff15_fac7f4f9934ea2ab7321",
+  "title": "2026년 입주기업 해외정보교류 및 경쟁력강화 지원사업 참여 기업 모집 안내",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8505&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n2026년 입주기업 해외정보교류 및 경쟁력강화 지원사업 참여 기업 모집 안내\n2026-03-12 13:47:22\n작성자\n기업지원2과\n조회\n292\n분류\n파일\n[붙임1] 2026년 기업 해외정보 교류 및 경쟁력강화 사업 참가기업 모집공고문.pdf\n바로보기\n[붙임2] 신청서 양식.hwp\n바로보기\n「2026년 해외정보 교류 및 경쟁력강화 지원사업」\n참여기업을 아래와 같이 모집하오니, 기업의 많은  관심과 참여 바랍니다.\n1. 지원사업 :  2026년 해외정보 교류 및 경쟁력강화 지원사업\n2. 지원대상 : DGFEZ 내 입주기업 및 포항에 본사, 공장, 연구소, 지사 등을 둔 바이오 관련 중소·중견기업\n3. 지원내용 : 국내외 바이오분야 학술대회 등록비 지원\n4. 접수기간 : 2026. 3. 3.(화) ~ 2025년 3월 20일(금)\n5.  접수방법 : 온라인 접수(\nwww.ptp.or.kr\n/ 알림마당_사업공고_온라인신청)\n[링크]\n사업공고 | 포항테크노파크\n6.  문 의 처 : (재)포항테크노파크 바이오사업본부 구주영 연구원 (054-223-2782 /\nkoojy38@ptp.or.kr\n)\n목록\nprev\n2026년 소규모사업장 방지시설 설치 지원사업 2차 공고\nnext\n2026년 입주기업 해외마케팅 지원사업 참여 기업 모집 공고\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "2025-03-03 ~ 2026-03-03",
+  "posted_date": "2026-03-12",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2025-03-03",
+    "end": "2026-03-03",
+    "display": "2025-03-03 ~ 2026-03-03",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 입주기업 해외정보교류 및 경쟁력강화 지원사업 참여 기업 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8505&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 2026년 입주기업 해외정보교류 및 경쟁력강화 지원사업 참여 기업 모집 안내 2026-03-12 13:47:22 작성자 기업지원2과 조회 292 분류 파일 [붙임1] 2026년 기업 해외정보 교류 및 경쟁력강화 사업 참가기업 모집공고문.pdf 바로보기 [붙임2] 신청서 양식.hwp"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2025-03-03 ~ 2026-03-03"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

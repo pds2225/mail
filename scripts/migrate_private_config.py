@@ -15,8 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import private_config  # noqa: E402
-from state_store import atomic_write_json  # noqa: E402
+from mail_core.security import private_config  # noqa: E402
+from mail_core.storage.state_store import atomic_write_json  # noqa: E402
 
 
 def _read(path: Path, default):
@@ -44,10 +44,10 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="validate and show counts without writing")
     args = parser.parse_args()
 
-    groups = _read(ROOT / "groups.json", [])
-    settings = _read(ROOT / "settings.json", {})
-    watchlist = _read(ROOT / "watchlist.json", {})
-    companies = _read(ROOT / "companies.json", [])
+    groups = _read(ROOT / "config" / "groups.json", [])
+    settings = _read(ROOT / "config" / "settings.json", {})
+    watchlist = _read(ROOT / "config" / "watchlist.json", {})
+    companies = _read(ROOT / "config" / "companies.json", [])
     public_groups, public_settings, public_watchlist, public_companies, payload = (
         private_config.split_public_private(groups, settings, watchlist, companies)
     )
@@ -55,10 +55,10 @@ def main() -> int:
 
     if not args.dry_run:
         private_config.save_private_payload(payload)
-        atomic_write_json(ROOT / "groups.json", public_groups, indent=2, backup=True)
-        atomic_write_json(ROOT / "settings.json", public_settings, indent=2, backup=True)
-        atomic_write_json(ROOT / "watchlist.json", public_watchlist, indent=2, backup=True)
-        atomic_write_json(ROOT / "companies.json", public_companies, indent=2, backup=True)
+        atomic_write_json(ROOT / "config" / "groups.json", public_groups, indent=2, backup=True)
+        atomic_write_json(ROOT / "config" / "settings.json", public_settings, indent=2, backup=True)
+        atomic_write_json(ROOT / "config" / "watchlist.json", public_watchlist, indent=2, backup=True)
+        atomic_write_json(ROOT / "config" / "companies.json", public_companies, indent=2, backup=True)
     action = "validated" if args.dry_run else "migrated"
     print(
         f"private config {action}: groups={counts['group_recipients']}, "

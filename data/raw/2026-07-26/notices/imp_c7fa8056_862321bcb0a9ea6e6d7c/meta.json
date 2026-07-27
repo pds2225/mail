@@ -1,0 +1,169 @@
+{
+  "saved_at": "2026-07-26 19:37:23",
+  "notice_id": "imp_c7fa8056_862321bcb0a9ea6e6d7c",
+  "title": "2026년 장애인 복지신문 보급사업 신문사 선정 결과 공고",
+  "link": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75039&pageIndex=2&searchCnd=40900000000&cate_cd=1",
+  "source": "김포시청",
+  "author": "",
+  "description": "고시공고 게시물 내용\n고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표\n고시공고구분\n공고(일반공고)\n조회수\n58\n고시공고번호\n김포시 공고 제2026-2037호\n등록일\n2026-07-23\n담당부서\n노인장애인과\n제목\n2026년 장애인 복지신문 보급사업 신문사 선정 결과 공고\n2026년 장애인 복지신문 보급사업 신문사 선정 결과를 아래와 같이 공고합니다.\nO 심사결과 : 신문사 4개소 선정\n1위: 대한사회복지신문\n2위: 경기복지신문\n3위: 장애인문화복지신문\n4위: e장애인신문\nO 협약체결기간 : 2026.7. 28.(화) ~ 2026. 7. 30.(목)\nO 보급기간 : 2026. 8. 1. ~ 2026. 12. 31.\nO 문의처 : 김포시청 노인장애인과 ☎ 031-980-2211\n첨부파일\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 장애인 복지신문 보급사업 신문사 선정 결과 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75039&pageIndex=2&searchCnd=40900000000&cate_cd=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표 고시공고구분 공고(일반공고) 조회수 58 고시공고번호 김포시 공고 제2026-2037호 등록일 2026-07-23 담당부서 노인장애인과 제목 2026년 장애인 복지신문 보급사업 신문사 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고구분",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고(일반공고)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "58",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김포시 공고 제2026-2037호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "노인장애인과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 장애인 복지신문 보급사업 신문사 선정 결과 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "2026년 장애인 복지신문 보급사업 신문사 선정 결과를 아래와 같이 공고합니다. O 심사결과 : 신문사 4개소 선정 1위: 대한사회복지신문 2위: 경기복지신문 3위: 장애인문화복지신문 4위: e장애인신문 O 협약체결기간 : 2026.7. 28.(화) ~ 2026. 7. 30.(목) O 보급기간 : 2026. 8. 1. ~ 2026. 12. 31. O 문의처 : 김포시청 노인장애인과 ☎ 031-980-2211",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

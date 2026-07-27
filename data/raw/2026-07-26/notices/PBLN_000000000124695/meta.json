@@ -1,0 +1,293 @@
+{
+  "saved_at": "2026-07-26 19:32:11",
+  "notice_id": "PBLN_000000000124695",
+  "title": "2026년 2차 국가첨단전략산업 소부장 중소ㆍ중견기업 투자지원금 사업시행 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124695",
+  "source": "기업마당(Bizinfo)",
+  "author": "산업통상부",
+  "description": "<p>국가첨단전략산업 분야의 핵심 소재ㆍ부품ㆍ장비 기업의 국내 생산기반을 확충하고 공급망 안정화에 기여하기 위하여,「2026년 국가첨단전략산업 소부장 중소ㆍ중견기업 투자지원금」 사업의 시행을 다음과 같이 공고합니다.</p><p><br></p><p>☞&nbsp;국가첨단전략산업 분야 중 지원품목(“공급망안정품목” 또는 “전략물자”)을 생산하는 중소ㆍ중견 소부장 기업</p><p><br></p><p>☞&nbsp;지원품목과 밀접하게 연관된 설비투자(건설 및 기계장비투자)와 설비투자를 위한 입지(토지) 매입에 대한 신규투자 비용 지원</p>\n국가첨단전략산업 분야의 핵심 소재ㆍ부품ㆍ장비 기업의 국내 생산기반을 확충하고 공급망 안정화에 기여하기 위하여,「2026년 국가첨단전략산업 소부장 중소ㆍ중견기업 투자지원금」 사업의 시행을 다음과 같이 공고합니다. ☞ 국가첨단전략산업 분야 중 지원품목(“공급망안정품목” 또는 “전략물자”)을 생산하는 중소ㆍ중견 소부장 기업 ☞ 지원품목과 밀접하게 연관된 설비투자(건설 및 기계장비투자)와 설비투자를 위한 입지(토지) 매입에 대한 신규투자 비용 지원",
+  "deadline": "2026-07-23 ~ 2026-08-21",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-21",
+    "display": "2026-07-23 ~ 2026-08-21",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 2차 국가첨단전략산업 소부장 중소ㆍ중견기업 투자지원금 사업시행 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "산업통상부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124695"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>국가첨단전략산업 분야의 핵심 소재ㆍ부품ㆍ장비 기업의 국내 생산기반을 확충하고 공급망 안정화에 기여하기 위하여,「2026년 국가첨단전략산업 소부장 중소ㆍ중견기업 투자지원금」 사업의 시행을 다음과 같이 공고합니다.</p><p><br></p><p>☞&nbsp;국가첨단전략산업 분야 중 지"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-21"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기계장비투자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#산업통상부",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#국가첨단전략산업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#설비투자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#건설",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#장비",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#소재",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부품",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#소부장",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#한국산업기술진흥원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#중견기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#중소기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#충남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#강원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#세종",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#울산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#인천",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대구",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기술",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "산업통상부"
+}

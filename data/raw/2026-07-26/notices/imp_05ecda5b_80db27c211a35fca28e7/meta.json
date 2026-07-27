@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:07",
+  "notice_id": "imp_05ecda5b_80db27c211a35fca28e7",
+  "title": "(공지) 센터 6층 공유 공간 개방 안내",
+  "link": "https://sehub.net/archives/2120447",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "메인-슬라이드배너\n(공지) 센터 6층 공유 공간 개방 안내\n2025-09-28\n조회 : 2166\n댓글 :\n0\n주최/주관 : 관리자\n4-1.png\n3-1.png\n2-1.png\n1-2.png\n4\n3\n2\n1\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "",
+  "posted_date": "2025-09-28",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(공지) 센터 6층 공유 공간 개방 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2120447"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "메인-슬라이드배너 (공지) 센터 6층 공유 공간 개방 안내 2025-09-28 조회 : 2166 댓글 : 0 주최/주관 : 관리자 4-1.png 3-1.png 2-1.png 1-2.png 4 3 2 1 < > 인쇄 목록 수정 댓글이 닫혀있습니다."
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:37",
+  "notice_id": "imp_5200845a_b806fe97b4464786194e",
+  "title": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기）",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982322",
+  "source": "김포시청",
+  "author": "",
+  "description": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기） 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n다중이용시설 실내공기질 측정결과 공개（2026년 2분기）\n담당부서\n기후에너지과\n실내공기질 관리법 제13조에 따라 김포시 다중이용시설（공공소유시설） 실내공기질 측정결과 및 오염도 검사 대상시설 검사 결과를 붙임과 같이 공개합니다.\n파일\n엑셀 문서\n다중이용시설 실내공기질 측정결과 공개（2026년 2분기）.xlsx\n미리보기\n조회수\n125\n작성일\n2026.07.16\n목록\n이전글\n「2026년 산단 근로자 천원의 아침밥」 사업 참여기업 모집\n다음글\n「북한이탈주민과 함께하는 문화 프로그램（8월 과정）」 운영",
+  "deadline": "",
+  "posted_date": "2026-07-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기）"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982322"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기） 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 다중이용시설 실내공기질 측정결과 공개（2026년 2분기） 담당부서 기후에너지과 실내공기질 관리법 제13조에 따라 김포시 다중이용시설（공공소유시설） 실내공기질 측정"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기） 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "다중이용시설 실내공기질 측정결과 공개（2026년 2분기）",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기후에너지과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "엑셀 문서 다중이용시설 실내공기질 측정결과 공개（2026년 2분기）.xlsx 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "125",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

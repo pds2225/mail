@@ -1,0 +1,173 @@
+{
+  "saved_at": "2026-07-26 19:31:49",
+  "notice_id": "PBLN_000000000124726",
+  "title": "[충북] 2026년 특화콘텐츠 마케팅 지원사업(팝업운영) 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124726",
+  "source": "기업마당(Bizinfo)",
+  "author": "충청북도",
+  "description": "<p>충북 콘텐츠 기업이 보유한 콘텐츠 IP의 홍보 및 판로 확대를 지원하고, 지역 행사와 연계한 팝업형 마케팅을 통해 기업 및 콘텐츠의 시장 경쟁력을 강화하고자 「2026 충북 특화콘텐츠 마케팅지원사업(팝업운영)」을 다음과 같이 시행하오니 많은 참여 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;공고 시작일 기준 충청북도에 사업자 등록이 되어 있는 콘텐츠기업으로, 콘텐츠 IP를 보유하고 이를 마케팅에 활용할 계획이 있는 기업</p><p style=\"line-height: 1.8;\">※ 자세한 지원대상 공고문 참조</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;지원금 한도 내 지역 행사 팝업 기획전 운영비 지원(과제별 8,000천원 내외)</p><p style=\"line-height: 1.8;\">- 도내 콘텐츠기업이 지역 행사에 참여하여 콘텐츠 IP를 전시ㆍ판매ㆍ홍보하거나 체험 프로그램을 운영하는 데 필요한 비용 지원</p><p style=\"line-height: 1.8;\">- 콘텐츠 특성 및 트렌드에 맞춘 레이아웃 연출로 테마형 기획전 진행</p><p style=\"line-height: 1.8;\">- 방문객의 콘텐츠 체험과 제품 구매를 유도하기 위한 현장 참여 프로그램 및 판매촉진 활동 지원</p><p style=\"line-height: 1.8;\">※ 콘텐츠IP장르 : 영상, 캐릭터, 웹툰ㆍ만화, 음악, 실감콘텐츠, 게임, 디지털콘텐츠 등 순수 콘텐츠 분야</p>\n충북 콘텐츠 기업이 보유한 콘텐츠 IP의 홍보 및 판로 확대를 지원하고, 지역 행사와 연계한 팝업형 마케팅을 통해 기업 및 콘텐츠의 시장 경쟁력을 강화하고자 「2026 충북 특화콘텐츠 마케팅지원사업(팝업운영)」을 다음과 같이 시행하오니 많은 참여 바랍니다. ☞ 공고 시작일 기준 충청북도에 사업자 등록이 되어 있는 콘텐츠기업으로, 콘텐츠 IP를 보유하고 이를 마케팅에 활용할 계획이 있는 기업 ※ 자세한 지원대상 공고문 참조 ☞ 지원금 한도 내 지역 행사 팝업 기획전 운영비 지원(과제별 8,000천원 내외) - 도내 콘텐츠기업이 지역 행사에 참여하여 콘텐츠 IP를 전시ㆍ판매ㆍ홍보하거나 체험 프로그램을 운영하는 데 필요한 비용 지원 - 콘텐츠 특성 및 트렌드에 맞춘 레이아웃 연출로 테마형 기획전 진행 - 방문객의 콘텐츠 체험과 제품 구매를 유도하기 위한 현장 참여 프로그램 및 판매촉진 활동 지원 ※ 콘텐츠IP장르 : 영상, 캐릭터, 웹툰ㆍ만화, 음악, 실감콘텐츠, 게임, 디지털콘텐츠 등 순수 콘텐츠 분야",
+  "deadline": "2026-07-23 ~ 2026-08-13",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-13",
+    "display": "2026-07-23 ~ 2026-08-13",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[충북] 2026년 특화콘텐츠 마케팅 지원사업(팝업운영) 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "충청북도"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124726"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>충북 콘텐츠 기업이 보유한 콘텐츠 IP의 홍보 및 판로 확대를 지원하고, 지역 행사와 연계한 팝업형 마케팅을 통해 기업 및 콘텐츠의 시장 경쟁력을 강화하고자 「2026 충북 특화콘텐츠 마케팅지원사업(팝업운영)」을 다음과 같이 시행하오니 많은 참여 바랍니다.</p><p><br></p"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-13"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#팝업운영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#특화콘텐츠",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#팝업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#콘텐츠IP",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기획전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#콘텐츠기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북과학기술혁신원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충청북도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#마케팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#내수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "충청북도"
+}

@@ -1,0 +1,108 @@
+{
+  "saved_at": "2026-07-26 19:38:59",
+  "notice_id": "imp_7381d7a0_43f6b16da8ded7966cd3",
+  "title": "2026년 안양시 소상공인 경영환경개선사업 신청 안내(모집 3.23.~3.27.)",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=434347&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n2026년 안양시 소상공인 경영환경개선사업 신청 안내(모집 3.23.~3.27.)\n핫이슈\n내용\n□ 2026년 안양시 소상공인 경영환경개선사업 신청 안내\n○ 접수기간 : 2026. 3. 23.(월) ~ 3. 27.(금)\n○ 신청대상 : 관내 소상공인\n- 도소매, 음식점, 숙박, 서비스업 : 상시종업원 5인 미만 업체\n- 광업, 제조업, 건설업 및 운수업 : 상시종업원 10인 미만 업체\n※ 신청한 모든 사업자를 지원하는 것은 아니며, 심사를 거쳐 선정함.\n○ 지원규모 :  100개사 내외(예산 범위 내)\n○ 지원내용 : 점포환경개선, 홍보 등\n※ 공급가액의 20% 및 지원한도 초과분, 부가세 본인 부담\n○ 신청방법 : 소상공인 경영환경개선사업 신청서 등 제출(방문 및 우편)\n○ 문의처 : 한국생산성본부 ☎ 02-3702-0777, 02-3702-0774\n○ 선정발표 : 2026. 4. 10. (예정)\n파일\nhwp 파일\n[공고문] 2026년 안양시 경영환경개선사업.hwp\n미리보기\n(파일크기 : 107.0KB,\n다운로드 : 47회)\nhwp 파일\n[신청서식]2026년 안양시 경영환경개선사업 관련서식.hwp\n미리보기\n(파일크기 : 119.5KB,\n다운로드 : 38회)\n목록",
+  "deadline": "2026-03-23 ~ 2026-03-27",
+  "posted_date": "2026-03-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-03-23",
+    "end": "2026-03-27",
+    "display": "2026-03-23 ~ 2026-03-27",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 안양시 소상공인 경영환경개선사업 신청 안내(모집 3.23.~3.27.)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=434347&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 2026년 안양시 소상공인 경영환경개선사업 신청 안내(모집 3.23.~3.27.) 핫이슈 내용 □ 2026년 안양시 소상공인 경영환경개선사업 신청 안내 ○ 접수기간 : 2026. 3. 23.(월) ~ 3. 27.(금"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-03-23 ~ 2026-03-27"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2026년 안양시 소상공인 경영환경개선사업 신청 안내(모집 3.23.~3.27.) 핫이슈",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "□ 2026년 안양시 소상공인 경영환경개선사업 신청 안내 ○ 접수기간 : 2026. 3. 23.(월) ~ 3. 27.(금) ○ 신청대상 : 관내 소상공인 - 도소매, 음식점, 숙박, 서비스업 : 상시종업원 5인 미만 업체 - 광업, 제조업, 건설업 및 운수업 : 상시종업원 10인 미만 업체 ※ 신청한 모든 사업자를 지원하는 것은 아니며, 심사를 거쳐 선정함. ○ 지원규모 : 100개사 내외(예산 범위 내) ○ 지원내용 : 점포환경개선, 홍보 등 ※ 공급가액의 20% 및 지원한도 초과분, 부가세 본인 부담 ○ 신청방법 : 소상공인 경영환경개선사업 신청서 등 제출(방문 및 우편) ○ 문의처 : 한국생산성본부 ☎ 02-3702-0777, 02-3702-0774 ○ 선정발표 : 2026. 4. 10. (예정)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "hwp 파일 [공고문] 2026년 안양시 경영환경개선사업.hwp 미리보기 (파일크기 : 107.0KB, 다운로드 : 47회) hwp 파일 [신청서식]2026년 안양시 경영환경개선사업 관련서식.hwp 미리보기 (파일크기 : 119.5KB, 다운로드 : 38회)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

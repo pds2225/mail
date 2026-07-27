@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:41",
+  "notice_id": "imp_8998eef2_f193c2cb815f97e50db0",
+  "title": "2026년 종사자 교육 - AI를 활용한 홍보교육",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=555&page=2",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "2026년 종사자 교육 - AI를 활용한 홍보교육\n광주광역자활센터\n작성일\n2026-02-10\n조회수\n67\n2026년 종사자 교육 - AI를 활용한 홍보교육\n목록\n이전글\n광주광역자활센터 2025년 세입·세출 결산 공고\n다음글\n2026년 광주광역자활센터 교육훈련사업 강사 모집\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2026-02-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 종사자 교육 - AI를 활용한 홍보교육"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=555&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 종사자 교육 - AI를 활용한 홍보교육 광주광역자활센터 작성일 2026-02-10 조회수 67 2026년 종사자 교육 - AI를 활용한 홍보교육 목록 이전글 광주광역자활센터 2025년 세입·세출 결산 공고 다음글 2026년 광주광역자활센터 교육훈련사업 강사 모집 센터소식 게시"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

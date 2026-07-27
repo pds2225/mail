@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:17",
+  "notice_id": "imp_28ff1a60_b3d8c1f67f21ad1c9e19",
+  "title": "기업 규제개선 과제 발굴 협조 및 찾아가는 기업애로 해소지원 안내",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13294&tag=&nPage=1",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n기업 규제개선 과제 발굴 협조 및 찾아가는 기업애로 해소지원 안내\n작성자\n배*준\n작성일\n2026/06/25 10:19\n조회수\n845\n안녕하십니까.\n대전광역시와 대전테크노파크(기업도움센터)에서는 지역 기업의 지속성장 가능한 사업환경 조성을 위하여 현장 애로해소 및 불합리한 규제개선에 지속적인 노력을 기울이고 있으며, 2026년 하반기 규제개선 및 기업애로 해소 지원을 위한 과제발굴ㆍ지원 관련하여 아래와 같이 안내하오니 관심있는 기업의 많은 신청 바랍니다.\n1. 기업 규제개선 과제 발굴 협조\n- 목적 : 기업 현장의 불합리한 규제를 적극 발굴하고 신속한 개선을 통해 기업하기 좋은 환경 마련\n- 내용 : 기업운영을 위해 법적ㆍ정책적 개선이 필요한 모든 분야\n- 절차 : 규제개선과제 건의(~7.8) -  전문가(기술/법리) 검토(~7.17.) - 현장방문/의견청취(~7.24.) - 행안부 과제 제출(9월경 예정) - 규제개선\n- 기타 : 규제개선 건의 내용에 대해서는 추가적인 자료조사와 자문 등을 통해 고도화 진행 예정이오니 내용파악 가능한 수준에서 대략적으로 작성해도 됨\n- 제출 : 7월 8일(수)까지 대전테크노파크 기업도움센터로 이메일(bjbae@djtp.or.kr) 제출 (문의 : 042-930-2930)\n※ 첨부 : 규제개선과제 건의양식 및 예시 각 1부\n2. 찾아가는 기업애로 해소지원\n- 목적 : 다양한 현장애로에 대한 신속하고 전문적인 해결 지원\n- 내용 : 경영 및 사업화 관련 전분야에 대한 전문가 상담 및 자문 지원\n- 접수 : 수시 접수, 대전테크노파크 기업도움센터로 이메일(bjbae@djtp.or.kr) 제출 (문의 : 042-930-2930)\n(세부내용 및 절차, 접수 및 문의처 등은 첨부자료  참조)\n※ 첨부 : 찾아가는 기업애로 해소지원(사전상담) 안내 1부\n감사합니다.\n(안내용)찾아가는 기업애로 해소지원(사전상담) 안내.hwp\r\n\t\t\t\t\t\t\t\t\t[792KB]\n규제개선과제 건의양식.hwp\r\n\t\t\t\t\t\t\t\t\t[38.5KB]\n예시.hwp\r\n\t\t\t\t\t\t\t\t\t[243.5KB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-06-25",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "기업 규제개선 과제 발굴 협조 및 찾아가는 기업애로 해소지원 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13294&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 기업 규제개선 과제 발굴 협조 및 찾아가는 기업애로 해소지"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

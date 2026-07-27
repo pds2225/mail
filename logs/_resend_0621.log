@@ -1,0 +1,22 @@
+2026-06-21 00:16:09,175 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=1 "HTTP/1.1 200 200"
+2026-06-21 00:16:09,951 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=2 "HTTP/1.1 200 200"
+2026-06-21 00:16:10,875 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttList?bbsNo=4&tab=2&curPage=3 "HTTP/1.1 200 200"
+2026-06-21 00:16:10,951 INFO 정보통신산업진흥원(NIPA): 30건
+2026-06-21 00:16:11,886 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16764 "HTTP/1.1 200 200"
+2026-06-21 00:16:12,574 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16756 "HTTP/1.1 200 200"
+2026-06-21 00:16:13,134 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16750 "HTTP/1.1 200 200"
+2026-06-21 00:16:13,721 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16731 "HTTP/1.1 200 200"
+2026-06-21 00:16:14,377 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16730 "HTTP/1.1 200 200"
+2026-06-21 00:16:14,936 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16728 "HTTP/1.1 200 200"
+2026-06-21 00:16:15,453 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16669 "HTTP/1.1 200 200"
+2026-06-21 00:16:16,023 INFO HTTP Request: GET https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=16664 "HTTP/1.1 200 200"
+2026-06-21 00:16:18,970 INFO 발송 완료 → ek******@gmail.com
+발송 완료: 8 건
+  - 2026년도 ｢AI 청년창업기업 동반성장 바우처｣ 사업 수요기업 모집 공고
+  - 2026년「조선 AX 특화 AI 모델하우스 구축·실증사업」신규과제 모집공고
+  - 2026년 소형 데이터센터 기반 AI산업 성장 지원 사업 공고
+  - 2026년도 ｢AI 청년창업기업 동반성장 바우처｣ 지원사업 운영기관 모집 공고
+  - 2026년도 「AI 청년창업기업 동반성장 바우처」 지원사업 공급기업 후보군(POOL) 모집
+  - 2026년 AI기반 의료시스템 디지털 전환 지원(AI특화병원 AX-Ready 시범사업) 사
+  - 2026년 SW IP(지식재산권) 평가보증 지원사업 신청안내
+  - 2026년도 AI 통합 바우처(클라우드 바우처) 지원 사업 수정공고

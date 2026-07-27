@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:38:57",
+  "notice_id": "imp_1cc848c7_fcffa2868587f33e6517",
+  "title": "AI기반 Age-Tech산업중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기술서비스 추가모집 공고",
+  "link": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=359",
+  "source": "원주의료기기산업진흥원",
+  "author": "",
+  "description": "사업공고 안내\n[시험분석,기타]\nAI기반 Age-Tech산업중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기술서비스 추가모집 공고\n신청기간\n2026-05-22 ~ 2026-06-19\n신청자격\n국내 디지털의료제품 개발기업(디지털헬스케어, 바이오데이터활용 기업)\n공고번호\n260053\n진행상태\n접수마감\n담당부서/담당자\n기획3팀 / 김은하 전임연구원\n신청서류\n기술서비스 공고문 및 참가신청서.zip\n[산업혁신기반구축, 2차년도]\nAI기반 Age-Tech산업중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기술서비스 추가모집 공고\n산업통상자원부와 원주시가 지원하는「AI기반 Age-Tech 산업 중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기반구축」기술서비스의 참여기업을 아래와 같이 모집하오니, 관심있는 기업들의 많은 신청 바랍니다.\n❏ 과 제 명:  AI기반 Age-Tech 산업 중심의 디지털의료제품 지원 바이오 데이터 및 알고리즘 실증 기반구축\n❏ 목 적:  바이오데이터 기반 AI 기술 개발 지원 및 서비스 플랫폼을 구축하여 AI 디지털의료제품 시장선도를 위한 기반 구축\n❏ 대 상:  국내 디지털의료제품 개발기업(디지털헬스케어, 바이오데이터활용 기업)\n❏ 지원내용:  시험/평가/인증(사이버보안평가지원)\n※ 2026년 11월 13일까지 과제 수행 완료 가능한 기술서비스 신청\n❏ 지원기간\n❍ 협약체결일로부터 ~ 2026년 11월 13일까지\n❏ 수행기관\n❍ (재)원주의료기기산업진흥원\n접수가 마감되었습니다.",
+  "deadline": "2026-05-22 ~ 2026-06-19",
+  "posted_date": "2026-05-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-22",
+    "end": "2026-06-19",
+    "display": "2026-05-22 ~ 2026-06-19",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "AI기반 Age-Tech산업중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기술서비스 추가모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=359"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 안내 [시험분석,기타] AI기반 Age-Tech산업중심의 디지털의료제품 지원 바이오데이터 및 알고리즘 실증 기술서비스 추가모집 공고 신청기간 2026-05-22 ~ 2026-06-19 신청자격 국내 디지털의료제품 개발기업(디지털헬스케어, 바이오데이터활용 기업) 공고번호 2600"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-22 ~ 2026-06-19"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

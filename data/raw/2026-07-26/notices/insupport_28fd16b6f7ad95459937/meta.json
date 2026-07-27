@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:33:44",
+  "notice_id": "insupport_28fd16b6f7ad95459937",
+  "title": "2026년 소상공인 재도약 컨설팅 지원 모집 공고",
+  "link": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=764&page=1",
+  "source": "인천소상공인종합지원센터",
+  "author": "",
+  "description": "[생애주기지원팀] 2026년 소상공인 재도약 컨설팅 지원 모집 공고 상세보기\n[생애주기지원팀] 2026년 소상공인 재도약 컨설팅 지원 모집 공고\n조회\n3627\n생애주기지원\n2026-03-05 09:00:00\n파일\n소상공인 재도약 컨설팅 지원 사업 공고.pdf (\nSize\n: 214 Kbyte /\nDown\n: 0)\n※ 아래 첨부파일(공고문)을 꼭 확인해주세요.\n※ 2026년 소상공인 경영환경개선 및 2026년 특색간판 지원 사업 가점은 컨설팅 3회 수료시에만 해당됩니다.\n※ 대표자가 직접 신청하며, 대표자가 컨설팅을 받으셔야 합니다!!(컨설턴트 배정까지 약 1주일 소요)\n1. 모집기간 :\n2026. 3. 5.(목) 09:00 ~ 예산 소진 시 마감\n2. 모집인원 :\n150개 업체\n3. 진행절차 :\n컨설팅 신청 ▶ 컨설턴트 매칭(센터) ▶ 컨설팅 진행 ▶ 만족도 조사\n4. 신청대상 :\n인천시에 사업자등록을 하고 사업을 운영 중인 소상공인\n(자세한 사항은 공고문 확인)\n5. 지원내용 :\n컨설팅 1~3회 지원(컨설팅 1일 1회, 4시간 기준)\n6. 수료혜택 :\n2026년 소상공인 경영환경개선 및 2026년 소상공인 특색간판 지원 신청 시 가점 부여\n7. 필요서류 :\n① 신청서 및 기업정보·제 3자의 제공에 관한 동의서(온라인 작성)\n② 사업자등록증명(온라인 발급: 정부24, 홈택스 / 오프라인 발급: 무인 발급기, 관할 세무서)\n※ 사업자등록증명은 공고일(3.5일) 이후 발급분 제출\n8. 문의사항 :\n생애주기지원팀 (032-715-4047)\n컨설팅 신청 접수 바로가기\n▼\nhttps://www.icsp.or.kr/main/bsns/ancm/view.do?bsns_ancm_sn=105&search=SjZybW5rRmRIWk0yWE1TVjBoWGdxZz09",
+  "deadline": "2026-03-05",
+  "posted_date": "2026-03-05",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-03-05",
+    "end": "2026-03-05",
+    "display": "2026-03-05",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 소상공인 재도약 컨설팅 지원 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.insupport.or.kr/sub/?mcode=0404010000&mode=2&no=764&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[생애주기지원팀] 2026년 소상공인 재도약 컨설팅 지원 모집 공고 상세보기 [생애주기지원팀] 2026년 소상공인 재도약 컨설팅 지원 모집 공고 조회 3627 생애주기지원 2026-03-05 09:00:00 파일 소상공인 재도약 컨설팅 지원 사업 공고.pdf ( Size : 214 Kb"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-03-05"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

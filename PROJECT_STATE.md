@@ -23,15 +23,15 @@
 |---|---|
 | `monitor.py` | 공고 수집, 중복 제거, 필터, AI 요약, 메일 발송 흐름 |
 | `streamlit_app.py` | 관리 대시보드 |
-| `sites.json` | 수집 대상 사이트 설정 |
-| `groups.json` | 그룹별 필터와 수신자 설정 |
-| `settings.json` | 전체 설정 |
-| `RULES.md` | 메일 발송과 자동개발 안전규칙 |
+| `config/sites.json` | 수집 대상 사이트 설정 |
+| `config/groups.json` | 그룹별 필터와 수신자 설정 |
+| `config/settings.json` | 전체 설정 |
+| `docs/project/RULES.md` | 메일 발송과 자동개발 안전규칙 |
 | `AGENTS.md` | 이 repo에서 Codex가 따라야 할 작업 규칙 |
 
 ## 공유해야 할 규칙
 
-- `AGENTS.md`와 `RULES.md`를 먼저 확인합니다.
+- `AGENTS.md`와 `docs/project/RULES.md`를 먼저 확인합니다.
 - 기존 앱 핵심 파일인 `monitor.py`, `streamlit_app.py`는 임의로 크게 바꾸지 않습니다.
 - 실제 이메일 발송은 사용자 명시 승인 없이 하지 않습니다.
 - 테스트나 자동개발에서는 preview, draft, dry-run을 우선합니다.
@@ -76,7 +76,7 @@
 cd D:\mail
 git status --short --branch
 Get-Content .\AGENTS.md -Raw
-Get-Content .\RULES.md -Raw
+Get-Content .\docs/project/RULES.md -Raw
 Get-Content .\PROJECT_STATE.md -Raw
 ```
 

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:26",
+  "notice_id": "imp_9d8f040b_77d0febffa42fb669102",
+  "title": "농촌융복합산업 자금(융자) 지원사업 사업시행 지침",
+  "link": "https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/view/sub4_1/802",
+  "source": "경남6차산업지원센터",
+  "author": "",
+  "description": "농촌융복합산업 자금 융자지원 사업(융자지원 _ 이차보전)\n1. 목적\n- 농촌융복합산업 인증사업자 대상 시설 설치·운영자금 지원을 통한 농촌융복합산업 활성화에 필요한 자금의 원활한 조달\n2. 지원 대상\n- 「농촌융복합산업 육성 및 지원에 관한 법률」제8조에 따른\n농촌융복합산업 인증사업자\n3. 자금 용도별 지원 조건\n- 시설자금 및 리모델링 : 연 2.0% 또는 변동금리 /  5년 거치 5년 균분 상환 / 개소당 최대 20억원\n- 운영자금 : 변동금리 / 2년 거치 3년 상환 / 개소당 최대 3억원\n4. 신청 절차\n- '25년 11월 말까지 주소지 관할 지자체 농업 관련 담당 부서 제출\n※ 자세한 내용은 첨부파일 확인\n※ 신청 관련 문의는 해당 시·군·구에 문의",
+  "deadline": "",
+  "posted_date": "2025-09-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "농촌융복합산업 자금(융자) 지원사업 사업시행 지침"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.xn--6-v85ew7hc2v44fiuk.com/board/board/view/sub4_1/802"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "농촌융복합산업 자금 융자지원 사업(융자지원 _ 이차보전) 1. 목적 - 농촌융복합산업 인증사업자 대상 시설 설치·운영자금 지원을 통한 농촌융복합산업 활성화에 필요한 자금의 원활한 조달 2. 지원 대상 - 「농촌융복합산업 육성 및 지원에 관한 법률」제8조에 따른 농촌융복합산업 인증사업자 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

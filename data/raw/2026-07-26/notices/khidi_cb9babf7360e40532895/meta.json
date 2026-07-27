@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:32:41",
+  "notice_id": "khidi_cb9babf7360e40532895",
+  "title": "[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고",
+  "link": "https://www.khidi.or.kr/board/view?pageNum=2&rowCnt=10&no1=173&linkId=48877270&menuId=MENU02096&maxIndex=00488954269998&minIndex=00488290539998&schType=0&schText=&schStartDate=&schEndDate=&boardStyle=&categoryId=&continent=&country=",
+  "source": "한국보건산업진흥원(KHIDI)",
+  "author": "",
+  "description": "공유\n페이스북\n트위터\n카카오스토리\n블로그\n프린트\n지원사업\n[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고\n[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고 : 작성자,  작성일, 조회수,  첨부파일 정보 제공\n작성자\n관리자\n작성일\n2022-07-27\n조회수\n1,733\n첨부파일\n[가톨릭대학교]2022년 바이오 Core Facility 구축 사업 참여기업 모집공고문.hwp(144.5KB)\n내려받기\n(붙임) [가톨릭대학교]2022년 바이오 Core Facility 구축 사업 참여기업 신청서류.hwp(164.5KB)\n내려받기\n* 출처 : 가톨릭대학교 서울성모병원\n이전글\n[김대중컨벤션센터] 「SPLASH 2022(글로벌 스타트업 커뮤니티 플랫폼)」 개최\n다음글\n[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고\n목록",
+  "deadline": "",
+  "posted_date": "2022-07-27",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.khidi.or.kr/board/view?pageNum=2&rowCnt=10&no1=173&linkId=48877270&menuId=MENU02096&maxIndex=00488954269998&minIndex=00488290539998&schType=0&schTex"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공유 페이스북 트위터 카카오스토리 블로그 프린트 지원사업 [가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고 [가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고 : 작성자, 작성일, 조회수, 첨부파일 정보 제공 작성자 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고 : 작성자, 작성일, 조회수, 첨부파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2022-07-27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,733",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[가톨릭대학교]2022년 바이오 Core Facility 구축 사업 참여기업 모집공고문.hwp(144.5KB) 내려받기 (붙임) [가톨릭대학교]2022년 바이오 Core Facility 구축 사업 참여기업 신청서류.hwp(164.5KB) 내려받기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

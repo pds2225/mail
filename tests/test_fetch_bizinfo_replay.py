@@ -17,7 +17,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "bizinfo"
+FX = pathlib.Path(__file__).parent / "fixtures" / "bizinfo"
 BIZINFO_URL = "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do"
 
 # 9키 스키마 (monitor._item 반환 키)
@@ -65,9 +65,10 @@ def test_bizinfo_extracts_expected_items():
     # is_aggregator: site dict 의 True 가 그대로 반영
     assert first["is_aggregator"] is True
 
-    # 5) 스키마 불변: 모든 item 이 9키를 전부 보유
+    # 5) 스키마 불변: 모든 item 이 9키를 전부 보유(핵심소스 구조화 부가키 허용)
     for it in items:
-        assert set(it.keys()) == SCHEMA_KEYS
+        assert SCHEMA_KEYS.issubset(set(it.keys()))
+        assert it.get("core_source") == "bizinfo"
 
 
 @respx.mock
@@ -112,7 +113,8 @@ def test_bizinfo_channel_item_branch():
     src = payload["channel"]["item"]
     assert items[0]["id"] == src["pblancId"]
     assert items[0]["title"] == src["pblancNm"]
-    assert set(items[0].keys()) == SCHEMA_KEYS
+    assert SCHEMA_KEYS.issubset(set(items[0].keys()))
+    assert items[0].get("core_source") == "bizinfo"
 
 
 @respx.mock
@@ -199,7 +201,7 @@ def test_bizinfo_partial_collection_preserved_no_raise(monkeypatch):
 def test_bizinfo_hard_failure_classified_as_collect_fail(monkeypatch):
     """★ 사용자 버그 직결 회귀: 하드 실패가 커버리지에서 '수집실패'로 분류되고
     baseline(평소값)을 오염시키지 않는지 end-to-end 확인."""
-    import coverage_alert
+    from mail_core.operations import coverage_alert
 
     def _raiser(_site_arg):
         raise RuntimeError("기업마당 API 오류: 인증키")

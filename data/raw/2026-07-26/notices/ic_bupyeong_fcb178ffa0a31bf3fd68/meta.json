@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:52",
+  "notice_id": "ic_bupyeong_fcb178ffa0a31bf3fd68",
+  "title": "세월천로 공영주차장 운영 변경에 따른 행정예고",
+  "link": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50283",
+  "source": "인천 부평구청",
+  "author": "",
+  "description": "고시/공고/입법예고\n인쇄하기\n부평\n소통과 참여\n부평알림\n고시/공고/입법예고\n블로그\n페이스북\n카카오톡\n트위터\n세월천로 공영주차장 운영 변경에 따른 행정예고\n고시공고번호\n인천광역시 부평구 공고 제2026-1460호\n공고구분\n공고(일반공고)\n담당부서\n주차관리과\n담당자\n김미혜\n연락처\n032-509-6722\n등록일\n2026-07-24\n첨부파일\n세월천로 공영주차장 운영 변경에 따른 행정예고.hwpx\n『세월천로 공영주차장 운영 변경』을 시행함에 따라, 행정절차법 제46조(행정예고) 규정에 의거 사전에 이해관계인 및 지역주민 여러분들의 의견을 수렴하기 위하여 다음과 같이 행정예고 합니다.\n목록\n자료관리 담당자\n담당부서 : 홍보담당관\n담당팀 : 언론미디어팀\n전화 : 032-509-3920\n만족도 평가\n결과보기\n매우만족\n만족\n보통\n불만족\n매우불만족",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "세월천로 공영주차장 운영 변경에 따른 행정예고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50283"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시/공고/입법예고 인쇄하기 부평 소통과 참여 부평알림 고시/공고/입법예고 블로그 페이스북 카카오톡 트위터 세월천로 공영주차장 운영 변경에 따른 행정예고 고시공고번호 인천광역시 부평구 공고 제2026-1460호 공고구분 공고(일반공고) 담당부서 주차관리과 담당자 김미혜 연락처 032-5"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

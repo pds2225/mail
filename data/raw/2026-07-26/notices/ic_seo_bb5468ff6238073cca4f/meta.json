@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:59",
+  "notice_id": "ic_seo_bb5468ff6238073cca4f",
+  "title": "인천광역시 서해구 지방시간선택제임기제 다급 공무원 채용 서류전형 합격자 및 면접계획 공고(안전관리자) 인천광역시 서구 지방시간선택제임기제 다급 공무원(안전관리자) 채용시험 서류전형 합격자 명단 및 필기시험 시행에 관한 사항을 붙임과 같이 공고합니다. 2026.07.23 인사팀",
+  "link": "https://www.seo.incheon.kr/open_content/main/bbs/bbsMsgDetail.do?bcd=job&msg_seq=5019",
+  "source": "인천 서구청",
+  "author": "",
+  "description": "채용소식\n공유하기\n링크복사\n페이스북에 공유하기\n트위터에 공유하기\n카카오톡에 공유하기\n네이버블로그에 공유하기\n공유목록 닫기\n프린트\n홈\n소통\n서해구소식\n채용소식\n인천광역시 서해구 지방시간선택제임기제 다급 공무원 채용 서류전형 합격자 및 면접계획 공고(안전관리자)\n작성자\n박단비(인사팀)\n작성일\n2026년 7월 23일(목) 18:23:00\n조회수\n92\n전화번호\n032-560-4103\n첨부파일\n인천광역시_서해구_지방시간선택제임기제_다급_공무원_채용_서류전형_합격자_및_면접계획_공고문(안전관리자).pdf\n(129KByte)\n미리보기\n인천광역시 서구 지방시간선택제임기제 다급 공무원(안전관리자) 채용시험 서류전형 합격자 명단 및 필기시험 시행에 관한 사항을 붙임과 같이 공고합니다.\n이전글\n인천광역시 서해구 지방시간선택제임기제 마급 공무원 채용 서류전형 합격자 및 면접계획 공고(금연구역 흡연단속원)\n다음글\n인천광역시 서해구 지방시간선택제임기제 나급 공무원 채용 서류전형 합격자 및 면접계획 공고(언론홍보요원)\n목록\n자료관리담당자\n담당부서 :\n전부서\n전화 :\n콘텐츠 만족도\n매우만족\n만족\n보통\n불만족\n매우불만족\n결과보기\nQR코드\nQR CODE 이미지를 스마트폰에 인식시키면 자동으로 이 페이지로 연결됩니다.\n이 QR CODE는\n\"채용소식\"\n페이지의 정보를 담고 있습니다.",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "인천광역시 서해구 지방시간선택제임기제 다급 공무원 채용 서류전형 합격자 및 면접계획 공고(안전관리자) 인천광역시 서구 지방시간선택제임기제 다급 공무원(안전관리자) 채용시험 서류전형 합격자 명단 및 필기시험 시행에 관한 사항을 붙임과 같이 공고합니다. 2026.07.23 인사팀"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.seo.incheon.kr/open_content/main/bbs/bbsMsgDetail.do?bcd=job&msg_seq=5019"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "채용소식 공유하기 링크복사 페이스북에 공유하기 트위터에 공유하기 카카오톡에 공유하기 네이버블로그에 공유하기 공유목록 닫기 프린트 홈 소통 서해구소식 채용소식 인천광역시 서해구 지방시간선택제임기제 다급 공무원 채용 서류전형 합격자 및 면접계획 공고(안전관리자) 작성자 박단비(인사팀) 작성"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

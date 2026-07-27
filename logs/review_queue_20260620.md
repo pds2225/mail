@@ -1,0 +1,1994 @@
+# Review queue — 2026-06-20 22:24 KST
+
+posted_date가 없거나 파싱되지 않은 공고입니다. 메일 설정에 따라 발송 대상에서 빠질 수 있습니다.
+
+- **낮음** | 2026 차이나 라이선싱 엑스포 참가사 모집 | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00091010&menuNo=204104&recptS
+- **낮음** | 2026 브랜드 라이선싱 유럽 참가사 모집 | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00091009&menuNo=204104&recptS
+- **낮음** | 2027년 병역지정업체 신규선정 및 산업기능요원 필요인원 신청 접수 안내(게임 분야) | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00034005&menuNo=204104&recptS
+- **낮음** | 2026년 CKL스테이지 정기대관(2차) 공고 | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00068008&menuNo=204104&recptS
+- **낮음** | 2026년 칠레 K-콘텐츠 엑스포 참가기업 모집 | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00089007&menuNo=204104&recptS
+- **낮음** | 2026 원로 대중문화예술인 활동지원 프로그램 | 한국콘텐츠진흥원(사업공고) | https://www.kocca.kr/kocca/pims/view.do?intcNo=126D00110010&menuNo=204104&recptS
+- **낮음** | 사용자가이드 | 한국콘텐츠진흥원(금융) | https://www.kocca.kr/kocca/bbs/view/B0000137/2007344.do?searchCnd=&searchWrd=&ca
+- **낮음** | 지원사업공고 | 창조경제혁신센터(공고) | https://ccei.creativekorea.or.kr/service/business_list.do
+- **낮음** | CCEI 투자 | 창조경제혁신센터(공고) | https://ccei.creativekorea.or.kr/custom/cceiInvest_view.do
+- **낮음** | [인천디자인교육센터] 디자이너를 위한 AI 바이브코딩 (전액무료/ 재직자 대상) | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=7024
+- **낮음** | [인천지식재산센터] 2026년 IP나래프로그램 하반기(2차) 지원기업 모집 공고 (연장공고) | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=6960
+- **낮음** | [인천지식재산센터]2026 특허분쟁 대응전략 지원사업 4차 공고 | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=7025
+- **낮음** | (인천상공회의소) 2026년 「근로자 행복이음 지원사업(문화이음 포인트)」3회차(영화관람) 모집 공고 | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=7032
+- **낮음** | [남동구] 2026 자카르타 국제 프리미엄 소비재전 참가기업 모집(연장) | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=6998
+- **낮음** | [인천디자인교육센터] AI 제품 비주얼 연출컷 제작 (전액무료/ 재직자 대상) | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=7037
+- **낮음** | [인천디자인교육센터] 2026년 6월 재직자 대상 무료 디자인교육 | 비즈오케이(BizOK) - 인천기업지원 | https://bizok.incheon.go.kr/open_content/support.do?act=detail&policyno=6997
+- **낮음** | {{obj.b_subj}} | (재)헬스케어스파산업진흥원 | https://hespa.or.kr/main/index.php?m_cd=23&b_id={{obj.b_id}}
+- **낮음** | 로그인 | 예술경영지원센터 | https://www.gokams.or.kr:/07_member/login.aspx
+- **낮음** | 회원가입 | 예술경영지원센터 | https://www.gokams.or.kr:/07_member/join01_Ipin.aspx
+- **낮음** | English | 예술경영지원센터 | https://www.gokams.or.kr/eng/main/main.aspx
+- **낮음** | 채용정보 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/jobposting_list.aspx
+- **낮음** | 입찰정보 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/bid_list.aspx
+- **낮음** | 언론보도 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/report_list.aspx
+- **낮음** | KAMS NOW | 예술경영지원센터 | https://www.gokams.or.kr/01_news/onkams_list.aspx
+- **낮음** | 일자리정보 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/job_list.aspx
+- **낮음** | 뉴스레터 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/newsletter_list.aspx
+- **낮음** | 지원/신청 | 예술경영지원센터 | https://www.gokams.or.kr/02_apply/introduction.aspx
+- **낮음** | 예술경영컨설팅 신청 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/online_list.aspx
+- **낮음** | 사업안내 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business03.aspx
+- **낮음** | 예술현장 성장기반 조성 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business03.aspx
+- **낮음** | 공연시장 활성화 지원 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business02.aspx
+- **낮음** | 미술시장 활성화 지원 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business01.aspx
+- **낮음** | 아트코리아랩 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business11.aspx
+- **낮음** | 자료공간 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/data_list.aspx
+- **낮음** | 발간자료 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/data_list.aspx
+- **낮음** | 동향/분석자료 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/trends_01.aspx
+- **낮음** | 전문예술법인단체현황 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/business10.aspx
+- **낮음** | 정보공개 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData2.aspx
+- **낮음** | 정보공개제도 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData2.aspx
+- **낮음** | 정보공개청구 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData3.aspx
+- **낮음** | 사전정보공표 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData4.aspx
+- **낮음** | 공공데이터개방 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData5.aspx
+- **낮음** | 통합공시 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/announce.aspx
+- **낮음** | 자체공시 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_5.aspx
+- **낮음** | 사업실명제 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_4.aspx
+- **낮음** | 부패신고센터 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/ethical_4.aspx
+- **낮음** | 고객의 소리 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/inquiry_list.aspx
+- **낮음** | 기관소개 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/vision.aspx
+- **낮음** | 인사말 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/greeting.aspx
+- **낮음** | 연혁 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/history.aspx
+- **낮음** | 미션&비전 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/vision.aspx
+- **낮음** | 조직 및 업무 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/setup.aspx
+- **낮음** | 윤리인권경영 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/ethical_1.aspx
+- **낮음** | 오시는길 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/contactus.aspx
+- **낮음** | 문화가 있는날 | 예술경영지원센터 | http://www.culture.go.kr/wday/
+- **낮음** | 서울문화포털 | 예술경영지원센터 | http://culture.seoul.go.kr/
+- **낮음** | 문화체육관광부 | 예술경영지원센터 | http://www.mcst.go.kr/
+- **낮음** | 문화셈터 | 예술경영지원센터 | http://stat.mcst.go.kr/mcst/WebPortal/public/main/main.html
+- **낮음** | 문화포털 | 예술경영지원센터 | http://www.culture.go.kr/index.do
+- **낮음** | 청렴포털_부패공익신고 | 예술경영지원센터 | https://www.clean.go.kr/index.es?sid=a1
+- **낮음** | 개인정보처리방침 | 예술경영지원센터 | https://www.gokams.or.kr/07_member/privacy.aspx
+- **낮음** | 영상정보처리기기방침 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/notice_view.aspx?Idx=3906&page=2&txtKeyword=&dd
+- **낮음** | 홈페이지불편신고 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/inquiry_list.aspx
+- **낮음** | 저작권정책 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/notice_view.aspx?Idx=3969&page=2&txtKeyword=&dd
+- **낮음** | 모바일 바로가기 | 예술경영지원센터 | http://m.gokams.or.kr/
+- **낮음** | 예술경영컨설팅 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/online_list.aspx
+- **낮음** | FAQ | 예술경영지원센터 | https://www.gokams.or.kr/01_news/faq_list.aspx
+- **낮음** | 컨설팅 전문 정보 | 예술경영지원센터 | https://www.gokams.or.kr/05_know/professional01.aspx
+- **낮음** | - 단체·법인 설립 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/report.aspx
+- **낮음** | - 세무회계 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/tax.aspx
+- **낮음** | - 인사노무 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/human.aspx
+- **낮음** | - 기부금 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/donation.aspx
+- **낮음** | - 저작권 | 예술경영지원센터 | https://www.gokams.or.kr/01_news/04_exchange/copyright.aspx
+- **낮음** | - 국제교류 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/exchange.aspx
+- **낮음** | - 정책제도 | 예술경영지원센터 | https://www.gokams.or.kr/04_exchange/social.aspx
+- **낮음** | 업무추진비 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_5.aspx
+- **낮음** | 주요계약현황 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_6.aspx
+- **낮음** | 기부금 수령 및 집행현황 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_7.aspx
+- **낮음** | 상품권 구매사용 현황 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_8.aspx
+- **낮음** | 징계현황 | 예술경영지원센터 | https://www.gokams.or.kr/11_openData/openData6_10.aspx
+- **낮음** | 조직구성 | 예술경영지원센터 | https://www.gokams.or.kr/06_intro/setup.aspx
+- **낮음** | 만60세 이상 고령자 고용기업 지원 "시니어인턴쉽" | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=174
+- **낮음** | 2025년「강원 행복일터 조성 사업」시행 안내 및 홍보 협조 요청 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=185
+- **낮음** | 고용부 [일터혁신 상생컨설팅 지원사업 릴레리 설명회 개최] | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=184
+- **낮음** | 제7기 기업인 공항우대서비스(CIP) 신청 안내 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=183
+- **낮음** | 노조법 개정 비교표(2024,7,4) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=182
+- **낮음** | 노조법 개정 반대 경제6단체 공동 기자회견 관련 보도자료(2024,7,2) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=181
+- **낮음** | 강원경영자총협회 "윤대통령, 노란봉투법 거부권 행사해야"(2023,11,15) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=180
+- **낮음** | 국가보훈부 강원제대군인지원센터 이전안내 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=179
+- **낮음** | 2023년 중소기업 훈련지원센터 현장맞춤형 체계적훈련 지원사업 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=178
+- **낮음** | 『경총 중대재해예방 Expert 양성과정』 프로그램 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=177
+- **낮음** | 2022년 경기경영자총협회 중소기업훈련지원센터 현장맞춤형 체계적 훈련 지원사업 | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=176
+- **낮음** | 강원형 취직 사회책임제(「강원도 고용창출·유지 자금(융자) 지원 사업」공고) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=173
+- **낮음** | 강원형 취직 사회책임제(강원도 정규직 일자리 취직지원 사업공고) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=172
+- **낮음** | 제52회 한국경총 정기총회 및 이사회 개최(2021.2.24) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=171
+- **낮음** | 강원경총회원사인 (주)MS리테일 이원복대표감사패받음(2021.1.27) | 강원경영자총협회 | http://www.gwef.or.kr/bbs/board.php?bo_table=notice&wr_id=170
+- **낮음** | [AI 및 멀티소스 다중센서 기반 연안 그린인프라 자원 생육 서비스 개발 용역] 제안서 평가위원(후보자) 공… | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=606
+- **낮음** | 제안서 평가결과 공개(AI/SW교육 프로그램 운영 용역) | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=605
+- **낮음** | [강원연구개발지원단]과학기술인 대상 역량강화 교육 신청 안내 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=603
+- **낮음** | 2026년 강원해양수산창업투자지원사업 기업지원 통합 모집 3차 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=602
+- **낮음** | 2026년 ICT이노베이션스퀘어확산사업 기업협력프로젝트 수행기업 추가모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=601
+- **낮음** | [중요] 강릉과학산업진흥원 사칭 연락 주의 안내 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=597
+- **낮음** | [NIPA] 전국민 AI 경진대회 AI 오류찾기 챌린지 참여하기 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=596
+- **낮음** | 2026년「첨단 융복합 기술 기반 바이오 소재 제품화 및 양산화 지원」 사업 기업지원 2차 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=590
+- **낮음** | 구내식당 위탁운영 대상자 모집 재공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=604
+- **낮음** | [연장공고] 강원 가상융합 콘텐츠‧서비스 제작지원 사업 통합 공고(2차 연장) | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=599
+- **낮음** | 「2026년 소형 데이터센터 기반 AI산업 성장 지원 사업」 컨소시엄 참여 (AI개발 중소기업) 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=598
+- **낮음** | 구내식당 위탁운영 대상자 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=595
+- **낮음** | [2026년 ICT이노베이션스퀘어확산사업] 기업협력프로젝트 수행기업 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=594
+- **낮음** | [연장공고] 강원 가상융합 콘텐츠‧서비스 제작지원 사업 통합 공고(연장) | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=593
+- **낮음** | 2026 가상융합산업대전(KMF) 참가기업 모집 공고문(연장) | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=592
+- **낮음** | [ICT이노베이션] 이노런(동북권 온라인 코딩 교육) 모집 홍보 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=591
+- **낮음** | [통합공고] 강원 가상융합 콘텐츠‧서비스 제작지원 사업 통합 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=589
+- **낮음** | [2026 특화역량BI육성지원사업] 지역 거점형 보육 프로그램 참가기업 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=588
+- **낮음** | [유관기관 홍보] 2026년 블록체인 특화 클러스터 조성사업 관련 용역(품질관리) 제안서 평가위원 후보자 모… | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=587
+- **낮음** | [유관기관 홍보] K-클럽 과학기술인 장기 그룹 멘토링 참가자(멘티) 모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=586
+- **낮음** | [유관기관 홍보] 2026 GRaND-K 창업학교 창업팀 모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=585
+- **낮음** | [유관기관 홍보] ‘모두의 창업 프로젝트’ 도전자 모집 홍보 요청 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=584
+- **낮음** | [유관기관 홍보] 경기도 AI 멤버십 기업 모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=583
+- **낮음** | 2026 가상융합산업대전 참가기업 모집 공고문 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=581
+- **낮음** | 2026년 창업보육센터운영사업 기업지원 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=580
+- **낮음** | [강릉시 1인 창조기업 지원센터]2026년 1차 신규 입주기업 추가 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=579
+- **낮음** | 2026년 강원해양수산창업투자지원사업 기업지원 통합 모집 2차 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=578
+- **낮음** | [강원특별자치도] 「2026년 강원자치도 AI디지털 배움터 교육 사업」제안서 평가위원 추천 요청 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=576
+- **낮음** | 2026 강원특별자치도 공공데이터 수요조사 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=574
+- **낮음** | 2026년 강원연구개발특구육성(R&D) 사업설명회 개최 일정 안내 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=573
+- **낮음** | [강릉시 1인 창조기업 지원센터] 2026년 1차 신규 입주기업 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=572
+- **낮음** | [NIPA] AI 챔피언·루키 대회 홍보 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=571
+- **낮음** | [ICT이노베이션스퀘어확산] 소외계층청년 디지털 맞춤교육 모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=570
+- **낮음** | 2026년「첨단 융복합 기술 기반 바이오 소재 제품화 및 양산화 지원」 사업 기업지원 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=569
+- **낮음** | [ICT이노베이션스퀘어확산]3-Track 맞춤형 창업지원 컨설팅 참가자 모집 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=563
+- **낮음** | 2026년 강원해양수산창업투자지원사업 기업지원 통합 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=560
+- **낮음** | [강릉소프트웨어융합지원센터] 2026년 1차 입주기업 모집 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=559
+- **낮음** | 「2026년 소프트웨어(SW) 미래채움사업(강원) 컨소시엄 참여기관 모집」참여기관 선정평가 개최 결과 공고 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=558
+- **낮음** | 생성형 AI를 활용한 멀티미디어 콘텐츠 크리에이터 캠프 개최 | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=555
+- **낮음** | 「2026년 소프트웨어(SW) 미래채움사업(강원) 컨소시엄 참여기관 모집」사업수행계획서 평가위원(후보자) 공… | 강릉과학산업진흥원 | https://gsipa.or.kr/board/bbs/board.php?bo_table=notice&wr_id=554
+- **낮음** | 2026년 강원지역 산업구조변화대응 등 특화훈련 사업 제3차 훈련공급기관 및 과정 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=433
+- **낮음** | 2026년 강원형 미래인력양성사업 훈련기관 및 선정심사(3차) 결과 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=432
+- **낮음** | 「2026년 강원형 미래인력양성사업 교육과정」 훈련기관별 훈련과정 및 일정 안내 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=430
+- **낮음** | 주니어 관광인 성장이음 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=428
+- **낮음** | 강원 영동권 관광 가치이음 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=427
+- **낮음** | 인구감소지역 거주 관광인 일생활 이음 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=426
+- **낮음** | 직주 불일치 관광인 생계 이음 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=425
+- **낮음** | 강원 의료기기 인재성장 협업 지원 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=424
+- **낮음** | 강원 의료기기 인재 안착ㆍ정주 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=423
+- **낮음** | 강원 의료기기 인재유입 고용서비스 지원사업 모집 공고 | 강원지역인적자원개발위원회 | https://gwhrd.or.kr/bbs/board.php?bo_table=sub01_01&wr_id=422
+- **낮음** | [타기관공고] 디지털트윈 기반 의료기기 개발 실증기업 모집 | 강원테크노파크 | https://www.gwtp.or.kr/gwtp/bbsNew_view.php?bbs_data=aWR4PTMxMjMmc3RhcnRQYWdlPSZ
+- **낮음** | 광주 사회적경제기업들을 위한 <광주 SE 최신 정보방> 오픈채팅방 OPEN! | 광주사회적경제지원센터 | https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2592&&sca=%EC%84%BC%ED%84
+- **낮음** | 2026 사회적경제 지역연계장터 “하이, 푸릇 마켓! in 광주시립수목원” 행사 안내 | 광주사회적경제지원센터 | https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2905&sca=%EC%84%BC%ED%84%
+- **낮음** | [ HOME ] | 군포산업진흥원 | https://gpipa.or.kr/index.html
+- **낮음** | ��������ó����ħ | 군포산업진흥원 | https://gpipa.or.kr/member/member01.html
+- **낮음** | �������� | 군포산업진흥원 | https://gpipa.or.kr/sub05/sub05_01.html
+- **낮음** | 하나 더 1사1인 캠페인 | 남북하나재단 | https://www.koreahana.or.kr/nkrfCampaign.do
+- **낮음** | 북향민 온라인 채용관 | 남북하나재단 | https://jobfair.incruit.com/koreahanajob/
+- **낮음** | 참 괜찮은 중소기업 채용사이트 | 남북하나재단 | https://www.smes.go.kr/gsmb/company/excellence_employment
+- **낮음** | 외교통일위원회 | 남북하나재단 | https://uft.na.go.kr:444/uft/index.do
+- **낮음** | 통일부 | 남북하나재단 | https://www.unikorea.go.kr/unikorea/
+- **낮음** | 외교부 | 남북하나재단 | https://www.mofa.go.kr/www/index.do
+- **낮음** | 국방부 | 남북하나재단 | https://www.mnd.go.kr/mbshome/mbs/mnd/
+- **낮음** | 국가정보원 | 남북하나재단 | https://www.nis.go.kr:4016/main.do
+- **낮음** | 이북5도위원회 | 남북하나재단 | https://www.ibuk5do.go.kr/main.do
+- **낮음** | 북한인권정보센터 | 남북하나재단 | http://nkdb.org/
+- **낮음** | 남북통합문화센터 | 남북하나재단 | https://uniculture.unikorea.go.kr/mpage
+- **낮음** | 보건복지부 | 남북하나재단 | https://www.mohw.go.kr/
+- **낮음** | Refugees International | 남북하나재단 | https://www.refugeesinternational.org/
+- **낮음** | LINK Non-profit | 남북하나재단 | https://www.libertyinnorthkorea.org/
+- **낮음** | Helping Hands Korea | 남북하나재단 | https://helpinghandskorea.org/
+- **낮음** | Human Rights Watch | 남북하나재단 | https://www.hrw.org/
+- **낮음** | 이용약관 | 남북하나재단 | https://www.koreahana.or.kr/home/kor/contents.do?menuPos=163
+- **낮음** | 고정형 영상정보처리기기운영관리 방침 | 남북하나재단 | https://www.koreahana.or.kr/home/kor/contents.do?menuPos=165
+- **낮음** | 이메일무단수집거부 | 남북하나재단 | https://www.koreahana.or.kr/home/kor/contents.do?menuPos=174
+- **낮음** | 찾아오시는 길 | 남북하나재단 | https://www.koreahana.or.kr/home/kor/contents.do?menuPos=67
+- **낮음** | 2026년 제1회 건축위원회 심의결과 알림 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8609&mnu_uid=319&srchB
+- **낮음** | 기술기반 창업기업 맞춤형 멘토링 지원 안내[대구지구 혁신생태계 조성사업-DGIST] | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8607&mnu_uid=319&srchB
+- **낮음** | 2026 DGFEZ 분양가심사위원회 명단 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8602&mnu_uid=319&srchB
+- **낮음** | 2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 추가모집(2차) 공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8600&mnu_uid=319&srchB
+- **낮음** | 2026년 경제자유구역[대구지구] 혁신생태계 조성사업 수혜기업 모집 안내 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8563&mnu_uid=319&srchB
+- **낮음** | 2026 DGFEZ 튀르키예 무역사절단 참가기업 모집 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8543&mnu_uid=319&srchB
+- **낮음** | 2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 모집 공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8539&mnu_uid=319&srchB
+- **낮음** | 2026년 소규모사업장 방지시설 설치 지원사업 2차 공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8522&mnu_uid=319&srchB
+- **낮음** | �ߴ�����ó���� ����ȸ(������� ����� ���� �߻� �� ����� �������) | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3111&m=01&s_no=1&Return_UR
+- **낮음** | ���� �뵿���չ� ���࿡ ���� ��� ���� ���� ����ȸ ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3110&m=01&s_no=1&Return_UR
+- **낮음** | �뵿������ ��� ���� ��� �䱸�� ���� �濵�� Ư�� �ǰ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3109&m=01&s_no=1&Return_UR
+- **낮음** | û��ģȭ ������ȭ �� ȯ�汸���� ������� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3106&m=01&s_no=1&Return_UR
+- **낮음** | ��2026�� ���߳� ��ȸ����Ȱ�� �������(�߱�)�� ������ �� ������� ���� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3105&m=01&s_no=1&Return_UR
+- **낮음** | �ߴ����� ���� �簢���� �ؼ� ������� �ȳ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3102&m=01&s_no=1&Return_UR
+- **낮음** | ��2026�� �߼ұ�� ������ ä����������� ���� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3095&m=01&s_no=1&Return_UR
+- **낮음** | ��2026�� ���߳� ��ȸ����Ȱ�� �������(�뱸)�� ������ �� ������� ���� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3094&m=01&s_no=1&Return_UR
+- **낮음** | ��2026�� û�����ڸ���������ݡ� ��� �ǽ� �ȳ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3079&m=01&s_no=1&Return_UR
+- **낮음** | 2026�� ����ǽ� �Ʒ�(�ôϾ����Ͻ�)������� �ǽ� �ȳ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3069&m=01&s_no=1&Return_UR
+- **낮음** | �����ȭ�� ���� �̿� �ȳ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3008&m=01&s_no=1&Return_UR
+- **낮음** | 2026�� �ٷ�ȯ�氳��(��������) ���� ��� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3107&m=01&s_no=1&Return_UR
+- **낮음** | 2026�� �ٷΰ��� ���� �� ��� ���� ���� ����ȸ ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3103&m=01&s_no=1&Return_UR
+- **낮음** | �츮 ����� ������õ ķ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3100&m=01&s_no=1&Return_UR
+- **낮음** | 2026�� ���� �����Ʈ�ʽ� ������ ������� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3096&m=01&s_no=1&Return_UR
+- **낮음** | �������� ������ �ٷ�ȯ�氳����� ���� (�������) | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3093&m=01&s_no=1&Return_UR
+- **낮음** | (�ְ��濵���������̳�) �ߵ� ����ũ, �۷ι� ������ ���� �ѱ������� ��ġ�� ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3091&m=01&s_no=1&Return_UR
+- **낮음** | 2026�� �Ӵ��� ü�� �������� ����ȸ ���� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3087&m=01&s_no=1&Return_UR
+- **낮음** | ��45ȸ ������ȸ ���鰳�� �ȳ� | 대구경영자총협회 | http://www.dgef.or.kr/Home/board/default.asp?v=2&g_no=3085&m=01&s_no=1&Return_UR
+- **낮음** | 2025회계연도 결산 승인 고시 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8568&mnu_uid=321&srchB
+- **낮음** | 대구경북경제자유구역청 분양가심사위원회 위원 공개모집 공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8560&mnu_uid=321&srchB
+- **낮음** | 경산도시계획시설(도로-대로1-하1호선,대로1-하6호선.소로1-하24호선,소로2-하123호선)사업시행자 지정 및 실시계획(변경)인가 열람공고 알림 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8524&mnu_uid=321&srchB
+- **낮음** | 영천하이테크파크지구 개발계획 변경을 위한 주민의견청취 공람·공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8520&mnu_uid=321&srchB
+- **낮음** | 건설공사 안전점검 수행기관지정 결과 공고(대학리 1017) | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8502&mnu_uid=321&srchB
+- **낮음** | 지적기준점 성과 고시 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8488&mnu_uid=321&srchB
+- **낮음** | 대구경북경제자유구역청 건축위원회 위원 공개모집 공고 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8484&mnu_uid=321&srchB
+- **낮음** | 포항융합기술산업지구 개발계획(13차) 및 실시계획(9차) 변경 승인 고시 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8463&mnu_uid=321&srchB
+- **낮음** | 경산지식산업지구 개발계획(23차) 및 실시계획(27차) 변경 승인 고시 | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8458&mnu_uid=321&srchB
+- **낮음** | 건설공사 안전점검 수행기관지정 결과 공고(대학리 1094번지) | 대구경북경제자유구역청 | https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8342&mnu_uid=321&srchB
+- **낮음** | DASH 소개 | 대구창업허브 DASH | https://startup.daegu.go.kr/index.do?menu_id=00002957
+- **낮음** | 뷰어다운로드 | 대구창업허브 DASH | https://startup.daegu.go.kr/index.do?menu_id=00002901
+- **낮음** | [2] | 부산경영자총협회 | http://www.bsef.or.kr/03_news/news01.php?record_start=15&bbs_id=notice&category=
+- **낮음** | 홈택스 | 대전지방국세청 | https://www.hometax.go.kr
+- **낮음** | 국세상담센터 | 대전지방국세청 | https://call.nts.go.kr/call/main.do
+- **낮음** | 국세법령정보시스템 | 대전지방국세청 | https://taxlaw.nts.go.kr
+- **낮음** | 국립조세박물관 | 대전지방국세청 | https://www.nts.go.kr/museum/main.do
+- **낮음** | 국세통계포털 | 대전지방국세청 | https://tasis.nts.go.kr
+- **낮음** | 국세환급금 찾기 | 대전지방국세청 | https://www.hometax.go.kr/websquare/websquare.wq?w2xPath=/ui/pp/index_pp.xml&tmI
+- **낮음** | 납세자권익24 | 대전지방국세청 | https://www.nts.go.kr/taxpayer_advocate/main.do
+- **낮음** | 세무서식 | 대전지방국세청 | https://www.nts.go.kr/nts/ad/nf/nltFormatApiList.do?mi=40178
+- **낮음** | 어린이 국세청 | 대전지방국세청 | https://kids.nts.go.kr/kid/main.do
+- **낮음** | 취업후 학자금상환 | 대전지방국세청 | http://www.icl.go.kr
+- **낮음** | 탈세제보 | 대전지방국세청 | https://www.hometax.go.kr/websquare/websquare.wq?w2xPath=/ui/pp/index_pp.xml&tmI
+- **낮음** | 국세공무원교육원 | 대전지방국세청 | https://i.nts.go.kr/taxstudy/main.do
+- **낮음** | 주류면허지원센터 | 대전지방국세청 | https://i.nts.go.kr/llsc/main.do
+- **낮음** | 국세청 | 대전지방국세청 | https://www.nts.go.kr/nts/main.do
+- **낮음** | 지방청·세무서 | 대전지방국세청 | https://www.nts.go.kr/nts/taxSrch/taxSrchPage.do?mi=6761
+- **낮음** | 납세자세법교실 | 대전지방국세청 | https://taxstudy.nts.go.kr/taxedu/main.do
+- **낮음** | 국세청 유튜브 | 대전지방국세청 | https://www.youtube.com/channel/UCVTdK_EozBDQ7ICMPJdbpzQ
+- **낮음** | 국세청 인스타그램 | 대전지방국세청 | https://www.instagram.com/nts.korea/
+- **낮음** | 국세청 페이스북 | 대전지방국세청 | http://www.facebook.com/ntsKorea
+- **낮음** | 국세청 네이버 블로그 | 대전지방국세청 | http://blog.naver.com/ntscafe/
+- **낮음** | 국세청 X | 대전지방국세청 | https://x.com/ntskorea
+- **낮음** | 카카오스토리 | 대전지방국세청 | https://story.kakao.com/ch/nts
+- **낮음** | ★2026년 청년일자리도약장려금 신청안내 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=242
+- **낮음** | 중장년내일센터 성과평가 S등급 달성 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=241
+- **낮음** | ★2025년 청년일자리도약장려금 유형Ⅱ 청년 장기근속 인센티브 신청 안내 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=220
+- **낮음** | 울산양산경영자총협회 카카오톡 채널 개설 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=161
+- **낮음** | SCI평가정보 신용평가등급확인서 발급 업무제휴(할인제공) | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=147
+- **낮음** | [홍보협조]「산업구조변화대응 등 특화훈련」훈련생 모집안내 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=270
+- **낮음** | [홍보협조]AI 기반 제조혁신 포럼 참석자 모집 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=269
+- **낮음** | [홍보협조] 산업 파트너(협력사) 중대재해 예방 원스톱 지원사업 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=268
+- **낮음** | [홍보협조] 위험성평가 환급 교육과정 안내 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=267
+- **낮음** | 울산양산경영자총협회 중장년내일센터 직업상담사(컨설턴트) 채용공고 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=265
+- **낮음** | [울산대학교 산학협력단]위험성평가 평가 담당자 교육 교육생 모집 | 울산양산경영자총협회 | http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=263
+- **낮음** | 초기화 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&sca=
+- **낮음** | 날짜순 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&sop=and&sst=wr_datet
+- **낮음** | 조회순 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&sop=and&sst=wr_hit&s
+- **낮음** | 3 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=3
+- **낮음** | 4 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=4
+- **낮음** | 5 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=5
+- **낮음** | 6 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=6
+- **낮음** | 7 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=7
+- **낮음** | 8 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=8
+- **낮음** | 9 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=9
+- **낮음** | 10 | 인천광역시사회적경제지원센터 | https://www.insehub.or.kr/bbs/board.php?bo_table=bbs_030101&page=10
+- **낮음** | 디자인개발지원 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EB%94%94%EC%9E%90%EC%9D
+- **낮음** | 마케팅연계지원 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EB%A7%88%EC%BC%80%ED%8C
+- **낮음** | 시제품개발지원 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EC%8B%9C%EC%A0%9C%ED%92
+- **낮음** | 서비스디자인지원 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EC%84%9C%EB%B9%84%EC%8A
+- **낮음** | 공예산업지원 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EA%B3%B5%EC%98%88%EC%82
+- **낮음** | 기타센터운영 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&sca=%EA%B8%B0%ED%83%80%EC%84
+- **낮음** | [공지] 제46회 인천광역시 공예품대전 입상작 결과 공고 [알림] | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=935
+- **낮음** | [마케팅연계지원] 2026년도 국내외 디자인어워드 출품비용 지원 선정결과 안내 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=936
+- **낮음** | [공예산업지원] 제46회 인천광역시 공예품대전 입상작 결과 공고 (파일포함) | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=935
+- **낮음** | [서비스디자인지원] 2026년도 유니버설디자인리빙랩 중소기업 제품 사용성 분석 지원 선정결과 안내 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=934
+- **낮음** | [기타센터운영] 2026년도 지역 디자인기업 역량강화 지원사업 선정결과 안내 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=930
+- **낮음** | [디자인개발지원] 2026년도 중소기업 디자인개발지원사업 공예산업 상품화지원분야 선정결과 안내 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=928
+- **낮음** | [디자인개발지원] 2026년도 중소기업 디자인개발지원사업 도서지역 지원분야 선정결과 안내 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business&wr_id=926
+- **낮음** | 2026년 철강업종 버팀이음 프로젝트「화물운송 고용안정 지원사업」공고문 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7574&page=&code=notice
+- **낮음** | 2026년 철강업종 버팀이음 프로젝트「퇴직근로자 재도약 지원사업」공고문 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7573&page=&code=notice
+- **낮음** | 2026년 인천광역시 「인천 온+맘 다해 연구소」 참여자 모집 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7529&page=&code=notice
+- **낮음** | 2026년 인천광역시 「우리집 든든, 주거비 부담제로」 참여자 모집 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7528&page=&code=notice
+- **낮음** | 2026년 인천광역시 「Rise-up, 근력(根力)강화 프로젝트」 참여자 모집 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7496&page=&code=notice
+- **낮음** | 2026년 근로시간유연화 지원사업 참여기업 및 근로자 모집 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7487&page=&code=notice
+- **낮음** | 2026년도 뿌리미(味)래 푸드트럭 참여기업 추가모집 연장공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7582&page=1&code=notice
+- **낮음** | 2026년 뿌리기업 컨설팅 사업 「제1회 인천광역시 커뮤니티 데이」 참여자 모집 안내 (~6/22) | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7578&page=1&code=notice
+- **낮음** | 제117회『경총CEO포럼』 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7577&page=1&code=notice
+- **낮음** | (한국고용노동교육원) '일·생활 균형 조직문화 만들기' 교육 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7566&page=1&code=notice
+- **낮음** | 제9회 전국동시지방선거 근로자 투표시간 보장 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7564&page=1&code=notice
+- **낮음** | 「제3차 사업장 노동법 교육」 참가 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7561&page=1&code=notice
+- **낮음** | 인천광역시 「천원 세탁소」 사업 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7560&page=1&code=notice
+- **낮음** | 2026년 인천 미래혁신기업 발굴 및 선정 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7559&page=1&code=notice
+- **낮음** | 2026년 인천광역시 우수기업 선정 계획공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7558&page=1&code=notice
+- **낮음** | 2026년 폭염 대비 온열질환 예방 대응지침 및 예방수칙 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7557&page=1&code=notice
+- **낮음** | 「제2차 사업장 노동법 교육」 참가 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7552&page=1&code=notice
+- **낮음** | 2026년 뿌리미래 푸드트럭 위탁 용역 입찰 모집 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7551&page=1&code=notice
+- **낮음** | 제116회『경총CEO포럼』 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7550&page=1&code=notice
+- **낮음** | 2026년 인천시 일자리창출 우수기업 인증제 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7548&page=1&code=notice
+- **낮음** | 2026년 뿌리청년 일할맛남 참여기업 선정 공고 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7547&page=1&code=notice
+- **낮음** | 2026년 고위험 소규모사업장 안전도약 컨설팅 신청 안내 | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7542&page=1&code=notice
+- **낮음** | 2026년 인천 청년도약기지 청년인턴 모집 공고(4/15~4/29) | 인천경영자총협회 | https://www.inef.or.kr/news/notice.php?ptype=view&idx=7539&page=1&code=notice
+- **낮음** | 2026 청년정책 종합상담 「청년 재정 UP 클래스」7월 강의 | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business2&wr_id=203
+- **낮음** | 2026년 6월 재직자 대상 무료 디자인교육 안내 (파일포함)(링크포함) | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business2&wr_id=199
+- **낮음** | 2026년 인천 스마트 공장 교육지원사업 (파일포함) | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business2&wr_id=195
+- **낮음** | 2026년 5월 재직자 대상 무료 디자인교육 안내 (링크포함) | 인천디자인지원센터 | https://idsc.kr/_NBoard/board.php?bo_table=business2&wr_id=190
+- **낮음** | 2026년 전북FTA통상진흥센터 무역실무교육 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1755
+- **낮음** | 2026 사회연대경제 청년 일경험 참여기업 추가모집 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1754
+- **낮음** | 2026년 전북사회적경제기업 우체국쇼핑 상세페이지 제작 지원 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1753
+- **낮음** | 『2026년 사회적경제 생태계 활성화 전략사업』 노동통합 출근프로젝트 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1749
+- **낮음** | 2026년 신중년 유연근무형 일자리사업 참여기업 추가모집 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1734
+- **낮음** | 2026년 자영업자 사회보험료 지원 모집 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1726
+- **낮음** | 구직활동비(자격증응시료) 지원사업 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1713
+- **낮음** | 중동분쟁 대응 수출입기업 긴급 경영안정자금 지원계획 변경 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1703
+- **낮음** | 2026년 새출발 재기지원 (휴·폐업 사업주형) 재기 지원(사업정리비 및 교육비) 모집 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1702
+- **낮음** | NCS·인적성 강의지원 사업 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub01_09&wr_id=1676
+- **낮음** | [전북산학융합원] 2026년 고용혁신 프로젝트(통근생활권 근로자 일자리 … | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=934
+- **낮음** | 2026년 익산형 청년창업 지원사업 창업 교육프로그램(심화) | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=933
+- **낮음** | 2026년 전주브랜드공연(마당창극) '별향단젼이라' 관람 안내 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=932
+- **낮음** | [한국산업인력공단] 기업HRD이음컨설팅 설문조사 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=927
+- **낮음** | ［서울경제진흥원］Try Everything「2026 서울 유니콘 챌린지」… | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=926
+- **낮음** | ［전주관광재단］「외국인 쇼핑환경 개선 서비스 확산 설명회」 모집 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=925
+- **낮음** | [전북벤처산업발전협의회] 관광일자리 권역이음 근로자 고용안착 지원사업 참… | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=924
+- **낮음** | [전주대학교산학협력단] 전북 권역이음 관광업 취업 교육생 모집안내 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=923
+- **낮음** | 2026년 2차 혁신형 중소기업 방송광고 활성화 지원사업 모집관련 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=921
+- **낮음** | 전북여성가족재단 1-1 임대 수의계약 공고 | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=920
+- **낮음** | [전북테크노파크]2026년 민간주도형 기술창업 활성화 지원사업 예비팁스 … | 전북특별자치도경제통상진흥원 | https://www.jbba.kr:443/bbs/board.php?bo_table=sub02_07_01&wr_id=919
+- **낮음** | 국민비서 구삐 | 정부24 | https://www.ips.go.kr/
+- **낮음** | 인증등록/관리 | 정부24 | https://plus.gov.kr/member/authCenter
+- **낮음** | 복합인증관리 | 정부24 | https://www.gov.kr/nlogin/authIntro
+- **낮음** | 보안센터 | 정부24 | https://plus.gov.kr/portal/scrtycntr/scrtyprgrm
+- **낮음** | 누리집 안내지도 | 정부24 | https://plus.gov.kr/portal/utztngd/hmpggd
+- **낮음** | 1588-2188 | 정부24 | tel:15882188
+- **낮음** | 110 | 정부24 | tel:110
+- **낮음** | 상담예약 | 정부24 | https://plus.gov.kr/portal/custcntr/dscsnrsvt
+- **낮음** | 누리집 의견 수렴 | 정부24 | https://plus.gov.kr/portal/custcntr/impvopnn
+- **낮음** | 공공서비스 활용(Open API) | 정부24 | https://plus.gov.kr/portal/publicsrvcutlzopenapi
+- **낮음** | 웹 접근성 품질인증 마크 획득 | 정부24 | https://www.wa.or.kr/board/list.asp?BoardID=0006
+- **낮음** | [제주 항공 좌석 부족 해소 및 접근성 개선을 위한 서.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=260
+- **낮음** | 「2026 우리회사 조직문화 성장 지원사업 참여 사업장」.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=259
+- **낮음** | 「근로감독 대비 실무 체크포인트」무료 교육 안내 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=258
+- **낮음** | 「2026 좋은 일자리 환경 구축을 위한 컨설팅 신청 안.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=256
+- **낮음** | 2026년 제2회 일터혁신과 노사안정 CEO포럼 개최 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=257
+- **낮음** | [행안부]2026년 재난안전기업 사업화 역량강화 컨설팅 참여.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=255
+- **낮음** | [안전보건공단] 제조업 끼임사고 예방을 위한 안전수칙.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=254
+- **낮음** | 「2026년 임금·단체협약 체결 대응전략 설명회」재개.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=252
+- **낮음** | [안전보건공단] 2026년 위험성평가 우수사례 발표대회 .. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=250
+- **낮음** | 「2026년 임금·단체협약 체결 대응전략 설명회」개최 .. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=249
+- **낮음** | 2026년 제1회 일터혁신과 노사안정 CEO포럼 개최 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=248
+- **낮음** | 2026년도 중소기업 육성시책 합동 설명회 개최 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=247
+- **낮음** | 「2026 제주노동포럼」개최 안내 및 참석 협조 요청 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=246
+- **낮음** | [신년사] 한봉심 제주경영자총협회장 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=245
+- **낮음** | [안전보건공단] 제조업 분야 ‘26년도 안전한 일터 지킴.. | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=244
+- **낮음** | 「2026년도 중소기업 유공자 포상」신청 안내 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=243
+- **낮음** | 「2025년 연말정산 실무 포인트」무료 교육 안내 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=241
+- **낮음** | 【2025 제주경총의 밤】행사 참석 안내 | 제주경영자총협회 | http://jef.or.kr/bbs/board.php?bo_table=1_1_1_1&wr_id=240
+- **낮음** | 2026년 제1차 제주신용보증재단 계약직원(휴직대체계약직) 채용 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1089
+- **낮음** | [일자리목표공시제] 제주신용보증재단 2026년 일자리대책 세부계획 공시 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1088
+- **낮음** | 2026년 제2차 제주신용보증재단 신입직원 채용 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1087
+- **낮음** | 2026년 제1회 제주특별자치도 공공기관 직원 통합채용 최종 합격자 발표 및 임용 등록 안내 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1086
+- **낮음** | 2026년 제1차 신입직원 채용(2026년 제1회 제주특별자치도 공공기관 직원 통합채용) 인성검사·서류전형 합격자 및 .. | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1085
+- **낮음** | 2026년 제1회 제주특별자치도 공공기관 통합채용 필기시험 제주신용보증재단 합격선 공개 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1084
+- **낮음** | 2026년 제1차 제주신용보증재단 신입직원 채용(2026년 제1회 제주특별자치도 공공기관 직원 통합채용) 필기시험 합격자 .. | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1083
+- **낮음** | 2026년 제1회 제주특별자치도 공공기관 직원 통합채용 필기시험 일시·장소 및 응시자 준수사항 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1081
+- **낮음** | 2026년 맞춤형 컨설팅 희망업체 모집 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1080
+- **낮음** | 2026년 제주신용보증재단 컨설턴트 모집 재공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1079
+- **낮음** | 2026년 제1차 제주신용보증재단 신입직원 채용 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1078
+- **낮음** | 제주신용보증재단 비상임이사 공개모집 서류심사 합격자 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1077
+- **낮음** | 2026년 제주신용보증재단 컨설턴트 모집 공고 | 제주신용보증재단 | https://www.jcgf.or.kr/bbs/board.php?bo_table=5_1_1_1&wr_id=1076
+- **낮음** | 2026년 도외 직업훈련 참가 지원사업 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=707
+- **낮음** | [26년 1회] 푸드스타일링 사진 촬영 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=778
+- **낮음** | 2026 중국 종합품목 무역사절단 모.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=777
+- **낮음** | 제주경제통상진흥원 5층 사무실 임대 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=776
+- **낮음** | 반려동물 연관산업 육성지원사업 박람.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=774
+- **낮음** | 2026년 제주 반려동물 PET ZONE 입점지.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=772
+- **낮음** | 2026 카메라로 배우는 제품 촬영 교.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=771
+- **낮음** | 2026년 중소기업 컨설팅 및 인증획득 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=770
+- **낮음** | [모집마감]「제주 관광기업 디지털 판.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=768
+- **낮음** | 2026년 예비창업인(in) 프로젝트 지원.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=765
+- **낮음** | 2026년 공동물류 지원사업 변경공.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_1_1_1&wr_id=763
+- **낮음** | 2026 제주특별자치도 공공구매제품 구.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=660
+- **낮음** | 2026년 제주특별자치도 고향사랑기부.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=648
+- **낮음** | ★제주 해안가 마약류(케타민) 발견 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=612
+- **낮음** | 2026년 제주지역 AI 통합바우처 사업 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=663
+- **낮음** | 제주관광일자리 워라밸 환경개선 지.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=662
+- **낮음** | 2026년 THE 제주트리에이터 지원사업 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=661
+- **낮음** | 제주특별자치도 스마트공동물류센터 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=659
+- **낮음** | 2026년 제주 지역산업맞춤형 일자리 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=658
+- **낮음** | 2026년 지역·산업맞춤형 일자리창출 .. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=657
+- **낮음** | 2026년 국가 AI데이터센터 고도화사업.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=655
+- **낮음** | 컨설팅 참여 관광사업체 모집 | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=654
+- **낮음** | 「2026년 THE 제주크리에이터 지원사.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=653
+- **낮음** | 2026년 제6회 「제주를 밝히는 사회적.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=652
+- **낮음** | 2026 국가식품클러스터 통합마케팅 활.. | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=651
+- **낮음** | 히트펌프 보급사업 수요조사 | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=650
+- **낮음** | 2026 관광 트렌드 특강 | 제주특별자치도 경제통상진흥원 | https://www.jba.or.kr/m/bbs/board.php?bo_table=2_4_1_1&wr_id=649
+- **낮음** | [마감]창원 액화수소 플랜트 사업 진단 및 재구조화 연구 용역… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=391
+- **낮음** | 2026년 창원시 모범장수기업 신청 안내(재공고) | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=392
+- **낮음** | 2026년 스타트업 액셀러레이팅 지원사업 참가기업 모집 공고 | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=390
+- **낮음** | InLEX KOREA 2026(대한민국 국방산업발전대전) 개최… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=389
+- **낮음** | 2027년도 창원시 창업지원사업 수요조사 | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=388
+- **낮음** | 창원산업진흥원 『창창 멘토단』 모집 공고 (~2/23, 14:… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=384
+- **낮음** | 2026 이순신방위산업전 개최 | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=383
+- **낮음** | 한국 드론·AAM 연구조합 창립총회 개최 안내(주무부처:과학기… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=382
+- **낮음** | 한국 드론·AAM 연구조합 창립총회 개최 안내(주무부처: 우주… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=381
+- **낮음** | 창원산업진흥원 고문변호사 모집 공고 (~9/24(수) 18:0… | 창원산업진흥원 | https://www.cwip.or.kr/bbs/board.php?bo_table=b0501&wr_id=378
+- **낮음** | 번호 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&sst=wr_id&sod=asc
+- **낮음** | [RISE 3-2] 전문 코디네이터 POOL 모집 공고 (기업집적지 현장캠퍼스 운영_성서산단) | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11461
+- **낮음** | [RISE 1-2] 2026년도 협업ㆍ지원대상 기업 모집 공고(2차) | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11449
+- **낮음** | [RISE 3-2] 디지털전환 현장캠퍼스(성서산단) 2026년도 지원대상 기업 모집 공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11433
+- **낮음** | 2026년 기술서비스 지원대상 기업 모집 통합 공고(AI 융합 무금형 디지털 제조 기반 미래보빌리티 부품 D… | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11410
+- **낮음** | [KOLAS] 공인시험기관 인정 안내 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11002
+- **낮음** | 「로봇 기반 공간컴퓨팅 창업지원」 2026년 예비창업자(팀) 모집 재공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11467
+- **낮음** | 고정밀 전력분석기를 활용한 전력 측정 솔루션 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11460
+- **낮음** | 무선충전 전력변환 회로 기술 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11459
+- **낮음** | [RISE 1-2] 2026년 경북대학교 첨단정보통신융합산업기술원 연수연구원(인턴) 선발 공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11452
+- **낮음** | 전기차 충전 인프라의 인증과 안전 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11451
+- **낮음** | [공고]_『2026년 지능형 반도체 시험분석·성능검증 지원 (2차)』 지원대상 기업 모집 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=notice&wr_id=11450
+- **낮음** | 2025년 AI 기반 공정혁신 시뮬레이션 사업 제품 개발지원 모집 공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=11004
+- **낮음** | [경북대창업지원단] 의료바이오 특화분야 창업패키지 창업기업(2차) 모집 안내 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=11441
+- **낮음** | 기술서비스 지원대상 기업 모집 통합 공고(AI 융합 무금형 디지털 제조 기반 미래보빌리티 부품 DX 혁신지원… | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=11156
+- **낮음** | [RIS]2024년도 기술이전 및 공동개발 지원사업 접수 공고(AIoT 모듈 및 응용제품 개발) | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=10830
+- **낮음** | 2024년 공정혁신 시뮬레이션 사업 제품 개발지원 모집 공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=10793
+- **낮음** | [RIS] 2023년 공동 장비 활용 지원 사업 안내 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=10600
+- **낮음** | AIoT 모듈 및 응용제품 개발기업 모집 공고 | 첨단정보통신융합산업기술원 | https://iact.or.kr/module/board/board.php?bo_id=business&wr_id=10401
+- **낮음** | 「스타트업지원센터」2022-2차 신규 입주기업 모집 공고 | 첨단정보통신융합산업기술원 | https://imaker.or.kr/bbs/board.php?bo_table=news&wr_id=333
+- **낮음** | 중소벤처기업진흥공단 | 청년창업사관학교 | http://hp.kosmes.or.kr
+- **낮음** | 중소벤처기업연수원 | 청년창업사관학교 | http://ssup.kosmes.or.kr
+- **낮음** | 내일채움공제사업 | 청년창업사관학교 | https://www.sbcplan.or.kr
+- **낮음** | 기업나라 | 청년창업사관학교 | http://nara.kosmes.or.kr/newshome/mtnmain.php
+- **낮음** | 이러닝연수 | 청년창업사관학교 | https://cyber.kosmes.or.kr/cyber_new/index_new.jsp
+- **낮음** | 고비즈코리아 | 청년창업사관학교 | https://kr.gobizkorea.com/kruser/main.do
+- **낮음** | 중소벤처기업부 | 청년창업사관학교 | https://www.mss.go.kr
+- **낮음** | K-스타트업 | 청년창업사관학교 | https://www.k-startup.go.kr
+- **낮음** | 중소기업기술정보진흥원 | 청년창업사관학교 | https://www.tipa.or.kr
+- **낮음** | [공고] 2026 충청북도 마을기업 경영상시자문 서비스 지원사업 참여 기업 모집(~10/30) | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1461
+- **낮음** | [안내] 행정안전부 「월간 마을기업」 웹진 창간 안내 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1459
+- **낮음** | [공고] 2026 충청북도 마을기업 온라인 판로입점 지원 컨설팅 지원사업 참여 기업 모집(~10/30) | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1457
+- **낮음** | [안내] 2026 마을기업 컨설턴트 Pool 공개 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1453
+- **낮음** | [공고] 2026 충청북도 마을기업 판매전 참여 기업 모집(~5/29) | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1475
+- **낮음** | [공고] 2026 충청북도 마을기업 마케팅플러스 지원사업 참여 기업 모집(~6/3) | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1471
+- **낮음** | [공고] 2026년 아웃박스 지원사업 선정심사 결과 공고 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1463
+- **낮음** | [공고] 2026년 신규상품개발 및 상품경쟁력강화 지원사업 선정심사 결과 공고 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1454
+- **낮음** | [공고] 2026년 마을기업 연합사업 추진계획 안내 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1440
+- **낮음** | [공고] 2026년 충청북도 마을기업 상품경쟁력강화 지원사업 연장 공고 (~3/26) | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1434
+- **낮음** | [공고] 2026년 마을기업 재도약 컨설팅 사업 안내 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1433
+- **낮음** | [안내] 2026년 충청북도 마을기업 지정 심사 결과 알림 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1432
+- **낮음** | [공고] 2026 충청북도 마을기업 경영자문서비스 지원단 및 맞춤형 컨설턴트 모집 공고 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1421
+- **낮음** | 2025 충청북도 마을기업 전문교육(기본) 참여자 모집 | 충북사회적경제센터 | http://www.cbse.co/board/view/notice/1418
+- **낮음** | 2026년「산업구조변화대응 등 특화훈련」 제4차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1269
+- **낮음** | 2026년「산업구조변화대응 등 특화훈련」 제3차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1265
+- **낮음** | 2026년「산업구조변화대응 등 특화훈련」 제2차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1259
+- **낮음** | 2026년「산업구조변화대응 등 특화훈련」 제1차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1240
+- **낮음** | 일하고 배우며 근로자와 기업이 함께 성장하는 일학습 병행 | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1211
+- **낮음** | 2025년「산업구조변화대응 등 특화훈련」 제5차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1203
+- **낮음** | [홍보] 2025년 하반기 산업구조변화대응 등 특화훈련 훈련기관… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1202
+- **낮음** | 2026년도 지역·산업 맞춤형 인력양성사업 공동훈련센터 및 파트… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1191
+- **낮음** | 2025년 충북지역인적자원개발의날 고용관련 유공자 및 유공기업… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1180
+- **낮음** | 2025년「산업구조변화대응 등 특화훈련」 제4차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1169
+- **낮음** | 2025년 충북지역 고용선도산업 인력 및 교육훈련 수요 심층조사… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1162
+- **낮음** | 2025년「산업구조변화대응 등 특화훈련」 제3차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1161
+- **낮음** | 2025년 충청북도 산업구조변화대응 등 특화훈련 연간 모집 일정… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1152
+- **낮음** | 2025년「산업구조변화대응 등 특화훈련」 제2차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1145
+- **낮음** | 2025년「산업구조변화대응 등 특화훈련」 제1차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1114
+- **낮음** | 2025년 산업구조변화대응 등 특화훈련 사업 전담인력 채용공고 | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1107
+- **낮음** | 2024년 산업구조변화대응 등 특화훈련 사업 전담인력 채용공고 | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1078
+- **낮음** | 2024년「산업구조변화대응 등 특화훈련」 제5차 훈련기관 및 훈… | 충북지역인적자원개발위원회 | https://www.cjrhrdc.org/post/1076
+- **낮음** | 개요 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-27/web.do
+- **낮음** | CEO | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-28/dir.do
+- **낮음** | 경영진 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-31/dir.do
+- **낮음** | 비전 및 경영전략 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-34/web.do
+- **낮음** | 정관 · 법규 및 규정 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-38/dir.do
+- **낮음** | CI/Banner | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-42/web.do
+- **낮음** | ESG 추진 전략 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-43/dir.do
+- **낮음** | ESG 주요 활동 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-46/dir.do
+- **낮음** | ESG 주요 뉴스 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-47/list.do
+- **낮음** | ESG 동향 및 발간 자료 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-48/list.do
+- **낮음** | ESG 자가진단 서비스 3.0 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-766/esg/front/use-gud.do
+- **낮음** | 윤리경영시스템 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-49/dir.do
+- **낮음** | 추진활동 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-53/dir.do
+- **낮음** | 윤리경영자료 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-58/dir.do
+- **낮음** | 윤리경영 신고센터 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-63/dir.do
+- **낮음** | 부패징계현황(ALIO) | 한국무역보험공사 | https://www.alio.go.kr/item/itemOrganList.do?apbaId=C0222&reportFormRootNo=2121
+- **낮음** | 부패영향평가 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-72/web.do
+- **낮음** | 고객서비스헌장 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-73/web.do
+- **낮음** | 핵심서비스 이행표준 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-74/web.do
+- **낮음** | 고객응대서비스 이행표준 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-75/web.do
+- **낮음** | 안전보건경영 방침 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-76/web.do
+- **낮음** | 안전보건경영 조직도 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-77/web.do
+- **낮음** | 주요 안전보건활동 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-78/web.do
+- **낮음** | 안전보건 위험신고 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-79/web.do
+- **낮음** | 본사 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-80/web.do
+- **낮음** | 해양산업금융부 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-81/web.do
+- **낮음** | 국내지사 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-82/dir.do
+- **낮음** | 단기수출보험(선적후) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-116/dir.do
+- **낮음** | 단기수출보험(포페이팅) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-123/dir.do
+- **낮음** | 단기수출보험(농수산물패키지) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-130/dir.do
+- **낮음** | 단기수출보험(중소중견Plus+) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-136/dir.do
+- **낮음** | 단기수출보험(단체보험) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-143/dir.do
+- **낮음** | 서비스종합보험(일시결제방식) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-151/dir.do
+- **낮음** | 단기수출보험(다이렉트-중소Plus+) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-157/dir.do
+- **낮음** | 단기수출보험(다이렉트-선적후) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-161/dir.do
+- **낮음** | 수출신용보증(선적전) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-165/dir.do
+- **낮음** | 수출신용보증(다이렉트-선적전) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-775/dir.do
+- **낮음** | 수출신용보증(선적후) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-169/dir.do
+- **낮음** | 수출신용보증(매입) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-175/dir.do
+- **낮음** | 수출신용보증(포괄매입) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-180/dir.do
+- **낮음** | 중장기수출보험(선적전) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-185/dir.do
+- **낮음** | 중장기수출보험(공급자신용) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-190/dir.do
+- **낮음** | 중장기수출보험(구매자신용) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-195/dir.do
+- **낮음** | 서비스종합보험(기성고·연불방식) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-219/dir.do
+- **낮음** | 수출보증보험 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-224/dir.do
+- **낮음** | 이자율변동보험 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-228/dir.do
+- **낮음** | 수출기반보험(선박, 항공기) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-232/dir.do
+- **낮음** | 수출기반보험(제조설비) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-237/dir.do
+- **낮음** | 환경심사 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-246/dir.do
+- **낮음** | 공통 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-249/dir.do
+- **낮음** | 선물환 방식 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-255/dir.do
+- **낮음** | 옵션형 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-263/dir.do
+- **낮음** | 수입보험(수입자용) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-267/dir.do
+- **낮음** | 수입보험(금융기관용) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-273/dir.do
+- **낮음** | TRADE-SURE 컨설팅 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-287/web.do
+- **낮음** | 혁신성장기업 등 특별지원 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-296/web.do
+- **낮음** | 일자리 창출 우수기업 특별지원 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-299/web.do
+- **낮음** | 수출초보기업 지원 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-300/web.do
+- **낮음** | 국내보상 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-687/web.do
+- **낮음** | 국외보상 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-688/web.do
+- **낮음** | 기타자료 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-373/list.do
+- **낮음** | Annual Report | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-374/list.do
+- **낮음** | 제도안내 영상 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-786/web.do
+- **낮음** | 기타홍보 영상 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-376/list.do
+- **낮음** | 일일리포트 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-378/web.do
+- **낮음** | 환율전망서비스신청 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-379/exchrt/vew/front/save.do
+- **낮음** | 월간리포트 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-380/list.do
+- **낮음** | FX뉴스 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-381/web.do
+- **낮음** | 고객제안목록 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-392/ibs/minwon/list.do
+- **낮음** | 고객제안 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-393/ibs/minwon/save.do
+- **낮음** | 칭찬 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-394/ibs/minwon/save.do
+- **낮음** | 불만 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-395/ibs/minwon/save.do
+- **낮음** | 환위험관리 상담신청 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-398/save.do
+- **낮음** | 기업성장응답센터 소개 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-402/web.do
+- **낮음** | 규제애로 신고 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-403/ibs/minwon/save.do
+- **낮음** | 기업민원 피해신고 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-404/save.do
+- **낮음** | 기업민원 보호·서비스헌장 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-405/web.do
+- **낮음** | 열린혁신 24 안내 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-406/web.do
+- **낮음** | 국민 아이디어 접수 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-407/list.do
+- **낮음** | 열린제도혁신센터(제도개선 제안) | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-408/dir.do
+- **낮음** | K-SURE 무역라운지 안내 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-411/web.do
+- **낮음** | K-SURE 지역거점 수출중기센터(천안·아산) 안내 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-791/web.do
+- **낮음** | 채용안내 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-422/dir.do
+- **낮음** | 채용현황 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-426/list.do
+- **낮음** | 인재상·인재육성 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-427/web.do
+- **낮음** | NCS관련 FAQ | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-428/list.do
+- **낮음** | NCS 및 채용 Q&A | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-429/list.do
+- **낮음** | 뉴스레터 보기 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-430/list.do
+- **낮음** | 뉴스레터 신청 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-431/news/ltr/front/save.do
+- **낮음** | 정보공개제도란 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-440/web.do
+- **낮음** | 제도의 필요성 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-441/web.do
+- **낮음** | 관련법률 및 서식 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-442/web.do
+- **낮음** | 정보목록 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-443/dir.do
+- **낮음** | 청구 및 처리절차 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-446/web.do
+- **낮음** | 공공기관 정보청구 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-447/web.do
+- **낮음** | 불복구제절차 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-448/web.do
+- **낮음** | 공공데이터 개방 제도안내 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-449/web.do
+- **낮음** | 공공데이터 목록 | 한국무역보험공사 | https://www.data.go.kr/tcs/dss/selectDataSetList.do?dType=TOTAL&keyword=%ED%95%9
+- **낮음** | 공공데이터 수요 조사 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/bbs/i-451/list.do
+- **낮음** | 공공데이터 활용사례 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/cntnts/i-784/web.do
+- **낮음** | 일별집행실적 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-453/ibs/bydd/actrslt/exec/list.do
+- **낮음** | 일별수납실적 | 한국무역보험공사 | https://www.ksure.or.kr/rh-kr/pgm/i-454/ibs/bydd/actrslt/rcpt/list.do
+- **낮음** | 생성형AI 입문 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=571&mkey=3633
+- **낮음** | 생성형AI 실무 활용 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=685&mkey=3722
+- **낮음** | 생성형AI 직무 특화 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=686&mkey=3722
+- **낮음** | AI 리더십 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=570&mkey=3633
+- **낮음** | 데이터 분석 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=568&mkey=3633
+- **낮음** | 리더십 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=534&mkey=3630
+- **낮음** | 인문학리더십 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=687&mkey=3722
+- **낮음** | 셀프리더십 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=535&mkey=3630
+- **낮음** | 조직문화 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=688&mkey=3722
+- **낮음** | 마음챙김 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=653&mkey=3715
+- **낮음** | 코칭 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=538&mkey=3630
+- **낮음** | 신임·승진자 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=544&mkey=3631
+- **낮음** | 직급별 역량 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=663&mkey=3715
+- **낮음** | 임원 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=545&mkey=3631
+- **낮음** | 최고경영자 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=546&mkey=3631
+- **낮음** | OA | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=556&mkey=3632
+- **낮음** | 문서작성 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=557&mkey=3632
+- **낮음** | 문제해결 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=658&mkey=3715
+- **낮음** | 업무생산성 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=558&mkey=3632
+- **낮음** | 커뮤니케이션 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=560&mkey=3632
+- **낮음** | HRD | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=659&mkey=3714
+- **낮음** | 강사역량 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=530&mkey=3628
+- **낮음** | 인사∙노무∙법무 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=661&mkey=3714
+- **낮음** | 성과관리 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=540&mkey=3630
+- **낮음** | 전략∙기획 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=561&mkey=3632
+- **낮음** | 고객경험(CX) | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=662&mkey=3715
+- **낮음** | 사업계획 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=564&mkey=3633
+- **낮음** | R&D | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=660&mkey=3714
+- **낮음** | 프로젝트관리 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=657&mkey=3714
+- **낮음** | CS·컨택센터 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=649&mkey=3715
+- **낮음** | 구매∙원가 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=651&mkey=3715
+- **낮음** | 마케팅·SNS | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=549&mkey=3631
+- **낮음** | 무역·물류 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=550&mkey=3631
+- **낮음** | 생산∙품질 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=650&mkey=3715
+- **낮음** | 비서 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=674&mkey=3720
+- **낮음** | 영업 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=554&mkey=3632
+- **낮음** | 재무·회계 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=552&mkey=3632
+- **낮음** | 미주·유럽 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=572&mkey=3634
+- **낮음** | 중국(홍콩·대만) | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=573&mkey=3634
+- **낮음** | 일본 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=574&mkey=3634
+- **낮음** | 기타 아시아 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=575&mkey=3634
+- **낮음** | 공통스킬 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=664&mkey=3717
+- **낮음** | 전문직무 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=665&mkey=3717
+- **낮음** | 디지털스킬 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=666&mkey=3717
+- **낮음** | 직업전환 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=668&mkey=3717
+- **낮음** | 특별자격 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=667&mkey=3717
+- **낮음** | 최고경영자조찬회 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=578&mkey=3634
+- **낮음** | 리더스포럼 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=579&mkey=3634
+- **낮음** | FORUM.M | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=580&mkey=3634
+- **낮음** | 특별한클라스 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=581&mkey=3634
+- **낮음** | 기타 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=583&mkey=3635
+- **낮음** | 퇴직예정 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=547&mkey=3631
+- **낮음** | 시니어 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=644&mkey=3658
+- **낮음** | 4050 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=646&mkey=3658
+- **낮음** | 창업·부업 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=647&mkey=3659
+- **낮음** | 자격증 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=648&mkey=3680
+- **낮음** | 공공특화 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=654&mkey=3715
+- **낮음** | 금융 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=655&mkey=3715
+- **낮음** | BIG 3 자유수강권 | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=642&mkey=3648
+- **낮음** | AI 교육> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=675&mkey=3721
+- **낮음** | 역량별 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=673&mkey=3718
+- **낮음** | 계층·직급 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=585&mkey=3635
+- **낮음** | 리더십 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=587&mkey=3635
+- **낮음** | 조직문화 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=588&mkey=3635
+- **낮음** | 성과 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=586&mkey=3635
+- **낮음** | 직무 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=589&mkey=3635
+- **낮음** | 디지털 솔루션> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=590&mkey=3635
+- **낮음** | AI 공공·지자체교육> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=595&mkey=3636
+- **낮음** | 대학교육> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=592&mkey=3636
+- **낮음** | 평생교육> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=593&mkey=3636
+- **낮음** | 힐링·트립·아트> | 한국능률협회(KMA) | https://www.kma.or.kr/usrs/eduRegMgnt/eduRegMgntForm.do?p_ctgry_id=596&mkey=3636
+- **낮음** | 새 카테고리 | 한국상생지원협회 | https://www.lmca.or.kr/22?category=J5h3II6713
+- **낮음** | 1 | 한국상생지원협회 | https://www.lmca.or.kr/22/?q=YToxOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&pa
+- **낮음** | 제720차 KS인증위원회 개최 안내 new | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590512/artclView.do
+- **낮음** | 🎓 우리 아이 서울대 간다! 회원사 서울대 캠퍼스 투어 참가자 모집(✅6/15~ 선착순) new | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590501/artclView.do
+- **낮음** | (훈련과정 안내) "[한화에어로스페이스] Space Challenger Acade new | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590445/artclView.do
+- **낮음** | 제718차 KS인증위원회 회의록 공지 new | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590437/artclView.do
+- **낮음** | 제719차 KS인증위원회 개최 안내 | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590434/artclView.do
+- **낮음** | [무료교육] 2026 무역기술장벽(TBT) 실무교육 1차 안내 | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590382/artclView.do
+- **낮음** | 제717차 KS인증위원회 회의록 공지 | 한국표준협회(KSA) | https://www.ksa.or.kr/bbs/ksa_kr/190/1590372/artclView.do
+- **낮음** | 2026년 「첨단산업 분야 표준화 멘토링」 지원기업 모집 공고 new | 한국표준협회(KSA) | https://ksa.or.kr/bbs/ksa_kr/1021/1590515/artclView.do
+- **낮음** | 2026년 재취업지원서비스 시행지원 사업 | 한국표준협회(KSA) | https://ksa.or.kr/bbs/ksa_kr/1021/1590446/artclView.do
+- **낮음** | 디지털통상(DT) 실무역량 강화과정 교육생 모집 (신청마감: 6.22.(금)) | 한국표준협회(KSA) | https://ksa.or.kr/bbs/ksa_kr/1021/1590376/artclView.do
+- **낮음** | 2026년 「수출 유망 디지털콘텐츠 강소기업 육성」지원기업 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 소형 데이터센터 기반 AI산업 성장 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 ｢AI 청년창업기업 동반성장 바우처｣ 지원사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 「AI 청년창업기업 동반성장 바우처」 지원사업 공급기업 후보군(POOL) 모집 수정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI기반 의료시스템 디지털 전환 지원(AI특화병원 AX-Ready 시범사업) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 산업전문인력 AI역량강화 지원사업 발표평가 결과 및 지원 대상과제 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 코리아 국제 스트리밍 페스티벌 투자유치 쇼케이스 참가 기업 모집 공고(기간연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 싱가포르IT지원센터 2026년 상반기 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 호치민IT지원센터 공간 효율화를 위한 인테리어 용역 입찰 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 산업전문인력 AI역량강화 지원사업 서류평가 결과 및 발표평가 대상자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 1차 ICT 비즈니스 파트너십(아세안) 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이 IT지원센터 ‘26년 상반기 연간/단기 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고]2026년 소프트웨어 인재키움 사업 수행지역 및 기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 SW IP(지식재산권) 평가보증 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「첨단 GPU 활용 지원 사업」사용자 수시 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 AI 통합 바우처(클라우드 바우처) 지원 사업 수정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 KoVAC XR 쇼룸 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 클라우드컴퓨팅 전문인력 양성기관 신규 지정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 지속가능한 데이터센터 산업 발전 지원 사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 『인공지능 루키(AI Rookie)』대회 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 『인공지능 챔피언(AI Champion)』대회 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 1차 XR기업성장지원센터(상암 누리꿈스퀘어) 신규 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 과학기술정보통신부「고성능컴퓨팅지원」사업 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 GovTech 창업기업 AI 실증·사업화 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 SaaS 개발·사업화 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 3D프린팅 전문인력 양성교육 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년「AI 통합 바우처 지원사업(AI바우처 지원사업)」모집 수정공고(공급기업 POOL 최종) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (서류평가 결과발표) 2026년도 DNA 대중소 파트너십 동반진출 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI기반 엔드프로덕트 상용화 지원사업 Type2 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI기반 엔드프로덕트 상용화 지원사업 Type1 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AX 원스톱 바우처 지원사업 공급기업 후보군 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [연장공고] 2026년도 『VICTORY 프로그램』 (벤처캐피탈리스트 ICT 전문성 강화 교육) 제26기 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 「수출 유망 디지털콘텐츠 강소기업 육성」지원기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 신산업 분야 오픈소스 사업화 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「첨단 GPU 활용 지원 사업」사용자 모집(26-1차) (산업계 대상) 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 과학기술정보통신부「고성능컴퓨팅지원」사업 공급사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 디지털콘텐츠 허브활성화 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 AI AGENT 융합·확산 지원사업 신규과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 강원의료AX산업실증허브조성 총괄운영 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI컴퓨팅자원 활용기반 강화사업 (GPU 확보·구축·운용지원) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 디지털트윈 3D프린팅 의료공동제조소 실증 지원과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 SaaS 전환지원센터 SaaS 전환 컨설팅 공급기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026 가상융합산업허브(메타버스허브) 입주기업 모집(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI바우처 지원사업 공급기업 POOL 2차 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ｢2026년도 AI바우처 지원사업｣ 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AX디바이스 개발·실증(정규트랙)사업 신규과제 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 AX원스톱 바우처 지원사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2026년 XaaS 선도 프로젝트 개발지원 신규과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 의료AI혁신생태계조성(닥터앤서3.0) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2026년도 오픈소스 AI·SW 개발·활용 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 AI 통합 바우처(클라우드 바우처) 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년「AI 통합 바우처 지원사업(AI바우처 지원사업)」모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 한-싱 AI 기술교류전 및 Milipol Tech X 전시 참가 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 디지털콘텐츠기업경쟁력강화 사업 수행기관 모집 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 지능형 홈 서비스 실증·확산 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 ｢산업전문인력 AI역량강화｣ 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 해양문화도시기반의 에이지테크 실증거점 조성 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 SaaS 전환지원센터 SaaS 개발환경 지원 공급기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI선박 특화 플랫폼 및 애플리케이션 개발·실증 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI반도체 시제품 제작지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AX디바이스 개발 실증(미니트랙) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 호치민 Korea IT School(KITS) 운영 대행 용역 입찰 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 하노이 Korea IT School(KITS) 운영 대행 용역 입찰 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 디지털 안전 선도모델 개발 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 Dubai AI Festival 한국관 구축 및 포럼 운영 용역 모집- 잠정 중단 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 AI 응용제품 신속 상용화 지원사업 신규과제 모집 공고 (AI 기반 엔드프로덕트 상용화 지원 Type 2(AI 민생 프로젝트)) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 중소기업 클라우드 서비스 보급·확산 사업 공급기업(컨설팅 포함) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 공공AX 프로젝트 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 중동 ICT 비즈니스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 AI바우처 지원사업 공급기업 POOL 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 한인도SW상생협력센터 공유 오피스 입주 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 중국 중관촌 포럼 참관 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 DNA 대중소 파트너십 동반진출 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 독자 AI 파운데이션 모델 프로젝트 추가 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 자이텍스 아시아 싱가포르 전시 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2026년 SW IP(지식재산권) 평가보증 지원사업 사전 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Lab 우즈베키스탄 협력 지원사업 수행기관 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 상반기(32기) 월드프렌즈코리아 NIPA자문단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도「고성능컴퓨팅지원」사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년도 하노이IT지원센터 공용공간 이용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2026년 지역 가상융합산업혁신센터 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | Korea-ASEAN Digital Academy - Phase 2 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3차 메타버스허브 입주기업 모집(기한연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KoVAC 공동제작센터 위탁운영 협력사 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3차 XR기업성장지원센터(상암 누리꿈스퀘어) 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도(추경)「AI컴퓨팅 자원 활용 기반 강화(GPU 임차 지원)」사업 사용자 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | UAE IT지원센터 '25년도 입주 및 라이선스 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [하노이IT지원센터] 2025년도 Korea IT School 채용상담회 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이 IT지원센터‘25년 하반기 입주기업 추가 모집 공고문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고]싱가포르IT지원센터 2025년 하반기 입주기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 일본 ICT 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 공공AX 프로젝트 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 인공지능 특화 파운데이션 모델 프로젝트 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도「고성능 컴퓨팅 지원(NPU)」사용자 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 고용노동부(한국산업안전보건공단) 연계 스마트 안전장비지원 품목 등록 시행계획 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 과학기술정보통신부 『AI모델 맞춤형 설계 지원』사업 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 클라우드 산업발전 유공 표창 및 산업 대상 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 중동 ICT 비즈니스 파트너십 참가기업 모집(카타르, UAE) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도(추경)「AI컴퓨팅 자원 활용 기반 강화(GPU 임차 지원)」사업 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도(추경)「AI컴퓨팅 자원 활용 기반 강화(GPU 임차 지원)」사업 공급사 “추가” 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이 IT지원센터‘25년 하반기 입주기업 2차 추가 모집 공고문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 산업 특화형 ｢피지컬AI 핵심기술 PoC｣ 사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 국제 스트리밍 페스티벌 투자유치 쇼케이스(우수 기획안 피칭 분야) 참가 기업 추가 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI반도체 최적화 설계지원 사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 2차 XR기업성장지원센터(상암 누리꿈스퀘어) 입주기업 모집 공고(공고문 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 K-Global@실리콘밸리 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 미주 ICT 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC 실리콘밸리 2025 Digital Health PMF(Product Market Fit) 프로그램 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025 국제 스트리밍 페스티벌 투자유치 쇼케이스 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 민·관합동 디지털 수출개척단(중동) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 2차 메타버스허브 입주기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 하반기(31기) 월드프렌즈코리아 NIPA자문단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 호치민 Korea IT School(KITS) 운영 용역 입찰 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년(추경) 고성능컴퓨팅 지원사업 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [연장공고] 2025년도 VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화 교육) 제25기 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI반도체 조기 상용화 및 AX실증 지원 사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 25년 7월 입주기업 모집 공고 (1개사) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도(추경)「AI컴퓨팅 자원 활용 기반 강화(GPU 임차 지원)」 및 「고성능컴퓨팅지원사업」공급사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 데이터센터 산업 활성화 국산 장비 및 SW 개발‧실증 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이 IT지원센터‘25년 하반기 입주기업 모집 공고문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 K-Global 액셀러레이팅(한국투자액셀러레이터) 창업기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 K-Global 액셀러레이팅(노틸러스인베스트먼트) 창업기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 하노이IT지원센터 공용공간 이용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3D프린팅 품질인증 체계지원 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 SaaS 혁신기업 역량강화 지원 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 SW투자유치컨설팅 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 25년 6월 입주기업 모집 공고 (3개사) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 ICT디바이스 판교FAB 위탁운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI기반 의료시스템 디지털 전환 지원 신규 과제 공고(수정공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 산업전문인력 AI역량강화 지원사업(신규) 발표평가 결과 및 지원대상과제 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 마포 3D-FAB 기술지원 위탁운영 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 중소기업 클라우드서비스 보급·확산 사업 모집 공고(수요기업) 수정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 과학기술정보통신부「고성능 컴퓨팅 지원(NPU)」 사용자 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3D프린팅 인식확산 및 서비스기반 지원 사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3D프린터 소재 장비 안전실증 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 수출 유망 디지털콘텐츠 강소기업 육성 지원기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 의료AI혁신생태계조성(닥터앤서3.0) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 1차 메타버스허브 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 온디바이스 AI 서비스 실증·확산 사업 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 디지털 트윈 혁신서비스 선도 품질검증기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 디지털 트윈 혁신서비스 선도 실증사업 [공공시설물 안전실증, 제조산업 적용실증] 통합 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 산업전문인력 AI역량강화 지원사업(신규) 서류평가 결과 및 발표평가 대상자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 한-아세안 디지털 비즈니스 파트너십 참가기업 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 소프트웨어 기술금융지원 사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 데이터센터 산업 활성화 지원 사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 3D프린팅 전문인력 양성교육 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | UAE IT지원센터 Dubai AI Festival 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 부처협업 기반 AI확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 디지털치료기기 개발 실증 지원 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 클라우드 기반 의료 협력 플랫폼 시범사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 1차 XR기업성장지원센터(상암 누리꿈스퀘어) 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 디지털콘텐츠기업경쟁력강화사업 수행기관 모집 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 디지털콘텐츠 허브활성화 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 1차 ICT 비즈니스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 SW안전 혁신서비스 실증 지원사업 신규과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 메타버스 테스트 랩 운영 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 UAE IT지원센터 중동진출 멤버십 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (접수방법 공지 등) 2025년 SaaS 개발 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2025년 AI바우처 지원사업」 전산접수시스템 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 K-Global 액셀러레이팅 사업 액셀러레이터 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 KICC 싱가포르 상반기 전시 참가 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 「AI·디지털기반 미디어 융합인재」 사업 수행기관 신규 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2025년 SaaS 개발 지원사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2025년 XaaS 선도 프로젝트 사업 신규과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (접수방법 공지) 2025년 DNA 대중소 파트너십 동반진출 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 ｢산업전문인력 AI역량강화｣ 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 디지털 안전 선도모델 개발 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 IoT 시장진출 지원 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 클라우드컴퓨팅 전문인력 양성기관 (비수도권) 신규 지정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 SaaS 창업성장 지원사업(SaaS 전환지원센터 운영) 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처 지원사업 공급기업 Pool 3차[최종] 변경등록 신청 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처 지원사업 공급기업 Pool 신규 2차(최종) 등록신청 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 「AI바우처 지원사업」공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 과학기술정보통신부「고성능컴퓨팅 지원 사업」사용자(GPU/NPU) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2025년 K-클라우드 프로젝트 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이IT지원센터 2025년도 상반기 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 SaaS 개발지원 사업 CSP·MSP Pool 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도 과학기술정보통신부 「고성능 컴퓨팅 지원사업」공급사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처 지원사업을 위한 공급기업 Pool 변경 신청 공고 (2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 한인도SW상생협력센터 공유 오피스 입주 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2025년 고성능컴퓨팅지원 사업 운영기관」모집 전산접수시스템 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2025년 AI바우처 지원사업 운영기관」모집 전산접수시스템 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처(AI반도체분과) 「AI반도체 컨소시엄」 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 입주기업 및 멤버십기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 GovTech 창업기업 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 상반기(30기) 월드프렌즈코리아 NIPA자문단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 세일즈 랩 프로그램 참여 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처 지원사업 공급기업 Pool 1차 신규등록 신청 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년도「고성능컴퓨팅지원」사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2025년 AI바우처 지원사업 운영기관」모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2025년 AI바우처 지원사업을 위한 1차 공급기업Pool 변경 신청 공고(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | Korea-ASEAN Digital Academy - Phase 1 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [하노이IT지원센터] 제4회 한-베 디지털전환 포럼 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2024년 현지화랩 프로그램』 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2024년 현지화랩 프로그램』 운영 용역사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [XR Fair Tokyo Autumn 2024 메타버스 한국공동관] 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 호치민IT지원센터 현지IT인력채용 지원사업(ICT공동채용관) 운영 용역 모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 5차 ICT 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 호치민IT지원센터 멤버십기업 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC 실리콘밸리 2024년 DH(Digital Healthcare) PMF(Product Market Fit) 프로그램 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 호치민IT지원센터 현지IT인력채용 지원사업(ICT공동채용관) 운영 용역 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 고성능 컴퓨팅 지원사업 사용자 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 민·관합동 디지털 수출개척단 (중동) 참가기업 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 현지화랩 인프라 조성 인테리어 용역 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 K-Global @ 싱가포르(구 K-솔루션페어) 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 소프트웨어 산업발전 유공자 포상계획 공고(재연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 K-Global@실리콘밸리 참가 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 메타버스 인프라 입주기업 통합 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | UAE IT지원센터 시설 인테리어 공사 용역 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 4차 ICT 비즈니스 파트너십 참가기업 모집_수정 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 소프트웨어 산업발전 유공자 포상계획 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 고용노동부(한국산업안전보건공단) 연계 스마트 안전장비지원 품목 등록 연계 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 국제 OTT 페스티벌 투자유치 쇼케이스 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 호치민IT지원센터 입주기업 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 친환경 그린 등 데이터센터 산업 활성화 사업 공고 (재공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 SaaS 전환 컨설팅 대상기업 추가 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | UAE IT지원센터 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 하반기(29기) 월드프렌즈 NIPA자문단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 수정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [GITEX Global 2024 메타버스 한국공동관] 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 『수출 유망 메타버스 강소기업 육성』 사업 지원기업 추가모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이IT지원센터 24년도 하반기 입주기업 모집(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI‧디지털 기반 미디어 활성화 지원기업(과제) 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024 공개SW 개발자 대회 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024 오픈소스 컨트리뷰션 아카데미 멘티(참가자) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 친환경 그린 등 데이터센터 산업 활성화 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 수출 유망 메타버스 강소기업 육성 사업 지원기업 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | UAE IT지원센터 입주기업 모집안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 초광역협력 지원 지역 자율형 디지털 혁신프로젝트 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 SW투자유치컨설팅 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 2차 ICT 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 초거대 AI기반 심리케어 서비스 지원 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 초거대AI 기반 보건의료 서비스 지원 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 3D프린팅 특화솔루션 구축지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 『VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화 교육)』제24기 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 스마트서비스 창출기반확충 운영 위탁공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 혁신거점 인공지능 데이터 융합과제(부산, 대구) 신규 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 홀로그램기술 사업화 실증지원 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지역 자율형 디지털 실증지원 사업(AI기반 어장공간정보, 농식품 메타버스) 통합 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI반도체 기술인재 공급 플랫폼 사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 한-아세안 디지털 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | GSMP 2024 개최·운영 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 1차 메타버스허브 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 입주기업 및 24년 멤버십기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 AI 미디어‧문화 향유 확산 사업 신규과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 초거대 AI 기반 학술활동 지원 사업 신규과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI 법률 보조 서비스 확산 사업 신규과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [AWE USA 2024 메타버스 한국공동관] 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 SW안전 혁신서비스 실증 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 산업전문인력 AI역량강화 지원사업(신규) 발표평가 결과 및 지원대상과제 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 수출 유망 메타버스 강소기업 육성 사업 지원기업 모집 공고 (수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 「고성능 컴퓨팅 지원」 사용자 모집 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 3D프린팅 제조혁신 실증지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 수출 유망 메타버스 강소기업 육성 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 SW기술금융 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 세일즈 랩 프로그램 참여 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 디지털치료기기 개발·실증 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 중소기업 클라우드 서비스 보급·확산 사업 모집 공고(수요기업)[수정공고] | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 28GHz 산업융합 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 부처협업 기반 AI확산 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 산업전문인력 AI역량강화 지원사업(신규) 서류평가 결과 및 발표평가 대상자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정)2024년 메타버스허브센터 구축 및 운영 사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2024년도 디지털 트윈 제품화 전환·개발 지원사업 신규과제 모집 공고 (사업설명회 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 과학기술정보통신부 GovTech 창업기업 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 3D프린팅 전문인력 양성교육 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI바우처 지원사업을 위한 공급기업Pool 변경 신청 공고 (4차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 1차 ICT 비즈니스 파트너십 참가기업 모집(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI융합 지능형 농업 생태계 구축 총괄운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 제조업 AI융합 기반 조성 총괄운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 K-Global 액셀러레이팅 사업 액셀러레이터 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI기반 의료시스템 디지털 전환 지원 사업 공고(재수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 고용노동부(한국산업안전보건공단) 연계 스마트 안전장비지원 품목 등록 시행계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정] 2024년도 디지털 트윈 혁신서비스 선도 실증사업 [공공시설물 안전실증, 제조산업 적용실증] 통합 모집 공고(사업설명회 발표자료 게시 등) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 XaaS 선도 프로젝트 사업 신규과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 「AI·디지털기반 미디어 융합인재」 사업 수행기관 신규 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2024년 K-LAB 코스타리카사업 수행기관 공개모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI‧디지털 기반 미디어 활성화 지원사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 한인도SW상생협력센터 공유 오피스 사무공간 활용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 메타버스 테스트 랩 운영 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 디지털 안전 선도모델 개발 신규과제 추가모집 공고(생활 안전 분야) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 블록체인 기술검증(PoC) 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 DNA 대중소 파트너십 동반진출 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 초거대 AI 기반 클라우드서비스 개발 역량지원 사업 공고(문의처 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 유망 SaaS 개발·육성 지원 사업 공고( 문의처 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 중소기업 클라우드 서비스 보급·확산 사업 공고(수요기업) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 의료AI 클리닉 도입 기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지능형 홈 서비스 실증·확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI 기반 뇌발달질환 디지털의료기기 실증지원 사업 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지능형응급의료시스템(AI앰뷸런스) 시범적용 지역 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 클라우드 병원정보시스템 확산지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 「고성능 컴퓨팅 지원(국산 AI반도체 활용 사업–AI반도체트랙)」 사용자 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 「고성능 컴퓨팅 지원」 사용자 모집 공고 [수정] | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 SaaS 전환 컨설팅 공급기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 SW개발환경 지원 클라우드 공급기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024 오픈 프런티어(기여·멘토형) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 K-클라우드 프로젝트 사업 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 AI반도체 응용실증지원 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 SaaS 개발 지원 사업 CSP·MSP Pool 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 디지털트윈 융합 의료혁신 선도 사업 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 중소기업 클라우드 서비스 보급·확산 사업 공고(공급서비스) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지능형 홈 협력 생태계 조성사업 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 ICT이노베이션스퀘어 운영 디지털 신기술 교육 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지역 디지털 혁신거점 조성지원 사업 신규지역 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 정보제공 플랫폼 개편 용역 견적 공고문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 ｢산업전문인력 AI역량강화｣ 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지역 자율형 디지털 실증지원 사업(스마트물류, AI기반 어장공간정보, 농식품 메타버스) 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 1차 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 지역디지털기초체력지원(지역지원, 제주, 세종) 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI바우처 지원사업을 위한 공급기업 Pool 신규등록 신청 공고 (3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 상반기 월드프렌즈 NIPA자문단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 디지털 안전 선도모델 개발 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI바우처 지원사업을 위한 공급기업 Pool 변경 신청 공고 (2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 「고성능 컴퓨팅 지원 사업」 공급자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년도 과학기술정보통신부 「고성능 컴퓨팅 지원 사업」 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2024년 AI바우처 지원사업 운영기관」모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI바우처 지원사업을 위한 공급기업 Pool 신규등록 신청 공고 (2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 K-Lab 라오스 협력 지원사업 수행기관 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 AI바우처 지원사업을 위한 공급기업 Pool 신규등록 및 변경 신청 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2024년 산업 메타버스 플래그십 서비스 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 디지털콘텐츠기업 성장지원센터 입주기업 모집(2024-1차) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 삼차원프린팅 산업안전교육 위탁기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023-3차 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 메타버스 현지전문가 활용을 통한 비즈니스 창출 지원 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 6차 정보통신방송융합서비스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 5차(CIS) 정보통신방송융합서비스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 하노이IT지원센터 2023년 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 민·관합동 디지털 수출개척단 (중동) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재수정] 2023년 한-아세안 네트워킹 상담회 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023-2차 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 공개SW 산업발전 유공자 표창 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2023년 블록체인 전문 컨설팅 지원」대상기업 모집 공고(원포인트) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 싱가포르 핀테크 페스티벌( K-솔루션 페어) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 4차(아세안) 정보통신방송융합서비스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 디지털콘텐츠기업 성장지원센터 입주기업 모집(2023-3차) 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 월드 스마트시티 엑스포(WSCE 2023) 우수기업 비즈니스 페어 개최 및 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 공개SW 개발자 대회 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도『수출 유망 메타버스 강소기업 육성』 지원기업 모집 공고(추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 오픈소스 컨트리뷰션 아카데미 멘티(참가자) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고(3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년「메타버스 초기기업 인프라 지원」대상 기업 모집 공고(추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도『수출 유망 메타버스 강소기업 육성』 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [하노이IT지원센터] 2023년 Vietnam ICT Market Entry Advisory 참여 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화교육) 제23기 교육생 모집 연장 공고(~05.02.화.15시) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 오픈 프런티어(멘토형) 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 2023년 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 지능형 IoT 적용 확산 사업 신규과제 모집 수정공고(근로자 안전 분야) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 오픈 프런티어(기여형) 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 28GHz 산업융합 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 3D프린팅 재직자 기술 컨설팅 지원사업 신규 과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부 AI기반 화력운용시스템 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 데이터 활용 의료·건강 생태계 조성 사업 총괄운영기관 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 개방형OS 보급ㆍ확산 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 K-STARTUP GRAND CHALLENGE Startup Application Notice (~5.18(Thu) 16:00 KST) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화교육) 제23기 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 클라우드 상호운용성 시험·컨설팅 지원대상 모집 및 설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 K-Lab 볼리비아 협력 지원사업 수행기관 모집(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 K-Lab 우즈베키스탄 협력 지원사업 수행기관 모집(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 오픈 프런티어(멘토형) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023 오픈 프런티어(기여형) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털 트윈 혁신서비스 선도 사업(제조산업 적용실증) 발표평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털 트윈 혁신서비스 선도 사업(의료시설물안전 실증 분야) 발표평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부 AI기반 도심공원 안전관리시스템 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 스마트서비스 창출기반확충 운영 위탁공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 클라우드 서비스 품질성능 검증 사업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 23년 3D프린팅 전문인력 양성교육 사업 공고(담당자 변경) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 데이터 활용 의료·건강 생태계 조성 사업 총괄운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털 트윈 혁신서비스 선도 사업(제조산업 적용실증) 서면평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 3D프린팅 기술활용 활성화 지원사업수행기관 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 부처협업 기반 AI확산 사업 신규과제(문화체육, 관세안전) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 ｢산업전문인력 AI역량강화 지원사업 신규과제｣ 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 메타버스 초기기업 인프라 지원기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 메타버스 초기기업 인프라 지원 사업수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 메타버스 선도 프로젝트 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 SW안전 제품·서비스 실증 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 중소기업 클라우드 서비스 보급·확산 사업 공고(공급서비스) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 중소기업 클라우드 서비스 보급·확산 사업 공고(수요기업) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 중소기업 클라우드 서비스 보급·확산 사업 공고(운영기관) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 유망 SaaS 개발·육성 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 클라우드 창업성장 지원(K-ICT클라우드혁신센터 운영) 사업 운영기관 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 K-스타트업 그랜드 챌린지 액셀러레이팅 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 SW기술금융 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 과학기술정보통신부 SW공학기술 역량강화 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 디지털콘텐츠기업 성장지원센터 입주기업 모집(2023-2차) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC실리콘밸리 EMF(실리콘밸리형 기업가 양성 교육) 프로그램 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부 AI융합 국민안전 확보 및 신속대응 지원 사업 신규과제 모집 공고(제출서류 양식 및 관련 규정 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 DNA 대중소 파트너십 동반진출 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부「고성능 컴퓨팅 지원」 (AI반도체 트랙) 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 AI바우처(AI반도체 분과) 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 K-클라우드 프로젝트 사업 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Health 국민의료 AI서비스 및 산업생태계 구축 사업(AI 의료지원플랫폼 구축(전국)) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Health 국민의료 AI서비스 및 산업생태계 구축 사업(AI 의료생태계 구축(대구)) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 디지털 트윈 혁신서비스 선도 제조산업 적용 실증 신규과제 공고(2.17 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 디지털 트윈 혁신서비스 선도 의료시설물 안전 실증 신규과제 공고(2.17 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 민간지능정보서비스확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 「산업연계형 디지털전환 전문기업 육성」 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털 안전 선도모델 개발 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023-1차 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [연장공고] 2023년 AI바우처 지원사업[일반/의료] 접수 마감시간 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 상반기 메타버스허브 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 지역선도기업사업화지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 클라우드 병원정보시스템 확산지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI바우처(AI반도체 분과) "AI반도체 컨소시엄 Pool" 등록 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 에디터 서식 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ex_23년 3D프린팅 전문인력 양성교육 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 한인도SW상생협력센터 공유 오피스 사무공간 활용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 디지털콘텐츠기업 성장지원센터 입주기업 모집 공고(2023-1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 2차 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI바우처 지원사업 공급기업 Pool 상시모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 창업플랫폼 지원사업 모집 안내(3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 하반기 통합 ICT 비즈니스 파트너십 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 하반기 콘텐츠 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 싱가포르 핀테크 페스티벌(K-솔루션 페어) 참가기업 연장모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 메타버스 노마드 시범사업 운영기관 모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 생활밀착분야 비대면 선도서비스 활성화 사업화 지원 운영기관 선정 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 하반기 ICT 비즈니스 파트너십 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [하노이IT지원센터] 2022년 『Vietnam ICT Market Entry Advisory』 참여 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 클라우드 도입 기초 컨설팅 지원사업 신청안내(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 클라우드 컨설팅 지원사업 신청안내(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 인공지능 중심 산업융합 집적단지 조성사업(R&D) 지원과제 SW 품질관리 컨설팅 전문기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI융합 국민 안전 확보 및 신속대응 지원 사업 검증 업체 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2022년 블록체인 전문 컨설팅 지원」 대상기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] K-Health 국민의료 AI서비스 및 산업생태계 구축 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 산업맞춤형 AI인력양성 바우처 지원과제 모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI앰뷸런스 시범적용 지역 선정 재공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI융합 국민 안전 확보 및 신속대응 지원 사업 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | Korea IT School교육 위탁운영 기관 선정결과 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 상반기 통합 ICT 비즈니스, 콘텐츠 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT디바이스 판교FAB 위탁운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 대기업·기금사 대상 비대면 기업홍보 지원(비대면IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지능형 IoT 적용 확산 사업 스마트홈 분야 신규과제 모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 메타버스 전문기업육성 사업화 운영 수행기관 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI융합 불법복제품 판독시스템 구축사업 신규과제 모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 AI융합 해안경비시스템 구축사업 신규과제 선정평가(발표평가) 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 KoVAC 공동제작센터 위탁운영사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 생활밀착분야 비대면 선도서비스 활성화 사업 지원기업 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 상반기 ICT 비즈니스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 SW시장성테스트지원 사업 지원 대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 22년 3D프린팅 전문인력 양성교육 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부 AI반도체 실증지원사업 신규지원 대상과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 SW기술금융 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 중소SW및 ICT기업의 인도시장 진출지원 사업모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI앰뷸런스 시범적용 지역 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI융합 의료영상 진료판독 시스템 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 SW공학기술 역량강화 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 블록체인 기술검증(PoC) 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 5G기반 디지털트윈 시설물 안전 실증 신규과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 5G기반 디지털트윈 제조산업 적용 실증 신규과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 「산업연계형 디지털전환 전문기업 육성」 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 DNA 대중소 파트너십 동반진출 사업설명회 동영상 및 자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 SW융합클러스터2.0 사업(특화산업 강화) 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 클라우드 도입 컨설팅 지원사업 신청안내(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 클라우드 컨설팅 지원사업 신청안내(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 DNA 대중소 파트너십 동반진출 사업설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [연장공고] 2022년 AI바우처 지원사업 접수 마감시간 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 K-Startup 그랜드 챌린지 액셀러레이팅 후속지원('22) 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 DNA 대중소 파트너십 동반진출 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IoT혁신센터 입주공간 공실분 입주기업 수시 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 클라우드 기반 SW개발환경 지원 사업 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI바우처 지원사업 공급기업 Pool 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 누리꿈스퀘어 XR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 신시장 ICT 비즈니스, 콘텐츠 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 5G MEC 실감콘텐츠 실증 지원 사업(추가) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 하반기 신북방국가 콘텐츠 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 하반기 신북방국가 ICT 비즈니스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI융합 국민안전 확보 및 신속대응 지원 사업 실증랩內 오픈랩 참여 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 한인도SW상생협력센터 공용 오피스 사무공간 활용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 하반기 신남방국가 콘텐츠 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 하반기 신남방국가 ICT 비즈니스 파트너십 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 소프트웨어 산업발전 유공자 포상계획 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 클라우드 컨설팅 2차 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 3D프린팅 공정컨설팅 지원사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 인공지능 온라인 경진대회 개최 공고(사업화 지원 안내서 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 3D프린팅 기술활용 활성화 지원사업 발표평가 대상 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 SW안전 제품·서비스 실증 지원 시범사업 선정 결과 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 『VICTORY 프로그램』 제21기 교육생 모집 연장 공고 (~5.24(월) 오후 3시) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2021년 블록체인 전문 컨설팅 지원」 사업 대상기업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 컴퓨터그래픽(CG) 리크루팅 캠프 참가기업 모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 기업수요연계 프로젝트 교육 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ﻿2021년 기술선도형 CG콘텐츠 개발 지원사업(CG기반 신비즈니스 모델) 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 스마트콘텐츠 개발지원사업 최종 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 생활밀착분야 비대면 서도서비스 활성화 사업화 지원 위탁운영 사업자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 SW안전 제품·서비스 실증 지원 시범사업 신규과제 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ﻿2021년 기술선도형 CG콘텐츠 개발 지원사업(CG전문기업육성) 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 SW공학기술 역량강화 지원사업 신규과제 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 스마트콘텐츠 개발지원사업 서면평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 AI융합 국민안전 확보 및 신속대응 지원사업 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 기술선도형 CG콘텐츠 개발 지원사업 서면평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 클라우드 기반 SW개발환경 지원사업 안내[연장 모집] | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 스마트콘텐츠 개발지원 사업공고 마감연장(03월 23일(화), 12시까지) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 기술선도형 CG콘텐츠 개발지원 사업공고 마감연장(03월 23일(화), 12시까지) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 상반기 콘텐츠 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 상반기 ICT 비즈니스 파트너십 참가기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (재공고)2021년 생활밀착분야 비대면 선도서비스 활성화 사업 (지정과제 : 로봇 배송) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 DNA 대중소 파트너십 동반진출 사업설명회 동영상 및 자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정게시]_2021년도 가상융합기술(XR) 확산 프로젝트 통합 공고(부속지침 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 지역 비대면비접촉 디지털콘텐츠 육성 사업 수행기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 SW안전 제품·서비스 실증 지원 시범사업 신규과제 모집 공고 사업설명 동영상 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI융합 신규 감염병 대응시스템 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 DNA 대중소 파트너십 동반진출 사업설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2021년 AI 바우처 지원사업 접수 마감시간 수정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI 기술실증 테스트베드 조성 사업 공고 제안 접수마감시간 변경 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 클라우드 기반 SW개발환경 지원 사업 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2021년 DNA 대중소 파트너십 동반진출 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI 기반 중량화물이동체 물류플랫폼 실증 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI 기반 중량화물이동체 물류플랫폼 실증 사업설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 AI기반 중량화물이동체 물류플랫폼 실증사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI 기술실증 테스트베드 조성 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 SW기술금융 지원사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 디지털콘텐츠기업 성장지원센터 입주기업 모집(2021-01차) 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 인공지능 융합 프로젝트(AI+X) 신규과제 모집 공고 사업설명 동영상 게시 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 SW공학기술 역량강화 지원사업 신규과제 모집 공고 관련 사업설명 동영상 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI 기술실증 테스트베드 조성 사업설명회 안내(장소 변경) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 지능형 IoT 적용 확산 사업 신규과제 모집 공고 사업설명 동영상 게시 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI반도체 실증지원사업 신규지원 대상과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 민간지능정보서비스확산 사업 신규과제 모집 공고 동영상 게시 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI융합 의료영상 진료판독시스템 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부「K-Global 액셀러레이터 육성」사업 액셀러레이터 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 과학기술정보통신부 지능형 IoT 적용 확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI융합 국민안전 확보 및 신속대응 지원 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 AI융합 에너지 효율화 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정:성능평가-탐지율]2021년 과학기술정보통신부 AI융합 해안경비 및 지뢰탐지시스템 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 5G기반 디지털트윈 시설물안전 실증사업 공고(사업설명회 자료 및 질의응답 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [서식6 수정]AI융합 지역특화산업 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (마감) 2021년 중소기업 클라우드서비스 이용지원(바우처) 사업 재공고(수요기업) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2021년 핵심산업 클라우드 플래그십 프로젝트 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2021년 생활밀착분야 비대면 선도서비스 활성화 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI정밀의료솔루션(닥터앤서2.0)개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털콘텐츠 미래인재발굴 육성 사업 설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 한국IT기업의 인도시장 진출 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털콘텐츠 미래인재발굴 육성 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI기반 응급의료시스템 개발 선도 지역 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 5G 실감콘텐츠 오픈랩 위탁운영 사업자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI기반 응급의료시스템 개발 선도 지역 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘5차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 헬스케어 빅데이터 쇼케이스 활용지원서비스(암환자 치료 및 예후관리 서비스 개발) 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘4차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 과학기술정보통신부 비대면 기업홍보 지원사업(언택트 IR) 하반기 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 K-Global@China K-Pitch 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT-문화융합센터 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT문화융합센터 콘텐츠 제작 인프라 시범 사업자 선정 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT 융합 실감콘텐츠 랩 지원 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 중소기업 클라우드서비스 이용지원(바우처) 사업(수요기업) 모집 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT를 통해 국민 생활문제 해결하는 '솔·직 챌린지' 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '20년 기업수요연계 프로젝트 교육 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공지] 2020년 중소기업 클라우드서비스 이용지원(바우처) 사업(수요기업) 접수 마감시간 수정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 AI 바우처 지원(추경) 사업 접수 마감시간 수정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 AI 바우처 지원사업 공급기업 Pool 공개 및 5차 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 핵심산업 클라우드 플래그쉽 프로젝트 지원 사업설명 동영상 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 중소기업 클라우드서비스 이용지원(바우처) 사업설명 동영상 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 지역 ICT이노베이션스퀘어 조성 사업 공고 (ICT콤플렉스20년사업비내역 수정공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정:전산접수매뉴얼]’20년 『AI융합 의료영상 진료·판독시스템』 및 『AI융합 해안경비시스템』 구축 사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI융합 국민안전 확보 및 신속대응 지원 실증랩 구축운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 중소기업 클라우드서비스 이용지원(바우처) 사업 공고(수요기업) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 중소기업 클라우드서비스 이용지원(바우처) 사업 공고(운영기관) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 AI 바우처 지원(추경) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고]2020년도 실감콘텐츠 신시장 창출 프로젝트 통합공고(XR 융합프로젝트)(관련규정 첨부) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 AI 바우처 지원사업 공급기업 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 실감교육 콘텐츠 개발지원과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [마감] 2020년도 VC ICT 전문성 강화 교육 『VICTORY 프로그램』 제20기 교육생 모집 공고 (6.17~6.24 오후 3시) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 블록체인 컨설팅 지원사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 소프트웨어(SW)미래채움사업 신규 선정 추가 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 기술선도형 CG콘텐츠 개발 지원사업 재공고 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 지역거점 인공지능 교육 운영 사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 기술선도형 CG콘텐츠 개발 지원사업 재공고 서면평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT 융합 프로젝트 개발 지원과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 AI 바우처 지원사업 접수기간 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 인공지능 중심 산업융합 집적단지 조성사업(R&D) 산업융합형 AI 연구개발 신규지원 대상과제 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-ICT 클라우드혁신센터 지원사업(2차) 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 3D프린팅 서비스 바우처 지원 사업 공급기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 SW시장성테스트지원 사업 지원 대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 3D프린팅 기술활용 활성화 지원사업(민간부담금 기준 완화) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 3D프린팅 제조혁신 실증지원사업(민간부담금 기준 완화) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 IoT혁신센터 입주기업 모집 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 사물인터넷 제품서비스 검증확산사업 서비스 확산분야 신규과제 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 클라우드 기반 개발 지원 플랫폼 운영사업 공고(담당자 변경) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년도 인공지능중심 산업융합 집적단지 조성사업(R&D) 산업융합형 AI 연구개발 신규지원 대상과제 공고 (공고내용 일부항목 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 3D프린팅 기술활용 활성화 지원사업 접수기간 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 3D프린팅 제조혁신 실증지원사업 접수기간 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 인공지능중심 산업융합 집적단지 조성사업(R&D) 온라인 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 KoVAC 공동제작센터 위탁 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [온라인 사업설명회] 2020년 5G 실감콘텐츠 신시장 창출 프로젝트 온라인 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 SW기술금융 지원사업 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 지역거점 인공지능 교육 운영 사업 공고(FAQ 및 발표자료 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 K-Startup 그랜드 챌린지 액셀러레이팅 운영 사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 SW공학기술 현장적용 지원사업 안내 (신청서식 예시수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [긴급공지] 2020년 5G 실감콘텐츠 신시장 창출 프로젝트 통합사업 사업설명회 취소 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 20년 스마트콘텐츠 개발지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 사물인터넷 제품서비스 검증확산사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 5G 실감콘텐츠 신시장 창출 프로젝트 통합사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020.2.14(금), 2020년 인공지능식별추적시스템 실증랩 예정장소 사전답사에 대해 안내드립니다. | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 2월 14일(금), 인공지능식별추적시스템 실증랩 사전답사 일정에 대해 안내드리오니 참석을 희망하는 분은 사전신청 양식을 작성해 주시면 감사하겠습니다. | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 인공지능식별추적시스템 구축 실증 및 검증 사업 현장 설명회 취소 및 온라인 설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020 ICT 분야 창업·벤처 지원사업(K-Global 프로젝트) 통합안내문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 인공지능식별추적시스템 구축 실증 및 검증 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 헬스케어 빅데이터 쇼케이스 활용서비스(헬스케어 빅데이터 비식별화 기술 개발) 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 SW고성장클럽 200 수행기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 민간지능정보서비스확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 2.0 (특화산업 강화) 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 2.0 (플랫폼 사업화) 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정)2020~21년 지역SW서비스사업화지원사업(세종) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정)2020~21년 지역SW서비스사업화지원사업(제주) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정)2020~21년 지역SW서비스사업화지원사업(지역지원) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019 누리꿈스퀘어 VRAR기업성장지원센터 입주 모집(하반기) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 클라우드혁신센터 지원사업(SW 개발환경, 클라우드 컨설팅) 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제5차 콘텐츠 파트너십(몽골) 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 MWC 디지털콘텐츠 한국전시관 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 인도네시아, 싱가포르 ICT 비즈니스 파트너십 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ★중국(베이징)스타트업 IR 참가기업모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 러시아, 터키 ICT비즈니스 파트너십 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 일본 DC EXPO 스마트콘텐츠 한국공동관 참가기업 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 소프트웨어 산업발전 유공자 포상계획 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 중학교 자유학기 진로체험을 위한 실감형(VR_AR) 콘텐츠 개발 지원 사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제4차 콘텐츠 파트너십(러시아, 터키) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제2차 콘텐츠 플래그십 프로젝트 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 개방형 경진대회 우수기업 사업화 지원 안내(AI STARTHON 연계) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 K-Pitch 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정 공고) 2019년 중화권(상해, 홍콩) ICT 비즈니스 파트너십 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 일본 DC EXPO 스마트콘텐츠 한국공동관 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 중학교 자유학기 진로체험을 위한 실감형(VR_AR) 콘텐츠 개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 K-솔루션 페어@싱가포르 참가기업 모집(싱가포르 Fintech Festival 2019 연계) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | AI STARTHON 2019 인공지능 개방형 경진대회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 소프트웨어 산업발전 유공자 포상계획 공고(연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 소프트웨어산업 발전 유공자 포상계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제3차 콘텐츠 파트너십(중화권역) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 소프트웨어산업 발전 유공자 포상계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 스마트시티 시범도시 혁신서비스 모델 검증확산 사업 과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 클라우드 기반 창업을 위한 개발 지원 플랫폼 운영 사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 누리꿈스퀘어 VR·AR기업성장지원센터 입주 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 지역 VR·AR제작거점센터 구축 사업 지원대상 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [추가모집] 2019년 싱가포르시장 진출을 위한 SW수출마케팅지원사업 지원대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 인도시장 진출을 위한 SW수출마케팅지원사업 지원대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제조+SW/ICT 융합촉진 컨설팅 지원 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 일본시장 진출을 위한 SW수출마케팅지원사업 지원대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 제2차 콘텐츠 파트너쉽(인도네시아, 말레이시아) 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 컴퓨터그래픽(CG)전문기업육성사업 공고(~6.29 15:00까지) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 디지털콘텐츠 대중소기업동반성장 지원 사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 2018년 SW시장성 테스트 지원 사업 지원 대상 SW기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 『3D프린팅 서비스 바우처 사업』 수요·공급기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 19~20년 지역SW융합제품상용화 SW품질관리 위탁지원 전문기관 선정공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 클라우드 선도활용 시범지구 조성사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019 K-Global 액셀러레이터 육성사업 스타트업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 블록체인 기술컨설팅 지원사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [마감] VICTORY 프로그램 [VC ICT 전문성 강화 교육] (2019) 교육생 모집(4/23~4/30, 3시) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 ICT-문화융합센터 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2019년 KoVAC Shared Infra(개발/테스트 장비) 지원 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 SW서비스 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정)2019년 ICT문화융합센터 콘텐츠 제작 인프라 시범 사업자 선정(한글 신청서 양식 첨부) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년도 5G 콘텐츠 플래그십 프로젝트 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 공개SW 기술확산 지원사업 시행 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 선정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공지) 2019년 ICT융합 디바이스 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 클라우드 선도활용 시범지구 조성사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2019년 고성능 컴퓨팅 지원사업 사전안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 클라우드 선도활용 시범지구 조성사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 SW시장성테스트지원 사업 지원 대상 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 클라우드 상호운용성 컨설팅 및 시험 지원기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 SW융합클러스터 신규선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 클라우드 도입/공급 컨설팅 지원사업 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 공개SW 기술확산 지원사업 시행 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 개방형 경진대회 플랫폼 구축사업 안내(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 ICT콤플렉스 멤버(입주자) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT융합 디바이스 개발 수요조사 실시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 중소기업 클라우드서비스 적용확산 사업 '클라우드서비스(공급기업)' 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 의료데이터분석 지능형 SW 기술개발 과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 2.0 플랫폼 사업화 선정 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 2.0 특화산업 강화 선정 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 수요·공급기업 현장애로기술지원 과제모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019~20년 지역SW융합상용화지원사업(10차) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 사물인터넷 제품서비스 검증확산 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2019년 '민간 지능정보서비스확산' 사업 신규과제 모집 공고(*사업설명회 사전등록) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW미래채움 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 SW융합클러스터 신규 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [사업설명회]소프트웨어(SW)미래채움 사업설명회 장소 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 K-솔루션 페어(온라인@싱가포르) 참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘6차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 스마트콘텐츠 중화권 비즈니스 로드쇼 1차 지원기업 선정결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년도 3D프린팅 산업 발전 유공자 포상계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 ICT-융합 콘텐츠 신산업 발굴지원 최종 선정 과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 ICT-융합 콘텐츠 신산업 발굴지원 서류 선정 과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 3D프린팅 기술활용 시범제작 지원사업(2차) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 VRAR Shared Infra 시범 운영 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [2차 재공고] 2018년도 3D프린팅 신규 제품 및 서비스 개발 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품상용화 지원사업 SW품질검증 전문기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018 융합형 스마트콘텐츠 제작지원 최종 선정 과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018 융합형 스마트콘텐츠 제작지원 1차(서류심사) 선정과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 지역 VR AR제작지원센터구축 사업자 선정 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 K-Startup 그랜드챌린지 액셀러레이팅 지원사업 추가 공고문 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 의료ICT융합컨소시엄 세부과제 개발 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년도 공동주택 ICT융합컨소시엄 협력과제개발 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 스마트산업에너지 ICT융합컨소시엄 협력과제 개발 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년도 제조 ICT융합 컨소시엄 협력 과제 신규 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 2018년 전통·융합산업별 공개SW 요소기술개발 지원사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 ICT융합 Industry4.0s(조선해양) 기술개발과제 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화 지원사업(경제/세종/제주) 선정결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화사업(세종) 공고문(재공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화사업(제주) 공고문(재공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 지역 VR AR제작지원센터 구축 사업자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (사업설명회 일정 안내)2018년가상증강혼합현실(VR/AR/MR) 플래그십 프로젝트 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 가상증강혼합현실(VR/AR/MR) 플래그십 프로젝트 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | I-KOREA 4.0실현을 위한「2018년도 국가디지털전환」 사업공고(기업주도형 과제) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT융합 Industry4.0s(조선해양) 기술개발과제 ICT.SW품질검증 및 컨설팅 전문기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년도 공개SW 기술개발 지원사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 ICT융합 Industry4.0s(조선해양) 기술개발 사업설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 K-Global 액셀러레이터 육성 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년도 ICT융합 Industry4.0s(조선해양) 기술개발사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화 지원사업(제주) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화 지원사업(세종) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018~19년 지역SW융합제품 상용화 지원사업(경제) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2018년 K-Global ICT 재도전 패키지 (예비)재창업자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT융합 Industry4.0s(조선해양) R&D 기술수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | MWC 2018 Smart Content Pavilion(한국공동관) 지원기업 모집 공고(~12/11(월) 14:00) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 K-Global 인큐베이팅 인턴십 프로그램 참가자 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 K-Global 인큐베이팅 인턴십 프로그램 참가자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 3D프린팅 기술활용 단종.조달애로 제품 시범제작 지원사업(재공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 아메리칸필름마켓(AFM) 컴퓨터그래픽기업 공동관 참가기업 모집 공고(~9/18) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 스마트타운ICT융합컨소시엄 협력과제 신규모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 SW기술금융지원 사업 공고(3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 제조 ICT융합 컨소시엄 신규모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『Soft Wave 2017』전시 참가기업 모집 공고(안) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [보충설명자료] 2017년 공동주택ICT융합컨소시엄 협력과제 개발 사업 공고 보충설명자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2017년도 스마트타운ICT융합컨소시엄 협력과제 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 K-Global Re-Startup현지화 지원사업 추가공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 K-Global Re-Startup 민간투자연계지원사업 추가공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2017년 의료 ICT융합컨소시엄 협력과제 개발 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2017년 스마트 산업에너지 ICT융합컨소시엄 협력과제 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 SW기술금융지원 사업 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 제조(플랜트)ICT융합컨소시엄 협력과제 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW사용자 편의성 개선 지원 대상 SW 2차모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 액셀러레이터(SW전문창업기획사) 육성사업 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 ICT융합 Industry4.0s(조선해양) 기술개발 재공고과제 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 벤처캐피탈리스트 ICT 전문성 강화 교육 프로그램 교육생 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 ICT융합 Industry4.0s(조선해양) 기술개발사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 ICT융합 Industry4.0s(조선해양) 기술개발과제 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 디지털콘텐츠 (VR/AR/MR) 가상현실 2차 신규지원 대상과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 CG전문기업육성(CG성장기업) 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 액셀러레이터(SW전문창업기획사) 육성사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 누리꿈스퀘어“VR성장지원센터 (실감콘텐츠 실증공간 지원)”입주 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW사용자 편의성 개선 지원 대상 SW모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 SW자산재개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 신산업창출을 위한 SW융합기술고도화 기술개발사업 서면평가 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 17년 SW프로슈머 평가 사업 평가단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 17년 SW프로슈머 평가 사업 지원 대상 소프트웨어 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 스타트업 다국적화 지원 선정 평가 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 K-Global 기업가정신 프로그램 참가자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 현장수요기반콘텐츠지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 ICT융합 Industry4.0s(조선해양) 기술개발 사업설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 디지털콘텐츠(VR/AR/MR) 플래그십 프로젝트 사업설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 ICT융합 Industry4.0s(조선해양) 기술개발사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 정밀의료 병원정보시스템(P-HIS) 개발 사업단.단장 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 산업단지 클라우드 서비스 적용 확산 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 신산업창출을 위한 SW융합기술 고도화 기술개발과제 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 K-Global 액셀러레이터 육성사업(Track1) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 ICT분야 패키지형 재도전 지원사업 (예비)재창업자 (추가)모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도『창의도전형 SW R&D 지원사업』 참가자(팀) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 K-Global Re-Startup 민간투자연계지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년도 ICT융합 컨소시엄 신규모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 K-Global Re-Startup 현지화 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 '클라우드컴퓨팅 전문인력 양성기관' 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Lab 운영 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Startup Grand Challenge 액셀러레이팅 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 스타트업 다국적화 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016~17년 ICT융합 Industry4.0s(조선해양) 기술개발과제 SW품질검증 전문기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 패키지형 재도전 지원사업 (예비)재창업자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 대구 성서산업단지 K-ICT 클라우드 서비스 적용 시범사업 특화SaaS 개발지원기업 추가모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2017년 K-ICT 디지털콘텐츠 플래그십 프로젝트 수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 제4기『공개SW 개발자(Global Open Source Frontier)』 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 삼차원프린팅서비스 안전교육 위탁기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 ICT융합 Industry4.0s(조선해양) 기술개발과제 사업계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 ICT융합 Industry4.0s(조선해양) 기술개발과제 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 SW기술가치평가 지원 사업(2차) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 SW자산활용촉진을 위한 민간SW 품질확보 지원대상 기업 추가모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | Innovation Fellowship 프로그램 참가자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 K-Global Re-Startup 현지화 지원 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 ICT융합 Industry4.0s(조선해양) 기술개발과제 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 액셀러레이터 육성 사업 2차 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 스마트타운 ICT융합컨소시엄 협력과제 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | VR스타트업 컴피티션 개최 수정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 클라우드 산업발전 유공자 표창 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [SW기술금융] IP(SW지재권)평가보증 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 클라우드 특화SaaS 실증 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [지원공고] 스마트콘텐츠기업 파워업 컨설팅 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 개도국 K-Lab 설치 및 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 K-Global 액셀러레이터 육성 사업 스타트업 모집 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 IaaS 관련 솔루션 개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW 사용자 품질 개선 지원 대상 SW모집 2차공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 스마트항공 ICT융합컨소시엄 협력과제 개발 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 스마트러닝시범콘텐츠 개발지원사업(추가) 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 개방형 스마트시티 실증단지 조성사업(도시 유망서비스 실증) 신규과제 최종 선정결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 사물인터넷 전문기업육성 지원사업(융합 신제품 상용화) 신규과제 선정 최종결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 사물인터넷 전문기업육성 지원사업 (신산업육성선도 사물인터넷 서비스 검증확산) 최종 선정결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 사물인터넷 전문기업육성 지원사업 (사물인터넷 신산업육성선도-전통-IoT동반성장 지원) 신규과제 선정결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 3D프린팅 맞춤형 컨설팅 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (VR기반) 주요 관광지 스마트 체험관 구축 개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 K-Global Re-Startup(재도전기업) 민간투자연계지원 사업 추가모집 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 SW기술금융 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 2016년 K-ICT 디바이스랩 위탁운영 사업 재공고(판교, 송도) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 SW자산재개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 신산업창출을 위한 SW융합기술고도화 기술개발사업 최종 선정결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 벤처캐피탈리스트 ICT 투자역량강화 교육 프로그램 교육생 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 기업공동진출지원사업 사업설명회 장소 변경 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 기업공동진출지원사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 컴퓨터그래픽(CG) 기반 新비즈모델 지원사업 2차 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW 사용자 품질 개선 지원 대상 SW모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 신산업창출을 위한 SW융합기술고도화 기술개발사업 서면평가 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [서면합격 발표] K-Global 스마트 모바일 스타기업 문화 ICT 융합 분야 스마트콘텐츠 제작지원 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 K-Global 기업가정신 프로그램 참가자 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 K-ICT 디바이스랩 위탁운영 사업공고(판교, 송도) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 수출형SW 제품화지원사업 사업공고기간 및 접수마감 시간 및 사업수행계획서 양식 변경 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 신산업창출을 위한 SW융합기술고도화 기술개발사업 평가일정 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 3D프린팅 비즈니스 모델 개발 및 사업화 지원사업 시행공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ‘2016년도 스마트러닝시범콘텐츠 개발지원 ’사업 신청 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 기업공동진출지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도『창의도전형 SW R&D』사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 SW자산활용촉진을 위한 민간SW 품질확보 지원대상 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 K-Global 액셀러레이터 육성 사업 추가모집 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 시장창출형 실감콘텐츠 개발지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 IoT 융·복합 시범단지 조성사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 다국적 스타벤처 육성 프로그램 참여사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016~17년 지역SW융합제품 상용화 지원사업 신규선정 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 개방형 스마트시티 실증단지 조성사업 신규과제(도시 유망서비스 실증) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 K-Global 기업가정신 프로그램 참가자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 사물인터넷 전문기업육성 지원사업 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 신산업창출을 위한 SW융합기술고도화 기술개발사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 대중소기업 상생IT혁신사업 컨소시엄 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 K-Global Re-Startup(재도전기업) 민간투자연계지원 사업 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 특허청 IP R&D 전략지원 사업 시행 계획 공고(K-Global 300 기업 대상) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 K-Global 액셀러레이터 육성 사업 공고 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 북경국제영화제 필름마켓 NIPA 공동관 참가업체 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016~17년 지역SW융합제품 상용화 지원사업 신규선정 관련 공지사항 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 K-Global 프로젝트 통합 사업설명회 자료집 배포 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 "K-Global 300" 지원시책(안) 배포 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016~17년 지역SW융합제품 상용화 지원사업 신규선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년도 "K-Global 프로젝트" 시행계획 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2016년 패키지형 재도전 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트러닝 산업지원센터 입주기업 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 디지털콘텐츠 동반성장지원사업 지원과제 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트러닝 산업지원센터 입주기업 수시모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 사물인터넷 DIY 창작경진대회 심사결과 및 수상팀 발표 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 15년 K-Global SW창업기획사 2차 창업기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | MWC 2016 한국스마트콘텐츠전시관(한국공동관) 참가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [사업공고] 소프트웨어 디자인 융합센터 구축 사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '15년 K-Global 재도전 창업보육센터 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 사물인터넷 DIY 방과후학교 교육 프로그램 개발 지원사업 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 『스마트항공ICT융합컨소시엄 협력과제 개발』 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고)헬스케어 ICT융합 협력과제 개발 사업공고(접수기간 연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 산업단지 K-ICT 클라우드 서비스 적용 시범사업 발표평가결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 산업단지 K-ICT 클라우드 서비스 적용 시범사업 서면평가결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 15년 K-Global SW창업기획사 우수 창업기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 SW+인문융합 시범적용 과제 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 지역SW융합과제 품질컨설팅 및 검증지원 용역 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 사물인터넷 DIY 방과후학교 교육 프로그램 개발지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 외국어 입력플랫폼 기반 구축 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 SW자산재개발 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | `15년 ICT융합실증확산 지원사업 신규과제 공고(2차) (공고/접수기간 연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 클라우드기반 산업적용 신서비스 개발 제안과제 평가결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 클라우드 서비스(SaaS) 개발지원 2차 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 스타트업 엔진 참가팀 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 K-Global 기업가정신 프로그램 참가자 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 K-Global 기업가정신 프로그램 참가자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global Startup IoT 분야 스마트 신제품 개발지원 사업 선정결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 프로젝트 통합사업설명회 자료집 배포 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '2015 대한민국 ICT Innovation 대상' 포상공고(접수연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 스마트 모바일 스타기업 / 서비스인프라 및 파워업 컨설팅 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [긴급] K-Global 프로젝트 통합사업설명회 온라인 대체 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 프로젝트(ICT 창업벤처지원) 2차 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 스마트.모바일 스타기업 육성 지원사업 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | K-Global 스마트.모바일 스타기업 육성 지원사업 서면평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 산업단지 K-ICT 클라우드 서비스 적용 시범사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 『에너지ITSW융합 협력과제 개발』 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 ICT학점연계 프로젝트 인턴십 지원 사업 2학기 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 클라우드 기반 산업적용 신서비스 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 클라우드 서비스(SaaS) 개발지원 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 K-ICT 디바이스랩 보급 운영 사업 신규 과제 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 「SW신서비스 사업타당성분석(F/S) 지원」사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 기업공동진출 지원사업 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 수출형 SW제품화 지원사업 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 우수 공개SW 커뮤니티 선발 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 스마트 모바일 스타기업 육성사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 엑셀러레이터 육성 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 신산업창출을 위한 SW융합기술고도화 기술개발사업 서면평가 결과공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 서비스기업경쟁력강화사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 사물인터넷 활성화 기반조성 사업 신규과제 모집 공고(IoT 스마트센서/전통산업) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 사물인터넷 신산업 육성선도 사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 SW융합클러스터 공고관련 사업설명회 자료 업로드 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 프로젝트 - Startup IoT 분야 스마트 신제품 개발지원 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 K-Global 프로젝트(ICT 창업벤처지원) 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 『SW융합 실증확산 지원』사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 공개SW 개발지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 15년 SW교육 사물인터넷 DIY 체험교실 지원대상 선정결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 전자문서 비즈니스모델 시범사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 신산업창출을 위한 SW융합기술고도화 기술개발과제 사업 기술로드맵 세미나 및 사업 Q&A 일자변경 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 신산업창출을 위한 SW융합기술고도화 기술개발과제 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015~16 지역SW융합제품 상용화 지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트 모바일 콘텐츠 스타기업육성 사업설명회 발표자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년 공개SW 개발지원사업 수요조사 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트/모바일 콘텐츠 스타기업 육성 사업설명회 개최 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 ICT/SW창의연구과정사업(기업주도형 기술개발) 사업계획 공고- 기업 프로젝트 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 ICT학점연계 프로젝트 인턴십 지원사업 사업 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 국가인적자원개발컨소시엄 SW현장전문인력양성사업 신규 운영기관 후보 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | MWC 2015 스마트콘텐츠 한국공동관 참가기업 선정 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | MWC 2015 스마트콘텐츠 한국공동관 참가 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2014년도 SW자산재개발 지원 사업』SW품질관리 지원 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 서비스기업경쟁력강화사업(서비스산업 IT.지식 접목모델) 수요조사공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 u-IT신기술검증확산사업 추가과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2015년도 ICT기반 ESCO 사업 지원 신청 수요 조사 실시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [세미나공지] 국내 SW기업의 미국 정부조달시장 진출 전략세미나 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [세미나공지] 국내 중소SW기업 일본진출 전략세미나 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 SW자산재개발 지원 사업 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 정보통신응용기술개발지원(융자) 사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [2014년 SW신서비스 사업타당성분석(F/S)지원사업] 발표평가 대상 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 2014년 SW수출마케팅지원사업(미국 정부조달시장) 지원기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [연기공지] 2014년 미국 정부조달시장 진출 전략세미나 개최 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 ICT/SW창의연구과정(창의연구형) 세부 프로젝트 사업계획 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 정보통신연구기반구축 신규지원 대상과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 스타트업 엔진 프로그램 참가 스타트업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 에너지 ITSW 융합협력과제 사업설명회 자료입니다 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW신서비스 사업타당성분석(F/S)지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 ICT/SW 창의연구과정(기술개발형) 추가 사업계획 재공고(재수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 『에너지.ITSW융합 협력과제 개발』 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 미국 TechCrunch Disrupt 2014 참가업체 선정 평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 『항공IT융합 협력과제 개발』 사업계획서 작성시 참고사항 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 『차량IT융합 협력과제 개발』 사업계획서 작성시 참고사항 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 14년 공개SW 개발지원사업 산출물에 대한 SW품질관리 및 검증 수행사 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '2014 대한민국 ICT Innovation 대상' 포상공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 『차량IT융합 협력과제 개발』 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 미국 TechCrunch Disrupt SF 2014 참가업체 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW수출마케팅지원사업(미국) 지원기관 추가모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 『항공IT융합 협력과제 개발』 사업 추가공고 (**발표평가 일정 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트콘텐츠 전략시장 비즈니스 협력 발굴 지원업체 선정 평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 스마트콘텐츠센터 입주기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | "ICT 학점이수 인턴제도" 참여 희망기업 추가모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW수출마케팅지원사업(미국 서부) 참여기업 추가모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 ICT/SW 창의연구과정 (창의연구형) 사업계획 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW융합기술고도화 기술개발과제 사업설명회 Q&A(출연금 등 지원기준 추가안내) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014 스마트콘텐츠기업 파워업 컨설팅 지원업체 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합기술고도화 기술개발과제 사업설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트콘텐츠 전략시장 비즈니스 협력 발굴 지원업체 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 가상현실 콘텐츠 EAS 2014 한국 공동관 참가 지원 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 14년 산학협력 특성화 지원사업 사업신청 양식 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | D.I.Y. 커뮤니티 활성화 지원 사업 안내 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW융합기술고도화 기술개발과제 사업공고(사업설명회 추가안내) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [설명회] IoT 기업가 양성을 위한 교육연계형 스마트 신제품 개발지원 프로그램 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT분야 학점이수 인턴제도 참여 수요조사 및 시범운영 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 SW활용촉진사업 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 접수기간연장, 전략과제2만 해당_서비스기업 경쟁력강화사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 스마트콘텐츠 중화권 전략 비즈니스 지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 14년 산학협력 특성화 지원사업 신규사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 IoT 기업가 양성을 위한 교육연계형 스마트 신제품 개발지원 프로그램 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 공개SW 개발지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 컴퓨터그래픽(CG) 프로젝트 지원사업 2차 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 CG프로젝트 지원사업 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 가상현실콘텐츠지원사업 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (융자)2014년도 정보통신응용기술개발지원사업(융자) 신청안내서 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 'ICT기반 의료정보교류 표준모델 개발 적용' 과제 추가자료 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 항공IT융합협력과제 전산접수방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT기반 의료정보교류 표준모델 개발적용 과제 참여기업 선정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 '항공IT융합 협력과제 개발' 사업 공고(*과제 상세내역 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014 지역 스마트콘텐츠기업 성장거점 구축 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 IT/SW 창의연구과정(기술개발형) 기업주도형 대학 및 대학주도형 컨소시엄 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 차세대콘텐츠 동반성장지원 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 신흥국 SW시장 진출을 위한 기업 공동 진출 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 클라우드 SW서비스(SaaS) 개발지원 사업 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합클러스터 사업설명회 자료 추가안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 소프트웨어 전문 창업기획사 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 융합형스마트콘텐츠 제작지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 14년 개방형 ICT융합과정 지원사업 안내서(양식포함) 공시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 정보통신응용기술개발지원(융자) 사업 신청안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2014년도 임베디드SW 개발환경 지원 프로젝트』사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 서비스기업 경쟁력강화 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 대학IT연구센터 및 IT융합 고급인력과정 사업설명회 발표자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 SW융합 실증확산사업 공고(전산접수방법 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도『신규 산업IT·SW융합지원센터』사업공고 (*전산접수 방법 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 『신규 IT·SW융합혁신센터』 사업공고(전산접수방법 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (공고) 서울어코드 공학교육 활성화 지원계획 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW특성화 대학·대학원 지원사업 추진공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW공학기술 현장적용 지원사업 설명회 자료 첨부 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 대학IT연구센터 및 IT융합 고급인력과정 신규 사업계획 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 SW인재저변확충 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 창조ICT융합인재양성사업 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW융합채용연수 과정 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 IT/SW 창의연구과정(기업주도형 기술개발) 사업계획 공고 - 기업 프로젝트 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 SW동아리 재능기부 챌린지 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 SW융합역량강화사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 이공계 창업꿈나무 과제 신규 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고) 2014년 u-IT신기술검증확산사업 신규과제 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 지역SW융합과제 SW품질 컨설팅 및 검증용역 과제수행기관 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 14년 공개SW 개발지원사업 수요조사 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 u-IT신기술검증확산사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 신시장창출을 위한 SW융합기술고도화 사업 기술 수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 정보통신응용기술개발지원(융자) 사업설명회 발표자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 서비스산업 IT.지식 접목모델 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 정보통신응용기술개발지원(융자) 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도「대중소기업 상생 IT혁신사업」참여 컨소시엄 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [재공고] 2013년도 SW자산재개발 사업 SW품질관리 지원 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 지역SW산업발전 유공자 포상안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 정보통신산업진흥원 “ICT 창조관” 구축 사업 지원 대상 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 SW자산재개발사업 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 공개SW「오픈 프론티어」1기 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 정보통신응용기술개발지원(융자) 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 웰니스ICT 실증사업 수요조사 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 인터넷신산업 경쟁력지수 개발 용역 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 『차량IT융합 협력과제 개발』 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 IT/SW창의연구과정(창의연구형-NAVER과정) 선정계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 소프트웨어 전문 창업기획사 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 13년도 산학협력교과과정 운영기관 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 SW마에스트로 멘토단 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 u-IT신기술검증확산사업 사전 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [공고] 정보통신기술인력양성 정책연구 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 정보통신응용기술개발지원사업(융자) 신규과제 추가접수 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 u-IT신기술검증확산사업 추가 과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 개방형 ICT융합과정 지원사업 참여안내서(양식포함) 개시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 IT/SW 창의연구과정(기술개발형) 제2차 사업계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 캠퍼스 CEO 발굴지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 IT/SW창의연구과정(창의연구형-대기업연계) 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013 신시장창출을 위한 SW융합기술고도화 기술개발과제 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 IT고급인재양성사업 SW공학 분야 신규 사업계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 '대한민국 IT Innovation 대상' 포상공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 IT/SW 창의연구과정(기술개발형) 제2차 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 SW신서비스 사업타당성분석(F/S) 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 SW융합채용연수과정 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 항공IT융합협력과제 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 공개SW 창업·사업화 지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 공개SW 전환지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 디지털파빌리온 IT제품 개발 지원 사업 추진 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년 IT기반 ESCO 시범사업 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 "항공IT융합 협력과제 개발" 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW융합기술고도화 기반조성사업 시행계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 3D 기술적용 시범사업 신규사업 계획 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 고용계약형 SW석사과정 하반기 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2013년도 SW활용촉진사업』기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 산업자원협력개발지원 사업 시행계획 3차 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | <수정공고> "2013년 차량IT융합 협력과제 개발" 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 3D 및 스마트TV 기술적용 시범사업 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 13년도 산학협력 특성화 지원사업 참여기업 정보공시 및 참여대학 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 "조선해양IT융합혁력과제 개발 사업" 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 IT고급인재양성사업(ITRC & IT융합) 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 신시장 창출을 위한 SW융합기술고도화 사업 기술 수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 창의도전형 SW R&D 프로그램 참가자(팀) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 융합SW 상용화프로젝트 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 클라우드(SaaS) 개발지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 SW공학기술 현장적용 지원사업 전산접수 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 정보통신응용기술개발지원사업(융자) 시행계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2014년도 정보통신연구기반구축사업 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 신규 IT융합혁신센터 전산접수방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 SW융합실증확산지원사업 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 SW공학기술 현장적용 지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | `13년도 IT/SW창의연구과정(기술개발형) 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 공개SW 개발지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 13년도 SW인력양성기관지정지원 신규사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 SW융합 채용연수 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 2013년도 브레인스카우팅사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 IT기반 ESCO 신사업모델 발굴 시범사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 u-IT신기술검증확산사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 신규 IT융합혁신센터 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 SW융합 실증확산 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 산업자원협력개발지원 사업 시행계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 SW융합역량강화(재직자)과정 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 정보통신연구기반구축 신규지원 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 전자문서 비즈니스 모델 시범사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년 정보통신정책개발지원사업 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 2013년도 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 대중소기업상생IT혁신사업 참여 컨소시엄 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 SW가치이음터 사업 SW품질관리 지원 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 구매조건부 SW자산재개발사업 기업 및 기관 모집 2차 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2013년도 정보통신기술인력양성사업 과제수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 3차 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 대기업 연계 IT/SW창의연구과정(NHN) 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 국가직무능력표준개발사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 구매조건부 SW자산재개발사업 기업 및 기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 u-IT신기술검증확산사업 추가과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 2차 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 정보통신응용기술개발지원(융자) 일반담보 신규과제 추가 접수 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ‘13년도 IT기반 ESCO 시범사업 지원대상 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 정보통신기술인력양성사업 개편방안 연구 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 산업기술거점기관지원사업(레이저가공기술산업화지원센터구축) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW 수출 마케팅 멘토링(아시아) 지원대상 기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 그린비즈니스서비스 산업기반구축 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 사업공고 및 사업개요(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 기술인재지원사업 기업모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [브레인스카우팅사업] 1차 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 소프트웨어 창업활성화 프로그램 접수마감 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '12년 대기업 연계 IT/SW창의연구과정(MS,LG전자) 전산접수매뉴얼 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 IT고급인재양성사업 반도체 분야 신규 사업계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SW융합역량강화(재직자)과정 전산접수방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 소프트웨어 창업활성화 프로그램 설명회 발표자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 디지털파빌리온 IT제품 개발 지원 사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SW융합역량강화(재직자)과정 사업설명회 자료 개시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SW융합역량강화(재직자)과정 사업공고(기간연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 조선IT융합 협력과제 개발 사업 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 조선IT융합 협력과제 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '12년 산업IT융합지원센터 전산접수 시간 연장(16:00시 까지) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW 수출 마케팅 멘토링 사업(미국) 지원대상 기업 선정 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SW산업발전유공자 포상 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '12년 서울어코드 클럽 산학협력교과과정 운영기관 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [2012 대한민국 IT Innovation 대상] 포상공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 신규 산업IT융합지원센터 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [SW특성화 대학원] SW특성화 대학원 지원 사업설명회 자료 게시(FAQ포함) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 섬유·건설IT 과제개발 사업 전산접수 방법 및 사업설명회 자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 IT융합 비즈모델 현장적용 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 고용계약형 SW석사과정 지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 'SW특성화 대학' 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 융합SW 상용화프로젝트 신규사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 “클라우드(SaaS) 개발지원 사업” 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IT기반 ESCO 시범사업 및 실증시험의 신규 과제 접수 시간 연장 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 신규 산업IT융합지원센터 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 섬유IT융합 협력과제 개발 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 건설IT 융합협력 과제개발 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [SW특성화 대학원] SW특성화 대학원 지원 사업공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SoC-IP DB화 및 유통 연계 구축 사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 일반인 지식강연 동영상 제작사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 SW Maestro(마에스트로) 과정 제3기 연수생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 신규 산업IT융합지원센터 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 'SW동아리 재능기부 챌린지!' Q&A | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 공개SW 커뮤니티 지원사업 선정 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 정보통신활용 서비스산업 경쟁력 강화 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 'SW동아리 재능기부 챌린지!' 인터넷 카페개설 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 3D 및 스마트TV 기술적용 시범사업 공고_사업설명회, 질의응답 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IT교수역량강화지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 'SW동아리 재능기부 챌린지!' 참가자 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 SW융합채용연수사업 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '12년도 IT/SW창의연구과정 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 이공계전문가기술지원서포터즈사업 주관기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IT기반 ESCO 시범사업 및 실증시험의 신규 과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 IT기반 ESCO 시범 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 취업연계교육센터지원사업 주관기관 선정공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 3D 및 스마트TV 기술적용 시범사업 공고(신청안내서 포함) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 3D 및 스마트TV 기술적용 시범사업 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 IT고급인재양성사업(ITRC & CITRC) 신규 사업계획 공고(수정 4) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 IT고급인재양성사업(ITRC & CITRC) 신규 사업계획 공고(수정3) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '12년 서울어코드 활성화 사업 선정평가 관련 참고자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012 지역SW융합과제 SW품질검증 전문기관 선정 추진 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 서울어코드 활성화 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 SW공학기술 현장적용지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 공개SW 커뮤니티 지원사업 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 창의도전형 SW R&D 프로그램 참가자(팀) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 정보통신응용기술개발지원사업(융자) 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 대중소기업상생IT혁신사업 참여 컨소시엄 추가 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 전자문서 비즈니스모델 시범사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 신규IT융합혁신센터 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 정보통신정책개발지원 사업설명회 안내서 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012 정보통신정책개발지원사업 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 공개SW신시장창출 지원사업 수요조사 실시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 지역SW융합사업 평가 가점관련 설명자료 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 『신규 IT융합혁신센터』 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 지역SW융합사업 설명회 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 지역SW융합사업 과제선정 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 u-IT신기술 검증.확산사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 공개SW 커뮤니티 지원사업 추진을 위한 수요조사 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 대중소기업 상생 IT혁신사업』참여 컨소시엄 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년도 고용계약형 SW석사과정 지원사업 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [차량IT혁신센터] 차량IT기술개발과제 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | SW품질검증 수행社 선정 공고(지원사업 산출물 대상) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 u-IT신기술검증확산사업 신규과제 모집 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [차량IT혁신센터] 차량IT기술개발과제(4기) 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 u-IT신기술검증확산사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 기술인재지원사업 2차 기업모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 중소기업을 위한 웹기반SW 보급 지원 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2012년 IT기반 ESCO시범사업 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 IT/SW 창의연구과정 (NHN) 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 IT/SW창의연구과정(MS 및 LG전자) 사업설명회 자료 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 국가직무능력표준개발사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 IT/SW창의연구과정 (MS 및 LG전자) 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 IT/SW창의연구과정(중소기업 연계형) 2차 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 이공계전문가기술지원서포터즈사업 기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 한국형 산업지식 인프라 시범사업(2차) 시행공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 고용계약형 SW석사과정 지원사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 섬유·건설IT 융합과제개발 사업 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 수출용 SaaS 제품 발굴 지원 사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 네트워크엔지니어링센터구축 추진계획 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 섬유IT 융합협력 과제개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 건설IT 융합협력 과제개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 세계일류상품 및 생산기업 선정계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 전자문서 유통 비즈니스모델 시범사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IT명품인재양성사업 전산접수 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 신규 산업IT융합지원센터 선정 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 융합SW 상용화 프로젝트 사업 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 정보통신연구기반구축사업 신규지원 대상과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 2차「SW융합 채용연수 사업」공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 신규 산업IT융합지원센터 선정 서면평가 결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | '11년도 IT/SW 창의연구과정 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 11년도 서울어코드 활성화 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 IT명품인재양성사업 사업안내서 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 벤처캐피탈리스트 전문성 강화 프로그램 교육생 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 융합SW 상용화 프로젝트 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 IT명품인재양성 신규 사업계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 신규 산업IT융합지원센터 전산접수 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 RFID/USN사업 신규과제 선정결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 3D산업 기술응용 시범사업 추진계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 네트워크엔지니어링센터구축 추진계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 공개SW커뮤니티 지원사업 과제 선정결과 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 SW융합역량강화(재직자)과정 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 이러닝 표준화 과제 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 IT활용 서비스산업 경쟁력강화 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도『SW Maestro(마에스트로) 과정』제2기 연수생 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 SaaS 어플리케이션 신규개발 지원 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 신규 IT혁신센터 전산접수 방법 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 「최고정보보안 전문가과정 지원사업」공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년 IT분야 연구개발고급인력지원 신규 사업계획 공고_안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 신규 산업IT융합지원센터 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 신규 IT혁신센터 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | IT멘토링 팀 프로젝트 지원 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 IT기반 ESCO 사업모델 발굴 및 검증사업 시행계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 한국형 산업지식 인프라 시범사업(1차) 시행공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 정보통신정책개발지원사업 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 서비스산업 IT활용 모델 수요조사 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 반도체.디스플레이 녹색생산기술 연구기반구축사업 수요조사 실시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도 정보통신응용기술개발지원사업(융자) 계획 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2011년도「SW융합 채용연수 사업」공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [차량IT기술개발지원] 공고내용(지원자격) 일부 수정입니다. | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 K-Global 액셀러레이터 육성 사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 확대 이전 시설 인테리어 공사 용역 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 디지털인프라(SW) 진단 및 개선 사업 수요기업(기관) 모집 공고(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2023년 지역 디지털 혁신거점 조성지원 사업 신규지역 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 SW융합클러스터 2.0 사업(특화산업강화) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 ｢산업전문인력 AI역량강화｣ 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 호치민IT지원센터 23년 멤버십기업 모집 공고 (연장) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 정보소외지역SW교육지원강화(SW미래채움)사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부「고성능 컴퓨팅 지원」 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부「고성능 컴퓨팅 지원 사업」 공급자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년도 과학기술정보통신부「고성능 컴퓨팅 지원 사업」 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부「하반기 초거대 인공지능 활용 등을 위한 고성능 컴퓨팅 지원 사업」사용자 모집 마감 안내 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 인도 IT시장진출 전략 공유 웨비나 개최 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 『2022년 제4회 통신사 대상 비대면 IR』 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부 비대면 기업홍보 지원사업(비대면 IR) 하반기 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부 「초거대 인공지능 API 서비스 지원」 사용자 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부 「하반기 초거대 인공지능 활용 등을 위한 고성능 컴퓨팅 지원 사업」 사용자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 과학기술정보통신부「하반기 초거대 인공지능 활용 등을 위한 고성능 컴퓨팅 지원 사업」공급자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 고성능 컴퓨팅 지원 사업 2차 추가 사용자 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ｢AI출입국 심사 관리 솔루션 개발 및 검증｣ 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 「초거대 인공지능 API 시범 서비스 지원」사용자 모집 안내(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 AI 출입국 심사·관리 솔루션 개발 및 검증사업 지원과제 모집 공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 초거대 인공지능 API 시범 서비스 지원 공급자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 22년 디지털인프라(SW) 진단 및 개선지원 사업 수요기업(기관) 모집 공고(3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 고성능 컴퓨팅 지원 사업 추가 사용자 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화교육) 제22기 교육생 모집 연장 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 인공지능 온라인 경진대회 개최 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 VICTORY 프로그램(벤처캐피탈리스트 ICT 전문성 강화교육) 제22기 교육생 모집 (4.27~5.6 오후 4시까지) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 22년 디지털인프라(SW) 진단 및 개선지원 사업 수요기업(기관) 모집 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 스마트서비스 창출기반 확충 사업 운영기관 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 경력단절자 AISW 교육사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 ｢산업전문인력 AI역량강화 지원사업 신규과제｣ 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 K-Startup 그랜드 챌린지 액셀러레이팅 운영 사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 민간 인공지능 신뢰성 시범인증 사업자 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 공개SW 기업성장 지원사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 개방형OS 확산 지원사업 시행공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 메타버스 플랫폼 개발지원사업 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 스마트서비스 창출기반 확충 사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 K-Global 액셀러레이터 육성사업 신청 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 「SW고성장클럽」 사업 운영기관 모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지역SW서비스사업화(세종) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지역SW서비스사업화(제주) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지역SW서비스사업화(지역지원) 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 정보소외지역SW교육지원강화(SW미래채움) 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년도 ｢산업전문인력 AI역량강화｣ 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 지역산업 SW인재양성 기반조성 사업공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 고성능컴퓨팅지원 사업 운영기관 모집 안내(2차 수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 핵심산업 클라우드 플래그십 프로젝트 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 고성능컴퓨팅지원 사업 운영기관 모집 안내(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2023년 공공부문 인공지능 융합사업 수요조사 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2022년 인공지능 고성능 컴퓨팅 자원 사용자 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 6차 비대면 기업홍보 지원(비대면IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 5차 비대면 기업홍보 지원(비대면IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 비대면 기업홍보 지원사업(비대면 IR) 하반기 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 4차 비대면 기업홍보 지원(비대면IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 K-Global@China K-Pitch 참가기업 모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털 전환 교육 수요처 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 KoVAC Shared Infra(개발/테스트 장비) 지원 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [메타버스 얼라이언스] 참여 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 K-Global@China K-Pitch 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털 전환 전문 강사 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 3차 비대면 기업홍보 지원(언택트IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 실감교육 콘텐츠 개발지원사업 발표평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 실감교육 콘텐츠 개발지원사업 서면평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 공개소프트웨어 리더급 개발자(오픈 프런티어) 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 공개소프트웨어 기반 창업기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 2차 비대면 기업홍보 지원(언택트IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 3D프린팅 전문인력 양성교육 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정공고-마감시간 수정) 2021년 디지털 전환 교육 지원 사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 「2021년 디지털콘텐츠기업 동반진출 지원사업」 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 ｢산업전문인력 AI역량강화 지원사업 신규과제｣ 선정 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 대기업·기금사 대상 1차 비대면 기업홍보 지원(언택트IR) 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 과학기술정보통신부 비대면 기업홍보 지원사업(언택트 IR) 상반기 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털콘텐츠기업 동반진출 지원사업 서면평가 결과 공지 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 실감교육 콘텐츠 개발지원 과제 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털인프라(SW) 진단 및 개선지원 사업 진단 수요기업(기관) 모집 공고(2차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 5G기반 디지털트윈 제조산업 적용 실증사업 발표 평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 5G기반 디지털트윈 시설물안전 실증사업 발표 평가 결과 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 ICT융합 디바이스 개발 신규지원 대상사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 공개SW 기업성장 지원사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 개방형OS 확산 지원사업 시행 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 핵심산업 클라우드 플래그십 프로젝트 사업 [인프라기업-물류부문] 재공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년도 산업전문인력 AI역량강화 지원사업 신규과제 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | XR소재.부품.장비 지원센터 구축 및 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 클라우드 통합 사업설명회 동영상 게시 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 디지털인프라(SW) 진단 및 개선지원 사업 진단 수요기업(기관) 모집 공고(1차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2021년 디지털콘텐츠 미래인재발굴 육성 교육기관 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 「SW고성장클럽200」사업 운영기관 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2021년 인공지능 고성능 컴퓨팅 자원 지원 사업 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ’20년 디지털인프라(SW) 진단 및 개선 사업 프로세스 진단 수요기업(기관) 모집 공고(3차) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 K-Global@Silicon Valley K-Pitch 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC실리콘밸리 TRT(빅데이터/클라우드/AI 분야) 프로그램 참가기업 모집 연장 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 인공지능 문제해결 경진대회 개최 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 K-Global@China K-Pitch 참가기업 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC실리콘밸리 TRT(빅데이터/클라우드/AI 분야) 프로그램 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC실리콘밸리 Soaring1단계 프로그램 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | KIC실리콘밸리 Challenging 프로그램 참가기업 모집 연장공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [중요] AI바우처, AI+X(불법복제품 판독, 의료영상 진료/판독, 해안경비), 클라우드 추경사업 접수 유의사항 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 『Go, Virtual! K-솔루션 페어』참가기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 신수요 창출형 AI융합 프로젝트(AI+X) 사업설명 동영상 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ｢산업전문인력 AI역량강화｣ 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (추경) 2020년 핵심산업 클라우드 플래그쉽 프로젝트 지원사업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 5G MEC 기반 콘텐츠 분석 및 컨설팅/기술지원 사업자 선정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 누리꿈스퀘어 판매시설 관리 대행 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘3차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 인공지능 온라인 경진대회 개최 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 개방형 경진대회 플랫폼 구축 사업 안내(수정공고) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘2차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 K-Startup 그랜드 챌린지 스케일업 및 오픈 이노베이션 운영 사업 2차 수정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 ICT융합 디바이스 개발 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | ICT 중소·벤처기업의 투자유치·업무협력 지원을 위한 ‘1차 언택트(온라인) IR’ 참가기업 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 과학기술정보통신부 비대면 기업홍보 지원사업(언택트 IR) 통합공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [수정공고] 2020년 K-Startup 그랜드 챌린지 스케일업 및 오픈 이노베이션 운영 사업 접수기간 연장 및 수행기간 수정 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 클라우드 전문인력 양성기관 지정 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 클라우드컴퓨팅 활성화를 위한 지원사업 통합 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 KoVAC Shared Infra(개발/테스트 장비) 지원 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 SOS랩 구축 및 SW서비스 개발 사업 추가공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 소프트웨어(SW) 미래채움 사업 추가 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 공개SW 기술확산 지원사업 사업설명회 자료 게시 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 공개SW 기술확산 지원사업 사업공고(수정) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년도 5G기반 디지털트윈 공공선도 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 SOS랩 구축 및 SW서비스 개발 사업설명회 자료 게시(참고자료 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 5G 기반 VR·AR 디바이스 개발 지원센터 운영 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 지역 VR·AR제작거점센터 구축 사업 지원대상 모집 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | (수정) 2020년 SOS랩 구축 및 SW서비스 개발 사업 공고(사업설명회 추가) | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 소프트웨어(SW)미래채움 사업 공고 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [추가모집] 2020년 인공지능 고성능 컴퓨팅 자원 이용자 (추가)모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | 2020년 인공지능 고성능 컴퓨팅 자원 이용자 모집 안내 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=
+- **낮음** | [추가모집] 인도시장 진출을 위한 "한인도SW상생협력센터 입주 및 개방형 사무공간 활용기업 모집 | 정보통신산업진흥원(NIPA) | https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&bbsNo=4&bsnsDtlsIemNo=&nttNo=

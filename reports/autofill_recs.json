@@ -1,0 +1,1809 @@
+[
+  {
+    "id": "mcst",
+    "name": "문화체육관광부",
+    "url": "https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "mof",
+    "sel": null,
+    "cnt": 0,
+    "dated": 0,
+    "reason": "no_soup"
+  },
+  {
+    "id": "subsidy24",
+    "name": "보조금24",
+    "url": "https://www.gov.kr/portal/subsidy",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "msit",
+    "name": "과학기술정보통신부",
+    "url": "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "bizinfo",
+    "name": "기업마당(Bizinfo)",
+    "url": "https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "moef",
+    "name": "기획재정부",
+    "url": "https://www.moef.go.kr/nw/nes/nesdta.do?searchBbsId1=MOSFBBS_000000000028",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "motie",
+    "name": "산업통상자원부",
+    "url": "https://www.motie.go.kr/kor/article/ATCL2826a2625",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kstartup",
+    "name": "K-Startup",
+    "url": "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "keit",
+    "name": "한국산업기술평가관리원(KEIT)",
+    "url": "https://itech.keit.re.kr/bsnsancm/retrieveSprtBsnsAncmList.do",
+    "sel": "table tbody tr",
+    "dated": 3,
+    "cnt": 3,
+    "reason": "ok"
+  },
+  {
+    "id": "kiat",
+    "name": "한국산업기술진흥원(KIAT)",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kotra",
+    "name": "KOTRA(대한무역투자진흥공사)",
+    "url": "https://www.kotra.or.kr/kp/biz/notificationList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "semas_loan_ols",
+    "name": "소진공 정책자금 온라인신청",
+    "url": "https://ols.semas.or.kr/ols/man/SMAN051M/page.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "g2b",
+    "name": "나라장터(G2B)",
+    "url": "https://www.g2b.go.kr/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "smes24",
+    "name": "중소벤처24(SMEs24)",
+    "url": "https://www.smes.go.kr/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kised",
+    "name": "창업진흥원(KISED)",
+    "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "iris",
+    "name": "IRIS(범부처통합연구지원)",
+    "url": "https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituListView.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "foodpolis",
+    "name": "한국식품산업클러스터진흥원",
+    "url": "https://www.foodpolis.kr/foodpolis/bbs/list.do?bbsId=FS_02",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kosme",
+    "name": "중소벤처기업진흥공단(KOSME)",
+    "url": "https://www.kosmes.or.kr/nsh/SH/NTS/SHNTS001M0.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "mss",
+    "name": "중소벤처기업부",
+    "url": "https://www.mss.go.kr/site/smba/ex/bbs/List.do?cbIdx=310",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "kvic",
+    "name": "한국벤처투자(KVIC)",
+    "url": "https://www.kvic.or.kr/vcms/contents/view.do?contentsNo=5050101",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "gbsa",
+    "name": "경기도경제과학진흥원(GBSA)",
+    "url": "https://pms.gbsa.or.kr/info/pblanc/pblancList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ksure",
+    "name": "한국무역보험공사(K-SURE)",
+    "url": "https://www.ksure.or.kr/rh-kr/bbs/i-671/list.do",
+    "sel": "ul.list li",
+    "dated": 0,
+    "cnt": 89,
+    "reason": "ok"
+  },
+  {
+    "id": "rdcdp",
+    "name": "지역디자인통합플랫폼",
+    "url": "https://www.rdcdp.or.kr/index.do?menu_id=00000746",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kidp",
+    "name": "한국디자인진흥원(KIDP)",
+    "url": "https://www.kidp.or.kr/?menuno=918&act=list",
+    "sel": "table tr",
+    "dated": 10,
+    "cnt": 18,
+    "reason": "ok"
+  },
+  {
+    "id": "sba",
+    "name": "서울산업진흥원(SBA)",
+    "url": "https://www.sba.seoul.kr/kr/sbcu31l1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "keiti",
+    "name": "한국환경산업기술원(KEITI)",
+    "url": "https://www.keiti.re.kr/site/keiti/ex/board/List.do?cbIdx=277",
+    "sel": "ul.list li",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "gsp",
+    "name": "경기스타트업플랫폼",
+    "url": "https://www.gsp.or.kr/supportProject/UVSL0001.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "myfair",
+    "name": "마이페어",
+    "url": "https://myfair.co/support-program-list",
+    "sel": "table tbody tr",
+    "dated": 15,
+    "cnt": 15,
+    "reason": "ok"
+  },
+  {
+    "id": "ccei_evt",
+    "name": "창조경제혁신센터(행사)",
+    "url": "https://ccei.creativekorea.or.kr/service/event_list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kita",
+    "name": "한국무역협회(KITA)",
+    "url": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ccei_biz",
+    "name": "창조경제혁신센터(공고)",
+    "url": "https://ccei.creativekorea.or.kr/service/business_list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "gov24",
+    "name": "정부24(Gov.kr)",
+    "url": "https://www.gov.kr/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "gtp",
+    "name": "경기TP",
+    "url": "https://pms.gtp.or.kr/web/business/webBusinessList.do",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "kodit",
+    "name": "신용보증기금(KODIT)",
+    "url": "https://www.kodit.co.kr/kodit/na/ntt/selectNttList.do?mi=2638&bbsId=148",
+    "sel": ".lst li",
+    "dated": 0,
+    "cnt": 3,
+    "reason": "ok"
+  },
+  {
+    "id": "bizok",
+    "name": "비즈오케이(BizOK) - 인천기업지원",
+    "url": "https://bizok.incheon.go.kr/open_content/support.do",
+    "sel": ".board_list li",
+    "dated": 12,
+    "cnt": 12,
+    "reason": "ok"
+  },
+  {
+    "id": "incheoncci",
+    "name": "인천상공회의소",
+    "url": "https://incheon.korcham.net/front/board/boardContentsListPage.do?boardId=51228",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kovwa",
+    "name": "한국여성벤처협회",
+    "url": "https://kovwa.or.kr/94",
+    "sel": ".board li",
+    "dated": 21,
+    "cnt": 50,
+    "reason": "ok"
+  },
+  {
+    "id": "bizok_plan",
+    "name": "비즈오케이 - 인천 연간사업공고계획",
+    "url": "https://bizok.incheon.go.kr/open_content/support/plan/plan2026.jsp",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "data_go",
+    "name": "공공데이터포털",
+    "url": "https://www.data.go.kr/",
+    "sel": "ul.list li",
+    "dated": 0,
+    "cnt": 3,
+    "reason": "ok"
+  },
+  {
+    "id": "icgf",
+    "name": "인천신용보증재단",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000044",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "kocca_general",
+    "name": "한국콘텐츠진흥원(일반공고)",
+    "url": "https://www.kocca.kr/kocca/bbs/list/B0000138.do?menuNo=204024",
+    "sel": ".list li",
+    "dated": 0,
+    "cnt": 239,
+    "reason": "ok"
+  },
+  {
+    "id": "ic_yeonsu",
+    "name": "인천 연수구청",
+    "url": "https://www.yeonsu.go.kr/",
+    "sel": ".board_list li",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "kotra_trade24",
+    "name": "KOTRA 무역투자24 - 사업공고",
+    "url": "https://www.kotra.or.kr/bigList/20000020753",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "incheon_city",
+    "name": "인천광역시청 - 공고/고시",
+    "url": "https://www.incheon.go.kr/IC010205",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ppi",
+    "name": "혁신제품지정공고(나라장터)",
+    "url": "https://ppi.g2b.go.kr:8914/cm/bbs/usr/00031/bbsList_usr.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "itp",
+    "name": "인천테크노파크",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=13",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ic_namdong",
+    "name": "인천 남동구청",
+    "url": "https://www.namdong.go.kr/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "bizcube",
+    "name": "비즈큐브(BizCube)",
+    "url": "https://bizcube-sol.com/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ic_gyeyang",
+    "name": "인천 계양구청",
+    "url": "https://www.gyeyang.go.kr/",
+    "sel": ".list li",
+    "dated": 8,
+    "cnt": 40,
+    "reason": "ok"
+  },
+  {
+    "id": "ic_ganghwa",
+    "name": "인천 강화군청",
+    "url": "https://www.ganghwa.go.kr/",
+    "sel": ".list li",
+    "dated": 9,
+    "cnt": 25,
+    "reason": "ok"
+  },
+  {
+    "id": "ic_bupyeong",
+    "name": "인천 부평구청",
+    "url": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceList.do",
+    "sel": ".board_list li",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "itp_notice",
+    "name": "인천테크노파크(ITP) - 공지사항",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=15",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "thevc",
+    "name": "더브이씨(THE VC) - 지원사업",
+    "url": "https://thevc.kr/grants",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "exportvoucher",
+    "name": "수출바우처(수출지원기반활용)",
+    "url": "https://www.exportvoucher.com/portal/board/boardList?bbs_id=1&active_menu_cd=EZ005004000",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ca1396ea",
+    "name": "AI·SW 마에스트로 서울",
+    "url": "https://www.swmaestro.ai/sw/bbs/B0000002/list.do?menuNo=200019",
+    "sel": "li.item",
+    "dated": 12,
+    "cnt": 12,
+    "reason": "ok"
+  },
+  {
+    "id": "ic_ongjin",
+    "name": "인천 옹진군청",
+    "url": "https://www.ongjin.go.kr/",
+    "sel": "ul.list li",
+    "dated": 0,
+    "cnt": 29,
+    "reason": "ok"
+  },
+  {
+    "id": "semas",
+    "name": "소상공인시장진흥공단(SEMAS)",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=BBS_0000009",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_33c1ed03",
+    "name": "ALIO 공공기관 경영정보 공개시스템",
+    "url": "https://www.alio.go.kr/notice/noticeList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_b477693f",
+    "name": "강남취·창업허브센터",
+    "url": "https://www.gangnam-jobnstartup.com/program/list",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "rndcircle",
+    "name": "디써클(RnD Circle) - 지원사업",
+    "url": "https://app.rndcircle.io/gov-grant",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_e364c052",
+    "name": "Wbiz 여성기업 종합정보 포털",
+    "url": "https://wbiz.or.kr/notice/bizNew.do?searchOp8=recruiting",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f17757c4",
+    "name": "Wbiz 여성기업 종합정보 포털",
+    "url": "https://www.wbiz.or.kr/notice/notice.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_0ebda26e",
+    "name": "강원농촌융복합산업지원센터",
+    "url": "https://gangwon6.co.kr/information/notices",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "seoultp",
+    "name": "서울TP",
+    "url": "https://www.seoultp.or.kr/user/nd19746.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ic_seo",
+    "name": "인천 서구청",
+    "url": "https://www.seo.incheon.kr/",
+    "sel": ".board_list li",
+    "dated": 16,
+    "cnt": 16,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_6b76eccc",
+    "name": "KOTRA 무역투자24",
+    "url": "https://www.kotra.or.kr/subList/41000022001",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_81066215",
+    "name": "KOTRA 무역투자24",
+    "url": "https://www.kotra.or.kr/subList/20000005958?tabid=1092",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "ic_donggu",
+    "name": "인천 동구청",
+    "url": "https://www.icdonggu.go.kr/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_d74b67ee",
+    "name": "경기경영자총협회",
+    "url": "http://gyef.or.kr/bbs/board.php?bo_table=notice",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_94d615de",
+    "name": "KBIZ 중소기업중앙회",
+    "url": "https://www.kbiz.or.kr/ko/contents/bbs/list.do?mnSeq=209",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_42bbef97",
+    "name": "K-Startup 창업지원포털",
+    "url": "https://www.k-startup.go.kr/web/contents/webNOTICE_MATR.do",
+    "sel": "ul.board_list li",
+    "dated": 23,
+    "cnt": 23,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_94977779",
+    "name": "경기농촌융복합산업 활성화 지원센터",
+    "url": "https://www.xn--6-v85el2bkz7b4zfiuk.com/board/?mode=list&page=1&menucode=70100",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_3f404c75",
+    "name": "경기대진테크노파크",
+    "url": "https://gdtp.or.kr/board/notice",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_1f9950ff",
+    "name": "경기대진테크노파크",
+    "url": "https://gdtp.or.kr/board/announcement",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_fcc1b8b9",
+    "name": "경기도 일자리포털 잡아바",
+    "url": "https://apply.jobaba.net/bsns/bsnsListView.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_1c0b71a2",
+    "name": "강원창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gangwon/custom/notice_list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_c3c772d6",
+    "name": "경기대진테크노파크",
+    "url": "https://gdtp.or.kr/document/experti",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "itp_marketing",
+    "name": "인천TP 마케팅센터(뷰티산업육성)",
+    "url": "https://www.itp.or.kr/intro.asp?tmid=36",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_86d69e8d",
+    "name": "강원지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/gangwon/ex/bbs/List.do?cbIdx=252",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_659f449d",
+    "name": "경기신용보증재단",
+    "url": "https://www.gcgf.or.kr/gcgf/pt/pst/selectPstList.do?mi=1024&bbsId=1002",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_787c2fcf",
+    "name": "경남창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gyeongnam/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8966bc33",
+    "name": "경기신용보증재단",
+    "url": "https://www.gcgf.or.kr/gcgf/cm/conts/contsView.do?mi=1044&contsId=1017",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5d6f7946",
+    "name": "경기창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gyeonggi/custom/notice_list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_fab2880b",
+    "name": "경남창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gyeongnam/allim/allim_list.do?div_code=2",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ac859502",
+    "name": "경북창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gyeongbuk/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_c0462323",
+    "name": "경북창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gyeongbuk/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_bc1a66bd",
+    "name": "경북신용보증재단",
+    "url": "https://gbsinbo.co.kr/page/10052/10005.tc",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_758648a9",
+    "name": "공공구매종합정보망",
+    "url": "https://www.smpp.go.kr/cst/notice/selectNoticeListVw.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_aed1d3f2",
+    "name": "경북테크노파크",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000021&searchTerm=ing",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_7ebb07c1",
+    "name": "경기지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/gyeonggi/ex/bbs/List.do?cbIdx=247",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_f5612142",
+    "name": "광주창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gwangju/custom/notice_list.do?&page=4",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5b68b879",
+    "name": "광주여성가족재단",
+    "url": "https://www.gjwf.or.kr/open/01",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_908d11bd",
+    "name": "광주테크노파크",
+    "url": "https://www.gjtp.or.kr/home/board/0008.cs?m=14",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_58477755",
+    "name": "경남지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/gyeongnam/ex/bbs/List.do?cbIdx=255",
+    "sel": "table tbody tr",
+    "dated": 30,
+    "cnt": 30,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_9f7a0251",
+    "name": "경북테크노파크",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000022",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ddb58721",
+    "name": "광주창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/gwangju/service/program_list.do?&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8c8821fd",
+    "name": "노란우산 경영지원단",
+    "url": "https://9976.kbiz.or.kr/cnst/information.do?mnSeq=271",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_9b66b0e9",
+    "name": "경북테크노파크",
+    "url": "https://gbtp.or.kr/user/board.do?bbsId=BBSMSTR_000000000023",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_9eb90e90",
+    "name": "광주신용보증재단",
+    "url": "https://untact.koreg.or.kr/web/lay1/bbs/S1T19C20/J/25/list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_24f53098",
+    "name": "광주전남지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/gwangju/ex/bbs/List.do?cbIdx=251",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_899167d1",
+    "name": "경남테크노파크",
+    "url": "https://www.gntp.or.kr/biz/apply",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_10f37b10",
+    "name": "농수산식품유통교육원",
+    "url": "https://edu.at.or.kr/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000053&baseMenuNo=401000000",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ee467cf5",
+    "name": "능력개발교육원",
+    "url": "https://hrdi.koreatech.ac.kr/?m1=page&menu_id=11",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_a10ceb9e",
+    "name": "대구사회적경제지원센터",
+    "url": "https://dgse.kr/page/cop/bbs/articleList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_6f750741",
+    "name": "대·중소기업·농어업협력재단",
+    "url": "https://www.win-win.or.kr/kr/board/notice/boardList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_83d942ef",
+    "name": "노사발전재단",
+    "url": "https://www.nosa.or.kr/portal/nosa/FoundNews/bizNotice",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8ca308f6",
+    "name": "대구지역인적자원개발위원회",
+    "url": "https://www.dghrd.or.kr/homeBoard/hpBoardList?tn=hp_notice&boardType=1&crsId=0&instId=0&menuCtgr=&bbsId=0",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "semas_announce",
+    "name": "소상공인시장진흥공단 - 사업공고",
+    "url": "https://www.semas.or.kr/web/SUP/supportAnnounce.kmdc",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_2c00cdbd",
+    "name": "대·중소기업·농어업협력재단",
+    "url": "https://www.win-win.or.kr/kr/board/notice_enter/boardList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_3d4945de",
+    "name": "대구신용보증재단",
+    "url": "https://www.dgsinbo.or.kr/page/10066/10160.tc",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5b74bc1b",
+    "name": "대구신용보증재단",
+    "url": "https://www.dgsinbo.or.kr/page/10065/10006.tc",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_af31523b",
+    "name": "경기도청",
+    "url": "https://www.gg.go.kr/bbs/board.do?bsIdx=469&menuId=1547&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f0bf6765",
+    "name": "나라장터",
+    "url": "https://www.g2b.go.kr/ehelpdesk/R23AB00000134L_01/",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_9a91c6ff",
+    "name": "대구창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/daegu/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_b537d1d4",
+    "name": "대구·경북지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/daegu/ex/bbs/List.do?cbIdx=253",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_91d277b0",
+    "name": "대전창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/daejeon/custom/notice_list.do?&sPtime=all&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_e9ed440c",
+    "name": "대전·세종지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/daejeon/ex/bbs/List.do?cbIdx=248",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_0b941589",
+    "name": "대구창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/daegu/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_31a18e66",
+    "name": "소상공인24",
+    "url": "https://www.sbiz24.kr/#/pbanc",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5c3d8f3c",
+    "name": "성남산업진흥원 성남기업지원포털",
+    "url": "https://portal.snip.or.kr:8443/portal/snip/MainMenu/businessManagement/application.page",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_81773f83",
+    "name": "노사발전재단",
+    "url": "https://www.nosa.or.kr/portal",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_044eae95",
+    "name": "세종창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/sejong/custom/notice_list.do?&sPtime=all&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_53a1cc1e",
+    "name": "소상공인365",
+    "url": "https://bigdata.sbiz.or.kr/#/sprtBiz",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_335e0e28",
+    "name": "수원창업지원포털",
+    "url": "https://s-startup.or.kr/menu-1-1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ac1e6305",
+    "name": "범부처통합연구지원시스템(IRIS)",
+    "url": "https://www.iris.go.kr/contents/retrieveNoticeListView.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5f1acc1e",
+    "name": "대전창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/daejeon/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_abc65c00",
+    "name": "대전사회혁신센터",
+    "url": "https://www.commonz042.kr/bbs/board.php?bo_table=contest",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8a238134",
+    "name": "수출지원기반활용사업",
+    "url": "https://www.exportvoucher.com/portal/board/boardList?bbs_id=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_7e7361f3",
+    "name": "소상공인스마트상점",
+    "url": "https://www.sbiz.or.kr/smst/bbs/list.do?key=2111306039167",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_40b571ae",
+    "name": "인천지역인적자원개발위원회",
+    "url": "https://www.incheonhrd.or.kr/community/notice.asp",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_affb7646",
+    "name": "신용회복위원회",
+    "url": "https://www.ccrs.or.kr/cms/com/index.do?MENU_ID=840",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_7577759c",
+    "name": "울산테크노파크",
+    "url": "https://platform.utp.or.kr/com/biz_gonggo_all.php",
+    "sel": "table tbody tr",
+    "dated": 0,
+    "cnt": 20,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_4d844748",
+    "name": "울산창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/ulsan/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_fdbe9346",
+    "name": "경남투자경제진흥원",
+    "url": "https://giba.or.kr/fe/bbs/NR_list.do?bbsCd=30",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8f79808a",
+    "name": "경남투자경제진흥원",
+    "url": "https://giba.or.kr/fe/bizinfo/bizannounce/NR_list.do?bbsCd=11",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_fd8af24e",
+    "name": "인천신용보증재단",
+    "url": "https://www.icsinbo.or.kr/home/board/brdList.do?menu_cd=000096",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_45597f3c",
+    "name": "원주의료기기산업진흥원",
+    "url": "https://www.wmit.or.kr/bbs/board.do?bsIdx=710&menuId=2848",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_50b8c911",
+    "name": "울산지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/ulsan/ex/bbs/List.do?cbIdx=254",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_ecacad7f",
+    "name": "인천창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/incheon/custom/notice_list.do?&sPtime=my&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5ee6803c",
+    "name": "인천지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/incheon/ex/bbs/List.do?cbIdx=246",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_c54d32c7",
+    "name": "제주창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/jeju/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_beecfe83",
+    "name": "제주사회적경제지원센터",
+    "url": "https://jejuhub.org/user/news/support",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5d5bf933",
+    "name": "제주테크노파크",
+    "url": "https://jejutp.or.kr/board/notice?searchType=subject&keyword=&pageNumber=0&size=30",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_d0ad1db1",
+    "name": "안양산업진흥원",
+    "url": "https://www.aba.or.kr/bbs/board.do?id=382&menuId=855#1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_63a14c42",
+    "name": "중소기업 기술보호울타리",
+    "url": "https://www.ultari.go.kr/site/board/expert/recruitment/nv_expertRecruitmentList.do?menuId=148",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_33c20dd9",
+    "name": "중소기업 혁신플랫폼",
+    "url": "https://www.mssmiv.com/portal/board/BoardList?bbsId=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_22960005",
+    "name": "중소기업 기술보호울타리",
+    "url": "https://www.ultari.go.kr/site/board/biz/nv_bizNoticeList.do?menuId=14",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_a7cddcb1",
+    "name": "중소벤처기업연수원",
+    "url": "https://ssup.kosmes.or.kr/support/notice/0",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f5a92d2c",
+    "name": "지역지식재산센터",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40000",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_e68206ee",
+    "name": "중소벤처24",
+    "url": "https://www.smes.go.kr/main/sportsBsnsPolicy",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_b435b560",
+    "name": "지역지식재산센터",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40003",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_865e5bd5",
+    "name": "지역지식재산센터",
+    "url": "https://pms.ripc.org/www/portal/notice/boardList.do?boardCategoryCode=BD40002",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_312f326e",
+    "name": "창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/custom/notice_list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_6e8c8360",
+    "name": "창업진흥원(창진원)",
+    "url": "https://www.kised.or.kr/misAnnouncement/index.es?mid=a10302000000",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f2dc13f2",
+    "name": "창업기업 확인시스템",
+    "url": "https://cert.k-startup.go.kr/usr/bbs/selectArticleList.do?bbsId=BBSMSTR_000000000031&tempValue=0502",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f4ce3dda",
+    "name": "청년인재DB",
+    "url": "https://www.2030db.go.kr/user/ntt/BBS_0000000000000001/nttList.do",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_d13e4f7f",
+    "name": "충북경영자총협회",
+    "url": "http://www.cbef.or.kr/www/brd/list/1615956709737934",
+    "sel": "table tbody tr",
+    "dated": 14,
+    "cnt": 14,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_f82e70cf",
+    "name": "충남창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/chungnam/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_0b9ba484",
+    "name": "충남창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/chungnam/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_f1460665",
+    "name": "축산물품질평가원",
+    "url": "https://www.ekape.or.kr/board/list.do?menuId=menu149208&nextUrl=",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_53572b95",
+    "name": "청년인재DB",
+    "url": "https://www.2030db.go.kr/user/ntt/BBS_0000000000000005/nttList.do",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_46549125",
+    "name": "충남신용보증재단",
+    "url": "https://www.cnsinbo.co.kr/boardCnts/list.do?boardID=134&m=030101&s=cnsinbo",
+    "sel": "table tbody tr",
+    "dated": 20,
+    "cnt": 20,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_131b6d49",
+    "name": "소상공인시장진흥공단(소진공)",
+    "url": "https://www.semas.or.kr/web/board/webBoardList.kmdc?bCd=1&pNm=BOA0101",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_d5ab266e",
+    "name": "천안과학산업진흥원",
+    "url": "https://www.cistep.re.kr/zboard/list.do?lmCode=notice",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5f7815d8",
+    "name": "충북창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/chungbuk/custom/notice_list.do?&page=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_8f9353fc",
+    "name": "카페: 경북도(경영 기술 지도사 컨설…)",
+    "url": "https://cafe.naver.com/f-e/cafes/30454029/menus/4?tc=1766819487648",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4212f2de",
+    "name": "카페: 고을스페이스",
+    "url": "https://cafe.naver.com/f-e/cafes/30864795/menus/16?viewType=L",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_fbb8c842",
+    "name": "충남지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/chungnam/ex/bbs/List.do?cbIdx=315",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_ece9a84d",
+    "name": "충북지방중소벤처기업청",
+    "url": "https://www.mss.go.kr/site/chungbuk/ex/bbs/List.do?cbIdx=249",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_4cdbea37",
+    "name": "카페: 지도사랑(한국경영기술지도사)",
+    "url": "https://cafe.naver.com/f-e/cafes/30044569/menus/26?viewType=L",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_d6d9c590",
+    "name": "클린아이 지방공공기관통합공시",
+    "url": "https://www.cleaneye.go.kr/user/noticeBoardList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_2c606051",
+    "name": "포항창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/pohang/allim/allim_list.do?div_code=1",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_1538409c",
+    "name": "포항창조경제혁신센터",
+    "url": "https://ccei.creativekorea.or.kr/pohang/custom/notice_list.do?",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_9ba65963",
+    "name": "판판대로",
+    "url": "https://fanfandaero.kr/portal/readUcenterNtcBbs.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_69798de3",
+    "name": "카페: 키노프 경영지도사",
+    "url": "https://cafe.naver.com/f-e/cafes/23509311/menus/407?viewType=L",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4046605c",
+    "name": "핀테크 포털 - 한국핀테크지원센터",
+    "url": "https://fintech.or.kr/web/board/boardContentsListPage.do?board_id=3&menu_id=6300&miv_pageNo=",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ae45e505",
+    "name": "판판대로",
+    "url": "https://fanfandaero.kr/portal/preSprtBizPbanc.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_a7794c85",
+    "name": "하이브레인넷",
+    "url": "https://www.hibrain.net/research/researches/34/recruitments/425/recruits?listType=ING",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_40bd609e",
+    "name": "한국경영자총협회",
+    "url": "https://www.kefplaza.com/web/pages/gc75749b.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4444c429",
+    "name": "평택산업진흥원",
+    "url": "https://www.pipabiz.or.kr/web/contents/notice.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_b127b15f",
+    "name": "포항테크노파크",
+    "url": "https://www.ptp.or.kr/main/board/index.do?menu_idx=113&manage_idx=2",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4934a7f6",
+    "name": "포항테크노파크",
+    "url": "https://www.ptp.or.kr/main/board/index.do?menu_idx=116&manage_idx=15",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_806ba8cc",
+    "name": "한국산업기술진흥원(KIAT)",
+    "url": "https://www.kiat.or.kr/front/board/boardContentsListPage.do?board_id=90&MenuId=b159c9dac684471b87256f1e25404f5e",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_ad603912",
+    "name": "파주시청",
+    "url": "https://www.paju.go.kr/user/board/BD_board.list.do?bbsCd=1022&q_ctgCd=4063",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_6ec722f0",
+    "name": "한국데이터산업진흥원",
+    "url": "https://www.kdata.or.kr/kr/board/notice_01/boardList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_7b9f8f65",
+    "name": "한국고용노동교육원",
+    "url": "https://www.keli.kr/home/cmmn/bbs/228/list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_0e132ffc",
+    "name": "한국능률협회컨설팅(KMAC)",
+    "url": "https://kmac.recruiter.co.kr/career/Notice",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_5748a319",
+    "name": "한국산업인력공단(HRDK)",
+    "url": "https://hrms.hrdkorea.or.kr/hrpRcrt/hrpRcrtPbanc.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_bc8abad5",
+    "name": "한국산업기술진흥협회",
+    "url": "https://www.koita.or.kr/board/commBoardNoticeList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_03def1ad",
+    "name": "한국어촌어항공단",
+    "url": "https://www.fipa.or.kr/fipa/bbs/i-167/list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_81d4ab9d",
+    "name": "한국농업기술진흥원",
+    "url": "https://www.koat.or.kr/board/business/list.do",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  },
+  {
+    "id": "imp_caa452db",
+    "name": "한국무역협회",
+    "url": "https://www.kita.net/board/notice/noticeList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_faea1548",
+    "name": "한국산업단지공단",
+    "url": "https://www.kicox.or.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1016",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4b9f2d12",
+    "name": "한성대학교",
+    "url": "https://hansung.ac.kr/kscon/6279/subview.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_dc80d32f",
+    "name": "한국사회적기업진흥원",
+    "url": "https://www.socialenterprise.or.kr/homepage/bbs/board.do?bsIdx=10002&menuId=822",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_19103cb3",
+    "name": "한국에너지공단",
+    "url": "https://www.energy.or.kr/front/board/List2.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_4d96088d",
+    "name": "한국중소벤처기업유통원",
+    "url": "https://www.kodma.or.kr/bbs/list.do?key=2409240028",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_894bbfc5",
+    "name": "한국테크노파크진흥회",
+    "url": "https://www.technopark.kr/businessboard",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_117a23cf",
+    "name": "한국어촌어항공단",
+    "url": "https://www.fipa.or.kr/fipa/bbs/i-326/list.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_20197f39",
+    "name": "희망리턴패키지",
+    "url": "https://www.sbiz.or.kr/nhrp/pblanc/pblancList.do",
+    "sel": null,
+    "dated": 0,
+    "cnt": 0,
+    "reason": "no_candidate"
+  },
+  {
+    "id": "imp_c4e5b92e",
+    "name": "한국양성평등교육진흥원",
+    "url": "https://www.kigepe.or.kr/user/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_000000000001&menuNo=13100",
+    "sel": "table tbody tr",
+    "dated": 10,
+    "cnt": 10,
+    "reason": "ok"
+  }
+]

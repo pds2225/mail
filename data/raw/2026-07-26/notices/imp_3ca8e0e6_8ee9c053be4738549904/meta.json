@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:31",
+  "notice_id": "imp_3ca8e0e6_8ee9c053be4738549904",
+  "title": "「2026 지역특화콘텐츠개발지원사업」 2026 차이나 라이선싱 엑스포 공동관 참가기업 모집 공고",
+  "link": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32089&nPage=1",
+  "source": "광주정보문화산업진흥원",
+  "author": "",
+  "description": "주요알림\n0\n건\n주요알림\n알림건수 : 총\n0\n건\n닫기\n오늘하루열지않기\n알림마당\n알림마당\n사업공고\n글자 크게\n글자 작게\n공유하기\n페이스북\n트위터\n밴드\n카카오스토리\nURL복사\n닫기\n인쇄\n「2026 지역특화콘텐츠개발지원사업」 2026 차이나 라이선싱 엑스포 공동관 참가기업 모집 공고\n작성일\n2026.07.14 09:34\n조회수\n1,367\n접수기간\n2026.07.14 ~ 2026.07.28\n담당자\n김신행\n담당자 연락처\n062-610-2934\n담당자 이메일\nsins2654@gicon.or.kr\n공지기간\n2026.07.14 ~ 2026.07.28\n첨부파일\n공고문.pdf\n(180.62KB / 다운로드 270회)\n다운로드\n1. 참가신청서(양식)_기업명.hwp\n(75.5KB / 다운로드 61회)\n다운로드\n2. 마케팅계획서(양식)_기업명.hwp\n(44KB / 다운로드 54회)\n다운로드\n3. 기업 데이터 관리시트_기업명.xlsx\n(23.56KB / 다운로드 54회)\n다운로드\n목록보기\n이전글\n[광주글로벌게임센터]게임사운드 크리에이터 지원사업 게임 개발사 추가모집 선정결과 공고\n다음글\n「2026 광주콘텐츠코리아랩」국내 전시회(광주 ACE Fair) 참가 지원 모집 공고\n콘텐츠 만족도 조사\n콘텐츠 만족도 조사\n이 페이지에서 제공하는 정보에 대하여 만족하십니까?\n평균\n4.00\n점\n205\n명 참여\n매우만족\n만족\n보통\n불만족\n매우불만족\n0\n/100\n퀵 전체열기\n추진사업\n주요사업안내\n시설대관\n장비대여\n교육신청\n기업정보\n전문가등록",
+  "deadline": "2026-07-14 ~ 2026-07-28",
+  "posted_date": "2026-07-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-14",
+    "end": "2026-07-28",
+    "display": "2026-07-14 ~ 2026-07-28",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「2026 지역특화콘텐츠개발지원사업」 2026 차이나 라이선싱 엑스포 공동관 참가기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32089&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "주요알림 0 건 주요알림 알림건수 : 총 0 건 닫기 오늘하루열지않기 알림마당 알림마당 사업공고 글자 크게 글자 작게 공유하기 페이스북 트위터 밴드 카카오스토리 URL복사 닫기 인쇄 「2026 지역특화콘텐츠개발지원사업」 2026 차이나 라이선싱 엑스포 공동관 참가기업 모집 공고 작성일 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-14 ~ 2026-07-28"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

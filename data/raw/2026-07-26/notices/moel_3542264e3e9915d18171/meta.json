@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:27",
+  "notice_id": "moel_3542264e3e9915d18171",
+  "title": "[공고] 2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 공고",
+  "link": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100545",
+  "source": "고용노동부",
+  "author": "",
+  "description": "고용노동부\n국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라!\n정보공개\n국고보조사업\n국고보조사업 공모현황입니다.\n제목\n[공고]2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 공고\n담당부서\n산재예방지원과\n전화번호\n044-202-8825\n담당자\n이상백\n등록일\n2026-01-14\n고용노동부 공고 2026-37호\n2026년 지역 중대재해 예방 사각지대 해소 사업 우선협상자 선정결과를 붙임과 같이 공고합니다.\nㅇ 선정결과\n- 선정: 6개소\n- 조건부 선정: 2개소\n첨부\n2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 결과.hwp\n다운로드\n바로보기\n이전글\n2026년도 인재채움뱅크, 인재채움 전용관 위탁 운영기관 선정 공고\n다음글\n2026년도 경계선지능청년지원 사업 참여 지자체 공모\n목록",
+  "deadline": "",
+  "posted_date": "2026-01-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20260100545"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고용노동부 국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라! 정보공개 국고보조사업 국고보조사업 공모현황입니다. 제목 [공고]2026년 지역 중대재해 예방 사각지대 해소사업 우선협상 대상자 선정 공고 담당부서 산재예방지원과 전화번호 044-202-8825 담당자 이상백 등록일 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

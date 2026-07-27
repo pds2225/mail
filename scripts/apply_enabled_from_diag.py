@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def latest_diag() -> Path:
-    files = sorted(glob.glob(str(ROOT / "reports" / "site_parse_diag_*.json")),
+    files = sorted(glob.glob(str(ROOT / "var" / "reports" / "site_parse_diag_*.json")),
                    key=os.path.getmtime)
     return Path(files[-1])
 
@@ -30,7 +30,7 @@ def main() -> int:
     ok_ids = {r["id"] for r in diag if r["status"] == "ok"}
     print(f"진단 파일: {diag_path.name} | OK(추출됨) {len(ok_ids)}건")
 
-    sites = json.loads((ROOT / "sites.json").read_text(encoding="utf-8"))
+    sites = json.loads((ROOT / "config" / "sites.json").read_text(encoding="utf-8"))
     on = off = 0
     for s in sites:
         if not s.get("id", "").startswith("imp_"):
@@ -46,7 +46,7 @@ def main() -> int:
 
     print(f"신규 imp_* → enabled=true {on}건 / enabled=false {off}건")
     if write:
-        (ROOT / "sites.json").write_text(
+        (ROOT / "config" / "sites.json").write_text(
             json.dumps(sites, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         import collections
         en = collections.Counter(x["enabled"] for x in sites)

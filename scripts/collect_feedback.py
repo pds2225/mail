@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from feedback import (  # noqa: E402
+from mail_core.delivery.feedback import (  # noqa: E402
     SUBJECT_TAG,
     LABELS_PATH,
     merge_feedback_labels,

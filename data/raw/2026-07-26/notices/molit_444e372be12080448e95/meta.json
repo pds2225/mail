@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:32",
+  "notice_id": "molit_444e372be12080448e95",
+  "title": "원주무실 공공지원민간임대주택 공급촉진지구 지정 변경(4차) 및 지구계획 변경(4차) 승인, 지형도면 등의 고시",
+  "link": "https://www.molit.go.kr/USR/BORD0201/m_69/DTL.jsp?id=N01_B&cate=&mode=view&idx=269017&key=&search=&search_regdate_s=2025-07-26&search_regdate_e=2026-07-26&order=&desc=asc&srch_prc_stts=&item_num=0&search_dept_id=&search_dept_nm=&srch_usr_nm=N&srch_usr_titl=N&srch_usr_ctnt=N&srch_mng_nm=N&old_dept_nm=&search_gbn=&search_section=&source=&search1=&lcmspage=1",
+  "source": "국토교통부",
+  "author": "",
+  "description": "원주무실 공공지원민간임대주택 공급촉진지구 지정 변경(4차) 및 지구계획 변경(4차)  승인, 지형도면 등의 고시\n담당부서\n민간임대정책과\n담당자\n남종현\n연락처\n등록일\n2026-07-24\n조회수\n179\n첨부파일\n국토교통부고시제2026-000호(원주무실)_채번전.pdf\n(904Kbyte)\n바로보기\n고시 제2026-388호\n◉\n국토교통부고시\n제\n2026\n–\n000\n호\n국토교통부고시 제\n2026-307\n호\n(2026.06.30.)\n로 지구지정 변경\n(3\n차\n)\n및 지구계획 변경\n(3\n차\n)\n승인 고시된 원주무실 공공지원민간\n임대주택 공급촉진지구에 대하여\n「\n민간임대주택에 관한 특별법\n」\n제\n26\n조에 따라 지구지정 변경\n(4\n차\n)\n및\n제\n28\n조에 따라 지구계획 변경\n(4\n차\n)\n을 승인하고\n,\n「\n토지이용규제기본법\n」\n제\n8\n조에 따라 지형도면 등을 다음과 같이 고시합니다\n.\n관계서류는 원주시 주택과\n(033-737-3462)\n와 한국토지주택공사 강원지역본부\n(033-258-4233)\n에 비치하여 일반인에게 보이고 있으며\n,\n지형도면 등은\n토지이음\n(http://www.eum.go.kr)\n에서 열람이 가능합니다\n.\n2026\n년\n07\n월 일\n국토교통부장관\n비밀번호입력\n비밀번호",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "원주무실 공공지원민간임대주택 공급촉진지구 지정 변경(4차) 및 지구계획 변경(4차) 승인, 지형도면 등의 고시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.molit.go.kr/USR/BORD0201/m_69/DTL.jsp?id=N01_B&cate=&mode=view&idx=269017&key=&search=&search_regdate_s=2025-07-26&search_regdate_e=2026-07-26&order"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "원주무실 공공지원민간임대주택 공급촉진지구 지정 변경(4차) 및 지구계획 변경(4차) 승인, 지형도면 등의 고시 담당부서 민간임대정책과 담당자 남종현 연락처 등록일 2026-07-24 조회수 179 첨부파일 국토교통부고시제2026-000호(원주무실)_채번전.pdf (904Kbyte) 바로"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:20",
+  "notice_id": "imp_c5c8a218_7523512a59b34049a46a",
+  "title": "(광주경영자총협회 공고 제 2024-7호) 2024년 일자리사업 서류 합격자 안내",
+  "link": "http://www.gjef.or.kr/ko/28/view?SEQ=95&page=2",
+  "source": "광주경영자총협회",
+  "author": "",
+  "description": "(광주경영자총협회 공고 제 2024-7호) 2024년 일자리사업 서류 합격자 안내\n운영자\n날짜\n2024-04-23\n조회수\n548\n첨부파일\n광주경영자총협회 공고 제 2024 .pdf\n[size : 46.8 KB]\n[다운로드 : 113]\n목록\n이전글\n(광주경영자총협회 공고 제 2024-6호) 2024년 공동안전관리자 지원사업 - 산업안전보건 분야 전문컨설턴트 공개채용 최종합격자 공고(수정)\n다음글\n(광주경영자총협회 공고 제 2024-8호) 2024년 일자리사업 최종합격자 공고\n공지사항 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2024-04-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(광주경영자총협회 공고 제 2024-7호) 2024년 일자리사업 서류 합격자 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjef.or.kr/ko/28/view?SEQ=95&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "(광주경영자총협회 공고 제 2024-7호) 2024년 일자리사업 서류 합격자 안내 운영자 날짜 2024-04-23 조회수 548 첨부파일 광주경영자총협회 공고 제 2024 .pdf [size : 46.8 KB] [다운로드 : 113] 목록 이전글 (광주경영자총협회 공고 제 2024-6호"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

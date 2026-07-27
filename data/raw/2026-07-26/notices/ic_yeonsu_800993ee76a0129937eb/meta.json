@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:44",
+  "notice_id": "ic_yeonsu_800993ee76a0129937eb",
+  "title": "2026 개인별 맞춤형 운동프로그램 2기 참가자 모집 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118780&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n2026 개인별 맞춤형 운동프로그램 2기 참가자 모집 안내\n작성자\n건강증진과\n작성일\n2026년 7월 9일\n조회수\n249\n담당부서\n건강증진과\n전화번호\n032-749-8124\n첨부파일\n2026_운동프로그램_2기_모집안내문.png (\n0.42MB)\n연수구보건소 AI 건강증진 프로그램\n2026 개인별 맞춤형 운동프로그램 2기\n참가자 모집 안내\nAI와 함께하는 리얼 밀착관리! 나에게 딱 맞는 운동, 연수구보건소에서 시작하세요\n목록\n이전글\n[인천광역시]「제7회 인천국제해양포럼(IIOF 2026)」개최 안내\n다음글\n[송도국제도서관][7.10.(금) 접수시작] <세계 속 전쟁, 전쟁과 우리> 프로그램 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 개인별 맞춤형 운동프로그램 2기 참가자 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118780&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 2026 개인별 맞춤형 운동프로그램 2기 참가자 모집 안내 작성자 건강증진과 작성일 2026년 7월 9일 조회수 249 담당부서 건강증진과 전화번호 032-749-8124 첨부파일 2026_운동프로그"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,169 @@
+{
+  "saved_at": "2026-07-26 19:37:19",
+  "notice_id": "imp_c7fa8056_ba7898f4154609ac3b58",
+  "title": "번호미상(소유자 미상) 무단 방치차량 자진이동 안내 및 강제견인 예고 공고",
+  "link": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75051&pageIndex=1&searchCnd=40900000000&cate_cd=1",
+  "source": "김포시청",
+  "author": "",
+  "description": "고시공고 게시물 내용\n고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표\n고시공고구분\n공고(일반공고)\n조회수\n25\n고시공고번호\n김포시 공고 제2026-2045호\n등록일\n2026-07-24\n담당부서\n차량등록과\n제목\n번호미상(소유자 미상) 무단 방치차량 자진이동 안내 및 강제견인 예고 공고\n1. 관내 주택가, 도로, 사유지 등에 무단으로 방치된 자동차의 번호미상 등으로 소유자 확인이 불가하여 자동차관리법 제26조 같은 법 시행령 제6조에 따라 자동차를 강제견인 하고자  다음과 같이 공고하오니, 해당 자동차의 소유자(점유자)는 공고 기간에 자진이동 등 적절한 조치를 하시기 바라며, 이동하지 않는 경우 강제 견인됨을 알려드립니다.\n가. 공고기간: 2026.07.24.~2026.08.07.(14일간)\n나. 강제견인 대상: 2대(붙임 참조)\n다. 보관 장소: 김포시 견인차고지 등\n라. 강제견인 예정일: 공고일 이후\n2. 공고 내용 등 자세한 사항은 붙임 공고문을 참고하시기 바랍니다.\n붙임  1. 번호미상(소유자 미상) 무단방치차량 자진이동 안내 및 강제견인 예고 공고문\n2. 번호미상 무단방치 자동차 사진대지.  끝.\n첨부파일\npdf 문서\n번호미상(소유자 미상) 무단방치차량 자진이동 안내 및 강제견인 예고 공고문(20260724).pdf\npdf 문서\n번호미상 무단방치 자동차 사진대지(20260724).pdf\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "번호미상(소유자 미상) 무단 방치차량 자진이동 안내 및 강제견인 예고 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75051&pageIndex=1&searchCnd=40900000000&cate_cd=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표 고시공고구분 공고(일반공고) 조회수 25 고시공고번호 김포시 공고 제2026-2045호 등록일 2026-07-24 담당부서 차량등록과 제목 번호미상(소유자 미상) 무단 방치차량 자진이동"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고구분",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고(일반공고)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "25",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김포시 공고 제2026-2045호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "차량등록과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "번호미상(소유자 미상) 무단 방치차량 자진이동 안내 및 강제견인 예고 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "1. 관내 주택가, 도로, 사유지 등에 무단으로 방치된 자동차의 번호미상 등으로 소유자 확인이 불가하여 자동차관리법 제26조 같은 법 시행령 제6조에 따라 자동차를 강제견인 하고자 다음과 같이 공고하오니, 해당 자동차의 소유자(점유자)는 공고 기간에 자진이동 등 적절한 조치를 하시기 바라며, 이동하지 않는 경우 강제 견인됨을 알려드립니다. 가. 공고기간: 2026.07.24.~2026.08.07.(14일간) 나. 강제견인 대상: 2대(붙임 참조) 다. 보관 장소: 김포시 견인차고지 등 라. 강제견인 예정일: 공고일 이후 2. 공고 내용 등 자세한 사항은 붙임 공고문을 참고하시기 바랍니다. 붙임 1. 번호미상(소유자 미상) 무단방치차량 자진이동 안내 및 강제견인 예고 공고문 2. 번호미상 무단방치 자동차 사진대지. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "pdf 문서 번호미상(소유자 미상) 무단방치차량 자진이동 안내 및 강제견인 예고 공고문(20260724).pdf pdf 문서 번호미상 무단방치 자동차 사진대지(20260724).pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "saved_at": "2026-07-26 19:36:39",
+  "notice_id": "imp_803b04b9_f2e1e8c9944a468f9414",
+  "title": "2026년 광주광역시 지역주도형 일자리 지원사업 (융·복합 가전산업 기술고도화 기반 성장 지원) 참여기업 모집 추가공고",
+  "link": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2206&ctg01=02,12&ctg02=02,06&ctg03=01,02,06,11,14&pageIndex=2&pageUnit=30&searchKeyword=",
+  "source": "광주테크노파크",
+  "author": "",
+  "description": "사업공고\n홈\n홈\n공고·안내\n사업공고\n2026년 광주광역시 지역주도형 일자리 지원사업 (융·복합 가전산업 기술고도화 기반 성장 지원) 참여기업 모집 추가공고\n지원분류\n산업구분\n>  가전/기타\n지원분야\n>  비R&D/기타\n지원프로그램\n>  시제품제작/마케팅/인증/자금지원/기타\n지원규모\n총 80,000\r\n\t\t\t\t\t천원\n접수기간\n2026-06-15 ~ 2026-06-26\n접수마감\n사업기간\n2026-03-09 ~ 2026-12-31\n담당부서\n광주테크노파크\n총괄담당자\n사업담당자\n김경현 선임\r\n\t\t\t\t\t (062-602-7215)\n사업목적\n융·복합 가전기업의 기술고도화 중점 지원을 통한 지역 일자리 창출\n사업내용\n* 세부적인 내용은 공고문 등 붙임자료 참조 요망\n첨부파일\n붙임1.공고문.pdf\n붙임2.지원신청서양식.hwpx\n목록",
+  "deadline": "2026-06-15 ~ 2026-06-26",
+  "posted_date": "2026-06-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-15",
+    "end": "2026-06-26",
+    "display": "2026-06-15 ~ 2026-06-26",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 광주광역시 지역주도형 일자리 지원사업 (융·복합 가전산업 기술고도화 기반 성장 지원) 참여기업 모집 추가공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2206&ctg01=02,12&ctg02=02,06&ctg03=01,02,06,11,14&pageIndex=2&pageUnit=30&searchKeyword="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 홈 홈 공고·안내 사업공고 2026년 광주광역시 지역주도형 일자리 지원사업 (융·복합 가전산업 기술고도화 기반 성장 지원) 참여기업 모집 추가공고 지원분류 산업구분 > 가전/기타 지원분야 > 비R&D/기타 지원프로그램 > 시제품제작/마케팅/인증/자금지원/기타 지원규모 총 80,"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-15 ~ 2026-06-26"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원분류",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업구분 > 가전/기타 지원분야 > 비R&D/기타 지원프로그램 > 시제품제작/마케팅/인증/자금지원/기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원규모",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "총 80,000 천원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-15 ~ 2026-06-26 접수마감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-03-09 ~ 2026-12-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "총괄담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김경현 선임 (062-602-7215)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업목적",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "융·복합 가전기업의 기술고도화 중점 지원을 통한 지역 일자리 창출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "* 세부적인 내용은 공고문 등 붙임자료 참조 요망",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "붙임1.공고문.pdf 붙임2.지원신청서양식.hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "run_day": "2026-06-30",
+    "started_at": "2026-06-30 09:25:19",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-06-30",
+    "started_at": "2026-06-30 09:33:33",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-06-30",
+    "started_at": "2026-06-30 15:12:10",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-06-30",
+    "started_at": "2026-06-30 15:56:46",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  }
+]

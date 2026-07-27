@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:07",
+  "notice_id": "imp_761f4e5f_9c9534a943a6f047c70d",
+  "title": "2026년 광주사회적경제지원센터 신규직원 채용 서류전형 합격자 공고",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2910&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2026.06.23\n조회수\n167회\n접수기간\n2026-06-23 ~ 2026-06-30\n부서\n경영전략팀\n문의처\n062-531-6667\n관련링크\n본문\n광주사회적경제지원센터 공고 제2026-39호\n광주사회적경제지원센터\n신규직원 채용 서류전형 합격자 공고\n광주사회적경제지원센터 신규직원 채용 서류전형 합격자를\n다음과 같이 공고합니다.\n2026.  6.  23.\n(사)광주사회적경제연합회 이사장 · 광주사회적경제지원센터장\n첨부파일\n2026년 광주사회적경제지원센터 신규직원 채용 서류전형 합격자 공고.pdf\n다운로드\n이전글\n2026년 광주사회적경제지원센터 신규직원 채용 최종합격자 공고\n다음글\n2026 중국 유통망 입점 지원사업 참여기업 선정 결과 공고",
+  "deadline": "2026-06-23 ~ 2026-06-30",
+  "posted_date": "2026-06-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-23",
+    "end": "2026-06-30",
+    "display": "2026-06-23 ~ 2026-06-30",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 광주사회적경제지원센터 신규직원 채용 서류전형 합격자 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2910&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2026.06.23 조회수 167회 접수기간 2026-06-23 ~ 2026-06-30 부서 경영전략팀 문의처 062-531-6667 관련링크 본문 광주사회적경제지원센터 공고 제2026-39호 광주사회적경제지원센터 신규직원 채용 서류전형 합격자 공고 광주사회적경제지원"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-23 ~ 2026-06-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

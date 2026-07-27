@@ -1,0 +1,207 @@
+{
+  "saved_at": "2026-07-26 19:32:08",
+  "notice_id": "PBLN_000000000124705",
+  "title": "[전남광주] 완도군 2026년 하반기 착한가격업소 신규지정 신청 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124705",
+  "source": "기업마당(Bizinfo)",
+  "author": "전남광주통합특별시",
+  "description": "<p>우리군에서는 저렴한 가격으로 물가안정에 기여해 온 업소를 착한가격업소로 지정하여 실질적 도움을 주고, 착한가격업소 지정의 신뢰도 확보를 위하여 다음과 같이 착한가격업소 신규지정 신청을 공고합니다.</p><p><br></p><p>☞ 외식업(한식,&nbsp;중식, 일식, 양식, 기타 외식업) 및&nbsp;기타 개인서비스업(세탁업, 이‧미용업, 목욕업, 숙박업, 기타 서비스업)</p><p><br></p><p>☞ 착한가격업소 신규지정, 착한가격업소 인증 표찰 제작, 업소별 기자재, 소모품, 홍보물품 구입비 지원 등</p>\n우리군에서는 저렴한 가격으로 물가안정에 기여해 온 업소를 착한가격업소로 지정하여 실질적 도움을 주고, 착한가격업소 지정의 신뢰도 확보를 위하여 다음과 같이 착한가격업소 신규지정 신청을 공고합니다. ☞ 외식업(한식, 중식, 일식, 양식, 기타 외식업) 및 기타 개인서비스업(세탁업, 이‧미용업, 목욕업, 숙박업, 기타 서비스업) ☞ 착한가격업소 신규지정, 착한가격업소 인증 표찰 제작, 업소별 기자재, 소모품, 홍보물품 구입비 지원 등",
+  "deadline": "2026-07-23 ~ 2026-08-06",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-06",
+    "display": "2026-07-23 ~ 2026-08-06",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전남광주] 완도군 2026년 하반기 착한가격업소 신규지정 신청 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "전남광주통합특별시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124705"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>우리군에서는 저렴한 가격으로 물가안정에 기여해 온 업소를 착한가격업소로 지정하여 실질적 도움을 주고, 착한가격업소 지정의 신뢰도 확보를 위하여 다음과 같이 착한가격업소 신규지정 신청을 공고합니다.</p><p><br></p><p>☞ 외식업(한식,&nbsp;중식, 일식, 양식, 기타 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-06"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주통합특별시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#신규지정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#홍보물품",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#표찰",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#소모품",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#개인서비스업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#착한가격업소",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#완도군",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#외식업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#지정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#기자재",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#서비스업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기초자치단체",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "전남광주통합특별시"
+}

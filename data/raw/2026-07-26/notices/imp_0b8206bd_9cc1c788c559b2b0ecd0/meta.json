@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:25",
+  "notice_id": "imp_0b8206bd_9cc1c788c559b2b0ecd0",
+  "title": "남양주시 통합돌봄 특화서비스(The돌봄스테이) 수행기관 모집 공고",
+  "link": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88086",
+  "source": "남양주시청",
+  "author": "",
+  "description": "남양주시 통합돌봄 특화서비스(The돌봄스테이) 수행기관 모집 공고\n시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공\n고시공고번호\n남양주시 공고 제2026-1633호\n공고기간\n2026-07-24 ~ 2026-07-31\n담당부서\n통합돌봄과\n내용\n「의료・요양 등 지역 돌봄의 통합지원에 관한 법률」제18조에 따라, 일상생활 유지에 어려움을 겪는 남양주시 통합돌봄 대상자에게 맞춤형 서비스를 제공할 “남양주시 통합돌봄 특화서비스(The돌봄스테이)” 수행기관을 다음과 같이 모집 공고합니다.\n1. 공고기간 : 2026. 7. 24.(금) ~ 7. 31.(금) / 7일간\n2. 접수방법 : 방문접수 또는  전자메일 제출\n※ 제출 서식은 붙임 서식자료 참조\n3. 모집대상 : 공고일 현재 자격요건을 갖춘 법인, 단체, 기관 등\n4. 세부내용 : 붙임 공고문 참조\n5. 문 의 처 : 통합돌봄과 돌봄지원팀(☎031-579-6745)\n첨부파일\n의료요양 통합돌봄 특화서비스(The돌봄스테이) 공고문.hwpx\n내려받기\n미리보기\n의료요양 통합돌봄 특화서비스(The돌봄스테이) 신청서식.hwpx\n내려받기\n미리보기\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "남양주시 통합돌봄 특화서비스(The돌봄스테이) 수행기관 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88086"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "남양주시 통합돌봄 특화서비스(The돌봄스테이) 수행기관 모집 공고 시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공 고시공고번호 남양주시 공고 제2026-1633호 공고기간 2026-07-24 ~ 2026-07-31 담당부서 통합돌봄과 내용 「의료・요양"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "남양주시 공고 제2026-1633호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공고기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-24 ~ 2026-07-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "통합돌봄과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「의료・요양 등 지역 돌봄의 통합지원에 관한 법률」제18조에 따라, 일상생활 유지에 어려움을 겪는 남양주시 통합돌봄 대상자에게 맞춤형 서비스를 제공할 “남양주시 통합돌봄 특화서비스(The돌봄스테이)” 수행기관을 다음과 같이 모집 공고합니다. 1. 공고기간 : 2026. 7. 24.(금) ~ 7. 31.(금) / 7일간 2. 접수방법 : 방문접수 또는 전자메일 제출 ※ 제출 서식은 붙임 서식자료 참조 3. 모집대상 : 공고일 현재 자격요건을 갖춘 법인, 단체, 기관 등 4. 세부내용 : 붙임 공고문 참조 5. 문 의 처 : 통합돌봄과 돌봄지원팀(☎031-579-6745)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "의료요양 통합돌봄 특화서비스(The돌봄스테이) 공고문.hwpx 내려받기 미리보기 의료요양 통합돌봄 특화서비스(The돌봄스테이) 신청서식.hwpx 내려받기 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

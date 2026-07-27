@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:12",
+  "notice_id": "imp_e855ce87_920381763ed89cb1e388",
+  "title": "Human Rights Watch",
+  "link": "https://www.hrw.org/",
+  "source": "남북하나재단",
+  "author": "",
+  "description": "",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": null,
+  "detail_extraction": {
+    "status": "DETAIL_FETCH_FAILED",
+    "reason": "http_no_response",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "Human Rights Watch"
+      },
+      "organizer": {
+        "status": "DETAIL_FETCH_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.hrw.org/"
+      },
+      "description": {
+        "status": "DETAIL_FETCH_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "application_period": {
+        "status": "DETAIL_FETCH_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "DETAIL_FETCH_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "DETAIL_FETCH_FAILED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

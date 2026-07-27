@@ -1,0 +1,208 @@
+{
+  "saved_at": "2026-07-26 19:31:50",
+  "notice_id": "PBLN_000000000124721",
+  "title": "[대전] 2026년 북미시장진출지원사업 KIC 실리콘밸리 K-Global 대전기업 추가모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124721",
+  "source": "기업마당(Bizinfo)",
+  "author": "대전광역시",
+  "description": "<p>대전일자리경제진흥원에서는 대전지역 AIㆍICT 기술기업의 미국 시장 진출 및 글로벌 투자 연계를 지원하기 위해 정보통신산업진흥원(NIPA) KIC 실리콘밸리와 연계한 「2026 북미시장진출지원사업(K-Global)」 참가기업을 다음과 같이 모집하오니 관심 있는 기업의 많은 참여 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞ 멀티모달 혹은 단일모달(Gemini, ChatGPT, Anthropic, 텍스트, 이미지, 비디오 모델 등) 기반 AI 기술을 서비스 형태로 제공하는 기업 또는 AI AGENT 솔루션 개발기업으로, 글로벌 진출을 희망하는 관내 ICT 중소기업</p><p style=\"line-height: 1.8;\">※ 자세한 지원대상 공고문 참조</p><p><br></p><p style=\"line-height: 1.8;\">☞ 현지활동 지원금, KIC 실리콘밸리 글로벌 프로그램 참가 지원</p><p style=\"line-height: 1.8;\">- 현지활동 지원금 : 참여기업 출장비 및 현지활동비 기업당 4백만원 한도 이내 지원 / 사후 정산 지원 (항공료, 숙박비, 기타 현지비용)</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참조</p>\n대전일자리경제진흥원에서는 대전지역 AIㆍICT 기술기업의 미국 시장 진출 및 글로벌 투자 연계를 지원하기 위해 정보통신산업진흥원(NIPA) KIC 실리콘밸리와 연계한 「2026 북미시장진출지원사업(K-Global)」 참가기업을 다음과 같이 모집하오니 관심 있는 기업의 많은 참여 바랍니다. ☞ 멀티모달 혹은 단일모달(Gemini, ChatGPT, Anthropic, 텍스트, 이미지, 비디오 모델 등) 기반 AI 기술을 서비스 형태로 제공하는 기업 또는 AI AGENT 솔루션 개발기업으로, 글로벌 진출을 희망하는 관내 ICT 중소기업 ※ 자세한 지원대상 공고문 참조 ☞ 현지활동 지원금, KIC 실리콘밸리 글로벌 프로그램 참가 지원 - 현지활동 지원금 : 참여기업 출장비 및 현지활동비 기업당 4백만원 한도 이내 지원 / 사후 정산 지원 (항공료, 숙박비, 기타 현지비용) ※ 자세한 지원내용 공고문 참조",
+  "deadline": "모집 완료시",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[대전] 2026년 북미시장진출지원사업 KIC 실리콘밸리 K-Global 대전기업 추가모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "대전광역시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124721"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>대전일자리경제진흥원에서는 대전지역 AIㆍICT 기술기업의 미국 시장 진출 및 글로벌 투자 연계를 지원하기 위해 정보통신산업진흥원(NIPA) KIC 실리콘밸리와 연계한 「2026 북미시장진출지원사업(K-Global)」 참가기업을 다음과 같이 모집하오니 관심 있는 기업의 많은 참여 바"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "모집 완료시"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#단일모달",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#글로벌프로그램",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#현지활동",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#북미시장",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#KIC",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#멀티모달",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#출장비",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#숙박",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#항공",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#북미",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전일자리경제진흥원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#ICT",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#AI",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전광역시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#중소기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#수출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "대전광역시"
+}

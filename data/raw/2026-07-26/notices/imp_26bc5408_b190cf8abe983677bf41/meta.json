@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:08",
+  "notice_id": "imp_26bc5408_b190cf8abe983677bf41",
+  "title": "기관공지 경기도시장상권진흥원 사칭 피싱 범죄 주의",
+  "link": "https://www.gmr.or.kr:443/base/board/read?boardManagementNo=1&boardNo=10746&searchCategory=&page=1&searchType=&searchWord=&menuLevel=2&menuNo=14",
+  "source": "경기도시장상권진흥원",
+  "author": "",
+  "description": "HOME\n>\n진흥원소식\n>\n공지사항\n공지사항\n프린트\nSNS 공유하기\n페이스북\n트위터\n카카오스토리\n카카오톡\n블로그",
+  "deadline": "",
+  "posted_date": "2026-07-08",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "기관공지 경기도시장상권진흥원 사칭 피싱 범죄 주의"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gmr.or.kr:443/base/board/read?boardManagementNo=1&boardNo=10746&searchCategory=&page=1&searchType=&searchWord=&menuLevel=2&menuNo=14"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME > 진흥원소식 > 공지사항 공지사항 프린트 SNS 공유하기 페이스북 트위터 카카오스토리 카카오톡 블로그"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

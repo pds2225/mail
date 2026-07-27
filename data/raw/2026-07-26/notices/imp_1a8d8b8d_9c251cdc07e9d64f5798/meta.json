@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:55",
+  "notice_id": "imp_1a8d8b8d_9c251cdc07e9d64f5798",
+  "title": "영천하이테크파크지구 개발계획(11차) 및 실시계획(7차) 변경 승인 고시",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8350&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n영천하이테크파크지구 개발계획(11차) 및 실시계획(7차) 변경 승인 고시\n2025-10-24 09:28:44\n작성자\n김용달\n조회\n893\n분류\n파일\n관보(제21101호)20251023[대구경북경제자유구역청고시제2025-8호(대구·경북 경제자유구역 영천하이테크파크지구 개발계획(11차) 변경 승인 및 지형도면 고시)].pdf\n바로보기\n도보(제6977호)20251023[대구경북경제자유구역청고시제2025-9호(대구·경북 경제자유구역 영천하이테크파크지구 실시계획(7차) 변경 승인 및 지형도면 고시)].pdf\n바로보기\n대구경북자유구역청 고시 제2025-8호(2025. 10. 23.) 및 제2025-9호(2025. 10. 23.)로 변경 승인 고시된 대구경북경제자유구역 영천하이테크파크지구 개발계획(11차) 및 실시계획(7차)에 대하여 「경제자유구역의 지정 및 운영에 관한 특별법」 제7조, 제9조, 제10조 및 「토지이용규제기본법」 제 8조 규정에 따라 다음과 같이 고시합니다.\n목록\nprev\n지적기준점 성과 고시\nnext\n건설공사 안전점검 수행기관지정 결과 공고(대학리 1094번지)\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2025-10-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "영천하이테크파크지구 개발계획(11차) 및 실시계획(7차) 변경 승인 고시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8350&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 영천하이테크파크지구 개발계획(11차) 및 실시계획(7차) 변경 승인 고시 2025-10-24 09:28:44 작성자 김용달 조회 893 분류 파일 관보(제21101호)20251023[대구경북경제자유구역청고시제2025-8호(대구·경북 경제자유구역 영천하이테크파크지구 개발계획(11차)"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

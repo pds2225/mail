@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:55",
+  "notice_id": "imp_1a8d8b8d_da74ac02d78fb032980b",
+  "title": "지적기준점 폐기 고시",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8390&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n지적기준점 폐기 고시\n2025-11-17 00:00:00\n작성자\n지구관리2과\n조회\n615\n분류\n파일\n지적기준점 폐기 고시(2025년).hwp\n바로보기\n2025년 지적기준점 전수조사결과 망실된 지적기준점을 『공간정보의 구축 및 관리 등에 관한 법률』 제8조에 따라 다음과 같이 폐기 고시합니다.\n2025년 11월 17일\n대구·경북경제자유구역청장\n목록\nprev\nDGFEZ 경관위원회 모집 공고\nnext\n건설공사 안전점검 수행기관지정 결과 공고(채신동 759번지)\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2025-11-17",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "지적기준점 폐기 고시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=2&cmd=258&bod_uid=8390&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 지적기준점 폐기 고시 2025-11-17 00:00:00 작성자 지구관리2과 조회 615 분류 파일 지적기준점 폐기 고시(2025년).hwp 바로보기 2025년 지적기준점 전수조사결과 망실된 지적기준점을 『공간정보의 구축 및 관리 등에 관한 법률』 제8조에 따라 다음과 같이 폐기 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

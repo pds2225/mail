@@ -1,0 +1,108 @@
+{
+  "saved_at": "2026-07-26 19:39:02",
+  "notice_id": "imp_7381d7a0_187c6e1055f4cfa9545a",
+  "title": "소상공인 경영안정 바우처 지원사업",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=433394&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n소상공인 경영안정 바우처 지원사업\n핫이슈\n내용\n소상공인 경영안정 바우처 지원사업\n- 신청기간 : 2026. 2.9.(월) 9시 ~ (잠정) 12.18.(금) 18시까지\n* 예산소진 시 조기마감\n- 지원방식 : 소상공인이 기보유 중인 신용카드/체크카드에 바우처 25만원을 선지급\n- 사용가능 항목 : 공과금 / 4대 보험료 / 차량연료비 / 전통시장 화재공제\n- 문의처\n1)콜센터 : 소상공인경영바우처콜센터(평일 9시~18시) ☎1533-0600 / 1533-0100(내선 2번)\n2)홈페이지 :\nhttps://voucher.sbiz24.kr/\n사진 확대보기\n파일\njpg 파일\n(붙임2) 소상공인 경영안정 바우처  포스터.jpg\n미리보기\n(파일크기 : 7.4MB,\n다운로드 : 10회)\n목록",
+  "deadline": "2026-02-09 ~ 2026-12-18",
+  "posted_date": "2026-02-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-02-09",
+    "end": "2026-12-18",
+    "display": "2026-02-09 ~ 2026-12-18",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "소상공인 경영안정 바우처 지원사업"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=433394&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 소상공인 경영안정 바우처 지원사업 핫이슈 내용 소상공인 경영안정 바우처 지원사업 - 신청기간 : 2026. 2.9.(월) 9시 ~ (잠정) 12.18.(금) 18시까지 * 예산소진 시 조기마감 - 지원방식 : 소상공"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-02-09 ~ 2026-12-18"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "소상공인 경영안정 바우처 지원사업 핫이슈",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "소상공인 경영안정 바우처 지원사업 - 신청기간 : 2026. 2.9.(월) 9시 ~ (잠정) 12.18.(금) 18시까지 * 예산소진 시 조기마감 - 지원방식 : 소상공인이 기보유 중인 신용카드/체크카드에 바우처 25만원을 선지급 - 사용가능 항목 : 공과금 / 4대 보험료 / 차량연료비 / 전통시장 화재공제 - 문의처 1)콜센터 : 소상공인경영바우처콜센터(평일 9시~18시) ☎1533-0600 / 1533-0100(내선 2번) 2)홈페이지 : https://voucher.sbiz24.kr/ 사진 확대보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "jpg 파일 (붙임2) 소상공인 경영안정 바우처 포스터.jpg 미리보기 (파일크기 : 7.4MB, 다운로드 : 10회)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:06",
+  "notice_id": "imp_761f4e5f_ab374ac6ba45f268d4ed",
+  "title": "2026 광주 사회연대경제 주간",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2916&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2026.06.30\n조회수\n134회\n접수기간\n2026-07-01 ~ 2026-07-10\n부서\n경영전략팀\n문의처\n062-531-6667\n관련링크\n본문\n사회연대경제 가치를 되새기는 시간!\n2026 광주 사회연대경제 주간\n가치플렉스 반값페스타\n- 일자 : 2026. 7. 1.(수) ~ 7. 10.(금)\n- 장소 : 가치사세몰 홈페이지\n- 내용 : 사회적경제주간 맞이, 50% 특별 할인!\nSNS 퀴즈 이벤트\n- 일자 : 2026. 7. 1.(수) ~ 7. 10.(금)\n- 장소 : 광주사회적경제지원센터 인스타그램\n- 내용 : 사회연대경제 O/X 퀴즈를 맞히면 추첨을 통해 기프티콘 증정!\n광주FC와 함께하는 광주사회연대경제 DAY\n- 일자 : 2026. 7. 5.(일) 16:00\n- 장소 : 롯데아울렛 광주월드컵점, 광주월드컵경기장 일원\n- 내용 : 사회연대경제 플리마켓 운영, 시축, 사회연대경제기업 단체관람\n사회연대경제의 가치를 되새기고 시민 인식 제고를 위한 사회연대경제주간\n시민 여러분의 많은 관심 바랍니다!\n첨부파일\n이전글\n2026년 5월 사회적경제기업 현황 및 신규기업 안내\n다음글\n2026년 광주사회적경제지원센터 신규직원 채용 최종합격자 공고",
+  "deadline": "2026-07-01 ~ 2026-07-10",
+  "posted_date": "2026-07-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-01",
+    "end": "2026-07-10",
+    "display": "2026-07-01 ~ 2026-07-10",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 광주 사회연대경제 주간"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2916&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2026.06.30 조회수 134회 접수기간 2026-07-01 ~ 2026-07-10 부서 경영전략팀 문의처 062-531-6667 관련링크 본문 사회연대경제 가치를 되새기는 시간! 2026 광주 사회연대경제 주간 가치플렉스 반값페스타 - 일자 : 2026. 7. "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-01 ~ 2026-07-10"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

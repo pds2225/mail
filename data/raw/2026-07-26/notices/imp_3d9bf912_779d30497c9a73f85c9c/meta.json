@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:11",
+  "notice_id": "imp_3d9bf912_779d30497c9a73f85c9c",
+  "title": "2026년 마을기업부스 운영지원사업 심사 결과 및 최종 선정기업 공고",
+  "link": "https://www.sjepa.or.kr/news-announcement/view/id/1173",
+  "source": "세종일자리경제진흥원",
+  "author": "",
+  "description": "2026년 마을기업부스 운영지원사업 심사 결과 및 최종 선정기업 공고\n경제육성팀\n2026.05.20.\n487\n첨부파일\n붙임_2026년_마을기업_부스운영_지원_선정_결과_공고.pdf\n148.3 KB\n이전글\n2026년  「사회적경제기업 성장 도약 지원사업」  모집공고\n다음글\n2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 연장 공고\n목록",
+  "deadline": "2026-05-20",
+  "posted_date": "2026-05-20",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 마을기업부스 운영지원사업 심사 결과 및 최종 선정기업 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sjepa.or.kr/news-announcement/view/id/1173"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 마을기업부스 운영지원사업 심사 결과 및 최종 선정기업 공고 경제육성팀 2026.05.20. 487 첨부파일 붙임_2026년_마을기업_부스운영_지원_선정_결과_공고.pdf 148.3 KB 이전글 2026년 「사회적경제기업 성장 도약 지원사업」 모집공고 다음글 2026년 고용환경"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-05-20"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "run_day": "2026-07-16",
+    "started_at": "2026-07-16 10:28:09",
+    "collected": 6807,
+    "deduped": 6139,
+    "new_items": 2738
+  },
+  {
+    "run_day": "2026-07-16",
+    "started_at": "2026-07-16 10:58:09",
+    "collected": 1,
+    "deduped": 1,
+    "new_items": 1
+  },
+  {
+    "run_day": "2026-07-16",
+    "started_at": "2026-07-16 16:45:44",
+    "collected": 6871,
+    "deduped": 6197,
+    "new_items": 2822
+  }
+]

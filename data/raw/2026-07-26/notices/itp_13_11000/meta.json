@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:56",
+  "notice_id": "itp_13_11000",
+  "title": "2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 모집공고",
+  "link": "https://www.itp.or.kr/intro.asp?tmid=13&mode=view&seq=11000",
+  "source": "인천테크노파크",
+  "author": "인천테크노파크(ITP)",
+  "description": "ITP 뉴스\n지원사업\nITP 뉴스\n지원사업\n채용안내\n기관공고\n보도자료\n유관사업\n뉴스레터\n홍보자료실\n기고자료\n지원사업\n[스타트업파크센터]2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 모집공고\n작성자\n백다원\n작성일\n2026-07-24\n부서\n스타트업파크센터\n진행상태\n마감일\n2026-08-07\n첨부파일\n붙임1. 2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 모집공고.pdf(330KB)\n붙임2. 2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 제출서류양식 및 사업비 운영요령.hwp(184KB)\n2026\n인천스타트업파크\n부스트 스타트업\n(RESI Boston)\n현지 운영사 모집공고\n인천스타트업파크는\n바이오\n·\n헬스케어 분야에 대한 전문성과 글로벌\n사업 운영 역량을 바탕으로\n인천 혁신 스타트업의 미국 시장 진출을\n지원할\n운영사를 다음과 같이 모집하오니 많은 관심과 참여 바랍니다\n.\n2026. 7. 24.\n(재)\n인천테크노파크 원장\n사업공고 바로가기\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 모집공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "인천테크노파크(ITP)"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.itp.or.kr/intro.asp?tmid=13&mode=view&seq=11000"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "ITP 뉴스 지원사업 ITP 뉴스 지원사업 채용안내 기관공고 보도자료 유관사업 뉴스레터 홍보자료실 기고자료 지원사업 [스타트업파크센터]2026 인천스타트업파크 부스트 스타트업(RESI Boston) 운영사 모집공고 작성자 백다원 작성일 2026-07-24 부서 스타트업파크센터 진행상태 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

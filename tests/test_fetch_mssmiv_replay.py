@@ -25,7 +25,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "mssmiv"
+FX = pathlib.Path(__file__).parent / "fixtures" / "mssmiv"
 MSSMIV_URL = "https://www.mssmiv.com/portal/board/BoardList?bbsId=1"
 BASE = "https://www.mssmiv.com"
 

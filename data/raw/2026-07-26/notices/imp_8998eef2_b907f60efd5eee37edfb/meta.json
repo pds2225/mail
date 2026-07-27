@@ -1,0 +1,313 @@
+{
+  "saved_at": "2026-07-26 19:38:42",
+  "notice_id": "imp_8998eef2_b907f60efd5eee37edfb",
+  "title": "2025년 3차 경영관리지원사업 선정 결과",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=549&page=2",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "2025년 3차 경영관리지원사업 선정 결과\n광주광역자활센터\n작성일\n2025-09-17\n조회수\n117\n1. 사 업 명: 2025년 제3차 경영관리지원사업\n2. 지원대상:\n자활근로사업단\n3. 지원분야:\n경영지원 및 법인전환 등 17개 분야 컨설팅 지원\n4. 선정결과: 총 6개 사업단\n﻿\n구\n분\n소속\n사업단 명\n지원 횟수\n신청예산\n횟수\n예산(원)\n1\n광주동구지역자활센터\n가사지원서비스\n5\n1,750,000\n2\n광주콜세차\n5\n1,750,000\n3\n우리동구카페\n5\n1,750,000\n4\n광주북구일터지역자활센터\n자연담은\n10\n3,000,000\n5\n광주광산지역자활센터\n광자다방\n10\n3,000,000\n6\n광주광산어등지역자활센터\n뷰밀베이커리\n10\n3,000,000\n합 계\n45회\n14,250,00\n0\n목록\n이전글\n2025년 자활생산품 친환경 포장재 개선지원사업 공고\n다음글\n2025년 3차 경영관리지원사업(자활기업 및 자활근로사업단) 공모 안내\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2025-09-17",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2025년 3차 경영관리지원사업 선정 결과"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=549&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2025년 3차 경영관리지원사업 선정 결과 광주광역자활센터 작성일 2025-09-17 조회수 117 1. 사 업 명: 2025년 제3차 경영관리지원사업 2. 지원대상: 자활근로사업단 3. 지원분야: 경영지원 및 법인전환 등 17개 분야 컨설팅 지원 4. 선정결과: 총 6개 사업단 ﻿ 구"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "구 분",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "소속",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "사업단 명",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "지원 횟수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "신청예산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "횟수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "예산(원)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "1",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주동구지역자활센터",
+              "header": false,
+              "rowspan": 3,
+              "colspan": 1
+            },
+            {
+              "text": "가사지원서비스",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "5",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,750,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "2",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주콜세차",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "5",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,750,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "3",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "우리동구카페",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "5",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,750,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주북구일터지역자활센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "자연담은",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "3,000,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "5",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주광산지역자활센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광자다방",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "3,000,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "6",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주광산어등지역자활센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "뷰밀베이커리",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "3,000,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "합 계",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            },
+            {
+              "text": "45회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "14,250,00 0",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS_PATH = ROOT / "auto_dev" / "work_assets.json"
-TASKS_PATH = ROOT / "TASKS.md"
+TASKS_PATH = ROOT / "docs" / "project" / "TASKS.md"
 CONFIG_PATH = ROOT / "auto_dev" / "loop_config.json"
 KST = timezone(timedelta(hours=9))
 
@@ -53,7 +53,7 @@ def check_running_stale() -> dict:
     content = TASKS_PATH.read_text(encoding="utf-8")
     running = _tasks_in_section(content, "RUNNING")
     # TASKS.md alone cannot tell when RUNNING started; use state file if present
-    state_path = ROOT / "auto_dev_state.json"
+    state_path = ROOT / "var" / "state" / "auto_dev_state.json"
     stale: list[str] = []
     if state_path.exists():
         state = json.loads(state_path.read_text(encoding="utf-8"))

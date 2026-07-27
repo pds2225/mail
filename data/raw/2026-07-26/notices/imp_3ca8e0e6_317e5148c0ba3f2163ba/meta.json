@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:34",
+  "notice_id": "imp_3ca8e0e6_317e5148c0ba3f2163ba",
+  "title": "「2026년 광주 가상융합산업혁신센터 운영」가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고",
+  "link": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32085&tag=&nPage=1",
+  "source": "광주정보문화산업진흥원",
+  "author": "",
+  "description": "주요알림\n0\n건\n주요알림\n알림건수 : 총\n0\n건\n닫기\n오늘하루열지않기\n알림마당\n알림마당\n사업공고\n글자 크게\n글자 작게\n공유하기\n페이스북\n트위터\n밴드\n카카오스토리\nURL복사\n닫기\n인쇄\n「2026년 광주 가상융합산업혁신센터 운영」가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고\n작성일\n2026.07.13 10:08\n조회수\n1,771\n접수기간\n2026.07.13 ~ 2026.07.24\n담당자\n박정준\n담당자 연락처\n062-610-2975\n담당자 이메일\nparkjsquare@gicon.or.kr\n공지기간\n2026.07.13 ~ 2026.07.24\n「\n2026\n년 광주 가상융합산업혁신센터 운영\n」\n가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고\n광주 지역 가상융합산업 기업의 국내 시장 및\n해외 진출 지원을 위한 가상융합 콘텐츠 ACE Fair\n공동관 참가 기업을 모집하고자 하니 많은 관심과 참여 바랍니다\n.\n첨부파일\n(공고문) 2026 가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고.pdf\n(215.71KB / 다운로드 232회)\n다운로드\n(참가신청서) 2026 가상융합 콘텐츠 ACE Fair 공동관 참가신청서.hwp\n(76.5KB / 다운로드 33회)\n다운로드\n목록보기\n이전글\n「2026 지역특화콘텐츠개발지원사업」 콘텐츠 IP 지역특화 상품개발지원 선정평가 결과\n다음글\n광주글로벌게임센터 게임 전시회 공동관 참가 지원 선정 결과 공고\n콘텐츠 만족도 조사\n콘텐츠 만족도 조사\n이 페이지에서 제공하는 정보에 대하여 만족하십니까?\n평균\n4.00\n점\n205\n명 참여\n매우만족\n만족\n보통\n불만족\n매우불만족\n0\n/100\n퀵 전체열기\n추진사업\n주요사업안내\n시설대관\n장비대여\n교육신청\n기업정보\n전문가등록",
+  "deadline": "2026-07-13 ~ 2026-07-24",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-13",
+    "end": "2026-07-24",
+    "display": "2026-07-13 ~ 2026-07-24",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「2026년 광주 가상융합산업혁신센터 운영」가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=32085&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "주요알림 0 건 주요알림 알림건수 : 총 0 건 닫기 오늘하루열지않기 알림마당 알림마당 사업공고 글자 크게 글자 작게 공유하기 페이스북 트위터 밴드 카카오스토리 URL복사 닫기 인쇄 「2026년 광주 가상융합산업혁신센터 운영」가상융합 콘텐츠 ACE Fair 공동관 참가 기업 모집 공고 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-13 ~ 2026-07-24"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

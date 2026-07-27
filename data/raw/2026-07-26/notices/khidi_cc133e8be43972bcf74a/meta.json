@@ -1,0 +1,112 @@
+{
+  "saved_at": "2026-07-26 19:32:41",
+  "notice_id": "khidi_cc133e8be43972bcf74a",
+  "title": "[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고",
+  "link": "https://www.khidi.or.kr/board/view?pageNum=2&rowCnt=10&no1=172&linkId=48875752&menuId=MENU02096&maxIndex=00488954269998&minIndex=00488290539998&schType=0&schText=&schStartDate=&schEndDate=&boardStyle=&categoryId=&continent=&country=",
+  "source": "한국보건산업진흥원(KHIDI)",
+  "author": "",
+  "description": "공유\n페이스북\n트위터\n카카오스토리\n블로그\n프린트\n지원사업\n[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고\n[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고 : 작성자,  작성일, 조회수,  정보 제공\n작성자\n관리자\n작성일\n2022-07-04\n조회수\n1,685\n중소벤처기업부 공고 제2022 - 419호\n「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고\n글로벌 경쟁력을 보유한 유망 창업기업의 해외 투자유치를 지원하는 2022년도 글로벌 투자유치 프로그램에 참여할 창업기업 모집을 다음과 같이 공고합니다.\n2022년 07월 01일\n중소벤처기업부 장관\n신청방법 및 대상\n신청기간\n2022.07.01(금) 00:00~2022.07.25(월) 15:00 까지\n신청방법\n온라인 접수 : 접수 바로가기\n신청대상\n국내·외에서 기 투자유치 또는 10억원 이상의 매출실적을 보유한 업력 7년 이내 창업기업\n* 상세 신청자격은 공고문 참조\n신청 시 요청하는 정보(개인정보포함)는 창업진흥원에서 관리되오니 이점 반드시 유의하여 주시기 바랍니다.\n지원내용\n선정규모 : 30개사 내외\n사업기간 : 2022년 8월 ~ 2022년 12월(예정)\n지원내용 : 글로벌 투자유치 프로그램, 여비 및 지급수수료 5백만원 지원 등\n문의처\n고객센터 : 국번없이 1357\nK-Startup 온라인 상담(Quick Menu-상담하기)\n사업문의 : 창업진흥원 글로벌창업실\n02-2039-1608, 1629, 1634 /\ndream2@kised.or.kr\n* 출처 : K-Startup 홈페이지 (\n바로가기\n)\n이전글\n[가톨릭대 서울성모병원] 바이오 Core Facility 구축사업 입주기업 모집 공고\n다음글\n[서울바이오허브] 서울-바젤 스타트업 허브 엑셀러레이션 프로그램\n목록",
+  "deadline": "2022-07-01 ~ 2022-07-25",
+  "posted_date": "2022-07-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2022-07-01",
+    "end": "2022-07-25",
+    "display": "2022-07-01 ~ 2022-07-25",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.khidi.or.kr/board/view?pageNum=2&rowCnt=10&no1=172&linkId=48875752&menuId=MENU02096&maxIndex=00488954269998&minIndex=00488290539998&schType=0&schTex"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공유 페이스북 트위터 카카오스토리 블로그 프린트 지원사업 [K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고 [K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고 : 작성자, 작성일, 조회수, 정보 제공 작성자 관리자 작성일 202"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2022-07-01 ~ 2022-07-25"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "[K-Startup] 「2022년 글로벌 투자유치 프로그램」 창업기업 모집 공고 : 작성자, 작성일, 조회수, 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2022-07-04",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1,685",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

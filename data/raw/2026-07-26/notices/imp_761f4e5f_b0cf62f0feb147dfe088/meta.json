@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:06",
+  "notice_id": "imp_761f4e5f_b0cf62f0feb147dfe088",
+  "title": "광주 사회적경제기업들을 위한 <광주 SE 최신 정보방> 오픈채팅방 OPEN!",
+  "link": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2592&&sca=%EC%84%BC%ED%84%B0",
+  "source": "광주사회적경제지원센터",
+  "author": "",
+  "description": "페이지 정보\n작성일\n2024.05.24\n조회수\n3,713회\n접수기간\n~\n부서\n경영전략팀\n문의처\n062-531-6667\n관련링크\n본문\n광주사회적경제지원센터에서 광주 사회적경제기업을 위한\n오픈채팅방\n을 만들었습니다!\n#사회적경제지원사업 #교육 #행사 #창업정보 #공모&입찰\n등\n사회적경제기업을 위한 다양한 정보가 기다리고 있습니다.\n오픈채팅방에 참여하여\n다양한 정보들을 빠르고 편하게 만나보세요!\n오픈채팅방 참여코드 : gjse\n오픈채팅 바로가기\n첨부파일\n이전글\n<2024년 청소년 사회적경제 아이디어 발표대회> 아이디어 공모\n다음글\n2024 광주사회적경제기업 ESG경영 지원사업(인증취득) 선정 결과 공고",
+  "deadline": "",
+  "posted_date": "2024-05-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "광주 사회적경제기업들을 위한 <광주 SE 최신 정보방> 오픈채팅방 OPEN!"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjsec.kr/bbs/board.php?bo_table=noti&wr_id=2592&&sca=%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성일 2024.05.24 조회수 3,713회 접수기간 ~ 부서 경영전략팀 문의처 062-531-6667 관련링크 본문 광주사회적경제지원센터에서 광주 사회적경제기업을 위한 오픈채팅방 을 만들었습니다! #사회적경제지원사업 #교육 #행사 #창업정보 #공모&입찰 등 사회적경제기업"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

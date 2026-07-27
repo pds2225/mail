@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:09",
+  "notice_id": "imp_3d9bf912_6b23fef6cbce6bba97a0",
+  "title": "2026년 EMS 해외물류비 지원사업 모집공고(상시, 선착순 모집)",
+  "link": "https://www.sjepa.or.kr/news-announcement/view/id/1253",
+  "source": "세종일자리경제진흥원",
+  "author": "",
+  "description": "2026년 EMS 해외물류비 지원사업 모집공고(상시, 선착순 모집)\n경제육성팀\n2026.07.13.\n232\n첨부파일\nEMS_해외물류비_지원사업_공고문.pdf\n200.0 KB\n(서식1)_사업신청서_및_계획서.hwp\n96.5 KB\n(서식2)_붙임_서식.hwp\n54.5 KB\n전체 다운로드\n이전글\n2026년 사회적경제기업 성장 도약 지원사업 모집 심사 결과 및 최종 선정기업 공고\n다음글\n2026년 세종시 청년 근로자 교통비 지원사업 모집 공고(상시, 선착순 모집)\n목록",
+  "deadline": "2026-07-13",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 EMS 해외물류비 지원사업 모집공고(상시, 선착순 모집)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sjepa.or.kr/news-announcement/view/id/1253"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 EMS 해외물류비 지원사업 모집공고(상시, 선착순 모집) 경제육성팀 2026.07.13. 232 첨부파일 EMS_해외물류비_지원사업_공고문.pdf 200.0 KB (서식1)_사업신청서_및_계획서.hwp 96.5 KB (서식2)_붙임_서식.hwp 54.5 KB 전체 다운로드 이"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-13"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

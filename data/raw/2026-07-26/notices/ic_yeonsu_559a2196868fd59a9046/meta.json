@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:37",
+  "notice_id": "ic_yeonsu_559a2196868fd59a9046",
+  "title": "장마, 태풍 이후 풍수해 감염병 주의!",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118924&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n장마, 태풍 이후 풍수해 감염병 주의!\n작성자\n감염병관리과\n작성일\n2026년 7월 21일\n조회수\n52\n담당부서\n감염병관리과\n전화번호\n032-749-8147\n첨부파일\n포스터(장마,_태풍_이후_풍수해_감염병_주의).png (\n1.26MB)\n장마\n,\n태풍 이후 풍수해 감염병 주의\n!\n수인성\n·\n식품매개 감염병\n- (\n원인\n)\n오염된 물\n·\n음식 섭취\n- (\n예방수칙\n)\n올바른 손씻기\n,\n음식 익혀 먹기\n모기 매개 감염병\n- (\n원인\n)\n모기 매개체 활동 증가\n- (\n예방수칙\n)\n기피제 사용하기\n,\n긴 옷 착용하기\n접촉성 피부염\n,\n렙토스피라증\n- (\n원인\n)\n수해복구 작업 시 피부 노출\n- (\n예방수칙\n)\n장화\n,\n고무장갑 착용 등 상처 부위 보호하기\n*\n렙토스피라증\n:\n병원성 렙토스피라균에 감염된 동물\n(\n쥐\n/\n소\n·\n돼지\n,\n개 등의\n가축\n)\n의 소변 등의 노출을 통해 감염되어 발생하는 감염병\n안과 감염병\n- (\n원인\n)\n오염된 물\n·\n손을 통한 눈 접촉\n-\n(\n예방수칙\n)\n비누로\n30\n초 이상 손씻기\n,\n손으로 눈 만지지 않기\n목록\n이전글\n「연수구, 사랑하게 될거야 홍보영상 공모전」 개최\n다음글\n[송도국제도서관]<(청소년을 위한) 내 삶의 방패가 되는 철학> 프로그램\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "장마, 태풍 이후 풍수해 감염병 주의!"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118924&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 장마, 태풍 이후 풍수해 감염병 주의! 작성자 감염병관리과 작성일 2026년 7월 21일 조회수 52 담당부서 감염병관리과 전화번호 032-749-8147 첨부파일 포스터(장마,_태풍_이후_풍수해_감"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

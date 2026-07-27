@@ -1,0 +1,146 @@
+{
+  "saved_at": "2026-07-26 19:32:37",
+  "notice_id": "ksure_1d3cfbe35b1a86e944ad",
+  "title": "2026년 산림조합중앙회 수출보험 지원사업 안내",
+  "link": "https://www.ksure.or.kr/rh-kr/bbs/i-412/detail.do?ntt_sn=625092",
+  "source": "한국무역보험공사(K-SURE)",
+  "author": "",
+  "description": "공지사항\n프린트\npdf 다운로드\n이미지 다운로드\n링크복사\n공유하기 열기\n페이스북 공유하기\nX 공유하기\n카카오스토리 공유하기\n홈\n소식\n공지사항\n공지사항\n2026년 산림조합중앙회 수출보험 지원사업 안내\n등록일 :\n2026.06.10\n조회수 :\n209\n2026년 산림조합중앙회 지원사업에 따라 2026년 수출보험 지원사업을 다음과 같이 실시하오니, 지원이 필요한 기업은 다음 내용을 참고하시어 지원 신청하시기 바랍니다.\n■ 지원기간 : 2026. 1. 1. ~ 2026. 12. 31.\n■ 지원대상 :\n○ 단기소득임산물, 목재류, 석재류 등 수출 임산물 대상\n○ 전년도 및 당해연도 수출실적이 있거나 수출계획이 있는 임산물 수출업체\n■ 지원내용\n○ 지원종목 : 환변동보험료 및 단기수출보험료\n지원항목\n환변동보험료\n단기수출보험료\n지원대상\n- 일반형, 범위제한 선물환, 옵션형환변동(부분보장, 완전보장)보험 가입비\n- 선적후 임산물패키지, 중소기업플러스 단체보험가입비\n지원비율\n- 가입 보험료의 95%\n- 가입 보험료의 90%\n지원한도\n- 업체당 10백만원 한도\n※ 한국무역보험공사 보험상품 특성에 따라 지원내용 변경 가능\n※ 지원비율 및 지원한도는 예산부족 등의 경우 지원기간 중이라도 조정될 수 있음\n■ 지원신청 및 제출서류\n○ 신청기간 :  2026. 6 ~ 2026. 12.31 (사업비 소진 시까지)\n○ 신청방법 : 산림조합중앙회 유통지원부로 신청(우편 및 방문)\n○ 문 의 처 : 산림조합중앙회 유통지원부(☎ 02-3434-7330)\n첨부파일\n2026년_수출_보험_지원_모집_공고.hwp\n2026년_수출_보험_지원_추진계획.hwp\n이전글\n2026년 경산시 단체보험 가입희망 중소기업 모집\n2026.06.09\n다음글\n(강원권) '26년 7월, 해외 기술규제 및 인증제도 설명회 안내\n2026.06.19\n목록\n무역보험 용어집\n찾고자 하시는  용어를 입력 하신 후 검색버튼을 누르세요.\n검색\n초기화\n전체\n905\n건, 현재페이지 :\n1\n/\n11\n무역보험 용어집 다운로드\n닫기\n현재 페이지의 내용과 사용 편의성에 대해 만족하십니까?\n담당부서 :\n고객가치부\n고객센터 :\n1588-3884\n매우 만족\n만족\n보통\n불만족\n매우 불만족\n만족도 평가\n본인확인\n의견등록\n답변을 받을 수 없는 의견함 입니다. 답변을 원하시는 질문은 [고객참여 > Q&A]를 이용해 주시기 바랍니다.",
+  "deadline": "2026-12-31",
+  "posted_date": "2026-06-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-12-31",
+    "end": "2026-12-31",
+    "display": "2026-12-31",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 산림조합중앙회 수출보험 지원사업 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ksure.or.kr/rh-kr/bbs/i-412/detail.do?ntt_sn=625092"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 프린트 pdf 다운로드 이미지 다운로드 링크복사 공유하기 열기 페이스북 공유하기 X 공유하기 카카오스토리 공유하기 홈 소식 공지사항 공지사항 2026년 산림조합중앙회 수출보험 지원사업 안내 등록일 : 2026.06.10 조회수 : 209 2026년 산림조합중앙회 지원사업에 따라"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-12-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원항목",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "환변동보험료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "단기수출보험료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "지원대상",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 일반형, 범위제한 선물환, 옵션형환변동(부분보장, 완전보장)보험 가입비",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 선적후 임산물패키지, 중소기업플러스 단체보험가입비",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "지원비율",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 가입 보험료의 95%",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 가입 보험료의 90%",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "지원한도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 업체당 10백만원 한도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

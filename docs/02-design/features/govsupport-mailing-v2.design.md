@@ -38,11 +38,11 @@ scripts/run_site_diagnostic.py (신규 진입점)
 
 | Module | File | LOC | 역할 | Session |
 |--------|------|-----|------|---------|
-| module-1 | `scoring.py` | ~150 | 점수 계산 + LLM 2차 판정 + 임계값 | S1 |
+| module-1 | `mail_core/matching/scoring.py` | ~150 | 점수 계산 + LLM 2차 판정 + 임계값 | S1 |
 | module-2 | `site_diagnostic.py` | ~120 | 사이트별 수집 진단 + Markdown 리포트 | S1 |
 | module-3 | `ui_admin.py` | ~180 | streamlit 그룹/수신자/필터 편집 페이지 | S2 |
 | module-4 | `scripts/run_site_diagnostic.py` | ~30 | 진단 진입점 | S1 |
-| module-5 | `groups.json` 스키마 확장 | ~10 | `score_threshold`, `weights` 필드 추가 | S1 |
+| module-5 | `config/groups.json` 스키마 확장 | ~10 | `score_threshold`, `weights` 필드 추가 | S1 |
 | module-6 | `monitor.py` 통합 (hook 호출 1줄) | ~5 | 후처리 hook 호출만 추가 | S3 (분리) |
 | module-7 | `streamlit_app.py` 통합 (sidebar 메뉴 1줄) | ~3 | ui_admin 페이지 등록 | S3 (분리) |
 
@@ -51,7 +51,7 @@ scripts/run_site_diagnostic.py (신규 진입점)
 - **S2 (별도)**: module-3 — UI 편집 페이지
 - **S3 (별도)**: module-6, 7 — 기존 파일 통합 (회귀 위험 분리)
 
-## 4. Data Schema (groups.json 확장)
+## 4. Data Schema (config/groups.json 확장)
 
 기존 필드 유지하면서 신규 옵션 필드 추가 (하위 호환).
 
@@ -78,7 +78,7 @@ scripts/run_site_diagnostic.py (신규 진입점)
 
 ## 5. Function Signatures
 
-### scoring.py
+### mail_core/matching/scoring.py
 ```python
 def compute_score(item: dict, group: dict) -> dict:
     """Returns {'score': int, 'breakdown': dict, 'reasons': list[str]}"""
@@ -99,7 +99,7 @@ def diagnose_site(site: dict, timeout: int = 15) -> dict:
                 'error_type': str|None, 'elapsed_ms': int}"""
 
 def diagnose_all(sites: list[dict]) -> str:
-    """Returns markdown report path. Writes to reports/site_diagnostic_YYYYMMDD.md"""
+    """Returns markdown report path. Writes to var/reports/site_diagnostic_YYYYMMDD.md"""
 ```
 
 ### ui_admin.py
@@ -119,7 +119,7 @@ def render():
    │     ├─ recipients (추가/삭제, 이메일 마스킹 미리보기)
    │     ├─ keywords (or/exclude/priority, 줄바꿈 입력)
    │     ├─ score_threshold (slider 0~100)
-   │     └─ [저장] → groups.backup.{ts}.json 자동 백업 후 groups.json 갱신
+   │     └─ [저장] → groups.backup.{ts}.json 자동 백업 후 config/groups.json 갱신
    └─ [새 그룹 추가] → 빈 그룹 생성
 ```
 
@@ -138,7 +138,7 @@ def render():
 | Risk | Mitigation |
 |------|-----------|
 | LLM 비용 | `llm_check_threshold_band`로 회색지대만 호출, 일일 상한 추가 |
-| groups.json 손상 | 저장 시 자동 백업 (`groups.backup.{ts}.json`) |
+| config/groups.json 손상 | 저장 시 자동 백업 (`groups.backup.{ts}.json`) |
 | monitor.py 회귀 | hook 호출 1줄만 추가, score_threshold 미존재 시 기존 동작 유지 |
 | 사이트 진단 장시간 | 사이트별 timeout 15초, 병렬 호출은 v2 이후 |
 | 오발송 | `confirm_send="SEND"` 가드 유지, 테스트 단계 recipients = test-recipient@example.test |
@@ -146,10 +146,10 @@ def render():
 ## 9. Implementation Order
 
 S1 (이번 세션):
-1. scoring.py 생성 (compute_score → llm_relevance_check → score_and_filter)
+1. mail_core/matching/scoring.py 생성 (compute_score → llm_relevance_check → score_and_filter)
 2. site_diagnostic.py 생성
 3. scripts/run_site_diagnostic.py 생성
-4. groups.json 스키마 확장 (`score_threshold`, `weights` 추가, 백업 후)
+4. config/groups.json 스키마 확장 (`score_threshold`, `weights` 추가, 백업 후)
 5. tests/test_scoring.py 단위 테스트
 
 S2 (별도): ui_admin.py

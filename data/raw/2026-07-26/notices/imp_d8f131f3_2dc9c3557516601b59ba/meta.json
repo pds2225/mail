@@ -1,0 +1,133 @@
+{
+  "saved_at": "2026-07-26 19:38:01",
+  "notice_id": "imp_d8f131f3_2dc9c3557516601b59ba",
+  "title": "2026년 전통시장 및 상점가 체험형 관광 프로그램 운영 지원사업 공고",
+  "link": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0132&menuKey=TOfnnvp207",
+  "source": "대전일자리경제진흥원",
+  "author": "",
+  "description": "사업공고\n사업공고\n홈\n지원사업 안내\n사업공고\n사업공고\n공유하기\n페이스북\nX\n블로그\n카카오톡\n링크복사\n닫기\n인쇄\n공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수\n공고명\n2026년 전통시장 및 상점가 체험형 관광 프로그램 운영 지원사업 공고\n접수기간\n2026-07-22 ~ 2026-08-04\n공고담당자\n소상공정책팀 | 조현주\n연락처\n조회수\n189\n기타사항\n□\n(\n신청기간\n)\n2026. 7. 22.(\n수\n) ~ 2026. 8. 4.(\n화\n) 18:00\n□\n신청\n(\n접수\n)\n방법\n:\n이메일 제출\n/ jumay3@djbea.or.kr\n□\n사업 참여 신청서류\n①\n전통시장 및 상점가 체험형 관광 프로그램 지원사업 신청서\n②\n지원사업 사업계획서\n③\n전통시장 및 상점가 체험형 관광프로그램 지원사업 자가진단 체크리스트\n④\n개인정보 수집\n·\n이용 제공 동의서\n(\n상인회장\n,\n실무자 각\n1\n부\n)\n⑤\n전통시장 및 상점가 입증서류\n1\n부\n(\n시장인증서\n,\n지정서\n,\n확인서 등\n)\n⑥\n신청서 내 상인회 관련 증빙자료 각\n1\n부\n※\n상인회 등록증\n,\n고유번호증\n,\n상인회가입명부\n,\n화재가입\n,\n카드 및 온누리가맹 등\n⑦\n발표평가 자료\n※\n발표평가 자료는\n1\n차 평가 후 제출\n/\nPPT\n자유양식\n,\n발표\n20\n분\n,\n질의응답\n10\n분\n(\n상황에 따라 변동 가능\n)\n첨부파일\n(공고문)26년 전통시장 및 상점가 체험형 관광프로그램 지원사업 모집.hwp\n(83,968 byte)\n(서식)전통시장 및 상점가 체험형 관광프로그램 지원사업 신청.hwp\n(172,544 byte)\n목록",
+  "deadline": "2026-07-22 ~ 2026-08-04",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 전통시장 및 상점가 체험형 관광 프로그램 운영 지원사업 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0132&menuKey=TOfnnvp207"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 사업공고 홈 지원사업 안내 사업공고 사업공고 공유하기 페이스북 X 블로그 카카오톡 링크복사 닫기 인쇄 공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수 공고명 2026년 전통시장 및 상점가 체험형 관광 프로그램 운영 지원사업 공고 접수기간 2026-07-22 ~ 20"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-22 ~ 2026-08-04"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "공고명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 전통시장 및 상점가 체험형 관광 프로그램 운영 지원사업 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-22 ~ 2026-08-04",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "소상공정책팀 | 조현주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "189",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

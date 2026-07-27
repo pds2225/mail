@@ -1,0 +1,169 @@
+{
+  "saved_at": "2026-07-26 19:37:23",
+  "notice_id": "imp_c7fa8056_d9639a28dc867b839943",
+  "title": "폐기물 관리법 위반에 따른 의류수거함 자진철거 계고 공고",
+  "link": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75043&pageIndex=2&searchCnd=40900000000&cate_cd=1",
+  "source": "김포시청",
+  "author": "",
+  "description": "고시공고 게시물 내용\n고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표\n고시공고구분\n공고(일반공고)\n조회수\n51\n고시공고번호\n김포시 공고 제2026-2040호\n등록일\n2026-07-23\n담당부서\n자원순환과\n제목\n폐기물 관리법 위반에 따른 의류수거함 자진철거 계고 공고\n1. 제    목: 폐기물관리법 위반에 따른 의류수거함 자진철거 계고 공고\n2. 근거법규\n가. 폐기물관리법 제8조 제1항, 제48조, 제49조\n나. 행정절차법 제14조제4항\n3. 처분대상: 붙임 참조 (총 10개)\n4. 공고기간: 2026. 7. 23. ~ 8. 3.\n5. 공고내용\n- 폐기물관리법 제8조 제1항을 위반한 자에 대하여, 송달받을 자의 주소나 거소를 확인할 수 없어 송달이 불가능하므로 행정절차법 제14조 제4항의 규정에 의거 다음과 같이 공시송달(공고)합니다.\n6. 문 의 처: 김포시청 자원순환과 자원재활용팀 ☎(031)980-2777. 끝.\n첨부파일\npdf 문서\n[붙임] 공고문.pdf\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "폐기물 관리법 위반에 따른 의류수거함 자진철거 계고 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/ntfcPblancView.do?key=1004&not_ancmt_mgt_no=75043&pageIndex=2&searchCnd=40900000000&cate_cd=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표 고시공고구분 공고(일반공고) 조회수 51 고시공고번호 김포시 공고 제2026-2040호 등록일 2026-07-23 담당부서 자원순환과 제목 폐기물 관리법 위반에 따른 의류수거함 자진철거"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "고시공고 게시물 내용 고시공고구분,고시공고번호,등록일, 담당부서, 제목, 내용, 첨부파일을 나타낸 표",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고구분",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고(일반공고)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "51",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김포시 공고 제2026-2040호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "자원순환과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "폐기물 관리법 위반에 따른 의류수거함 자진철거 계고 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "1. 제 목: 폐기물관리법 위반에 따른 의류수거함 자진철거 계고 공고 2. 근거법규 가. 폐기물관리법 제8조 제1항, 제48조, 제49조 나. 행정절차법 제14조제4항 3. 처분대상: 붙임 참조 (총 10개) 4. 공고기간: 2026. 7. 23. ~ 8. 3. 5. 공고내용 - 폐기물관리법 제8조 제1항을 위반한 자에 대하여, 송달받을 자의 주소나 거소를 확인할 수 없어 송달이 불가능하므로 행정절차법 제14조 제4항의 규정에 의거 다음과 같이 공시송달(공고)합니다. 6. 문 의 처: 김포시청 자원순환과 자원재활용팀 ☎(031)980-2777. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "pdf 문서 [붙임] 공고문.pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

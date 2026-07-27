@@ -39,7 +39,7 @@ export default function RecipientsPage() {
       <header className="page-header">
         <h1 className="page-title">수신자 검증 · PR 패킷</h1>
         <p className="page-desc">
-          이메일은 <code>groups.json</code> / <code>settings.json</code>에 PR로만 반영합니다. 임의
+          이메일은 <code>config/groups.json</code> / <code>config/settings.json</code>에 PR로만 반영합니다. 임의
           주소를 코드에 추가하지 않습니다.
         </p>
       </header>

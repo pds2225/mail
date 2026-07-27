@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:42",
+  "notice_id": "ic_yeonsu_1207edf5ff0ef2189f0b",
+  "title": "조례 제정에 따른 숙박업 신고기준 한시적 완화 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118834&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n조례 제정에 따른 숙박업 신고기준 한시적 완화 안내\n작성자\n송도생활지원과\n작성일\n2026년 7월 14일\n조회수\n48\n담당부서\n송도생활지원과\n전화번호\n032-749-8448\n첨부파일\n★인천광역시_공중위생영업의_시설_및_설비에_관한_조례_.hwpx (\n0.04MB)\n미리보기\n1.\n관련 근거\n가\n.\n「\n공중위생관리법\n」\n제\n3\n조 및 같은 법 시행규칙 제\n2\n조\n나\n.\n국토교통부\n「\n생활숙박시설 합법사용 지원방안\n」\n및\n「\n지자체별 생숙 지원센터 운영 및 생숙 유형별 지원방안 가이드라인\n」\n(2024.10.16)\n2.\n「\n인천광역시 공중위생영업의 시설 및 설비에 관한 조례\n」\n가\n2025\n년\n11\n월\n12\n일에 공포\n되어\n조례 시행일로부터\n1\n년간 한시적으로 건물의 일부를 대상으로 하는\n숙박업 객실 수 기준이\n20\n개 이상으로 완화됨을 안내드립니다.\n□\n인천광역시 공중위생영업의 시설 및 설비에 관한 조례\n(‘25.11.12\n시행\n)\n○\n주요내용 :\n생활숙박시설용 건축물에서 건물의 일부를 대상으로 하는 숙박업 영업을 하고자 하는 경우\n객실 수 기준을\n20\n개 이상\n으로\n조례 시행일로부터\n1\n년간('26.11.11 종료) 한시적 완화\n(\n제\n3\n조\n,\n부칙 제\n2\n조\n)\n목록\n이전글\n2026년 하반기 마을기업 공모계획 공고\n다음글\n해양레저스포츠 교육프로그램 운영(연수카누학교) 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "조례 제정에 따른 숙박업 신고기준 한시적 완화 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118834&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 조례 제정에 따른 숙박업 신고기준 한시적 완화 안내 작성자 송도생활지원과 작성일 2026년 7월 14일 조회수 48 담당부서 송도생활지원과 전화번호 032-749-8448 첨부파일 ★인천광역시_공중위"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

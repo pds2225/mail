@@ -12,9 +12,9 @@ export function jsonPatchSnippet(existing: SiteRecord[], addition: SiteRecord): 
 
 export function unifiedDiffLines(existing: SiteRecord[], addition: SiteRecord): string[] {
   const lines = [
-    "--- a/sites.json",
-    "+++ b/sites.json",
-    `@@ sites.json에 1건 추가 @@`,
+    "--- a/config/sites.json",
+    "+++ b/config/sites.json",
+    `@@ config/sites.json에 1건 추가 @@`,
     `+  ${JSON.stringify(addition, null, 2).split("\n").join("\n+  ")}`,
   ];
   return lines;

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:54",
+  "notice_id": "imp_1a8d8b8d_6b5f811d3c5aeea0a176",
+  "title": "포항융합기술산업지구 개발계획(13차) 및 실시계획(9차) 변경 승인 고시",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8463&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n포항융합기술산업지구 개발계획(13차) 및 실시계획(9차) 변경 승인 고시\n2026-01-07 15:33:44\n작성자\n김건우\n조회\n801\n분류\n파일\n대구경북경제자유구역청고시 제2025-13호 대구경북경제자유구역 포항융합기술산업지구 개발계획 변경(13차) 승인 고시.pdf\n바로보기\n대구경북경제자유구역청고시 제2025-14호 대구경북경제자유구역 포항융합기술산업지구 실시계획 변경(9차) 승인 및 지형도면 고시.pdf\n바로보기\n대구경북경제자유구역청 고시 제2025-13호(2025.12.11) 및 제2025-14호(2025.12.11)로 변경 승인 고시된 대구경북경제자유구역 포항융합기술산업지구 개발계획(13차) 및 실시계획(9차)에 대하여「경제자유구역의 지정 및 운영에 관한 특별법 」제7조, 제9조, 제10조 및「토지이용규제기본법 」제8조 규정에 의거 다음과 같이 고시합니다.\n목록\nprev\n영천하이테크파크지구 개발계획 변경을 위한 주민의견청취 공람·공고\nnext\n경산지식산업지구 개발계획(23차) 및 실시계획(27차) 변경 승인 고시\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "",
+  "posted_date": "2026-01-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "포항융합기술산업지구 개발계획(13차) 및 실시계획(9차) 변경 승인 고시"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8463&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 포항융합기술산업지구 개발계획(13차) 및 실시계획(9차) 변경 승인 고시 2026-01-07 15:33:44 작성자 김건우 조회 801 분류 파일 대구경북경제자유구역청고시 제2025-13호 대구경북경제자유구역 포항융합기술산업지구 개발계획 변경(13차) 승인 고시.pdf 바로보기 대"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

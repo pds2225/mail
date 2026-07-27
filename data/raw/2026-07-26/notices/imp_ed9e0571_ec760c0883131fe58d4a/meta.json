@@ -1,0 +1,184 @@
+{
+  "saved_at": "2026-07-26 19:37:08",
+  "notice_id": "imp_ed9e0571_ec760c0883131fe58d4a",
+  "title": "(시흥시)「산업단지 주차환경 개선사업」참여기업 모집 변경 공고",
+  "link": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4185&cpage=2&rows=10&condition=&keyword=&show=&cat=",
+  "source": "기업 SOS",
+  "author": "",
+  "description": "제목\n(시흥시)「산업단지 주차환경 개선사업」참여기업 모집 변경 공고\n공개여부\n공개\n작성자\n방소현\n등록일\n2026-06-16\n시흥시「산업단지 주차환경 개선사업」참여기업 모집 변경 공고\n산업단지 내 주차난 해소와 근로환경 개선을 위해 공장 부지 내 주차환경개선 지원 비용 일부를 지원하는 「산업단지 주차환경 개선사업」참여업체을 아래와 같이 변경 공고하오니 관심있는 기업은 신청하여 주시기 바랍니다.\n1. 사업개요\n□ 사 업 명 : 2026년 산업단지 주차환경 개선사업\n□ 사업기간 : 2026년 6월 ~ 12월\n□ 지원대상 : 산업단지 내 주차환경 개선 희망 사업장\n※ 사업신청 금액에 따라 선정사업장 수 결정\n□ 접수기간 : 2026년 6월 16일(화) ~ 7월 10일(금)\n□ 사 업 비 : 56,000천원(시비 100%)\n□ 선정기준 : 심사기준표(붙임 참고)에 따라 심사 및 현장실사(1차), 보조금 심의(2차) 후 결정\n□ 문 의 처 : 시흥시청 기업지원과 기업지원팀 (☏ 031-310-6093)\n파일\n전체 다운로드\n[붙임 1] 산업단지 주차환경 개선사업 참여기업 모집 변경 공고문.hwpx\n[붙임 2] 산업단지 주차환경 개선사업 지원사업 신청서.hwpx\n[붙임 3] 심사기준표.hwpx",
+  "deadline": "2026-06-16 ~ 2026-07-10",
+  "posted_date": "2026-06-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-16",
+    "end": "2026-07-10",
+    "display": "2026-06-16 ~ 2026-07-10",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(시흥시)「산업단지 주차환경 개선사업」참여기업 모집 변경 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4185&cpage=2&rows=10&condition=&keyword=&show=&cat="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 (시흥시)「산업단지 주차환경 개선사업」참여기업 모집 변경 공고 공개여부 공개 작성자 방소현 등록일 2026-06-16 시흥시「산업단지 주차환경 개선사업」참여기업 모집 변경 공고 산업단지 내 주차난 해소와 근로환경 개선을 위해 공장 부지 내 주차환경개선 지원 비용 일부를 지원하는 「"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-16 ~ 2026-07-10"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(시흥시)「산업단지 주차환경 개선사업」참여기업 모집 변경 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공개여부",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공개",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "방소현",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "시흥시「산업단지 주차환경 개선사업」참여기업 모집 변경 공고 산업단지 내 주차난 해소와 근로환경 개선을 위해 공장 부지 내 주차환경개선 지원 비용 일부를 지원하는 「산업단지 주차환경 개선사업」참여업체을 아래와 같이 변경 공고하오니 관심있는 기업은 신청하여 주시기 바랍니다. 1. 사업개요 □ 사 업 명 : 2026년 산업단지 주차환경 개선사업 □ 사업기간 : 2026년 6월 ~ 12월 □ 지원대상 : 산업단지 내 주차환경 개선 희망 사업장 ※ 사업신청 금액에 따라 선정사업장 수 결정 □ 접수기간 : 2026년 6월 16일(화) ~ 7월 10일(금) □ 사 업 비 : 56,000천원(시비 100%) □ 선정기준 : 심사기준표(붙임 참고)에 따라 심사 및 현장실사(1차), 보조금 심의(2차) 후 결정 □ 문 의 처 : 시흥시청 기업지원과 기업지원팀 (☏ 031-310-6093)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전체 다운로드 [붙임 1] 산업단지 주차환경 개선사업 참여기업 모집 변경 공고문.hwpx [붙임 2] 산업단지 주차환경 개선사업 지원사업 신청서.hwpx [붙임 3] 심사기준표.hwpx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "이전,다음 게시물 목록을 볼 수 있습니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(김포시)김포시 중소기업 대상 AI 활용전략 포럼",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(광명시) 광명시 기업전략설명회 개최 (6.16.)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

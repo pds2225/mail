@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:51",
+  "notice_id": "ic_bupyeong_330581ddf36186194d16",
+  "title": "주차요금 미납 차량 공시송달 공고",
+  "link": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50289",
+  "source": "인천 부평구청",
+  "author": "",
+  "description": "고시/공고/입법예고\n인쇄하기\n부평\n소통과 참여\n부평알림\n고시/공고/입법예고\n블로그\n페이스북\n카카오톡\n트위터\n주차요금 미납 차량 공시송달 공고\n고시공고번호\n인천광역시 부평구 공고 제2026-1462호\n공고구분\n공고(일반공고)\n담당부서\n주차관리과\n담당자\n김미혜\n연락처\n032-509-6722\n등록일\n2026-07-24\n첨부파일\n2026년 6월 등기발송(2026년 5월 미납 및 2026년 3월 체납).xlsx\n주차요금 미납 차량 공시송달 공고.hwpx\n1. 부평구시설관리공단 주차사업팀-7413(2026. 7. 24.)호와 관련입니다.\n2. 『인천광역시부평구 주차장 설치 및 관리조례』 제3조(주차요금 및 가산금)에 따라 주차요금 미납 및 체납자에게 등기우편 발송하였으나 수취인 부재, 수취인 미거주, 주소불명 등으로 반송된 건에 대하여『행정절차법』제14조제4항에 따라 아래와 같이 공시송달합니다.\n◈ 공고내용\n가. 기  간 : 2026. 7. 24.(금) ∼ 2026. 8. 6.(목)\n나. 대  상 : 2026년 6월 등기 발송(미납 82건, 체납 53건)\n목록\n자료관리 담당자\n담당부서 : 홍보담당관\n담당팀 : 언론미디어팀\n전화 : 032-509-3920\n만족도 평가\n결과보기\n매우만족\n만족\n보통\n불만족\n매우불만족",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "주차요금 미납 차량 공시송달 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50289"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시/공고/입법예고 인쇄하기 부평 소통과 참여 부평알림 고시/공고/입법예고 블로그 페이스북 카카오톡 트위터 주차요금 미납 차량 공시송달 공고 고시공고번호 인천광역시 부평구 공고 제2026-1462호 공고구분 공고(일반공고) 담당부서 주차관리과 담당자 김미혜 연락처 032-509-6722"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

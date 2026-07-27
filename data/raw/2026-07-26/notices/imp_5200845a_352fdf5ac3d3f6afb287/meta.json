@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:38",
+  "notice_id": "imp_5200845a_352fdf5ac3d3f6afb287",
+  "title": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=981863",
+  "source": "김포시청",
+  "author": "",
+  "description": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고\n담당부서\n기업지원과\n○ 사업대상 : ① 고환율로 인한 원재료·중간재 수입비용 증가로 애로를 겪고 있는 수출 중소·중견기업\n② 주요국（미국, 중국 등） 수출 통제로 인해 애로를 겪고 있는 수출 중소·중견기업\n○ 사업내용 : 고환율·수출통제 애로 해소 지원 특화서비스 제공（자세한 내용 공고문 참조）\n○ 접수기한 : ~ 2026. 7. 22.（화） 18:00까지\n○ 접수방법 : 수출지원기반활용시스템 신청（www.exportvoucher.com）\n○ 문 의 처 : KOTRA 수출바우처 통합콜센터（☎02-6004-8400）\n※ 세부사항은 수출지원기반활용시스템 홈페이지（www.exportvoucher.com） 및 붙임의 공고문 참고 바랍니다.\n파일\npdf 문서\n1. 공고문_2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차）.PDF\n미리보기\npng 문서\n2. 포스터_2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차）.png\n미리보기\n조회수\n215\n작성일\n2026.07.13\n목록\n이전글\n2026년 중소기업 맞춤형 역량강화 지원사업 DX전환 4차 세미나 알림\n다음글\n홈페이지 서비스 일부 중단 안내（2026.7.13.（월） 18:00 ~ 19:00）",
+  "deadline": "",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=981863"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고 담당부서 기업지원과 ○ 사업대상 : ① 고환율로 인한 원재"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차） 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기업지원과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "pdf 문서 1. 공고문_2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차）.PDF 미리보기 png 문서 2. 포스터_2026년 산업통상부 산업 글로벌 진출역량 강화（긴급지원바우처 4차）.png 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "215",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

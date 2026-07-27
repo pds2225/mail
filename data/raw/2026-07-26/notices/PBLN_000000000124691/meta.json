@@ -1,0 +1,167 @@
+{
+  "saved_at": "2026-07-26 19:32:14",
+  "notice_id": "PBLN_000000000124691",
+  "title": "[전남광주] 나주시 2026년 하반기 착한가격업소 신규 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124691",
+  "source": "기업마당(Bizinfo)",
+  "author": "전남광주통합특별시",
+  "description": "<p>나주시는 지방 물가안정에 기여하는 업소에 대하여「착한가격업소 지정 및 관리지침」및「나주시 착한가격업소 지원 및 관리에 관한 조례」에 따라 ‘2026년 착한가격업소’로 지정하고자 아래와 같이 모집하오니 많은 신청 바랍니다.</p><p><br></p><p>☞ 개인사업자, 법인으로서 서민생활과 밀접한 개인서비스요금(통계청 분류)에 해당하는 업종에 대해 시민에게 직접 소매단위로 물품ㆍ서비스 등의 판매행위를 하는 업소</p><p><br></p><p style=\"line-height: 1.8;\">☞ 업소별 필요물품 지원 등</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참조</p>\n나주시는 지방 물가안정에 기여하는 업소에 대하여「착한가격업소 지정 및 관리지침」및「나주시 착한가격업소 지원 및 관리에 관한 조례」에 따라 ‘2026년 착한가격업소’로 지정하고자 아래와 같이 모집하오니 많은 신청 바랍니다. ☞ 개인사업자, 법인으로서 서민생활과 밀접한 개인서비스요금(통계청 분류)에 해당하는 업종에 대해 시민에게 직접 소매단위로 물품ㆍ서비스 등의 판매행위를 하는 업소 ☞ 업소별 필요물품 지원 등 ※ 자세한 지원내용 공고문 참조",
+  "deadline": "2026-07-20 ~ 2026-07-31",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-20",
+    "end": "2026-07-31",
+    "display": "2026-07-20 ~ 2026-07-31",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전남광주] 나주시 2026년 하반기 착한가격업소 신규 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "전남광주통합특별시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124691"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>나주시는 지방 물가안정에 기여하는 업소에 대하여「착한가격업소 지정 및 관리지침」및「나주시 착한가격업소 지원 및 관리에 관한 조례」에 따라 ‘2026년 착한가격업소’로 지정하고자 아래와 같이 모집하오니 많은 신청 바랍니다.</p><p><br></p><p>☞ 개인사업자, 법인으로서 서"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-20 ~ 2026-07-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주통합특별시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#물가안정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#나주시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#착한가격업소",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#개인사업자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#법인",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기초자치단체",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#내수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "전남광주통합특별시"
+}

@@ -1,0 +1,119 @@
+{
+  "saved_at": "2026-07-26 19:39:17",
+  "notice_id": "imp_4456e24e_6c5b100e00317aab83ef",
+  "title": "2026년 인천광역시 소규모 사업장 방호장치 및 휴게시설 개선 지원사업 안내",
+  "link": "https://www.inef.or.kr/news/notice.php?ptype=view&idx=7709&page=1&code=notice",
+  "source": "인천경영자총협회",
+  "author": "",
+  "description": "로그인\n회원가입\n협회안내\n인사말\n연혁\n비전 & 미션\n조직도\n주요사업\n회장단\n회원사 명단\n한국경총 및 지방경총 안내\n찾아오시는 길\n경총소식\n공지사항\n협회동정\n회원사소식\n회원사 채용정보\n인스타그램\n유튜브\n인사노무정보\n경영계입장/건의\n경제경영정책리포트\n경총e매거진\n경제통계조사\n기타자료실\n기업지원사업\n지역형 플러스 일자리 사업\n뿌리기업 컨설팅 사업\n청년일자리도약장려금\n시니어 인턴십\n보험사무대행\n청년도약기지\n중대재해 종합대응센터\n교육연수사업\n인천경총CEO인재대학\n인천경총CEO포럼\n인사노무교육\n산업안전교육\n인사노무관리자협의회\n협의회 안내\n협의회 게시판\n회원현황\n커뮤니티\n회원사가입안내\n회원사가입 안내\n회원가입절차 및 회비\n회원가입신청\nClose\nNews\n경총소식\n공지사항\n게시물 상세\n2026년 인천광역시 소규모 사업장 방호장치 및 휴게시설 개선 지원사업 안내\n작성자 : 인천경영자총협회\n작성일 : 26.07.16\n조회수 : 55\n2026년 인천광역시\n소규모 사업장 방호장치 및 휴게시설 개선 지원사업\n을 아래와 같이 안내드리오니, 많은 관심과 신청 바랍니다.\n○\n사업대상\n: 인천광역시 소재 50인 미만 사업장(사업주)\n인천시에 주소지를 두고 산재보험에 가입한 상시근로자 50인 미만 사업장\n「중소기업기본법 시행령」 별표 3에 따른 소기업 규모 기준 매출액 사업장 포함\n○\n사업기간\n: 2026년 3월 ~ 10월\n○\n지원금액\n: 사업장당 최대 200만 원\n부가가세를 제외한 공급가액의 90% 지원\n○\n지원내용\n방호장치 설치 및 개선\n안전인증 보호구 구입\n휴게시설 설치 및 환경개선\n※ 지원금 범위 내에서 방호장치, 보호구, 휴게시설 개선 비용 모두 지원 가능\n○\n접수기간\n: 상시접수(예산 소진 시까지)\n○\n신청방법\n이메일:\nfktuin@fktuin.com\n팩스: 032-437-8511\n※ 팩스 접수 후 전화 확인 필수\n○\n문의처\n한국노총 인천지역본부(인천광역시 노사민정협의회 사무국)\n☎ 032-437-8510\n첨부파일\n2026 인천광역시 노사민정협의회 방호장치 및 휴게시설 개선 지원사업 모집공고.hwpx\n2차 방호장치 및 휴게시설 개선 지원사업. (1).jpg\n이전글\n고용·산재보험 가입 및 두루누리 사회보험료 지원사업 안내\n다음글\n2026년도「뿌리미(味)래 푸드트럭」참여기업 선정 공고(2차)\n리스트",
+  "deadline": "",
+  "posted_date": "2026-07-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 인천광역시 소규모 사업장 방호장치 및 휴게시설 개선 지원사업 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.inef.or.kr/news/notice.php?ptype=view&idx=7709&page=1&code=notice"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 회원가입 협회안내 인사말 연혁 비전 & 미션 조직도 주요사업 회장단 회원사 명단 한국경총 및 지방경총 안내 찾아오시는 길 경총소식 공지사항 협회동정 회원사소식 회원사 채용정보 인스타그램 유튜브 인사노무정보 경영계입장/건의 경제경영정책리포트 경총e매거진 경제통계조사 기타자료실 기업"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "게시물 상세",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "2026년 인천광역시 소규모 사업장 방호장치 및 휴게시설 개선 지원사업 안내",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "작성자 : 인천경영자총협회 작성일 : 26.07.16 조회수 : 55",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "2026년 인천광역시 소규모 사업장 방호장치 및 휴게시설 개선 지원사업 을 아래와 같이 안내드리오니, 많은 관심과 신청 바랍니다. ○ 사업대상 : 인천광역시 소재 50인 미만 사업장(사업주) 인천시에 주소지를 두고 산재보험에 가입한 상시근로자 50인 미만 사업장 「중소기업기본법 시행령」 별표 3에 따른 소기업 규모 기준 매출액 사업장 포함 ○ 사업기간 : 2026년 3월 ~ 10월 ○ 지원금액 : 사업장당 최대 200만 원 부가가세를 제외한 공급가액의 90% 지원 ○ 지원내용 방호장치 설치 및 개선 안전인증 보호구 구입 휴게시설 설치 및 환경개선 ※ 지원금 범위 내에서 방호장치, 보호구, 휴게시설 개선 비용 모두 지원 가능 ○ 접수기간 : 상시접수(예산 소진 시까지) ○ 신청방법 이메일: fktuin@fktuin.com 팩스: 032-437-8511 ※ 팩스 접수 후 전화 확인 필수 ○ 문의처 한국노총 인천지역본부(인천광역시 노사민정협의회 사무국) ☎ 032-437-8510 첨부파일",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "고용·산재보험 가입 및 두루누리 사회보험료 지원사업 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년도「뿌리미(味)래 푸드트럭」참여기업 선정 공고(2차)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "saved_at": "2026-07-26 19:38:12",
+  "notice_id": "imp_43aebb10_b13aad0dae1ef52c248b",
+  "title": "[2026-059호] 2026 세종국제만화영상전(SICACO) 모집 공고",
+  "link": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1985",
+  "source": "세종테크노파크",
+  "author": "",
+  "description": "페이지 정보\n작성자\n세종테크노파크\n댓글\n0건\n조회\n205회\n작성일\n26-07-16 09:19\n사업분야\n세종웹툰캠퍼스 조성 및 운영사업\n접수기간\n2026-07-16 ~ 2026-09-06\n주관기관명\n세종테크노파크\n시행기관명\n세종테크노파크\n담당자명\n김헌수 전임연구원\n담당자메일\nwebtoon.SJ@gmail.com\n담당자 연락처\n044-850-3844\n본문\n첨부파일\n2026년 세종국제만화영상전SICACO 공고문 및 신청양식.hwp\n(77.0K)\n20회 다운로드 | DATE : 2026-07-16 09:19:41\n목록\n이전글\n2026년 세종 성장사다리지원사업 연계 성장브릿지(정부과제 기획지원)사업 공고\n26.07.18\n다음글\n[2026-058호] 2026년 AI기반 디지털헬스케어 서비스 실증사업지역시민체험단 모집 공고\n26.07.15",
+  "deadline": "2026-07-16 ~ 2026-09-06",
+  "posted_date": "2026-07-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-16",
+    "end": "2026-09-06",
+    "display": "2026-07-16 ~ 2026-09-06",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[2026-059호] 2026 세종국제만화영상전(SICACO) 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1985"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성자 세종테크노파크 댓글 0건 조회 205회 작성일 26-07-16 09:19 사업분야 세종웹툰캠퍼스 조성 및 운영사업 접수기간 2026-07-16 ~ 2026-09-06 주관기관명 세종테크노파크 시행기관명 세종테크노파크 담당자명 김헌수 전임연구원 담당자메일 webtoon"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-16 ~ 2026-09-06"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사업분야",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세종웹툰캠퍼스 조성 및 운영사업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-16 ~ 2026-09-06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "주관기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세종테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "시행기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세종테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "김헌수 전임연구원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "담당자메일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "webtoon.SJ@gmail.com",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자 연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "044-850-3844",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

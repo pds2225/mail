@@ -1,0 +1,164 @@
+{
+  "saved_at": "2026-07-26 19:38:12",
+  "notice_id": "imp_43aebb10_f084e6f1e9f60ae1bdf5",
+  "title": "[2026-047호] 2026년 디지털 콘텐츠 산업 규제개혁 어드바이저 참여기업 모집 공고",
+  "link": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1972",
+  "source": "세종테크노파크",
+  "author": "",
+  "description": "페이지 정보\n작성자\n세종테크노파크\n댓글\n0건\n조회\n1,148회\n작성일\n26-06-05 09:27\n사업분야\n디지털 콘텐츠\n접수기간\n2026-06-05 ~ 2026-08-28\n주관기관명\n정보통신산업진흥원\n시행기관명\n세종테크노파크\n담당자명\n이민우 전임연구원\n담당자메일\nminu1005@sjtp.or.kr\n담당자 연락처\n044-850-3824\n본문\n첨부파일\n26년 규제개혁 어드바이저 참여기업 모집 공고문.pdf\n(208.0K)\n273회 다운로드 | DATE : 2026-06-05 09:27:49\n붙임1. 규제개혁 어드바이저 신청서.hwp\n(48.0K)\n64회 다운로드 | DATE : 2026-06-05 09:27:49\n목록\n이전글\n[2026-046호]2026년 지역특화프로젝트 레전드50+ 1.0 지역주력산업육성 기업지원 2차 모집 공고\n26.06.05\n다음글\n[2026-045호]2026년 지역주력산업육성(지역특화프로젝트 레전드50+2.0) 사업화지원 2차 모집공고\n26.06.04",
+  "deadline": "2026-06-05 ~ 2026-08-28",
+  "posted_date": "2026-06-05",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-05",
+    "end": "2026-08-28",
+    "display": "2026-06-05 ~ 2026-08-28",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[2026-047호] 2026년 디지털 콘텐츠 산업 규제개혁 어드바이저 참여기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sjtp.or.kr/bbs/board.php?bo_table=business01&wr_id=1972"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성자 세종테크노파크 댓글 0건 조회 1,148회 작성일 26-06-05 09:27 사업분야 디지털 콘텐츠 접수기간 2026-06-05 ~ 2026-08-28 주관기관명 정보통신산업진흥원 시행기관명 세종테크노파크 담당자명 이민우 전임연구원 담당자메일 minu1005@sjtp"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-05 ~ 2026-08-28"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사업분야",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "디지털 콘텐츠",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-05 ~ 2026-08-28",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "주관기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "정보통신산업진흥원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "시행기관명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "세종테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "이민우 전임연구원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "담당자메일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "minu1005@sjtp.or.kr",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당자 연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "044-850-3824",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

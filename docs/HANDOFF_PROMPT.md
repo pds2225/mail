@@ -40,7 +40,7 @@
 - Design: `D:\mail\docs\02-design\features\govsupport-mailing-v2.design.md`
 
 선택한 아키텍처: **Option C — 실용균형**
-- 신규 모듈 3개 + groups.json 스키마 확장 + streamlit UI 1페이지 추가
+- 신규 모듈 3개 + config/groups.json 스키마 확장 + streamlit UI 1페이지 추가
 - monitor.py는 hook 호출 1줄만 추가 (S3 단계)
 
 ### 5. 완료된 작업 (S1)
@@ -49,11 +49,11 @@
 
 | 파일 | 상태 | 역할 |
 |------|------|------|
-| `D:\mail\scoring.py` | 신규 | 점수 계산 + LLM 2차 판정(claude-haiku-4-5-20251001) + 임계값 필터 |
+| `D:\mail\mail_core/matching/scoring.py` | 신규 | 점수 계산 + LLM 2차 판정(claude-haiku-4-5-20251001) + 임계값 필터 |
 | `D:\mail\site_diagnostic.py` | 신규 | 82개 사이트 HTTP 진단 + Markdown 리포트 |
 | `D:\mail\scripts\run_site_diagnostic.py` | 신규 | 진단 진입점 (메일 발송 없음) |
 | `D:\mail\test_scoring.py` | 신규 | 단위 테스트 8개 (전부 통과) |
-| `D:\mail\groups.json` | 수정 | `score_threshold`, `weights`, `llm_check_*` 필드 추가 (하위호환) |
+| `D:\mail\config/groups.json` | 수정 | `score_threshold`, `weights`, `llm_check_*` 필드 추가 (하위호환) |
 | `D:\mail\groups.backup.20260531.json` | 신규 | 변경 전 백업 |
 
 검증 결과:
@@ -65,7 +65,7 @@
 #### S2 — UI 페이지 추가 (`ui_admin.py`)
 - streamlit 페이지로 그룹/수신자/필터 편집
 - 그룹 목록 → 선택 → 편집 패널(name, active, recipients, or/exclude/priority keywords, score_threshold slider, llm_check_enabled)
-- 저장 시 `groups.backup.{ts}.json` 자동 백업 후 `groups.json` 갱신
+- 저장 시 `groups.backup.{ts}.json` 자동 백업 후 `config/groups.json` 갱신
 - 이메일은 마스킹 미리보기 (e***@gmail.com)
 - 약 180 LOC 목표
 
@@ -89,14 +89,14 @@
 |-----------|------|------|
 | `from anthropic import Anthropic` | 16 | |
 | `ANTHROPIC_API_KEY = _require_env(...)` | 51 | import 시 환경변수 필수 |
-| `SITES_PATH = BASE_DIR / "sites.json"` | 56 | 82개 사이트 |
+| `SITES_PATH = BASE_DIR / "config/sites.json"` | 56 | 82개 사이트 |
 | `filter_for_group_with_diagnostics()` | 1607 | 1차 키워드 필터 (hook 추가 위치) |
 | `filter_for_group()` | 1625 | |
 | `claude_summarize()` | 1755 | 기존 Claude 호출 패턴 |
 | `execute_monitor(*, allow_send=False)` | 1850 | 안전한 dry-run 진입점 |
 | `def main()` | 2014 | **allow_send=True로 호출 (위험)** |
 
-### 8. groups.json 스키마 (확장 후)
+### 8. config/groups.json 스키마 (확장 후)
 
 ```json
 {

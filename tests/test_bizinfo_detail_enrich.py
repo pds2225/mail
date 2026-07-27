@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 
 import monitor as m  # noqa: E402
 
-FX = ROOT / "fixtures" / "bizinfo"
+FX = ROOT / "tests" / "fixtures" / "bizinfo"
 DETAIL_URL = (
     "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do"
     "?pblancId=PBLN_000000000123386"

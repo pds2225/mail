@@ -1,0 +1,135 @@
+{
+  "saved_at": "2026-07-26 19:35:44",
+  "notice_id": "imp_dbb1da21_6703ec4e46242051cf81",
+  "title": "[제2026-54호]『2026년 경북 한바퀴 찾아가는 양성평등교육』참여 기관 모집",
+  "link": "https://forwoman.or.kr/main/contents.do?proc_type=view&a_num=59464232&b_num=32501&prepage=%2Fmain%2Fcontents.do%3Fa_num%3D59464232",
+  "source": "경북여성정책개발원",
+  "author": "",
+  "description": "개발원소식\n[제2026-54호]『2026년 경북 한바퀴 찾아가는 양성평등교육』참여 기관 모집\n작성자\n관리자\n등록일\n2026-07-09\n조회수\n325\n첨부파일\n2026_경상북도 한바퀴 찾아가는 양성평등교육_모집_공고_참가신청서.hwp\n(77.0KB byte)\n1_2026 아동기부터 시작하는 찾아가는 양성평등 교육.pdf\n(625.3KB byte)",
+  "deadline": "",
+  "posted_date": "2026-07-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[제2026-54호]『2026년 경북 한바퀴 찾아가는 양성평등교육』참여 기관 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://forwoman.or.kr/main/contents.do?proc_type=view&a_num=59464232&b_num=32501&prepage=%2Fmain%2Fcontents.do%3Fa_num%3D59464232"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "개발원소식 [제2026-54호]『2026년 경북 한바퀴 찾아가는 양성평등교육』참여 기관 모집 작성자 관리자 등록일 2026-07-09 조회수 325 첨부파일 2026_경상북도 한바퀴 찾아가는 양성평등교육_모집_공고_참가신청서.hwp (77.0KB byte) 1_2026 아동기부터 시작하"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "개발원소식",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "[제2026-54호]『2026년 경북 한바퀴 찾아가는 양성평등교육』참여 기관 모집",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 6
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-09",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "325",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "가변변수 담기.. 2026_경상북도 한바퀴 찾아가는 양성평등교육_모집_공고_참가신청서.hwp (77.0KB byte) 가변변수 담기.. 1_2026 아동기부터 시작하는 찾아가는 양성평등 교육.pdf (625.3KB byte) 가변변수 담기.. 가변변수 담기.. 가변변수 담기.. 가변변수 담기.. 가변변수 담기.. 가변변수 담기.. 가변변수 담기.. 가변변수 담기..",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 5
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 6
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

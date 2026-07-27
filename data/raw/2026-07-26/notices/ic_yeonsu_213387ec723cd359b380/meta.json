@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:33:42",
+  "notice_id": "ic_yeonsu_213387ec723cd359b380",
+  "title": "2026년 라돈 무료측정 및 저감 컨설팅 사업 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118856&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n2026년 라돈 무료측정 및 저감 컨설팅 사업 안내\n작성자\n환경보전과\n작성일\n2026년 7월 15일\n조회수\n54\n담당부서\n환경보전과\n전화번호\n032-749-7914\n첨부파일\n(게시용)라돈_무료측정_및_저감컨설팅_포스터.pdf (\n0.68MB)\n미리보기\n(게시용)_라돈_무료측정_및_저감컨설팅_리플렛.pdf (\n4.37MB)\n미리보기\n기후에너지환경부와 한국환경공단에서 추진하는 「2026년 라돈 저감관리 지원사업」 에 대하여 안내드리오니 관심있는 분들의 많은 참여 부탁드립니다.\n○ 모집기간: 2026. 1. 1. ~ 11. 30. ※ 선착순으로 조기 마감될 수 있습니다.\n○ 모집대상: 대국민주택(단독·다세대주택, 아파트 등)\n○ 신청방법: 신청기간 내 하단 홈페이지 또는 포스터 QR코드 신청\n-\n한국환경공단 라돈무료측정 신청 홈페이지\n○ 세부내용: 무료 라돈 측정, 고농도 세대 대상 저감컨설팅 무료 지원(라돈 알림기 보급, 저감 시공 지원)\n○ 문 의 처: 라돈콜센터(1899-9148)\n목록\n이전글\n해양레저스포츠 교육프로그램 운영(연수카누학교) 안내\n다음글\n2026년 하반기 지역사회서비스투자사업 이용자 모집 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "2026-01-01 ~ 2026-11-30",
+  "posted_date": "2026-07-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-01-01",
+    "end": "2026-11-30",
+    "display": "2026-01-01 ~ 2026-11-30",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 라돈 무료측정 및 저감 컨설팅 사업 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118856&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 2026년 라돈 무료측정 및 저감 컨설팅 사업 안내 작성자 환경보전과 작성일 2026년 7월 15일 조회수 54 담당부서 환경보전과 전화번호 032-749-7914 첨부파일 (게시용)라돈_무료측정_및"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-01-01 ~ 2026-11-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

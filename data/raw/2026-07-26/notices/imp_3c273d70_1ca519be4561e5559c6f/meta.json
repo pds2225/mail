@@ -1,0 +1,168 @@
+{
+  "saved_at": "2026-07-26 19:39:12",
+  "notice_id": "imp_3c273d70_1ca519be4561e5559c6f",
+  "title": "(이노비즈 혜택) 방송광고 제작비 지원사업 (2026년 1차)...",
+  "link": "https://www.innobiz.net/company/company1_view.asp?Seq=418&Page=2&SearchKey=&SearchValue=",
+  "source": "이노비즈협회(사)중소기업기술혁신",
+  "author": "",
+  "description": "Global leader\n미래지향적인 기술혁신기업 이노비즈와 함께하세요!\n공지사항\n>\n기업마당\n>\n공지사항\n공지사항 상세보기\n제목\n(이노비즈 혜택) 방송광고 제작비 지원사업 (2026년 1차) ~ 2월 23일(월) 18:00까지\n작성자\n관리자\n등록일\n2026-01-27\n첨부파일\n한국방송광고진흥공사(KOBACO)에서 추진하는 「혁신형 중소기업 방송광고 활성화 지원사업」과 관련하여, 중소기업이 활용할 수 있는 방송광고 제작비 지원사업과 방송광고비 할인지원사업을 아래와 같이 안내드립니다.\n1. 중소기업 방송광고 제작비 지원사업 (2026년 1차)\n우수한 기술력을 보유하고 있음에도 방송광고 제작비 부담으로 홍보에 어려움을 겪는 혁신형 중소기업을 대상으로 TV·라디오 광고 제작비 일부를 지원하는 사업입니다.\n■ 지원대상\n이노비즈 / 혁신형 중소기업\n■ 지원내용\nTV 광고 제작비 : 제작비의 50% 지원 (최대 4,500만원)\n라디오 광고 제작비 : 제작비의 70% 지원 (최대 300만원)\n방송광고 제작 교육 및 1:1 맞춤 컨설팅 지원\n■ 신청기간\n(1차) 2026년 1월 22일(목) ~ 2월 23일(월) 18:00까지\n(2차) 2026년 5월 중 예정 (추후 공고)\n■ 신청방법\n한국방송광고진흥공사 중소기업 지원사업 홈페이지 온라인 접수(www.kobaco.co.kr/smad)-본 사업은 방송광고 ‘제작비’만을 지원하며, 광고 송출비는 포함되지 않습니다.\n2. 중소기업 방송광고 비용 할인지원사업(상시)\n중소기업이 방송광고를 보다 장기간·안정적으로 활용할 수 있도록방송광고 송출비를 할인 또는 보너스로 지원하는 상시 사업입니다.\n■ 지원내용\n방송광고 송출비 70% 할인 또는 250% 보너스 제공\nTV·라디오 등 지상파 방송광고 대상\n■ 지원기간\n지원대상 선정 후 최초 방송광고일로부터 최대 3년\n■ 지원매체\nTV : KBS, MBC, EBS\nRadio : KBS, MBC, CBS, BBS, CPBC, FEBC, YTN, TBS 등\n■ 신청방법\n중소기업 지원사업 홈페이지(www.kobaco.co.kr/smad)를 통한 상시 접수(매월 심사 후 선정)\n-방송광고 제작비 지원사업과는 별도 사업으로, 각각 신청·선정이 필요합니다.\n다음 게시물 목록\n이전글\n📢 [안내] 2026년 설 연휴 휴무 및 온라인 서비스 이용 안내\n다음글\n(안내) 2026년 정부 R&D사업 부처 합동 설명회/자료 1/19~21\n목록",
+  "deadline": "2026-01-22 ~ 2026-02-23",
+  "posted_date": "2026-01-27",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-01-22",
+    "end": "2026-02-23",
+    "display": "2026-01-22 ~ 2026-02-23",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(이노비즈 혜택) 방송광고 제작비 지원사업 (2026년 1차)..."
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.innobiz.net/company/company1_view.asp?Seq=418&Page=2&SearchKey=&SearchValue="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "Global leader 미래지향적인 기술혁신기업 이노비즈와 함께하세요! 공지사항 > 기업마당 > 공지사항 공지사항 상세보기 제목 (이노비즈 혜택) 방송광고 제작비 지원사업 (2026년 1차) ~ 2월 23일(월) 18:00까지 작성자 관리자 등록일 2026-01-27 첨부파일 한국방송"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-01-22 ~ 2026-02-23"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공지사항 상세보기",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(이노비즈 혜택) 방송광고 제작비 지원사업 (2026년 1차) ~ 2월 23일(월) 18:00까지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-01-27",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "한국방송광고진흥공사(KOBACO)에서 추진하는 「혁신형 중소기업 방송광고 활성화 지원사업」과 관련하여, 중소기업이 활용할 수 있는 방송광고 제작비 지원사업과 방송광고비 할인지원사업을 아래와 같이 안내드립니다. 1. 중소기업 방송광고 제작비 지원사업 (2026년 1차) 우수한 기술력을 보유하고 있음에도 방송광고 제작비 부담으로 홍보에 어려움을 겪는 혁신형 중소기업을 대상으로 TV·라디오 광고 제작비 일부를 지원하는 사업입니다. ■ 지원대상 이노비즈 / 혁신형 중소기업 ■ 지원내용 TV 광고 제작비 : 제작비의 50% 지원 (최대 4,500만원) 라디오 광고 제작비 : 제작비의 70% 지원 (최대 300만원) 방송광고 제작 교육 및 1:1 맞춤 컨설팅 지원 ■ 신청기간 (1차) 2026년 1월 22일(목) ~ 2월 23일(월) 18:00까지 (2차) 2026년 5월 중 예정 (추후 공고) ■ 신청방법 한국방송광고진흥공사 중소기업 지원사업 홈페이지 온라인 접수(www.kobaco.co.k",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "다음 게시물 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "📢 [안내] 2026년 설 연휴 휴무 및 온라인 서비스 이용 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(안내) 2026년 정부 R&D사업 부처 합동 설명회/자료 1/19~21",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

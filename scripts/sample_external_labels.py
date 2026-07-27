@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
 KST = timezone(timedelta(hours=9))
-OUT_JSON = Path(__file__).resolve().parent.parent / "logs" / "external_label_samples.json"
-OUT_MD = Path(__file__).resolve().parent.parent / "logs" / "external_label_samples.md"
+OUT_JSON = Path(__file__).resolve().parent.parent / "var" / "logs" / "external_label_samples.json"
+OUT_MD = Path(__file__).resolve().parent.parent / "var" / "logs" / "external_label_samples.md"
 MAX_EACH = 12
 
 # monitor.py SUPPORT_TYPE_RULES 축소 매핑 (표시용)

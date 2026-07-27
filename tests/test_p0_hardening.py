@@ -14,12 +14,12 @@ os.environ.setdefault("GMAIL_APP_PASSWORD", "x")
 os.environ.setdefault("NTFY_TOPIC", "x")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import delivery_outbox as outbox  # noqa: E402
+from mail_core.delivery import outbox  # noqa: E402
 import monitor as m  # noqa: E402
-import private_config as pc  # noqa: E402
-import run_lock  # noqa: E402
-import secure_store  # noqa: E402
-import state_store  # noqa: E402
+from mail_core.security import private_config as pc  # noqa: E402
+from mail_core.operations import run_lock  # noqa: E402
+from mail_core.storage import secure_store  # noqa: E402
+from mail_core.storage import state_store  # noqa: E402
 
 
 def test_private_payload_removes_plaintext_pii_and_enforces_tenant(tmp_path, monkeypatch):

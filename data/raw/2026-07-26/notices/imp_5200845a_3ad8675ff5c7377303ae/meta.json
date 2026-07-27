@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:37",
+  "notice_id": "imp_5200845a_3ad8675ff5c7377303ae",
+  "title": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=982159",
+  "source": "김포시청",
+  "author": "",
+  "description": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내\n담당부서\n기업지원과\nㅇ 행 사 명 : 초보부터 실전까지, 수출입통관&관세환급 완벽 교육\nㅇ 일    시 : 2026년 7월 23일（목） 10:00~16:00 （총 5시간）\nㅇ 장    소 : 김포상공회의소 2층 대회의실\nㅇ 참석대상 : 도내 기업체 임직원 30여 명（선착순 QR 신청）\nㅇ 교육내용 : 수출입통관 개요, 통관 비용 구조 이해, 관세환급 제도 개요 등\nㅇ 문의전화 : 031-995-7482\n파일\npng 문서\n붙임2. （7.23 김포）초보부터 실전까지  수출입통관＆관세환급 완벽 교육 홍보물.png\n미리보기\n조회수\n181\n작성일\n2026.07.15\n목록\n이전글\n「북한이탈주민과 함께하는 문화 프로그램（8월 과정）」 운영\n다음글\n2026년 중소기업 맞춤형 역량강화 지원사업 DX전환 4차 세미나 알림",
+  "deadline": "",
+  "posted_date": "2026-07-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=982159"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내 담당부서 기업지원과 ㅇ 행 사 명 : 초보부터 실전까지, 수출입통관&관세환급 완벽 교육 ㅇ 일 시 : 2"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「초보부터 실전까지 수출입통관&관세환급 완벽 교육」 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기업지원과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "png 문서 붙임2. （7.23 김포）초보부터 실전까지 수출입통관＆관세환급 완벽 교육 홍보물.png 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "181",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.15",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

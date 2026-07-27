@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:26",
+  "notice_id": "imp_60bf007e_3362eb9097da95008e69",
+  "title": "2026년 안산시 피지컬로봇 실증지원 선정기업 공지",
+  "link": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29352",
+  "source": "경기테크노파크",
+  "author": "",
+  "description": "공지사항\n공지사항\nHOME\n공고ㆍ안내\n공지사항\n공지사항\n지역기술혁신의 산실, 지식산업 창조의 요람\n2026년 안산시 피지컬로봇 실증지원 선정기업 공지\n번호 :\n29352\n작성자 :\n혁신클러스터팀\n작성일 :\n2026-05-06\n조회수 :\n624\n홈페이지 :\nhttp://\n첨부파일 :\ngtp260506_tctM.pdf\n2026년 안산시 피지컬로봇 실증 지원사업 선정결과발표\n감사합니다.\n페이스북으로 이동\nx로 이동\n다음글\n이전글\n목록",
+  "deadline": "",
+  "posted_date": "2026-05-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 안산시 피지컬로봇 실증지원 선정기업 공지"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29352"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 HOME 공고ㆍ안내 공지사항 공지사항 지역기술혁신의 산실, 지식산업 창조의 요람 2026년 안산시 피지컬로봇 실증지원 선정기업 공지 번호 : 29352 작성자 : 혁신클러스터팀 작성일 : 2026-05-06 조회수 : 624 홈페이지 : http:// 첨부파일 : gt"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

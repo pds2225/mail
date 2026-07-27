@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:50",
+  "notice_id": "imp_36182169_41a0aea835790853a549",
+  "title": "2026년 중소기업AI훈련확산센터 추가 선정 결과 공고",
+  "link": "https://www.hrd4u.or.kr/hrddoctor/web/board/view.do?mId=34&brdIdx=27",
+  "source": "기업직업훈련지원시스템",
+  "author": "",
+  "description": "2026년 중소기업AI훈련확산센터 추가 선정 결과 공고\n작성자\n신남훈\n작성일\n2026-03-13 18:11:12\n지역\n전체\n조회수\n1427\n파일\n2026년 중소기업AI훈련확산센터 추가 선정 결과 공고문.pdf\n[제2026-038호]\n2026년 중소기업AI훈련확산센터 추가 선정 결과 공고\n2026년 중소기업AI훈련확산센터 추가 선정 결과를 아래와 같이 공고합니다.\n2026년 3월 13일\n한국산업인력공단 이사장\n이전글\n2026년 중소기업AI훈련확산센터 AI훈련코치 모집 안내\n다음글\n2026년 체계적 현장훈련 외부전문가 역량 향상 교육 개최 알림(최종)\n목록",
+  "deadline": "",
+  "posted_date": "2026-03-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 중소기업AI훈련확산센터 추가 선정 결과 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.hrd4u.or.kr/hrddoctor/web/board/view.do?mId=34&brdIdx=27"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 중소기업AI훈련확산센터 추가 선정 결과 공고 작성자 신남훈 작성일 2026-03-13 18:11:12 지역 전체 조회수 1427 파일 2026년 중소기업AI훈련확산센터 추가 선정 결과 공고문.pdf [제2026-038호] 2026년 중소기업AI훈련확산센터 추가 선정 결과 공고"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

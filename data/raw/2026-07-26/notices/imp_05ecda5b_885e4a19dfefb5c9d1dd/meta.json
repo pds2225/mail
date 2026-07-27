@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:08",
+  "notice_id": "imp_05ecda5b_885e4a19dfefb5c9d1dd",
+  "title": "(재)숲과나눔, 풀씨아카데미 9기 수강생 모집 안내",
+  "link": "https://sehub.net/archives/2156818",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "사회적경제 공지\n(재)숲과나눔, 풀씨아카데미 9기 수강생 모집 안내\n2026-07-21\n조회 : 45\n댓글 :\n0\n주최/주관 : 재단법인 숲과나눔\n문의 전화 : 010-9898-1724\n문의 메일 : jh@koreashe.org\n관련링크 :\nhttps://koreashe.org/board/?mode=view&board_id=22&post_id=95362\n풀씨아카데미-9기.zip\n‘풀씨아카데미 9기’ 수강생 모집\n환경 분야 공익활동가 양성 과정 ‘풀씨아카데미 9기’ 수강생을 모집합니다.\n⭐\n풀씨아카데미 9기 수료자만 받을 수 있는 특별한 혜택\n⭐까지!\n✅ 기후·에너지 및 환경·생태 분야 시민사회단체 인턴십 지원 프로그램 ‘풀씨펠로우십’ 지원 자격 부여\n✅ 숲과나눔 타 프로그램 지원 시 선발 우대\n✅ 수료증 발급 및 수료 기념품 증정\n환경 분야 공익활동가로의 첫 여정, 풀씨아카데미에서 시작하세요.\n동료들과 함께 배우고, 고민하고, 실천하며 진짜 변화를 만들어 갈 여러분을 기다립니다.\n🔶 지원기간 🔶\n2026. 7. 21.(화)~ 8. 18.(화) 13:00 까지\n🔶 지원방법 🔶\n▶️▶️▶️\n온라인 지원서 링크 클릭\n◀️◀️◀️\n🔶 문의 🔶\n02-6318-9004 (응답 가능 시간 – 평일 08:00~16:00), ontheroad@koreashe.org\n첨부파일\n풀씨아카데미-9기\n(ERROR)\n풀씨아카데미-9기\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "",
+  "posted_date": "2026-07-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(재)숲과나눔, 풀씨아카데미 9기 수강생 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2156818"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사회적경제 공지 (재)숲과나눔, 풀씨아카데미 9기 수강생 모집 안내 2026-07-21 조회 : 45 댓글 : 0 주최/주관 : 재단법인 숲과나눔 문의 전화 : 010-9898-1724 문의 메일 : jh@koreashe.org 관련링크 : https://koreashe.org/boar"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

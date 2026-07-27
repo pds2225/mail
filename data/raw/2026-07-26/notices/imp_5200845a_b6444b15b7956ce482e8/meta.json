@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:35",
+  "notice_id": "imp_5200845a_b6444b15b7956ce482e8",
+  "title": "개인정보 보호 활용 기술 대상 모집 공고",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982808",
+  "source": "김포시청",
+  "author": "",
+  "description": "개인정보 보호 활용 기술 대상 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n개인정보 보호 활용 기술 대상 모집 공고\n담당부서\n정보통신과\n＜ 2026 개인정보 보호·활용 기술 대상 개요 ＞\n가. （시상명） 2026 개인정보 보호·활용 기술 대상\n나. （대상） 우수한 개인정보 보호 성과를 보인 제품의 개발 기업 대상 개인정보보호위원회 위원장상 수여（최대 3점）\n다. （운영방법） 공모 진행 및 심사 등을 거쳐 선정 후 시상\n라. （주최/주관） 개인정보보호위원회 / 한국인터넷진흥원, 한국개인정보보호책임자협의회, 지디넷코리아\n마. （접수 기간） 2026. 7. 3.（금） ~ 7. 31.（금）\n파일\nhwpx 문서\n（개인정보보호위원회 공고 제2026-76호） 개인정보 보호 활용 기술 대상 모집 공고.hwpx\n미리보기\npdf 문서\n（개인정보보호위원회 공고 제2026-76호） 개인정보 보호 활용 기술 대상 모집 공고.pdf\n미리보기\npng 문서\n260623_포스터.png\n미리보기\n조회수\n220\n작성일\n2026.07.21\n목록\n이전글\n2026년 주민등록 사실조사 안내\n다음글\n2026년 제2차 지역사회서비스투자사업 이용자 모집 안내",
+  "deadline": "",
+  "posted_date": "2026-07-21",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "개인정보 보호 활용 기술 대상 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=1&nttNo=982808"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "개인정보 보호 활용 기술 대상 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 개인정보 보호 활용 기술 대상 모집 공고 담당부서 정보통신과 ＜ 2026 개인정보 보호·활용 기술 대상 개요 ＞ 가. （시상명） 2026 개인정보 보호·활용 기술 대상 나. （대"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "개인정보 보호 활용 기술 대상 모집 공고 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "개인정보 보호 활용 기술 대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "정보통신과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "hwpx 문서 （개인정보보호위원회 공고 제2026-76호） 개인정보 보호 활용 기술 대상 모집 공고.hwpx 미리보기 pdf 문서 （개인정보보호위원회 공고 제2026-76호） 개인정보 보호 활용 기술 대상 모집 공고.pdf 미리보기 png 문서 260623_포스터.png 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "220",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.21",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

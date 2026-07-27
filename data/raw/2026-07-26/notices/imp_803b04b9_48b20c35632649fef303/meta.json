@@ -1,0 +1,218 @@
+{
+  "saved_at": "2026-07-26 19:36:40",
+  "notice_id": "imp_803b04b9_48b20c35632649fef303",
+  "title": "2026년도 지역기업 맞춤형 현장애로 해결 기술닥터 참여기업 1차 모집 공고",
+  "link": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2202&ctg01=01,02,03,04,05,06,09,11,12&ctg02=06&ctg03=05&pageIndex=2&pageUnit=30&searchKeyword=",
+  "source": "광주테크노파크",
+  "author": "",
+  "description": "사업공고\n홈\n홈\n공고·안내\n사업공고\n2026년도 지역기업 맞춤형 현장애로 해결 기술닥터 참여기업 1차 모집 공고\n지원분류\n산업구분\n>  자동차/가전/금형/광융합/생체의료/에너지/인공지능/ICT/기타\n지원분야\n>  기타\n지원프로그램\n>  컨설팅\n지원규모\n접수기간\n2026-06-10 ~ 2026-06-17\n접수마감\n사업기간\n2026-06-10 ~ 2026-10-31\n담당부서\n광주테크노파크\n총괄담당자\n사업담당자\n박정상\r\n\t\t\t\t\t (062-602-7217)\n사업목적\n산·학·연·관에서 보유하고 있는 기술・경영혁신 등 다양한 분야의 지원전문가를 활용한 기업 맞춤형 현장 애로 해결로 중소기업의 경쟁력 강화\n사업내용\n첨부파일\n2026년현장애로해결지원기술닥터참여기업모집공고문(안).pdf\n붙임1.기업명기입_2026년현장애로지원기술닥터참여기업신청서등양식.hwp\n붙임2.2026기술닥터전문가pool(공고용).xlsx\n붙임3.기업명기입_2026기술닥터신청기업개요엑셀양식.xlsx\n목록",
+  "deadline": "2026-06-10 ~ 2026-06-17",
+  "posted_date": "2026-06-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-10",
+    "end": "2026-06-17",
+    "display": "2026-06-10 ~ 2026-06-17",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년도 지역기업 맞춤형 현장애로 해결 기술닥터 참여기업 1차 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2202&ctg01=01,02,03,04,05,06,09,11,12&ctg02=06&ctg03=05&pageIndex=2&pageUnit=30&searchKeyword="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 홈 홈 공고·안내 사업공고 2026년도 지역기업 맞춤형 현장애로 해결 기술닥터 참여기업 1차 모집 공고 지원분류 산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/ICT/기타 지원분야 > 기타 지원프로그램 > 컨설팅 지원규모 접수기간 2026-06-10 ~ 2026"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-10 ~ 2026-06-17"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원분류",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업구분 > 자동차/가전/금형/광융합/생체의료/에너지/인공지능/ICT/기타 지원분야 > 기타 지원프로그램 > 컨설팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원규모",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-10 ~ 2026-06-17 접수마감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-10 ~ 2026-10-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "총괄담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박정상 (062-602-7217)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업목적",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산·학·연·관에서 보유하고 있는 기술・경영혁신 등 다양한 분야의 지원전문가를 활용한 기업 맞춤형 현장 애로 해결로 중소기업의 경쟁력 강화",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년현장애로해결지원기술닥터참여기업모집공고문(안).pdf 붙임1.기업명기입_2026년현장애로지원기술닥터참여기업신청서등양식.hwp 붙임2.2026기술닥터전문가pool(공고용).xlsx 붙임3.기업명기입_2026기술닥터신청기업개요엑셀양식.xlsx",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

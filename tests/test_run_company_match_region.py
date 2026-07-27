@@ -17,7 +17,7 @@ os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-import company_match as cm  # noqa: E402
+from mail_core.matching import company_match as cm  # noqa: E402
 import run_company_match as rcm  # noqa: E402
 
 SEOUL_NOTICE = {"title": "서울 AI 사업화 지원", "description": "서울특별시 소재 인공지능 데이터 기업 대상."}

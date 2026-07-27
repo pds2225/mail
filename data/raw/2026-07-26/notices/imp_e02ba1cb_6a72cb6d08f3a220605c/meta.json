@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:24",
+  "notice_id": "imp_e02ba1cb_6a72cb6d08f3a220605c",
+  "title": "[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=238&keyfield_s=&search_word_s=&cpage=2&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내\n작성일자\n2026.07.07\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n1. (공고문) 2026년 경기도 중소기업 ESG 진단평가 및 개선지원_v2.pdf\n2. (신청서식) 2026년 경기도 중소기업 ESG 진단평가 및 개선지원.hwp\n3. (신청매뉴얼) 2026년 경기도 중소기업 ESG 진단평가 및 개선지원 참여신청 매뉴얼.pdf\n목록\n이전글\n⚠️시흥산업진흥원 직원을 사칭한 보이스피싱 주의 안내⚠️\n다음글\n[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내",
+  "deadline": "",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=238&keyfield_s=&search_word_s=&cpage=2&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내 작성일자 2026.07.07 담당부서 홍보실 문의처 공고문 참조 첨부파일 1. (공고문) 2026년 경기도 중소기업 ESG 진단평가 및 개선지원_v2.pdf 2. (신청서식) 2026년 경기도 중소기업 ESG 진"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "⚠️시흥산업진흥원 직원을 사칭한 보이스피싱 주의 안내⚠️",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

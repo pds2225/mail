@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:50",
+  "notice_id": "ic_bupyeong_4982267fa76bfde47fef",
+  "title": "인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고",
+  "link": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50288",
+  "source": "인천 부평구청",
+  "author": "",
+  "description": "고시/공고/입법예고\n인쇄하기\n부평\n소통과 참여\n부평알림\n고시/공고/입법예고\n블로그\n페이스북\n카카오톡\n트위터\n인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고\n고시공고번호\n인천광역시 부평구 공고 제2026-1461호\n공고구분\n공고(일반공고)\n담당부서\n복지정책과\n담당자\n문세준\n연락처\n032-509-6452\n등록일\n2026-07-24\n첨부파일\n인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고.hwpx\n「사회복지사업법」 제34조 및 같은 법 시행규칙 제21조에 의거 인천광역시 부평구 삼산종합사회복지관 수탁자선정심의위원회 심의 결정사항을 다음과 같이 공고합니다.\n가. (공 고 명) 인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고\n나. (공고기간) 2026.07.24. ~ 2026.08.13. (20일)\n다. (공고방법) 부평구청 홈페이지\n라. (공고내용)【붙임】참조\n목록\n자료관리 담당자\n담당부서 : 홍보담당관\n담당팀 : 언론미디어팀\n전화 : 032-509-3920\n만족도 평가\n결과보기\n매우만족\n만족\n보통\n불만족\n매우불만족",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50288"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시/공고/입법예고 인쇄하기 부평 소통과 참여 부평알림 고시/공고/입법예고 블로그 페이스북 카카오톡 트위터 인천광역시 부평구 삼산종합사회복지관 수탁운영 법인 선정 결과 공고 고시공고번호 인천광역시 부평구 공고 제2026-1461호 공고구분 공고(일반공고) 담당부서 복지정책과 담당자 문세"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

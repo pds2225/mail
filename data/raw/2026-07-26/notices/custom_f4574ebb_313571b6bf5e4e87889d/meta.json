@@ -1,0 +1,419 @@
+{
+  "saved_at": "2026-07-26 19:34:04",
+  "notice_id": "custom_f4574ebb_313571b6bf5e4e87889d",
+  "title": "예술경영컨설팅 신청",
+  "link": "https://www.gokams.or.kr/05_know/online_list.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n지원/신청\n예술경영컨설팅\n※ 24년 12월부로 <예술경영온라인 컨설팅> 사업은 종료되었습니다.\n컨설팅 도움이 필요하신 분들은 <아트코리아랩 비즈센터> 분야별 비즈컨설팅(대면 및 화상회의) 활용 가능하오니 참고 바랍니다.\n아트코리아랩 비즈센터 바로가기\n예술경영컨설팅 FAQ\n대부분의 경우 자주 묻는 질의 사례를 정리한 예술경영컨설팅 FAQ 확인을 통해 컨설팅 의뢰 전 신속한 문제 해결이 가능합니다.\n아래의 링크를 통해 예술경영컨설팅 FAQ 를 확인할 수 있습니다.\n예술경영컨설팅 FAQ 바로가기\n2023 예술경영컨설팅 FAQ 다운로드\n공개강좌\n전문예술법인 · 단체 실무자 및 지방자치단체 공무원이 알아야 할 세무회계의 기초 교육을 아트모아 예술산업아카데미 공개강좌로 제공합니다\n01\n공익법인 등 세무기초\n전문예술법인 · 단체 세무회계 실무자 대상 교육 공개강좌 링크\n1차시 문화예술단체의 법적형태와 사업자등록 유형\n2차시 부가가치세와 세금계산서\n3차시 원천징수\n4차시 전문예술법인 · 단체와 공익법인,공익단체\n5차시 기부금 회계세무\n6차시 공익법인의 의무\n02\n전문예술법인‧단체 제도 및 세무기초\n지방자치단체 공무원 - 제도 담당자 대상 교육 공개강좌 링크\n1차시 법인격과 사업자등록\n2차시 기부금품법과 전문예술법인단체 지정\n3차시 공익법인의 범위\n4차시 기부금 회계세무\n제목\n내용\n온라인컨설팅 문의 목록 표로 번호, 구분, 제목, 진행상황, 작성일을 나타냄\n진행상황\n4855\n단체(법인)설립\n공연기획사 개인사업자 설립 관련 문의\n답변완료\n2024-12-30\n4854\n저작권\n저작권 관련문의\n답변완료\n2024-12-30\n4853\n회계·세무\n해외 아티스트 원천세 및 공연으로 인한 부가세\n답변완료\n2024-12-30\n4852\n회계·세무\n대표와 프리랜서로 활동 시, 소득 구분 세금신고 방법.\n답변완료\n2024-12-25\n4851\n단체(법인)설립\n문의드려요~\n답변완료\n2024-12-24\n4850\n법률\n재단법인 정관변경 내용에 관련하여 질문드립니다.\n답변완료\n2024-12-24\n4849\n기타\n저작권 및 회계\n답변완료\n2024-12-23\n4848\n국제교류\n공연예술 분야\n답변완료\n2024-12-20\n4847\n회계·세무\n페스티벌 시상식 상금 세금 관련\n답변완료\n2024-12-18\n4846\n회계·세무\n외국인 원천세 및 예술인고용보험\n답변완료\n2024-12-16\n1\n현재페이지\n2\n3\n4\n5\n6\n7\n8\n9\n10",
+  "deadline": "",
+  "posted_date": "2024-12-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "예술경영컨설팅 신청"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/05_know/online_list.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 지원/신청 예술경영컨설팅 ※ 24년 12월부로 <예술경영온라인 컨설팅> 사업은 종료되었습니다. 컨설팅 도움이 필요하신 분들은 <아트코리아랩 비즈센터> 분야별 비즈컨설팅(대면 및 화상회의) 활용 가능하오니 참고 바랍니다. 아트코리아랩 비즈센터 바로가기 예술경영컨설팅 FAQ 대부분"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "온라인컨설팅 문의 목록 표로 번호, 구분, 제목, 진행상황, 작성일을 나타냄",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "진행상황",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4855",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "단체(법인)설립",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공연기획사 개인사업자 설립 관련 문의",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4854",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "저작권",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "저작권 관련문의",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4853",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "회계·세무",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "해외 아티스트 원천세 및 공연으로 인한 부가세",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4852",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "회계·세무",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "대표와 프리랜서로 활동 시, 소득 구분 세금신고 방법.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-25",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4851",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "단체(법인)설립",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "문의드려요~",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4850",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "법률",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "재단법인 정관변경 내용에 관련하여 질문드립니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4849",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "저작권 및 회계",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-23",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4848",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "국제교류",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공연예술 분야",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-20",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4847",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "회계·세무",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "페스티벌 시상식 상금 세금 관련",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "4846",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "회계·세무",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "외국인 원천세 및 예술인고용보험",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "답변완료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2024-12-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

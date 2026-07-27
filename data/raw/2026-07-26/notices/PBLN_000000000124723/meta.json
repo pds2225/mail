@@ -1,0 +1,293 @@
+{
+  "saved_at": "2026-07-26 19:31:50",
+  "notice_id": "PBLN_000000000124723",
+  "title": "2026년 KTSC도쿄-공공기관 공동 개최 데모데이 참가기업 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124723",
+  "source": "기업마당(Bizinfo)",
+  "author": "문화체육관광부",
+  "description": "<p>한국관광공사에서는 해외 시장 검증을 희망하는 국내 유망 관광 스타트업의 글로벌 진출을 지원하고자, 2026년 KTSC도쿄-공공기관 공동 개최 데모데이 행사에 참가할 기업을 아래와 같이 모집합니다. 해외 시장에 바로 적용 가능한 기술ㆍ서비스를 보유한 국내 관광 스타트업의 많은 관심과 참여 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;아래 ’19년~’26년 성장ㆍ도약기 관광기업 지원 사업 참여기업</p><p style=\"line-height: 1.8;\">-&nbsp;해외 관광기업지원센터(KTSC) 입주기업(‘26년도 입주기업 한정)&nbsp;</p><p style=\"line-height: 1.8;\">-&nbsp;관광 글로벌 챌린지 프로그램</p><p style=\"line-height: 1.8;\">-&nbsp;관광 플러스 테크 선정 기업 (前 관광 플러스팁스 포함)</p><p style=\"line-height: 1.8;\">※ 자세한 지원자격 공고문 참조&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 현지 지자체, VC, 사업 담당자 대상 피칭 및 교류회 등 지원&nbsp;</p><p style=\"line-height: 1.8;\">1인 왕복 항공권(이코노미), 현지업계 네트워킹 기회 및 행사 내 오/만찬 지원&nbsp;</p>\n한국관광공사에서는 해외 시장 검증을 희망하는 국내 유망 관광 스타트업의 글로벌 진출을 지원하고자, 2026년 KTSC도쿄-공공기관 공동 개최 데모데이 행사에 참가할 기업을 아래와 같이 모집합니다. 해외 시장에 바로 적용 가능한 기술ㆍ서비스를 보유한 국내 관광 스타트업의 많은 관심과 참여 바랍니다. ☞ 아래 ’19년~’26년 성장ㆍ도약기 관광기업 지원 사업 참여기업 - 해외 관광기업지원센터(KTSC) 입주기업(‘26년도 입주기업 한정) - 관광 글로벌 챌린지 프로그램 - 관광 플러스 테크 선정 기업 (前 관광 플러스팁스 포함) ※ 자세한 지원자격 공고문 참조 ☞ 현지 지자체, VC, 사업 담당자 대상 피칭 및 교류회 등 지원 1인 왕복 항공권(이코노미), 현지업계 네트워킹 기회 및 행사 내 오/만찬 지원",
+  "deadline": "2026-07-20 ~ 2026-07-30",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-20",
+    "end": "2026-07-30",
+    "display": "2026-07-20 ~ 2026-07-30",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 KTSC도쿄-공공기관 공동 개최 데모데이 참가기업 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "문화체육관광부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124723"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>한국관광공사에서는 해외 시장 검증을 희망하는 국내 유망 관광 스타트업의 글로벌 진출을 지원하고자, 2026년 KTSC도쿄-공공기관 공동 개최 데모데이 행사에 참가할 기업을 아래와 같이 모집합니다. 해외 시장에 바로 적용 가능한 기술ㆍ서비스를 보유한 국내 관광 스타트업의 많은 관심과"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-20 ~ 2026-07-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#VC",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#피칭",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#항공권",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#교류회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#행사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#관광기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#도쿄",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#데모데이",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#한국관광공사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#네트워킹",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#문화체육관광부",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#스타트업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#충남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#강원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#세종",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#울산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#인천",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대구",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#수출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "문화체육관광부"
+}

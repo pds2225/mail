@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:43",
+  "notice_id": "ic_yeonsu_07acc202d6b179254b9c",
+  "title": "말기 치매환자 돌봄을 위한 심포지엄 개최 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118787&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n말기 치매환자 돌봄을 위한 심포지엄 개최 안내\n작성자\n치매정신건강과\n작성일\n2026년 7월 9일\n조회수\n94\n담당부서\n치매정신건강과\n전화번호\n032-749-8933\n첨부파일\n홍보포스터_(1).png (\n0.17MB)\n말기 치매환자 돌봄을 위한 심포지엄 개최 안내\n- 일시: 2026.8.24.(월) 14:00 ~ 16:30\n- 장소: 가톨릭대학교 인천성모병원 신관 15층, 마리아홀\n- 대상: 관심있는 누구나\n- 신청: 2026.8.14.(금) 까지 온라인 접수\n목록\n이전글\n장출혈성대장균 감염증 예방 수칙 안내\n다음글\n불법 주방용 오물분쇄기 사용 근절 관련 안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "말기 치매환자 돌봄을 위한 심포지엄 개최 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118787&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 말기 치매환자 돌봄을 위한 심포지엄 개최 안내 작성자 치매정신건강과 작성일 2026년 7월 9일 조회수 94 담당부서 치매정신건강과 전화번호 032-749-8933 첨부파일 홍보포스터_(1).png "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

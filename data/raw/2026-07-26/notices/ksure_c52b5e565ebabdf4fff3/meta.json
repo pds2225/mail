@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:36",
+  "notice_id": "ksure_c52b5e565ebabdf4fff3",
+  "title": "K-SURE 시스템 점검 안내",
+  "link": "https://www.ksure.or.kr/rh-kr/bbs/i-412/detail.do?ntt_sn=625105",
+  "source": "한국무역보험공사(K-SURE)",
+  "author": "",
+  "description": "공지사항\n프린트\npdf 다운로드\n이미지 다운로드\n링크복사\n공유하기 열기\n페이스북 공유하기\nX 공유하기\n카카오스토리 공유하기\n홈\n소식\n공지사항\n공지사항\nK-SURE 시스템 점검 안내\n등록일 :\n2026.07.22\n조회수 :\n44\n저희 무역보험공사는 보다 나은 서비스와 품질 향상을 위해 아래와 같이 시스템 점검 작업을 진행합니다.\n따라서 시스템 점검 시간 동안은 공사 K-SURE ON 및 대표 홈페이지 서비스를 이용하실 수 없사오니 고객 여러분의 깊은 양해 부탁 드리겠습니다.\n더 나은 서비스를 위하여 노력하겠습니다.\n- 아       래 -\n▶ 중단기간 :\n'26.7.22(수) 19:00 ~ 20:00\n(한국시간 기준)\n▶ 중단서비스 : 대표 홈페이지, K-SURE ON\n이전글\n[천안시청] 2026년 천안시 동남아 기계부품 시장개척단 참가기업 모집 공고\n2026.07.21\n다음글\n2026년 8월 K-SURE 외환포럼 개최\n2026.07.24\n목록\n무역보험 용어집\n찾고자 하시는  용어를 입력 하신 후 검색버튼을 누르세요.\n검색\n초기화\n전체\n905\n건, 현재페이지 :\n1\n/\n11\n무역보험 용어집 다운로드\n닫기\n현재 페이지의 내용과 사용 편의성에 대해 만족하십니까?\n담당부서 :\n고객가치부\n고객센터 :\n1588-3884\n매우 만족\n만족\n보통\n불만족\n매우 불만족\n만족도 평가\n본인확인\n의견등록\n답변을 받을 수 없는 의견함 입니다. 답변을 원하시는 질문은 [고객참여 > Q&A]를 이용해 주시기 바랍니다.",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "K-SURE 시스템 점검 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.ksure.or.kr/rh-kr/bbs/i-412/detail.do?ntt_sn=625105"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 프린트 pdf 다운로드 이미지 다운로드 링크복사 공유하기 열기 페이스북 공유하기 X 공유하기 카카오스토리 공유하기 홈 소식 공지사항 공지사항 K-SURE 시스템 점검 안내 등록일 : 2026.07.22 조회수 : 44 저희 무역보험공사는 보다 나은 서비스와 품질 향상을 위해 아"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

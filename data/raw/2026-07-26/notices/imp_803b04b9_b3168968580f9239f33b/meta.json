@@ -1,0 +1,218 @@
+{
+  "saved_at": "2026-07-26 19:36:40",
+  "notice_id": "imp_803b04b9_b3168968580f9239f33b",
+  "title": "광주대학교 RISE(R&D 실증) 수요실증을 위한 시민참여단 모집",
+  "link": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2204&ctg01=12&ctg02=02&ctg03=14&pageIndex=2&pageUnit=30&searchKeyword=",
+  "source": "광주테크노파크",
+  "author": "",
+  "description": "사업공고\n홈\n홈\n공고·안내\n사업공고\n광주대학교 RISE(R&D 실증) 수요실증을 위한 시민참여단 모집\n지원분류\n산업구분\n>  기타\n지원분야\n>  비R&D\n지원프로그램\n>  기타\n지원규모\n접수기간\n2026-06-12 ~ 2026-06-18\n접수마감\n사업기간\n2026-01-01 ~ 2026-12-31\n담당부서\n총괄담당자\n사업담당자\n전효진 전임\r\n\t\t\t\t\t (070-7710-4901)\n사업목적\n사업내용\n첨부파일\n붙임.지원신청서및개인정보동의서.hwp\n목록",
+  "deadline": "2026-06-12 ~ 2026-06-18",
+  "posted_date": "2026-06-12",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-12",
+    "end": "2026-06-18",
+    "display": "2026-06-12 ~ 2026-06-18",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "광주대학교 RISE(R&D 실증) 수요실증을 위한 시민참여단 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjtp.or.kr/home/business.cs?act=view&bsnssId=2204&ctg01=12&ctg02=02&ctg03=14&pageIndex=2&pageUnit=30&searchKeyword="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 홈 홈 공고·안내 사업공고 광주대학교 RISE(R&D 실증) 수요실증을 위한 시민참여단 모집 지원분류 산업구분 > 기타 지원분야 > 비R&D 지원프로그램 > 기타 지원규모 접수기간 2026-06-12 ~ 2026-06-18 접수마감 사업기간 2026-01-01 ~ 2026-12"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-12 ~ 2026-06-18"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원분류",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산업구분 > 기타 지원분야 > 비R&D 지원프로그램 > 기타",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "지원규모",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-12 ~ 2026-06-18 접수마감",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-01-01 ~ 2026-12-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "총괄담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전효진 전임 (070-7710-4901)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업목적",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "사업내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "붙임.지원신청서및개인정보동의서.hwp",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

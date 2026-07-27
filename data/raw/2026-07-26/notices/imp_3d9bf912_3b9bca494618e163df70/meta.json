@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:10",
+  "notice_id": "imp_3d9bf912_3b9bca494618e163df70",
+  "title": "2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 심사 결과 및 최종 선정기업 공고",
+  "link": "https://www.sjepa.or.kr/news-announcement/view/id/1197",
+  "source": "세종일자리경제진흥원",
+  "author": "",
+  "description": "2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 심사 결과 및 최종 선정기업 공고\n경제육성팀\n2026.06.05.\n449\n첨부파일\n2026년_고용환경개선사업(기숙사_임차비_지원)_2차_모집_심사_결과_및_최종_선정기업_공고.pdf\n222.3 KB\n★붙임1_(양식)_2025년_고용환경개선사업(기숙사_임차비_지원)_지원금_신청_및_근로자·기숙사_변경.hwp\n81.0 KB\n전체 다운로드\n이전글\n2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 연장 공고\n다음글\n[2026년 지역·산업맞춤형 일자리지원 사업] 세종시 지역주도형 일자리사업  통합 모집 수정공고(고용장려금/고용환경개선)\n목록",
+  "deadline": "2026-06-05",
+  "posted_date": "2026-06-05",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 심사 결과 및 최종 선정기업 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sjepa.or.kr/news-announcement/view/id/1197"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 고용환경개선사업(기숙사 임차비 지원) 2차 모집 심사 결과 및 최종 선정기업 공고 경제육성팀 2026.06.05. 449 첨부파일 2026년_고용환경개선사업(기숙사_임차비_지원)_2차_모집_심사_결과_및_최종_선정기업_공고.pdf 222.3 KB ★붙임1_(양식)_2025년_"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-06-05"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

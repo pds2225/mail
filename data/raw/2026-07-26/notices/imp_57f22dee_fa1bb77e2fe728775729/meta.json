@@ -1,0 +1,103 @@
+{
+  "saved_at": "2026-07-26 19:37:51",
+  "notice_id": "imp_57f22dee_fa1bb77e2fe728775729",
+  "title": "2026년 소상공인 경영지도 종합지원 패키지 사업 모집 공고(2차)_수정",
+  "link": "https://www.sinbo.or.kr/sub04_01_01/view/id/4503",
+  "source": "대전신용보증재단",
+  "author": "",
+  "description": "2026년 소상공인 경영지도 종합지원 패키지 사업 모집 공고(2차)_수정\n작성자\n관리자\n작성일\n26/06/04 (16:17)\n조회수\n355\n- 공지사항 입니다.",
+  "deadline": "",
+  "posted_date": "2026-06-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 소상공인 경영지도 종합지원 패키지 사업 모집 공고(2차)_수정"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sinbo.or.kr/sub04_01_01/view/id/4503"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 소상공인 경영지도 종합지원 패키지 사업 모집 공고(2차)_수정 작성자 관리자 작성일 26/06/04 (16:17) 조회수 355 - 공지사항 입니다."
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2026년 소상공인 경영지도 종합지원 패키지 사업 모집 공고(2차)_수정",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자 관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "작성일 26/06/04 (16:17)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수 355",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "- 공지사항 입니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

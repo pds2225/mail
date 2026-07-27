@@ -1,0 +1,108 @@
+{
+  "saved_at": "2026-07-26 19:38:59",
+  "notice_id": "imp_7381d7a0_45185bff5d5c137d65ca",
+  "title": "[공고문]2026년 안양시 골목형상점가 모집 공고",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=450336&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n[공고문]2026년 안양시 골목형상점가 모집 공고\n내용\n아래의 고시공고를 [게시판]에 게재 하고자 합니다.\n안양시에서는 2026년도 안양시 골목형상점가 지정에 대해 아래와 같이 공고하오니 상인조직 등의 적극적인 참여를 바랍니다.\n1. 공고기간: 2026. 7. 14.(화) ~ 7. 31.(목)\n2. 접수기간: 2026. 7. 21.(화) ~ 7. 31.(금)\n3. 신청대상: 상인조직이 결성되어 있는 안양시 소재 골목상권\n4. 지원내용: 전통시장법에 따른 전통시장 및 상점가 지원대상에 포함\n5. 문    의: 안양시 상권활성화센터(031-8045-5143)\n자세한 내용은 붙임문서를 참고하시기 바랍니다.\n붙임  1. [공고문]2026년 안양시 골목형상점가 모집공고.  끝.\n파일\nhwpx 파일\n[공고문]2026년 안양시 골목형상점가 모집공고.hwpx\n미리보기\n(파일크기 : 1.0MB,\n다운로드 : 27회)\n목록",
+  "deadline": "2026-07-21 ~ 2026-07-31",
+  "posted_date": "2026-07-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-21",
+    "end": "2026-07-31",
+    "display": "2026-07-21 ~ 2026-07-31",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고문]2026년 안양시 골목형상점가 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=450336&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 [공고문]2026년 안양시 골목형상점가 모집 공고 내용 아래의 고시공고를 [게시판]에 게재 하고자 합니다. 안양시에서는 2026년도 안양시 골목형상점가 지정에 대해 아래와 같이 공고하오니 상인조직 등의 적극적인 참여"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-21 ~ 2026-07-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "[공고문]2026년 안양시 골목형상점가 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "아래의 고시공고를 [게시판]에 게재 하고자 합니다. 안양시에서는 2026년도 안양시 골목형상점가 지정에 대해 아래와 같이 공고하오니 상인조직 등의 적극적인 참여를 바랍니다. 1. 공고기간: 2026. 7. 14.(화) ~ 7. 31.(목) 2. 접수기간: 2026. 7. 21.(화) ~ 7. 31.(금) 3. 신청대상: 상인조직이 결성되어 있는 안양시 소재 골목상권 4. 지원내용: 전통시장법에 따른 전통시장 및 상점가 지원대상에 포함 5. 문 의: 안양시 상권활성화센터(031-8045-5143) 자세한 내용은 붙임문서를 참고하시기 바랍니다. 붙임 1. [공고문]2026년 안양시 골목형상점가 모집공고. 끝.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "hwpx 파일 [공고문]2026년 안양시 골목형상점가 모집공고.hwpx 미리보기 (파일크기 : 1.0MB, 다운로드 : 27회)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -37,7 +37,7 @@ def main() -> int:
     logging.getLogger().setLevel(logging.ERROR)  # fetch_html_generic 의 info 로그 억제
 
     all_mode = "--all" in sys.argv
-    sites = json.loads((ROOT / "sites.json").read_text(encoding="utf-8"))
+    sites = json.loads((ROOT / "config" / "sites.json").read_text(encoding="utf-8"))
     target = sites if all_mode else [s for s in sites if s.get("id", "").startswith("imp_")]
     print(f"진단 대상: {len(target)}개 ({'전체' if all_mode else '신규 imp_*'})", flush=True)
 
@@ -66,7 +66,7 @@ def main() -> int:
     empty = [r for r in results if r["status"] == "empty"]
     fail = [r for r in results if r["status"] == "fail"]
 
-    reports = ROOT / "reports"
+    reports = ROOT / "var" / "reports"
     reports.mkdir(exist_ok=True)
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     out = reports / f"site_parse_diag_{ts}.json"

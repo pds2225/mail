@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:33:44",
+  "notice_id": "ic_yeonsu_10437e25f3d5d9e8d0b3",
+  "title": "2026년 마을엔 여름방학맞이 원데이 클래스 수강생 모집",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118782&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n2026년 마을엔 여름방학맞이 원데이 클래스 수강생 모집\n작성자\n교육지원과\n작성일\n2026년 7월 9일\n조회수\n231\n담당부서\n교육지원과\n전화번호\n032-749-7254\n첨부파일\n마을엔_여름방학맞이_원데이_클래스.jpg (\n0.19MB)\n□\n개요\n○\n모집기간\n:\n2026. 7. 9.(\n목\n)\n09:00 ~\n마감시까지\n○\n운영기간\n:\n2026. 7. 23.(\n목\n) ~ 7. 28.(\n화\n)\n○\n모집인원\n:\n학생과 보호자로 이뤄진\n가족 각\n8\n팀 총\n40\n팀\n○\n교육장소\n:\n교육문화공간\n“\n마을엔\n”\n동아리실 등\n○\n수 강 료\n:\n무료\n(\n재료비 개인부담\n)\n□\n신청링크\n○\n레몬청 만들고 모히또로 힐링\n!(클릭, 네이버폼)\n○\n가족의 시간을 엮다\n,\n매듭 팔찌 만들기(클릭, 네이버폼)\n○\n뚝딱뚝딱 목공 교실(클릭, 네이버폼)\n○\n함께 만드는 특별한\n도시락(클릭, 네이버폼)\n○\n감성을 담은 키캡(클릭, 네이버폼)\n목록\n이전글\n[송도국제도서관][7.10.(금) 접수시작] <세계 속 전쟁, 전쟁과 우리> 프로그램 안내\n다음글\n7월 행정안전부 조직문화 개선과제 「신규직원에게 기피업무, 잡무 떠넘기기 금지」\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "2026-07-09",
+  "posted_date": "2026-07-09",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-09",
+    "end": "2026-07-09",
+    "display": "2026-07-09",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 마을엔 여름방학맞이 원데이 클래스 수강생 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118782&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 2026년 마을엔 여름방학맞이 원데이 클래스 수강생 모집 작성자 교육지원과 작성일 2026년 7월 9일 조회수 231 담당부서 교육지원과 전화번호 032-749-7254 첨부파일 마을엔_여름방학맞이_"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-09"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,103 @@
+{
+  "saved_at": "2026-07-26 19:37:51",
+  "notice_id": "imp_57f22dee_12134a9dfa8302c7f702",
+  "title": "2026년 대전형 소상공인 초저금리 특별자금 공고",
+  "link": "https://www.sinbo.or.kr/sub04_01_01/view/id/4318",
+  "source": "대전신용보증재단",
+  "author": "",
+  "description": "2026년 대전형 소상공인 초저금리 특별자금 공고\n작성자\n관리자\n작성일\n26/01/06 (11:40)\n조회수\n2605\n- 공지사항 입니다.",
+  "deadline": "",
+  "posted_date": "2026-01-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 대전형 소상공인 초저금리 특별자금 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sinbo.or.kr/sub04_01_01/view/id/4318"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 대전형 소상공인 초저금리 특별자금 공고 작성자 관리자 작성일 26/01/06 (11:40) 조회수 2605 - 공지사항 입니다."
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2026년 대전형 소상공인 초저금리 특별자금 공고",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자 관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "작성일 26/01/06 (11:40)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수 2605",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "- 공지사항 입니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

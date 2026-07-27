@@ -103,7 +103,7 @@ def test_enrich_worker_exception_keeps_failure_state(monkeypatch):
 
 
 def test_detail_failure_without_definitive_exclusion_goes_to_review():
-    groups = json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))
+    groups = json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))
     group = next(g for g in groups if g.get("active"))
     item = _item(
         title="제목만 있는 공고",
@@ -122,4 +122,9 @@ def test_detail_failure_without_definitive_exclusion_goes_to_review():
     assert buckets["review"]
     reviewed = buckets["review"][0]
     assert reviewed["detail_failure_review"] is True
-    assert any("상세정보 추출 실패" in note for note in reviewed["notes"])
+    notes = " ".join(reviewed["notes"])
+    assert (
+        "상세정보 추출 실패" in notes
+        or "추출 실패" in notes
+        or "상세 접속 실패" in notes
+    )

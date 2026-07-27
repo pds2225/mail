@@ -38,7 +38,7 @@ Cloud는 시크릿을 **환경변수로도 주입**하므로, 서브프로세스
 `monitor.py`(`os.environ`으로 키를 읽음)가 정상 동작합니다.
 
 ## 4. 알려진 클라우드 제약
-- **파일 영속성 없음**: `sites.json` / `groups.json` / `settings.json` 수정은
+- **파일 영속성 없음**: `config/sites.json` / `config/groups.json` / `config/settings.json` 수정은
   컨테이너 재시작 시 초기화됩니다(에페메럴 FS). 영구 보관이 필요하면 변경분을
   GitHub에 커밋하거나 외부 저장소(DB)로 옮겨야 합니다.
 - **메일 발송(SMTP)**: Streamlit Cloud는 아웃바운드 SMTP를 보장하지 않습니다.

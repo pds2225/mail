@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:22",
+  "notice_id": "imp_8aec2600_e3ae5514857934d8f520",
+  "title": "★자동차 부품업종 신규인력 상생고용 장려금 참여기업 모집공고",
+  "link": "http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=249",
+  "source": "울산양산경영자총협회",
+  "author": "",
+  "description": "페이지 정보\n작성자\n관리자\n작성일\n26-03-23 18:14\n조회\n711회\n댓글\n0건\n첨부파일\n공고문2026년 자동차 부품업종 신규인력 상생고용 장려금 모집공고.pdf\n(347.1K)\n86회 다운로드\nDATE : 2026-03-27 10:44:51\n서식2026년 자동차 부품업종 신규인력 상생고용 장려금 신청서식.hwp\n(167.5K)\n67회 다운로드\nDATE : 2026-03-27 10:45:56\n관련링크\n이전글\n다음글\n목록\n본문\n댓글목록\n등록된 댓글이 없습니다.\n이전글\n다음글\n목록",
+  "deadline": "",
+  "posted_date": "2026-03-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "★자동차 부품업종 신규인력 상생고용 장려금 참여기업 모집공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.uyef.or.kr/V1/bbs/board.php?bo_table=cu01&wr_id=249"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "페이지 정보 작성자 관리자 작성일 26-03-23 18:14 조회 711회 댓글 0건 첨부파일 공고문2026년 자동차 부품업종 신규인력 상생고용 장려금 모집공고.pdf (347.1K) 86회 다운로드 DATE : 2026-03-27 10:44:51 서식2026년 자동차 부품업종 신규인력"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

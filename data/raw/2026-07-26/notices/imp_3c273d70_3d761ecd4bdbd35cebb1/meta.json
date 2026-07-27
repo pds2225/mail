@@ -1,0 +1,163 @@
+{
+  "saved_at": "2026-07-26 19:39:11",
+  "notice_id": "imp_3c273d70_3d761ecd4bdbd35cebb1",
+  "title": "[긴급공지] 이노비즈협회 및 유관기관 사칭 불법 영업활동 주의...",
+  "link": "https://www.innobiz.net/company/company1_view.asp?Seq=423&Page=2&SearchKey=&SearchValue=",
+  "source": "이노비즈협회(사)중소기업기술혁신",
+  "author": "",
+  "description": "Global leader\n미래지향적인 기술혁신기업 이노비즈와 함께하세요!\n공지사항\n>\n기업마당\n>\n공지사항\n공지사항 상세보기\n제목\n[긴급공지] 이노비즈협회 및 유관기관 사칭 불법 영업활동 주의 안내\n작성자\n관리자\n등록일\n2026-04-06\n첨부파일\n최근 이노비즈협회 또는 공공기관을 사칭하여\n확인기업의 정보를 요구하거나 특정 서비스 결제를 강요하는 사례가 빈번하게 발생하고 있어 안내드립니다.\n우리 협회는 운영규정에 따라 확인기업 정보를 홈페이지에 공개하고 있으나,\n영업 목적의 외부 업체에 기업 정보를 별도로 제공하지 않습니다.\n사칭 업체들은 홈페이지에 공개된 정보를 악용하여 마치 협회와 관련이 있는 것처럼 접근하고 있으니 각별히 유의하시기 바랍니다.\n⚠️ 협회는 홍보, 검색 노출, 도메인 등록 등을 명목으로\n대표자 번호와 결제(카드번호 등)를 절대 요구하지 않습니다.\n[주요 사칭 및 불법 영업 수법]\n1. 기관 및 담당자 사칭\n- OOO분류센터, OOO도메인센터 등 공공기관과 유사한 명칭 사용\n- 협회 직원을 사칭하며 \"대표자 번호 알려달라\"고 접근\n- \"지원사업과 공지사항을 전달해야 하니 대표자 개인 연락처를 달라\"며 집요하게 요구\n2. 도메인 및 홍보 결제 강요\n- 이노비즈 확인 유지 조건으로 특정 도메인 구매가 필수라고 속여 수백만 원 결제 유도\n- \"오늘까지 등록 안 하면 다른 업체에 넘어간다\"며 고압적인 태도로 카드번호 요구\n- 무료 홍보를 미끼로 장기 약정 계약 유도 후 중도 해지 거부\n3. 금융 및 자금조달 사칭\n- 협회 유관기관임을 내세워 자금조달(대출)을 제안하며 불법 수수료나 사채 유도\n- 이노비즈 연장 등을 빌미로 특정 보험 상품 가입이나 금융 거래 요구\n[사칭 의심 사례 및 유형 (지속 업데이트)]\n✔️\n유형 1:\n이노비즈 확인사 대상 국가 도메인 독점권 부여 명목의 카드 결제 요구\n✔️\n유형 2:\n대표자 연락처 미제공 시 이노비즈 확인이 박탈되거나 불이익이 있다고 협박\n✔️\n유형 3:\n협회 자문기관이라며 대표 미팅을 요청하고 경영 컨설팅 비용 요구\n✔️\n유형 4:\n특정 제품의 온라인 노출 순위를 보장해주겠다며 월 정액 비용 요구\n[대응 방법 및 신고 안내]\n🔴\n절대 금지:\n전화상으로 대표자 개인 연락처, 카드번호, 비밀번호를 알려주지 마십시오.\n🔍\n사실 확인:\n협회 직원을 사칭할 경우 소속과 성명을 확인한 후, 협회 공식번호로 직접 전화하여 사실 여부를 확인하시기 바랍니다.\n📱\n증거 확보:\n사칭 의심 문자를 수신하거나 통화 내용을 녹취한 경우, 협회로 제보해 주시면 추가 피해 방지에 큰 도움이 됩니다.\n이노비즈협회는 이노비즈기업의 안전한 경영 환경을 위해 사칭 업체에 대한 법적 대응을 지속적으로 진행하고 있습니다.\n이노비즈협회 (중소기업기술혁신협회)\n다음 게시물 목록\n이전글\n[WISET] 2026년 과학기술분야 R&D 대체인력 활용 지원사업 2차 모집(~4/13(월))\n다음글\n(이노비즈협회) 중동 정세 관련 해외거래 기업 애로 조사 안내\n목록",
+  "deadline": "",
+  "posted_date": "2026-04-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[긴급공지] 이노비즈협회 및 유관기관 사칭 불법 영업활동 주의..."
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.innobiz.net/company/company1_view.asp?Seq=423&Page=2&SearchKey=&SearchValue="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "Global leader 미래지향적인 기술혁신기업 이노비즈와 함께하세요! 공지사항 > 기업마당 > 공지사항 공지사항 상세보기 제목 [긴급공지] 이노비즈협회 및 유관기관 사칭 불법 영업활동 주의 안내 작성자 관리자 등록일 2026-04-06 첨부파일 최근 이노비즈협회 또는 공공기관을 사칭"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공지사항 상세보기",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[긴급공지] 이노비즈협회 및 유관기관 사칭 불법 영업활동 주의 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-04-06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "최근 이노비즈협회 또는 공공기관을 사칭하여 확인기업의 정보를 요구하거나 특정 서비스 결제를 강요하는 사례가 빈번하게 발생하고 있어 안내드립니다. 우리 협회는 운영규정에 따라 확인기업 정보를 홈페이지에 공개하고 있으나, 영업 목적의 외부 업체에 기업 정보를 별도로 제공하지 않습니다. 사칭 업체들은 홈페이지에 공개된 정보를 악용하여 마치 협회와 관련이 있는 것처럼 접근하고 있으니 각별히 유의하시기 바랍니다. ⚠️ 협회는 홍보, 검색 노출, 도메인 등록 등을 명목으로 대표자 번호와 결제(카드번호 등)를 절대 요구하지 않습니다. [주요 사칭 및 불법 영업 수법] 1. 기관 및 담당자 사칭 - OOO분류센터, OOO도메인센터 등 공공기관과 유사한 명칭 사용 - 협회 직원을 사칭하며 \"대표자 번호 알려달라\"고 접근 - \"지원사업과 공지사항을 전달해야 하니 대표자 개인 연락처를 달라\"며 집요하게 요구 2. 도메인 및 홍보 결제 강요 - 이노비즈 확인 유지 조건으로 특정 도메인 구매가 필수라고 속",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "다음 게시물 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[WISET] 2026년 과학기술분야 R&D 대체인력 활용 지원사업 2차 모집(~4/13(월))",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "(이노비즈협회) 중동 정세 관련 해외거래 기업 애로 조사 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

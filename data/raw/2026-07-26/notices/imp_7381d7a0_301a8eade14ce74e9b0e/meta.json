@@ -1,0 +1,108 @@
+{
+  "saved_at": "2026-07-26 19:39:03",
+  "notice_id": "imp_7381d7a0_301a8eade14ce74e9b0e",
+  "title": "2025년 경기도 청년 창업 원스텝 2차 모집공고(~8.13.(수)까지)",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=408888&searchCtgry=&searchKrwd=&pageIndex=2&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n2025년 경기도 청년 창업 원스텝 2차 모집공고(~8.13.(수)까지)\n핫이슈\n내용\n- 신청기간 : 2025. 7. 22.(화) ~ 8. 13.(수) 18:00까지\n- 지원대상 : 도내 창업을 희망하는 청년\n- 지원규모 : 청년창업지원 150명 이상\n- 지원내용 :  창업계획교육 (13H, 8과목) , 창업아이디어 진단 (창업분과별 2회)  및 심화컨설팅 (전문분야 5회) , 경쟁오디션 (창업계획력 평가) , 창업자금 이자비 지원 (1년, 최대 3%, 최대 1백만원)\n-  신청자격 : 공고일 기준 경기도 1년 이상 거주자이며, 도내 창업을 희망하는 청년\n※ 「경기도 청년 기본 조례」에 따라 도내 거주 19세 이상 ~ 39세 이하인 자\n※ 우선대상자(사업/유관기관) : 전통시장 청년상인 육성사업, 청년 푸드창업허브 / 여주 반려마루\n-  창업분과 : 음식업, 도소매업(전자상거래업 포함), 서비스업, 제조업\n- 신청방법 : 경기바로를 통한 온라인 접수(\nhttps://ggbaro.kr/\n)\n- 문 의 처 : 경기도시장상권진흥원 종합콜센터 1600-8001\n파일\n목록",
+  "deadline": "2025-07-22 ~ 2026-08-13",
+  "posted_date": "2025-07-29",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2025-07-22",
+    "end": "2026-08-13",
+    "display": "2025-07-22 ~ 2026-08-13",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2025년 경기도 청년 창업 원스텝 2차 모집공고(~8.13.(수)까지)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=408888&searchCtgry=&searchKrwd=&pageIndex=2&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 2025년 경기도 청년 창업 원스텝 2차 모집공고(~8.13.(수)까지) 핫이슈 내용 - 신청기간 : 2025. 7. 22.(화) ~ 8. 13.(수) 18:00까지 - 지원대상 : 도내 창업을 희망하는 청년 - 지"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2025-07-22 ~ 2026-08-13"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2025년 경기도 청년 창업 원스텝 2차 모집공고(~8.13.(수)까지) 핫이슈",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "- 신청기간 : 2025. 7. 22.(화) ~ 8. 13.(수) 18:00까지 - 지원대상 : 도내 창업을 희망하는 청년 - 지원규모 : 청년창업지원 150명 이상 - 지원내용 : 창업계획교육 (13H, 8과목) , 창업아이디어 진단 (창업분과별 2회) 및 심화컨설팅 (전문분야 5회) , 경쟁오디션 (창업계획력 평가) , 창업자금 이자비 지원 (1년, 최대 3%, 최대 1백만원) - 신청자격 : 공고일 기준 경기도 1년 이상 거주자이며, 도내 창업을 희망하는 청년 ※ 「경기도 청년 기본 조례」에 따라 도내 거주 19세 이상 ~ 39세 이하인 자 ※ 우선대상자(사업/유관기관) : 전통시장 청년상인 육성사업, 청년 푸드창업허브 / 여주 반려마루 - 창업분과 : 음식업, 도소매업(전자상거래업 포함), 서비스업, 제조업 - 신청방법 : 경기바로를 통한 온라인 접수( https://ggbaro.kr/ ) - 문 의 처 : 경기도시장상권진흥원 종합콜센터 1600-8001",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -18,7 +18,7 @@ os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-import coverage_alert as ca  # noqa: E402
+from mail_core.operations import coverage_alert as ca  # noqa: E402
 
 
 def _row(site_id, *, item_count, fetch_success=True, fetch_error="", enabled=True, name=None):

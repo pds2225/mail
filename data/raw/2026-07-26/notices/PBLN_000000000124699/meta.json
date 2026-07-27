@@ -1,0 +1,207 @@
+{
+  "saved_at": "2026-07-26 19:32:11",
+  "notice_id": "PBLN_000000000124699",
+  "title": "[전남광주] 구례군 2026년 소상공인 카드수수료 지원사업 신청자 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124699",
+  "source": "기업마당(Bizinfo)",
+  "author": "전남광주통합특별시",
+  "description": "<p>경기 불황으로 경영상 어려움을 겪고 있는 관내 소상공인의 경영 부담을 완화하고자 「2026년 소상공인 카드수수료 지원사업」을 추진 하오니 참여를 희망하는 소상공인의 많은 신청 바랍니다.&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 2025년부터 신청일까지 관내에서 정상적으로 영업 중인 연매출액 3억원 이하 사업자 중, 국세 및 지방세 체납액이 없는 소상공인</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;2025년도 카드 매출액의 0.5%(업체당 최대 50만원) 지원</p><p style=\"line-height: 1.8;\">※&nbsp;1인이 다수 사업체 운영하는 경우 1인당 1개 사업체만 지원</p>\n경기 불황으로 경영상 어려움을 겪고 있는 관내 소상공인의 경영 부담을 완화하고자 「2026년 소상공인 카드수수료 지원사업」을 추진 하오니 참여를 희망하는 소상공인의 많은 신청 바랍니다. ☞ 2025년부터 신청일까지 관내에서 정상적으로 영업 중인 연매출액 3억원 이하 사업자 중, 국세 및 지방세 체납액이 없는 소상공인 ☞ 2025년도 카드 매출액의 0.5%(업체당 최대 50만원) 지원 ※ 1인이 다수 사업체 운영하는 경우 1인당 1개 사업체만 지원",
+  "deadline": "2026-07-13 ~ 2026-09-11",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-13",
+    "end": "2026-09-11",
+    "display": "2026-07-13 ~ 2026-09-11",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전남광주] 구례군 2026년 소상공인 카드수수료 지원사업 신청자 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "전남광주통합특별시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124699"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>경기 불황으로 경영상 어려움을 겪고 있는 관내 소상공인의 경영 부담을 완화하고자 「2026년 소상공인 카드수수료 지원사업」을 추진 하오니 참여를 희망하는 소상공인의 많은 신청 바랍니다.&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 20"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-13 ~ 2026-09-11"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#구례읍",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#산동면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#용방면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#광의면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#마산면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#토지면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#간전면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#문척면",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전남광주통합특별시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#카드매출액",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#구례군",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#카드수수료",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기초자치단체",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#소상공인",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "전남광주통합특별시"
+}

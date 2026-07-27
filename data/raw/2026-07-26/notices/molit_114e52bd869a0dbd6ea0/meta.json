@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:31",
+  "notice_id": "molit_114e52bd869a0dbd6ea0",
+  "title": "비관리청 도로공사 시행 허가 내용(안양-성남)",
+  "link": "https://www.molit.go.kr/USR/BORD0201/m_69/DTL.jsp?id=N01_B&cate=&mode=view&idx=268936&key=&search=&search_regdate_s=2025-07-26&search_regdate_e=2026-07-26&order=&desc=asc&srch_prc_stts=&item_num=0&search_dept_id=&search_dept_nm=&srch_usr_nm=N&srch_usr_titl=N&srch_usr_ctnt=N&srch_mng_nm=N&old_dept_nm=&search_gbn=&search_section=&source=&search1=&lcmspage=1",
+  "source": "국토교통부",
+  "author": "",
+  "description": "비관리청 도로공사 시행 허가 내용(안양-성남)\n담당부서\n도로투자지원과\n담당자\n박푸른\n연락처\n044-201-4576\n등록일\n2026-07-24\n조회수\n186\n첨부파일\n도로공사_시행_허가_공고문(안양-성남).hwp\n(39Kbyte)\n바로보기\n도로공사_시행_허가_공고문(안양-성남).pdf\n(88Kbyte)\n바로보기\n공고 제2026-960호\n◉\n국토교통부 공고 제\n2026-960\n호\n｢\n도로법 시행령\n｣\n제\n34\n조 제\n2\n항에 따라 다음과 같이 도로관리청이 아닌 자의 도로공사 시행 허가 내용을 공고합니다\n.\n2026\n년\n7\n월\n24\n일\n국토교통부장관\n도로공사 시행 허가 내용 공고\n비밀번호입력\n비밀번호",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "비관리청 도로공사 시행 허가 내용(안양-성남)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.molit.go.kr/USR/BORD0201/m_69/DTL.jsp?id=N01_B&cate=&mode=view&idx=268936&key=&search=&search_regdate_s=2025-07-26&search_regdate_e=2026-07-26&order"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "비관리청 도로공사 시행 허가 내용(안양-성남) 담당부서 도로투자지원과 담당자 박푸른 연락처 044-201-4576 등록일 2026-07-24 조회수 186 첨부파일 도로공사_시행_허가_공고문(안양-성남).hwp (39Kbyte) 바로보기 도로공사_시행_허가_공고문(안양-성남).pdf ("
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

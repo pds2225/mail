@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:37:52",
+  "notice_id": "imp_1a8d8b8d_cc8c1dbb34080d286bbf",
+  "title": "수성알파시티 처분신청부지 매각 공고",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8649&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n수성알파시티 처분신청부지 매각 공고\n2026-07-13 00:00:00\n작성자\n기업지원1과\n조회\n72\n분류\n파일\n수성알파시티 처분신청부지 매각 공고문.hwp\n바로보기\n입주심의신청서 및 서약서(입주심사용).hwp\n바로보기\n사업계획서(입주심사용).hwp\n바로보기\n사업계획요약서(입주심사용).xls\n바로보기\n대구경북경제자유구역청 공고 제2026-21호\n수성알파시티 처분신청부지 매각 공고\n수성알파시티 내 처분신청 지식기반산업시설용지에 대한 매각을 다음과 같이 공고합니다.\n2026. 7. 13.\n대구경북경제자유구역청장\n1. 용      도 : 지식기반산업시설용지\n2. 주      소 : 대구광역시 수성구 대흥동 858-2번지\n3. 용지면적 : 2,112.7㎡\n4. 양도가격 : 3,064,686,070원\n5. 접수기간 : 2026.7.28. ~ 7.29.(2일간, 방문접수)\n※ 자세한 사항은 붙임 공고문을 참고하시기 바랍니다.\n목록\nprev\n건설공사 안전점검 수행기관 지정 공고문(녹전동974-21외6필지, 영천시 )\nnext\n2025회계연도 결산 승인 고시\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "2026-07-28 ~ 2026-07-29",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-28",
+    "end": "2026-07-29",
+    "display": "2026-07-28 ~ 2026-07-29",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "수성알파시티 처분신청부지 매각 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8649&mnu_uid=321&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 수성알파시티 처분신청부지 매각 공고 2026-07-13 00:00:00 작성자 기업지원1과 조회 72 분류 파일 수성알파시티 처분신청부지 매각 공고문.hwp 바로보기 입주심의신청서 및 서약서(입주심사용).hwp 바로보기 사업계획서(입주심사용).hwp 바로보기 사업계획요약서(입주심사"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-28 ~ 2026-07-29"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

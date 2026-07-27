@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:38:56",
+  "notice_id": "imp_1cc848c7_c7847aedd56d94a2fb17",
+  "title": "2026년 몽골 의공학회 전시부스 참가기업 모집 공고 (~6/23까지)",
+  "link": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=366",
+  "source": "원주의료기기산업진흥원",
+  "author": "",
+  "description": "사업공고 안내\n[시장진출 및 마케팅]\n2026년 몽골 의공학회 전시부스 참가기업 모집 공고 (~6/23까지)\n신청기간\n2026-06-12 ~ 2026-06-23\n신청자격\n원주 의료기기 및 헬스케어 제조기업\n공고번호\n260060\n진행상태\n접수마감\n담당부서/담당자\n사업관리팀  / 이수연 전임연구원\n신청서류\n2026년 몽골 의공학회 전시부스 모집 공고문.zip\n우리 재단은 원주 의료기기 기업의 몽골 시장개척 지원을 위하여 아래와 같이 참가기업을 모집하오니 관심 있는 기업의 많은 신청 바랍니다.\n□ 몽골 의공학회 개요\n○ (행사명) International Conference on the Development of Biomedical Engineering\n○ (일시 및 장소) 2026. 8. 23.(일) ~ 8. 25.(화), 몽골, 울란바토르 호텔\n□ 전시부스 운영 계획\n○ (참가대상) 원주 의료기기 및 헬스케어 제조기업\n○ (조성규모) 5개사 2.5부스(1부스 2개사 공유) 내외\n○ (운영주체) (재)원주의료기기산업진흥원\n○ (참 가 비) 기업당 110만원(0.5부스 기준)\n- 참가기업 선정 통보일로부터 2주 이내, 지정된 계좌로 참가비 납부, 기한 내 미납 시 참여 제한\n- 기업에서 1부스 사용 희망시 참가비 220만원 납부 필요\n- 기본 지원사항 외 체재비, 운송비, 추가 장치비용 등 기업 자부담\n○ (참가기업 기업지원사항)\n- 비품 제공(기본전력, 상호간판, 인포데스크 1개, 의자 2개, 부스 벽면 부착용 인쇄물)\n- 바이어 DM 발송 등 사전마케팅\n- 몽골 현지 비즈니스 교류회\n- 통역: 관내기업 기준 2개사 당 1명\n□ 참가신청\n○ (신청기간) ~2026. 6. 23.(화)\n○ (신청방법) 재단 홈페이지(www.wmit.or.kr)신청서 다운로드 후 작성하여 구비서류와 함께 담당자 이메일(lsy@wmit.or.kr) 접수\n※문의처: 사업관리팀 이수연 전임(760-6174 / lsy@wmit.or.kr)\n○ (제출서류) 참가신청서 및 항목별 증빙서류 必\n① 참가신청서(대표자 직인 必)\n② 참가서약서(대표자 직인 必)\n③ 신청 자격 적정 확인서(대표자 직인 必)\n④ 개인(기업) 정보제공 활용 동의서(대표자 직인 必)\n⑤ 자기평가표 및 각 항목별 증빙 일체\n※참가신청서 및 항목별 증빙서류 必, 서류 누락 및 제출오류(미접수) 시 불이익이 있을 수 있음\n자세한 사항은 붙임의 공고문을 참고 바랍니다.\n접수가 마감되었습니다.",
+  "deadline": "2026-06-12 ~ 2026-06-23",
+  "posted_date": "2026-06-12",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-12",
+    "end": "2026-06-23",
+    "display": "2026-06-12 ~ 2026-06-23",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 몽골 의공학회 전시부스 참가기업 모집 공고 (~6/23까지)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.wmit.or.kr/announce/businessAnnounceDetail.do?noticeIdx=366"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 안내 [시장진출 및 마케팅] 2026년 몽골 의공학회 전시부스 참가기업 모집 공고 (~6/23까지) 신청기간 2026-06-12 ~ 2026-06-23 신청자격 원주 의료기기 및 헬스케어 제조기업 공고번호 260060 진행상태 접수마감 담당부서/담당자 사업관리팀 / 이수연 전임"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-12 ~ 2026-06-23"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

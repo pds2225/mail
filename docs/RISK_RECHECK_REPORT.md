@@ -35,7 +35,7 @@
 |----|------|--------|------|------|
 | S-01 | `persist_seen=False` 시 저장 안 함 | LOW | 조건부 `save_seen_ids` | 유지 + dry-run 명시 로그 |
 | S-02 | `save_seen_ids` 직접 호출 시 우회 | MEDIUM | streamlit 등 다른 진입점 가능 | dry-run: `MONITOR_NO_PERSIST_SEEN=1` 가드 추가 |
-| S-03 | GHA가 `seen_ids.json` 커밋·푸시 | **HIGH** | `.github/workflows/monitor.yml` | **NEEDS_USER** — 운영 정책. 본 브랜치에서 변경 안 함 |
+| S-03 | GHA가 `var/state/seen_ids.json` 커밋·푸시 | **HIGH** | `.github/workflows/monitor.yml` | **NEEDS_USER** — 운영 정책. 본 브랜치에서 변경 안 함 |
 | S-04 | dry-run 중 파일 touch | MEDIUM | `.tmp` 저장 경로 | 가드 + 테스트로 미변경 검증 |
 
 ---
@@ -79,11 +79,11 @@
 
 | ID | 항목 | 위험도 | 현황 | 조치 |
 |----|------|--------|------|------|
-| R-01 | 수신자: `groups.json` / `settings.json` | LOW | 설정 파일 기반 | `ADD_RECIPIENT_GUIDE.md` |
+| R-01 | 수신자: `config/groups.json` / `config/settings.json` | LOW | 설정 파일 기반 | `ADD_RECIPIENT_GUIDE.md` |
 | R-02 | 이메일 형식 검증 없음 | MEDIUM | 잘못된 주소 SMTP 실패 | `validate_recipients()` 추가 |
 | R-03 | 중복 수신자 | LOW | 미제거 | dedupe 추가 |
 | R-04 | 로그 마스킹 `_mask_email` | LOW | monitor.py 존재 | dry-run 출력에 적용 |
-| R-05 | groups.json에 실주소 하드코딩 | MEDIUM | 레포에 포함됨 | **임의 추가 금지** — 가이드만 제공 |
+| R-05 | config/groups.json에 실주소 하드코딩 | MEDIUM | 레포에 포함됨 | **임의 추가 금지** — 가이드만 제공 |
 
 ---
 
@@ -94,7 +94,7 @@
 | G-01 | `D:\mail` 경로 (customer_intake) | MEDIUM | `customer_intake/sheets_writer.py` 안내 문구 | monitor 경로는 `Path(__file__)` — 안전 |
 | G-02 | `api/run.py` → `/tmp/monitor_ws` | LOW | Vercel 전용 | monitor 본편과 분리 |
 | G-03 | `run_monitor.bat` Windows 로컬 | LOW | 사용 안 함(원격 작업) | 무시 |
-| G-04 | `logs/` 미존재 | LOW | — | `logs/.gitkeep` + gitignore |
+| G-04 | `var/logs/` 미존재 | LOW | — | `var/logs/.gitkeep` + gitignore |
 
 ---
 
@@ -110,7 +110,7 @@
 ## 본 브랜치에서 진행하는 안전 작업
 
 - `scripts/monitor_dry_run.py` — `allow_send=False`, `persist_seen=False`, 커버리지·review 리포트
-- `date_unknown` review queue 분리 및 `logs/review_queue_YYYYMMDD.md` 생성
+- `date_unknown` review queue 분리 및 `var/logs/review_queue_YYYYMMDD.md` 생성
 - `validate_recipients()` + 테스트
 - SMTP/seen_ids 가드 (dry-run 플래그)
 - 문서: `ADD_RECIPIENT_GUIDE.md`, 커버리지 리포트 샘플
@@ -124,4 +124,4 @@ git checkout main
 git branch -D feat/mail-coverage-recipient-safety
 ```
 
-생성된 `logs/*.md`는 커밋하지 않아도 됨 (로컬/CI 산출물).
+생성된 `var/logs/*.md`는 커밋하지 않아도 됨 (로컬/CI 산출물).

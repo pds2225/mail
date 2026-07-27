@@ -1,0 +1,20 @@
+{
+  "date_filter_enabled": true,
+  "days_back": 3,
+  "include_date_unknown": false,
+  "raw_all_enabled": true,
+  "raw_all_recipients": [],
+  "company_match_enabled": true,
+  "max_posted_age_days": null,
+  "date_unknown_policy": "recall",
+  "date_unknown_max_age_days": 40,
+  "raw_store_enabled": true,
+  "raw_store_retention_days": 30,
+  "raw_store_max_detail_bytes": 800000,
+  "raw_store_gzip_detail": true,
+  "tenant_id": "default",
+  "region_unknown_mail_limit": 10,
+  "notice_versioning_enabled": true,
+  "filter_trace_sheet_id": "1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E",
+  "filter_trace_sheet_tab": "filter_trace"
+}

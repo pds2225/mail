@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:04",
+  "notice_id": "djtp_1ebb6db3dcf163756693",
+  "title": "「`26년도 시군구연고산업육성 협업프로젝트 지원기업 추가모집 공고」 대덕구 인구유..",
+  "link": "https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102&act=view&list_no=13238&tag=&nPage=2",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n사업공고\n일반사업공고\n입찰공고\n입주공고\n채용공고\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n일반사업공고\n「`26년도 시군구연고산업육성 협업프로젝트 지원기업 추가모집 공고」 대덕구 인구유입을 위한 푸드테크산업 활성화 프로젝트\n작성자\n박*철\n작성일\n2026/05/20 15:30\n조회수\n1,041\n「`26년도 시군구연고산업육성 협업프로젝트 지원기업 추가모집 공고」\n대덕구 인구유입을 위한 푸드테크산업 활성화 프로젝트\n붙임1. 추가모집 연장 공고문.pdf\n붙임1. 추가모집 연장 공고문.pdf\r\n\t\t\t\t\t\t\t\t\t[269.95KB]\n[별첨 1] 제출서류 및 신청방법.hwp\r\n\t\t\t\t\t\t\t\t\t[72KB]\n[서식 제1호] 신청서 양식.hwp\r\n\t\t\t\t\t\t\t\t\t[56KB]\n[서식 제2호] 수행계획서 양식.hwp\r\n\t\t\t\t\t\t\t\t\t[66.5KB]\n[서식 제3호] 참여의사 확인 및 개인정보 이용 동의서.hwp\r\n\t\t\t\t\t\t\t\t\t[87KB]\n[서식 제4호] 신청자격 적정성 확인서.hwp\r\n\t\t\t\t\t\t\t\t\t[50KB]\n[서식 제5호] 중복지원 금지사항 확약서.hwp\r\n\t\t\t\t\t\t\t\t\t[51KB]\n[서식 제6호] 성실의무이행서약서.hwp\r\n\t\t\t\t\t\t\t\t\t[69KB]\n참고자료. 푸드테크산업 범위 및 세부기준.hwp\r\n\t\t\t\t\t\t\t\t\t[78.5KB]\n목록",
+  "deadline": "2026-05-20",
+  "posted_date": "2026-05-20",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "「`26년도 시군구연고산업육성 협업프로젝트 지원기업 추가모집 공고」 대덕구 인구유.."
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.djtp.or.kr/board.es?mid=a20102000000&bid=0102&act=view&list_no=13238&tag=&nPage=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 사업공고 일반사업공고 입찰공고 입주공고 채용공고 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 일반사업공고 「`26년도 시군구연고산업육성 협업프로젝트 지원기업 추가모집 공고」 대덕구 인구유"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-05-20"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

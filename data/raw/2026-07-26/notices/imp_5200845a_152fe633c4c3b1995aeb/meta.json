@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:40",
+  "notice_id": "imp_5200845a_152fe633c4c3b1995aeb",
+  "title": "청년지원센터 8월 프로그램 참여자 모집",
+  "link": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=980859",
+  "source": "김포시청",
+  "author": "",
+  "description": "청년지원센터 8월 프로그램 참여자 모집 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보  제공\n제목\n청년지원센터 8월 프로그램 참여자 모집\n담당부서\n일자리정책과\n청년지원센터 8월 프로그램 참여자 모집\n파일\npng 문서\n8월 프로그램 참여자 모집 （1）.png\n미리보기\n조회수\n388\n작성일\n2026.07.06\n목록\n이전글\n제16회 지방행정의 달인 후보자 공적 공개검증\n다음글\n찾아가는 청년지원센터 8월 프로그램 참여자 모집",
+  "deadline": "",
+  "posted_date": "2026-07-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "청년지원센터 8월 프로그램 참여자 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gimpo.go.kr/portal/selectBbsNttView.do?key=999&bbsNo=292&searchCnd=all&deleteAt=N&pageUnit=10&pageIndex=2&nttNo=980859"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "청년지원센터 8월 프로그램 참여자 모집 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공 제목 청년지원센터 8월 프로그램 참여자 모집 담당부서 일자리정책과 청년지원센터 8월 프로그램 참여자 모집 파일 png 문서 8월 프로그램 참여자 모집 （1）.png 미리보기 조회수 38"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "청년지원센터 8월 프로그램 참여자 모집 상세보기 - 제목,담당부서,내용,파일,조회수,작성일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "청년지원센터 8월 프로그램 참여자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "일자리정책과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "png 문서 8월 프로그램 참여자 모집 （1）.png 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "388",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

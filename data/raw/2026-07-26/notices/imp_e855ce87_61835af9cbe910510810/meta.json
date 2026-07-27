@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:37:13",
+  "notice_id": "imp_e855ce87_61835af9cbe910510810",
+  "title": "LINK Non-profit",
+  "link": "https://www.libertyinnorthkorea.org/",
+  "source": "남북하나재단",
+  "author": "",
+  "description": "",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": null,
+  "detail_extraction": {
+    "status": "PARSE_FAILED",
+    "reason": "no_extractable_detail",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "LINK Non-profit"
+      },
+      "organizer": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.libertyinnorthkorea.org/"
+      },
+      "description": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "application_period": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

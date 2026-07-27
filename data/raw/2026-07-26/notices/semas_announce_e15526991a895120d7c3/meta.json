@@ -1,0 +1,141 @@
+{
+  "saved_at": "2026-07-26 19:35:04",
+  "notice_id": "semas_announce_e15526991a895120d7c3",
+  "title": "2026년 보조사업자를 위한 부정수급 매뉴얼 배포",
+  "link": "https://www.semas.or.kr/web/board/webBoardView.kmdc?b_idx=55632&bCd=1&pNm=BOA0101",
+  "source": "소상공인시장진흥공단 - 사업공고",
+  "author": "",
+  "description": "알림마당\n공지사항\n양도담보물공매\n사업공고\n유관공고\n채용정보\n공단 인재상\n직원채용\n친인척 채용현황\n보도/설명\n보도자료\n설명자료\n안전게시판\n전국 소상공인지원센터\n서울지역\n강원지역\n경기북부지역\n경기남부지역\n대전세종충남지역\n대구경북지역\n부산울산지역\n광주전남제주지역\n평일 09:00 ~ 18:00\n중소기업통합콜센터\n1357\n소진공 통합콜센터\n1533-0100\n업무\n부서\n공지사항\n알림마당\n공지사항\n제목\n2026년 보조사업자를 위한 부정수급 매뉴얼 배포\n조회수\n344\n등록자\n관리자\n등록일\n2026-07-22\n첨부파일1\n★2026년 보조사업자를 위한 부정수급 매뉴얼.pdf\n안녕하세요, 소상공인시장진흥공단입니다.\n공단에서 수행하는 사업에 참여하시는 보조사업자분들을 위한\n'2026년 보조사업자를 위한 부정수급 매뉴얼'을 붙임과 같이 제작\n하였습니다.\n부정수급\n이란, 사업 규정이나 지침에 위반되는 내용으로 보조금을 집행하여 그\n금액을 환수당하거나 교부 결정이 취소되는 경우\n등을 말하며,\n부정수급으로 확정\n되는 경우,\n사업 수행 배제, 부정수급액 환수, 제재부가금 부과 등의 조치\n가 될 수 있습니다.\n의도하지 않은 채로 부정수급을 저지르는 일이 없도록, 부정수급 개념부터 적발 사례까지 상세하게 작성된 (붙임) 매뉴얼을 보조금 집행 전 수행 중 필독해주시고,\n한 해 사업을 잘 마무리하여 주시기 바랍니다.\n항상 공단 사업에 많은 관심을 가져주셔서 감사합니다.\n목록\n열람하신 정보에 만족하십니까?\n매우만족\n만족\n보통\n불만족\n매우불만족\n평가하기",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 보조사업자를 위한 부정수급 매뉴얼 배포"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.semas.or.kr/web/board/webBoardView.kmdc?b_idx=55632&bCd=1&pNm=BOA0101"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "알림마당 공지사항 양도담보물공매 사업공고 유관공고 채용정보 공단 인재상 직원채용 친인척 채용현황 보도/설명 보도자료 설명자료 안전게시판 전국 소상공인지원센터 서울지역 강원지역 경기북부지역 경기남부지역 대전세종충남지역 대구경북지역 부산울산지역 광주전남제주지역 평일 09:00 ~ 18:00"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 보조사업자를 위한 부정수급 매뉴얼 배포",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "344",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일1",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "★2026년 보조사업자를 위한 부정수급 매뉴얼.pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "안녕하세요, 소상공인시장진흥공단입니다. 공단에서 수행하는 사업에 참여하시는 보조사업자분들을 위한 '2026년 보조사업자를 위한 부정수급 매뉴얼'을 붙임과 같이 제작 하였습니다. 부정수급 이란, 사업 규정이나 지침에 위반되는 내용으로 보조금을 집행하여 그 금액을 환수당하거나 교부 결정이 취소되는 경우 등을 말하며, 부정수급으로 확정 되는 경우, 사업 수행 배제, 부정수급액 환수, 제재부가금 부과 등의 조치 가 될 수 있습니다. 의도하지 않은 채로 부정수급을 저지르는 일이 없도록, 부정수급 개념부터 적발 사례까지 상세하게 작성된 (붙임) 매뉴얼을 보조금 집행 전 수행 중 필독해주시고, 한 해 사업을 잘 마무리하여 주시기 바랍니다. 항상 공단 사업에 많은 관심을 가져주셔서 감사합니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 4
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

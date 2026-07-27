@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:24",
+  "notice_id": "imp_e02ba1cb_05d7498ad62db46f3143",
+  "title": "[오엠인터랙티브] 소상공인 온·오프라인 판로지원 사업 '소담상회' 셀러 모집 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=241&keyfield_s=&search_word_s=&cpage=2&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[오엠인터랙티브] 소상공인 온·오프라인 판로지원 사업 '소담상회' 셀러 모집 안내\n작성일자\n2026.07.07\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n[2026소담상회]모집포스터.jpg\n목록\n이전글\n[K-DATA] AI·데이터 문제해결은행 맞춤 지원 사업 모집안내(설명회 일정 추가)\n다음글\n[한국산업인력공단]  제목 중소기업 재직자 대상 인사·노무 및 AI 리더십 교육 안내",
+  "deadline": "",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[오엠인터랙티브] 소상공인 온·오프라인 판로지원 사업 '소담상회' 셀러 모집 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=241&keyfield_s=&search_word_s=&cpage=2&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[오엠인터랙티브] 소상공인 온·오프라인 판로지원 사업 '소담상회' 셀러 모집 안내 작성일자 2026.07.07 담당부서 홍보실 문의처 공고문 참조 첨부파일 [2026소담상회]모집포스터.jpg 목록 이전글 [K-DATA] AI·데이터 문제해결은행 맞춤 지원 사업 모집안내(설명회 일정 추가"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[K-DATA] AI·데이터 문제해결은행 맞춤 지원 사업 모집안내(설명회 일정 추가)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[한국산업인력공단] 제목 중소기업 재직자 대상 인사·노무 및 AI 리더십 교육 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

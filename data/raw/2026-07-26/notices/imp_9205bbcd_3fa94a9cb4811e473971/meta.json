@@ -1,0 +1,939 @@
+{
+  "saved_at": "2026-07-26 19:35:48",
+  "notice_id": "imp_9205bbcd_3fa94a9cb4811e473971",
+  "title": "[마감] 2025년 구미시 마이스터 멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 공고",
+  "link": "http://kbef.or.kr/zbxe/index.php?mid=support1&page=2&document_srl=2403",
+  "source": "경북경영자총협회",
+  "author": "",
+  "description": "2025\n년 구미시마이스터멘토단 기업멘토링\n중소기업 기술지원 멘토링 참여 기업 모집 공고\n구미지역 중소기업의 애로사항을 공유하고 다양한 기술 및 노하우 전수를 바탕으로 효율적이고 효과적인 해결책을 제시하기 위하여 구미시 마이스터 멘토단의 우수 인력을 전문 멘토로 지정하여 궁극적인 중소기업 애로기술 해결을 지원하고자 대상 사업장을 다음과 같이 모집합니다\n.\n2025\n년\n8\n월\n1\n일\n구미시마이스터멘토단장\n･････････････････････････････････････････････････････････････････････････････\n■\n기술지원 멘토링 참여 기업 모집 공고\n1.\n개요\n사 업 명\n선정\n사업장\n예정금액\n(\n원\n)\n비 고\n계\n개선지원비\n중소기업 기술지원 멘토링\n2\n개사\n6,000,000\n6,000,000\n원\n(3,000,000\n원\n*2\n개사\n)VAT\n포함\n2.\n신청자격\n○\n구미시에 사업장이 소재하며 가동 중인 중소기업\n(\n제조업\n)\n○\n매출액\n100\n억 미만\n,\n또는\n50\n인 미만 사업장\n*\n소재지는 사업자등록증을 통해 확인\n○\n자격제한\n:\n휴\n·\n폐업 상태의 기업\n,\n단순 서비스업 및 유통업\n,\n인력공급업\n3.\n신청서 제출\n○\n공모기간\n: 2025. 08. 01.\n∼\n08. 15.(15\n일간\n)\n○\n접수방법\n: E-mail(\nhero33111@hanmail.net\n)\n또는 우편접수\n(\n방문접수 자재\n)\n○\n접 수 처\n:\n경북경영자총협회 기업지원부\n경북 구미시\n1\n공단로\n135(\n공단동\n, 2\n층\n) /\n☏\n054) 461-5524\n4.\n선정절차\n○\n선정심의위원회 개최\n-\n운영기관\n(\n경북경영자총협회\n)\n에서 구성\n･\n운영하는 선정심의위원회에서 평가 기준에 따라 대상 사업장 선정\n○\n선정결과 통지\n-\n선정결과를 해당 업체로 개별 통지 또는 홈페이지 공고\n*\n탈락시 별도 통보 없음\n5.\n협약체결\n○\n운영기관과 선정된 사업장 협약체결 후 사업 진행\n6.\n지원사항\n○\n개선지원비\n1\n개소당\n3,000,000\n원 지원\n(VAT\n포함\n)\n7.\n기타\n○\n운영기관의 동의 없이 범위\n,\n일정 등이 변경되는 경우 개선지원비 전부 또는 일부를 감액할 수 있음",
+  "deadline": "",
+  "posted_date": "2025-08-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[마감] 2025년 구미시 마이스터 멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://kbef.or.kr/zbxe/index.php?mid=support1&page=2&document_srl=2403"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2025 년 구미시마이스터멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 공고 구미지역 중소기업의 애로사항을 공유하고 다양한 기술 및 노하우 전수를 바탕으로 효율적이고 효과적인 해결책을 제시하기 위하여 구미시 마이스터 멘토단의 우수 인력을 전문 멘토로 지정하여 궁극적인 중소기"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2025 년 구미시마이스터멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사 업 명",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "선정 사업장",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            },
+            {
+              "text": "예정금액 ( 원 )",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            },
+            {
+              "text": "비 고",
+              "header": false,
+              "rowspan": 2,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "계",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "개선지원비",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "중소기업 기술지원 멘토링",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2 개사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "6,000,000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "6,000,000 원 (3,000,000 원 *2 개사 )VAT 포함",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[if !supportEmptyParas] [endif]",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "List of Articles",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "날짜",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회 수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시마이스터멘토단 중소기업 맞춤형 기술지원 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "4213",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시마이스터멘토단 자영업 숙련기술지도 멘토링 참여대상 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.07.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "4000",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 2차 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "25721",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 중소기업AI훈련확산센터 AI훈련 로드맵 컨설팅 참여기업 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.05.06",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "28695",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 글로벌 관세 등 수출피해기업 고용유지지원 참여기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.24",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "34165",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 구미시 청년근로자 지역정착 행복원룸 사업 협약원룸 목록(7/8)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.04.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "15363",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 버팀이음사업 임금체불 피해 근로자 생계비 지원자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "39664",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 신중년 근로자 생활안정 지원사업 참여자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "41112",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 청년일자리도약장려금사업 참여기업 및 채용자 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "37940",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 워라벨+4.5 프로젝트 사업 참여기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.11",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "43657",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년도 구미시 청년근로자 지역정착 행복원룸사업 참여자 모집(원룸소유주/청년근로자)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "40590",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 기업성장혁신부 사업 평가위원 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.05",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "42643",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집]2026년 현장실습훈련지원사업 (구 시니어인턴십)사업 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.02.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "45552",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[모집] 2026년 중소기업 기숙사 임차지원 사업 참여 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.01.20",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "47170",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "185",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 경북경영자총협회 기업성장혁신부 신규채용",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.04",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "19701",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "184",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2026년도 경북권 AI훈련코치 공개 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.03.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "19835",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "183",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[홍보] 2026년 산업재해예방 유공 포상 계획 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.02.19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "14398",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "182",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 경북경영자총협회 기업성장혁신부 신규채용(계약직)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026.02.10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "18449",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "181",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "『제13회 경상북도 클린경영대상』 수상기업 선정 결과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.12.31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "17970",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "180",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[홍보]2025년 “글로컬 커넥트 잡 페스타” 취업박람회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.12.16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "19460",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "179",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[종료] 중소기업 실무자를 위한 현장 맞춤 실무역량 집중 교육",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.11.12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "17690",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "178",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감]제13회 경상북도 클린(Clean)경영대상 응모 신청 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.11.03",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "17694",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "177",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감]2025 경상북도 희망경북만들기 노사정 워크숍 』 진행업체 입찰 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.09.12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "18015",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "176",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[종료] 2025년도 철강업(관련소재) 고용둔화 대응지원 사업 참여기업 추가 모집(~9/24까지)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.09.08",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "28458",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "175",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「2025년 구미시 마이스터 멘토단 기업멘토링」중소기업 기술지원 멘토링 기업 선정 결과 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.09.04",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "16628",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "174",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025년 경상북도 철강 및 관련소재산업 고용유지지원사업 선정 결과 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.08.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "17066",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "173",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2025년 구미시 마이스터 멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 재공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.08.18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "19367",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "172",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[공고] 산불재난지역 고용유지지원사업 선정 결과 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.08.12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "16594",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "»",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[마감] 2025년 구미시 마이스터 멘토단 기업멘토링 중소기업 기술지원 멘토링 참여 기업 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025.08.01",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "19423",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

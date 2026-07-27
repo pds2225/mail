@@ -1,0 +1,103 @@
+{
+  "saved_at": "2026-07-26 19:39:01",
+  "notice_id": "imp_7381d7a0_4b4f1748402ac4d3e046",
+  "title": "2026년 소상공인 창업 아카데미 등용문 강사 POOL 발표",
+  "link": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=434003&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode=",
+  "source": "안양시상권활성화센터",
+  "author": "",
+  "description": "로그인\n알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공\n2026년 소상공인 창업 아카데미 등용문 강사 POOL 발표\n내용\n「2026년 소상공인 창업 아카데미 등용문 교육」의 강사 모집에 지원해주신 분들께 진심으로 감사의 말씀을 드립니다. 심사결과에 따라 2026년 강사 POOL 발표하오니 확인해주시기 바랍니다.\n* 첨부파일 확인 요망\n이번 기회에 참여하지 못하는 분들께 아쉬움을 전하며, 안양시상권활성화센터에서 진행하는 다양한 사업에 지속적인 관심 부탁드리겠습니다.\n자세한 내용은 붙임문서를 참고하시기 바랍니다. 감사합니다.\n파일\npdf 파일\n2026년 소상공인 컨설팅 및 창업자 지원사업_컨설턴트 추가 등록 POOL 발표.pdf\n미리보기\n(파일크기 : 70.1KB,\n다운로드 : 44회)\n목록",
+  "deadline": "",
+  "posted_date": "2026-02-27",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 소상공인 창업 아카데미 등용문 강사 POOL 발표"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.anyang.go.kr/amrc/selectBbsNttView.do?key=3887&bbsNo=1284&nttNo=434003&searchCtgry=&searchKrwd=&pageIndex=1&integrDeptCode="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "로그인 알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공 2026년 소상공인 창업 아카데미 등용문 강사 POOL 발표 내용 「2026년 소상공인 창업 아카데미 등용문 교육」의 강사 모집에 지원해주신 분들께 진심으로 감사의 말씀을 드립니다. 심사결과에 따라 2026년 강사 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "알림마당 > 공지사항 상세보기 - 제목, 내용, 파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "2026년 소상공인 창업 아카데미 등용문 강사 POOL 발표",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「2026년 소상공인 창업 아카데미 등용문 교육」의 강사 모집에 지원해주신 분들께 진심으로 감사의 말씀을 드립니다. 심사결과에 따라 2026년 강사 POOL 발표하오니 확인해주시기 바랍니다. * 첨부파일 확인 요망 이번 기회에 참여하지 못하는 분들께 아쉬움을 전하며, 안양시상권활성화센터에서 진행하는 다양한 사업에 지속적인 관심 부탁드리겠습니다. 자세한 내용은 붙임문서를 참고하시기 바랍니다. 감사합니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "pdf 파일 2026년 소상공인 컨설팅 및 창업자 지원사업_컨설턴트 추가 등록 POOL 발표.pdf 미리보기 (파일크기 : 70.1KB, 다운로드 : 44회)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

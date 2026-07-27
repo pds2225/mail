@@ -1,0 +1,173 @@
+{
+  "saved_at": "2026-07-26 19:32:14",
+  "notice_id": "PBLN_000000000124689",
+  "title": "[전남] 2026년 하반기 사회적경제기업 온라인 판로개척 지원 입점 업체 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124689",
+  "source": "기업마당(Bizinfo)",
+  "author": "전남광주통합특별시",
+  "description": "<p>전남사회적경제유통지원센터는 전라남도 사회적경제기업의 우수제품 홍보 및 판로 지원을 위해 ㈜포레스트그룹코리아와 협업을 통해 공공 및 민간 온라인 쇼핑몰 입점을 추진하여 행사에 참여할 기업을 모집 합니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞ 전남 사회적경제기업 및 전남 특산물협동조합 등</p><p style=\"line-height: 1.8;\">- (신청자격) 본사 소재지가 전라남도인 사회적경제기업(사회적기업, 마을기업, 협동조합, 자활기업), 도지사 품질 인증 제품, 전남6차산업 인증, 지역특산물을 직접 생산하는 농어업인 중 전남사회적경제유통지원센터의 추천을 받은 자</p><p><br></p><p>☞&nbsp;공공 및 민간 온라인 쇼핑몰 입점 지원</p>\n전남사회적경제유통지원센터는 전라남도 사회적경제기업의 우수제품 홍보 및 판로 지원을 위해 ㈜포레스트그룹코리아와 협업을 통해 공공 및 민간 온라인 쇼핑몰 입점을 추진하여 행사에 참여할 기업을 모집 합니다. ☞ 전남 사회적경제기업 및 전남 특산물협동조합 등 - (신청자격) 본사 소재지가 전라남도인 사회적경제기업(사회적기업, 마을기업, 협동조합, 자활기업), 도지사 품질 인증 제품, 전남6차산업 인증, 지역특산물을 직접 생산하는 농어업인 중 전남사회적경제유통지원센터의 추천을 받은 자 ☞ 공공 및 민간 온라인 쇼핑몰 입점 지원",
+  "deadline": "2026-07-21 ~ 2026-07-28",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-21",
+    "end": "2026-07-28",
+    "display": "2026-07-21 ~ 2026-07-28",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[전남] 2026년 하반기 사회적경제기업 온라인 판로개척 지원 입점 업체 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "전남광주통합특별시"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124689"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>전남사회적경제유통지원센터는 전라남도 사회적경제기업의 우수제품 홍보 및 판로 지원을 위해 ㈜포레스트그룹코리아와 협업을 통해 공공 및 민간 온라인 쇼핑몰 입점을 추진하여 행사에 참여할 기업을 모집 합니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-21 ~ 2026-07-28"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#특산물협동조합",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남사회적경제유통지원센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#전남광주통합특별시",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#민간",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#공공",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#우수제품",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#사회적경제기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#온라인쇼핑몰",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#홍보",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#내수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "전남광주통합특별시"
+}

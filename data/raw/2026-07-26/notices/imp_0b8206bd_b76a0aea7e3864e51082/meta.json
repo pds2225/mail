@@ -1,0 +1,137 @@
+{
+  "saved_at": "2026-07-26 19:37:28",
+  "notice_id": "imp_0b8206bd_b76a0aea7e3864e51082",
+  "title": "건설기계관리법 위반 과태료 독촉고지서 반송분 공시송달 공고",
+  "link": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88079",
+  "source": "남양주시청",
+  "author": "",
+  "description": "건설기계관리법 위반 과태료 독촉고지서 반송분 공시송달 공고\n시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공\n고시공고번호\n남양주시 공고 제2026-1629호\n공고기간\n2026-07-23 ~ 2026-08-14\n담당부서\n도로건설과\n내용\n「건설기계관리법」 제24조(건설기계사업자의 변경신고 등의 의무), 제29조(건설기계조종사의 정기적성검사), 제33조제2항(건설기계의 소유자 또는 점유자의 금지행위) 위반 사항에 대하여 같은 법 제44조에 따른 과태료를 부과하고 독촉고지서를 발송하였으나, 폐문부재・기타 등의 사유로 송달이 불가능하여 행정절차법 제14조4항(공시송달)의 규정에 의거 아래와 같이 공시송달 공고 합니다.\n첨부파일\n독촉 고지서 반송분 공시송달 공고문(18건).hwpx\n내려받기\n미리보기\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-23",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "건설기계관리법 위반 과태료 독촉고지서 반송분 공시송달 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.nyj.go.kr/www/selectEminwonWebView.do?sa1Join=01;02;04;05&sc4=2024&key=2492&pk=88079"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "건설기계관리법 위반 과태료 독촉고지서 반송분 공시송달 공고 시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공 고시공고번호 남양주시 공고 제2026-1629호 공고기간 2026-07-23 ~ 2026-08-14 담당부서 도로건설과 내용 「건설기계관리법」 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "시정소식 상세보기 - 고시공고번호, 공고기간, 담당부서, 내용, 첨부파일 정보 제공",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "고시공고번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "남양주시 공고 제2026-1629호",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공고기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-23 ~ 2026-08-14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "담당부서",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "도로건설과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "내용",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "「건설기계관리법」 제24조(건설기계사업자의 변경신고 등의 의무), 제29조(건설기계조종사의 정기적성검사), 제33조제2항(건설기계의 소유자 또는 점유자의 금지행위) 위반 사항에 대하여 같은 법 제44조에 따른 과태료를 부과하고 독촉고지서를 발송하였으나, 폐문부재・기타 등의 사유로 송달이 불가능하여 행정절차법 제14조4항(공시송달)의 규정에 의거 아래와 같이 공시송달 공고 합니다.",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "독촉 고지서 반송분 공시송달 공고문(18건).hwpx 내려받기 미리보기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

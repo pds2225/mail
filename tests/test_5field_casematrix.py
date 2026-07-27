@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 import monitor as m  # noqa: E402
 
-G = {g["id"]: g for g in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))}
+G = {g["id"]: g for g in json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))}
 ACTIVE = [gid for gid in G if G[gid].get("active")]
 TODAY = date(2026, 6, 18)  # 고정 기준일(요일=목)
 

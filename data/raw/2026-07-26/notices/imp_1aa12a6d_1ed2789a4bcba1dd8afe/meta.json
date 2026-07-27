@@ -1,0 +1,215 @@
+{
+  "saved_at": "2026-07-26 19:34:56",
+  "notice_id": "imp_1aa12a6d_1ed2789a4bcba1dd8afe",
+  "title": "강원광역새일센터",
+  "link": "https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21&sca=%EA%B0%95%EC%9B%90%EA%B4%91%EC%97%AD%EC%83%88%EC%9D%BC%EC%84%BC%ED%84%B0",
+  "source": "강원특별자치도경제진흥원",
+  "author": "",
+  "description": "지원사업\n기관소개\n지원사업\n입주안내\n회의시설안내\n정보자료실\n고객센터\n사업공고\n사업공고\n전략사업부\n└ 국내외 마케팅 및 수출지원\n└ 소상공인지원\n성장지원부\n└ 자금지원\n└ 관광융복합지원\n└ 온라인사업지원\n일자리부\n└ 일자리센터\n└ 공제지원\n└ 청년센터\n지식재산센터\n└ 지식재산 창출지원\n└ IP 창업성장지원\n└ 기타 지원사업\n강원광역새일센터\n인적자원개발위원회\n미래성장교육관\n강원경제교육센터\n지원사업\n사업공고\n지원사업\n사업공고\nTotal 3건\n1 페이지\n강원광역새일센터\n전체\n전략사업부\n자금지원\n성장지원부\n일자리부\n지식재산\n열린 분류\n강원광역새일센터\n인적자원개발위원회\n미래성장교육관\n게시물 검색\n검색대상\n제목\n내용\n제목+내용\n회원아이디\n회원아이디(코)\n글쓴이\n글쓴이(코)\n검색어\n필수\n검색\n사업공고 목록\n번호\n제목\n글쓴이\n조회\n날짜\n공지\n강원광역새일센터\n2026 제3회 강원 여성 창업 아이디어 공모전 신청자 모집\n박세영\n조회\nHit  996\n작성일\nDate  2026-07-16\n박세영\n996\n2026-07-16\n공지\n강원광역새일센터\n2026년 강원 여성 IT 교육 전문가 양성과정 참여자 모집\n박세영\n조회\nHit  535\n작성일\nDate  2026-04-19\n박세영\n535\n2026-04-19\n공지\n강원광역새일센터\n[사업공고] 2026년 경력단절예방 지원사업「직장문화개선 지원사업 참여기업 모집」공고\n박소은\n조회\nHit  1113\n작성일\nDate  2026-02-25\n박소은\n1113\n2026-02-25\n목록",
+  "deadline": "2026-07-16",
+  "posted_date": "2026-07-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "강원광역새일센터"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gwep.or.kr/bbs/board.php?bo_table=gw_sub21&sca=%EA%B0%95%EC%9B%90%EA%B4%91%EC%97%AD%EC%83%88%EC%9D%BC%EC%84%BC%ED%84%B0"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "지원사업 기관소개 지원사업 입주안내 회의시설안내 정보자료실 고객센터 사업공고 사업공고 전략사업부 └ 국내외 마케팅 및 수출지원 └ 소상공인지원 성장지원부 └ 자금지원 └ 관광융복합지원 └ 온라인사업지원 일자리부 └ 일자리센터 └ 공제지원 └ 청년센터 지식재산센터 └ 지식재산 창출지원 └"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-16"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "사업공고 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "글쓴이",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "날짜",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "강원광역새일센터 2026 제3회 강원 여성 창업 아이디어 공모전 신청자 모집 박세영 조회 Hit 996 작성일 Date 2026-07-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박세영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "996",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "강원광역새일센터 2026년 강원 여성 IT 교육 전문가 양성과정 참여자 모집 박세영 조회 Hit 535 작성일 Date 2026-04-19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박세영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "535",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-04-19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "강원광역새일센터 [사업공고] 2026년 경력단절예방 지원사업「직장문화개선 지원사업 참여기업 모집」공고 박소은 조회 Hit 1113 작성일 Date 2026-02-25",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "박소은",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "1113",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-25",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:44",
+  "notice_id": "imp_695dd267_4737541aabe109633d4d",
+  "title": "New 2026년 반도체 산업 전문인력 양성 교육 교육생 모집공고(8기)(~8/13(목) 14:00)",
+  "link": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7366",
+  "source": "용인시산업진흥원",
+  "author": "",
+  "description": "사업공지\n창업지원팀\n2025-06-10T09:49:10+09:00\n사업공지\n입찰공고\n채용공고\n2026년 반도체 산업 전문인력 양성 교육 교육생 모집공고(8기)(~8/13(목) 14:00)\n작성자\n전략산업팀\n작성일\n2026-07-24 09:27\n조회\n227\n첨부파일\n공고문「2026년-반도체-산업-전문인력-양성-교육」-교육생-모집공고8기.pdf\n포스터-반도체-산업-전문인력-양성-교육8기.jpg\n좋아요\n0\n싫어요\n0\n인쇄\n▶ 교육 신청(구글폼) 바로가기\n«\n2026년 용인특례시 글로벌 수출상담회 참가 기업 모집 공고(~8/20 17:00)\n목록보기\nPowered by KBoard",
+  "deadline": "2026-08-13",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "New 2026년 반도체 산업 전문인력 양성 교육 교육생 모집공고(8기)(~8/13(목) 14:00)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7366"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공지 창업지원팀 2025-06-10T09:49:10+09:00 사업공지 입찰공고 채용공고 2026년 반도체 산업 전문인력 양성 교육 교육생 모집공고(8기)(~8/13(목) 14:00) 작성자 전략산업팀 작성일 2026-07-24 09:27 조회 227 첨부파일 공고문「2026년-반도"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-08-13"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

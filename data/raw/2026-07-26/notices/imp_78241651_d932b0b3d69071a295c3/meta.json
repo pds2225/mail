@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:36:14",
+  "notice_id": "imp_78241651_d932b0b3d69071a295c3",
+  "title": "[일반] (완료) 홈페이지 서버 이전 안내",
+  "link": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4800&make=&search=&type=&apply_no=&table_name=notice&page=2",
+  "source": "고양산업진흥원",
+  "author": "",
+  "description": "KOR\nENG\nJPN\nCHN\nARB\n검색 폼\nSEARCH\n검색\n[일반] (완료) 홈페이지 서버 이전 안내\n상세\n작성자\n관리자\n등록일\n2026-06-30\n조회수\n188\n첨부파일\n안녕하세요.\n고양산업진흥원입니다.\n저희 원 홈페이지의 원활한 유지관리를 위한 서버 이전 및 DNS 변경 작업이 예정되어 있습니다.\n작업 기간 중 회원가입 및 사업신청 등 중요 작업을 처리하시는 경우 데이터의 유실이 발생될 수 있으니\n아래 세부 내용을 확인하시고 피해가 없도록 유의하여 주시기 바랍니다.\n작업 내용: 홈페이지 서버 이전(IP주소 변경)에 따른 DNS 변경\n작업 기간:\n2026. 7. 3.(금) 12:00 ~ 16:00 (작업 진행에 따라 조기 종료 가능)\n13:45 작업 종료\n작업 영향: 작업 이후 개별 PC DNS 설정에 따라 홈페이지 접속 불가할 수 있으며\n수동 DNS 플러싱\n을 통해 해결 가능함\n관련 문의사항은 ESG경영팀(031-960-7815)으로 문의해 주시기 바랍니다.\n감사합니다.\n목록\nList\n이전글\n「2026년 AI특화 콘텐츠 창작자 양성 지원」 웹툰·웹소설 작가 양성 아카데미 선정 결과 공고\n다음글\n[동국대학교경기RISE사업단] 2026 한‧중 지산학협력 글로벌 진출 전략 세미나 (7.16. 13:30)\n콘텐츠 관리부서 :\nESG경영팀\n연락처 :\n031-960-7810\n진흥원 소개\n개인정보처리방침\n영상정보처리기기 운영관리방침\n채용비리 익명신고센터\n오시는길\n대표번호 : 031.960.7810\n사업자번호 : 128-82-08631\n경기도 고양시 일산동구 태극로 60 (장항동) 14층\nFax : 031.960.7819\nCopyright©2020 gipa.or.kr     ALL RIGHTS RESERVED.",
+  "deadline": "",
+  "posted_date": "2026-06-30",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[일반] (완료) 홈페이지 서버 이전 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4800&make=&search=&type=&apply_no=&table_name=notice&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "KOR ENG JPN CHN ARB 검색 폼 SEARCH 검색 [일반] (완료) 홈페이지 서버 이전 안내 상세 작성자 관리자 등록일 2026-06-30 조회수 188 첨부파일 안녕하세요. 고양산업진흥원입니다. 저희 원 홈페이지의 원활한 유지관리를 위한 서버 이전 및 DNS 변경 작업이 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-30",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "188",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,419 @@
+{
+  "saved_at": "2026-07-26 19:34:02",
+  "notice_id": "custom_f4574ebb_83444e689690e265a5b2",
+  "title": "뉴스레터",
+  "link": "https://www.gokams.or.kr/01_news/newsletter_list.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n알림/소식\n뉴스레터\n제목\n내용\n뉴스레터 목록 표로 번호, 제목, 작성일, 조회, 파일 정보를 나타냄\n번호\n제목\n작성일\n조회\n파일\n15\n[2026년 6월호] 월간 예경 Vol.15 - 2026 K-뮤지컬마켓(K-Musical Market) 6월 코엑스 개막\n2026-07-07\n177\n14\n[2026년 5월호] 월간 예경 Vol.14 - 예술산업 금융지원 시범사업 지역설명회 개최\n2026-07-07\n67\n13\n[2026년 4월호] 월간 예경 Vol.13 - 예술산업보증, 예술기업 성장 발판을 만나보세요!\n2026-04-16\n938\n12\n[2026년 3월호] 월간 예경 Vol.12 - 예술기업, 금융지원이 필요하다면?\n2026-03-19\n384\n11\n[2026년 2월호] 월간 예경 Vol.11 - 예술기업 창업, 다음 단계는?\n2026-02-19\n488\n10\n[2026년 1월호] 월간 예경 Vol.10 - 예술기업은 정부지원사업을 어떻게 활용해야 할까?\n2026-01-15\n621\n9\n[2025년 12월호] 월간 예경 Vol.9 - 공연예술의 미래, 데이터에서 답을 찾다\n2025-12-18\n441\n8\n[2025년 11월호] 월간 예경 Vol.8 - <2025 예술 일자리 박람회 - 예술로 일하다> 개최\n2025-11-20\n487\n7\n[2025년 10월호] 월간 예경 Vol.7 - <2025 아트코리아랩 페스티벌> 개최\n2025-10-16\n601\n6\n[2025년 9월호] 월간 예경 Vol.6 – “AI 시대 예술 생태계의 변화와 대응과제” <AI×예술포럼> 개최\n2025-09-18\n778\n1\n현재페이지\n2",
+  "deadline": "",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "뉴스레터"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/01_news/newsletter_list.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 알림/소식 뉴스레터 제목 내용 뉴스레터 목록 표로 번호, 제목, 작성일, 조회, 파일 정보를 나타냄 번호 제목 작성일 조회 파일 15 [2026년 6월호] 월간 예경 Vol.15 - 2026 K-뮤지컬마켓(K-Musical Market) 6월 코엑스 개막 2026-07-07 1"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "뉴스레터 목록 표로 번호, 제목, 작성일, 조회, 파일 정보를 나타냄",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "번호",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "작성일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "15",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 6월호] 월간 예경 Vol.15 - 2026 K-뮤지컬마켓(K-Musical Market) 6월 코엑스 개막",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-07",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "177",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "14",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 5월호] 월간 예경 Vol.14 - 예술산업 금융지원 시범사업 지역설명회 개최",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-07",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "67",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "13",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 4월호] 월간 예경 Vol.13 - 예술산업보증, 예술기업 성장 발판을 만나보세요!",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-04-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "938",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "12",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 3월호] 월간 예경 Vol.12 - 예술기업, 금융지원이 필요하다면?",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-03-19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "384",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "11",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 2월호] 월간 예경 Vol.11 - 예술기업 창업, 다음 단계는?",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-02-19",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "488",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2026년 1월호] 월간 예경 Vol.10 - 예술기업은 정부지원사업을 어떻게 활용해야 할까?",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-01-15",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "621",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "9",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2025년 12월호] 월간 예경 Vol.9 - 공연예술의 미래, 데이터에서 답을 찾다",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-12-18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "441",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "8",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2025년 11월호] 월간 예경 Vol.8 - <2025 예술 일자리 박람회 - 예술로 일하다> 개최",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-11-20",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "487",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "7",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2025년 10월호] 월간 예경 Vol.7 - <2025 아트코리아랩 페스티벌> 개최",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-10-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "601",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "6",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[2025년 9월호] 월간 예경 Vol.6 – “AI 시대 예술 생태계의 변화와 대응과제” <AI×예술포럼> 개최",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2025-09-18",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "778",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

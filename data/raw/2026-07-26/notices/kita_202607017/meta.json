@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:48",
+  "notice_id": "kita_202607017",
+  "title": "[울산지역본부-무역아카데미] 생초보 무역실무 과정 수강생 모집",
+  "link": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingView.do?sn=202607017",
+  "source": "한국무역협회(KITA)",
+  "author": "한국무역협회(KITA)",
+  "description": "교육/취업 / 지역: 울산",
+  "deadline": "2026-08-04",
+  "posted_date": "2026-07-14",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": null,
+  "detail_extraction": {
+    "status": "PARSE_FAILED",
+    "reason": "no_extractable_detail",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[울산지역본부-무역아카데미] 생초보 무역실무 과정 수강생 모집"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "한국무역협회(KITA)"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.kita.net/asocBiz/asocBiz/asocBizOngoingView.do?sn=202607017"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "교육/취업 / 지역: 울산"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-08-04"
+      },
+      "target": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "PARSE_FAILED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:25",
+  "notice_id": "mss_2166",
+  "title": "2026년도 중소기업 R&D 우수성과 50선 모집 연장 공고",
+  "link": "https://www.mss.go.kr/site/smba/ex/bbs/View.do?cbIdx=310&bcIdx=2166",
+  "source": "중소벤처기업부",
+  "author": "중소벤처기업부",
+  "description": "알림소식\n공지사항\n펼치기\n사업공고\n접기\n인사·채용\n펼치기\n인사동정\n채용정보\n보도자료\n펼치기\n보도자료\n보도설명자료\n카드뉴스\n홍보자료\n펼치기\n현장속으로\n홍보영상\n중기부소식지\n사업공고\nHOME\n알림소식\n사업공고\n공유\n공유하기\n공유기능 닫기\n페이스북으로 공유\nX로 공유\n네이버블로그로 공유\n네이버밴드로 공유\nURL 공유\n프린트",
+  "deadline": "2026-07-24",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년도 중소기업 R&D 우수성과 50선 모집 연장 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "중소벤처기업부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.mss.go.kr/site/smba/ex/bbs/View.do?cbIdx=310&bcIdx=2166"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "알림소식 공지사항 펼치기 사업공고 접기 인사·채용 펼치기 인사동정 채용정보 보도자료 펼치기 보도자료 보도설명자료 카드뉴스 홍보자료 펼치기 현장속으로 홍보영상 중기부소식지 사업공고 HOME 알림소식 사업공고 공유 공유하기 공유기능 닫기 페이스북으로 공유 X로 공유 네이버블로그로 공유 네이"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-24"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

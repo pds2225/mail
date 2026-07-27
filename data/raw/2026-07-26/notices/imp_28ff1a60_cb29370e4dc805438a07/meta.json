@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:18",
+  "notice_id": "imp_28ff1a60_cb29370e4dc805438a07",
+  "title": "2026년 우주산업 혁신 기반 조성사업 모집공고 선정 결과 안내",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13151&tag=&nPage=2",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n2026년 우주산업 혁신 기반 조성사업 모집공고 선정 결과 안내\n작성자\n김*성\n작성일\n2026/03/24 17:11\n조회수\n694\n2026년 우주산업 혁신 기반 조성사업 모집공고 선정 결과 안내\n1. 26년 우주산업 혁신 기반 조성사업 선정 결과 안내.pdf\n1. 26년 우주산업 혁신 기반 조성사업 선정 결과 안내.pdf\r\n\t\t\t\t\t\t\t\t\t[64.17KB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-03-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 우주산업 혁신 기반 조성사업 모집공고 선정 결과 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13151&tag=&nPage=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 2026년 우주산업 혁신 기반 조성사업 모집공고 선정 결과"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

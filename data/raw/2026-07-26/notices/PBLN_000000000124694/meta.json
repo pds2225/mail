@@ -1,0 +1,273 @@
+{
+  "saved_at": "2026-07-26 19:32:11",
+  "notice_id": "PBLN_000000000124694",
+  "title": "2026년 글로벌 배터리 선도기업 차세대 기술 분야 Global Partnering(GP) 참가기업 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124694",
+  "source": "기업마당(Bizinfo)",
+  "author": "산업통상부",
+  "description": "<p>KOTRA 샤먼무역관은 국내 우수 이차전지 부품ㆍ소재ㆍ장비 기업의 글로벌 공급망(GVC) 진입 및 다각적 기술 협력을 지원하고자, 글로벌 탑티어(Top-tier) 배터리 제조사의 핵심 수요를 기반으로 하는 '차세대 배터리 분야 Global Partnering(GP) 1:1 비즈니스 매칭 상담회'를 다음과 같이 추진하오니 관련 기업의 많은 신청 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;수요 품목에 부합하는 제품 및 기술을 보유한 국내 중소ㆍ중견기업</p><p style=\"line-height: 1.8;\">※ 자세한 신청자격 공고문 참조&nbsp;</p><p><br></p><p style=\"line-height: 1.8;\">☞ 수요기업 담당자 1:1 비즈니스 매칭 : 서류 심사를 통과한 기업에 한해 온라인(비공개) 상담 기회 지원</p>\nKOTRA 샤먼무역관은 국내 우수 이차전지 부품ㆍ소재ㆍ장비 기업의 글로벌 공급망(GVC) 진입 및 다각적 기술 협력을 지원하고자, 글로벌 탑티어(Top-tier) 배터리 제조사의 핵심 수요를 기반으로 하는 '차세대 배터리 분야 Global Partnering(GP) 1:1 비즈니스 매칭 상담회'를 다음과 같이 추진하오니 관련 기업의 많은 신청 바랍니다. ☞ 수요 품목에 부합하는 제품 및 기술을 보유한 국내 중소ㆍ중견기업 ※ 자세한 신청자격 공고문 참조 ☞ 수요기업 담당자 1:1 비즈니스 매칭 : 서류 심사를 통과한 기업에 한해 온라인(비공개) 상담 기회 지원",
+  "deadline": "2026-07-23 ~ 2026-08-26",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-26",
+    "display": "2026-07-23 ~ 2026-08-26",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 글로벌 배터리 선도기업 차세대 기술 분야 Global Partnering(GP) 참가기업 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "산업통상부"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124694"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>KOTRA 샤먼무역관은 국내 우수 이차전지 부품ㆍ소재ㆍ장비 기업의 글로벌 공급망(GVC) 진입 및 다각적 기술 협력을 지원하고자, 글로벌 탑티어(Top-tier) 배터리 제조사의 핵심 수요를 기반으로 하는 '차세대 배터리 분야 Global Partnering(GP) 1:1 비즈니스"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-26"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#전남광주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#산업통상부",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#비즈니스매칭",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#이차전지",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대한무역투자진흥공사",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#상담회",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#중견기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#상담",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#중소기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제주",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#전북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#강원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경기",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#세종",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#울산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대전",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#인천",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#대구",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#부산",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#서울",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기술",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "산업통상부"
+}

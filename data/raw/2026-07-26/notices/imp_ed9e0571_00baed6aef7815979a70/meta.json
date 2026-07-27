@@ -1,0 +1,184 @@
+{
+  "saved_at": "2026-07-26 19:37:11",
+  "notice_id": "imp_ed9e0571_00baed6aef7815979a70",
+  "title": "[안산시] 2026 일본 FIW 안산시 참관단 모집 공고",
+  "link": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4172&cpage=2&rows=10&condition=&keyword=&show=&cat=",
+  "source": "기업 SOS",
+  "author": "",
+  "description": "제목\n[안산시] 2026 일본 FIW 안산시 참관단 모집 공고\n공개여부\n공개\n작성자\n이서윤\n등록일\n2026-05-22\n안산시는 관내 중소기업의 수출 판로 개척 지원을 위하여【안산기업 2026 해외전시회(일본FIW) 참관단】을 모집하오니 많은 참여 바랍니다.\n1. 전시회 개요\n❍ 전시회명 : 2026 일본 추계 팩토리 이노베이션 위크\n(Factory Innovation Week 2026, FIW)\n❍ 개최기간 :  2026. 9. 9.(수) ~ 9. 11.(금), 3일간\n❍ 개최장소 : Makuhari Messe (일본 지바)\n❍ 주       최 : RX Japan GK\n※ FIW 홈페이지 참조: https://www.fiweek.jp/autumn/en-gb.html\n❍ 개최연혁 : 2017년 일본 도쿄에서 시작으로 매년 개최\n2. 참관단 모집 및 지원내용\n❍ 모집인원 : 총 30명 (기업당 최대 2명 접수 가능)\n❍ 모집기간 : 공고일 ~ 2026. 5. 29.(금) 18:00까지\n❍ 지원대상 : 안산시에 사업장(본사/공장)이 소재한 기업의 대표 및 임직원\n❍ 파견일정 : 2026. 9. 8.(화) ~ 9. 11.(금) / 3박 4일\n※ 항공 일정 및 현지 상황에 따라 변경될 수 있음\n❍ 지원내용\n① 왕복항공료 50%\n② 식비·숙박비 일부, 현지 교통비·통역비·전시회 입장료 등 기타 경비\n③ 선진기업 탐방, 세미나 등\n※ 기업 자부담 : 왕복 항공료 50%(이코노미 기준), 숙박비(2인 1실 기준), 개별 체재비 등\n(1인당 1,000천원 내외 예상하며, 환율 및 일정에 따라 변동될 수 있음)\n3. 신청방법 및 참고사항\n❍ 신청방법 : 모집기간 내 신청서 및 증빙서류 제출\n- 신청서 및 선정 평가자료 Excel 파일 : 반드시 이메일 제출\n- 그 외 증빙서류: 우편 또는 방문 제출\n※신청서 다운로드 (안산시 홈페이지 공고/고시: www.ansan.go.kr,\n안산상공회의소 홈페이지 새소식/공지사항: ansancci.korcham.net)\n4. 제출 및 문의처: 안산상공회의소 교육통상팀\n❍ 담 당 자 : 사원 서윤우, 팀장 채선기\n- 이 메 일 : tjdbsdn99@korcham.net\n- 주    소 : 안산시 단원구 적금로 120 A동 3층 안산상공회의소\n- 전    화 : 070-4571-5802\n파일\n전체 다운로드\n참가신청서 등 관련 서류 안내 및 서식.xls\n2026 일본 FIW 참관단 모집 공고문.hwp",
+  "deadline": "2026-05-29",
+  "posted_date": "2026-05-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-29",
+    "end": "2026-05-29",
+    "display": "2026-05-29",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[안산시] 2026 일본 FIW 안산시 참관단 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.giupsos.or.kr/portal/lay1/bbs/S122T158C160/F/13/view.do?article_seq=4172&cpage=2&rows=10&condition=&keyword=&show=&cat="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 [안산시] 2026 일본 FIW 안산시 참관단 모집 공고 공개여부 공개 작성자 이서윤 등록일 2026-05-22 안산시는 관내 중소기업의 수출 판로 개척 지원을 위하여【안산기업 2026 해외전시회(일본FIW) 참관단】을 모집하오니 많은 참여 바랍니다. 1. 전시회 개요 ❍ 전시회명"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-29"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": true,
+        "rows": [
+          [
+            {
+              "text": "제목",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안산시] 2026 일본 FIW 안산시 참관단 모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "공개여부",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공개",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "이서윤",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-05-22",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "안산시는 관내 중소기업의 수출 판로 개척 지원을 위하여【안산기업 2026 해외전시회(일본FIW) 참관단】을 모집하오니 많은 참여 바랍니다. 1. 전시회 개요 ❍ 전시회명 : 2026 일본 추계 팩토리 이노베이션 위크 (Factory Innovation Week 2026, FIW) ❍ 개최기간 : 2026. 9. 9.(수) ~ 9. 11.(금), 3일간 ❍ 개최장소 : Makuhari Messe (일본 지바) ❍ 주 최 : RX Japan GK ※ FIW 홈페이지 참조: https://www.fiweek.jp/autumn/en-gb.html ❍ 개최연혁 : 2017년 일본 도쿄에서 시작으로 매년 개최 2. 참관단 모집 및 지원내용 ❍ 모집인원 : 총 30명 (기업당 최대 2명 접수 가능) ❍ 모집기간 : 공고일 ~ 2026. 5. 29.(금) 18:00까지 ❍ 지원대상 : 안산시에 사업장(본사/공장)이 소재한 기업의 대표 및 임직원 ❍ 파견일정 : 2026. 9. 8.(화) ~ 9. ",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "text": "파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "전체 다운로드 참가신청서 등 관련 서류 안내 및 서식.xls 2026 일본 FIW 참관단 모집 공고문.hwp",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "이전,다음 게시물 목록을 볼 수 있습니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026년 하남시 중소기업 육성기금(융자금) 2차 접수 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[안산시] 2026년 기업지원 시책안내 책자 배포",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

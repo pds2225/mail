@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:35:21",
+  "notice_id": "imp_60bf007e_880e19b26896eb5ae2b5",
+  "title": "[교육안내] 2026년 안산시 온라인마케팅 지원사업 시민 파워셀러 특강",
+  "link": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29525",
+  "source": "경기테크노파크",
+  "author": "",
+  "description": "공지사항\n공지사항\nHOME\n공고ㆍ안내\n공지사항\n공지사항\n지역기술혁신의 산실, 지식산업 창조의 요람\n[교육안내] 2026년 안산시 온라인마케팅 지원사업 시민 파워셀러 특강\n번호 :\n29525\n작성자 :\n기술사업화팀\n작성일 :\n2026-07-07\n조회수 :\n290\n홈페이지 :\nhttps://forms.gle/Y1Jmzmf7CSpbQhB9A\n첨부파일 :\ngtp260707_Flte.png\ngtp260707_QTig.hwpx\n「2026년 안산시 온라인마케팅 지원사업」시민 파워셀러 특강\n‘세법의 기초 이해와 공공조달, 혁신제품 지정 실무교육’수강생 모집 안내\n안산시에서는 e비즈니스에 관심 있는 시민을 대상으로 「세법의 기초 이해와 공공조달, 혁신제품 지정 실무교육」을 개최합니다. 종합소득세, 부가가치세 등 세법이 어려우신 분이나 제품의 공공조달 시장 진입 또는 혁신제품 지정을 준비 중이신 분들의 많은 참여를 바랍니다.\n2026. 7. 7.\n안 산 시 장\n○ 교 육 명 : 세법의 기초 이해와 공공조달, 혁신제품 지정 실무교육\n○ 주최/주관 : 안산시 청년정책관 / (재)경기테크노파크\n○ 교육일시 : 2026. 7. 24.(금) 13:30~17:00\n○ 교육장소 : 안산시청 제2별관 대회의실(4층)\n○ 교육대상 : 안산시민 등 80명\n○ 교육비용 : 무료\n○ 주요프로그램 : 첨부파일 참고\n○ 교육신청\n- 신청기간 : 2026. 7. 7.(화) ~ 7. 22.(수), 18:00까지 ※ 선착순 80명\n- 신청방법 : 구글폼(https://forms.gle/Y1Jmzmf7CSpbQhB9A)\n※ 교육참가신청서 및 개인정보제공동의서 작성 후 이메일(ygh6463@gtp.or.kr) 및 현장 신청도 가능\n페이스북으로 이동\nx로 이동\n다음글\n이전글\n목록",
+  "deadline": "2026-07-07 ~ 2026-07-22",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-07",
+    "end": "2026-07-22",
+    "display": "2026-07-07 ~ 2026-07-22",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[교육안내] 2026년 안산시 온라인마케팅 지원사업 시민 파워셀러 특강"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29525"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 HOME 공고ㆍ안내 공지사항 공지사항 지역기술혁신의 산실, 지식산업 창조의 요람 [교육안내] 2026년 안산시 온라인마케팅 지원사업 시민 파워셀러 특강 번호 : 29525 작성자 : 기술사업화팀 작성일 : 2026-07-07 조회수 : 290 홈페이지 : https:/"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-07 ~ 2026-07-22"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

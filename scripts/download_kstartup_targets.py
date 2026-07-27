@@ -3,7 +3,7 @@
 Usage:
     python scripts/download_kstartup_targets.py --dry-run
     python scripts/download_kstartup_targets.py
-    python scripts/download_kstartup_targets.py --target-file targets/kstartup_20260623.txt --out-dir downloads/kstartup/20260623
+    python scripts/download_kstartup_targets.py --target-file config/targets/kstartup_20260623.txt --out-dir downloads/kstartup/20260623
 
 This script is intentionally separated from monitor.py send mode. It matches only
 the target titles listed in the target file, opens each K-Startup detail page,
@@ -978,7 +978,7 @@ def run(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Download attachments for selected K-Startup notices.")
-    parser.add_argument("--target-file", default="targets/kstartup_20260623.txt")
+    parser.add_argument("--target-file", default="config/targets/kstartup_20260623.txt")
     parser.add_argument("--out-dir", default="downloads/kstartup/20260623")
     parser.add_argument("--dry-run", action="store_true", help="Do not write attachment files; write planned manifest only.")
     parser.add_argument("--min-score", type=float, default=0.72)

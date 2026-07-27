@@ -1,0 +1,75 @@
+{
+  "saved_at": "2026-07-26 19:32:29",
+  "notice_id": "motie_094d576f254b2f3f5802",
+  "title": "2026 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고",
+  "link": "https://www.motie.go.kr/kor/article/ATCL2826a2625/71237/view",
+  "source": "산업통상자원부",
+  "author": "",
+  "description": "2026 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고\n공고번호\n2026-519\n담당자\n장재명\n담당부서\n산업일자리혁신과\n연락처\n044-203-4227\n등록일\n2026-07-24\n조회수\n370\n첨부파일\n2026년 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고문.hwpx [121.1 KB]\n바로보기\n공고 제\n2026-519\n호\n2026\n년도 한미 첨단분야 청년교류 지원사업\n제\n6\n기 장학생 선발 공고\n“\n산업통상부\n”\n에서는 미국 첨\n단산업 분야의 기술\n·\n경험 습득 기회를 제공하고\n,\n글로벌 인재 육성을 위해\n美\n대학에 교환학생 파견 예정인 이공계\n청년\n인재를 다음과 같이 모집합니다\n.\n2026\n년\n7\n월\n24\n일\n산업통상부장관\n목록\n이전글\n2026년 「국가첨단전략산업 소부장 중소·중견기업 투자지원금」사업시행 2차 공고\n다음글\n세계일류상품 및 생산기업 선정계획 공고\n만족도 조사\n이 페이지에서 제공하는 정보에 만족하셨습니까?\n매우만족\n만족\n보통\n불만족\n매우불만족\n등록하기",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.motie.go.kr/kor/article/ATCL2826a2625/71237/view"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고 공고번호 2026-519 담당자 장재명 담당부서 산업일자리혁신과 연락처 044-203-4227 등록일 2026-07-24 조회수 370 첨부파일 2026년 한미 첨단분야 청년교류 지원사업 제6기 장학생 선발 공고문.hwp"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "“ 산업통상부 ” 에서는 미국 첨 단산업 분야의 기술 · 경험 습득 기회를 제공하고 , 글로벌 인재 육성을 위해 美 대학에 교환학생 파견 예정인 이공계 청년 인재를 다음과 같이 모집합니다 . 2026 년 7 월 24 일 산업통상부장관",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

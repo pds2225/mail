@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:53",
+  "notice_id": "imp_695dd267_ae163a21653c4ab6a199",
+  "title": "2026년 해외진출 종합지원사업(해외지사화) 공고(마감)",
+  "link": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7310",
+  "source": "용인시산업진흥원",
+  "author": "",
+  "description": "사업공지\n창업지원팀\n2025-06-10T09:49:10+09:00\n사업공지\n입찰공고\n채용공고\n2026년 해외진출 종합지원사업(해외지사화) 공고(마감)\n작성자\n판로지원팀\n작성일\n2026-07-01 09:12\n조회\n252\n좋아요\n0\n싫어요\n0\n인쇄\n2026년 해외지사화 지원사업 모집은 마감되었습니다.\n1. '해외지사화 지원사업'은 선착순 접수\n2. [신청서], [개인정보 이용 동의서], [확약서]는 용인기업지원시스템의 첨부파일 다운로드 후 작성하여 제출\n3. 신청은 온라인으로만 접수\n4. 신청서 작성 시 '증빙자료 온라인 제출' 클릭 X, '다음' 버튼 클릭\n→ 증빙서류 하나씩 업로드 후 최종 접수\n☞ 지원사업 신청하기\n«\n2026년 용인 오픈이노베이션 교류회 2회차 참가 안내(7/14 화, 13:00)\n2026년 맞춤형창업지원사업 '로컬크리에이터 지원사업' 모집공고(~7/30, 16:00)\n»\n목록보기\n답글쓰기\nPowered by KBoard",
+  "deadline": "2026-07-01",
+  "posted_date": "2026-07-01",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 해외진출 종합지원사업(해외지사화) 공고(마감)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7310"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공지 창업지원팀 2025-06-10T09:49:10+09:00 사업공지 입찰공고 채용공고 2026년 해외진출 종합지원사업(해외지사화) 공고(마감) 작성자 판로지원팀 작성일 2026-07-01 09:12 조회 252 좋아요 0 싫어요 0 인쇄 2026년 해외지사화 지원사업 모집은 마감"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-01"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

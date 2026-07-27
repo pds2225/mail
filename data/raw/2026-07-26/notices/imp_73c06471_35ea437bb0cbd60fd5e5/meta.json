@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:04",
+  "notice_id": "imp_73c06471_35ea437bb0cbd60fd5e5",
+  "title": "2026 사회적경제 주간 기념 이벤트 챌린지 안내(7.1~7.10)",
+  "link": "http://gbse.or.kr/HOME/gbse/sub.htm?mode=view&mv_data=aWR4PTMzODImc3RhcnRQYWdlPTAmbGlzdE5vPTk3OCZ0YWJsZT1leF9iYnNfZGF0YV9nYnNlJm5hdl9jb2RlPWdiczE1NjY5NzkzMTgmY29kZT1OMkp1TnNuYU14bW0mc2VhcmNoX2l0ZW09JnNlYXJjaF9vcmRlcj0mb3JkZXJfbGlzdD0mbGlzdF9zY2FsZT0mdmlld19sZXZlbD0mdmlld19jYXRlPSZ2aWV3X2NhdGUyPQ==||",
+  "source": "경상북도사회적경제지원센터",
+  "author": "",
+  "description": "HOME\n알림마당\n공지사항\nb\n공지사항\n2026 사회적경제 주간 기념 이벤트 챌린지 안내(7.1~7.10)\n등록일\n2026-07-02\n작성자\n경북사경센터\n조회수\n292\n📣 * 사회적경제주간 기념 SNS 이벤트 OPEN!\n사회적경제의 가치를 더 많은 사람들과 함께 나누기 위해 사회적경제주간 기념 SNS 챌린지를 진행합니다!\n💙 참여도 하고,\n🎁 경품도 받아갈 수 있는 기회!\n🗓️ 이벤트 기간\n2026. 7. 1.(수) ~ 7. 10.(금)\n🗓️ 당첨자 발표\n2026. 7. 14.(화)\n✅ EVENT 1) 사회적경제 주간 리포스트 이벤트\n경상북도 사회적경제지원센터 (\n@gbsecenter\n) 팔로우\n해당 게시물에 좋아요, 리포스트하고 댓글에 참여완료 달기\n🎁 경품 메가커피 2천 원 추첨 100명\n✅ EVENT 2) 초성퀴즈 이벤트\n이벤트 페이지 좌측 하단 QR코드 타고 초성퀴즈 정답\n네이버 폼 제출!\n🎁 경품 메가커피 5천 원 추첨 90명\n✅ EVENT 3) 경상북도 사회적경제 제품 구매 이용 인증 이벤트\n경상북도 사회적경제기업 제품 구매 후 \"상품 사진\"을 SNS업로드하고 경상북도 사회적경제지원센터 (\n@gbsecenter\n) 태그 !\n* 경상북도 사회적기업 제품은 QR코드로 확인해 보세요 !\n* 당첨자 발표 후 주문내역을 네이버 폼으로 제출 받을 예정입니다.\n문의: 053-850-4807\n목록",
+  "deadline": "2026-07-01 ~ 2026-07-10",
+  "posted_date": "2026-07-02",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 사회적경제 주간 기념 이벤트 챌린지 안내(7.1~7.10)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://gbse.or.kr/HOME/gbse/sub.htm?mode=view&mv_data=aWR4PTMzODImc3RhcnRQYWdlPTAmbGlzdE5vPTk3OCZ0YWJsZT1leF9iYnNfZGF0YV9nYnNlJm5hdl9jb2RlPWdiczE1NjY5NzkzMTgmY2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 알림마당 공지사항 b 공지사항 2026 사회적경제 주간 기념 이벤트 챌린지 안내(7.1~7.10) 등록일 2026-07-02 작성자 경북사경센터 조회수 292 📣 * 사회적경제주간 기념 SNS 이벤트 OPEN! 사회적경제의 가치를 더 많은 사람들과 함께 나누기 위해 사회적경제주"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-01 ~ 2026-07-10"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:23",
+  "notice_id": "imp_e02ba1cb_0861803bfa15d8e413ac",
+  "title": "[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=260&keyfield_s=&search_word_s=&cpage=1&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내\n작성일자\n2026.07.24\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n시흥시의회 소식지(제52호).pdf\n목록\n이전글\n처음 게시글입니다\n다음글\n[인천창조경제혁신센터]  「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=260&keyfield_s=&search_word_s=&cpage=1&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[시흥시의회] 의회 소식지(제52호) 발행 및 구독 신청 안내 작성일자 2026.07.24 담당부서 홍보실 문의처 공고문 참조 첨부파일 시흥시의회 소식지(제52호).pdf 목록 이전글 처음 게시글입니다 다음글 [인천창조경제혁신센터] 「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "처음 게시글입니다",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[인천창조경제혁신센터] 「빅웨이브 글로벌/츄가이 오픈이노베이션 밋업」참여기업 모집",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "saved_at": "2026-07-26 19:31:50",
+  "notice_id": "PBLN_000000000124727",
+  "title": "[충북] 2026년 특화콘텐츠 마케팅 지원사업(국내ㆍ외형) 모집 공고",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124727",
+  "source": "기업마당(Bizinfo)",
+  "author": "충청북도",
+  "description": "<p>충북 콘텐츠 기업이 보유한 콘텐츠 IP를 활용하여 브랜드 가치를 높이고 국내․외 시장 진출 촉진과 경쟁력 향상을 위하여 「2026 충북 특화콘텐츠 마케팅지원사업 (국내외형)」을 다음과 같이 시행하오니 많은 참여 바랍니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞&nbsp;공고 시작일 기준 충청북도에 사업자 등록이 되어 있는 콘텐츠기업으로, 콘텐츠 IP를 보유하고 이를 마케팅에 활용할 계획이 있는 기업</p><p style=\"line-height: 1.8;\">※콘텐츠IP장르 : 영상, 캐릭터, 웹툰ㆍ만화, 음악, 실감콘텐츠, 게임, 디지털콘텐츠 등 순수 콘텐츠 분야</p><p style=\"line-height: 1.8;\">※ 자세한 지원대상 공고문 참조</p><p><br></p><p style=\"line-height: 1.8;\">☞ 국내형 마케팅(과제당 지원금 8,000천원), 국외형 마케팅(과제당 14,000천원) 지원</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참고</p>\n충북 콘텐츠 기업이 보유한 콘텐츠 IP를 활용하여 브랜드 가치를 높이고 국내․외 시장 진출 촉진과 경쟁력 향상을 위하여 「2026 충북 특화콘텐츠 마케팅지원사업 (국내외형)」을 다음과 같이 시행하오니 많은 참여 바랍니다. ☞ 공고 시작일 기준 충청북도에 사업자 등록이 되어 있는 콘텐츠기업으로, 콘텐츠 IP를 보유하고 이를 마케팅에 활용할 계획이 있는 기업 ※콘텐츠IP장르 : 영상, 캐릭터, 웹툰ㆍ만화, 음악, 실감콘텐츠, 게임, 디지털콘텐츠 등 순수 콘텐츠 분야 ※ 자세한 지원대상 공고문 참조 ☞ 국내형 마케팅(과제당 지원금 8,000천원), 국외형 마케팅(과제당 14,000천원) 지원 ※ 자세한 지원내용 공고문 참고",
+  "deadline": "2026-07-23 ~ 2026-08-12",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-23",
+    "end": "2026-08-12",
+    "display": "2026-07-23 ~ 2026-08-12",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[충북] 2026년 특화콘텐츠 마케팅 지원사업(국내ㆍ외형) 모집 공고"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "충청북도"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124727"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>충북 콘텐츠 기업이 보유한 콘텐츠 IP를 활용하여 브랜드 가치를 높이고 국내․외 시장 진출 촉진과 경쟁력 향상을 위하여 「2026 충북 특화콘텐츠 마케팅지원사업 (국내외형)」을 다음과 같이 시행하오니 많은 참여 바랍니다.</p><p><br></p><p style=\"line-heig"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-23 ~ 2026-08-12"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#미디어제작",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#특화콘텐츠",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#콘텐츠분야",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#국외마케팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#국내마케팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#콘텐츠IP",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#콘텐츠기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북과학기술혁신원",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#홍보물제작",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#시장진출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#판로개척",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#충청북도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#마케팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#충북",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#내수",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#수출",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "충청북도"
+}

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:35:18",
+  "notice_id": "imp_60bf007e_7f271ab261ff2b975a97",
+  "title": "2026년 안산IT·SW기업 성장지원사업- 판로개척 지원 (2차) - 선정결과",
+  "link": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29572",
+  "source": "경기테크노파크",
+  "author": "",
+  "description": "공지사항\n공지사항\nHOME\n공고ㆍ안내\n공지사항\n공지사항\n지역기술혁신의 산실, 지식산업 창조의 요람\n2026년 안산IT·SW기업 성장지원사업- 판로개척 지원 (2차) - 선정결과\n번호 :\n29572\n작성자 :\n안산정보산업진흥센터\n작성일 :\n2026-07-22\n조회수 :\n139\n홈페이지 :\nhttp://\n첨부파일 :\ngtp260722_QnE8.pdf\ngtp260722_O6Kx.xlsx\n첨부파일 참조.\n페이스북으로 이동\nx로 이동\n이전글\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-22",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 안산IT·SW기업 성장지원사업- 판로개척 지원 (2차) - 선정결과"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gtp.or.kr/web/bbs/noticeView.jsp?gubun=&cPage=1&no=29572"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 HOME 공고ㆍ안내 공지사항 공지사항 지역기술혁신의 산실, 지식산업 창조의 요람 2026년 안산IT·SW기업 성장지원사업- 판로개척 지원 (2차) - 선정결과 번호 : 29572 작성자 : 안산정보산업진흥센터 작성일 : 2026-07-22 조회수 : 139 홈페이지 :"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

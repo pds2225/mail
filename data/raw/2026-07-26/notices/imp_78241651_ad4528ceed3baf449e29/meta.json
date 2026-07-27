@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:36:13",
+  "notice_id": "imp_78241651_ad4528ceed3baf449e29",
+  "title": "[일반] 2026년 중소기업 빅데이터 분석·활용 지원사업 빅데이터 공모전 모집 공고",
+  "link": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4818&make=&search=&type=&apply_no=&table_name=notice&page=1",
+  "source": "고양산업진흥원",
+  "author": "",
+  "description": "상세\n작성자\n관리자\n등록일\n2026-07-10\n조회수\n336\n첨부파일\n붙임 2026년 빅데이터 공모전 모집 공고.pdf",
+  "deadline": "",
+  "posted_date": "2026-07-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[일반] 2026년 중소기업 빅데이터 분석·활용 지원사업 빅데이터 공모전 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4818&make=&search=&type=&apply_no=&table_name=notice&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "상세 작성자 관리자 등록일 2026-07-10 조회수 336 첨부파일 붙임 2026년 빅데이터 공모전 모집 공고.pdf"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-10",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "336",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "붙임 2026년 빅데이터 공모전 모집 공고.pdf",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

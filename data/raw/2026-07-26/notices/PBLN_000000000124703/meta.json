@@ -1,0 +1,227 @@
+{
+  "saved_at": "2026-07-26 19:32:08",
+  "notice_id": "PBLN_000000000124703",
+  "title": "[경남] 2026년 제조 스타트업 제품화 지원 수혜기업 모집 공고(제조전문형 메이커스페이스 지원사업)",
+  "link": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124703",
+  "source": "기업마당(Bizinfo)",
+  "author": "경상남도",
+  "description": "<p>경상남도에 소재한 제조분야 (예비)창업자를 대상으로 제조혁신을 이끌 핵심역량을 갖춘 우수기업으로 육성하고자 「메이킹 아카데미」지원 대상자를 다음과 같이 모집하고자 합니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞ 경남지역 내 소재한 예비창업자 또는 초기창업기업</p><p style=\"line-height: 1.8;\">※ 사업자등록증 상 소재지가 경남지역으로 기재된 업력 7년 이내 창업기업</p><p style=\"line-height: 1.8;\">-&nbsp;경상남도 미래첨단산업 분야 전후방 산업 제조업종</p><p><br></p><p style=\"line-height: 1.8;\">☞ 제품화(필수), 기술경영 애로해결(기술닥터 연계형, 필수), 금융(수요기업 희망시) 지원</p><p style=\"line-height: 1.8;\">- 제품화 지원 :&nbsp;제품설계(제품디자인 포함) 지원(기업당 3,000천원 내외)</p><p style=\"line-height: 1.8;\">- 기술경영 애로해결(기술닥터 연계형) 지원 :&nbsp;기업당 컨설팅 최대 1백만원 지원</p><p style=\"line-height: 1.8;\">※ 자세한 지원내용 공고문 참조</p>\n경상남도에 소재한 제조분야 (예비)창업자를 대상으로 제조혁신을 이끌 핵심역량을 갖춘 우수기업으로 육성하고자 「메이킹 아카데미」지원 대상자를 다음과 같이 모집하고자 합니다. ☞ 경남지역 내 소재한 예비창업자 또는 초기창업기업 ※ 사업자등록증 상 소재지가 경남지역으로 기재된 업력 7년 이내 창업기업 - 경상남도 미래첨단산업 분야 전후방 산업 제조업종 ☞ 제품화(필수), 기술경영 애로해결(기술닥터 연계형, 필수), 금융(수요기업 희망시) 지원 - 제품화 지원 : 제품설계(제품디자인 포함) 지원(기업당 3,000천원 내외) - 기술경영 애로해결(기술닥터 연계형) 지원 : 기업당 컨설팅 최대 1백만원 지원 ※ 자세한 지원내용 공고문 참조",
+  "deadline": "2026-07-24 ~ 2026-08-06",
+  "posted_date": "2026-07-24",
+  "is_aggregator": true,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-24",
+    "end": "2026-08-06",
+    "display": "2026-07-24 ~ 2026-08-06",
+    "label": "신청기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[경남] 2026년 제조 스타트업 제품화 지원 수혜기업 모집 공고(제조전문형 메이커스페이스 지원사업)"
+      },
+      "organizer": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "경상남도"
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124703"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "<p>경상남도에 소재한 제조분야 (예비)창업자를 대상으로 제조혁신을 이끌 핵심역량을 갖춘 우수기업으로 육성하고자 「메이킹 아카데미」지원 대상자를 다음과 같이 모집하고자 합니다.</p><p><br></p><p style=\"line-height: 1.8;\">☞ 경남지역 내 소재한 예비창업자"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-24 ~ 2026-08-06"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "#메이킹아카데미",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기술경영애로해결",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#2026",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#초기창업기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제품화",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제품설계",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#제품디자인",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#기술닥터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#예비창업자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경남테크노파크",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#창업7년이내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경상남도",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#창업기업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#컨설팅",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#제조업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#경남",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#경영",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#창업",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "#기술",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "#금융",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      },
+      {
+        "caption": "앱스토어 사용자 및 플레이스토어 사용자 별 QR 코드 안내 테이블",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "▲ 앱스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "▲ 플레이스토어 사용자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "organizer_field": "경상남도"
+}

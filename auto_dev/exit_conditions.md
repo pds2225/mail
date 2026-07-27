@@ -43,10 +43,10 @@
 
 | 한도 | 값 | 설정 위치 |
 |------|-----|-----------|
-| TASK 재시도 | 2 | `RULES.md`, `loops.json` defaults.max_retry |
-| 1회 실행 TASK 수 | 1 | `RULES.md` |
+| TASK 재시도 | 2 | `docs/project/RULES.md`, `loops.json` defaults.max_retry |
+| 1회 실행 TASK 수 | 1 | `docs/project/RULES.md` |
 | GHA timeout | 15분 | `auto-dev-queue.yml` |
-| BLOCKED 자동 재개 | 금지 | `RULES.md` |
+| BLOCKED 자동 재개 | 금지 | `docs/project/RULES.md` |
 
 ## 6. 운영 메모
 

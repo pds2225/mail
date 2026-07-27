@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:44",
+  "notice_id": "imp_e0b8d791_42700015b33259fb6537",
+  "title": "2026년「민관 수익공유형 기술이전 공동중개」참여 민간기술거래기관 추가 모집 공고",
+  "link": "https://www.kibo.or.kr/main/board/boardType01.do?mode=view&articleNo=64384&article.offset=0&articleLimit=10",
+  "source": "기술보증기금(기보)",
+  "author": "",
+  "description": "공지사항\n공지사항\n보도ㆍ안내자료\n보도설명자료\n행사사진 및 동영상\n입찰공고  ↗\n2026년「민관 수익공유형 기술이전 공동중개」참여 민간기술거래기관 추가 모집 공고\n작성일\n2026.06.19\n조회수\n1135\n작성자\n기술보증기금\n첨부파일\n2026년 「민관 수익 공유형 기술이전 공동중개」 참여 민간기술거래기관 추가 모집공고문.hwp\n이전글\n제9기 기보 청년 기술평가체험단 모집공고\n다음글\n기술보증기금 상임이사 모집 공고\n목록",
+  "deadline": "2026-06-19",
+  "posted_date": "2026-06-19",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년「민관 수익공유형 기술이전 공동중개」참여 민간기술거래기관 추가 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.kibo.or.kr/main/board/boardType01.do?mode=view&articleNo=64384&article.offset=0&articleLimit=10"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 공지사항 보도ㆍ안내자료 보도설명자료 행사사진 및 동영상 입찰공고 ↗ 2026년「민관 수익공유형 기술이전 공동중개」참여 민간기술거래기관 추가 모집 공고 작성일 2026.06.19 조회수 1135 작성자 기술보증기금 첨부파일 2026년 「민관 수익 공유형 기술이전 공동중개」 참여 "
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-06-19"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

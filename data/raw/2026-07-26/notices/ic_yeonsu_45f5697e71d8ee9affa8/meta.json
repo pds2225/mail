@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:42",
+  "notice_id": "ic_yeonsu_45f5697e71d8ee9affa8",
+  "title": "2026년 국민신청실명제 접수 안내",
+  "link": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118865&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_idx=&category=&head_idx_cateYN=&listCnt=",
+  "source": "인천 연수구청",
+  "author": "",
+  "description": "공지사항\nHOME\n참여·알림\n알림광장\n공지사항\n페이스북\n트위터X\n블로그\n즐겨찾기\n프린트\n2026년 국민신청실명제 접수 안내\n작성자\n기획예산실\n작성일\n2026년 7월 15일\n조회수\n81\n담당부서\n기획예산실\n전화번호\n032-749-7083\n첨부파일\n[붙임3]국민신청실명제_신청_서식.hwpx (\n0.03MB)\n미리보기\n2026\n년 국민신청실명제 접수 안내\n연수구에서는 구가 수립하고 시행하는 주요 정책에 관련된 사람들의 실명과 의견을 기록\n·\n관리\n·\n공개함으로써 정책의 투명성과 책임성을 제고하고자\n2026\n년도 국민신청실명제를 시행   합니다\n.\n연수구민 여러분의 많은 관심과 참여 바랍니다\n.\n○\n신청자격\n:\n연수구 거주 모든 주민\n○\n신청기간\n:\n연중\n○\n신청방법\n:\n첨부파일의 신청서식을 작성 후\n1.\n연수구청 정책실명제 담당자 이메일\nsjnam1@korea.kr\n송부\n2.\n문서\n24\n3.\n방문접수 또는\n우편접수\n(\n인천광역시 연수구 원인재로\n115,\n기획예산실 국민신청실명제 담당자 앞\n)\n○\n공개방식\n:\n정책실명제 심의위원회에서 대상사업 결정 후 공개\n(\n연수구 홈페이지\n-\n『\n정책실명제\n』\n게시판에 사업내역서 공개\n)\n※\n국민신청 실명제 제외\n-\n정보공개법상 비공개 사유에 해당할 때\n-\n정책실명제 취지와 다른 단순민원\n-\n신청내용이 불분명하거나 특정할 수 없는 경우\n-\n이미 정책실명제로 공개하고 있는\n목록\n이전글\n제4차 지하수관리기본계획 변경(2022-2031) 알림\n다음글\n2026년 연수구 느린학습자 부모특강 수강생 모집안내\nQR코드\n이 게시물은 \"공공누리 제 3유형(출처표시+변경금지)\" 조건에 따라 자유롭게 이용이 가능합니다.",
+  "deadline": "",
+  "posted_date": "2026-07-15",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 국민신청실명제 접수 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.yeonsu.go.kr/main/community/notify/notice.asp?page=v&gotopage=1&seq=118865&keyfield=&keyword=&s_date=&e_date=&eminwon=&dept_idx=&head_idx=&se_dept_i"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "공지사항 HOME 참여·알림 알림광장 공지사항 페이스북 트위터X 블로그 즐겨찾기 프린트 2026년 국민신청실명제 접수 안내 작성자 기획예산실 작성일 2026년 7월 15일 조회수 81 담당부서 기획예산실 전화번호 032-749-7083 첨부파일 [붙임3]국민신청실명제_신청_서식.hwpx"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

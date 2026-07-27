@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:37:48",
+  "notice_id": "imp_0533ff15_121b1afa4175746c43b4",
+  "title": "2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 모집 공고",
+  "link": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8539&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyword=",
+  "source": "대구경북경제자유구역청",
+  "author": "",
+  "description": "﻿﻿\n2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 모집 공고\n2026-04-10 16:12:25\n작성자\n기업지원2과\n조회\n344\n분류\n파일\n붙임1. 수혜기업 모집 공고문.hwp\n바로보기\n붙임2. 지원신청서(양식).hwp\n바로보기\n1. 사업명 : 2026년 경제자유구역(경북지구) 혁신생태계 조성사업\n2. 지원분야 및 규모 : 붙임 참조\n3. 접수기간 : 공고일~ 2026.5.8.(금) 18:00시 까지\n* 전문컨설팅지원은 연내 수시모집(사업비 소진시 까지)\n4. 사업기간 : 2026. 5월 ~ 2026. 10월(6개월 이내, 공통)\n5. 문의처 : 경북자동차임베디드연구원(기업성장팀) 이승준 선임연구원, 054-339-0054,  sjlee@givet.re.kr\n목록\nprev\n2026 DGFEZ 튀르키예 무역사절단 참가기업 모집\nnext\n2026년 ESG 경영컨설팅 지원모집 공모\n만족도 조사\n현재 페이지의 내용과 사용편의성에 대해서 만족하십니까?\n매우만족\n만족\n보통\n불만\n매우불만\n평가하기\n담당부서\n대구경북경제자유구역청\n연락처\n053-550-1500",
+  "deadline": "2026-05-08",
+  "posted_date": "2026-04-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-05-08",
+    "end": "2026-05-08",
+    "display": "2026-05-08",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.dgfez.go.kr/page.php?pageNo=1&cmd=258&bod_uid=8539&mnu_uid=319&srchBgpUid=-1&srchVoteType=-1&srchEnable=1&srchSDate=&srchEDate=&srchColumn=&srchKeyw"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "﻿﻿ 2026년 경제자유구역(경북지구) 혁신생태계조성사업 수혜기업 모집 공고 2026-04-10 16:12:25 작성자 기업지원2과 조회 344 분류 파일 붙임1. 수혜기업 모집 공고문.hwp 바로보기 붙임2. 지원신청서(양식).hwp 바로보기 1. 사업명 : 2026년 경제자유구역(경"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-05-08"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

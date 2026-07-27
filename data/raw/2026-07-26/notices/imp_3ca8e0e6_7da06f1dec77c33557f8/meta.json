@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:36:29",
+  "notice_id": "imp_3ca8e0e6_7da06f1dec77c33557f8",
+  "title": "2026 투자진흥지구 콘텐츠 기업 상시 컨설팅 지원사업",
+  "link": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=31958&nPage=1",
+  "source": "광주정보문화산업진흥원",
+  "author": "",
+  "description": "주요알림\n0\n건\n주요알림\n알림건수 : 총\n0\n건\n닫기\n오늘하루열지않기\n알림마당\n알림마당\n사업공고\n글자 크게\n글자 작게\n공유하기\n페이스북\n트위터\n밴드\n카카오스토리\nURL복사\n닫기\n인쇄\n2026 투자진흥지구 콘텐츠 기업 상시 컨설팅 지원사업\n작성일\n2026.06.04 10:17\n조회수\n5,150\n접수기간\n2026.06.04 ~ 2026.11.20\n담당자\n김서영\n담당자 연락처\n062-610-2984\n담당자 이메일\nseoyoung6@gicon.or.kr\n공지기간\n2026.06.04 ~ 2026.11.30\n★ 신청서 제출 페이지 :\nhttps://forms.gle/RWzsB3zh8xAp6j3G8\n첨부파일\n(공고문) 2026 투자진흥지구 콘텐츠 기업 상시컨설팅 참여기업 모집 공고.pdf\n(618.46KB / 다운로드 687회)\n다운로드\n(붙임1) 신청서 및 동의서_상시 컨설팅.hwp\n(64.5KB / 다운로드 131회)\n다운로드\n(붙임2) 기업 데이터 관리시트_기업명 1부.xlsx\n(23.88KB / 다운로드 390회)\n다운로드\n(붙임3)투자진흥지구 권역지도.pdf\n(621.89KB / 다운로드 122회)\n다운로드\n목록보기\n이전글\n2026 투자진흥지구 콘텐츠 기업 성장단계별 맞춤형 멘토링 참여기업 모집 공고\n다음글\n『아시아 문화기술 실증센터 운영기반 구축』2025 문화기술 활용 콘텐츠고도화·실증지원사업 선정 결과 안..\n콘텐츠 만족도 조사\n콘텐츠 만족도 조사\n이 페이지에서 제공하는 정보에 대하여 만족하십니까?\n평균\n4.00\n점\n205\n명 참여\n매우만족\n만족\n보통\n불만족\n매우불만족\n0\n/100\n퀵 전체열기\n추진사업\n주요사업안내\n시설대관\n장비대여\n교육신청\n기업정보\n전문가등록",
+  "deadline": "2026-06-04 ~ 2026-11-20",
+  "posted_date": "2026-06-04",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-04",
+    "end": "2026-11-20",
+    "display": "2026-06-04 ~ 2026-11-20",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026 투자진흥지구 콘텐츠 기업 상시 컨설팅 지원사업"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gicon.or.kr/board.es?mid=a10204000000&bid=0003&act=view&list_no=31958&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "주요알림 0 건 주요알림 알림건수 : 총 0 건 닫기 오늘하루열지않기 알림마당 알림마당 사업공고 글자 크게 글자 작게 공유하기 페이스북 트위터 밴드 카카오스토리 URL복사 닫기 인쇄 2026 투자진흥지구 콘텐츠 기업 상시 컨설팅 지원사업 작성일 2026.06.04 10:17 조회수 5,"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-04 ~ 2026-11-20"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

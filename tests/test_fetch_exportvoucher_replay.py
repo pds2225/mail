@@ -22,7 +22,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "exportvoucher"
+FX = pathlib.Path(__file__).parent / "fixtures" / "exportvoucher"
 LIST_URL = (
     "https://www.exportvoucher.com/portal/board/boardList"
     "?bbs_id=1&active_menu_cd=EZ005004000"

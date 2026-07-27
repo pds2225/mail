@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:36:12",
+  "notice_id": "imp_78241651_c79e873c6c825f6b706b",
+  "title": "[일반] G-ROUND 877 파트너스",
+  "link": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4828&make=&search=&type=&apply_no=&table_name=notice&page=1",
+  "source": "고양산업진흥원",
+  "author": "",
+  "description": "KOR\nENG\nJPN\nCHN\nARB\n검색 폼\nSEARCH\n검색\n[일반] G-ROUND 877 파트너스\n상세\n작성자\n관리자\n등록일\n2026-07-20\n조회수\n200\n첨부파일\n목록\nList\n이전글\n[강원테크노파크] AI 기본법 시대, 생성형 AI 활용과 디지털 품질 대응 세미나 개최 안내\n다음글\n[정보통신산업진흥원] 2026년도 소프트웨어 산업발전 유공자 포상계획 공고\n콘텐츠 관리부서 :\nESG경영팀\n연락처 :\n031-960-7810\n진흥원 소개\n개인정보처리방침\n영상정보처리기기 운영관리방침\n채용비리 익명신고센터\n오시는길\n대표번호 : 031.960.7810\n사업자번호 : 128-82-08631\n경기도 고양시 일산동구 태극로 60 (장항동) 14층\nFax : 031.960.7819\nCopyright©2020 gipa.or.kr     ALL RIGHTS RESERVED.",
+  "deadline": "",
+  "posted_date": "2026-07-20",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[일반] G-ROUND 877 파트너스"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4828&make=&search=&type=&apply_no=&table_name=notice&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "KOR ENG JPN CHN ARB 검색 폼 SEARCH 검색 [일반] G-ROUND 877 파트너스 상세 작성자 관리자 등록일 2026-07-20 조회수 200 첨부파일 목록 List 이전글 [강원테크노파크] AI 기본법 시대, 생성형 AI 활용과 디지털 품질 대응 세미나 개최 안내 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-20",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "200",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

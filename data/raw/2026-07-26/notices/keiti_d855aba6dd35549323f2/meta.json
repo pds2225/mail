@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:39",
+  "notice_id": "keiti_d855aba6dd35549323f2",
+  "title": "[기술평가결과]환경보건포털 고도화 3차 구축 감리 용역 기술평가 결과 알림",
+  "link": "https://www.keiti.re.kr/site/keiti/ex/board/View.do?cbIdx=277&bcIdx=40783",
+  "source": "한국환경산업기술원(KEITI)",
+  "author": "",
+  "description": "○ 조달청 입찰공고 번호 :R26BK01609172-000환경보건포털 고도화 3차 구축 감리 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.자세한 사항은 조달청 나라장터 홈페\n[기술평가결과]환경보건포털 고도화 3차 구축 감리 용역 기술평가 결과 알림\n등록부서\n환경피해예방실\n등록일\n2026-07-24\n조회수\n80\n첨부파일\n제안평가결과(홈페이지공고)_감리.hwp\n○ 조달청 입찰공고 번호 :R26BK01609172-000\n환경보건포털 고도화 3차 구축 감리 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.\n자세한 사항은 조달청 나라장터 홈페이지를 참고하시기 바랍니다.",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[기술평가결과]환경보건포털 고도화 3차 구축 감리 용역 기술평가 결과 알림"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.keiti.re.kr/site/keiti/ex/board/View.do?cbIdx=277&bcIdx=40783"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "○ 조달청 입찰공고 번호 :R26BK01609172-000환경보건포털 고도화 3차 구축 감리 용역제안서 기술평가 결과를 붙임과 같이 안내드립니다.자세한 사항은 조달청 나라장터 홈페 [기술평가결과]환경보건포털 고도화 3차 구축 감리 용역 기술평가 결과 알림 등록부서 환경피해예방실 등록일 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

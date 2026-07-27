@@ -57,7 +57,7 @@
 ## 5. 어디서·어떻게 동작하나요?
 
 - 평소에는 **자동으로(서버에서 정해진 시간마다)** 돌도록 만들어져 있습니다.
-- 화면(웹페이지)에서 직접 실행해 볼 수도 있습니다. (`auto_mail_web.html`)
+- 화면(웹페이지)에서 직접 실행해 볼 수도 있습니다. (`web/auto_mail_web.html`)
 - 프로그램의 "두뇌"는 `monitor.py` 파일이고, 인터넷에 올려서 자동 실행하는 구조(Vercel)도 준비돼 있습니다.
 
 ---
@@ -77,9 +77,24 @@
 
 ### 구성
 - 실행 언어: Python
-- 화면: `auto_mail_web.html` (정적 페이지)
+- 화면: `web/auto_mail_web.html` (정적 페이지)
 - 자동 실행 입구: `api/index.py` (Vercel 서버리스 함수)
 - 핵심 로직: `monitor.py`
+
+### 저장소 구조
+
+| 경로 | 역할 |
+|---|---|
+| `monitor.py`, `streamlit_app.py` | 운영 진입점 |
+| `mail_core/` | 매칭·발송·저장·보안·운영 로직 |
+| `config/` | 사이트·그룹·기업·전역 설정 |
+| `var/` | 상태·암호화 outbox·로그·리포트 |
+| `tests/fixtures/` | 재생형 테스트 데이터 |
+| `docs/project/` | Auto Dev 큐·규칙·처리 이력 |
+
+> 중복 발송 방지를 위해 `var/state/seen_ids.json`,
+> `var/state/delivery_state.json`, `var/outbox/delivery_outbox.enc`만
+> GitHub Actions가 예외적으로 커밋백합니다. 나머지 런타임 산출물은 Git에서 제외됩니다.
 
 ### 필요한 비밀 설정값 (환경변수)
 코드에 직접 적지 말고, 반드시 **환경변수(또는 `.env`)** 로만 관리합니다.

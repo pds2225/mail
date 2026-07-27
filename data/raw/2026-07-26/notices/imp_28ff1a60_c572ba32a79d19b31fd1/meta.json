@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:15",
+  "notice_id": "imp_28ff1a60_c572ba32a79d19b31fd1",
+  "title": "(교육) AI·AX 기반 재직자 업무 역량 강화 「업무 효율화 교육 과정」",
+  "link": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13307&tag=&nPage=1",
+  "source": "대전테크노파크",
+  "author": "",
+  "description": "HOME\n열기\n사업·공고\n알림·홍보\n기업지원\n오시는길\n기관소개\n열기\n공지사항\n기관행사\n보도자료\n홍보영상\n포토갤러리\n자료실\n유관기관소식\n뉴스레터\n공유하기 열기\n공유하기 닫기\n페이스북\nX(트위터)\n카카오톡\n주소복사\n출력하기\n공지사항\n(교육) AI·AX 기반 재직자 업무 역량 강화 「업무 효율화 교육 과정」\n작성자\n김*지\n작성일\n2026/07/06 20:49\n조회수\n213\n□ 교육 개요\n○ 교육명 : AI·AX 기반 재직자 업무 역량 강화 「업무 효율화 교육 과정」\n○ 교육일시 : 2026. 7. 24.(금) 13:00 ~ 17:00 (4시간)\n○ 교육장소 : 소상공인시장진흥공단 대전교육장 성공실(대전광역시 서구 대덕대로227, 동서빌딩 6층)\n○ 교육대상 : 중소기업 재직자 및 소상공인 30명\n○ 교육비 : 전액 무료 (IBK기업은행 후원)\n○ 주요 교육내용\n- AI를 활용한 업무자료 탐색 및 핵심정보 정리\n- AI 기반 업무 문서 초안 작성\n- 대상별 맞춤 문서 제작 및 전달 전략\n- 반복 업무 자동화 및 AI 활용 시나리오 설계\n□ 신청방법 : 중소상공인희망재단 홈페이지 → 교육 신청\nhttps://www.heemangfdn.or.kr/layout/res/home.php?go=edu_main.view#=461&start=0&s_status=&s_year=&s_key1=&s_que=\n□ 문의 : 중소상공인희망재단 코업성장사업부 ☎ 070-4261-8383\nAI·AX 기반 중소기업 재직자 업무 효율화 과정(대전) 포스터.pdf\nAI·AX 기반 중소기업 재직자 업무 효율화 과정(대전) 포스터.pdf\r\n\t\t\t\t\t\t\t\t\t[1.15MB]\n목록",
+  "deadline": "",
+  "posted_date": "2026-07-06",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(교육) AI·AX 기반 재직자 업무 역량 강화 「업무 효율화 교육 과정」"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://djtp.or.kr/board.es?mid=a20201000000&bid=0101&act=view&list_no=13307&tag=&nPage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 열기 사업·공고 알림·홍보 기업지원 오시는길 기관소개 열기 공지사항 기관행사 보도자료 홍보영상 포토갤러리 자료실 유관기관소식 뉴스레터 공유하기 열기 공유하기 닫기 페이스북 X(트위터) 카카오톡 주소복사 출력하기 공지사항 (교육) AI·AX 기반 재직자 업무 역량 강화 「업무 효"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

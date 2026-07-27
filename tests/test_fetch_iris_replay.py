@@ -18,7 +18,7 @@ import respx
 # conftest.py 가 import 전 env 를 setdefault 로 보장하므로 import 안전.
 import monitor
 
-FX = pathlib.Path(__file__).parent.parent / "fixtures" / "iris"
+FX = pathlib.Path(__file__).parent / "fixtures" / "iris"
 
 # fetch_iris 가 실제로 POST 하는 목록 API URL (site["url"] 의 ...ListView.do 가 아님)
 IRIS_API_URL = "https://www.iris.go.kr/contents/retrieveBsnsAncmBtinSituList.do"

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:36:10",
+  "notice_id": "imp_d6c628c3_dc5a288b2d9195590e1f",
+  "title": "(최종 합격 발표) 6. 26 정부, 지자체수임사업 계약직원 채용",
+  "link": "https://www.gjcci.or.kr/user/board/view/board_cd/3010/wr_no/1594",
+  "source": "광주상공회의소",
+  "author": "",
+  "description": "본문으로 바로가기\n글로벌메뉴로 바로가기\n로컬메뉴로 바로가기\n연락처 및 저작권으로 바로가기\n공지/행사/교육\n광주상공회의소는 회원기업과 지역사회 발전을 위해 항상 노력하고있습니다.\nHOME\n>\n공지/행사/교육 >\n공지사항\n공지/행사/교육\n공지사항\n행사\n교육\n행사/교육확인\n포토뉴스\n정부지자체사업\n지원사업 신청\n근로자 지원사업\n기업 지원사업\n보도자료\nHOME\n공지/행사/교육\n상의사업안내\n기업지원서비스\n공지/행사/교육\n정책건의/조사연구\n고객센터\n광주상공회의소\n공지사항\n공지사항\n행사\n교육\n행사/교육확인\n포토뉴스\n정부지자체사업\n지원사업 신청\n보도자료\n공지사항\n(최종 합격 발표) 6. 26 정부, 지자체수임사업 계약직원 채용\n2026-06-26\n(최종 합격 발표) 6. 26 정부, 지자체수임사업 계약직원 채용\n​\n다음글 >\n(서류합격발표) 광주상공회의소 사무국 계약직원(정부 지자체 수임사업) 채용\n< 이전글\n[인자위 공고 제2026-09호] 2026년도 광주지역인적자원개발위원회 전담자(인력양성팀 …\n목록\n상단으로",
+  "deadline": "",
+  "posted_date": "2026-06-26",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(최종 합격 발표) 6. 26 정부, 지자체수임사업 계약직원 채용"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gjcci.or.kr/user/board/view/board_cd/3010/wr_no/1594"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "본문으로 바로가기 글로벌메뉴로 바로가기 로컬메뉴로 바로가기 연락처 및 저작권으로 바로가기 공지/행사/교육 광주상공회의소는 회원기업과 지역사회 발전을 위해 항상 노력하고있습니다. HOME > 공지/행사/교육 > 공지사항 공지/행사/교육 공지사항 행사 교육 행사/교육확인 포토뉴스 정부지자체"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

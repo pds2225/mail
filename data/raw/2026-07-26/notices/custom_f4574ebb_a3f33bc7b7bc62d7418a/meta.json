@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:34:02",
+  "notice_id": "custom_f4574ebb_a3f33bc7b7bc62d7418a",
+  "title": "일자리정보",
+  "link": "https://www.gokams.or.kr/01_news/job_list.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n알림/소식\n일자리 정보\n본 게시판을 이용한 게시글 등록은 제한되며,\n예술분야의 기업 채용 정보, 교육을 종합적으로 제공하는 플랫폼인 “아트모아”에서 이용할 수 있습니다.\n[아트모아 바로가기]\n검색하기\n일자리 정보 목록\n로딩 준비중...",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "일자리정보"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/01_news/job_list.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 알림/소식 일자리 정보 본 게시판을 이용한 게시글 등록은 제한되며, 예술분야의 기업 채용 정보, 교육을 종합적으로 제공하는 플랫폼인 “아트모아”에서 이용할 수 있습니다. [아트모아 바로가기] 검색하기 일자리 정보 목록 로딩 준비중..."
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "일자리 정보 목록",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "로딩 준비중...",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

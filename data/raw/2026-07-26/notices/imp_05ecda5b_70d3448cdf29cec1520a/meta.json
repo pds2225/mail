@@ -1,0 +1,62 @@
+{
+  "saved_at": "2026-07-26 19:38:06",
+  "notice_id": "imp_05ecda5b_70d3448cdf29cec1520a",
+  "title": "[재공고] 2026년 가치소비 체험교육 운영 참여기업 모집 (~7/27(월) 18시)",
+  "link": "https://sehub.net/archives/2156756",
+  "source": "서울특별시 사회적경제지원센터",
+  "author": "",
+  "description": "메인-슬라이드배너\n[재공고] 2026년 가치소비 체험교육 운영 참여기업 모집 (~7/27(월) 18시)\n2026-07-13\n조회 : 158\n댓글 :\n0\n주최/주관 : 서울특별시 사회적경제지원센터\n문의 전화 : 02-2088-6087\n문의 메일 : basara7808@sehub.net\n공고-2026년-가치소비-체험교육-운영-참여기업-모집-재공고-1.hwp\n2026년 가치소비 체험교육 운영 참여기업 모집 공고\n서울특별시 사회적경제지원센터 공고 제2026-042호\n2026년 가치소비 체험교육 운영 참여기업 모집 재공고\n서울특별시 소재 사회적경제기업과 소셜벤처의 현장 중심 체험교육을 통해 사회적경제에 대한 인식 확산과 가치소비 문화 조성을 도모하고자「2026년 가치소비 체험교육」참여기업 모집공고를 추진하고자 하오니 관심 있는 기업의 적극적인 참여 바랍니다.\n2026. 7. 13.\n서울특별시 사회적경제지원센터장\n1. 사업개요\n– 사  업 명 :  2026년 가치소비 체험 교육 운영\n– 사업목적 : 사회적경제기업의 제품・콘텐츠를 활용한 가치소비 체험교육 운영을 통해 사회적가치 확산 및 교육 분야 판로 연계를 지원\n– 지원내용 : 사회적경제기업 연계 가치소비 체험교육 운영 및 교육 프로그램 운영비 지원\n2. 모집개요\n– 공 고  명 : 2026년 가치소비 체험교육 운영 참여기업 모집\n– 공고기간 : 공고일 ~ 2026. 7. 27.(월) 18시까지\n– 접수기간 : 공고일 ~ 2026. 7. 27.(월) 18시까지\n– 모집규모 : 서울시 소재 사회적경제기업 및 소셜벤처 3개사 내외\n– 신청대상 : 서울시 소재 사회적경제기업 중 가치소비 체험교육 운영을 희망하는 기업\n3. 신청방법\n– 접수기간 : 공고일 ~ 2026. 7. 27.(월) 18시까지\n– 접수방법 : 온라인 접수 /  basara7808@sehub.net\n4. 문의 : 서울특별시 사회적경제지원센터 판로지원팀 02-2088-6087\n첨부파일\n(공고) 2026년 가치소비 체험교육 운영 참여기업 모집 재공고\n(73 kB)\n(공고) 2026년 가치소비 체험교육 운영 참여기업 모집 재공고\n<\n>\n인쇄\n목록\n수정\n댓글이 닫혀있습니다.",
+  "deadline": "2026-07-27",
+  "posted_date": "2026-07-13",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-07-27",
+    "end": "2026-07-27",
+    "display": "2026-07-27",
+    "label": "접수기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[재공고] 2026년 가치소비 체험교육 운영 참여기업 모집 (~7/27(월) 18시)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://sehub.net/archives/2156756"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "메인-슬라이드배너 [재공고] 2026년 가치소비 체험교육 운영 참여기업 모집 (~7/27(월) 18시) 2026-07-13 조회 : 158 댓글 : 0 주최/주관 : 서울특별시 사회적경제지원센터 문의 전화 : 02-2088-6087 문의 메일 : basara7808@sehub.net 공"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-07-27"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

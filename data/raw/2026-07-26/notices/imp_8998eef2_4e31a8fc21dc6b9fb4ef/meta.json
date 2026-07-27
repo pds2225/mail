@@ -1,0 +1,119 @@
+{
+  "saved_at": "2026-07-26 19:38:40",
+  "notice_id": "imp_8998eef2_4e31a8fc21dc6b9fb4ef",
+  "title": "2026년 공공기관 입점지원 공모사업 선정 결과 안내",
+  "link": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=560&page=2",
+  "source": "광주광역자활센터",
+  "author": "",
+  "description": "2026년 공공기관 입점지원 공모사업 선정 결과 안내\n광주광역자활센터\n작성일\n2026-03-26\n조회수\n79\n첨부파일\n(공문)2026년 「공공기관 입점지원 공모사업」 심사 결과 안내 1부.pdf\n[size : 123.6 KB]\n[다운로드 : 50]\n2026년 공공기관 입점지원 공모사업 심사 결과 안내 1부..pdf\n[size : 129.9 KB]\n[다운로드 : 36]\n선정 안내 1부.jpg\n[size : 122.3 KB]\n[다운로드 : 29]\n광주광역자활센터에서는\n「2026년 「공공기관 입점지원 공모사업\n」선정\n심사를 진행하고 아래와 같이 결과를 안내하오니 참고 바랍\n니다.\n1. 사 업 명: 2026년 「공공기관 입점지원 공모사업」\n2. 심사일시: 2026. 3. 25.(수) 13:00~13:30\n3. 심사대상: 오늘도든든\n(광주광산지역자활센터)\n4. 심사내용: 산단 노동자 조식지원사업 3호점(평동종합비즈니스센터) 개점\n5. 심사기준:\n입점사업부합성\n(30점), 실행 가능성(30점), 성장 가능성(20점), 사업수행역량(20점)\n6. 심사위원회: 내부심사위원 3명 구성\n7. 심사결과\n사업단명\n지역자활센터명\n심사\n결과\n지원내용\n오늘도든든\n광주광산지역자활센터\n선정\n산단 노동자 조식지원사업 3호점 창고 구축\n(락카장 및 선반 2종)\n8. 향후계획: 업무협약 후 업무 지원\n9. 문    의: 사업기획부 최동선 부장(☎070-4044-8570)\n목록\n이전글\n광주주거복지협동조합-지역 강소기업-광주광역자활센터, 자재 공동구매 업무협약 체결\n다음글\n2026년 자활기업 「 사업장 시설개선 지원사업 」 공모 안내\n센터소식 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2026-03-26",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 공공기관 입점지원 공모사업 선정 결과 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjjahwal.or.kr/ko/36/view?SEQ=560&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026년 공공기관 입점지원 공모사업 선정 결과 안내 광주광역자활센터 작성일 2026-03-26 조회수 79 첨부파일 (공문)2026년 「공공기관 입점지원 공모사업」 심사 결과 안내 1부.pdf [size : 123.6 KB] [다운로드 : 50] 2026년 공공기관 입점지원 공모사업 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "사업단명",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지역자활센터명",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "심사 결과",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "지원내용",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "오늘도든든",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "광주광산지역자활센터",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "선정",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "산단 노동자 조식지원사업 3호점 창고 구축 (락카장 및 선반 2종)",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

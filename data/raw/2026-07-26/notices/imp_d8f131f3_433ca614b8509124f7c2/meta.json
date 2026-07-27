@@ -1,0 +1,138 @@
+{
+  "saved_at": "2026-07-26 19:38:03",
+  "notice_id": "imp_d8f131f3_433ca614b8509124f7c2",
+  "title": "진흥원 유성분원 `26년 6월 창업보육실 공실 추가모집 공고",
+  "link": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0120&menuKey=TOfnnvp207",
+  "source": "대전일자리경제진흥원",
+  "author": "",
+  "description": "사업공고\n사업공고\n홈\n지원사업 안내\n사업공고\n사업공고\n공유하기\n페이스북\nX\n블로그\n카카오톡\n링크복사\n닫기\n인쇄\n공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수\n공고명\n진흥원 유성분원 `26년 6월 창업보육실 공실 추가모집 공고\n접수기간\n2026-06-25 ~ 2026-12-31\n공고담당자\n총무팀 | 강동연\n연락처\n조회수\n417\n사업개요\n(재)대전일자리경제진흥원에서 우수한 기술력을 갖춘 중소·벤처기업의 비즈니스를 지원하기 위해 운영하는 창업보육실 입주기업을 모집하오니 입주를 희망하는 기업들의 많은 신청 바랍니다.\n지원분야 및 대상\n○ 모집기간 : 2026. 6. 25. ~ 12. 31.(상시모집)\n○ 신청자격\n- 소프트웨어 진흥법 제2조(정의) 4항에 따른 소프트웨어 사업자\n- 소프트웨어 진흥시설 및 진흥단지의 지정·관리 등에 관한 지침 제3조(지원시설 등의 범위)에 따른 소프트웨어 지원시설\n○ 제외대상\n- 금융기관으로부터 불량거래자로 규제중인 자\n- 폐수, 소음 진동 등 공해 다발업종 사업자\n- 휴·폐업중인 자\n- 기타 운영자가 입주자로 부적합하다고 인정되는 자\n지원조건 및 내용\n○\n계약기간\n:\n최초 계약일로부터\n3\n년\n(\n연장가능\n)\n○\n임 대 료\n:\n전용면적\n(\n㎡\n) × 3,660\n원\n○\n관 리 비\n:\n전체면적\n(\n㎡\n) × 4,030\n원\n(\n수도\n, 가스\n포함\n)\n○\n선 납 금\n: 5\n개월 임대\n·\n관리비\n/\n퇴거 시 반환\n(\n이자없음)\n신청방법\n○ 신청서류\n- 사업신청서 및 사업계획서(소정양식), 경력증명서(동종업종 경력에 한함),\n법인인감증명서, 주민등록등본, 사업자등록증, 법인등기부등본, 기업재무재표,\n기타 각종 증빙자료사본(벤처, 이노비즈, 경영혁신, 신기술 등 각종 인증서류)\n○ 접수\n- 접 수 처 : 대전광역시 유성구 가정북로96,(대전일자리경제진흥원 207호) - 접수방법 : 이메일 접수\n문의처\n문     의 : 총무팀 강동연책임 / 042-380-3078 / rkdehd17@djbea.or.kr\n기타사항\n문     의 : 총무팀 강동연책임 / 042-380-3078 / rkdehd17@djbea.or.kr\n첨부파일\n입주신청서 (2) (1).hwpx\n(68,007 byte)\n2026년 진흥원 창업보육실가모집공고(안) (6) (3) (3) (1).hwp\n(126,464 byte)\n사업신청\n목록",
+  "deadline": "2026-06-25 ~ 2026-12-31",
+  "posted_date": "2026-06-25",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": {
+    "start": "2026-06-25",
+    "end": "2026-12-31",
+    "display": "2026-06-25 ~ 2026-12-31",
+    "label": "모집기간"
+  },
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "진흥원 유성분원 `26년 6월 창업보육실 공실 추가모집 공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.djbea.or.kr/mps/bizTskPbnc/view?tsk_pbnc_id=2026-0120&menuKey=TOfnnvp207"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공고 사업공고 홈 지원사업 안내 사업공고 사업공고 공유하기 페이스북 X 블로그 카카오톡 링크복사 닫기 인쇄 공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수 공고명 진흥원 유성분원 `26년 6월 창업보육실 공실 추가모집 공고 접수기간 2026-06-25 ~ 2026-12-"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "2026-06-25 ~ 2026-12-31"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "공고정보 - 공고명, 접수기간, 공고담당자, 연락처, 조회수",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "공고명",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "진흥원 유성분원 `26년 6월 창업보육실 공실 추가모집 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "접수기간",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-06-25 ~ 2026-12-31",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "공고담당자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "총무팀 | 강동연",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "연락처",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "417",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

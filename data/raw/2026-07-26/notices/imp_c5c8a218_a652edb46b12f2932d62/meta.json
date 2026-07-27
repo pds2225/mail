@@ -1,0 +1,91 @@
+{
+  "saved_at": "2026-07-26 19:36:20",
+  "notice_id": "imp_c5c8a218_a652edb46b12f2932d62",
+  "title": "(광주경영자총협회 공고 제 2024-5호)2024년 직원 채용 공고문",
+  "link": "http://www.gjef.or.kr/ko/28/view?SEQ=93&page=2",
+  "source": "광주경영자총협회",
+  "author": "",
+  "description": "(광주경영자총협회 공고 제 2024-5호)2024년 직원 채용 공고문\n운영자\n날짜\n2024-04-08\n조회수\n846\n첨부파일\n2024년 직원 채용 공고문(5호).hwp\n[size : 505.5 KB]\n[다운로드 : 535]\n광주경영자총협회 공고 제\n2024 - 5\n호\n광주경영자총협회\n일자리 사업 직원 공개채용 공고\n광주경영자총협회는\n1981\n년\n9\n월 고용노동부 인가로 설립되었으며\n,\n관할구역 내 청년\n․\n중장년 고용창출과 협력적 노사관계 지원을 통해 중소기업경쟁력 향상과 지역경제발전을 선도하기 위해 설립된 단체입니다\n.\n우리협회에서는\n2024\n년 중앙부처 및 지자체 일자리사업을 주도적으로 시행하고 있는바 동 사업을 계획\n․\n관리할 분야별 사업 담당자를 공개 채용하오니\n,\n많은 참여 바랍니다\n.\n2024\n년\n4\n월\n8\n일\n광주경영자총협회장\n목록\n이전글\n(광주경영자총협회 공고 제 2024-4호) 2024년 공동안전관리자 지원사업 - 산업안전보건 분야 전문컨설턴트 공개채용\n다음글\n(광주경영자총협회 공고 제 2024-6호) 2024년 공동안전관리자 지원사업 - 산업안전보건 분야 전문컨설턴트 공개채용 최종합격자 공고(수정)\n공지사항 게시글 상세 폼",
+  "deadline": "",
+  "posted_date": "2024-04-08",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "(광주경영자총협회 공고 제 2024-5호)2024년 직원 채용 공고문"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "http://www.gjef.or.kr/ko/28/view?SEQ=93&page=2"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "(광주경영자총협회 공고 제 2024-5호)2024년 직원 채용 공고문 운영자 날짜 2024-04-08 조회수 846 첨부파일 2024년 직원 채용 공고문(5호).hwp [size : 505.5 KB] [다운로드 : 535] 광주경영자총협회 공고 제 2024 - 5 호 광주경영자총협회 일"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "광주경영자총협회 일자리 사업 직원 공개채용 공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

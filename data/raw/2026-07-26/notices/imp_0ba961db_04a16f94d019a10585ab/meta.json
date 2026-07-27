@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:37:30",
+  "notice_id": "imp_0ba961db_04a16f94d019a10585ab",
+  "title": "[공지사항] 농신보 기준보증료율 인상 안내",
+  "link": "https://nongshinbo.nonghyup.com/user/boardList.do?command=view&page=1&boardId=4482556&boardSeq=5642452&id=",
+  "source": "농림수산업자신용보증기금(농신보)",
+  "author": "",
+  "description": "제목 :\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t[공지사항] 농신보 기준보증료율 인상 안내\n첨부파일 (파일 명이 길 경우 브라우저 특성상 파일명이 잘릴 수 있습니다.)\n농신보 기준보증료율 인상 안내.pdf\n[공지사항] 농신보 기준보증료율 인상 안내",
+  "deadline": "",
+  "posted_date": "2024-12-10",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공지사항] 농신보 기준보증료율 인상 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://nongshinbo.nonghyup.com/user/boardList.do?command=view&page=1&boardId=4482556&boardSeq=5642452&id="
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "제목 : [공지사항] 농신보 기준보증료율 인상 안내 첨부파일 (파일 명이 길 경우 브라우저 특성상 파일명이 잘릴 수 있습니다.) 농신보 기준보증료율 인상 안내.pdf [공지사항] 농신보 기준보증료율 인상 안내"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "이 테이블은 다음글, 이전글의 목록의 제목을 보여줍니다.",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[입찰공고] 2025년 농신보 자금운용 성과평가 및 리스크관리 용역 입찰공고",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[공지사항] 채권추심 착수통지를 위한 채무자 사전 안내사항",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

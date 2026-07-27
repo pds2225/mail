@@ -1,0 +1,95 @@
+{
+  "saved_at": "2026-07-26 19:38:24",
+  "notice_id": "imp_e02ba1cb_0cf8f076106a53a06700",
+  "title": "[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내",
+  "link": "https://www.sida.kr/notification/newsView.html?uid=237&keyfield_s=&search_word_s=&cpage=2&spage=1",
+  "source": "시흥산업진흥원",
+  "author": "",
+  "description": "[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내\n작성일자\n2026.07.07\n담당부서\n홍보실\n문의처\n공고문 참조\n첨부파일\n포스터.jpg\n목록\n이전글\n[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내\n다음글\n[시흥시청] 2026년 시흥 지붕없는 박물관 연계, 시화공단 옛 사진 공모전 안내",
+  "deadline": "",
+  "posted_date": "2026-07-07",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.sida.kr/notification/newsView.html?uid=237&keyfield_s=&search_word_s=&cpage=2&spage=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "[시흥시청] 2026 AI 인재육성 및 기업혁신 포럼 안내 작성일자 2026.07.07 담당부서 홍보실 문의처 공고문 참조 첨부파일 포스터.jpg 목록 이전글 [GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내 다음글 [시흥시청] 2026년 시흥 지붕없는 박물관 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "이전글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[GBSA]2026년 경기도 중소기업 ESG진단평가 및 개선지원 사업 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "다음글",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "[시흥시청] 2026년 시흥 지붕없는 박물관 연계, 시화공단 옛 사진 공모전 안내",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

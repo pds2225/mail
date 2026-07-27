@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:33:52",
+  "notice_id": "ic_bupyeong_5d8976ca0b1361ba0ea1",
+  "title": "2026년도 부개1동 통장(27통) 후보자 공개모집 재공고",
+  "link": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50284",
+  "source": "인천 부평구청",
+  "author": "",
+  "description": "고시/공고/입법예고\n인쇄하기\n부평\n소통과 참여\n부평알림\n고시/공고/입법예고\n블로그\n페이스북\n카카오톡\n트위터\n2026년도 부개1동 통장(27통) 후보자 공개모집 재공고\n고시공고번호\n인천광역시 부평구 부개1동 공고 제2026-56호\n공고구분\n공고(일반공고)\n담당부서\n부개1동\n담당자\n김은혜\n연락처\n032-509-8463\n등록일\n2026-07-24\n첨부파일\n통장 후보자 모집 재공고(부개1동).hwpx\n통장 후보자 신청서.hwpx\n「인천광역시부평구 통·반 설치 조례 시행규칙」 제2조 및 제3조 규정에 따라, 붙임 공고문과 같이 통장 임명을 위한 대상자 모집을 재공고합니다.\n목록\n자료관리 담당자\n담당부서 : 홍보담당관\n담당팀 : 언론미디어팀\n전화 : 032-509-3920\n만족도 평가\n결과보기\n매우만족\n만족\n보통\n불만족\n매우불만족",
+  "deadline": "",
+  "posted_date": "2026-07-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년도 부개1동 통장(27통) 후보자 공개모집 재공고"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.icbp.go.kr/main/eminwon/eminwonAnnounceDetail.do?mgt_no=50284"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고시/공고/입법예고 인쇄하기 부평 소통과 참여 부평알림 고시/공고/입법예고 블로그 페이스북 카카오톡 트위터 2026년도 부개1동 통장(27통) 후보자 공개모집 재공고 고시공고번호 인천광역시 부평구 부개1동 공고 제2026-56호 공고구분 공고(일반공고) 담당부서 부개1동 담당자 김은혜 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

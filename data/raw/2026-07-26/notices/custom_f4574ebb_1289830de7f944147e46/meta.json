@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:34:10",
+  "notice_id": "custom_f4574ebb_1289830de7f944147e46",
+  "title": "윤리인권경영",
+  "link": "https://www.gokams.or.kr/06_intro/ethical_1.aspx",
+  "source": "예술경영지원센터",
+  "author": "",
+  "description": "HOME\n윤리인권경영\n윤리헌장\n윤리헌장\n인권경영선언문\n고객헌장\n윤리인권경영 활동\n(재)예술경영지원센터 윤리헌장\n재단법인 예술경영지원센터는 지속가능한 발전을 위하여 상생의 가치를 기반으로 책임경영을\n도모하며, 예술산업의 미래가치를 창출하는 예술경영 전문기관이다.\n이에 우리는 재단법인 예술경영지원센터의 일원으로서 긍지와 자부심을 가지고 다음과 같이\n윤리헌장을 제정하여 모든 임직원이 지켜야 할 행동 및 가치판단의\n기준으로 삼아 실천할 것을 다짐한다.\n재단법인 예술경영지원센터 임직원은 긍지와 자부심을 가지고 윤리경영, 투명경영을 통해 국민의\n사랑과 신뢰를 받을 수 있도록 노력한다.\n하나\n우리는 공익을 우선시하며 투명하고 공정하게 맡은 바 책임을 다한다.\n하나\n우리는 고객의 편의를 먼저 생각하며 고객의 요구와 기대에 부응하는 서비스를 제공한다.\n하나\n우리는 모든 이해관계자와 상호 협력하여 함께 발전하는 동반성장을 추구한다.\n하나\n우리는 임직원 개개인의 존엄성과 가치를 인정하고 임직원의 삶의 질 향상을 위해 노력한다.\n하나\n우리는 청렴을 생활화하고 규범과 건전한 상식에 따라 행동한다.\n하나\n우리는 창의성과 전문성을 바탕으로 업무를 혁신하고 생명 존중과 환경 보호에 앞장선다.\n하나\n우리는 사회의 일원으로써 공익활동에 적극적으로 참여하고, 끊임없이 새로운 가치를\n창조하여 국가와 사회의 발전에 공헌한다.\n하나\n우리는 예술유통의 활성화 및 예술산업진흥에 최선의 노력을 기울인다.\n(재)예술경영지원센터 임직원 일동",
+  "deadline": "",
+  "posted_date": "",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "윤리인권경영"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gokams.or.kr/06_intro/ethical_1.aspx"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "HOME 윤리인권경영 윤리헌장 윤리헌장 인권경영선언문 고객헌장 윤리인권경영 활동 (재)예술경영지원센터 윤리헌장 재단법인 예술경영지원센터는 지속가능한 발전을 위하여 상생의 가치를 기반으로 책임경영을 도모하며, 예술산업의 미래가치를 창출하는 예술경영 전문기관이다. 이에 우리는 재단법인 예술"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

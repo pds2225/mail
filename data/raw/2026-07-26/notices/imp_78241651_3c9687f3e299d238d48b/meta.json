@@ -1,0 +1,121 @@
+{
+  "saved_at": "2026-07-26 19:36:13",
+  "notice_id": "imp_78241651_3c9687f3e299d238d48b",
+  "title": "[일반] K-하이테크플랫폼 2026 8월 재직자 훈련 [생성형 AI 활용 실무] 훈련생 모집",
+  "link": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4826&make=&search=&type=&apply_no=&table_name=notice&page=1",
+  "source": "고양산업진흥원",
+  "author": "",
+  "description": "KOR\nENG\nJPN\nCHN\nARB\n검색 폼\nSEARCH\n검색\n[일반] K-하이테크플랫폼 2026 8월 재직자 훈련 [생성형 AI 활용 실무] 훈련생 모집\n상세\n작성자\n관리자\n등록일\n2026-07-16\n조회수\n167\n첨부파일\n[안내사항]\n* 고양산업진흥원 K-하이테크플랫폼 교육 과정은 고용노동부, 한국산업인력공단의 사업으로 고용보험 가입자 대상 전액 무료로 진행됩니다.​\n​ * ​신청 완료 이후 정보 확인하여 개별 [참여 확정] 안내드릴 예정이며, 우선지원기업 재직자를 우선으로 교육 참여가 확정됩니다.​\n* 교육은 신청 현황에 따라 조기 마감될 수 있으며, 과정 별 참여 대기자가 있사오니 신중한 신청 부탁드립니다.​\n* 교육 신청 후 사전 취소 없이 불참하는 경우, 출결 불성실로 인해 미수료하는 경우 향후 교육 참여가 제한됩니다.​\n[교육신청]\n실무 적용을 위한 AI 서비스 기획 및 시나리오 설계 과정 (1일/8시간/주말반)\n신청 링크:\nhttps://event-us.kr/gipakhp/event/130659\n​\n목록\nList\n이전글\n[정보통신산업진흥원] 2026년도 소프트웨어 산업발전 유공자 포상계획 공고\n다음글\n대구디지털혁신진흥원장 공개모집 공고\n콘텐츠 관리부서 :\nESG경영팀\n연락처 :\n031-960-7810\n진흥원 소개\n개인정보처리방침\n영상정보처리기기 운영관리방침\n채용비리 익명신고센터\n오시는길\n대표번호 : 031.960.7810\n사업자번호 : 128-82-08631\n경기도 고양시 일산동구 태극로 60 (장항동) 14층\nFax : 031.960.7819\nCopyright©2020 gipa.or.kr     ALL RIGHTS RESERVED.",
+  "deadline": "",
+  "posted_date": "2026-07-16",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[일반] K-하이테크플랫폼 2026 8월 재직자 훈련 [생성형 AI 활용 실무] 훈련생 모집"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.gipa.or.kr/community/01_1.php?admin_mode=read&no=4826&make=&search=&type=&apply_no=&table_name=notice&page=1"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "KOR ENG JPN CHN ARB 검색 폼 SEARCH 검색 [일반] K-하이테크플랫폼 2026 8월 재직자 훈련 [생성형 AI 활용 실무] 훈련생 모집 상세 작성자 관리자 등록일 2026-07-16 조회수 167 첨부파일 [안내사항] * 고양산업진흥원 K-하이테크플랫폼 교육 과정은 "
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": {
+    "truncated": false,
+    "tables": [
+      {
+        "caption": "상세",
+        "truncated": false,
+        "rows": [
+          [
+            {
+              "text": "작성자",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "관리자",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "등록일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "2026-07-16",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 1
+            }
+          ],
+          [
+            {
+              "text": "조회수",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "167",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ],
+          [
+            {
+              "text": "첨부파일",
+              "header": true,
+              "rowspan": 1,
+              "colspan": 1
+            },
+            {
+              "text": "",
+              "header": false,
+              "rowspan": 1,
+              "colspan": 3
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import monitor as m  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-GROUPS = {g["id"]: g for g in json.loads((ROOT / "groups.json").read_text(encoding="utf-8"))}
+GROUPS = {g["id"]: g for g in json.loads((ROOT / "config" / "groups.json").read_text(encoding="utf-8"))}
 SEARCH = "https://ols.semas.or.kr/ols/man/SMAN051M/search.do"
 
 

@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:38:47",
+  "notice_id": "imp_695dd267_501c6b9383ed6602efdf",
+  "title": "2026년 맞춤형창업지원사업 '로컬크리에이터 지원사업' 모집공고(~7/30, 16:00)",
+  "link": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7316",
+  "source": "용인시산업진흥원",
+  "author": "",
+  "description": "사업공지\n창업지원팀\n2025-06-10T09:49:10+09:00\n사업공지\n입찰공고\n채용공고\n2026년 맞춤형창업지원사업 '로컬크리에이터 지원사업' 모집공고(~7/30, 16:00)\n작성자\n창업지원팀\n작성일\n2026-07-02 13:54\n조회\n400\n첨부파일\n2026년_맞춤형창업지원사업_로컬크리에이터_지원사업_모집공고-.hwp\n2026년_맞춤형창업지원사업_로컬크리에이터_신청서-및-부대서류-.hwp\n좋아요\n0\n싫어요\n0\n인쇄\n지원사업 신청 바로가기 => 클릭\n«\n2026년 해외진출 종합지원사업(해외지사화) 공고(마감)\n2026년 제2차 창업지원센터 입주기업 선정결과 공고\n»\n목록보기\nPowered by KBoard",
+  "deadline": "2026-07-30",
+  "posted_date": "2026-07-02",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026년 맞춤형창업지원사업 '로컬크리에이터 지원사업' 모집공고(~7/30, 16:00)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://ypa.or.kr/information/businessnotice/?mod=document&uid=7316"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "사업공지 창업지원팀 2025-06-10T09:49:10+09:00 사업공지 입찰공고 채용공고 2026년 맞춤형창업지원사업 '로컬크리에이터 지원사업' 모집공고(~7/30, 16:00) 작성자 창업지원팀 작성일 2026-07-02 13:54 조회 400 첨부파일 2026년_맞춤형창업지원사업"
+      },
+      "application_period": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "2026-07-30"
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

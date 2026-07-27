@@ -95,7 +95,9 @@ def test_render_region_unknown_section():
               "deadline": "2026-12-31", "posted_date": "2026-06-18",
               "link": "https://example.com/a"}]
     out = m.render_region_unknown(items)
-    assert "지역 미상" in out and "확인 필요" in out
+    # W3: 단일 "지역 미상" 신규 문구 대신 surface 구분. 레거시 버킷 섹션은 '확인 필요'.
+    assert "확인 필요" in out
+    assert ("지역 미상" in out) or ("지역 확인 필요" in out)
     assert "지역없는 지원사업 공고" in out
     assert "https://example.com/a" in out
 

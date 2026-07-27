@@ -16,7 +16,7 @@ os.environ.setdefault("MONITOR_NO_PERSIST_SEEN", "1")
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-import company_match as cm  # noqa: E402
+from mail_core.matching import company_match as cm  # noqa: E402
 import monitor as mon  # noqa: E402
 
 OWN_CITIES = ["서울", "인천", "부산", "대구", "광주"]

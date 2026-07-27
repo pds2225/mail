@@ -1,0 +1,57 @@
+{
+  "saved_at": "2026-07-26 19:32:28",
+  "notice_id": "moel_a2c7f3e69ec60d3356df",
+  "title": "[공고] 2026년 취약노동자 일터개선 지원사업 참여기관 모집 공고(민간)",
+  "link": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20251201451",
+  "source": "고용노동부",
+  "author": "",
+  "description": "고용노동부\n국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라!\n정보공개\n국고보조사업\n국고보조사업 공모현황입니다.\n제목\n[공고]2026년 취약노동자 일터개선 지원사업 참여기관 모집 공고(민간)\n담당부서\n노무제공자지원과\n전화번호\n044-202-7785\n담당자\n김형우\n등록일\n2025-12-24\n고용노동부 공고 제2025-493호\n고용노동부는 노무제공자 등 취약노동자의 노무제공 환경 개선을 위한 기업(또는 컨소시엄), 협·단체의\n맞춤형 일터 개선 사업을 지원하고자 2026년 취약노동자 일터개선 지원사업 참여기관 모집에 관한 사항을\n다음과 같이 공고합니다.\n자세한 내용은 첨부파일의 공고문을 참고하시기 바랍니다.\n* (사업문의) 044-202-7785, 7745\n첨부\n2026년 취약노동자 일터개선 지원사업 공고문(민간).hwp\n다운로드\n바로보기\n이전글\n2026년 취약노동자 일터개선 지원사업 참여기관 모집 공고(자치단체)\n다음글\n2026년 지역상생형 일터조성 프로젝트 사업 공모 공고\n목록",
+  "deadline": "",
+  "posted_date": "2025-12-24",
+  "is_aggregator": false,
+  "region_field": null,
+  "application_period": null,
+  "detail_enriched": true,
+  "detail_extraction": {
+    "status": "SUCCESS",
+    "reason": "detail_parsed",
+    "fields": {
+      "title": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "[공고] 2026년 취약노동자 일터개선 지원사업 참여기관 모집 공고(민간)"
+      },
+      "organizer": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "url": {
+        "status": "SUCCESS",
+        "source": "list",
+        "evidence": "https://www.moel.go.kr/info/govsupport/govsupportcon/govSupportSubView.do?bbs_seq=20251201451"
+      },
+      "description": {
+        "status": "SUCCESS",
+        "source": "detail",
+        "evidence": "고용노동부 국민 누구나 원하는 일자리에서 마음껏 역량을 발휘하는 나라! 정보공개 국고보조사업 국고보조사업 공모현황입니다. 제목 [공고]2026년 취약노동자 일터개선 지원사업 참여기관 모집 공고(민간) 담당부서 노무제공자지원과 전화번호 044-202-7785 담당자 김형우 등록일 2025"
+      },
+      "application_period": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "target": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      },
+      "region": {
+        "status": "NOT_SPECIFIED",
+        "source": "detail",
+        "evidence": ""
+      }
+    }
+  },
+  "detail_tables": null
+}

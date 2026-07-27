@@ -23,7 +23,7 @@ $ErrorActionPreference = "Stop"
 function Test-MailProjectRoot {
     param([string]$Path)
     if (-not (Test-Path -LiteralPath $Path)) { return $false }
-    $markers = @("monitor.py", "sites.json", "groups.json")
+    $markers = @("monitor.py", "config\sites.json", "config\groups.json")
     foreach ($m in $markers) {
         if (-not (Test-Path -LiteralPath (Join-Path $Path $m))) { return $false }
     }
@@ -39,7 +39,7 @@ function Get-ProjectScore {
         return @{ Score = -1; Details = @{ valid = $false } }
     }
 
-    foreach ($f in @("vercel.json", "api\index.py", "api\run.py", "streamlit_app.py", "auto_mail_web.html", "scripts\auto_dev_queue.py")) {
+    foreach ($f in @("vercel.json", "api\index.py", "api\run.py", "streamlit_app.py", "web\auto_mail_web.html", "scripts\auto_dev_queue.py")) {
         if (Test-Path -LiteralPath (Join-Path $Path $f)) { $score += 10 }
     }
 
@@ -62,7 +62,7 @@ function Get-ProjectScore {
         } finally { Pop-Location }
     }
 
-    foreach ($key in @("monitor.py", "streamlit_app.py", "sites.json", "groups.json", "settings.json", "vercel.json")) {
+    foreach ($key in @("monitor.py", "streamlit_app.py", "config\sites.json", "config\groups.json", "config\settings.json", "vercel.json")) {
         $fp = Join-Path $Path $key
         if (Test-Path -LiteralPath $fp) {
             $details["mtime_$key"] = (Get-Item -LiteralPath $fp).LastWriteTimeUtc
@@ -70,7 +70,7 @@ function Get-ProjectScore {
         }
     }
 
-  if (Test-Path -LiteralPath (Join-Path $Path "seen_ids.json")) { $score += 5 }
+  if (Test-Path -LiteralPath (Join-Path $Path "var\state\seen_ids.json")) { $score += 5 }
 
     return @{ Score = $score; Details = $details }
 }
