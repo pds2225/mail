@@ -2,7 +2,9 @@
 """Recall zero gate — 알려진 누락(recall) 테스트가 전부 통과할 때만 OK.
 
 야간 자동개발·CI가 '누락 없음' 종료 조건을 숫자로 판정할 때 쓴다.
-3대 소스(기업마당·K-Startup·NIPA) 수집 완성도는 scripts/core_sources_checklist.py (별도).
+3대 소스 전체 완성도는 scripts/core_sources_checklist.py 가 별도로 검사한다.
+다만 최우선 소스인 기업마당·K-Startup의 파서 재생과 서울 AI 예비창업자
+전달 경로는 이 기본 게이트에도 중복 편입해 회귀를 즉시 차단한다.
 
 Usage (PowerShell, D:\\mail):
   python scripts/recall_zero_gate.py
@@ -24,8 +26,16 @@ ROOT = Path(__file__).resolve().parents[1]
 RECALL_SUITES = [
     "test_5field_casematrix.py",
     "test_seoul_ai_recall.py",
+    "test_prestartup_ai_digest_regression.py",
+    "test_priority_recall_paths.py",
     "test_decision_matrix.py",
     "test_download_kstartup_targets.py",
+]
+
+CRITICAL_SOURCE_SUITES = [
+    "test_fetch_bizinfo_replay.py",
+    "test_fetch_kstartup_replay.py",
+    "test_core_sources_specialize.py",
 ]
 
 SMOKE_SCRIPTS = [
@@ -69,7 +79,7 @@ def main() -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
-    results = [_run_pytest(s) for s in RECALL_SUITES]
+    results = [_run_pytest(s) for s in [*RECALL_SUITES, *CRITICAL_SOURCE_SUITES]]
     results += [_run_script(s) for s in SMOKE_SCRIPTS]
     failed = [r for r in results if not r["ok"]]
     out = {

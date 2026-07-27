@@ -15,7 +15,9 @@ python scripts\core_sources_checklist.py --live   # 실수집 포함 (BIZINFO_AP
 python scripts\core_sources_checklist.py --json
 ```
 
-`recall_zero_gate.py`(판정 로직 5/5)와 **별도** — 3대 소스 **수집·상세보강** 전용.
+`core_sources_checklist.py`는 3대 소스 **수집·상세보강** 전용이다.
+`recall_zero_gate.py`는 판정 로직 게이트이지만, 최우선인 기업마당·K-Startup
+파서 재생과 서울 AI 예비창업자 전달 경로는 의도적으로 중복 검사한다.
 
 ---
 
@@ -70,7 +72,18 @@ python scripts\core_sources_checklist.py --json
 |--------|-----------|
 | `core_sources_checklist` | 3소스 × (설정+상세보강+pytest) = **오프라인 13항목** |
 | `+ --live` | 위 + 실수집 3항목 |
-| `recall_zero_gate` | 알려진 recall 패턴 **5/5** (별도) |
+| `recall_zero_gate` | 알려진 recall 패턴 + 기업마당·K-Startup 재생 + 서울 AI 예비창업자 경로 전부 통과 |
+
+## 최우선 페르소나 4중 방어
+
+서울 거주 AI 예비창업자가 신청 가능한 공고는 아래 네 층을 모두 통과해야 한다.
+
+1. 매일 `monitor.yml` 실수집과 P0 커버리지 탐지로 기업마당·K-Startup 장애·급락을 알린다.
+2. `test_fetch_bizinfo_replay.py`와 `test_fetch_kstartup_replay.py`로 API/HTML 파서 회귀를 막는다.
+3. `test_priority_recall_paths.py`로 두 소스의 구조화 필드가 `grp_prestartup_ai`의
+   `included` 버킷까지 도달하는지 고정한다. K-Startup은 공공·민간을 모두 검사한다.
+4. `test_prestartup_ai_digest_regression.py`의 실수신 기반 정·오추천 사례를
+   기본 `recall_zero_gate.py`에 포함해 자동개발의 필수 차단 게이트로 사용한다.
 
 ---
 

@@ -33,6 +33,18 @@
       "drift_signals": ["live_min_items 하향"]
     },
     {
+      "id": "priority_recall_paths",
+      "path": "tests/test_priority_recall_paths.py",
+      "role": "기업마당·K-Startup에서 서울 AI 예비창업자까지의 전달 경로",
+      "drift_signals": ["기업마당 또는 K-Startup 사례 삭제", "공공·민간 경로 축소"]
+    },
+    {
+      "id": "prestartup_digest_regression",
+      "path": "tests/test_prestartup_ai_digest_regression.py",
+      "role": "예비창업 AI 실수신 정·오추천 회귀",
+      "drift_signals": ["recall_zero_gate 편입 해제", "정추천 사례 축소"]
+    },
+    {
       "id": "loop_config",
       "path": "auto_dev/loop_config.json",
       "role": "루프 한도·종료 조건",
