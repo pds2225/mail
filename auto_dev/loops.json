@@ -14,7 +14,7 @@
       "name": "에이전틱 코딩 수정",
       "trigger": [
         "TASKS.md PENDING 1건 선택",
-        "GitHub Actions schedule/workflow_dispatch"
+        "GitHub Actions workflow_dispatch (schedule은 자격증명·에이전트 준비 전까지 비활성)"
       ],
       "execute": [
         "허용 파일만 수정하는 패치 세션",
