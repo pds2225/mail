@@ -35,20 +35,29 @@ def p0_site_names(reports: list[dict] | None) -> set[str]:
 
 
 def item_belongs_to_p0(item: dict, *, p0_ids: set[str], p0_names: set[str]) -> bool:
-    """공고가 P0 소스 소속인지. site_id 필드·source 이름·id 접두로 판별."""
+    """공고가 P0 소스 소속인지. site_id · id 접두를 우선, 이름은 비접두 id 만.
+
+    동일 display name 을 쓰는 보드가 여럿 있다(예: 정부24×6). source 이름만으로
+    제외하면 정상 sibling 보드 공고까지 발송 후보에서 빠지므로, site_id 가 있거나
+    `{site_id}_…` id 접두로 소속을 알 수 있으면 이름 매칭을 쓰지 않는다.
+    """
     if not item:
         return False
-    sid = str(item.get("site_id") or "")
-    if sid and sid in p0_ids:
-        return True
-    src = str(item.get("source") or "")
-    if src and src in p0_names:
-        return True
+    sid = str(item.get("site_id") or "").strip()
+    if sid:
+        return sid in p0_ids
+
     iid = str(item.get("id") or "")
     for pid in p0_ids:
-        if pid and iid.startswith(f"{pid}_"):
+        if pid and (iid == pid or iid.startswith(f"{pid}_")):
             return True
-    return False
+
+    # id 가 이미 site_id 접두 형태면(다른 보드 소속) 공유 display name 으로 제외하지 않음
+    if iid and "_" in iid:
+        return False
+
+    src = str(item.get("source") or "").strip()
+    return bool(src and src in p0_names)
 
 
 def drop_items_from_p0_sources(
