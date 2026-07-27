@@ -271,9 +271,11 @@ def main() -> int:
     else:
         print(f"[loop_verify] mode={result['mode']} ok={result['ok']}")
         for c in result["checks"]:
-            status = "✅" if c.get("ok") else "❌"
+            # ASCII markers keep the verifier usable on Windows consoles whose
+            # default cp949 codec cannot encode emoji status characters.
+            status = "[PASS]" if c.get("ok") else "[FAIL]"
             if c.get("id") == "D4" and c.get("warn"):
-                status = "⚠️"
+                status = "[WARN]"
             name = c.get("name", c.get("id"))
             extra = ""
             if c.get("changed"):
