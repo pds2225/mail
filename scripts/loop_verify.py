@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone, timedelta
@@ -28,6 +29,8 @@ PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
 WORK_ASSETS = (
     "docs/project/RULES.md",
     "docs/project/TASKS.md",
+    ".github/workflows/auto-dev-queue.yml",
+    "auto_dev/loop_config.json",
     "auto_dev/loops.json",
     "auto_dev/eval_rubric.md",
     "auto_dev/exit_conditions.md",
@@ -209,6 +212,52 @@ def check_pending_backlog() -> dict:
     }
 
 
+def check_trigger_alignment() -> dict:
+    """D5: declared schedule state must match the active workflow trigger."""
+    config_path = ROOT / "auto_dev" / "loop_config.json"
+    workflow_path = ROOT / ".github" / "workflows" / "auto-dev-queue.yml"
+    issues: list[str] = []
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        schedule_enabled = config.get("trigger", {}).get("schedule_enabled")
+    except (OSError, json.JSONDecodeError) as e:
+        return {"id": "D5", "name": "trigger_alignment", "ok": False, "issues": [str(e)]}
+
+    if not isinstance(schedule_enabled, bool):
+        issues.append("loop_config.trigger.schedule_enabled must be boolean")
+
+    try:
+        workflow_lines = workflow_path.read_text(encoding="utf-8").splitlines()
+    except OSError as e:
+        return {"id": "D5", "name": "trigger_alignment", "ok": False, "issues": [str(e)]}
+
+    active_lines = [
+        line for line in workflow_lines
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    workflow_schedule_enabled = any(
+        re.match(r"^\s+schedule\s*:\s*$", line) for line in active_lines
+    )
+    workflow_dispatch_enabled = any(
+        re.match(r"^\s+workflow_dispatch\s*:\s*$", line) for line in active_lines
+    )
+    if isinstance(schedule_enabled, bool) and schedule_enabled != workflow_schedule_enabled:
+        issues.append(
+            "loop_config schedule_enabled does not match auto-dev-queue.yml"
+        )
+    if not workflow_dispatch_enabled:
+        issues.append("auto-dev-queue.yml has no active workflow_dispatch trigger")
+
+    return {
+        "id": "D5",
+        "name": "trigger_alignment",
+        "ok": not issues,
+        "issues": issues,
+        "schedule_enabled": workflow_schedule_enabled,
+        "workflow_dispatch_enabled": workflow_dispatch_enabled,
+    }
+
+
 def run_verify(
     *,
     quick: bool = False,
@@ -223,6 +272,7 @@ def run_verify(
             check_loops_schema(),
             check_tasks_structure(),
             check_pending_backlog(),
+            check_trigger_alignment(),
         ]
     else:
         checks.append(check_protected_files(base_ref))
@@ -236,7 +286,7 @@ def run_verify(
         checks.append(check_loops_schema())
 
     # Fatal: V* and D1/D2; D3 issues fatal; D4 warn only
-    fatal_ids = {"V1", "V2", "V3", "V6", "D1", "D2", "D3"}
+    fatal_ids = {"V1", "V2", "V3", "V6", "D1", "D2", "D3", "D5"}
     ok = True
     for c in checks:
         if c.get("id") in fatal_ids and not c.get("ok", False):
