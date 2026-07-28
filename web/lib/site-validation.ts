@@ -1,4 +1,9 @@
-import { COLLECTOR_TYPES, type SiteAddInput, type SiteRecord } from "./site-types";
+import {
+  COLLECTOR_TYPES,
+  type SiteAddInput,
+  type SiteEditInput,
+  type SiteRecord,
+} from "./site-types";
 
 export type ValidationIssue = {
   field: string;
@@ -141,6 +146,65 @@ export function validateSiteInput(
         "목록에 공고 ID가 없으면 stable_id(title+link) 사용 — URL 변경 시 다른 공고로 인식될 수 있음",
     },
   };
+}
+
+export function validateSiteEditInput(
+  input: SiteEditInput,
+  existingSites: SiteRecord[],
+): SiteValidationResult {
+  const original = existingSites.find((site) => site.id === input.id);
+  if (!original) {
+    const id = (input.id || "").trim();
+    return {
+      ok: false,
+      errors: [{ field: "id", level: "error", message: "수정할 사이트를 찾을 수 없습니다." }],
+      warnings: [],
+      normalized: { id },
+      checks: {
+        collectorRegistered: false,
+        urlReachable: null,
+        dateUnknownRisk: "높음",
+        dryRunReady: false,
+        stableIdNote: "존재하는 사이트 ID만 수정할 수 있습니다.",
+      },
+    };
+  }
+
+  const others = existingSites.filter((site) => site.id !== original.id);
+  const base = validateSiteInput(
+    {
+      name: input.name,
+      url: input.url,
+      category: "",
+      collectorType: input.collectorType,
+      enabled: input.enabled,
+      isAggregator: input.isAggregator,
+      note: input.note,
+      testCollect: input.testCollect,
+      suggestedId: original.id,
+    },
+    others,
+  );
+
+  const selectorsRow = (input.selectorsRow || "").trim();
+  const originalSelectors =
+    original.selectors && typeof original.selectors === "object" ? original.selectors : undefined;
+  const normalized: SiteRecord = {
+    ...original,
+    ...base.normalized,
+    id: original.id,
+    note: (input.note || "").trim(),
+    ...(originalSelectors || selectorsRow
+      ? {
+          selectors: {
+            ...(originalSelectors || {}),
+            ...(selectorsRow ? { row: selectorsRow } : {}),
+          },
+        }
+      : {}),
+  } as SiteRecord;
+
+  return { ...base, normalized };
 }
 
 export async function probeUrlReachable(url: string, timeoutMs = 8000): Promise<boolean> {

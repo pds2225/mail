@@ -13,7 +13,7 @@
 | V4 | Secret/수신자 로그 스캔 | 로그에 API Key·앱비밀번호·수신자 전체주소 없음 |
 | V5 | 이메일 발송 경로 | 실제 SMTP/Gmail send 호출 없음 (dry-run only) |
 
-`scripts/loop_verify.py`가 V1–V3을 실행한다. V4–V5는 RULES + 위험 키워드 가드.
+`scripts/loop_verify.py`가 V1–V3과 V9를 실행한다. V4–V5는 RULES + 위험 키워드 가드.
 
 ## 2. 조건부 게이트
 
@@ -22,6 +22,7 @@
 | V6 | TASK가 수집/소스 관련 | `python3 scripts/core_sources_checklist.py` | exit 0 (네트워크 불가 환경은 SKIP 기록) |
 | V7 | accuracy/필터 TASK | 관련 회귀 테스트 + matrix diff 악화 없음 | FP↑ 또는 recall 정책 위반 시 FAIL |
 | V8 | 문서-only TASK | 마크다운/링크 깨짐만 확인 | V2/V3는 선택(기본은 스모크만) |
+| V9 | 핵심 소스 필드 품질 | `python3 scripts/source_field_quality_gate.py --offline` | 4대 소스 선택·본문 DOM·학습회귀 테스트 exit 0 |
 
 ## 3. DONE / FAILED / BLOCKED 판정
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Loop verification entrypoint — Auto Dev L1 검증 단일 진입점.
 
-eval_rubric.md 의 V1–V3(및 옵션 V6)를 실행한다.
+eval_rubric.md 의 V1–V3·V9(및 옵션 V6)를 실행한다.
 Secret 값은 출력하지 않는다.
 
 Usage:
@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone, timedelta
@@ -28,6 +29,9 @@ PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
 WORK_ASSETS = (
     "docs/project/RULES.md",
     "docs/project/TASKS.md",
+    ".github/workflows/auto-dev-queue.yml",
+    "auto_dev/work_assets.json",
+    "auto_dev/loop_config.json",
     "auto_dev/loops.json",
     "auto_dev/eval_rubric.md",
     "auto_dev/exit_conditions.md",
@@ -54,6 +58,8 @@ def _run(cmd: list[str], timeout: int = 600) -> dict:
         cwd=ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         env=_env_for_tests(),
         timeout=timeout,
     )
@@ -131,13 +137,36 @@ def check_core_sources() -> dict:
     return {"id": "V6", "name": "core_sources_checklist", **r}
 
 
+def check_source_field_quality() -> dict:
+    r = _run(
+        [sys.executable, "scripts/source_field_quality_gate.py", "--offline"],
+        timeout=300,
+    )
+    return {"id": "V9", "name": "source_field_quality_gate", **r}
+
+
 def check_work_asset_presence() -> dict:
-    missing = [p for p in WORK_ASSETS if not (ROOT / p).exists()]
+    paths = set(WORK_ASSETS)
+    issues: list[str] = []
+    registry_path = ROOT / "auto_dev" / "work_assets.json"
+    try:
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        for asset in registry.get("assets", []):
+            path = asset.get("path") if isinstance(asset, dict) else None
+            if isinstance(path, str) and path.strip():
+                paths.add(path.strip())
+            else:
+                issues.append("work_assets.json contains an asset without a valid path")
+    except (OSError, json.JSONDecodeError) as e:
+        issues.append(str(e))
+
+    missing = [p for p in sorted(paths) if not (ROOT / p).exists()]
     return {
         "id": "D1",
         "name": "work_assets_present",
-        "ok": len(missing) == 0,
+        "ok": not missing and not issues,
         "missing": missing,
+        "issues": issues,
     }
 
 
@@ -207,6 +236,52 @@ def check_pending_backlog() -> dict:
     }
 
 
+def check_trigger_alignment() -> dict:
+    """D5: declared schedule state must match the active workflow trigger."""
+    config_path = ROOT / "auto_dev" / "loop_config.json"
+    workflow_path = ROOT / ".github" / "workflows" / "auto-dev-queue.yml"
+    issues: list[str] = []
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        schedule_enabled = config.get("trigger", {}).get("schedule_enabled")
+    except (OSError, json.JSONDecodeError) as e:
+        return {"id": "D5", "name": "trigger_alignment", "ok": False, "issues": [str(e)]}
+
+    if not isinstance(schedule_enabled, bool):
+        issues.append("loop_config.trigger.schedule_enabled must be boolean")
+
+    try:
+        workflow_lines = workflow_path.read_text(encoding="utf-8").splitlines()
+    except OSError as e:
+        return {"id": "D5", "name": "trigger_alignment", "ok": False, "issues": [str(e)]}
+
+    active_lines = [
+        line for line in workflow_lines
+        if line.strip() and not line.lstrip().startswith("#")
+    ]
+    workflow_schedule_enabled = any(
+        re.match(r"^\s+schedule\s*:\s*$", line) for line in active_lines
+    )
+    workflow_dispatch_enabled = any(
+        re.match(r"^\s+workflow_dispatch\s*:\s*$", line) for line in active_lines
+    )
+    if isinstance(schedule_enabled, bool) and schedule_enabled != workflow_schedule_enabled:
+        issues.append(
+            "loop_config schedule_enabled does not match auto-dev-queue.yml"
+        )
+    if not workflow_dispatch_enabled:
+        issues.append("auto-dev-queue.yml has no active workflow_dispatch trigger")
+
+    return {
+        "id": "D5",
+        "name": "trigger_alignment",
+        "ok": not issues,
+        "issues": issues,
+        "schedule_enabled": workflow_schedule_enabled,
+        "workflow_dispatch_enabled": workflow_dispatch_enabled,
+    }
+
+
 def run_verify(
     *,
     quick: bool = False,
@@ -221,10 +296,12 @@ def run_verify(
             check_loops_schema(),
             check_tasks_structure(),
             check_pending_backlog(),
+            check_trigger_alignment(),
         ]
     else:
         checks.append(check_protected_files(base_ref))
         checks.append(check_unit())
+        checks.append(check_source_field_quality())
         if not quick:
             checks.append(check_recall())
         if with_core_sources:
@@ -234,7 +311,7 @@ def run_verify(
         checks.append(check_loops_schema())
 
     # Fatal: V* and D1/D2; D3 issues fatal; D4 warn only
-    fatal_ids = {"V1", "V2", "V3", "V6", "D1", "D2", "D3"}
+    fatal_ids = {"V1", "V2", "V3", "V6", "V9", "D1", "D2", "D3", "D5"}
     ok = True
     for c in checks:
         if c.get("id") in fatal_ids and not c.get("ok", False):
@@ -267,13 +344,15 @@ def main() -> int:
     )
 
     if args.json:
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(json.dumps(result, ensure_ascii=True, indent=2))
     else:
         print(f"[loop_verify] mode={result['mode']} ok={result['ok']}")
         for c in result["checks"]:
-            status = "✅" if c.get("ok") else "❌"
+            # ASCII markers keep the verifier usable on Windows consoles whose
+            # default cp949 codec cannot encode emoji status characters.
+            status = "[PASS]" if c.get("ok") else "[FAIL]"
             if c.get("id") == "D4" and c.get("warn"):
-                status = "⚠️"
+                status = "[WARN]"
             name = c.get("name", c.get("id"))
             extra = ""
             if c.get("changed"):

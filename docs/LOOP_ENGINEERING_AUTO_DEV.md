@@ -148,7 +148,7 @@ Mail 시스템의 실패 모드는 “한 번 잘못 짠 프롬프트”보다 �
 
 | 요소 | 내용 |
 |------|------|
-| 트리거 | `docs/project/TASKS.md` PENDING 1건 / GHA daily 09:00 KST |
+| 트리거 | `docs/project/TASKS.md` PENDING 1건 / GHA `workflow_dispatch` (daily 09:00 schedule은 현재 비활성) |
 | 실행 | 허용 파일만 수정하는 에이전트 세션 (Cloud Agent / 로컬) |
 | 검증 | `loop_verify.py` → unit + recall(+ core sources if scoped) |
 | 상태 | TASK → DONE/FAILED/BLOCKED, state.json, PR 링크 |
@@ -169,7 +169,7 @@ Mail 시스템의 실패 모드는 “한 번 잘못 짠 프롬프트”보다 �
 | 요소 | 내용 |
 |------|------|
 | 트리거 | monitor dry-run / raw store 일자 롤 |
-| 실행 | coverage·3대 소스 checklist (네트워크 허용 환경) |
+| 실행 | coverage·4대 소스 checklist + 상세필드 품질 표본 (네트워크 허용 환경) |
 | 검증 | baseline 대비 high-severity면 **즉시 STOP** |
 | 상태 | 리포트 아티팩트 |
 | 종료 | OK 계속 / high-severity → 사람 통보(G1) — 자동 패치 금지 |
@@ -199,7 +199,7 @@ Mail 시스템의 실패 모드는 “한 번 잘못 짠 프롬프트”보다 �
 ## 7. 실행 아키텍처
 
 ```
-GitHub Actions (cron/dispatch)
+GitHub Actions (workflow_dispatch; cron은 현재 비활성)
         │
         ▼
 scripts/auto_dev_queue.py          ← 오케스트레이터(큐·상태·안전)
@@ -275,7 +275,7 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 - `docs/project/RULES.md` — 안전규칙
 - `docs/project/TASKS.md` — L1 입력 큐
 - `docs/mail_accuracy_orchestrator_plan.md` — L2 accuracy 파이프라인
-- `docs/CORE_SOURCES_CHECKLIST.md` — 3대 소스 게이트
+- `docs/CORE_SOURCES_CHECKLIST.md` — 4대 소스 게이트
 - `AGENTS.md` — Cloud Agent 운영 메모
 
 ---

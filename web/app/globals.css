@@ -301,6 +301,12 @@ code {
   text-decoration: none;
 }
 
+.btn-small {
+  min-height: 34px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+}
+
 /* ============================================================
    Forms
    ============================================================ */
@@ -438,6 +444,12 @@ code {
   white-space: nowrap;
 }
 
+.tag-danger {
+  background: var(--danger-bg);
+  border-color: #fecaca;
+  color: var(--danger);
+}
+
 /* ============================================================
    Site rows (list)
    ============================================================ */
@@ -474,6 +486,20 @@ code {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.recipient-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.4rem;
+}
+
+.recipient-entry {
+  min-width: 0;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
 }
 
 /* ============================================================

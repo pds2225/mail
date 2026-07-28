@@ -220,6 +220,14 @@ def main() -> int:
     import os
     import sys
 
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure:
+            try:
+                reconfigure(errors="replace")
+            except (OSError, ValueError):
+                pass
+
     parser = argparse.ArgumentParser(description="Safe auto-dev executor (single task)")
     parser.add_argument("--task-id", required=True)
     parser.add_argument("--title", required=True)

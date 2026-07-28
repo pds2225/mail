@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""3대 핵심 소스(기업마당·K-Startup·NIPA) 완성 체크리스트.
+"""4대 핵심 소스(기업마당·K-Startup·NIPA·KITA) 완성 체크리스트.
 
 수집기 + 상세보강 + 오프라인 회귀테스트를 한 번에 판정한다.
-실무 기준: 기능 '있다'가 아니라 이 스크립트 PASS가 3곳 완성도 게이트.
+실무 기준: 기능 '있다'가 아니라 이 스크립트 PASS가 4곳 완성도 게이트.
 
 Usage (PowerShell, D:\\mail):
   python scripts/core_sources_checklist.py
@@ -84,14 +84,17 @@ def _check_site_enabled(spec: SourceSpec) -> tuple[bool, str]:
 def _check_enrich_host(spec: SourceSpec) -> tuple[bool, str]:
     sys.path.insert(0, str(ROOT))
     import monitor as m  # noqa: PLC0415
+    from mail_core.matching.core_sources import (
+        CORE_MAX_DETAIL_ENRICH,
+        PRIORITY_DETAIL_HOSTS,
+    )
 
-    if spec.enrich_host not in m.DETAIL_ENRICH_HOSTS:
-        return False, f"DETAIL_ENRICH_HOSTS에 {spec.enrich_host} 없음"
-    try:
-        from mail_core.matching.core_sources import CORE_MAX_DETAIL_ENRICH
-        core_budget = CORE_MAX_DETAIL_ENRICH
-    except Exception:
-        core_budget = m.MAX_DETAIL_ENRICH
+    if (
+        spec.enrich_host not in m.DETAIL_ENRICH_HOSTS
+        and spec.enrich_host not in PRIORITY_DETAIL_HOSTS
+    ):
+        return False, f"상세보강 우선호스트에 {spec.enrich_host} 없음"
+    core_budget = CORE_MAX_DETAIL_ENRICH
     return True, (
         f"상세보강 대상 (핵심≤{core_budget}/기타≤{m.MAX_DETAIL_ENRICH}건)"
     )
@@ -163,6 +166,16 @@ def _live_fetch(spec: SourceSpec) -> tuple[bool, str]:
         if hosts < min(5, n):
             return False, f"k-startup 링크 {hosts}/{n} 부족"
         extra = f", k-startup 링크 {hosts}건"
+    if spec.id == "kita":
+        from mail_core.matching.core_sources import canonical_detail_link
+
+        public_links = sum(
+            1 for it in items
+            if "asocBizOngoingDetail.do?bizAltkey=" in canonical_detail_link(it)
+        )
+        if public_links < min(3, n):
+            return False, f"KITA 공개 상세링크 {public_links}/{n} 부족"
+        extra = f", 공개 상세링크 {public_links}건"
     return True, f"수집 {n}건{extra}"
 
 
@@ -194,6 +207,19 @@ def _build_specs() -> list[SourceSpec]:
             enrich_host="nipa.kr",
             pytest_files=["test_fetch_nipa_replay.py"],
             live_min_items=50,
+        ),
+        SourceSpec(
+            id="kita",
+            name="KITA",
+            site_id="kita",
+            fetcher_type="kita_html",
+            enrich_host="kita.net",
+            pytest_files=[
+                "test_fetch_kita_replay.py",
+                "test_runtime_detail_adapter.py",
+                "test_source_field_quality.py",
+            ],
+            live_min_items=3,
         ),
     ]
     extra: dict[str, list[Check]] = {
@@ -254,14 +280,16 @@ def run_checklist(*, live: bool = False) -> dict[str, Any]:
         "live": live,
         "sources": sources_out,
         "note": (
-            "3대 소스 완성도 게이트. recall_zero_gate(판정 로직)와 별도. "
+            "4대 소스 완성도 게이트. recall_zero_gate(판정 로직)와 별도. "
             "--live 는 BIZINFO_API_KEY·네트워크 필요."
         ),
     }
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="기업마당·K-Startup·NIPA 완성 체크리스트")
+    parser = argparse.ArgumentParser(
+        description="기업마당·K-Startup·NIPA·KITA 완성 체크리스트"
+    )
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--live", action="store_true", help="실제 HTTP 수집 검사 추가")
     args = parser.parse_args()

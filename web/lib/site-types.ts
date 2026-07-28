@@ -50,7 +50,8 @@ export type SiteRecord = {
   is_aggregator: boolean;
   note?: string;
   category?: string;
-  selectors?: { row?: string };
+  selectors?: { row?: string; [key: string]: unknown };
+  [key: string]: unknown;
 };
 
 export type SiteAddInput = {
@@ -63,4 +64,16 @@ export type SiteAddInput = {
   note: string;
   testCollect: boolean;
   suggestedId?: string;
+};
+
+export type SiteEditInput = {
+  id: string;
+  name: string;
+  url: string;
+  collectorType: string;
+  enabled: boolean;
+  isAggregator: boolean;
+  note: string;
+  selectorsRow?: string;
+  testCollect: boolean;
 };

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildSitesPatch, jsonPatchSnippet } from "@/lib/site-patch";
+import {
+  buildSitesPatch,
+  changedSiteFields,
+  jsonPatchSnippet,
+  replaceSite,
+} from "@/lib/site-patch";
 import type { SiteRecord } from "@/lib/site-types";
 
 describe("sites.json patch", () => {
@@ -36,5 +41,33 @@ describe("sites.json patch", () => {
       is_aggregator: true,
     });
     expect(() => JSON.parse(snippet)).not.toThrow();
+  });
+
+  it("replaces a site in place without reordering", () => {
+    const existing: SiteRecord[] = [
+      {
+        id: "a",
+        name: "A",
+        type: "html_table",
+        url: "https://a.com",
+        enabled: true,
+        is_aggregator: false,
+      },
+      {
+        id: "b",
+        name: "B",
+        type: "html_table",
+        url: "https://b.com",
+        enabled: true,
+        is_aggregator: false,
+        max_pages: 3,
+      },
+    ];
+    const replacement = { ...existing[1], name: "B2", enabled: false };
+    const next = replaceSite(existing, "b", replacement);
+
+    expect(next.map((site) => site.id)).toEqual(["a", "b"]);
+    expect(next[1]).toEqual(replacement);
+    expect(changedSiteFields(existing[1], replacement)).toEqual(["enabled", "name"]);
   });
 });

@@ -36,7 +36,7 @@ def test_core_sources_checklist_runs_offline():
     assert data["passed"] == data["total"]
 
 
-def test_three_sources_in_output():
+def test_four_priority_sources_in_output():
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "core_sources_checklist.py"), "--json"],
         cwd=ROOT,
@@ -47,4 +47,4 @@ def test_three_sources_in_output():
     )
     data = __import__("json").loads(proc.stdout)
     ids = {s["id"] for s in data["sources"]}
-    assert ids == {"bizinfo", "kstartup", "nipa"}
+    assert ids == {"bizinfo", "kstartup", "nipa", "kita"}

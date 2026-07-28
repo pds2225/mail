@@ -2,9 +2,11 @@
   "version": 1,
   "description": "Mail 프로젝트 L1 에이전틱 코딩 루프 설정",
   "trigger": {
+    "schedule_enabled": false,
     "cron_kst": "0 9 * * *",
     "cron_utc": "0 0 * * *",
     "manual_workflow": "auto-dev-queue.yml",
+    "schedule_note": "AUTO_DEV_PAT 및 외부 코딩 에이전트 준비 전까지 비활성",
     "tasks_per_run": 1
   },
   "limits": {

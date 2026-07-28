@@ -14,7 +14,7 @@
       "name": "에이전틱 코딩 수정",
       "trigger": [
         "TASKS.md PENDING 1건 선택",
-        "GitHub Actions schedule/workflow_dispatch"
+        "GitHub Actions workflow_dispatch (schedule은 자격증명·에이전트 준비 전까지 비활성)"
       ],
       "execute": [
         "허용 파일만 수정하는 패치 세션",
@@ -78,22 +78,32 @@
       "name": "수집 건전성 감시",
       "trigger": [
         "monitor dry-run 일자 롤",
-        "core_sources_checklist 스케줄"
+        "core_sources_checklist 스케줄",
+        "source_field_quality 반복 fingerprint 또는 baseline 급락"
       ],
       "execute": [
-        "coverage / 3대 소스 checklist (네트워크 환경)"
+        "coverage / 4대 소스 checklist (네트워크 환경)",
+        "최신 3건 상세표본의 제목·본문·날짜·신청기간·대상 읽기율 측정"
       ],
       "verify": [
         "core_sources_checklist",
-        "baseline_delta_ok"
+        "source_field_quality_gate",
+        "baseline_delta_ok",
+        "기업마당·K-Startup 첫 실패 P0",
+        "NIPA·KITA 동일 fingerprint 2회 반복 시 P0 승격"
       ],
       "memory": [
-        "coverage report artifact"
+        "coverage report artifact",
+        "var/state/source_field_quality_history.json",
+        "var/logs/source_field_quality_latest.json"
       ],
       "exit": {
-        "success": ["checklist_ok"],
+        "success": ["checklist_ok", "field_read_rates_ok"],
         "failure": [],
-        "escalate": ["high_severity_coverage_drop"],
+        "escalate": [
+          "high_severity_coverage_drop",
+          "repeated_source_field_fingerprint"
+        ],
         "stop_no_progress": []
       },
       "human_gate": "G1",

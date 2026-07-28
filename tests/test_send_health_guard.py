@@ -9,6 +9,7 @@ import pathlib
 import yaml
 
 WF = pathlib.Path(__file__).resolve().parent.parent / ".github/workflows/monitor.yml"
+RUNTIME = pathlib.Path(__file__).resolve().parent.parent / "scripts/monitor_runtime.py"
 
 
 def _load():
@@ -20,13 +21,25 @@ def _steps(wf):
 
 
 def _monitor_run(wf):
-    cmds = [s.get("run", "") for s in _steps(wf) if "monitor.py" in (s.get("run") or "")]
-    assert cmds, "워크플로에 monitor.py 실행 스텝이 없다"
+    entrypoints = ("monitor.py", "monitor_runtime.py")
+    cmds = [
+        s.get("run", "")
+        for s in _steps(wf)
+        if any(name in (s.get("run") or "") for name in entrypoints)
+    ]
+    assert cmds, "워크플로에 monitor 운영 엔트리포인트 실행 스텝이 없다"
     return " ; ".join(cmds)
 
 
 def test_workflow_file_exists():
     assert WF.exists(), "monitor.yml 워크플로가 없다"
+
+
+def test_runtime_entrypoint_delegates_to_protected_monitor():
+    """호환 엔트리포인트가 별도 발송기를 만들지 않고 monitor.py CLI를 실행해야 한다."""
+    text = RUNTIME.read_text(encoding="utf-8")
+    assert 'MONITOR = ROOT / "monitor.py"' in text
+    assert "runpy.run_path" in text
 
 
 def test_scheduled_trigger_present():
