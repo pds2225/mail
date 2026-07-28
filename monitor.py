@@ -32,6 +32,7 @@ from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
 from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
 from mail_core.security import net_guard, private_config
+from mail_core.storage.seen_ids_prune import MAX_SEEN_IDS, prune_seen_ids
 from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
 BASE_DIR = REPO_ROOT
@@ -103,7 +104,6 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
-MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -1719,11 +1719,9 @@ def save_seen_ids(ids: set[str]) -> None:
     if not _ALLOW_PERSIST_SEEN or os.environ.get("MONITOR_NO_PERSIST_SEEN") == "1":
         log.info("seen_ids 저장 생략 (dry-run / persist 비활성)")
         return
-    # 날짜 포함 ID(bizinfo_20260415 등)는 날짜순, 나머지는 알파벳순 → 최신 MAX_SEEN_IDS 유지
-    def _sort_key(s: str) -> str:
-        m = re.search(r"(\d{4}-\d{2}-\d{2}|\d{8})", s)
-        return m.group(1) if m else s
-    save_json(SEEN_IDS_PATH, sorted(ids, key=_sort_key)[-MAX_SEEN_IDS:])
+    # 핵심 소스(PBLN/kstartup/…) 우선 보존 + 20xx 날짜키. 알파벳 꼬리 절단으로
+    # 기업마당 id 가 통째로 사라지던 중복발송 사고를 막는다(seen_ids_prune).
+    save_json(SEEN_IDS_PATH, prune_seen_ids(ids, max_keep=MAX_SEEN_IDS))
 
 def load_sites() -> list[dict]:
     sites = load_json(SITES_PATH, [])
