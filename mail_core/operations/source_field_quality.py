@@ -25,7 +25,7 @@ BASELINE_MIN_RUNS = 3
 BASELINE_DROP_PP = 0.2
 HISTORY_MAX_RUNS = 30
 FAILURE_STATUSES = frozenset({"PARSE_FAILED", "DETAIL_FETCH_FAILED"})
-READABLE_STATUSES = frozenset({"SUCCESS", "NOT_SPECIFIED"})
+OPTIONAL_NOT_SPECIFIED_FIELDS = frozenset({"application_period", "target"})
 # 사용자 최우선: 두 전국 종합포털은 첫 실패부터 P0. NIPA/KITA는 한 번의
 # 일시오류를 허용하되 같은 fingerprint가 2회 연속이면 P0로 올린다.
 CRITICAL_SOURCE_IDS = frozenset({"bizinfo", "kstartup"})
@@ -92,7 +92,13 @@ def evaluate_source_items(site_id: str, items: list[dict[str, Any]] | None) -> d
             if field == "body":
                 readable = bool(value)
             else:
-                readable = bool(value) or status in READABLE_STATUSES
+                # SUCCESS는 실제 값이 있을 때만 읽기 성공이다. 상위 상세 파싱이
+                # 성공했다는 이유로 빈 날짜/지원대상을 성공 처리하지 않는다.
+                # 신청기간·지원대상은 원문 미기재가 정상 상태일 수 있다.
+                readable = bool(value) or (
+                    field in OPTIONAL_NOT_SPECIFIED_FIELDS
+                    and status == "NOT_SPECIFIED"
+                )
             if readable:
                 read_count += 1
             if status in FAILURE_STATUSES:
@@ -123,6 +129,9 @@ def _baseline_rates(
 ) -> list[float]:
     rates: list[float] = []
     for run in history.get("runs") or []:
+        fingerprint = f"{site_id}:{field}"
+        if fingerprint in set(run.get("fingerprints") or []):
+            continue
         source = (run.get("sources") or {}).get(site_id) or {}
         metric = (source.get("fields") or {}).get(field) or {}
         try:
@@ -191,7 +200,10 @@ def build_quality_report(
                 reasons.append("FIELD_READ_RATE_LOW")
             previous = _baseline_rates(history, site_id, field)
             baseline = statistics.median(previous) if len(previous) >= BASELINE_MIN_RUNS else None
-            if baseline is not None and baseline - rate >= BASELINE_DROP_PP:
+            if (
+                baseline is not None
+                and baseline - rate >= BASELINE_DROP_PP - 1e-9
+            ):
                 reasons.append("FIELD_READ_RATE_REGRESSION")
             if not reasons:
                 continue
