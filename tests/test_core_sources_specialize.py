@@ -144,6 +144,41 @@ def test_kita_old_login_link_is_rewritten_and_selected_as_priority():
     assert cs.priority_source_id(item) == "kita"
 
 
+def test_kita_other_budget_is_not_bypassed_by_generic_enrichment(monkeypatch):
+    import monitor as m
+    from mail_core.operations.detail_runtime_adapter import (
+        install_priority_detail_hosts_adapter,
+    )
+
+    requested: list[str] = []
+    items = [
+        {
+            "id": f"kita_{i}",
+            "title": f"KITA 공고 {i}",
+            "link": (
+                "https://www.kita.net/asocBiz/asocBiz/"
+                f"asocBizOngoingView.do?sn={i}"
+            ),
+            "description": "",
+        }
+        for i in range(45)
+    ]
+
+    def fake_enrich(item):
+        requested.append(item["id"])
+        return {**item, "detail_enriched": True}
+
+    monkeypatch.setattr(m, "GENERIC_DETAIL_ENRICH_ENABLED", True)
+    monkeypatch.setattr(m, "MAX_GENERIC_DETAIL_ENRICH", 1500)
+    monkeypatch.setattr(m, "enrich_item_from_detail", fake_enrich)
+    install_priority_detail_hosts_adapter(vars(m))
+
+    m.enrich_items(items, limit=40)
+
+    assert len(requested) == 40
+    assert "kita.net" in m.DETAIL_ENRICH_HOSTS
+
+
 def test_keyword_extra_parts_only_for_core():
     core = {
         "core_source": "kstartup",

@@ -72,8 +72,8 @@ python scripts\core_sources_checklist.py --json
 |---|------|-----------|
 | 1 | config/sites.json | `kita` enabled, `type=kita_html` |
 | 2 | 공개 상세링크 | 로그인 전용 `OngoingView?sn=`을 공개 `OngoingDetail?bizAltkey=`로 정규화 |
-| 3 | 상세 보강 | `kita.net` 우선 상세조회 대상 |
-| 4 | 회귀 테스트 | `test_fetch_kita_replay.py` · `test_core_sources_specialize.py` |
+| 3 | 상세 보강 | runtime adapter에서 `kita.net` ∈ `DETAIL_ENRICH_HOSTS`, 기타 핵심 예산(기본 40건) 초과분은 범용조회 제외 |
+| 4 | 회귀 테스트 | `test_fetch_kita_replay.py` · `test_core_sources_specialize.py` (예산 우회 방지 포함) |
 | 5 | 필드 계측 | 본문·날짜·신청기간·지원대상 읽기율을 매 실행 표본검사 |
 | 6 | live (선택) | 수집 ≥3건, 공개 상세링크 ≥3건 |
 

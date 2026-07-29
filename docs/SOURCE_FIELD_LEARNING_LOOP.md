@@ -10,15 +10,18 @@
    기존 `monitor.py` CLI를 그대로 실행한다.
 2. 실행이 끝나면 각 핵심 소스의 최신 3건만 읽기 전용으로 다시 표본검사한다.
 3. 제목, 본문, 날짜, 신청기간, 지원대상의 읽기 성공률과 값 존재율을 분리한다.
-   원문에 대상이 없다는 `NOT_SPECIFIED`는 읽기 성공이지만 값 존재는 0으로 남는다.
+   원문에 신청기간·대상이 없다는 `NOT_SPECIFIED`는 읽기 성공이지만 값 존재는
+   0으로 남는다. 제목·날짜는 실제 값이 있어야 읽기 성공이다.
 4. 비율과 실패 fingerprint만
    `var/state/source_field_quality_history.json`에 최대 30회 저장한다. 원문과
-   오류 전문은 저장하지 않는다.
+   오류 전문은 저장하지 않는다. fingerprint가 발생한 필드의 실행값은 정상
+   기준선 계산에서 제외해 지속 장애가 새 정상으로 학습되지 않게 한다.
 5. 기업마당·K-Startup은 첫 실패부터 P0다. NIPA·KITA는 같은 fingerprint가
    2회 연속이면 P1에서 P0로 승격한다. 정상 이력 3회 이후 중앙값보다 20%p
    이상 급락해도 회귀 결함으로 기록한다.
 6. 최신 결과는 `var/logs/source_field_quality_latest.{json,md}` 아티팩트로
-   보존한다.
+   보존한다. P0는 digest 발송을 실패시키지 않으면서 GitHub Actions 오류 주석과
+   `NTFY_TOPIC` 긴급 폰 알림으로 즉시 노출한다.
 
 ## 검증
 

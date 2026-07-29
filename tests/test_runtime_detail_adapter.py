@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from mail_core.operations.detail_runtime_adapter import (
     KSTARTUP_LEGACY_SELECTOR,
     install_kstartup_body_selector_adapter,
+    install_priority_detail_hosts_adapter,
 )
 
 
@@ -44,3 +45,24 @@ def test_existing_full_legacy_body_is_preserved():
     selected = soup.select_one(KSTARTUP_LEGACY_SELECTOR)
     assert selected is not None
     assert "기존 상세 본문" in selected.get_text(" ", strip=True)
+
+
+def test_priority_hosts_extend_monitor_runtime_without_replacing_existing():
+    runtime_globals = {
+        "DETAIL_ENRICH_HOSTS": (
+            "exportvoucher.com",
+            "k-startup.go.kr",
+            "nipa.kr",
+            "bizinfo.go.kr",
+        ),
+    }
+
+    assert install_priority_detail_hosts_adapter(runtime_globals) is True
+    assert runtime_globals["DETAIL_ENRICH_HOSTS"] == (
+        "exportvoucher.com",
+        "k-startup.go.kr",
+        "nipa.kr",
+        "bizinfo.go.kr",
+        "kita.net",
+    )
+    assert install_priority_detail_hosts_adapter(runtime_globals) is False
