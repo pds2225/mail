@@ -65,13 +65,17 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 | `scripts/auto_dev_executor.py` | 결정적 안전 실행기 (문서 NOOP·허용 패치) |
 | `scripts/decompose_defects.py` | L2 빈틈 → TASK 분해 (G1 `--approve`) |
 | `scripts/loop_verify.py` | L1 검증 단일 진입점 |
+| `scripts/outstanding_dev_audit.py` | 원격/worktree/stash 미반영 개발 감사 |
+| `scripts/auto_dev_overnight_ready.py` | 야간 자동개발 준비 판정 (user-priority 큐 우선) |
 | `auto_dev/defects_inbox.md` | G1 승인용 빈틈 인박스 |
 | `var/state/auto_dev_state.json` | 실행 상태 추적 |
 | `.github/workflows/auto-dev-queue.yml` | GHA 워크플로우 |
 
 실행: GitHub Actions → "Auto Dev Queue" → "Run workflow"  
 로컬: `python3 scripts/auto_dev_queue.py` (`DRY_RUN=true` 권장)  
-검증: `python3 scripts/loop_verify.py` / `--drift`
+검증: `python3 scripts/loop_verify.py` / `--drift`  
+미반영 감사: `python3 scripts/outstanding_dev_audit.py --strict`  
+야간 준비: `python3 scripts/auto_dev_overnight_ready.py` (`--require-local` / `--require-live`)
 
 **핵심 안전규칙:**
 - 기존 앱 파일(`monitor.py`, `streamlit_app.py`) 수정 금지

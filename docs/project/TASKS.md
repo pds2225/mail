@@ -6,10 +6,14 @@
 
 ## PENDING
 
-
 ## RUNNING
 
 ## DONE
+- TASK-017: user-priority: source_field_quality·monitor_runtime P0 알림/빈필드/KITA 예산 회귀가 유지되는지 테스트로 확인하고 빠지면 보강한다.
+- TASK-018: overnight: AUTO_DEV_PAT·AUTO_DEV_AGENT 준비 전제와 schedule 복구 체크리스트를 docs/project/RULES.md에 추가한다 (스케줄 자체는 켜지 않음).
+- TASK-016: user-priority: outstanding_dev_audit UNIQUE_CANDIDATE 발견 시 병합 PR 초안 절차를 docs/LOOP_ENGINEERING_AUTO_DEV.md에 짧게 문서화한다 (monitor.py 수정 금지).
+- TASK-015: user-priority overnight readiness — `scripts/auto_dev_overnight_ready.py`로 야간 실행 가능 여부를 판정한다.
+- TASK-014: user-priority outstanding merge audit — `scripts/outstanding_dev_audit.py`로 원격/worktree/stash 미반영 개발을 분류한다.
 - TASK-013: loop:accuracy-defect 주간 matrix → s3_defects → G1 승인 후 TASK 분해 훅을 설계만 구체화한다 (코딩 금지, 사람 게이트).
 - TASK-007: 정책자금 모듈 안정화 후 중진공 등 추가 기관 확장 가능성을 검토한다.
 - TASK-006: 소진공 정책자금 페이지 구조 변경에 대비해 파서 selector 안정화를 검토한다.
