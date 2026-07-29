@@ -30,12 +30,21 @@ def _payload(value: Any) -> dict[str, Any]:
 
 
 def load(path: str | Path = OUTBOX_PATH) -> dict[str, Any]:
+    """Load outbox payload.
+
+    Missing file → empty outbox. Existing ciphertext that will not decrypt with the
+    active key raises SecureStoreDecryptError so callers cannot silently wipe retries.
+    """
     return _payload(load_encrypted_json(path, {"version": 1, "entries": []}))
 
 
 def save(value: dict[str, Any], path: str | Path = OUTBOX_PATH) -> None:
     if not is_ready():
         raise SecureStoreUnavailable("encrypted outbox requires MAIL_PRIVATE_CONFIG_KEY or local key")
+    # Refuse to overwrite undecryptable ciphertext with a fresh empty/new payload.
+    target = Path(path)
+    if target.exists() and target.stat().st_size > 0:
+        load(path)
     save_encrypted_json(path, _payload(value), create_local_key=False)
 
 
