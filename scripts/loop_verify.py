@@ -236,6 +236,64 @@ def check_pending_backlog() -> dict:
     }
 
 
+def check_outstanding_dev() -> dict:
+    """D6: leftover remotes/worktrees must not hide UNIQUE_CANDIDATE content."""
+    script = ROOT / "scripts" / "outstanding_dev_audit.py"
+    if not script.exists():
+        return {
+            "id": "D6",
+            "name": "outstanding_dev_audit",
+            "ok": False,
+            "issues": ["scripts/outstanding_dev_audit.py missing"],
+        }
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(script), "--json", "--strict"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=_env_for_tests(),
+            timeout=180,
+        )
+    except (OSError, subprocess.TimeoutExpired) as e:
+        return {
+            "id": "D6",
+            "name": "outstanding_dev_audit",
+            "ok": False,
+            "issues": [str(e)],
+        }
+    issues: list[str] = []
+    unique: list[str] = []
+    stashes = 0
+    raw = (proc.stdout or "").strip()
+    if raw:
+        try:
+            report = json.loads(raw)
+            unique = [
+                f"{u.get('ref')}:{','.join((u.get('unique_paths') or [])[:3])}"
+                for u in report.get("unique_candidates") or []
+            ]
+            stashes = len(report.get("stashes") or [])
+            if unique:
+                issues.append(f"UNIQUE_CANDIDATE={unique}")
+            if stashes:
+                issues.append(f"stash_count={stashes}")
+        except json.JSONDecodeError as e:
+            issues.append(f"audit json parse failed: {e}")
+    elif proc.returncode != 0:
+        issues.append((proc.stderr or "outstanding_dev_audit failed").strip()[:500])
+    return {
+        "id": "D6",
+        "name": "outstanding_dev_audit",
+        "ok": len(issues) == 0 and proc.returncode == 0,
+        "issues": issues,
+        "unique_candidates": unique,
+        "stash_count": stashes,
+    }
+
+
 def check_trigger_alignment() -> dict:
     """D5: declared schedule state must match the active workflow trigger."""
     config_path = ROOT / "auto_dev" / "loop_config.json"
@@ -297,6 +355,7 @@ def run_verify(
             check_tasks_structure(),
             check_pending_backlog(),
             check_trigger_alignment(),
+            check_outstanding_dev(),
         ]
     else:
         checks.append(check_protected_files(base_ref))
@@ -309,9 +368,11 @@ def run_verify(
         # always attach lightweight drift presence (non-fatal unless missing assets when expected)
         checks.append(check_work_asset_presence())
         checks.append(check_loops_schema())
+        if not quick:
+            checks.append(check_outstanding_dev())
 
     # Fatal: V* and D1/D2; D3 issues fatal; D4 warn only
-    fatal_ids = {"V1", "V2", "V3", "V6", "V9", "D1", "D2", "D3", "D5"}
+    fatal_ids = {"V1", "V2", "V3", "V6", "V9", "D1", "D2", "D3", "D5", "D6"}
     ok = True
     for c in checks:
         if c.get("id") in fatal_ids and not c.get("ok", False):

@@ -63,6 +63,18 @@
       "drift_signals": ["recall_zero_gate 편입 해제", "정추천 사례 축소"]
     },
     {
+      "id": "outstanding_dev_audit",
+      "path": "scripts/outstanding_dev_audit.py",
+      "role": "원격·worktree·stash 미반영 개발 감사 (user-priority merge-all)",
+      "drift_signals": ["UNIQUE_CANDIDATE 무시", "backup/archive 강제 병합"]
+    },
+    {
+      "id": "overnight_ready",
+      "path": "scripts/auto_dev_overnight_ready.py",
+      "role": "야간 자동개발 준비 상태 (큐·스케줄·에이전트·PAT)",
+      "drift_signals": ["PENDING 공백 방치", "PAT 없이 cron 강제 활성"]
+    },
+    {
       "id": "loop_config",
       "path": "auto_dev/loop_config.json",
       "role": "루프 한도·종료 조건",
