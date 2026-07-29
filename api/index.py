@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler
+import hmac
 import json
 import os
 from pathlib import Path
@@ -33,10 +34,10 @@ class handler(BaseHTTPRequestHandler):
         if allow_send:
             if not secret:
                 return False, "MONITOR_SECRET must be configured for real sends"
-            if auth != expected:
+            if not hmac.compare_digest(auth, expected):
                 return False, "Unauthorized"
             return True, ""
-        if secret and auth != expected:
+        if secret and not hmac.compare_digest(auth, expected):
             return False, "Unauthorized"
         return True, ""
 
@@ -63,13 +64,6 @@ class handler(BaseHTTPRequestHandler):
             self._json(404, {"ok": False, "error": "Unknown endpoint"})
             return
 
-        # lazy import: monitor.py has module-level env checks
-        try:
-            from monitor import execute_monitor
-        except Exception as exc:
-            self._json(500, {"ok": False, "error": f"Monitor import failed: {exc}"})
-            return
-
         content_len = int(self.headers.get("Content-Length", 0))
         body_raw = self.rfile.read(content_len).decode() if content_len else "{}"
         try:
@@ -79,11 +73,11 @@ class handler(BaseHTTPRequestHandler):
 
         dry_run = body.get("dry_run", True)
         confirm_send = body.get("confirm_send") == "SEND"
-        allow_send = (not dry_run) and confirm_send
-        persist_seen = bool(body.get("persist_seen", False))
-        include_raw_all = bool(body.get("include_raw_all", False))
+        allow_send = (dry_run is False) and confirm_send
+        persist_seen = body.get("persist_seen", False) is True
+        include_raw_all = body.get("include_raw_all", False) is True
 
-        if not dry_run and not confirm_send:
+        if dry_run is False and not confirm_send:
             self._json(400, {
                 "ok": False,
                 "error": "Explicit send confirmation required",
@@ -103,6 +97,13 @@ class handler(BaseHTTPRequestHandler):
                 "error": "persist_seen=true is required for real sends",
                 "hint": "Omit confirm_send for dry-run, or set persist_seen=true with confirm_send='SEND'.",
             })
+            return
+
+        # 인증·send gate 통과 뒤에만 무거운 monitor 모듈을 읽는다.
+        try:
+            from monitor import execute_monitor
+        except Exception as exc:
+            self._json(500, {"ok": False, "error": f"Monitor import failed: {exc}"})
             return
 
         try:

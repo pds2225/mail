@@ -17,6 +17,17 @@ MANUAL_QUEUE_PATH = STATE_DIR / "miss_manual_queue.json"
 DEFAULT_AUTO_RETRY = 2
 DEFAULT_BACKOFF_SEC = (60, 180)
 
+# 수집기가 site_id와 다른 실제 공고 ID를 쓰는 핵심 소스 별칭.
+# 일반적인 "_" 포함 여부로 소속을 추측하지 않고, 알려진 접두만 사용한다.
+KNOWN_ITEM_ID_PREFIXES: tuple[tuple[str, str], ...] = (
+    ("PBLN_", "bizinfo"),
+    ("pbln_", "bizinfo"),
+    ("bizinfo_", "bizinfo"),
+    ("kstartup_", "kstartup"),
+    ("nipa_", "nipa"),
+    ("kita_", "kita"),
+)
+
 
 def p0_site_ids(reports: list[dict] | None) -> set[str]:
     return {
@@ -34,12 +45,45 @@ def p0_site_names(reports: list[dict] | None) -> set[str]:
     }
 
 
-def item_belongs_to_p0(item: dict, *, p0_ids: set[str], p0_names: set[str]) -> bool:
-    """공고가 P0 소스 소속인지. site_id · id 접두를 우선, 이름은 비접두 id 만.
+def _known_item_site_id(
+    item_id: str,
+    known_site_ids: set[str],
+) -> str:
+    """실제 공고 ID를 알려진 site_id/별칭 접두로 소유 보드에 연결."""
+    iid = str(item_id or "")
+    for prefix, site_id in KNOWN_ITEM_ID_PREFIXES:
+        if iid.startswith(prefix):
+            return site_id
+    # site_id 자체에 "_"가 있을 수 있으므로 가장 긴 접두부터 확인한다.
+    for site_id in sorted(known_site_ids, key=len, reverse=True):
+        if site_id and (iid == site_id or iid.startswith(f"{site_id}_")):
+            return site_id
+    return ""
+
+
+def _site_ids_by_name(reports: list[dict] | None) -> dict[str, set[str]]:
+    grouped: dict[str, set[str]] = {}
+    for report in reports or []:
+        name = str(report.get("site_name") or "").strip()
+        site_id = str(report.get("site_id") or "").strip()
+        if name and site_id:
+            grouped.setdefault(name, set()).add(site_id)
+    return grouped
+
+
+def item_belongs_to_p0(
+    item: dict,
+    *,
+    p0_ids: set[str],
+    p0_names: set[str],
+    known_site_ids: set[str] | None = None,
+    site_ids_by_name: dict[str, set[str]] | None = None,
+) -> bool:
+    """공고가 P0 소스 소속인지 알려진 site_id/ID 접두를 우선해 판별.
 
     동일 display name 을 쓰는 보드가 여럿 있다(예: 정부24×6). source 이름만으로
-    제외하면 정상 sibling 보드 공고까지 발송 후보에서 빠지므로, site_id 가 있거나
-    `{site_id}_…` id 접두로 소속을 알 수 있으면 이름 매칭을 쓰지 않는다.
+    제외하면 정상 sibling 보드 공고까지 발송 후보에서 빠진다. 명시 site_id 또는
+    알려진 ID 접두로 소유 보드를 먼저 확정하고, 이름은 단일 보드에만 연결될 때 쓴다.
     """
     if not item:
         return False
@@ -47,16 +91,17 @@ def item_belongs_to_p0(item: dict, *, p0_ids: set[str], p0_names: set[str]) -> b
     if sid:
         return sid in p0_ids
 
-    iid = str(item.get("id") or "")
-    for pid in p0_ids:
-        if pid and (iid == pid or iid.startswith(f"{pid}_")):
-            return True
-
-    # id 가 이미 site_id 접두 형태면(다른 보드 소속) 공유 display name 으로 제외하지 않음
-    if iid and "_" in iid:
-        return False
+    owner = _known_item_site_id(
+        str(item.get("id") or ""),
+        set(known_site_ids or ()) | p0_ids,
+    )
+    if owner:
+        return owner in p0_ids
 
     src = str(item.get("source") or "").strip()
+    if site_ids_by_name is not None and src in site_ids_by_name:
+        owners = site_ids_by_name[src]
+        return len(owners) == 1 and bool(owners & p0_ids)
     return bool(src and src in p0_names)
 
 
@@ -67,12 +112,24 @@ def drop_items_from_p0_sources(
     """P0 소스 공고를 발송 후보에서 분리. (kept, dropped) 반환."""
     ids = p0_site_ids(reports)
     names = p0_site_names(reports)
+    known_ids = {
+        str(report.get("site_id") or "").strip()
+        for report in (reports or [])
+        if report.get("site_id")
+    }
+    ids_by_name = _site_ids_by_name(reports)
     if not ids and not names:
         return list(items or []), []
     kept: list[dict] = []
     dropped: list[dict] = []
     for it in items or []:
-        if item_belongs_to_p0(it, p0_ids=ids, p0_names=names):
+        if item_belongs_to_p0(
+            it,
+            p0_ids=ids,
+            p0_names=names,
+            known_site_ids=known_ids,
+            site_ids_by_name=ids_by_name,
+        ):
             dropped.append(it)
         else:
             kept.append(it)

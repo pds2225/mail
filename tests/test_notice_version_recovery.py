@@ -87,6 +87,54 @@ def test_detail_fetch_failure_does_not_create_false_updated():
     assert updates["fail"]["delivery_id"] == "fail"
 
 
+def test_unreliable_observation_commit_preserves_delivered_snapshot(
+    monkeypatch,
+    tmp_path,
+):
+    """classify → commit → 정상복구 뒤에도 허위 @v2가 생기지 않는다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    before = item("recover", "2026-07-20")
+    delivered_snapshot = m._notice_version_snapshot(before)
+    delivered_hash = m._notice_snapshot_hash(delivered_snapshot)
+    versions = {
+        "recover": {
+            "version": 1,
+            "delivery_id": "recover",
+            "delivered_hash": delivered_hash,
+            "delivered_snapshot": delivered_snapshot,
+            "observed_hash": delivered_hash,
+        }
+    }
+    thin = item(
+        "recover",
+        "2026-07-20",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        detail_extraction={"status": "DETAIL_FETCH_FAILED"},
+    )
+
+    deliverable, updates = m.classify_notice_versions(
+        [thin],
+        {"recover"},
+        versions,
+    )
+    assert deliverable == []
+    committed = m.commit_notice_versions(versions, updates, {"recover"})
+    assert committed["recover"]["delivered_hash"] == delivered_hash
+    assert committed["recover"]["delivered_snapshot"] == delivered_snapshot
+
+    recovered, _ = m.classify_notice_versions(
+        [before],
+        {"recover"},
+        committed,
+    )
+    assert recovered == []
+
+
 def test_missing_delivered_hash_seeds_instead_of_version_bump():
     """observed만 있고 delivered_hash가 없는 seen 공고는 @v2가 아니라 seed."""
     source = item("pending", "2026-07-24")

@@ -887,12 +887,8 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
                 "seed_only": True,
             }
             continue
-        changed = _snapshot_changed_fields(old_snapshot, snapshot)
-        material = sorted(set(changed) & _NOTICE_VERSION_MATERIAL_FIELDS)
-        if current_hash == old_hash or not material:
-            updates[iid] = {**base, "version": int(previous.get("version", 1) or 1), "delivery_id": str(previous.get("delivery_id") or iid)}
-            continue
-        # 상세 추출 실패로 필드가 비어 이전 전달본과 달라 보이는 경우 — 관찰만, 재발송 금지
+        # 상세 추출 실패 관찰은 현재 우연히 같은 값이어도 전달 확정본으로 승격하지 않는다.
+        # 다음 정상 조회가 기존 delivered_snapshot과 비교되도록 항상 관찰 전용으로 남긴다.
         if _detail_extraction_unreliable(item):
             updates[iid] = {
                 **base,
@@ -900,6 +896,11 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
                 "delivery_id": str(previous.get("delivery_id") or iid),
                 "unreliable_observe": True,
             }
+            continue
+        changed = _snapshot_changed_fields(old_snapshot, snapshot)
+        material = sorted(set(changed) & _NOTICE_VERSION_MATERIAL_FIELDS)
+        if current_hash == old_hash or not material:
+            updates[iid] = {**base, "version": int(previous.get("version", 1) or 1), "delivery_id": str(previous.get("delivery_id") or iid)}
             continue
         version = int(previous.get("version", 1) or 1) + 1
         change_type = _classify_notice_change(old_snapshot, snapshot)
@@ -914,6 +915,7 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
     merged = {str(k): dict(v) for k, v in versions.items() if isinstance(v, dict)}
     for iid, update in updates.items():
         record = dict(merged.get(iid) or {})
+        prior_pending_delivery_id = record.get("pending_delivery_id", "")
         record.update({
             "list_hash": update.get("list_hash", ""),
             "observed_hash": update.get("content_hash", ""),
@@ -921,6 +923,12 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             "last_seen_at": update.get("last_seen_at") or now.isoformat(),
             "pending_delivery_id": update.get("delivery_id", ""),
         })
+        if update.get("unreliable_observe"):
+            # FETCH/PARSE 실패 스냅샷은 재조회 대상으로 관찰만 기록한다.
+            # 이미 전달된 확정본과 기존 pending delivery는 절대 덮지 않는다.
+            record["pending_delivery_id"] = prior_pending_delivery_id
+            merged[iid] = record
+            continue
         delivery_id = str(update.get("delivery_id") or iid)
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({

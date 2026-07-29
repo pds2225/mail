@@ -43,6 +43,11 @@ def _is_core_seen_id(value: str) -> bool:
     return str(value or "").startswith(CORE_SEEN_PREFIXES)
 
 
+def _sorted_seen_ids(values: Iterable[str]) -> list[str]:
+    """날짜키가 같은 ID도 원문으로 tie-break해 실행마다 같은 JSON을 만든다."""
+    return sorted(values, key=lambda item: (seen_id_sort_key(item), item))
+
+
 def prune_seen_ids(
     ids: Iterable[str],
     *,
@@ -52,14 +57,14 @@ def prune_seen_ids(
     unique = {str(x) for x in ids if x}
     limit = max(1, int(max_keep))
     if len(unique) <= limit:
-        return sorted(unique, key=seen_id_sort_key)
+        return _sorted_seen_ids(unique)
 
     core = {item for item in unique if _is_core_seen_id(item)}
     other = unique - core
     if len(core) >= limit:
         # 핵심만으로도 초과 — 날짜/문자 키 기준 최신 쪽을 남긴다.
-        return sorted(core, key=seen_id_sort_key)[-limit:]
+        return _sorted_seen_ids(core)[-limit:]
 
     remain = limit - len(core)
-    other_kept = sorted(other, key=seen_id_sort_key)[-remain:] if remain else []
-    return sorted(core | set(other_kept), key=seen_id_sort_key)
+    other_kept = _sorted_seen_ids(other)[-remain:] if remain else []
+    return _sorted_seen_ids(core | set(other_kept))

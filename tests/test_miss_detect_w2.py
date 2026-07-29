@@ -88,6 +88,15 @@ def test_drop_items_from_p0_does_not_drop_sibling_boards_with_same_name():
     }
 
 
+def test_pbln_id_maps_to_bizinfo_instead_of_generic_underscore_fallback():
+    """기업마당 실제 ID(PBLN_*)는 알려진 별칭으로 P0 bizinfo에 연결한다."""
+    assert mr.item_belongs_to_p0(
+        {"id": "PBLN_000000000123", "source": "기업마당"},
+        p0_ids={"bizinfo"},
+        p0_names={"기업마당"},
+    ) is True
+
+
 def test_manual_queue_enqueue_and_ack(tmp_path):
     path = tmp_path / "miss_manual_queue.json"
     reports = [

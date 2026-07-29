@@ -24,6 +24,7 @@ GET /api/run?dry_run=1
 from __future__ import annotations
 
 import json
+import hmac
 import logging
 import os
 import shutil
@@ -96,10 +97,10 @@ class handler(BaseHTTPRequestHandler):
         if allow_send:
             if not secret:
                 return False, "MONITOR_SECRET must be configured for real sends"
-            if auth != expected:
+            if not hmac.compare_digest(auth, expected):
                 return False, "Unauthorized"
             return True, ""
-        if secret and auth != expected:
+        if secret and not hmac.compare_digest(auth, expected):
             return False, "Unauthorized"
         return True, ""
 
@@ -121,8 +122,8 @@ class handler(BaseHTTPRequestHandler):
         body = self._read_json_body()
         dry_run = body.get("dry_run", True)               # 기본 true
         confirm_send = str(body.get("confirm_send", ""))
-        include_raw_all = bool(body.get("include_raw_all", False))
-        persist_seen = bool(body.get("persist_seen", False))
+        include_raw_all = body.get("include_raw_all", False) is True
+        persist_seen = body.get("persist_seen", False) is True
         # 실제 발송은 dry_run 이 명시적으로 False(JSON false) 이고 confirm_send=="SEND" 일 때만.
         allow_send = (dry_run is False) and (confirm_send == "SEND")
 

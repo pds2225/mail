@@ -101,6 +101,45 @@ def test_api_run_rejects_send_with_wrong_bearer(monkeypatch):
     assert calls == []
 
 
+def test_api_run_checks_auth_before_importing_monitor(monkeypatch):
+    index_mod = _load_index_module(monkeypatch, MONITOR_SECRET="s3cret")
+    monkeypatch.setitem(sys.modules, "monitor", None)
+    h = _FakeHandler(
+        index_mod,
+        {"dry_run": False, "confirm_send": "SEND", "persist_seen": True},
+        headers={"Authorization": "Bearer wrong"},
+    )
+    h.do_POST()
+    assert h._responses[0][0] == 401
+
+
+def test_api_run_requires_literal_true_for_persist_seen(monkeypatch):
+    index_mod = _load_index_module(monkeypatch, MONITOR_SECRET="s3cret")
+    calls: list[dict] = []
+    _install_fake_monitor(monkeypatch, calls)
+    h = _FakeHandler(
+        index_mod,
+        {"dry_run": False, "confirm_send": "SEND", "persist_seen": "true"},
+        headers={"Authorization": "Bearer s3cret"},
+    )
+    h.do_POST()
+    assert h._responses[0][0] == 400
+    assert calls == []
+
+
+def test_api_run_non_boolean_falsy_dry_run_never_sends(monkeypatch):
+    index_mod = _load_index_module(monkeypatch)
+    calls: list[dict] = []
+    _install_fake_monitor(monkeypatch, calls)
+    h = _FakeHandler(
+        index_mod,
+        {"dry_run": 0, "confirm_send": "SEND", "persist_seen": True},
+    )
+    h.do_POST()
+    assert h._responses[0][0] == 200
+    assert calls[0]["allow_send"] is False
+
+
 def test_api_run_allows_authorized_send_with_persist_seen(monkeypatch):
     index_mod = _load_index_module(monkeypatch, MONITOR_SECRET="s3cret")
     calls: list[dict] = []
