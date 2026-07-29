@@ -1,0 +1,17 @@
+{
+ "counts": {
+  "fp_exclude_leak": 1
+ },
+ "cap": 300,
+ "candidates": {
+  "fp_exclude_leak": [
+   {
+    "id": "ema_56db4de359808ba02cca",
+    "cid": "cmp_bnco",
+    "exclude_hits": 1,
+    "score": 44,
+    "title": "인천서구]2025년 해외지사화 지원사업 2차 참가신청 모집"
+   }
+  ]
+ }
+}
