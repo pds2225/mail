@@ -32,6 +32,7 @@ from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
 from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
 from mail_core.security import net_guard, private_config
+from mail_core.storage.seen_ids_prune import MAX_SEEN_IDS, prune_seen_ids
 from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
 BASE_DIR = REPO_ROOT
@@ -103,7 +104,6 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
-MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -845,6 +845,15 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     return "UPDATED"
 
 
+def _detail_extraction_unreliable(item: dict) -> bool:
+    """상세 FETCH/PARSE 실패면 스냅샷이 불완전해 버전 재발송 근거로 쓰면 안 된다."""
+    extraction = item.get("detail_extraction")
+    if not isinstance(extraction, dict):
+        return False
+    status = str(extraction.get("status") or "").strip().upper()
+    return status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}
+
+
 def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:
     deliverable: list[dict] = []
     updates: dict[str, dict] = {}
@@ -868,6 +877,26 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
             continue
         old_snapshot = previous.get("delivered_snapshot") or {}
         old_hash = str(previous.get("delivered_hash") or "")
+        # 전달 확정 스냅샷이 없으면 빈 dict 와 비교해 전 필드가 "변경"으로 오인된다.
+        # 이미 seen 이므로 시드만 하고 @vN 재발송하지 않는다.
+        if not old_hash:
+            updates[iid] = {
+                **base,
+                "version": max(1, int(previous.get("version", 1) or 1)),
+                "delivery_id": str(previous.get("delivery_id") or iid),
+                "seed_only": True,
+            }
+            continue
+        # 상세 추출 실패 관찰은 현재 우연히 같은 값이어도 전달 확정본으로 승격하지 않는다.
+        # 다음 정상 조회가 기존 delivered_snapshot과 비교되도록 항상 관찰 전용으로 남긴다.
+        if _detail_extraction_unreliable(item):
+            updates[iid] = {
+                **base,
+                "version": int(previous.get("version", 1) or 1),
+                "delivery_id": str(previous.get("delivery_id") or iid),
+                "unreliable_observe": True,
+            }
+            continue
         changed = _snapshot_changed_fields(old_snapshot, snapshot)
         material = sorted(set(changed) & _NOTICE_VERSION_MATERIAL_FIELDS)
         if current_hash == old_hash or not material:
@@ -886,6 +915,7 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
     merged = {str(k): dict(v) for k, v in versions.items() if isinstance(v, dict)}
     for iid, update in updates.items():
         record = dict(merged.get(iid) or {})
+        prior_pending_delivery_id = record.get("pending_delivery_id", "")
         record.update({
             "list_hash": update.get("list_hash", ""),
             "observed_hash": update.get("content_hash", ""),
@@ -893,6 +923,12 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             "last_seen_at": update.get("last_seen_at") or now.isoformat(),
             "pending_delivery_id": update.get("delivery_id", ""),
         })
+        if update.get("unreliable_observe"):
+            # FETCH/PARSE 실패 스냅샷은 재조회 대상으로 관찰만 기록한다.
+            # 이미 전달된 확정본과 기존 pending delivery는 절대 덮지 않는다.
+            record["pending_delivery_id"] = prior_pending_delivery_id
+            merged[iid] = record
+            continue
         delivery_id = str(update.get("delivery_id") or iid)
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({
@@ -1719,11 +1755,9 @@ def save_seen_ids(ids: set[str]) -> None:
     if not _ALLOW_PERSIST_SEEN or os.environ.get("MONITOR_NO_PERSIST_SEEN") == "1":
         log.info("seen_ids 저장 생략 (dry-run / persist 비활성)")
         return
-    # 날짜 포함 ID(bizinfo_20260415 등)는 날짜순, 나머지는 알파벳순 → 최신 MAX_SEEN_IDS 유지
-    def _sort_key(s: str) -> str:
-        m = re.search(r"(\d{4}-\d{2}-\d{2}|\d{8})", s)
-        return m.group(1) if m else s
-    save_json(SEEN_IDS_PATH, sorted(ids, key=_sort_key)[-MAX_SEEN_IDS:])
+    # 핵심 소스(PBLN/kstartup/…) 우선 보존 + 20xx 날짜키. 알파벳 꼬리 절단으로
+    # 기업마당 id 가 통째로 사라지던 중복발송 사고를 막는다(seen_ids_prune).
+    save_json(SEEN_IDS_PATH, prune_seen_ids(ids, max_keep=MAX_SEEN_IDS))
 
 def load_sites() -> list[dict]:
     sites = load_json(SITES_PATH, [])
@@ -6075,22 +6109,14 @@ def execute_monitor(
     dedup_removed = len(all_items) - len(deduped)
 
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
+    # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
+    # classify 를 retry 앞에 두면 FETCH 실패 스냅샷으로 허위 UPDATED(@vN) 재발송이 난다.
     notice_versions = load_notice_versions()
     version_candidates = select_notice_version_candidates(
         deduped, seen_ids, notice_versions, now=now, days_back=days_back,
     )
     enriched_candidates = enrich_items(version_candidates)
-    new_items, notice_version_updates = classify_notice_versions(enriched_candidates, seen_ids, notice_versions)
-    brand_new_count = sum(1 for it in new_items if it.get("_change_type") == "NEW")
-    changed_count = len(new_items) - brand_new_count
-    log.info("처리대상: 신규 %d / 중요변경 %d / 버전검사 %d", brand_new_count, changed_count, len(version_candidates))
 
-    if _RAW_STORE is not None:
-        _RAW_STORE.begin_run(collected=len(all_items), deduped=len(deduped), new_items=len(new_items))
-        for it in new_items:
-            _RAW_STORE.save_item_meta(it)
-
-    # W3-c: 이미 enrich된 처리대상에 FETCH/PARSE 재시도 + 추출률·큐 (main 병합)
     extraction_rates_by_site: dict = {}
     extraction_retry_plan: list = []
     extraction_retry_stats: dict = {}
@@ -6110,8 +6136,8 @@ def execute_monitor(
         else:
             _backoff = (60, 180)
             _sleep_fn = None
-        new_items, extraction_retry_stats = run_extraction_retries(
-            new_items,
+        enriched_candidates, extraction_retry_stats = run_extraction_retries(
+            enriched_candidates,
             enrich_item_from_detail,
             backoff_sec=_backoff,
             sleep_fn=_sleep_fn,
@@ -6124,6 +6150,28 @@ def execute_monitor(
                 extraction_retry_stats.get("recovered"),
                 extraction_retry_stats.get("still_failed"),
             )
+    except Exception as e:
+        log.warning("extraction retry 실패(무시·분류 계속): %s", e)
+
+    new_items, notice_version_updates = classify_notice_versions(
+        enriched_candidates, seen_ids, notice_versions,
+    )
+    brand_new_count = sum(1 for it in new_items if it.get("_change_type") == "NEW")
+    changed_count = len(new_items) - brand_new_count
+    log.info("처리대상: 신규 %d / 중요변경 %d / 버전검사 %d", brand_new_count, changed_count, len(version_candidates))
+
+    if _RAW_STORE is not None:
+        _RAW_STORE.begin_run(collected=len(all_items), deduped=len(deduped), new_items=len(new_items))
+        for it in new_items:
+            _RAW_STORE.save_item_meta(it)
+
+    try:
+        from mail_core.operations.field_status import (
+            compute_extraction_rates,
+            plan_extraction_retries,
+            write_extraction_rates_report,
+        )
+        from mail_core.operations.miss_remediation import enqueue_extraction_failures
 
         by_site: dict[str, list] = {}
         for it in new_items:
@@ -6137,7 +6185,7 @@ def execute_monitor(
         write_extraction_rates_report(
             extraction_rates_by_site, run_at=now)
     except Exception as e:
-        log.warning("extraction_rates/retry/queue 실패(무시): %s", e)
+        log.warning("extraction_rates/queue 실패(무시): %s", e)
 
     # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
     p0_dropped: list = []

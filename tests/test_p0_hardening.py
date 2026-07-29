@@ -100,6 +100,48 @@ def test_encrypted_outbox_recovers_last_decryptable_backup(tmp_path, monkeypatch
     assert outbox.load(path)["entries"][0]["id"] == "backup"
 
 
+def test_encrypted_outbox_refuses_wipe_on_wrong_key(tmp_path, monkeypatch):
+    """Key mismatch must not treat ciphertext as empty and overwrite pending entries."""
+    from cryptography.fernet import Fernet
+
+    monkeypatch.delenv("MAIL_PRIVATE_CONFIG_KEY", raising=False)
+    monkeypatch.setattr(secure_store, "DEFAULT_KEY_PATH", tmp_path / "mail.key")
+    key1 = secure_store.ensure_local_key(tmp_path / "mail.key")
+    path = tmp_path / "outbox.enc"
+    outbox.upsert(
+        date="2026-07-28",
+        tenant="default",
+        group="g1",
+        subject="s",
+        body="b",
+        recipients=["a@example.test"],
+        notice_ids=["n1"],
+        path=path,
+    )
+    original = path.read_bytes()
+    # Rotate to a different Fernet key with no decryptable backup under the new key.
+    (tmp_path / "mail.key").write_bytes(Fernet.generate_key() + b"\n")
+    with pytest.raises(secure_store.SecureStoreDecryptError):
+        outbox.load(path)
+    with pytest.raises(secure_store.SecureStoreDecryptError):
+        outbox.upsert(
+            date="2026-07-29",
+            tenant="default",
+            group="g2",
+            subject="s2",
+            body="b2",
+            recipients=["b@example.test"],
+            notice_ids=["n2"],
+            path=path,
+        )
+    assert path.read_bytes() == original
+    # Restoring the original key recovers the pending entry.
+    (tmp_path / "mail.key").write_bytes(key1 + b"\n")
+    pending = outbox.pending(path)
+    assert len(pending) == 1 and pending[0]["notice_ids"] == ["n1"]
+
+
+
 def test_local_run_lock_allows_only_one_active_sender(tmp_path):
     path = tmp_path / "monitor.run.lock"
     first = run_lock.MonitorRunLock(path)
