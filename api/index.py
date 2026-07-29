@@ -15,6 +15,7 @@ REQUIRED_ENV_KEYS = [
     "IMAP_PORT",
 ]
 
+
 class handler(BaseHTTPRequestHandler):
     def _json(self, code: int, data: dict) -> None:
         body = json.dumps(data, ensure_ascii=False).encode()
@@ -23,6 +24,21 @@ class handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _authorized(self, *, allow_send: bool) -> tuple[bool, str]:
+        """Fail closed for real sends; dry-run still honors MONITOR_SECRET when set."""
+        secret = os.environ.get("MONITOR_SECRET", "").strip()
+        auth = self.headers.get("Authorization", "")
+        expected = f"Bearer {secret}" if secret else ""
+        if allow_send:
+            if not secret:
+                return False, "MONITOR_SECRET must be configured for real sends"
+            if auth != expected:
+                return False, "Unauthorized"
+            return True, ""
+        if secret and auth != expected:
+            return False, "Unauthorized"
+        return True, ""
 
     def do_GET(self):
         path = self.path.split("?")[0]
@@ -64,6 +80,8 @@ class handler(BaseHTTPRequestHandler):
         dry_run = body.get("dry_run", True)
         confirm_send = body.get("confirm_send") == "SEND"
         allow_send = (not dry_run) and confirm_send
+        persist_seen = bool(body.get("persist_seen", False))
+        include_raw_all = bool(body.get("include_raw_all", False))
 
         if not dry_run and not confirm_send:
             self._json(400, {
@@ -73,11 +91,25 @@ class handler(BaseHTTPRequestHandler):
             })
             return
 
+        ok_auth, auth_error = self._authorized(allow_send=allow_send)
+        if not ok_auth:
+            self._json(401, {"ok": False, "error": auth_error})
+            return
+
+        # Mirror CLI: --send requires --persist-seen so outbox/idempotency cannot be bypassed.
+        if allow_send and not persist_seen:
+            self._json(400, {
+                "ok": False,
+                "error": "persist_seen=true is required for real sends",
+                "hint": "Omit confirm_send for dry-run, or set persist_seen=true with confirm_send='SEND'.",
+            })
+            return
+
         try:
             result = execute_monitor(
                 allow_send=allow_send,
-                include_raw_all=bool(body.get("include_raw_all", False)),
-                persist_seen=bool(body.get("persist_seen", False)),
+                include_raw_all=include_raw_all,
+                persist_seen=persist_seen,
             )
             self._json(200, {"ok": True, "result": result})
         except Exception as exc:
@@ -85,4 +117,3 @@ class handler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt, *args):
         pass  # suppress default access log
-
