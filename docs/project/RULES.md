@@ -95,7 +95,17 @@ auto_dev/*
 docs/LOOP_ENGINEERING_AUTO_DEV.md
 scripts/*
 .github/workflows/auto-dev-queue.yml
+.github/workflows/monitor.yml
+docs/project/mail_daily_reviews/*
 ```
+
+## 7b. 매일 메일 발송 후 검수 (MDR)
+
+발송 직후 `python scripts/mail_daily_review.py` 로 당일 메타를 검수하고,
+`docs/project/mail_daily_reviews/context/ledger.jsonl` 에 append 한다.
+규칙 정의: `docs/project/mail_daily_reviews/rules.md` (MDR-001… — L규칙 스타일).
+상세 산출물: `var/reviews/YYYY-MM-DD/`. SMTP 추가 발송·Secret 출력 금지.
+매일 체크: 누적 ledger + MDR 규칙으로 가드레일 재발 여부를 확인한다.
 
 ## 8. Loop Engineering 규칙
 
