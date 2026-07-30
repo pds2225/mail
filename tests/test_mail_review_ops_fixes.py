@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -161,3 +161,89 @@ def test_skip_gate_when_all_units_delivered(tmp_path):
         enabled=False,
     )
     assert result2["skip"] is False
+
+
+# ── 2026-07-30 발송 누락 사고 회귀 (days_back 1→3 → 멱등 오판으로 이틀 미발송) ──────────
+#   증상: 07-28·07-29 클라우드 run 이 2분 44초에 끝나며 "기준일 2026-07-24 발송 단위 6개
+#   멱등 완료 — 커버리지·수집·발송 생략" 로그만 남기고 digest 를 보내지 않았다.
+#   원인: 발송 멱등 키의 기준일이 재조회창의 가장 오래된 날이라, days_back 을 1→3 으로
+#   늘린 순간(2026-07-25) 기준일이 이미 발송 완료된 과거 날짜로 후퇴했다.
+
+def test_delivery_cycle_date_does_not_regress_when_days_back_grows():
+    """기준일은 실행 당일 — days_back 을 늘려도 과거로 후퇴하지 않는다."""
+    import monitor
+
+    now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
+
+    assert monitor.delivery_cycle_date(now) == date(2026, 7, 29)
+    # 사고 당시 기준일 계산식은 days_back 에 따라 과거로 밀렸다(07-28 → 07-24).
+    assert monitor.previous_business_day(now, 3) == date(2026, 7, 24)
+    for days_back in (1, 2, 3, 5, 10):
+        assert monitor.delivery_cycle_date(now) == date(2026, 7, 29), days_back
+
+
+def test_days_back_increase_does_not_skip_today_send(tmp_path):
+    """옛 기준일(07-23·07-24)이 발송 완료여도 오늘(07-29) 발송은 스킵되지 않는다."""
+    import monitor
+
+    groups = [{
+        "id": "grp_a", "active": True, "tenant_id": "default",
+        "recipients": ["a@example.com"],
+    }]
+    settings = {"tenant_id": "default", "raw_all_enabled": False, "days_back": 3}
+    path = tmp_path / "delivery_state.json"
+    delivered = {
+        delivery_state.key(old, "grp_a", "a@example.com", tenant="default")
+        for old in ("2026-07-23", "2026-07-24")
+    }
+    delivery_state.save(path, delivered)
+
+    now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
+    result = should_skip_fetch_already_delivered(
+        target_date=str(monitor.delivery_cycle_date(now)),
+        groups=groups,
+        settings=settings,
+        delivery_path=path,
+        enabled=True,
+    )
+    assert result["skip"] is False
+    assert result["reason"] == "pending_units"
+    assert result["target_date"] == "2026-07-29"
+
+
+def test_same_day_rerun_still_skips(tmp_path):
+    """같은 날 재실행은 계속 멱등으로 막는다(주말 재실행 2h+ 낭비 방지 의도 유지)."""
+    import monitor
+
+    groups = [{
+        "id": "grp_a", "active": True, "tenant_id": "default",
+        "recipients": ["a@example.com"],
+    }]
+    settings = {"tenant_id": "default", "raw_all_enabled": False, "days_back": 3}
+    path = tmp_path / "delivery_state.json"
+    now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
+    today_key = delivery_state.key(
+        str(monitor.delivery_cycle_date(now)), "grp_a", "a@example.com", tenant="default",
+    )
+    delivery_state.save(path, {today_key})
+
+    result = should_skip_fetch_already_delivered(
+        target_date=str(monitor.delivery_cycle_date(now)),
+        groups=groups,
+        settings=settings,
+        delivery_path=path,
+        enabled=True,
+    )
+    assert result["skip"] is True
+    assert result["reason"] == "already_delivered"
+
+
+def test_send_path_uses_run_day_for_delivery_key():
+    """실발송 경로(execute_monitor)가 재조회창 끝이 아닌 실행 당일을 멱등 키로 쓴다."""
+    import inspect
+
+    import monitor
+
+    src = inspect.getsource(monitor.execute_monitor)
+    assert "target_date = delivery_cycle_date(now)" in src
+    assert "target_date = recheck_dates[0]" not in src
