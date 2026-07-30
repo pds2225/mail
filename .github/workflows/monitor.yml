@@ -110,7 +110,7 @@ jobs:
             var/logs/source_field_quality_latest.json
             var/logs/source_field_quality_latest.md
           retention-days: 14
-          if-no-files-found: ignore
+          if-no-files-found: warn
 
       - name: seen_ids·공고버전·O/X 피드백 커밋
         if: always()

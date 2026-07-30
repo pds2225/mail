@@ -415,6 +415,7 @@ def classify_source_status(
 
     zero_item_policy:
       - p0_if_baseline: 기준선 충분·0건 → P0 (기본)
+      - p0_always: 기준선 없어도 0건 → P0 (기업마당 등 핵심소스 fail-closed)
       - warning: 0건이어도 P1 만 (지역·월간 사이트)
       - ignore_zero: 0건 사유 미부여 (SUCCESS, 남용 금지)
 
@@ -423,7 +424,7 @@ def classify_source_status(
     """
     th = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
     policy = str(zero_item_policy or "p0_if_baseline")
-    if policy not in {"p0_if_baseline", "warning", "ignore_zero"}:
+    if policy not in {"p0_if_baseline", "p0_always", "warning", "ignore_zero"}:
         policy = "p0_if_baseline"
     fail_risk = str(fetch_failed_risk or "P0").upper()
     if fail_risk not in {"P0", "P1"}:
@@ -471,6 +472,12 @@ def classify_source_status(
     if item_count == 0:
         if policy == "ignore_zero":
             return _source_report(row, COLLECT_STATUS_SUCCESS, [], stats, detail)
+        if policy == "p0_always":
+            reason_codes.append(REASON_ZERO_ITEMS_WITH_BASELINE)
+            detail["drop_rate"] = 1.0
+            detail["p0_always"] = True
+            return _source_report(
+                row, COLLECT_STATUS_ZERO_SUSPICIOUS, reason_codes, stats, detail)
         if stats["sufficient"] and (median or 0) >= 1:
             if policy == "warning":
                 # 평소 수집되던 사이트라도 warning 정책이면 P1 만
