@@ -1941,7 +1941,13 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
 
 def _item(id_, title, link, author, desc, deadline, source,
           posted_date="", is_aggregator=False) -> dict:
-    return {"id": id_, "title": title, "link": link, "author": author,
+    # org=title 오염 차단(TASK-G05): 목록 파서가 제목을 주관기관 칸에 넣으면
+    # 지역·키워드 판정이 제목 문자열에 오염된다 → 동일하면 author 를 비운다.
+    title_n = norm(title)
+    author_n = norm(author)
+    if author_n and title_n and author_n == title_n:
+        author_n = ""
+    return {"id": id_, "title": title_n, "link": link, "author": author_n,
             "description": desc, "deadline": deadline, "source": source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
 
@@ -2180,26 +2186,35 @@ def fetch_bizinfo(site: dict) -> list[dict]:
     #      timeout 되므로, 직결을 먼저 시도하면 매 실행 ~90초를 헛되이 버린다 → data.go.kr 우선.
     #   ② 직결(bizinfo.go.kr RSS-API) — 키가 없거나 data.go.kr 이 하드 실패했을 때의 경로.
     #
-    # ★ 실패 신호 규약(커버리지 오탐 방지) — 한 경로가 '예외 없이' 완료하면(0건이어도) 그 응답을
-    #   권위 있는 것으로 신뢰해 그대로 반환한다(정상 0건 = '진짜 0건' → [] 반환, 다음 경로로 안 넘어감).
-    #   경로가 하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr/resultCode 오류)하면 다음 경로로 넘어가고,
-    #   모든 경로가 하드 실패하면 첫 예외를 올린다 → 상위(fetch_all)가 fetch_success=False='수집실패'로
-    #   분류(커버리지 알림 정확 표기 + baseline 오염 방지).
+    # ★ 실패 신호 규약 — 경로 하드 실패(접속/파싱/reqErr) 또는 fail-closed 0건이면
+    #   다음 경로로 넘어가고, 전 경로 실패 시 예외를 올려 fetch_success=False 로 분류한다.
+    #   정상 N건(>0)만 권위 응답으로 즉시 반환. 빈 목록 허용은 BIZINFO_ALLOW_EMPTY=1.
     if DATA_GO_KR_KEY:
         sources = [("data.go.kr", _fetch_bizinfo_datagokr), ("bizinfo 직결", _fetch_bizinfo_direct)]
     else:
         sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
     hard_err: Exception | None = None
+    _allow_empty = os.environ.get("BIZINFO_ALLOW_EMPTY", "").strip().lower() in {
+        "1", "true", "yes", "on",
+    }
     for label, fn in sources:
         try:
             got = fn(site)
+            # ★ 기업마당 0건 fail-closed (TASK-03): 핵심소스 '진짜 0건'은 거의 없다.
+            #   권위 응답이어도 0건이면 이 경로 실패로 보고 다음 경로를 시도한다.
+            #   전 경로 0/실패면 아래 hard_err 로 올려 fetch_success=False 가 된다.
+            #   BIZINFO_ALLOW_EMPTY=1 일 때만 빈 목록 반환을 허용.
+            if not got and not _allow_empty:
+                raise RuntimeError(
+                    f"기업마당 {label} 0건 — fail-closed"
+                    " (BIZINFO_ALLOW_EMPTY=1 로만 완화 가능)"
+                )
         except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
             log.error("기업마당 %s 실패: %s", label, e)
             if hard_err is None:
                 hard_err = e
             continue
-        # 예외 없이 완료 = 권위 있는 응답(0건이어도 신뢰) → 그대로 반환.
         log.info("%s: %d건 (%s)", site["name"], len(got), label)
         return got
 
@@ -7233,7 +7248,14 @@ if __name__ == "__main__":
         else:
             # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
             # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
-            # 기준일 전량 멱등 완료면 커버리지·수집 전부 생략(주말 재실행 2h+ 낭비 방지).
+            #
+            # ★ skip 이어도 SystemExit(0) 금지 (2026-07-30 TASK-G01):
+            #   과거 early-exit 가 coverage/P0/artifact 를 통째로 건너뛰어
+            #   "2분대 초록불 + 수집이상 침묵" 사고가 났다. 발송만 생략하고
+            #   coverage·이상탐지·아티팩트는 반드시 돌린다.
+            _t0 = time.monotonic()
+            _skip_fetch = False
+            _skip_meta: dict = {}
             if args.send and args.persist_seen:
                 try:
                     from mail_core.delivery.skip_gate import (
@@ -7252,15 +7274,22 @@ if __name__ == "__main__":
                         delivery_path=DELIVERY_STATE_PATH,
                     )
                     if _skip_ee.get("skip"):
+                        _skip_fetch = True
+                        _skip_meta = dict(_skip_ee)
                         log.info(
-                            "기준일 %s 발송 단위 %s개 멱등 완료 — 커버리지·수집·발송 생략",
+                            "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략"
+                            "(coverage/P0/artifact 는 계속)",
                             _skip_ee.get("target_date"), _skip_ee.get("units"),
                         )
-                        raise SystemExit(0)
-                except SystemExit:
-                    raise
                 except Exception as e:
-                    log.warning("발송완료 early-exit 실패(무시·수집 계속): %s", e)
+                    log.warning("발송완료 skip 판정 실패(무시·수집 계속): %s", e)
+            if args.send and not DATA_GO_KR_KEY:
+                # DATA_GO_KR_KEY 정책(TASK-G03): 실발송에서 키 없으면 기업마당이
+                # bizinfo 직결(WAF timeout)에만 의존 → 경고를 남긴다(발송은 막지 않음).
+                log.warning(
+                    "DATA_GO_KR_KEY 미설정 — 기업마당 data.go.kr 폴백 비활성"
+                    "(GHA Secret 등록 권장)"
+                )
             _gate: dict = {}
             if not args.skip_coverage_fetch:
                 try:
@@ -7302,12 +7331,31 @@ if __name__ == "__main__":
                     }
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
-            main(
-                allow_send=args.send,
-                include_raw_all=args.include_raw_all,
-                persist_seen=args.persist_seen,
-                collection_gate=_gate,
-            )
+            if _skip_fetch:
+                _dur = time.monotonic() - _t0
+                log.info(
+                    "skipped_fetch=true duration_sec=%.1f target_date=%s reason=%s"
+                    " units=%s (coverage done, send skipped)",
+                    _dur,
+                    _skip_meta.get("target_date"),
+                    _skip_meta.get("reason"),
+                    _skip_meta.get("units"),
+                )
+                # 이상치 경보(TASK-G04): skip 인데도 coverage 가 비정상적으로 짧으면 경고.
+                # coverage 를 돌렸다면 보통 수분 이상; 30초 미만이면 artifact/수집 의심.
+                if _dur < 30 and not args.skip_coverage_fetch:
+                    log.warning(
+                        "SHORT_RUN_ANOMALY skipped_fetch=true duration_sec=%.1f"
+                        " — coverage artifact/수집 누락 의",
+                        _dur,
+                    )
+            else:
+                main(
+                    allow_send=args.send,
+                    include_raw_all=args.include_raw_all,
+                    persist_seen=args.persist_seen,
+                    collection_gate=_gate,
+                )
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise

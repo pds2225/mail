@@ -6,6 +6,8 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
@@ -310,3 +312,99 @@ def test_send_path_uses_run_day_for_delivery_key():
     src = inspect.getsource(monitor.execute_monitor)
     assert "target_date = delivery_cycle_date(now)" in src
     assert "target_date = recheck_dates[0]" not in src
+
+
+def test_skip_early_exit_does_not_systemexit_before_coverage():
+    """skip 판정이 SystemExit(0) 으로 coverage 를 건너뛰지 않는다(TASK-G01)."""
+    import inspect
+
+    import monitor
+
+    src = inspect.getsource(monitor)
+    # __main__ 실발송 경로에서 skip 직후 SystemExit 을 올리면 안 된다.
+    assert "raise SystemExit(0)" not in src.split("실발송 경로")[-1].split("except Exception as e:")[0]
+    assert "skipped_fetch=true" in src
+    assert "coverage/P0/artifact 는 계속" in src or "coverage done, send skipped" in src
+
+
+def test_bizinfo_empty_is_fail_closed(monkeypatch):
+    """기업마당 권위 응답 0건은 fail-closed(TASK-G03)."""
+    import monitor
+
+    monkeypatch.setenv("DATA_GO_KR_KEY", "dummy")
+    monkeypatch.setattr(monitor, "DATA_GO_KR_KEY", "dummy")
+    monkeypatch.delenv("BIZINFO_ALLOW_EMPTY", raising=False)
+
+    def _empty(_site):
+        return []
+
+    monkeypatch.setattr(monitor, "_fetch_bizinfo_datagokr", _empty)
+    monkeypatch.setattr(monitor, "_fetch_bizinfo_direct", _empty)
+    with pytest.raises(RuntimeError, match="fail-closed"):
+        monitor.fetch_bizinfo({"name": "기업마당", "url": "https://example.invalid"})
+
+
+def test_bizinfo_empty_allowed_when_env_set(monkeypatch):
+    """BIZINFO_ALLOW_EMPTY=1 이면 0건을 허용한다."""
+    import monitor
+
+    monkeypatch.setenv("DATA_GO_KR_KEY", "dummy")
+    monkeypatch.setattr(monitor, "DATA_GO_KR_KEY", "dummy")
+    monkeypatch.setenv("BIZINFO_ALLOW_EMPTY", "1")
+    monkeypatch.setattr(monitor, "_fetch_bizinfo_datagokr", lambda _s: [])
+    assert monitor.fetch_bizinfo({"name": "기업마당", "url": "https://example.invalid"}) == []
+
+
+def test_item_clears_author_when_equals_title():
+    """org=title 오염 시 author 를 비운다(TASK-05)."""
+    import monitor
+
+    item = monitor._item("id1", "서울 AI 모집", "https://x", "서울 AI 모집", "", "", "src")
+    assert item["title"] == "서울 AI 모집"
+    assert item["author"] == ""
+
+
+def test_title_badge_regression_lock():
+    """제목 끝 badge 잔존 회귀 잠금(TASK-05)."""
+    import monitor
+
+    assert monitor.strip_title_badges("모집 공고 file") == "모집 공고"
+    assert "새로운게시글" not in monitor.strip_title_badges(
+        "2026년 서울 AI 허브 모집 안내 새로운게시글"
+    )
+    # 본문에 '파일'이 들어 있는 정상 제목은 보존
+    assert monitor.strip_title_badges("파일 관리 시스템 구축 지원") == "파일 관리 시스템 구축 지원"
+
+
+def test_year_tail_not_reinterpreted_as_current_year():
+    """연도 포함 날짜 꼬리를 실행연도로 오인하지 않는다(TASK-05)."""
+    import monitor
+
+    dates = [d for _, d in monitor._parse_date_candidates(
+        "2025. 7. 22.(화) ~ 2025. 8. 5.(화)", base_year=2026,
+    )]
+    assert all(d.year == 2025 for d in dates)
+    assert monitor.date(2026, 7, 22) not in dates if hasattr(monitor, "date") else True
+    from datetime import date as _date
+    assert _date(2026, 7, 22) not in dates
+
+
+def test_bizinfo_p0_always_zero_without_baseline():
+    """기업마당 0건은 baseline 없어도 P0(ZERO_SUSPICIOUS)(TASK-03)."""
+    from mail_core.operations.coverage_alert import (
+        COLLECT_STATUS_ZERO_SUSPICIOUS,
+        classify_source_status,
+    )
+
+    row = {
+        "site_id": "bizinfo",
+        "site_name": "기업마당",
+        "enabled": True,
+        "collector_fn": "fetch_bizinfo",
+        "fetch_success": True,
+        "item_count": 0,
+        "fetch_error": "",
+    }
+    report = classify_source_status(row, history=[], zero_item_policy="p0_always")
+    assert report["status"] == COLLECT_STATUS_ZERO_SUSPICIOUS
+    assert report.get("detail", {}).get("p0_always") is True

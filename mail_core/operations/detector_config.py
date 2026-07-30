@@ -78,9 +78,9 @@ def thresholds_for_site(cfg: dict[str, Any] | None, site_id: str) -> dict[str, f
 
 
 def zero_item_policy_for_site(cfg: dict[str, Any] | None, site_id: str) -> str:
-    """p0_if_baseline | warning | ignore_zero."""
+    """사이트별 0건 정책. 허용: p0_if_baseline / p0_always / warning / ignore_zero."""
     value = str(site_policy(cfg, site_id).get("zero_item_policy") or "p0_if_baseline")
-    if value not in {"p0_if_baseline", "warning", "ignore_zero"}:
+    if value not in {"p0_if_baseline", "p0_always", "warning", "ignore_zero"}:
         return "p0_if_baseline"
     return value
 
