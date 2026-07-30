@@ -111,7 +111,7 @@ def test_detector_config_loads_pilots():
     assert "nipa" in cfg["sites"]
     assert "itp" in cfg["sites"]
     assert dc.zero_item_policy_for_site(cfg, "itp") == "warning"
-    assert dc.zero_item_policy_for_site(cfg, "bizinfo") == "p0_if_baseline"
+    assert dc.zero_item_policy_for_site(cfg, "bizinfo") == "p0_always"
     th_biz = dc.thresholds_for_site(cfg, "bizinfo")
     th_default = dc.thresholds_for_site(cfg, "unknown_site_xyz")
     assert th_biz["drop_ratio_p0"] == pytest.approx(0.35)

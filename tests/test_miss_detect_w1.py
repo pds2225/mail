@@ -75,9 +75,9 @@ def test_classify_sources_applies_detector_cfg_per_site():
 
 
 def test_real_detector_sites_json_pilots_diverge():
-    """실파일 기준: bizinfo 엄격, itp warning."""
+    """실파일 기준: bizinfo p0_always, itp warning."""
     cfg = dc.load_detector_config()
-    assert dc.zero_item_policy_for_site(cfg, "bizinfo") == "p0_if_baseline"
+    assert dc.zero_item_policy_for_site(cfg, "bizinfo") == "p0_always"
     assert dc.zero_item_policy_for_site(cfg, "itp") == "warning"
 
     rows = [

@@ -118,11 +118,12 @@ def test_bizinfo_channel_item_branch():
 
 
 @respx.mock
-def test_bizinfo_empty_json_array_returns_empty():
-    """구조 깨짐 시나리오 1: jsonArray 가 빈 배열이면 items == [] (빨간불)."""
+def test_bizinfo_empty_json_array_raises_fail_closed():
+    """빈 jsonArray 는 fail-closed — 수집실패 신호로 올린다(TASK-03)."""
     respx.get(BIZINFO_URL).mock(
         return_value=httpx.Response(200, json={"jsonArray": []}))
-    assert monitor.fetch_bizinfo(_site()) == []
+    with pytest.raises(RuntimeError, match="fail-closed"):
+        monitor.fetch_bizinfo(_site())
 
 
 @respx.mock
