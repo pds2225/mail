@@ -22,7 +22,7 @@
   },
   "sites": {
     "bizinfo": {
-      "zero_item_policy": "p0_if_baseline",
+      "zero_item_policy": "p0_always",
       "fetch_failed_risk": "P0",
       "drop_ratio_p0": 0.35,
       "drop_threshold": 0.65,

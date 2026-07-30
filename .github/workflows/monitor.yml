@@ -110,7 +110,7 @@ jobs:
             var/logs/source_field_quality_latest.json
             var/logs/source_field_quality_latest.md
           retention-days: 14
-          if-no-files-found: ignore
+          if-no-files-found: warn
 
       # 발송 직후 당일 메타 검수(MDR = L규칙 스타일). SMTP/IMAP 추가 호출 없음.
       # FAIL 이어도 발송은 이미 끝났으므로 continue-on-error — 커밋백·아티팩트는 계속.
