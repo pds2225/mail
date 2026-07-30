@@ -1735,8 +1735,18 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
     return day
 
 
-def delivery_cycle_date(now: datetime | None = None):
-    """발송 멱등 키의 기준일 = 실행 당일(KST). `days_back`·재조회창과 무관하다.
+#: 오전/오후 발송 회차를 가르는 KST 시각. 예약(07:30·18:30 KST)보다 넉넉히 뒤에 둬서
+#: GitHub Actions 예약 지연(실측 최대 ~1시간)에도 회차 판정이 흔들리지 않게 한다.
+DELIVERY_PM_CUTOFF_HOUR = 14
+
+
+def delivery_cycle_date(now: datetime | None = None) -> str:
+    """발송 멱등 키의 기준 = 실행 당일(KST) + 발송 회차(`#am`/`#pm`).
+
+    하루 2회 발송(07:30·18:30 KST, 2026-07-30 사용자 지정)에서 오후 실행이
+    "오늘 이미 보냄"으로 스킵되지 않도록 회차를 키에 포함한다. 같은 회차의 재실행은
+    계속 멱등으로 막힌다(크래시 후 재시도·중복 발송 방지).
+    `days_back`·재조회창과는 무관하다.
 
     왜 실행 당일인가 (2026-07-28·29 실제 발송 누락 사고):
       기준일을 재조회창의 가장 오래된 날(`previous_business_day(now, days_back)`)로 쓰면
@@ -1748,7 +1758,9 @@ def delivery_cycle_date(now: datetime | None = None):
       막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
     날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
     """
-    return (now or datetime.now(KST)).date()
+    dt = now or datetime.now(KST)
+    slot = "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
+    return f"{dt.date()}#{slot}"
 
 
 def select_text(root: Any, selector: str) -> str:
@@ -6248,7 +6260,10 @@ def execute_monitor(
     # (days_back 을 늘리면 기준일이 과거로 후퇴해 발송이 조용히 멈춘다 — delivery_cycle_date 참조)
     target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
-    date_str    = now.strftime("%m/%d")
+    # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
+    # 회차 경계는 발송 멱등 키와 같은 DELIVERY_PM_CUTOFF_HOUR 를 쓴다(표기·멱등 불일치 방지).
+    _slot_label = "오전" if now.hour < DELIVERY_PM_CUTOFF_HOUR else "저녁"
+    date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
 
     include_unknown = settings.get("include_date_unknown", False)
     # 날짜불명 처리정책: 명시값 우선, 없으면 legacy include_date_unknown 로 결정
