@@ -170,16 +170,79 @@ def test_skip_gate_when_all_units_delivered(tmp_path):
 #   늘린 순간(2026-07-25) 기준일이 이미 발송 완료된 과거 날짜로 후퇴했다.
 
 def test_delivery_cycle_date_does_not_regress_when_days_back_grows():
-    """기준일은 실행 당일 — days_back 을 늘려도 과거로 후퇴하지 않는다."""
+    """기준값은 실행 당일 회차 — days_back 을 늘려도 과거로 후퇴하지 않는다."""
     import monitor
 
     now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
 
-    assert monitor.delivery_cycle_date(now) == date(2026, 7, 29)
+    assert monitor.delivery_cycle_date(now) == "2026-07-29#am"
     # 사고 당시 기준일 계산식은 days_back 에 따라 과거로 밀렸다(07-28 → 07-24).
     assert monitor.previous_business_day(now, 3) == date(2026, 7, 24)
     for days_back in (1, 2, 3, 5, 10):
-        assert monitor.delivery_cycle_date(now) == date(2026, 7, 29), days_back
+        assert monitor.delivery_cycle_date(now) == "2026-07-29#am", days_back
+
+
+# ── 하루 2회 발송(07:30·18:30 KST, 2026-07-30 사용자 지정) ────────────────────────────
+
+def test_am_and_pm_runs_have_separate_cycles():
+    """오전·오후 실행은 다른 회차 키를 쓰고, 예약 지연에도 회차가 흔들리지 않는다."""
+    import monitor
+
+    def cycle(hour: int, minute: int = 30) -> str:
+        return monitor.delivery_cycle_date(
+            datetime(2026, 7, 30, hour, minute, tzinfo=monitor.KST)
+        )
+
+    assert cycle(7) == "2026-07-30#am"      # 예약 07:30
+    assert cycle(18) == "2026-07-30#pm"     # 예약 18:30
+    assert cycle(7) != cycle(18)
+    # GitHub 예약 지연 흡수: 오전분이 최대 6시간 늦어도 am, 오후분은 항상 pm
+    assert cycle(13, 59) == "2026-07-30#am"
+    assert cycle(14) == "2026-07-30#pm"
+    assert cycle(23, 59) == "2026-07-30#pm"
+
+
+def test_pm_run_not_skipped_after_am_delivered(tmp_path):
+    """오전 발송 완료 뒤 오후 실행이 '이미 보냄'으로 스킵되지 않는다(2회 발송 핵심)."""
+    import monitor
+
+    groups = [{
+        "id": "grp_a", "active": True, "tenant_id": "default",
+        "recipients": ["a@example.com"],
+    }]
+    settings = {"tenant_id": "default", "raw_all_enabled": False, "days_back": 3}
+    path = tmp_path / "delivery_state.json"
+
+    am = monitor.delivery_cycle_date(datetime(2026, 7, 30, 7, 30, tzinfo=monitor.KST))
+    pm = monitor.delivery_cycle_date(datetime(2026, 7, 30, 18, 30, tzinfo=monitor.KST))
+    delivery_state.save(
+        path, {delivery_state.key(am, "grp_a", "a@example.com", tenant="default")},
+    )
+
+    am_again = should_skip_fetch_already_delivered(
+        target_date=am, groups=groups, settings=settings,
+        delivery_path=path, enabled=True,
+    )
+    assert am_again["skip"] is True  # 같은 회차 재실행은 계속 막는다
+
+    pm_run = should_skip_fetch_already_delivered(
+        target_date=pm, groups=groups, settings=settings,
+        delivery_path=path, enabled=True,
+    )
+    assert pm_run["skip"] is False
+    assert pm_run["reason"] == "pending_units"
+
+
+def test_delivery_state_prune_keeps_thirty_days_of_two_cycles():
+    """하루 2회차여도 약 30일치 발송기록이 남는다(회차 도입으로 반토막 방지)."""
+    from mail_core.delivery import state as st
+
+    assert st.MAX_KEEP_DATES >= 60
+    keys = {
+        st.key(f"2026-06-{day:02d}#{slot}", "grp_a", "a@example.com")
+        for day in range(1, 31) for slot in ("am", "pm")
+    }
+    assert st._prune(set(keys)) == keys  # 30일 × 2회차는 전부 보존
 
 
 def test_days_back_increase_does_not_skip_today_send(tmp_path):
@@ -200,7 +263,7 @@ def test_days_back_increase_does_not_skip_today_send(tmp_path):
 
     now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
     result = should_skip_fetch_already_delivered(
-        target_date=str(monitor.delivery_cycle_date(now)),
+        target_date=monitor.delivery_cycle_date(now),
         groups=groups,
         settings=settings,
         delivery_path=path,
@@ -208,7 +271,7 @@ def test_days_back_increase_does_not_skip_today_send(tmp_path):
     )
     assert result["skip"] is False
     assert result["reason"] == "pending_units"
-    assert result["target_date"] == "2026-07-29"
+    assert result["target_date"] == "2026-07-29#am"
 
 
 def test_same_day_rerun_still_skips(tmp_path):

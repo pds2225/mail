@@ -2,8 +2,13 @@ name: 수출지원 모니터링 자동 실행
 
 on:
   schedule:
-    # 매일 오전 8시 KST (= UTC 23시, 전날 기준)
-    - cron: '0 23 * * *'
+    # 하루 2회 발송 (2026-07-30 사용자 지정): 07:30 KST, 18:30 KST
+    #   07:30 KST = 22:30 UTC (전날)  /  18:30 KST = 09:30 UTC
+    # ※ GitHub 예약 실행은 혼잡 시 지연된다(이 저장소 실측 ~50분). 도착이 늦으면
+    #   cron 을 그만큼 앞으로 당긴다. 회차(am/pm) 판정은 monitor.py 의
+    #   DELIVERY_PM_CUTOFF_HOUR=14 라서 지연 1~6시간까지 흔들리지 않는다.
+    - cron: '30 22 * * *'
+    - cron: '30 9 * * *'
   workflow_dispatch:
     # 수동 실행 버튼 (Actions 탭에서 즉시 실행 가능)
 
