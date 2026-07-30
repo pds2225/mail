@@ -45,8 +45,26 @@ python scripts/mail_daily_review.py
 python scripts/mail_daily_review.py --date 2026-07-30 --slot am --json
 ```
 
+### 30초 체크 (운영)
+
+1. `python scripts/mail_daily_review.py --json` → `overall` / `fails`
+2. FAIL이면 `rules.md` MDR ID → ZERO_MISS 7원칙 표로 원인 좁힘
+3. 재발이면 `context/ledger.jsonl` 최근 줄에서 같은 `fails[].id` 빈도 확인
+
 GHA: `.github/workflows/monitor.yml` 발송 step 이후 `mail_daily_review` step.
 기본은 **warn-only**(아티팩트+Summary, workflow red 강제 아님). `--fail-on-error`로 엄격화 가능.
+
+### 문서 연결
+
+| 문서 | 역할 |
+|------|------|
+| `docs/project/RULES.md` §7b | Auto Dev 허용 경로·매일 검수 계약 |
+| `docs/project/TASKS.md` TASK-019 | 큐 완료 기록 |
+| `docs/project/ZERO_MISS_GUARDRAILS.md` | 누락제로 7원칙(PR #218). MDR은 발송 후 재확인 |
+| `docs/project/mail_daily_reviews/rules.md` | MDR-001…005 + ZERO_MISS 매핑 |
+
+PR #218(`cursor/skipgate-ops-hardening`)과 `monitor.yml`·`TASKS.md`만 겹친다.
+MDR는 아티팩트 step **아래**에 훅을 추가하고 `if-no-files-found` 줄은 건드리지 않음 → #218의 `warn` 변경과 수동 머지 용이.
 
 ## 한계
 

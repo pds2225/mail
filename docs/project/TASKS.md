@@ -9,7 +9,7 @@
 ## RUNNING
 
 ## DONE
-- TASK-019: mail-daily-review — 발송 후 MDR 검수·`var/reviews/`·`docs/project/mail_daily_reviews/context/` 컨텍스트 적재·monitor.yml 후단 훅 (L규칙 스타일 매일 체크).
+- TASK-019: mail-daily-review — 발송 후 MDR 검수·`var/reviews/`·`docs/project/mail_daily_reviews/context/` 컨텍스트 적재·monitor.yml 후단 훅·ZERO_MISS/30초 체크 연결 (L규칙 스타일 매일 체크). PR #219.
 - TASK-017: user-priority: source_field_quality·monitor_runtime P0 알림/빈필드/KITA 예산 회귀가 유지되는지 테스트로 확인하고 빠지면 보강한다.
 - TASK-018: overnight: AUTO_DEV_PAT·AUTO_DEV_AGENT 준비 전제와 schedule 복구 체크리스트를 docs/project/RULES.md에 추가한다 (스케줄 자체는 켜지 않음).
 - TASK-016: user-priority: outstanding_dev_audit UNIQUE_CANDIDATE 발견 시 병합 PR 초안 절차를 docs/LOOP_ENGINEERING_AUTO_DEV.md에 짧게 문서화한다 (monitor.py 수정 금지).

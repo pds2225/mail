@@ -20,8 +20,35 @@
 — 해당없음/SKIP: 0
 ```
 
+## ZERO_MISS 7원칙 매핑 (PR #218 / TASK-G06)
+
+`docs/project/ZERO_MISS_GUARDRAILS.md`(skip_gate 계열)의 운영 계약을 **발송 후 자동 검수**로 재확인한다.
+본 MDR 브랜치는 그 파일을 새로 쓰지 않는다(#218과 충돌 회피). #218 머지 후 아래 표가 문서·실측을 잇는다.
+
+| ZERO_MISS 원칙 | MDR |
+|----------------|-----|
+| 1. 멱등 기준일 ≠ 참조창 | MDR-001 · MDR-004 |
+| 2. skip 이후에도 감시(coverage) | MDR-001 |
+| 3. 핵심소스 0건 fail-closed | MDR-002 |
+| 4. 알림·아티팩트 침묵 금지 | GHA `mail-daily-review-*` 아티팩트 + Step Summary |
+| 5. 표시 오염 ≠ 설정 | MDR-005 |
+| 6. 누락 < 과출 (recall) | `recall_zero_gate` / core_sources (코딩 게이트; MDR 외) |
+| 7. Secret·실발송 = 사람 게이트 | SMTP/IMAP 미호출 · Secret 미출력 (설계 계약) |
+
+## 30초 체크 (사람)
+
+```text
+python scripts/mail_daily_review.py --json
+# overall=PASS 이면 종료. FAIL 이면 fails[].id 만 읽고 RULES §7b / ZERO_MISS 표로 원인 좁힘.
+# 누적 패턴: docs/project/mail_daily_reviews/context/ledger.jsonl 끝 3~5줄
+```
+
+목표: 30초 안에 PASS/FAIL·위반 ID만 확인. 본문·수신자·Secret은 보지 않는다.
+
 ## 연결
 
 - Auto Dev 안전규칙: `docs/project/RULES.md` §7b
+- 누락제로 가드레일: `docs/project/ZERO_MISS_GUARDRAILS.md` (PR #218)
+- TASKS: TASK-019 (본 작업) · TASK-G01~G06 (#218)
 - 발송 훅: `.github/workflows/monitor.yml` → `mail_daily_review` step
 - 누적 컨텍스트: `docs/project/mail_daily_reviews/context/ledger.jsonl`
