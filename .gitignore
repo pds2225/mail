@@ -29,6 +29,9 @@ var/reports/loan/semas_seen_notices.json
 var/reports/review/*_review.md
 var/reports/review/*_send.csv
 var/reports/review/*_mail_draft.txt
+# 발송 후 일일 검수 상세 (컨텍스트 jsonl 은 docs/project/mail_daily_reviews/context/ 추적)
+var/reviews/*
+!var/reviews/.gitkeep
 # digest 품질 계측 산출물 (런타임 생성)
 workspace/digest_quality_*.json
 
