@@ -280,6 +280,23 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 
 ---
 
+## 12. 미반영 개발 감사 → 병합 (user-priority)
+
+`python3 scripts/outstanding_dev_audit.py --strict` 가 `UNIQUE_CANDIDATE` 를 내면:
+
+1. **backup/archive 는 병합하지 않는다** (`SKIP_NOISE`).
+2. tip 고유 파일이 `tests/` 뿐이고 생산 변경이 `monitor.py`/`groups.json`/`scoring.py` 뿐이며 main에 digest FP 스위트가 있으면 **이미 반영된 것으로 본다** (`CONTENT_ON_MAIN`).
+3. 그 외 UNIQUE 는 별도 worktree 브랜치에서:
+   - 보호 파일(`monitor.py`, `streamlit_app.py`) 직접 수정 금지 → `mail_core/` / `scripts/` / `tests/` 로 이식
+   - 회귀 테스트 추가 후 `loop_verify --quick` 통과
+   - PR 경유 merge (main 직푸시 금지)
+4. 병합 후 같은 브랜치가 다시 UNIQUE 로 잡히면 감사 휴리스틱을 고친다(허위 양성 방지).
+
+야간 준비: `python3 scripts/auto_dev_overnight_ready.py`  
+GHA cron 은 `AUTO_DEV_PAT` + `AUTO_DEV_AGENT=true` + `loop_config.trigger.schedule_enabled=true` 가 모두 준비되기 전에는 복구하지 않는다.
+
+---
+
 ## 12. 설계 결론
 
 > 앞으로 이 레포에서 AI를 가장 잘 쓰는 방식은

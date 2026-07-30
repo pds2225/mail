@@ -29,7 +29,9 @@ from pathlib import Path
 
 from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
-MAX_KEEP_DATES = 30  # 최근 N개 기준일자의 키만 유지(무한 증가 방지)
+#: 최근 N개 기준값(`YYYY-MM-DD#am`/`#pm`)의 키만 유지(무한 증가 방지).
+#: 하루 2회 발송(07:30·18:30 KST)이므로 60 = 약 30일치.
+MAX_KEEP_DATES = 60
 
 
 def _recipient_token(recipient: str, *, secret: str | None = None) -> str:

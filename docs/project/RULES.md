@@ -95,7 +95,18 @@ auto_dev/*
 docs/LOOP_ENGINEERING_AUTO_DEV.md
 scripts/*
 .github/workflows/auto-dev-queue.yml
+.github/workflows/monitor.yml
+docs/project/mail_daily_reviews/*
 ```
+
+## 7b. 매일 메일 발송 후 검수 (MDR)
+
+발송 직후 `python scripts/mail_daily_review.py` 로 당일 메타를 검수하고,
+`docs/project/mail_daily_reviews/context/ledger.jsonl` 에 append 한다.
+규칙 정의: `docs/project/mail_daily_reviews/rules.md` (MDR-001… — L규칙 스타일).
+상세 산출물: `var/reviews/YYYY-MM-DD/`. SMTP 추가 발송·Secret 출력 금지.
+매일 체크(30초): `python scripts/mail_daily_review.py --json` → overall/fails 만 확인 후,
+재발은 ledger + `ZERO_MISS_GUARDRAILS.md`(PR #218) 원칙 표로 좁힌다.
 
 ## 8. Loop Engineering 규칙
 
@@ -113,3 +124,17 @@ scripts/*
 | 7 | 사람 개입은 G1~G4만 (L1 무인 기본) |
 | 8 | `AUTO_DEV_FORCE_DONE` 는 비상용(기본 금지). 슬롯 없으면 `AWAITING_AGENT` | 허위 DONE 회귀 방지 |
 | 9 | `AUTO_DEV_SAFE_EXECUTOR` 기본 true — 문서 NOOP·허용 패치만 자동 DONE | 파서/핵심코드는 에이전트 |
+
+## 9. 야간 자동개발 schedule 복구 체크리스트
+
+GHA `auto-dev-queue.yml` 의 cron 을 다시 켜기 **전에** 모두 충족:
+
+1. GitHub Secret `AUTO_DEV_PAT` 가 유효하고 `contents`/`pull-requests` 권한이 있다.
+2. 워크플로에서 `AUTO_DEV_AGENT=true` 로 코딩 슬롯이 실제로 연결되어 있다 (아니면 AWAITING_AGENT만 반복).
+3. `auto_dev/loop_config.json` → `trigger.schedule_enabled=true` 와 워크플로 `schedule:` 블록이 동시에 활성이다 (`loop_verify --drift` D5).
+4. `docs/project/TASKS.md` PENDING 이 비어 있지 않다 (user-priority TASK 우선).
+5. `python3 scripts/auto_dev_overnight_ready.py --require-live` 가 exit 0 이다.
+6. `python3 scripts/outstanding_dev_audit.py --strict` 가 UNIQUE_CANDIDATE 없이 통과한다.
+
+위가 하나라도 실패하면 cron 을 복구하지 말고 `workflow_dispatch` / 로컬 에이전트로 PENDING 을 소진한다.
+

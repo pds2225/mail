@@ -40,6 +40,31 @@ def test_evaluate_source_items_measures_body_not_short_category():
     assert result["fields"]["target"]["value_rate"] == 0.5
 
 
+def test_success_without_date_or_target_value_is_not_readable():
+    support_only = {
+        **_good_item(),
+        "posted_date": "",
+        "target_field": "",
+        "support_field": "사업화",
+        "detail_extraction": {
+            "status": "SUCCESS",
+            "fields": {
+                "description": {"status": "SUCCESS"},
+                "application_period": {"status": "SUCCESS"},
+                # monitor의 레거시 메타는 support_field만 있어도 SUCCESS일 수 있다.
+                "target": {"status": "SUCCESS"},
+            },
+        },
+    }
+
+    result = sfq.evaluate_source_items("kstartup", [support_only])
+
+    assert result["fields"]["date"]["read_rate"] == 0.0
+    assert result["fields"]["date"]["value_rate"] == 0.0
+    assert result["fields"]["target"]["read_rate"] == 0.0
+    assert result["fields"]["target"]["value_rate"] == 0.0
+
+
 def test_repeated_fingerprint_escalates_from_p1_to_p0():
     metrics = {
         "kita": sfq.evaluate_source_items(
@@ -96,6 +121,43 @@ def test_learned_baseline_flags_large_regression():
     body = next(i for i in report["issues"] if i["fingerprint"] == "bizinfo:body")
     assert "FIELD_READ_RATE_REGRESSION" in body["reason"]
     assert body["baseline_median"] == 1.0
+
+
+def test_regressed_runs_do_not_replace_the_healthy_baseline():
+    healthy = {"bizinfo": sfq.evaluate_source_items("bizinfo", [_good_item()] * 5)}
+    regressed_item = {**_good_item(), "target_field": ""}
+    regressed = {
+        "bizinfo": sfq.evaluate_source_items(
+            "bizinfo",
+            [_good_item() for _ in range(4)] + [regressed_item],
+        )
+    }
+    history = {
+        "runs": [
+            *[
+                {"sources": healthy, "fingerprints": []}
+                for _ in range(3)
+            ],
+            *[
+                {
+                    "sources": regressed,
+                    "fingerprints": ["bizinfo:target"],
+                }
+                for _ in range(4)
+            ],
+        ]
+    }
+
+    report = sfq.build_quality_report(regressed, history=history)
+    target = next(
+        issue
+        for issue in report["issues"]
+        if issue["fingerprint"] == "bizinfo:target"
+    )
+
+    assert report["status"] == "P0"
+    assert target["baseline_median"] == 1.0
+    assert "FIELD_READ_RATE_REGRESSION" in target["reason"]
 
 
 def test_history_contains_metrics_and_fingerprints_only(tmp_path):

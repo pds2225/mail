@@ -36,10 +36,65 @@ def test_drop_items_from_p0_sources_by_name_and_id_prefix():
         {"id": "nipa_1", "title": "A", "source": "정보통신산업진흥원(NIPA)"},
         {"id": "bizinfo_1", "title": "B", "source": "기업마당"},
         {"id": "x", "title": "C", "source": "기타", "site_id": "nipa"},
+        # 접두 없는 legacy id 는 display name 으로만 소속 판별
+        {"id": "legacyNipa", "title": "D", "source": "정보통신산업진흥원(NIPA)"},
     ]
     kept, dropped = mr.drop_items_from_p0_sources(items, reports)
     assert {it["id"] for it in kept} == {"bizinfo_1"}
-    assert {it["id"] for it in dropped} == {"nipa_1", "x"}
+    assert {it["id"] for it in dropped} == {"nipa_1", "x", "legacyNipa"}
+
+
+def test_drop_items_from_p0_does_not_drop_sibling_boards_with_same_name():
+    """동일 display name 보드가 여러 개일 때 P0 1건이 sibling 정상 보드를 같이 지우면 안 됨.
+
+    sites.json 에 정부24×6, 대전테크노파크×3 등 중복 name 이 있다. html_table 공고 id 는
+    `{site_id}_{hash}` 형태이므로 id 접두로만 제외해야 한다.
+    """
+    reports = [
+        {
+            "site_id": "imp_0671c689",
+            "site_name": "정부24",
+            "risk_level": "P0",
+            "reason_codes": ["FETCH_FAILED"],
+        },
+        {"site_id": "imp_73a18059", "site_name": "정부24", "risk_level": ""},
+        {"site_id": "imp_410e209d", "site_name": "정부24", "risk_level": ""},
+    ]
+    items = [
+        {
+            "id": "imp_0671c689_aaa",
+            "title": "from P0 board",
+            "source": "정부24",
+        },
+        {
+            "id": "imp_73a18059_bbb",
+            "title": "healthy sibling",
+            "source": "정부24",
+        },
+        {
+            "id": "imp_410e209d_ccc",
+            "title": "healthy sibling2",
+            "source": "정부24",
+            "site_id": "imp_410e209d",
+        },
+        {"id": "bizinfo_1", "title": "unrelated", "source": "기업마당"},
+    ]
+    kept, dropped = mr.drop_items_from_p0_sources(items, reports)
+    assert {it["id"] for it in dropped} == {"imp_0671c689_aaa"}
+    assert {it["id"] for it in kept} == {
+        "imp_73a18059_bbb",
+        "imp_410e209d_ccc",
+        "bizinfo_1",
+    }
+
+
+def test_pbln_id_maps_to_bizinfo_instead_of_generic_underscore_fallback():
+    """기업마당 실제 ID(PBLN_*)는 알려진 별칭으로 P0 bizinfo에 연결한다."""
+    assert mr.item_belongs_to_p0(
+        {"id": "PBLN_000000000123", "source": "기업마당"},
+        p0_ids={"bizinfo"},
+        p0_names={"기업마당"},
+    ) is True
 
 
 def test_manual_queue_enqueue_and_ack(tmp_path):

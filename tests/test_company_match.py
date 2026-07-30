@@ -351,3 +351,55 @@ def test_determinism():
     a = company_match.match_for_company(items, _incheon_company())
     b = company_match.match_for_company(items, _incheon_company())
     assert [it["_match_score"] for it in a["matched"]] == [it["_match_score"] for it in b["matched"]]
+
+
+# ── #22: 예성이엔지 고객 매칭 프로필 ────────────────────────────────────────────
+
+def _yesung_profile():
+    # 명시 경로로 읽어 private recipient 주입 없이 공개 프로필 형상만 검증한다.
+    companies = company_match.load_companies(company_match.COMPANIES_PATH)
+    return next(c for c in companies if c["id"] == "cmp_yesung_eng")
+
+
+def test_yesung_profile_present_and_shaped():
+    profile = _yesung_profile()
+    assert profile["region"] == {"city": "경기", "district": "화성시"}
+    assert profile["has_factory"] is True
+    assert profile["email"] == ""
+    keywords = set(profile["industry_keywords"]) | set(profile["interest_keywords"])
+    for keyword in (
+        "용접",
+        "소부장",
+        "뿌리기업",
+        "스마트공장",
+        "스마트설비도입",
+        "AX",
+        "DX",
+        "디지털전환",
+    ):
+        assert keyword in keywords
+
+
+def test_yesung_matches_hwaseong_smartfactory_notice():
+    """경기 화성 스마트공장·뿌리기업 공고는 프로필 임계 이상이다."""
+    profile = _yesung_profile()
+    item = _item(
+        "경기 화성 뿌리기업 스마트공장 구축 지원사업",
+        "경기도 화성시 소재 제조업(용접·소부장) 기업 대상. "
+        "스마트설비도입·공정효율화 지원. 지원금 바우처.",
+        _types=["지원금/바우처"],
+    )
+    result = company_match.compute_match_score(item, profile)
+    assert result["score"] >= profile["match_threshold"]
+
+
+def test_yesung_excludes_other_region_and_education_notice():
+    """부산 전용 교육·설명회는 타지역·제외 키워드로 임계 미만이다."""
+    profile = _yesung_profile()
+    item = _item(
+        "부산 소상공인 교육일정 설명회 안내",
+        "부산광역시 전용. 부산 외 지역 제외. 교육 설명회 오리엔테이션.",
+    )
+    result = company_match.compute_match_score(item, profile)
+    assert result["score"] < profile["match_threshold"]
+    assert result["mismatches"]

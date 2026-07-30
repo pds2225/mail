@@ -29,6 +29,7 @@ SAMPLE_SIZE = 3
 OFFLINE_TESTS = (
     "tests/test_source_field_quality.py",
     "tests/test_runtime_detail_adapter.py",
+    "tests/test_monitor_runtime.py",
     "tests/test_core_sources_specialize.py",
     "tests/test_fetch_kita_replay.py",
 )
@@ -61,10 +62,12 @@ def collect_live_metrics() -> tuple[dict[str, dict], dict[str, str]]:
     os.environ["MONITOR_EXTRACTION_RETRY_SLEEP"] = "0"
     from mail_core.operations.detail_runtime_adapter import (
         install_kstartup_body_selector_adapter,
+        install_priority_detail_hosts_adapter,
     )
 
     install_kstartup_body_selector_adapter()
     import monitor as m
+    install_priority_detail_hosts_adapter(vars(m))
     from mail_core.operations.source_field_quality import evaluate_source_items
 
     sites = {s.get("id"): s for s in m.load_json(m.SITES_PATH, [])}

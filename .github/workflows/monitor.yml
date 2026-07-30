@@ -2,8 +2,13 @@ name: 수출지원 모니터링 자동 실행
 
 on:
   schedule:
-    # 매일 오전 8시 KST (= UTC 23시, 전날 기준)
-    - cron: '0 23 * * *'
+    # 하루 2회 발송 (2026-07-30 사용자 지정): 07:30 KST, 18:30 KST
+    #   07:30 KST = 22:30 UTC (전날)  /  18:30 KST = 09:30 UTC
+    # ※ GitHub 예약 실행은 혼잡 시 지연된다(이 저장소 실측 ~50분). 도착이 늦으면
+    #   cron 을 그만큼 앞으로 당긴다. 회차(am/pm) 판정은 monitor.py 의
+    #   DELIVERY_PM_CUTOFF_HOUR=14 라서 지연 1~6시간까지 흔들리지 않는다.
+    - cron: '30 22 * * *'
+    - cron: '30 9 * * *'
   workflow_dispatch:
     # 수동 실행 버튼 (Actions 탭에서 즉시 실행 가능)
 
@@ -105,6 +110,33 @@ jobs:
             var/logs/source_field_quality_latest.json
             var/logs/source_field_quality_latest.md
           retention-days: 14
+          if-no-files-found: warn
+
+      # 발송 직후 당일 메타 검수(MDR = L규칙 스타일). SMTP/IMAP 추가 호출 없음.
+      # FAIL 이어도 발송은 이미 끝났으므로 continue-on-error — 커밋백·아티팩트는 계속.
+      - name: 발송 후 일일 검수(MDR)·컨텍스트 적재
+        if: always()
+        id: daily_review
+        continue-on-error: true
+        run: |
+          set +e
+          python scripts/mail_daily_review.py --fail-on-error
+          code=$?
+          echo "review_exit=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -ne 0 ]; then
+            echo "::warning::mail_daily_review FAIL (exit $code) — var/reviews · ledger.jsonl 확인"
+          fi
+          exit "$code"
+
+      - name: 일일 검수 아티팩트 업로드
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mail-daily-review-${{ github.run_id }}
+          path: |
+            var/reviews/
+            docs/project/mail_daily_reviews/context/ledger.jsonl
+          retention-days: 30
           if-no-files-found: ignore
 
       - name: seen_ids·공고버전·O/X 피드백 커밋
@@ -124,10 +156,12 @@ jobs:
           # 수집 실패는 발송·중복방지와 무관하므로 경고만 내고 계속한다(발송은 이미 끝났다).
           python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
           git add -f var/state/seen_ids.json var/state/notice_versions.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
+          # 일일 검수 컨텍스트(append-only jsonl) — PII/Secret 없음. 실패해도 커밋백 계속.
+          git add docs/project/mail_daily_reviews/context/ledger.jsonl || true
           if git diff --staged --quiet; then
             echo "seen_ids·공고버전·피드백 변경 없음 — 커밋 생략"; exit 0
           fi
-          git commit -m "chore: seen_ids·공고버전·O/X 피드백 업데이트 $(date +'%Y-%m-%d')"
+          git commit -m "chore: seen_ids·공고버전·O/X 피드백·일일검수 업데이트 $(date +'%Y-%m-%d')"
           # 실행 중 원격 main 이 앞서가면 원격 트리에 정렬한 뒤 상태파일을 안전하게 합친다.
           for i in 1 2 3 4 5; do
             if git push origin HEAD:main; then
@@ -151,6 +185,9 @@ jobs:
               echo "::warning::delivery_outbox 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
               sleep 2; continue
             fi
+            if [ -f docs/project/mail_daily_reviews/context/ledger.jsonl ]; then
+              cp -f docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || true
+            fi
             git reset --hard origin/main
             python scripts/merge_seen_ids.py var/state/seen_ids.json /tmp/local_seen_ids.json || true
             if [ -f /tmp/local_notice_versions.json ]; then
@@ -162,12 +199,17 @@ jobs:
             if [ -f /tmp/local_delivery_outbox.enc ]; then
               python scripts/merge_delivery_outbox.py var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc || true
             fi
+            if [ -f /tmp/local_mail_daily_ledger.jsonl ]; then
+              python scripts/merge_jsonl_append.py docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || \
+                cp -f /tmp/local_mail_daily_ledger.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl || true
+            fi
             python scripts/collect_feedback.py --days 60 || true
             git add -f var/state/seen_ids.json var/state/notice_versions.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
+            git add docs/project/mail_daily_reviews/context/ledger.jsonl || true
             if git diff --staged --quiet; then
               echo "원격에 이미 반영됨 — 추가 커밋 불필요"; exit 0
             fi
-            git commit -m "chore: seen_ids·공고버전·O/X 피드백 업데이트(원격 병합) $(date +'%Y-%m-%d')"
+            git commit -m "chore: seen_ids·공고버전·O/X 피드백·일일검수 업데이트(원격 병합) $(date +'%Y-%m-%d')"
             sleep 2
           done
           echo "::warning::커밋백 push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"

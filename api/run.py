@@ -1,15 +1,17 @@
 """Vercel Python Serverless Function — 공고 모니터 HTTP 트리거 (safe-by-default)
 
 POST /api/run
-  Header: Authorization: Bearer <MONITOR_SECRET>   (MONITOR_SECRET 설정 시에만 검사)
+  Header: Authorization: Bearer <MONITOR_SECRET>
+    - dry-run: MONITOR_SECRET 이 설정돼 있으면 필수
+    - 실발송: MONITOR_SECRET 미설정이면 거부(fail closed), 설정 시 Bearer 필수
   Body(JSON, 모두 선택):
     {
       "dry_run": true,           # 기본 true — 미지정/true 면 미리보기만(발송 없음)
       "confirm_send": "SEND",    # 실제 발송하려면 정확히 "SEND" 이어야 함
       "include_raw_all": false,  # 원본전체 보고 메일 포함 여부
-      "persist_seen": false      # seen_ids 저장 여부(/tmp, warm-reuse 중만 유지)
+      "persist_seen": false      # 실발송 시 반드시 true (CLI --send/--persist-seen 와 동일)
     }
-  → 실제 발송은 dry_run=false 이고 confirm_send=="SEND" 일 때만. 그 외에는 전부 dry-run.
+  → 실제 발송은 dry_run=false 이고 confirm_send=="SEND" 이고 persist_seen=true 일 때만.
 
 GET /api/run?dry_run=1
   → dry-run(미리보기)만 허용. GET 으로는 절대 발송하지 않는다.
@@ -22,6 +24,7 @@ GET /api/run?dry_run=1
 from __future__ import annotations
 
 import json
+import hmac
 import logging
 import os
 import shutil
@@ -86,11 +89,20 @@ def _result_summary(result: dict) -> dict:
 class handler(BaseHTTPRequestHandler):
     """Vercel Python serverless handler (safe-by-default)."""
 
-    def _authorized(self) -> bool:
-        secret = os.environ.get("MONITOR_SECRET", "")
-        if not secret:
-            return True
-        return self.headers.get("Authorization", "") == f"Bearer {secret}"
+    def _authorized(self, *, allow_send: bool) -> tuple[bool, str]:
+        """Fail closed for real sends; dry-run still honors MONITOR_SECRET when set."""
+        secret = os.environ.get("MONITOR_SECRET", "").strip()
+        auth = self.headers.get("Authorization", "")
+        expected = f"Bearer {secret}" if secret else ""
+        if allow_send:
+            if not secret:
+                return False, "MONITOR_SECRET must be configured for real sends"
+            if not hmac.compare_digest(auth, expected):
+                return False, "Unauthorized"
+            return True, ""
+        if secret and not hmac.compare_digest(auth, expected):
+            return False, "Unauthorized"
+        return True, ""
 
     def _read_json_body(self) -> dict:
         try:
@@ -106,19 +118,28 @@ class handler(BaseHTTPRequestHandler):
             return {}
 
     def do_POST(self):  # noqa: N802
-        # ── 인증 ─────────────────────────────────────────────────────────────
-        if not self._authorized():
-            self._json(401, {"error": "Unauthorized"})
-            return
-
         # ── 발송 여부 판정 (safe-by-default) ─────────────────────────────────
         body = self._read_json_body()
         dry_run = body.get("dry_run", True)               # 기본 true
         confirm_send = str(body.get("confirm_send", ""))
-        include_raw_all = bool(body.get("include_raw_all", False))
-        persist_seen = bool(body.get("persist_seen", False))
+        include_raw_all = body.get("include_raw_all", False) is True
+        persist_seen = body.get("persist_seen", False) is True
         # 실제 발송은 dry_run 이 명시적으로 False(JSON false) 이고 confirm_send=="SEND" 일 때만.
         allow_send = (dry_run is False) and (confirm_send == "SEND")
+
+        # ── 인증 (실발송은 MONITOR_SECRET 필수) ───────────────────────────────
+        ok_auth, auth_error = self._authorized(allow_send=allow_send)
+        if not ok_auth:
+            self._json(401, {"error": auth_error})
+            return
+
+        # Mirror CLI: --send requires --persist-seen so outbox/idempotency cannot be bypassed.
+        if allow_send and not persist_seen:
+            self._json(400, {
+                "error": "persist_seen=true is required for real sends",
+                "hint": "Omit confirm_send for dry-run, or set persist_seen=true with confirm_send='SEND'.",
+            })
+            return
 
         # ── 실행 ─────────────────────────────────────────────────────────────
         try:

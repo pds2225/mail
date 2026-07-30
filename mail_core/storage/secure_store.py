@@ -23,6 +23,10 @@ class SecureStoreUnavailable(RuntimeError):
     """Raised when sensitive state would be persisted without an encryption key."""
 
 
+class SecureStoreDecryptError(RuntimeError):
+    """Raised when encrypted state exists but cannot be decrypted with the active key."""
+
+
 def ensure_local_key(path: str | os.PathLike[str] = DEFAULT_KEY_PATH) -> bytes:
     """Return the local Fernet key, creating it in the ignored secrets directory."""
     target = Path(path)
@@ -94,7 +98,12 @@ def save_encrypted_json(
 
 
 def load_encrypted_json(path: str | os.PathLike[str], default: Any = None) -> Any:
-    """Load encrypted state, recovering the newest decryptable rolling backup if needed."""
+    """Load encrypted state, recovering the newest decryptable rolling backup if needed.
+
+    If the primary file exists (non-empty) but neither it nor any backup decrypts with
+    the active key, raise SecureStoreDecryptError instead of returning ``default``.
+    Returning empty on key mismatch would let callers overwrite pending recovery state.
+    """
     target = Path(path)
     candidates = [target]
     backup_dir = target.parent / "state_backups"
@@ -103,12 +112,19 @@ def load_encrypted_json(path: str | os.PathLike[str], default: Any = None) -> An
             backup_dir.glob(f"{target.name}.*.bak"), key=lambda p: p.stat().st_mtime, reverse=True,
         ))
     missing = object()
+    saw_ciphertext = False
     for candidate in candidates:
         try:
             token = candidate.read_bytes()
         except OSError:
             continue
+        if token:
+            saw_ciphertext = True
         value = decrypt_json(token, missing)
         if value is not missing:
             return value
+    if saw_ciphertext:
+        raise SecureStoreDecryptError(
+            f"encrypted state at {target} is present but undecryptable with the active key"
+        )
     return default

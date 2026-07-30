@@ -422,3 +422,15 @@ def test_existing_severity_values_unchanged():
     anomalies = ca.detect_coverage_anomalies(rows, {"a": _history()})
     assert anomalies and anomalies[0]["severity"] == "high"
     assert anomalies[0]["reason"] == "0건 급락"
+
+
+def test_bizinfo_p0_always_zero_without_baseline():
+    """기업마당 zero_item_policy=p0_always — 기준선 없어도 0건은 의(TASK-G03)."""
+    row = _row(
+        site_id="bizinfo", site_name="기업마당", item_count=0,
+        collector_fn="fetch_bizinfo",
+    )
+    report = ca.classify_source_status(row, history=[], zero_item_policy="p0_always")
+    assert report["status"] == ca.COLLECT_STATUS_ZERO_SUSPICIOUS
+    assert ca.REASON_ZERO_ITEMS_WITH_BASELINE in report["reason_codes"]
+    assert report.get("detail", {}).get("p0_always") is True

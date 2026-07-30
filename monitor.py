@@ -32,6 +32,7 @@ from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
 from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
 from mail_core.security import net_guard, private_config
+from mail_core.storage.seen_ids_prune import MAX_SEEN_IDS, prune_seen_ids
 from mail_core.storage.state_store import atomic_write_json, load_json_with_recovery
 
 BASE_DIR = REPO_ROOT
@@ -103,7 +104,6 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
-MAX_SEEN_IDS   = 5000
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -845,6 +845,15 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     return "UPDATED"
 
 
+def _detail_extraction_unreliable(item: dict) -> bool:
+    """상세 FETCH/PARSE 실패면 스냅샷이 불완전해 버전 재발송 근거로 쓰면 안 된다."""
+    extraction = item.get("detail_extraction")
+    if not isinstance(extraction, dict):
+        return False
+    status = str(extraction.get("status") or "").strip().upper()
+    return status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}
+
+
 def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:
     deliverable: list[dict] = []
     updates: dict[str, dict] = {}
@@ -868,6 +877,26 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
             continue
         old_snapshot = previous.get("delivered_snapshot") or {}
         old_hash = str(previous.get("delivered_hash") or "")
+        # 전달 확정 스냅샷이 없으면 빈 dict 와 비교해 전 필드가 "변경"으로 오인된다.
+        # 이미 seen 이므로 시드만 하고 @vN 재발송하지 않는다.
+        if not old_hash:
+            updates[iid] = {
+                **base,
+                "version": max(1, int(previous.get("version", 1) or 1)),
+                "delivery_id": str(previous.get("delivery_id") or iid),
+                "seed_only": True,
+            }
+            continue
+        # 상세 추출 실패 관찰은 현재 우연히 같은 값이어도 전달 확정본으로 승격하지 않는다.
+        # 다음 정상 조회가 기존 delivered_snapshot과 비교되도록 항상 관찰 전용으로 남긴다.
+        if _detail_extraction_unreliable(item):
+            updates[iid] = {
+                **base,
+                "version": int(previous.get("version", 1) or 1),
+                "delivery_id": str(previous.get("delivery_id") or iid),
+                "unreliable_observe": True,
+            }
+            continue
         changed = _snapshot_changed_fields(old_snapshot, snapshot)
         material = sorted(set(changed) & _NOTICE_VERSION_MATERIAL_FIELDS)
         if current_hash == old_hash or not material:
@@ -886,6 +915,7 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
     merged = {str(k): dict(v) for k, v in versions.items() if isinstance(v, dict)}
     for iid, update in updates.items():
         record = dict(merged.get(iid) or {})
+        prior_pending_delivery_id = record.get("pending_delivery_id", "")
         record.update({
             "list_hash": update.get("list_hash", ""),
             "observed_hash": update.get("content_hash", ""),
@@ -893,6 +923,12 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             "last_seen_at": update.get("last_seen_at") or now.isoformat(),
             "pending_delivery_id": update.get("delivery_id", ""),
         })
+        if update.get("unreliable_observe"):
+            # FETCH/PARSE 실패 스냅샷은 재조회 대상으로 관찰만 기록한다.
+            # 이미 전달된 확정본과 기존 pending delivery는 절대 덮지 않는다.
+            record["pending_delivery_id"] = prior_pending_delivery_id
+            merged[iid] = record
+            continue
         delivery_id = str(update.get("delivery_id") or iid)
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({
@@ -1699,6 +1735,34 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
     return day
 
 
+#: 오전/오후 발송 회차를 가르는 KST 시각. 예약(07:30·18:30 KST)보다 넉넉히 뒤에 둬서
+#: GitHub Actions 예약 지연(실측 최대 ~1시간)에도 회차 판정이 흔들리지 않게 한다.
+DELIVERY_PM_CUTOFF_HOUR = 14
+
+
+def delivery_cycle_date(now: datetime | None = None) -> str:
+    """발송 멱등 키의 기준 = 실행 당일(KST) + 발송 회차(`#am`/`#pm`).
+
+    하루 2회 발송(07:30·18:30 KST, 2026-07-30 사용자 지정)에서 오후 실행이
+    "오늘 이미 보냄"으로 스킵되지 않도록 회차를 키에 포함한다. 같은 회차의 재실행은
+    계속 멱등으로 막힌다(크래시 후 재시도·중복 발송 방지).
+    `days_back`·재조회창과는 무관하다.
+
+    왜 실행 당일인가 (2026-07-28·29 실제 발송 누락 사고):
+      기준일을 재조회창의 가장 오래된 날(`previous_business_day(now, days_back)`)로 쓰면
+      `days_back` 을 늘리는 순간 기준일이 과거로 후퇴한다. 1→3 으로 바꾼 뒤(2026-07-25)
+      기준일이 이미 발송 완료된 07-23·07-24 로 되돌아가, 멱등 게이트가 매일
+      "이미 발송 완료"로 오판하고 수집·발송·커버리지 알림을 통째로 생략했다
+      (07-28·07-29 run 이 2분 44초에 종료, 이틀치 digest 누락).
+      실행 당일을 쓰면 하루에 정확히 한 세트가 되어 같은 날 재실행은 계속 멱등으로
+      막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
+    날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
+    """
+    dt = now or datetime.now(KST)
+    slot = "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
+    return f"{dt.date()}#{slot}"
+
+
 def select_text(root: Any, selector: str) -> str:
     """CSS selector로 찾은 첫 요소의 텍스트를 반환."""
     if not selector:
@@ -1719,11 +1783,9 @@ def save_seen_ids(ids: set[str]) -> None:
     if not _ALLOW_PERSIST_SEEN or os.environ.get("MONITOR_NO_PERSIST_SEEN") == "1":
         log.info("seen_ids 저장 생략 (dry-run / persist 비활성)")
         return
-    # 날짜 포함 ID(bizinfo_20260415 등)는 날짜순, 나머지는 알파벳순 → 최신 MAX_SEEN_IDS 유지
-    def _sort_key(s: str) -> str:
-        m = re.search(r"(\d{4}-\d{2}-\d{2}|\d{8})", s)
-        return m.group(1) if m else s
-    save_json(SEEN_IDS_PATH, sorted(ids, key=_sort_key)[-MAX_SEEN_IDS:])
+    # 핵심 소스(PBLN/kstartup/…) 우선 보존 + 20xx 날짜키. 알파벳 꼬리 절단으로
+    # 기업마당 id 가 통째로 사라지던 중복발송 사고를 막는다(seen_ids_prune).
+    save_json(SEEN_IDS_PATH, prune_seen_ids(ids, max_keep=MAX_SEEN_IDS))
 
 def load_sites() -> list[dict]:
     sites = load_json(SITES_PATH, [])
@@ -1879,7 +1941,13 @@ def _soup(url: str, extra_headers: dict | None = None, **kwargs):
 
 def _item(id_, title, link, author, desc, deadline, source,
           posted_date="", is_aggregator=False) -> dict:
-    return {"id": id_, "title": title, "link": link, "author": author,
+    # org=title 오염 차단(TASK-G05): 목록 파서가 제목을 주관기관 칸에 넣으면
+    # 지역·키워드 판정이 제목 문자열에 오염된다 → 동일하면 author 를 비운다.
+    title_n = norm(title)
+    author_n = norm(author)
+    if author_n and title_n and author_n == title_n:
+        author_n = ""
+    return {"id": id_, "title": title_n, "link": link, "author": author_n,
             "description": desc, "deadline": deadline, "source": source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
 
@@ -2118,26 +2186,35 @@ def fetch_bizinfo(site: dict) -> list[dict]:
     #      timeout 되므로, 직결을 먼저 시도하면 매 실행 ~90초를 헛되이 버린다 → data.go.kr 우선.
     #   ② 직결(bizinfo.go.kr RSS-API) — 키가 없거나 data.go.kr 이 하드 실패했을 때의 경로.
     #
-    # ★ 실패 신호 규약(커버리지 오탐 방지) — 한 경로가 '예외 없이' 완료하면(0건이어도) 그 응답을
-    #   권위 있는 것으로 신뢰해 그대로 반환한다(정상 0건 = '진짜 0건' → [] 반환, 다음 경로로 안 넘어감).
-    #   경로가 하드 실패(HTTP 접속실패·JSON 파싱실패·reqErr/resultCode 오류)하면 다음 경로로 넘어가고,
-    #   모든 경로가 하드 실패하면 첫 예외를 올린다 → 상위(fetch_all)가 fetch_success=False='수집실패'로
-    #   분류(커버리지 알림 정확 표기 + baseline 오염 방지).
+    # ★ 실패 신호 규약 — 경로 하드 실패(접속/파싱/reqErr) 또는 fail-closed 0건이면
+    #   다음 경로로 넘어가고, 전 경로 실패 시 예외를 올려 fetch_success=False 로 분류한다.
+    #   정상 N건(>0)만 권위 응답으로 즉시 반환. 빈 목록 허용은 BIZINFO_ALLOW_EMPTY=1.
     if DATA_GO_KR_KEY:
         sources = [("data.go.kr", _fetch_bizinfo_datagokr), ("bizinfo 직결", _fetch_bizinfo_direct)]
     else:
         sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
     hard_err: Exception | None = None
+    _allow_empty = os.environ.get("BIZINFO_ALLOW_EMPTY", "").strip().lower() in {
+        "1", "true", "yes", "on",
+    }
     for label, fn in sources:
         try:
             got = fn(site)
+            # ★ 기업마당 0건 fail-closed (TASK-03): 핵심소스 '진짜 0건'은 거의 없다.
+            #   권위 응답이어도 0건이면 이 경로 실패로 보고 다음 경로를 시도한다.
+            #   전 경로 0/실패면 아래 hard_err 로 올려 fetch_success=False 가 된다.
+            #   BIZINFO_ALLOW_EMPTY=1 일 때만 빈 목록 반환을 허용.
+            if not got and not _allow_empty:
+                raise RuntimeError(
+                    f"기업마당 {label} 0건 — fail-closed"
+                    " (BIZINFO_ALLOW_EMPTY=1 로만 완화 가능)"
+                )
         except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
             log.error("기업마당 %s 실패: %s", label, e)
             if hard_err is None:
                 hard_err = e
             continue
-        # 예외 없이 완료 = 권위 있는 응답(0건이어도 신뢰) → 그대로 반환.
         log.info("%s: %d건 (%s)", site["name"], len(got), label)
         return got
 
@@ -6027,7 +6104,7 @@ def execute_monitor(
         log.info("활성 그룹 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
 
-    target_date_early = previous_business_day(now, days_back)
+    target_date_early = delivery_cycle_date(now)
     # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
     if effective_send and persist_seen:
         try:
@@ -6075,22 +6152,14 @@ def execute_monitor(
     dedup_removed = len(all_items) - len(deduped)
 
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
+    # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
+    # classify 를 retry 앞에 두면 FETCH 실패 스냅샷으로 허위 UPDATED(@vN) 재발송이 난다.
     notice_versions = load_notice_versions()
     version_candidates = select_notice_version_candidates(
         deduped, seen_ids, notice_versions, now=now, days_back=days_back,
     )
     enriched_candidates = enrich_items(version_candidates)
-    new_items, notice_version_updates = classify_notice_versions(enriched_candidates, seen_ids, notice_versions)
-    brand_new_count = sum(1 for it in new_items if it.get("_change_type") == "NEW")
-    changed_count = len(new_items) - brand_new_count
-    log.info("처리대상: 신규 %d / 중요변경 %d / 버전검사 %d", brand_new_count, changed_count, len(version_candidates))
 
-    if _RAW_STORE is not None:
-        _RAW_STORE.begin_run(collected=len(all_items), deduped=len(deduped), new_items=len(new_items))
-        for it in new_items:
-            _RAW_STORE.save_item_meta(it)
-
-    # W3-c: 이미 enrich된 처리대상에 FETCH/PARSE 재시도 + 추출률·큐 (main 병합)
     extraction_rates_by_site: dict = {}
     extraction_retry_plan: list = []
     extraction_retry_stats: dict = {}
@@ -6110,8 +6179,8 @@ def execute_monitor(
         else:
             _backoff = (60, 180)
             _sleep_fn = None
-        new_items, extraction_retry_stats = run_extraction_retries(
-            new_items,
+        enriched_candidates, extraction_retry_stats = run_extraction_retries(
+            enriched_candidates,
             enrich_item_from_detail,
             backoff_sec=_backoff,
             sleep_fn=_sleep_fn,
@@ -6124,6 +6193,28 @@ def execute_monitor(
                 extraction_retry_stats.get("recovered"),
                 extraction_retry_stats.get("still_failed"),
             )
+    except Exception as e:
+        log.warning("extraction retry 실패(무시·분류 계속): %s", e)
+
+    new_items, notice_version_updates = classify_notice_versions(
+        enriched_candidates, seen_ids, notice_versions,
+    )
+    brand_new_count = sum(1 for it in new_items if it.get("_change_type") == "NEW")
+    changed_count = len(new_items) - brand_new_count
+    log.info("처리대상: 신규 %d / 중요변경 %d / 버전검사 %d", brand_new_count, changed_count, len(version_candidates))
+
+    if _RAW_STORE is not None:
+        _RAW_STORE.begin_run(collected=len(all_items), deduped=len(deduped), new_items=len(new_items))
+        for it in new_items:
+            _RAW_STORE.save_item_meta(it)
+
+    try:
+        from mail_core.operations.field_status import (
+            compute_extraction_rates,
+            plan_extraction_retries,
+            write_extraction_rates_report,
+        )
+        from mail_core.operations.miss_remediation import enqueue_extraction_failures
 
         by_site: dict[str, list] = {}
         for it in new_items:
@@ -6137,7 +6228,7 @@ def execute_monitor(
         write_extraction_rates_report(
             extraction_rates_by_site, run_at=now)
     except Exception as e:
-        log.warning("extraction_rates/retry/queue 실패(무시): %s", e)
+        log.warning("extraction_rates/queue 실패(무시): %s", e)
 
     # W2: DEGRADED/P0 소스 공고는 발송 후보에서 제외 (정상 소스만 발송)
     p0_dropped: list = []
@@ -6180,9 +6271,14 @@ def execute_monitor(
 
     # ④ 날짜 필터 (직전 영업일)
     recheck_dates = sorted(_recent_recheck_dates(now, days_back))
-    target_date = recheck_dates[0]
+    # 발송 멱등 키는 재조회창의 끝(가장 오래된 날)이 아니라 실행 당일을 쓴다.
+    # (days_back 을 늘리면 기준일이 과거로 후퇴해 발송이 조용히 멈춘다 — delivery_cycle_date 참조)
+    target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
-    date_str    = now.strftime("%m/%d")
+    # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
+    # 회차 경계는 발송 멱등 키와 같은 DELIVERY_PM_CUTOFF_HOUR 를 쓴다(표기·멱등 불일치 방지).
+    _slot_label = "오전" if now.hour < DELIVERY_PM_CUTOFF_HOUR else "저녁"
+    date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
 
     include_unknown = settings.get("include_date_unknown", False)
     # 날짜불명 처리정책: 명시값 우선, 없으면 legacy include_date_unknown 로 결정
@@ -7152,7 +7248,14 @@ if __name__ == "__main__":
         else:
             # 실발송 경로: 커버리지 감사로 send_hold·P0 필터·manual_queue 를 연결한다.
             # allow_alert 는 --coverage-alert 일 때만(알림 노이즈 분리).
-            # 기준일 전량 멱등 완료면 커버리지·수집 전부 생략(주말 재실행 2h+ 낭비 방지).
+            #
+            # ★ skip 이어도 SystemExit(0) 금지 (2026-07-30 TASK-G01):
+            #   과거 early-exit 가 coverage/P0/artifact 를 통째로 건너뛰어
+            #   "2분대 초록불 + 수집이상 침묵" 사고가 났다. 발송만 생략하고
+            #   coverage·이상탐지·아티팩트는 반드시 돌린다.
+            _t0 = time.monotonic()
+            _skip_fetch = False
+            _skip_meta: dict = {}
             if args.send and args.persist_seen:
                 try:
                     from mail_core.delivery.skip_gate import (
@@ -7161,9 +7264,7 @@ if __name__ == "__main__":
                     _settings_ee = load_settings()
                     _groups_ee = load_groups()
                     _wl_ee = load_watchlist()
-                    _td = previous_business_day(
-                        datetime.now(KST), int(_settings_ee.get("days_back", 1) or 1),
-                    )
+                    _td = delivery_cycle_date(datetime.now(KST))
                     _skip_ee = should_skip_fetch_already_delivered(
                         target_date=str(_td),
                         groups=_groups_ee,
@@ -7173,15 +7274,22 @@ if __name__ == "__main__":
                         delivery_path=DELIVERY_STATE_PATH,
                     )
                     if _skip_ee.get("skip"):
+                        _skip_fetch = True
+                        _skip_meta = dict(_skip_ee)
                         log.info(
-                            "기준일 %s 발송 단위 %s개 멱등 완료 — 커버리지·수집·발송 생략",
+                            "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략"
+                            "(coverage/P0/artifact 는 계속)",
                             _skip_ee.get("target_date"), _skip_ee.get("units"),
                         )
-                        raise SystemExit(0)
-                except SystemExit:
-                    raise
                 except Exception as e:
-                    log.warning("발송완료 early-exit 실패(무시·수집 계속): %s", e)
+                    log.warning("발송완료 skip 판정 실패(무시·수집 계속): %s", e)
+            if args.send and not DATA_GO_KR_KEY:
+                # DATA_GO_KR_KEY 정책(TASK-G03): 실발송에서 키 없으면 기업마당이
+                # bizinfo 직결(WAF timeout)에만 의존 → 경고를 남긴다(발송은 막지 않음).
+                log.warning(
+                    "DATA_GO_KR_KEY 미설정 — 기업마당 data.go.kr 폴백 비활성"
+                    "(GHA Secret 등록 권장)"
+                )
             _gate: dict = {}
             if not args.skip_coverage_fetch:
                 try:
@@ -7223,12 +7331,31 @@ if __name__ == "__main__":
                     }
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
-            main(
-                allow_send=args.send,
-                include_raw_all=args.include_raw_all,
-                persist_seen=args.persist_seen,
-                collection_gate=_gate,
-            )
+            if _skip_fetch:
+                _dur = time.monotonic() - _t0
+                log.info(
+                    "skipped_fetch=true duration_sec=%.1f target_date=%s reason=%s"
+                    " units=%s (coverage done, send skipped)",
+                    _dur,
+                    _skip_meta.get("target_date"),
+                    _skip_meta.get("reason"),
+                    _skip_meta.get("units"),
+                )
+                # 이상치 경보(TASK-G04): skip 인데도 coverage 가 비정상적으로 짧으면 경고.
+                # coverage 를 돌렸다면 보통 수분 이상; 30초 미만이면 artifact/수집 의심.
+                if _dur < 30 and not args.skip_coverage_fetch:
+                    log.warning(
+                        "SHORT_RUN_ANOMALY skipped_fetch=true duration_sec=%.1f"
+                        " — coverage artifact/수집 누락 의",
+                        _dur,
+                    )
+            else:
+                main(
+                    allow_send=args.send,
+                    include_raw_all=args.include_raw_all,
+                    persist_seen=args.persist_seen,
+                    collection_gate=_gate,
+                )
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise
