@@ -1735,6 +1735,22 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
     return day
 
 
+def delivery_cycle_date(now: datetime | None = None):
+    """발송 멱등 키의 기준일 = 실행 당일(KST). `days_back`·재조회창과 무관하다.
+
+    왜 실행 당일인가 (2026-07-28·29 실제 발송 누락 사고):
+      기준일을 재조회창의 가장 오래된 날(`previous_business_day(now, days_back)`)로 쓰면
+      `days_back` 을 늘리는 순간 기준일이 과거로 후퇴한다. 1→3 으로 바꾼 뒤(2026-07-25)
+      기준일이 이미 발송 완료된 07-23·07-24 로 되돌아가, 멱등 게이트가 매일
+      "이미 발송 완료"로 오판하고 수집·발송·커버리지 알림을 통째로 생략했다
+      (07-28·07-29 run 이 2분 44초에 종료, 이틀치 digest 누락).
+      실행 당일을 쓰면 하루에 정확히 한 세트가 되어 같은 날 재실행은 계속 멱등으로
+      막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
+    날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
+    """
+    return (now or datetime.now(KST)).date()
+
+
 def select_text(root: Any, selector: str) -> str:
     """CSS selector로 찾은 첫 요소의 텍스트를 반환."""
     if not selector:
@@ -6061,7 +6077,7 @@ def execute_monitor(
         log.info("활성 그룹 없음. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
 
-    target_date_early = previous_business_day(now, days_back)
+    target_date_early = delivery_cycle_date(now)
     # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
     if effective_send and persist_seen:
         try:
@@ -6228,7 +6244,9 @@ def execute_monitor(
 
     # ④ 날짜 필터 (직전 영업일)
     recheck_dates = sorted(_recent_recheck_dates(now, days_back))
-    target_date = recheck_dates[0]
+    # 발송 멱등 키는 재조회창의 끝(가장 오래된 날)이 아니라 실행 당일을 쓴다.
+    # (days_back 을 늘리면 기준일이 과거로 후퇴해 발송이 조용히 멈춘다 — delivery_cycle_date 참조)
+    target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
     date_str    = now.strftime("%m/%d")
 
@@ -7209,9 +7227,7 @@ if __name__ == "__main__":
                     _settings_ee = load_settings()
                     _groups_ee = load_groups()
                     _wl_ee = load_watchlist()
-                    _td = previous_business_day(
-                        datetime.now(KST), int(_settings_ee.get("days_back", 1) or 1),
-                    )
+                    _td = delivery_cycle_date(datetime.now(KST))
                     _skip_ee = should_skip_fetch_already_delivered(
                         target_date=str(_td),
                         groups=_groups_ee,
