@@ -153,6 +153,87 @@ def test_missing_delivered_hash_seeds_instead_of_version_bump():
     assert updates["pending"].get("seed_only") is True
 
 
+def test_seed_path_fetch_failure_does_not_promote_thin_delivered(
+    monkeypatch,
+    tmp_path,
+):
+    """seen 이지만 versions 없는 공고 + DETAIL_FETCH_FAILED 는 seed_only 로
+    빈 delivered_* 를 심지 않는다. 다음 정상 enrich 가 허위 @v2 를 만들지 않아야 한다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    thin = item(
+        "seedfail",
+        "2026-07-24",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+        detail_extraction={"status": "DETAIL_FETCH_FAILED"},
+        _version_seed_only=True,
+    )
+    deliverable, updates = m.classify_notice_versions([thin], {"seedfail"}, {})
+    assert deliverable == []
+    assert updates["seedfail"].get("unreliable_observe") is True
+    assert updates["seedfail"].get("seed_only") is not True
+
+    committed = m.commit_notice_versions({}, updates, {"seedfail"})
+    assert not committed["seedfail"].get("delivered_hash")
+    assert committed["seedfail"].get("observed_hash")
+
+    full = item("seedfail", "2026-07-24")
+    recovered, updates2 = m.classify_notice_versions([full], {"seedfail"}, committed)
+    assert recovered == []
+    assert updates2["seedfail"].get("seed_only") is True
+    seeded = m.commit_notice_versions(committed, updates2, {"seedfail"})
+    assert seeded["seedfail"].get("delivered_hash")
+    # 시드 이후 동일 본문은 재발송 없음
+    again, _ = m.classify_notice_versions([full], {"seedfail"}, seeded)
+    assert again == []
+
+
+def test_pending_without_delivered_hash_fetch_failure_does_not_promote(
+    monkeypatch,
+    tmp_path,
+):
+    """delivered_hash 없는 pending 레코드 + FETCH 실패도 빈 스냅샷을 승격하지 않는다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    full = item("pendfail", "2026-07-24")
+    snap = m._notice_version_snapshot(full)
+    versions = {
+        "pendfail": {
+            "version": 1,
+            "delivery_id": "pendfail",
+            "list_hash": m._notice_list_hash(full),
+            "observed_hash": m._notice_snapshot_hash(snap),
+            "observed_snapshot": snap,
+            "pending_delivery_id": "pendfail",
+        }
+    }
+    thin = item(
+        "pendfail",
+        "2026-07-24",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        detail_extraction={"status": "DETAIL_FETCH_FAILED"},
+    )
+    deliverable, updates = m.classify_notice_versions([thin], {"pendfail"}, versions)
+    assert deliverable == []
+    assert updates["pendfail"].get("unreliable_observe") is True
+    committed = m.commit_notice_versions(versions, updates, {"pendfail"})
+    assert not committed["pendfail"].get("delivered_hash")
+    assert committed["pendfail"].get("pending_delivery_id") == "pendfail"
+
+    recovered, _ = m.classify_notice_versions([full], {"pendfail"}, committed)
+    # 정상 enrich 후 seed 가능 — 허위 @v2(EXTENDED) 가 아니어야 한다
+    assert recovered == []
+
+
 def test_real_deadline_extension_still_versions_after_reliable_enrich():
     """추출 성공 상태의 실제 마감 연장은 계속 @vN 재발송한다."""
     before = item("extend2", "2026-07-20", deadline="2026-07-25")

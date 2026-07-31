@@ -872,6 +872,18 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
             deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
             updates[iid] = {**base, "version": version, "delivery_id": iid}
             continue
+        # 상세 FETCH/PARSE 실패 스냅샷은 seed 경로에서도 전달 확정본으로 승격하면 안 된다.
+        # (seed_only 가 빈 delivered_* 를 심으면, 다음 정상 enrich 가 전 필드 "변경"으로
+        #  허위 @vN 재발송을 만든다 — delivered_hash 가 이미 있는 경로의 unreliable_observe
+        #  가드와 같은 사고 유형.)
+        if _detail_extraction_unreliable(item):
+            updates[iid] = {
+                **base,
+                "version": max(1, int((previous or {}).get("version", 1) or 1)),
+                "delivery_id": str((previous or {}).get("delivery_id") or iid),
+                "unreliable_observe": True,
+            }
+            continue
         if previous is None or item.get("_version_seed_only"):
             updates[iid] = {**base, "version": 1, "delivery_id": iid, "seed_only": True}
             continue
@@ -885,16 +897,6 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
                 "version": max(1, int(previous.get("version", 1) or 1)),
                 "delivery_id": str(previous.get("delivery_id") or iid),
                 "seed_only": True,
-            }
-            continue
-        # 상세 추출 실패 관찰은 현재 우연히 같은 값이어도 전달 확정본으로 승격하지 않는다.
-        # 다음 정상 조회가 기존 delivered_snapshot과 비교되도록 항상 관찰 전용으로 남긴다.
-        if _detail_extraction_unreliable(item):
-            updates[iid] = {
-                **base,
-                "version": int(previous.get("version", 1) or 1),
-                "delivery_id": str(previous.get("delivery_id") or iid),
-                "unreliable_observe": True,
             }
             continue
         changed = _snapshot_changed_fields(old_snapshot, snapshot)

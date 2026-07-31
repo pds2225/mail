@@ -49,6 +49,75 @@ os.environ.setdefault("ANTHROPIC_API_KEY", "dummy")
 os.environ.setdefault("GMAIL_ADDRESS", "dummy@example.com")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "dummy")
 
+def _force_utf8_console() -> None:
+    """cp949 콘솔에서 한글·이모지 출력이 UnicodeEncodeError 로 죽지 않게 한다."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+def _git(*args: str) -> subprocess.CompletedProcess | None:
+    """저장소 루트에서 git 을 실행한다(git 없음·실행 실패면 None)."""
+    try:
+        return subprocess.run(
+            ["git", "-C", str(ROOT), *args],
+            capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _deleted_tracked_files() -> list[str]:
+    """git 이 관리하는데 작업 폴더에서는 사라진 파일 목록(진단 불가면 빈 목록)."""
+    proc = _git("ls-files", "--deleted")
+    if proc is None or proc.returncode != 0:
+        return []
+    return [name for name in proc.stdout.splitlines() if name.strip()]
+
+
+def selfcheck_repo_files(verbose: bool = False) -> int:
+    """프로그램 파일 소실을 감지해 알리고 원본에서 되살린다. 0=정상, 1=미해결.
+
+    2026-07-31 실제 사고: 다른 세션의 중단된 git 작업으로
+    mail_core/storage/seen_ids_prune.py 등 15개가 작업 폴더에서 사라져,
+    이 프로그램이 실행 즉시 ModuleNotFoundError 로 죽었다(런처 창이 그냥 닫혀
+    사용자에게는 원인이 보이지 않았다). 그래서 실행 전에 먼저 점검한다.
+    복구는 git 인덱스를 잠그지 않는 checkout-index 로 하므로 같은 폴더에서
+    작업 중인 다른 세션의 git 작업을 방해하지 않는다.
+    """
+    missing = _deleted_tracked_files()
+    if not missing:
+        if verbose:
+            print("✅ 자가진단: 프로그램 파일 이상 없음")
+        return 0
+
+    print(f"\n⚠ 자가진단: 프로그램 파일 {len(missing)}개가 사라졌습니다(이대로면 실행이 죽습니다).")
+    for name in missing[:5]:
+        print(f"   · {name}")
+    if len(missing) > 5:
+        print(f"   · … 외 {len(missing) - 5}개")
+
+    print("   🔧 저장돼 있던 원본에서 되살리는 중…")
+    for i in range(0, len(missing), 100):   # 명령줄 길이 제한 회피
+        _git("checkout-index", "-f", "--", *missing[i:i + 100])
+
+    still = _deleted_tracked_files()
+    if still:
+        print(f"   ❌ {len(still)}개를 되살리지 못했습니다(다른 프로그램이 폴더를 쓰는 중일 수 있음).")
+        print(f"      잠시 뒤 다시 실행해 보고, 계속 실패하면 이렇게 알려주세요: {ROOT} 파일이 사라졌어요")
+        return 1
+    print(f"   ✅ {len(missing)}개 되살렸습니다 — 계속 진행합니다.\n")
+    return 0
+
+
+_force_utf8_console()
+if "--selfcheck" in sys.argv:      # 런처(cmd)가 실행 직전에 부르는 진단 전용 모드
+    raise SystemExit(selfcheck_repo_files(verbose=True))
+selfcheck_repo_files()             # 평소 실행에서도 무거운 import 전에 먼저 점검
+
 import httpx  # noqa: E402
 from bs4 import BeautifulSoup  # noqa: E402
 
@@ -684,12 +753,7 @@ def _notify_download_done(ok: int, link_count: int, out_dir: Path) -> None:
 
 
 def main() -> int:
-    # cp949 콘솔/파이프에서 이모지 출력이 UnicodeEncodeError 로 죽지 않게(출력은 UTF-8 고정)
-    for stream in (sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
+    _force_utf8_console()   # cp949 콘솔/파이프에서 이모지 출력이 죽지 않게(UTF-8 고정)
     parser = argparse.ArgumentParser(
         description="공고 상세 페이지 링크의 첨부파일을 모두 다운로드한다.")
     parser.add_argument("urls", nargs="*", help="공고 상세 페이지 URL(여러 개 가능)")
@@ -701,6 +765,8 @@ def main() -> int:
                         help="완료 시 Windows 팝업(가능할 때만)")
     parser.add_argument("--interactive", action="store_true", help="링크를 직접 입력받아 반복 처리(더블클릭 런처용)")
     parser.add_argument("--quiet", action="store_true", help="httpx 등 로그 출력 최소화")
+    parser.add_argument("--selfcheck", action="store_true",
+                        help="프로그램 파일이 사라졌는지만 점검하고 종료(런처가 실행 직전에 사용)")
     args = parser.parse_args()
 
     logging.basicConfig(
