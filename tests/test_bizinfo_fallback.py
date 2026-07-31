@@ -6,11 +6,13 @@
   · 직결이 건을 모으면 그대로 사용(폴백 안 탐)
   · 직결 하드 실패 + 키 없음 → 예외 재발생(커버리지 '수집실패' 신호 유지)
   · 직결 하드 실패 + 키 있음 → data.go.kr 폴백
-  · 직결 진짜 0건 + 키 없음 → [] (예외 아님)
+  · 0건은 fail-closed(예외) — BIZINFO_ALLOW_EMPTY=1 일 때만 [] 허용 (TASK-03)
 """
 import os
 import sys
 from pathlib import Path
+
+import pytest
 
 os.environ.setdefault("BIZINFO_API_KEY", "x")
 os.environ.setdefault("ANTHROPIC_API_KEY", "x")
@@ -93,8 +95,18 @@ def test_fall_to_direct_when_datagokr_hard_fails(monkeypatch):
     assert len(out) == 1 and out[0]["id"] == "d1"
 
 
-def test_direct_empty_no_key_returns_empty(monkeypatch):
-    """진짜 0건(빈 배열)은 예외 아님 — 키 없으면 그대로 [] 반환."""
+def test_direct_empty_no_key_raises_fail_closed(monkeypatch):
+    """0건은 fail-closed — 키 없이 직결만 있으면 RuntimeError."""
+    monkeypatch.delenv("BIZINFO_ALLOW_EMPTY", raising=False)
+    monkeypatch.setattr(m, "_fetch_bizinfo_direct", lambda s: [])
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "")
+    with pytest.raises(RuntimeError, match="fail-closed"):
+        m.fetch_bizinfo(SITE)
+
+
+def test_direct_empty_allowed_when_env_set(monkeypatch):
+    """BIZINFO_ALLOW_EMPTY=1 이면 0건 [] 허용."""
+    monkeypatch.setenv("BIZINFO_ALLOW_EMPTY", "1")
     monkeypatch.setattr(m, "_fetch_bizinfo_direct", lambda s: [])
     monkeypatch.setattr(m, "DATA_GO_KR_KEY", "")
     assert m.fetch_bizinfo(SITE) == []
@@ -154,15 +166,21 @@ def test_datagokr_raises_on_error_header(monkeypatch):
         assert "data.go.kr 오류" in str(e)
 
 
-def test_datagokr_legit_zero_trusted(monkeypatch):
-    """primary(data.go.kr)가 정상 0건(예외 아님)이면 그 응답을 신뢰 — 직결로 안 넘어간다."""
+def test_datagokr_zero_falls_through_to_direct(monkeypatch):
+    """primary 0건은 fail-closed → 직결 폴백을 시도한다(TASK-03)."""
+    monkeypatch.delenv("BIZINFO_ALLOW_EMPTY", raising=False)
     monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
-    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: [])   # 정상 0건(권위)
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", lambda s: [])
     called = {"direct": False}
-    monkeypatch.setattr(m, "_fetch_bizinfo_direct",
-                        lambda s: called.__setitem__("direct", True) or [m._item("z", "Z", "", "", "", "", s["name"])])
+    monkeypatch.setattr(
+        m,
+        "_fetch_bizinfo_direct",
+        lambda s: called.__setitem__("direct", True)
+        or [m._item("z", "Z", "", "", "", "", s["name"])],
+    )
     out = m.fetch_bizinfo(SITE)
-    assert out == [] and called["direct"] is False, "primary 정상 0건은 직결로 안 넘어가야 함"
+    assert called["direct"] is True
+    assert len(out) == 1 and out[0]["id"] == "z"
 
 
 def test_datagokr_retries_transient_failure(monkeypatch):
