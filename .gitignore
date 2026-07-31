@@ -60,7 +60,12 @@ Thumbs.db
 .vercel/
 node_modules/
 
-.claude/
+# .claude 는 기본 제외(개인 설정·세션 캐시·워크트리). 단 팀·클라우드 세션이 공유해야 하는
+# 스킬/훅/공용 설정만 예외로 추적한다. (클라우드 세션은 repo 에 커밋된 것만 볼 수 있다)
+.claude/*
+!.claude/skills/
+!.claude/hooks/
+!.claude/settings.json
 
 # Local diagnostic outputs
 config/groups.backup.*.json
