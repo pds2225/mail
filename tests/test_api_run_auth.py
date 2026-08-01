@@ -140,7 +140,8 @@ def test_api_run_non_boolean_falsy_dry_run_never_sends(monkeypatch):
     assert calls[0]["allow_send"] is False
 
 
-def test_api_run_allows_authorized_send_with_persist_seen(monkeypatch):
+def test_api_run_rejects_serverless_real_send_even_when_authorized(monkeypatch):
+    """Vercel /tmp state 로는 persist_seen 멱등이 성립하지 않는다 → 실발송 501."""
     index_mod = _load_index_module(monkeypatch, MONITOR_SECRET="s3cret")
     calls: list[dict] = []
     _install_fake_monitor(monkeypatch, calls)
@@ -155,14 +156,10 @@ def test_api_run_allows_authorized_send_with_persist_seen(monkeypatch):
         headers={"Authorization": "Bearer s3cret"},
     )
     h.do_POST()
-    assert h._responses[0][0] == 200
-    assert calls == [
-        {
-            "allow_send": True,
-            "include_raw_all": True,
-            "persist_seen": True,
-        }
-    ]
+    assert h._responses[0][0] == 501
+    assert "not supported" in h._responses[0][1]["error"]
+    assert "GitHub Actions" in h._responses[0][1]["hint"]
+    assert calls == []
 
 
 def test_api_run_dry_run_ok_without_secret(monkeypatch):

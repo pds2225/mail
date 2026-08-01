@@ -99,6 +99,18 @@ class handler(BaseHTTPRequestHandler):
             })
             return
 
+        # Vercel Python 은 MAIL_VAR_DIR 을 /tmp 에 둔다(이 파일 L7–8). seen_ids·
+        # delivery_state·outbox 가 콜드스타트마다 증발하므로 persist_seen=true 여도
+        # 멱등이 성립하지 않는다 → 인증된 실발송이 전 수신자 중복 메일을 만든다.
+        # 실발송은 GitHub Actions monitor 워크플로(커밋백 있는 영구 state)만 허용.
+        if allow_send:
+            self._json(501, {
+                "ok": False,
+                "error": "Real sends are not supported on Vercel serverless",
+                "hint": "Use dry_run=true for preview, or trigger the GitHub Actions monitor workflow for delivery.",
+            })
+            return
+
         # 인증·send gate 통과 뒤에만 무거운 monitor 모듈을 읽는다.
         try:
             from monitor import execute_monitor
