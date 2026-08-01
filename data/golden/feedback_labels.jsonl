@@ -6,6 +6,7 @@
 {"id": "ic_namdong_319e298f029d54171a6e", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:35 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:35 +0900"}
 {"id": "ic_namdong_6fbfd3dd5b7e0730517e", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:27 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:27 +0900"}
 {"id": "ic_namdong_8c37a069ae1dc34301eb", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:17 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:17 +0900"}
+{"id": "ic_namdong_958d5286a04ebd487de2", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:38:04 +0900", "last_seen": "Fri, 31 Jul 2026 16:38:04 +0900"}
 {"id": "ic_namdong_ad04b1b5deb23a19e06a", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:18 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:18 +0900"}
 {"id": "ic_namdong_cc448610a2efea7d0155", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:15 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:15 +0900"}
 {"id": "ic_namdong_cf1ea41385f0a1cae825", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:24 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:24 +0900"}
@@ -13,6 +14,12 @@
 {"id": "imp_54ff535f_69da987e2a23595e08ce", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 24 Jul 2026 10:58:10 +0900", "last_seen": "Fri, 24 Jul 2026 10:58:10 +0900"}
 {"id": "incheon_city_DOM_0000000015195041", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 24 Jul 2026 10:57:30 +0900", "last_seen": "Fri, 24 Jul 2026 10:57:30 +0900"}
 {"id": "itp_13_11000", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Sat, 25 Jul 2026 16:37:29 +0900", "last_seen": "Sat, 25 Jul 2026 16:37:29 +0900"}
+{"id": "itp_13_11007", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:38:02 +0900", "last_seen": "Fri, 31 Jul 2026 16:38:02 +0900"}
 {"id": "kstartup_178537", "verdict": "O", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 17 Jul 2026 15:25:01 +0900", "last_seen": "Fri, 17 Jul 2026 15:25:01 +0900"}
 {"id": "kstartup_178539", "verdict": "O", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 17 Jul 2026 15:24:58 +0900", "last_seen": "Fri, 17 Jul 2026 15:24:58 +0900"}
+{"id": "kstartup_178633", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:36:10 +0900", "last_seen": "Fri, 31 Jul 2026 16:36:10 +0900"}
 {"id": "kstartup_178655", "verdict": "O", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 24 Jul 2026 11:42:29 +0900", "last_seen": "Fri, 24 Jul 2026 11:42:29 +0900"}
+{"id": "kstartup_178658", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:37:15 +0900", "last_seen": "Fri, 31 Jul 2026 16:37:15 +0900"}
+{"id": "kstartup_178670", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:36:30 +0900", "last_seen": "Fri, 31 Jul 2026 16:36:30 +0900"}
+{"id": "kstartup_178693", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:37:07 +0900", "last_seen": "Fri, 31 Jul 2026 16:37:07 +0900"}
+{"id": "kstartup_178710", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:36:26 +0900", "last_seen": "Fri, 31 Jul 2026 16:36:26 +0900"}
