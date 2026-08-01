@@ -102,3 +102,6 @@ downloads/
 
 # 빌드/익스포트 산출물
 *.zip
+
+# raw_store 런타임 저장물(원문 재현용, 커밋 대상 아님)
+data/raw/
