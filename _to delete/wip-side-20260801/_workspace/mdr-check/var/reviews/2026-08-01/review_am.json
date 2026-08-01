@@ -1,0 +1,50 @@
+{
+  "date": "2026-08-01",
+  "slot": "am",
+  "cycle_key": "2026-08-01#am",
+  "generated_at": "2026-08-01T10:35:04+0900",
+  "overall": "PASS",
+  "checks": [
+    {
+      "id": "MDR-001",
+      "label": "무증상 스킵(skip/coverage)",
+      "status": "PASS",
+      "detail": "coverage OK (source_coverage_20260801.json)"
+    },
+    {
+      "id": "MDR-002",
+      "label": "핵심소스 0건",
+      "status": "PASS",
+      "detail": "bizinfo/kstartup/nipa item_count > 0 또는 해당 소스 미포함(수집 성공)"
+    },
+    {
+      "id": "MDR-003",
+      "label": "08:54 외부발송 징후",
+      "status": "PASS",
+      "detail": "외부 머리글 미검출(로그/draft 기준; IMAP 본문 미검수)"
+    },
+    {
+      "id": "MDR-004",
+      "label": "delivery_state 당일키",
+      "status": "PASS",
+      "detail": "2026-08-01#am 키 6개"
+    },
+    {
+      "id": "MDR-005",
+      "label": "제목 badge 품질",
+      "status": "PASS",
+      "detail": "스캔 텍스트에 제목 badge 잔재 없음"
+    }
+  ],
+  "inputs": {
+    "delivery_state": "/home/runner/work/mail/mail/var/state/delivery_state.json",
+    "delivery_keys_total": 36,
+    "coverage": "/home/runner/work/mail/mail/var/logs/source_coverage_20260801.json",
+    "run_duration_sec": null,
+    "scan_files": [
+      "/home/runner/work/mail/mail/var/logs/source_coverage_20260801.md",
+      "/home/runner/work/mail/mail/var/logs/source_coverage_20260801.json",
+      "/home/runner/work/mail/mail/var/logs/p0_collection_alert_20260801.md"
+    ]
+  }
+}

@@ -12,15 +12,15 @@ description: >-
 # source-doctor — ❌ 비활성 소스 원인진단·처방
 
 ## 목적
-`D:\mail\sites.json`에서 `enabled: false`인 소스(2026-07 기준 192개)를 대상으로
+`config/sites.json`(repo 루트 기준)에서 `enabled: false`인 소스(2026-07 기준 192개)를 대상으로
 **① 원인 ② 해결방안 ③ 예상 토큰 ④ 기대효과**를 산출해 사용자가 "뭘 먼저 살릴지" 결정하게 한다.
 
 ## 절차 (읽기 전용 — sites.json·코드 수정은 별도 승인 후)
 
-1. **대상 수집**: `sites.json`에서 `enabled:false` 목록 로드. 사용자가 소스명을 지정했으면 그것만.
+1. **대상 수집**: `config/sites.json`에서 `enabled:false` 목록 로드. 사용자가 소스명을 지정했으면 그것만.
 2. **원인 클러스터링** (증거 우선순위 순):
    - `note` 필드 (수동 기록된 사유)
-   - git 이력: `git log --oneline -- sites.json` + RESUME.md·SESSION_RECAP.md 의 비활성 사유 기록
+   - git 이력: `git log --oneline -- config/sites.json` + RESUME.md·SESSION_RECAP.md 의 비활성 사유 기록
      (예: 신규 등록 후 셀렉터 보강 pass2 대기, 404, SSL, JS렌더링 필요, 통합포털 중복)
    - `monitor.py`의 해당 type(html_table 등) 처리 요건 — 활성화에 무엇이 필요한지
    - **샘플 실접속 프로브**: 클러스터별 대표 2~3개만 requests(timeout 5s)로 상태코드·인코딩·JS필요 확인
