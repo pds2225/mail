@@ -397,7 +397,9 @@ GRANT_SIGNAL_KEYWORDS = [
     "지원사업", "지원 사업", "지원금", "보조금", "바우처", "사업화", "사업 공고",
     "모집공고", "모집 공고", "참여기업", "수요기업", "공모", "융자", "정책자금",
     "창업", "육성", "r&d", "연구개발", "기술개발", "수출", "판로", "마케팅",
-    "컨설팅", "멘토링", "인증지원", "시제품", "입주기업", "투자유치",
+    # 컨설팅·멘토링은 GRANT 신호에서 제외 — 단독 안내가 application_like 로 통과하던 과출 방지.
+    # (실지원 공고는 모집/신청/지원사업 등 다른 신호로 충분하다.)
+    "인증지원", "시제품", "입주기업", "투자유치",
     "장려금", "지원 안내", "지원계획", "지원대상", "참가기업", "참가신청",
 ]
 
@@ -441,6 +443,7 @@ EXCLUSION_RULES = [
     ("INFO_SESSION", "info_session", "unknown", ["설명회", "오리엔테이션"]),
     ("EDUCATION_ONLY", "education", "unknown", [
         "교육 일정", "교육일정", "분야별 교육", "선정기업 교육", "수요기업 교육", "공급기업 교육",
+        "교육참여기업", "교육 참여기업", "교육생 모집", "수강생 모집", "교육과정 모집", "교육 과정 모집",
     ]),
     ("SUPPLIER_ONLY", "application_notice", "supplier", [
         "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
@@ -448,8 +451,19 @@ EXCLUSION_RULES = [
     ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
     ]),
-    ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
+    # NOT_GRANT_NOTICE: 지원사업이 아닌 제도·요율·안내성 게시. soft/hard 분리는 _split_exclusion_hits.
+    # 잡공고(결과·채용·총회 등)는 REPORT_JUNK, 행정고지는 ADMIN_NOISE 로 분리(동일 코드명 혼선 방지).
+    ("NOT_GRANT_NOTICE", "general_info", "unknown", [
+        "산재예방요율제", "보험료율", "제도 안내", "요율 변경", "요율변경",
+        "수수료 안내", "수수료안내", "제도 개편", "제도개편", "규정 개정", "규정개정",
+        "운영 안내", "이용 안내", "사이트 안내",
+    ]),
 ]
+
+# 제목 앵커: '교육참여기업모집'처럼 공백 없이 붙어도 교육 모집으로 본다.
+_EDUCATION_RECRUIT_TITLE_RE = re.compile(
+    r"교육\s*참여\s*기업\s*모집|교육생\s*모집|수강생\s*모집|교육\s*과정\s*모집"
+)
 
 # ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
 # '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
@@ -3995,7 +4009,9 @@ def assess_date_unknown_risk(item: dict) -> str:
     except Exception:
         pass
     text = _notice_body_text(item)
-    if any(kw in text for kw in APPLICATION_KEYWORDS):
+    # APPLICATION_KEYWORDS 만 보면 '모집' 단독 제목이 낮음으로 떨어져 recall 누락이 난다.
+    # evaluate_notice 의 application_like 와 같은 기준으로 중/고 위험을 판정한다.
+    if _application_like(text):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
             return "높음"
         return "중간"
@@ -4109,13 +4125,20 @@ def _notice_body_text(item: dict) -> str:
 
 
 def _keyword_match_text(item: dict) -> str:
-    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상 필드 포함, 주관기관명 제외."""
+    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상·카테고리 포함, 주관기관명 제외."""
     parts = [
         item.get("title", ""),
         item.get("description", ""),
         item.get("support_field", ""),
         item.get("target_field", ""),
+        item.get("category", ""),
     ]
+    for key in ("hashtags", "tags", "hashTags"):
+        val = item.get(key)
+        if isinstance(val, (list, tuple)):
+            parts.extend(str(x) for x in val if x)
+        elif val:
+            parts.append(str(val))
     try:
         from mail_core.matching.core_sources import keyword_extra_parts
         parts.extend(keyword_extra_parts(item))
@@ -4167,13 +4190,24 @@ def _split_exclusion_hits(item: dict, code: str, hits: list[str]) -> tuple[list[
     제외 단어가 제목에 있거나 제목이 모집 공고가 아니면 기존처럼 hard다.
     반대로 제목이 명백한 모집 공고인데 본문에만 교육·설명회·지침 등이 있으면
     부대 일정/유의사항일 수 있으므로 soft 근거로 남기고 공고 전체를 버리지 않는다.
+
+    INFO_SESSION / EDUCATION_ONLY 특수: 제목에 설명회·교육일정이 있어도
+    동시에 실모집 신호(모집/신청/공모 등)가 있으면 soft — '모집 및 설명회' 실공고 보존.
+    단, 제목이 교육참여기업모집·교육생 모집처럼 교육 모집 자체면 hard 유지.
     """
     if not hits:
         return [], []
     title = norm(item.get("title", "")).lower()
     if code == "SUPPLIER_ONLY" and _mixed_target_roles(item):
         return [], list(hits)
-    if any(hit in title for hit in hits):
+    title_hit = any(hit in title for hit in hits)
+    if code in {"INFO_SESSION", "EDUCATION_ONLY"} and _active_application_title(title):
+        # 교육 모집 전용 제목은 soft 완화 대상이 아니다.
+        if code == "EDUCATION_ONLY" and _EDUCATION_RECRUIT_TITLE_RE.search(title):
+            return list(hits), []
+        # 제목·본문 모두 soft — 실모집 본체 + 부대 설명회/교육일정
+        return [], list(hits)
+    if title_hit:
         return list(hits), []
     if _active_application_title(title):
         return [], list(hits)
@@ -4825,6 +4859,26 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             if rule_target_type != "unknown":
                 target_type = rule_target_type
 
+    # 제목 앵커: 교육참여기업모집·교육생 모집 등 — EXCLUSION_RULES soft 완화와 무관하게 제외.
+    edu_title = norm(item.get("title", ""))
+    if _EDUCATION_RECRUIT_TITLE_RE.search(edu_title):
+        reason_codes.append("EDUCATION_ONLY")
+        excluded_keywords.append(_EDUCATION_RECRUIT_TITLE_RE.search(edu_title).group(0))
+        if notice_type == "unknown":
+            notice_type = "education"
+
+    # 원본전체용 잡공고·행정고지 판정을 그룹 필터에도 적용(사유코드는 경로별로 분리).
+    if is_report_junk(item):
+        reason_codes.append("REPORT_JUNK")
+        excluded_keywords.append("report_junk")
+        if notice_type == "unknown":
+            notice_type = "general_info"
+    if is_admin_noise(item):
+        reason_codes.append("ADMIN_NOISE")
+        excluded_keywords.append("admin_noise")
+        if notice_type == "unknown":
+            notice_type = "admin_notice"
+
     # [제목 앵커] 비공고 정적 페이지(기관소개·정보공개·약관·nav 링크 등) 제외.
     # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
     nonnotice_hit = non_notice_reason(item)
@@ -4920,7 +4974,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     hard_group_hits, soft_group_hits = _split_exclusion_hits(item, "GROUP_EXCLUSION", group_excluded)
     soft_excluded_keywords.extend(soft_group_hits)
     if hard_group_hits:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("GROUP_EXCLUSION")
         excluded_keywords.extend(hard_group_hits)
 
     kw_text = _keyword_match_text(item)
@@ -4939,7 +4993,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         reason_codes.append("INDUSTRY_NOT_MATCHED")
 
     if not application_like and not priority_keywords:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("NOT_APPLICATION_LIKE")
 
     biz_years_status = business_years_status(item, g) if group is not None else "n/a"
     amount_status = support_amount_status(item, g) if group is not None else "n/a"
@@ -4987,6 +5041,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
+        "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
+        "NOT_GRANT_NOTICE",
     }
     detail_failure_review = (
         detail_failure
