@@ -107,3 +107,65 @@ def test_reason_codes_are_path_specific():
     )
     assert "NOT_APPLICATION_LIKE" in non_app["exclude_reason_codes"]
     assert "NOT_GRANT_NOTICE" not in non_app["exclude_reason_codes"]
+
+
+def test_ambiguous_infogonggae_goes_to_review_not_hard():
+    """정보공개+모집(지원사업 신호 없음) → AMBIGUOUS_NOTICE review 분리."""
+    ev = m.evaluate_notice(
+        {
+            "title": "2026년 정보공개 고객 모니터링단 모집공고",
+            "description": "서울 소재 신청",
+        },
+        _ai_group(),
+    )
+    assert ev["is_relevant"] is False
+    assert "AMBIGUOUS_NOTICE" in ev["exclude_reason_codes"]
+    assert ev["review_needed"] is True
+    assert "REPORT_JUNK" not in ev["exclude_reason_codes"]
+
+
+def test_environment_infogonggae_support_still_not_ambiguous():
+    """환경정보공개 지원사업은 애매 분리 대상이 아니다."""
+    assert m.ambiguous_notice_reason({
+        "title": "자발적 환경정보공개 지원사업 참여기업 모집 공고",
+    }) == ""
+
+
+def test_fund_priority_sorts_first():
+    low = {"title": "AI 모집", "priority_keyword": True, "priority_keywords": ["혁신바우처"],
+           "relevance_score": 50, "deadline_status": "open"}
+    high = {"title": "사업화지원금 모집", "priority_keyword": True,
+            "priority_keywords": ["사업화지원금"], "relevance_score": 20, "deadline_status": "open"}
+    assert m._notice_sort_key(high) < m._notice_sort_key(low)
+
+
+def test_refine_score_llm_demotes_on_llm_reject(monkeypatch):
+    group = {
+        "id": "t",
+        "or_keywords": ["AI"],
+        "priority_keywords": [],
+        "exclude_keywords": [],
+        "required_conditions": {"regions": ["서울"]},
+        "score_threshold": 1,
+        "llm_check_enabled": True,
+        "llm_check_threshold_band": [0, 100],
+        "llm_call_limit_per_run": 5,
+    }
+    items = [{"title": "서울 AI 지원사업 모집", "description": "서울", "summary": "x"}]
+
+    def _fake_score(item, group):
+        return {"score": 50, "breakdown": {}, "reasons": ["or 1x"]}
+
+    def _fake_llm(item, group):
+        return {"is_relevant": False, "confidence": 0.9, "reason": "test reject"}
+
+    monkeypatch.setattr(m, "_SCORE_OK", True)
+    import mail_core.matching.scoring as scoring
+    monkeypatch.setattr(scoring, "compute_score", _fake_score)
+    monkeypatch.setattr(scoring, "llm_relevance_check", _fake_llm)
+    monkeypatch.setattr(m, "_score_and_filter", scoring.score_and_filter)
+
+    passed, demoted = m.refine_included_by_score_llm(items, group)
+    assert passed == []
+    assert len(demoted) == 1
+    assert "SCORE_OR_LLM_REJECT" in demoted[0]["exclude_reason_codes"]

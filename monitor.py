@@ -27,6 +27,12 @@ try:
 except ImportError:
     _CM_OK = False
 
+try:
+    from mail_core.matching.scoring import score_and_filter as _score_and_filter
+    _SCORE_OK = True
+except ImportError:
+    _SCORE_OK = False
+
 from mail_core.delivery import outbox as delivery_outbox
 from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
@@ -331,6 +337,12 @@ GENERAL_INCLUDE_KEYWORD_ALIASES = [
 ]
 
 PRIORITY_KEYWORD_ALIASES = [
+    # 사업화 직접지원(현금·제작비) — 최우선 추천 신호 (사용자 정책)
+    ("사업화지원금", ["사업화지원금", "사업화 지원금", "사업화자금", "사업화 자금"]),
+    ("시제품제작비", ["시제품제작비", "시제품 제작비", "시제품제작", "시제품 제작"]),
+    ("사업화비용", ["사업화비용", "사업화 비용"]),
+    ("지원금", ["지원금"]),
+    ("직접지원", ["직접지원", "현금지원", "현금 지원"]),
     ("혁신바우처", ["혁신바우처", "혁신 바우처"]),
     ("수출바우처", ["수출바우처", "수출 바우처"]),
     ("스마트공장", ["스마트공장"]),
@@ -341,6 +353,11 @@ PRIORITY_KEYWORD_ALIASES = [
     ("자동화", ["자동화"]),
     ("제조혁신", ["제조혁신"]),
 ]
+
+# 메일 '우선 추천' 정렬에서 사업화 직접지원을 최상단으로 올린다.
+FUND_PRIORITY_LABELS = frozenset({
+    "사업화지원금", "시제품제작비", "사업화비용", "지원금", "직접지원",
+})
 
 FACTORY_KEYWORD_ALIASES = [
     ("공장", ["공장"]),
@@ -424,7 +441,8 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    # '모니터링단'은 REPORT_JUNK hard 제외에서 빼고 AMBIGUOUS_NOTICE(검토 분리)로 보낸다.
+    "회원 모집", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
     "기획위원", "자문위원", "전문위원",
 ]
 
@@ -440,7 +458,9 @@ EXCLUSION_RULES = [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
         "공동인증서", "공인인증서", "매뉴얼", "사용 안내", "유의사항", "시스템 이용 안내",
     ]),
-    ("INFO_SESSION", "info_session", "unknown", ["설명회", "오리엔테이션"]),
+    ("INFO_SESSION", "info_session", "unknown", [
+        "설명회", "오리엔테이션", "사업설명회", "사전설명회", "투자유치설명회",
+    ]),
     ("EDUCATION_ONLY", "education", "unknown", [
         "교육 일정", "교육일정", "분야별 교육", "선정기업 교육", "수요기업 교육", "공급기업 교육",
         "교육참여기업", "교육 참여기업", "교육생 모집", "수강생 모집", "교육과정 모집", "교육 과정 모집",
@@ -452,11 +472,14 @@ EXCLUSION_RULES = [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
     ]),
     # NOT_GRANT_NOTICE: 지원사업이 아닌 제도·요율·안내성 게시. soft/hard 분리는 _split_exclusion_hits.
-    # 잡공고(결과·채용·총회 등)는 REPORT_JUNK, 행정고지는 ADMIN_NOISE 로 분리(동일 코드명 혼선 방지).
+    # 키워드 출처: var/state/notice_versions 제목 히스토리(공시송달 53·제도안내 2 등) + 기존 규칙.
+    # 잡공고(결과·채용·총회 등)는 REPORT_JUNK, 행정고지는 ADMIN_NOISE 로 분리.
     ("NOT_GRANT_NOTICE", "general_info", "unknown", [
         "산재예방요율제", "보험료율", "제도 안내", "요율 변경", "요율변경",
         "수수료 안내", "수수료안내", "제도 개편", "제도개편", "규정 개정", "규정개정",
         "운영 안내", "이용 안내", "사이트 안내",
+        "공시송달", "결정통지", "정보부존재", "과태료 전자고지", "전자고지 서비스",
+        "대출 제도 안내", "온렌딩 대출",
     ]),
 ]
 
@@ -464,6 +487,20 @@ EXCLUSION_RULES = [
 _EDUCATION_RECRUIT_TITLE_RE = re.compile(
     r"교육\s*참여\s*기업\s*모집|교육생\s*모집|수강생\s*모집|교육\s*과정\s*모집"
 )
+
+# 설명회가 '모집 본체'인 제목(설명회 참여기업 모집 등) → 본문 추천 제외·review 분리(hard 제외 아님).
+_INFO_SESSION_AS_RECRUIT_RE = re.compile(
+    r"(?:사업|투자\s*유치)?설명회\s*(?:개최\s*)?(?:참여자|참여기업|참가기업|참석자|참가)\s*모집|"
+    r"설명회\s*참여기업\s*모집|"
+    r"모집\s*설명회"
+)
+# 실모집 본체 + 부대 설명회(모집 및 설명회 / 설명회 일정 추가) → soft 통과 유지.
+_INFO_SESSION_SECONDARY_RE = re.compile(
+    r"모집\s*및\s*설명회|설명회\s*일정\s*(?:추가|안내)"
+)
+
+# 애매 비지원(부분일치로 hard 금지하되 본문 추천에서 분리해 review로 보냄).
+_AMBIGUOUS_GRANT_OK = ("지원사업", "바우처", "지원금", "보조금", "사업화", "융자", "정책자금")
 
 # ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
 # '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
@@ -573,6 +610,24 @@ def non_notice_reason(item: dict) -> str:
     host = host[4:] if host.startswith("www.") else host
     if host and host in NON_NOTICE_LINK_DOMAINS:
         return host
+    return ""
+
+
+def ambiguous_notice_reason(item: dict) -> str:
+    """hard 제외하기엔 반례가 있으나 본문 추천에 넣기엔 애매한 제목 → review 분리 근거.
+
+    - 정보공개+모집/공고: 정적 메뉴 오수집·모니터링단류와 진짜 '환경정보공개 지원사업'이 섞임
+      → 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE.
+    - 모니터링단: 기업 현금지원 확률 낮음 → review(완전 hard REPORT_JUNK 아님).
+    """
+    title = norm(item.get("title", ""))
+    if not title:
+        return ""
+    if "모니터링단" in title:
+        return "모니터링단"
+    if "정보공개" in title and any(tok in title for tok in ("모집", "공고")):
+        if not any(ok in title for ok in _AMBIGUOUS_GRANT_OK):
+            return "정보공개"
     return ""
 
 REGION_EXCLUDE_PHRASES = [
@@ -4194,6 +4249,8 @@ def _split_exclusion_hits(item: dict, code: str, hits: list[str]) -> tuple[list[
     INFO_SESSION / EDUCATION_ONLY 특수: 제목에 설명회·교육일정이 있어도
     동시에 실모집 신호(모집/신청/공모 등)가 있으면 soft — '모집 및 설명회' 실공고 보존.
     단, 제목이 교육참여기업모집·교육생 모집처럼 교육 모집 자체면 hard 유지.
+    설명회 참여기업 모집처럼 설명회가 모집 본체면 soft로 두되, evaluate_notice 가
+    INFO_SESSION_REVIEW 로 본문 추천에서 분리한다(hard INFO_SESSION 아님).
     """
     if not hits:
         return [], []
@@ -4888,6 +4945,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
+    # 애매 비지원 — hard 금지(반례 있음)하되 본문 추천에서 분리해 review 로 보낸다.
+    amb_hit = ambiguous_notice_reason(item)
+    if amb_hit:
+        reason_codes.append("AMBIGUOUS_NOTICE")
+        excluded_keywords.append(amb_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
     # [제목 앵커] 위원(개인 전문가) 위촉·모집 공고 — 기업 대상 지원사업이 아니므로 제외.
     committee_hit = _COMMITTEE_TITLE_RE.search(norm(item.get("title", "")))
     if committee_hit:
@@ -4900,12 +4965,26 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
         excluded_keywords.extend(hard_service_hits)
-        if "설명회" in hard_service_hits:
+        if "설명회" in hard_service_hits or any("설명회" in h for h in hard_service_hits):
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
+
+    # 설명회가 모집 본체(…설명회 참여기업 모집)이면 hard INFO_SESSION 대신 review 분리.
+    # '모집 및 설명회' 등 부대 설명회는 soft 통과 유지.
+    title_raw = norm(item.get("title", ""))
+    if (
+        "설명회" in title_raw
+        and _INFO_SESSION_AS_RECRUIT_RE.search(title_raw)
+        and not _INFO_SESSION_SECONDARY_RE.search(title_raw)
+    ):
+        reason_codes.append("INFO_SESSION_REVIEW")
+        if "설명회" not in soft_excluded_keywords and "설명회" not in excluded_keywords:
+            soft_excluded_keywords.append("설명회")
+        if notice_type == "unknown":
+            notice_type = "info_session"
 
     if smart_info and notice_type in {"education", "info_session", "general_info", "guideline", "manual"}:
         reason_codes.append("SMART_FACTORY_INFO_ONLY")
@@ -5042,7 +5121,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
         "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
-        "NOT_GRANT_NOTICE",
+        "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW",
     }
     detail_failure_review = (
         detail_failure
@@ -5074,6 +5153,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and application_like
             and group_keyword_pass
         )
+    # hard 제외 대신 본문 추천에서만 빼는 분리 코드(설명회 모집 본체·정보공개 애매건).
+    _review_separate = {"INFO_SESSION_REVIEW", "AMBIGUOUS_NOTICE"}
     review_needed = (
         not is_relevant
         and (
@@ -5082,6 +5163,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
                 and not (set(reason_codes) & detail_failure_blockers)
             )
             or detail_failure_review
+            or bool(set(reason_codes) & _review_separate)
         )
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
@@ -5168,10 +5250,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     return result
 
 
-def _notice_sort_key(item: dict) -> tuple[int, int, int]:
+def _notice_sort_key(item: dict) -> tuple[int, int, int, int]:
+    pri = item.get("priority_keywords") or []
+    fund_first = 0 if any(p in FUND_PRIORITY_LABELS for p in pri) else 1
     return (
+        fund_first,
         0 if item.get("priority_keyword") else 1,
-        -int(item.get("relevance_score", 0)),
+        -int(item.get("relevance_score", 0) or item.get("_match_score", 0) or 0),
         0 if item.get("deadline_status") == "open" else 1,
     )
 
@@ -5224,6 +5309,58 @@ def refine_included_by_company(
         return included, []
     result = _match_for_company(included, company)
     return result["matched"], result["rejected"]
+
+
+def refine_included_by_score_llm(
+    included: list[dict], group: dict,
+) -> tuple[list[dict], list[dict]]:
+    """evaluate_notice 통과분에 score_and_filter(점수+LLM 회색지대 컷)를 적용.
+
+    group 에 score_threshold 가 없거나 llm_check_enabled 도 없으면 통과분 그대로.
+    llm_check_enabled 만 켠 그룹은 score_threshold 기본 0(점수로는 거의 통과, LLM 밴드만 컷).
+    API 키 없거나 anthropic 미설치 시 scoring.llm_relevance_check 가 보수적으로 통과시킨다.
+    """
+    if not _SCORE_OK:
+        return included, []
+    if "score_threshold" not in group and not group.get("llm_check_enabled"):
+        return included, []
+    g = group
+    if "score_threshold" not in g:
+        g = {**group, "score_threshold": 0}
+    out = _score_and_filter(included, g)
+    passed = list(out.get("passed") or [])
+    rejected = []
+    for it in out.get("rejected") or []:
+        codes = list(it.get("exclude_reason_codes") or [])
+        decision = ""
+        # audit 매칭은 title 기준 — rejected item 에 결정 표시
+        codes.append("SCORE_OR_LLM_REJECT")
+        rejected.append({
+            **it,
+            "exclude_reason_codes": _unique(codes),
+            "review_needed": True,
+            "is_relevant": False,
+            "filter_confidence": "medium",
+            "notes": list(it.get("notes") or []) + ["점수/LLM 2차 컷오프"],
+        })
+    # 통과분에 점수 부착(정렬·표시용)
+    audit_by_title = {
+        str(a.get("title") or ""): a
+        for a in (out.get("audit") or [])
+        if a.get("decision") == "passed"
+    }
+    enriched = []
+    for it in passed:
+        title_key = str(it.get("title") or "")[:80]
+        a = audit_by_title.get(title_key) or {}
+        enriched.append({
+            **it,
+            "_match_score": a.get("score", it.get("_match_score")),
+            "_score_reasons": a.get("reasons") or [],
+            "_llm_check": a.get("llm"),
+        })
+    enriched.sort(key=_notice_sort_key)
+    return enriched, rejected
 
 
 
@@ -6491,6 +6628,11 @@ def execute_monitor(
         if ru_items:
             write_region_unknown_report(ru_items, str(group.get("name") or "group"), run_at=now)
         excluded_items = diagnostics["excluded"]
+        # 점수+LLM 2차 컷(그룹 score_threshold / llm_check_enabled)
+        g_items, _score_demoted = refine_included_by_score_llm(g_items, group)
+        if _score_demoted:
+            review_items = review_items + _score_demoted
+            log.info("그룹 '%s' 점수/LLM 컷오프: %d건 → 검토 강등", group.get("name"), len(_score_demoted))
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
         if _demoted:

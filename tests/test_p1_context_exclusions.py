@@ -84,7 +84,23 @@ def test_title_recruitment_with_info_session_stays_relevant():
 
     assert result["is_relevant"] is True
     assert "INFO_SESSION" not in result["exclude_reason_codes"]
+    assert "INFO_SESSION_REVIEW" not in result["exclude_reason_codes"]
     assert "설명회" in result["soft_excluded_keywords"]
+
+
+def test_info_session_as_recruit_goes_to_review_not_hard():
+    """'설명회 참여기업 모집'은 hard INFO_SESSION이 아니라 review 분리."""
+    item = _item(
+        "수출지원 설명회 참여기업 모집",
+        "서울 소재 기업 대상 설명회 참가 모집.",
+    )
+
+    result = monitor.evaluate_notice(item, GROUP, today=TODAY)
+
+    assert result["is_relevant"] is False
+    assert "INFO_SESSION_REVIEW" in result["exclude_reason_codes"]
+    assert "INFO_SESSION" not in result["exclude_reason_codes"]
+    assert result["review_needed"] is True
 
 
 def test_education_participant_recruit_title_hard_excluded():
