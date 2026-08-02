@@ -4308,6 +4308,25 @@ def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> li
     return _unique(matches)
 
 
+def _group_priority_hits(item: dict, group: dict | None) -> list[str]:
+    """전역 PRIORITY_KEYWORD_ALIASES + 그룹 priority_keywords 합집합.
+
+    - 전역: 사업화지원금·바우처·스마트공장 등 공통 최우선
+    - 그룹: groups.json 업종별 우선어(예: bnco K-뷰티·디자인)
+    메일 '우선 추천'과 점수/LLM이 같은 그룹 맥락을 쓰게 한다.
+    """
+    body = _notice_text(item)
+    kw_text = _keyword_match_text(item)
+    hits = _find_keyword_aliases(body, PRIORITY_KEYWORD_ALIASES)
+    for kw in (group or {}).get("priority_keywords") or []:
+        raw = str(kw or "").strip()
+        if not raw:
+            continue
+        if _kw_in_text(kw_text, raw.lower()) or _kw_in_text(body, raw.lower()):
+            hits.append(raw)
+    return _unique(hits)
+
+
 def classify_deadline_status(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     text = _notice_text(item)
@@ -4890,7 +4909,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     notice_type = "unknown"
 
     matched_keywords = _find_keyword_aliases(text, GENERAL_INCLUDE_KEYWORD_ALIASES)
-    priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
+    priority_keywords = _group_priority_hits(item, g)
     factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
     matched_keywords = _unique(matched_keywords + factory_keywords)
     factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
@@ -5694,15 +5713,31 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
     return "\n".join(lines)
 
 def claude_summarize(items: list[dict], group: dict) -> str:
-    """Render the digest from collected fields only.
+    """메일 본문 렌더. 기본은 수집 필드만 사용(금액·날짜를 LLM이 지어내지 않게).
 
-    A language model must never be the source of a delivered support amount, posted date,
-    reception period, organization, or link. Keeping this former API name avoids a broad
-    caller refactor while making P0 factual integrity and prompt-injection safety absolute.
+    MONITOR_DIGEST_LLM=1 이면 맨 위에 '한 줄 적합성' 코멘트만 LLM으로 붙인다.
+    공고별 금액·마감·링크는 여전히 fallback_body(원문 필드)만 쓴다.
     """
     if not items:
         return ""
-    return fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    body = fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    if os.environ.get("MONITOR_DIGEST_LLM", "") not in ("1", "true", "True"):
+        return body
+    try:
+        from mail_core.matching.scoring import llm_relevance_check
+    except Exception:
+        return body
+    # 상위 3건만 짧은 코멘트 — 비용·환각 최소화
+    notes = []
+    for it in sorted(items, key=_notice_sort_key)[:3]:
+        r = llm_relevance_check(it, group)
+        reason = str(r.get("reason") or "").strip()
+        if reason and r.get("is_relevant", True):
+            title = strip_title_badges(_mail_clean_text(it.get("title"), limit=40))
+            notes.append(f"- {title}: {reason[:80]}")
+    if not notes:
+        return body
+    return "AI 한줄 메모(참고·원문 수치 아님):\n" + "\n".join(notes) + "\n\n" + body
 
 
 # ══════════════════════════════════════════════════════════════════
