@@ -169,3 +169,38 @@ def test_refine_score_llm_demotes_on_llm_reject(monkeypatch):
     assert passed == []
     assert len(demoted) == 1
     assert "SCORE_OR_LLM_REJECT" in demoted[0]["exclude_reason_codes"]
+
+
+def test_resolve_region_single_entry_incheon_vs_other():
+    """인천은 classify_region, 타광역은 for_group — 단일 진입점 resolve_region."""
+    bupyeong = {"title": "인천 부평구 소상공인 지원금 신청 공고", "description": ""}
+    assert m.resolve_region(bupyeong, None)["region_status"] == "not_eligible"
+    incheon_g = {
+        "applicant_region_city": "인천광역시",
+        "applicant_region_district": "남동구",
+    }
+    assert m.resolve_region(bupyeong, incheon_g)["region_status"] == "not_eligible"
+    assert m.uses_incheon_region_engine(incheon_g) is True
+
+    busan_g = {
+        "applicant_region_city": "부산광역시",
+        "applicant_region_label": "부산",
+        "applicant_region_district": "해운대구",
+    }
+    assert m.uses_incheon_region_engine(busan_g) is False
+    busan_notice = {"title": "[부산] 해운대구 중소기업 지원 모집", "description": "부산 소재"}
+    assert m.resolve_region(busan_notice, busan_g)["region_status"] == "eligible"
+
+
+def test_for_group_peer_district_blocks_other_gu():
+    """for_group에도 동일 광역 타 구 전용 차단(부평구 vs 남동구)."""
+    g = {
+        "applicant_region_city": "인천광역시",
+        "applicant_region_label": "인천",
+        "applicant_region_district": "남동구",
+        "applicant_districts": ["남동구"],
+    }
+    other = {"title": "인천 부평구 소재 기업 지원", "description": "부평구 소재 기업 대상"}
+    assert m.classify_region_for_group(other, g)["region_status"] == "not_eligible"
+    own = {"title": "인천 남동구 소재 기업 지원", "description": "남동구 소재"}
+    assert m.classify_region_for_group(own, g)["region_status"] == "eligible"

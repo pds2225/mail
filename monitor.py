@@ -4594,6 +4594,14 @@ def _other_region_block(item: dict, own_meta: dict):
     return None
 
 
+def _metro_peer_districts(city: str, label: str) -> list[str]:
+    """광역 내 구·군 목록. 신청자 구가 있을 때 '타 구 전용' 차단에 쓴다."""
+    blob = f"{city or ''} {label or ''}".lower()
+    if "인천" in blob:
+        return list(INCHEON_DISTRICTS)
+    return []
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -4642,6 +4650,15 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if d.lower() in app_text or (short_d and short_d.lower() in app_text):
             district_hits.append(d)
+
+    # 동일 광역 내 타 구·군만 명시(우리 구 미포함) → not_eligible.
+    # classify_region(인천·남동구)의 '부평구 전용 차단'과 같은 정밀도 — for_group 경로에도 이식.
+    peers = _metro_peer_districts(city, label)
+    if districts and peers:
+        mentioned_peers = [d for d in peers if d in app_text]
+        other_districts = [d for d in mentioned_peers if d not in districts]
+        if other_districts and not district_hits:
+            return result("not_eligible", "not_eligible", [], other_districts)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
     # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
@@ -4834,12 +4851,12 @@ def classify_region(item: dict) -> dict:
     }
 
 
-def region_match(item: dict, group_regions: list[str]) -> bool:
+def region_match(item: dict, group_regions: list[str], region_info: dict | None = None) -> bool:
     """그룹 지역 조건 매칭. 남동구 신청 불가 공고는 인천 그룹에서 제외."""
     if not group_regions:
         return True
-    region_info = classify_region(item)
-    if region_info["region_status"] == "not_eligible" or region_info["district_status"] == "not_eligible":
+    info = region_info if region_info is not None else classify_region(item)
+    if info["region_status"] == "not_eligible" or info["district_status"] == "not_eligible":
         return False
     text = _notice_text(item)
     g_regions = [r.lower() for r in group_regions]
@@ -4847,9 +4864,29 @@ def region_match(item: dict, group_regions: list[str]) -> bool:
         return True
     if "전국" in text:
         return True
-    if region_info["region_status"] == "eligible":
+    if info["region_status"] == "eligible":
         return True
     return False
+
+
+def uses_incheon_region_engine(group: dict | None) -> bool:
+    """인천(+남동구) 정밀 엔진을 쓸지. False면 classify_region_for_group."""
+    if not group:
+        return True
+    city = group.get("applicant_region_city", APPLICANT_REGION_CITY)
+    return city == APPLICANT_REGION_CITY
+
+
+def resolve_region(item: dict, group: dict | None = None) -> dict:
+    """지역 적격 단일 진입점.
+
+    - 인천광역시 그룹(기본 포함): ``classify_region`` — 구 단위 배타(부평구 전용 등)
+    - 그 외 시·도 그룹: ``classify_region_for_group`` — 임의 광역/시·군
+    """
+    g = group or {}
+    if uses_incheon_region_engine(g if group is not None else None):
+        return classify_region(item)
+    return classify_region_for_group(item, g)
 
 
 def keyword_match(item: dict, kw_cfg: dict) -> bool:
@@ -5033,16 +5070,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     elif deadline_status == "unknown" and not application_like:
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
-    applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
-    use_generic_region = bool(group) and applicant_city != APPLICANT_REGION_CITY
-    region_info = classify_region_for_group(item, g) if use_generic_region else classify_region(item)
+    applicant_district = g.get("applicant_region_district", APPLICANT_REGION_DISTRICT)
+    incheon_engine = uses_incheon_region_engine(group)
+    region_info = resolve_region(item, g if group is not None else None)
     if region_info["region_status"] == "not_eligible":
         reason_codes.append("REGION_NOT_ELIGIBLE")
     if region_info["district_status"] == "not_eligible":
         reason_codes.append("DISTRICT_NOT_ELIGIBLE")
     if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
         reason_codes.append("LOW_CONFIDENCE")
-    if not use_generic_region and "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
+    if incheon_engine and "산업단지" in text and "입주기업" in text and applicant_district not in text:
         reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
 
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
@@ -5056,7 +5093,12 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         or region_info["district_status"] == "not_eligible"
     )
     if group is not None and not source_bypass:
-        region_ok = (region_info["region_status"] == "eligible") if use_generic_region else region_match(item, req_regions)
+        # 인천 엔진: required_conditions.regions + 구 배타를 region_match 로 결합.
+        # 기타 광역: classify_region_for_group 의 region_status==eligible 만으로 통과.
+        if incheon_engine:
+            region_ok = region_match(item, req_regions, region_info=region_info)
+        else:
+            region_ok = region_info["region_status"] == "eligible"
         if not region_ok:
             reason_codes.append("REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN")
 
