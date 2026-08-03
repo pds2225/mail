@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 DEFAULT_WEIGHTS: dict[str, int] = {
@@ -159,9 +160,13 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str
     priority_kw = ", ".join((group.get("priority_keywords") or [])[:10])
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
+    # 오늘(KST) 미주입 시 "2026년 공고라 신청 불가"처럼 연도만으로 오판하는 사고 방지
+    today_kst = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
 
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
+        f"오늘(KST): {today_kst}\n"
+        "연도만으로 마감/신청불가 판정 금지. 마감일이 명시되지 않았거나 오늘 이후면 연도 숫자만으로 제외하지 말 것.\n"
         f"그룹 지역: {region}\n"
         f"우선 키워드: {priority_kw}\n"
         f"제외 키워드: {exclude_kw}\n"
