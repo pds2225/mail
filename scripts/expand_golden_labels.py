@@ -172,6 +172,31 @@ def _iter_matrix(runs_root: Path):
             yield k, {"title": t, "source": str(n.get("source") or "")}
 
 
+def _iter_queue(queue_path: Path):
+    """이미 리뷰 큐에 쌓인 보류 공고를 새 규칙으로 다시 판정한다(id/title/source 만 사용).
+
+    규칙이 좋아지면 예전에 '애매'로 보류했던 공고가 지금은 확정될 수 있다. 그 몫을
+    사람 손 없이 되살리는 경로다(여전히 애매하면 그대로 큐에 남는다).
+    """
+    seen: set[str] = set()
+    if not queue_path.exists():
+        return
+    for line in queue_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            d = json.loads(line)
+        except Exception:  # noqa: BLE001
+            continue
+        k = str(d.get("id") or "")
+        t = str(d.get("title") or "")
+        if not k or not t or k in seen:
+            continue
+        seen.add(k)
+        yield k, {"title": t, "source": str(d.get("source") or "")}
+
+
 def main() -> int:
     _fix_console()
     ap = argparse.ArgumentParser(description="제목 지역키워드 → Tier B 골든 라벨 확대 (append-only)")
@@ -180,11 +205,15 @@ def main() -> int:
     ap.add_argument("--from-matrix", action="store_true",
                     help="raw 대신 .omc/accuracy/runs/*/matrix.json 의 제목을 코퍼스로 사용")
     ap.add_argument("--runs-root", default=str(BASE_DIR / ".omc" / "accuracy" / "runs"))
+    ap.add_argument("--recheck-queue", action="store_true",
+                    help="리뷰 큐에 보류된 공고를 새 규칙으로 재판정(확정되면 라벨로 승격)")
     ap.add_argument("--dry-run", action="store_true", help="쓰기 없이 통계만")
     args = ap.parse_args()
 
     raw_root = Path(args.raw_root)
-    if args.from_matrix:
+    if args.recheck_queue:
+        source_iter = _iter_queue(REVIEW)
+    elif args.from_matrix:
         runs_root = Path(args.runs_root)
         if not runs_root.exists():
             print(f"[expand] runs 없음: {runs_root}")
