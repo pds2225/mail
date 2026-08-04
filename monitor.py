@@ -5259,8 +5259,12 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
         lines += [f"\n━━━ {label} — {len(src_items)}건 ━━━"]
         for it in src_items:
             dl = resolve_item_deadline(it)
-            lines += [f"▸ {it['title']}",
-                      f"  기관: {it.get('author') or '미기재'} | 마감: {dl or '미기재'}"
+            # 다이제스트와 같은 정제를 태운다 — 예전엔 원본을 그대로 찍어
+            # "&amp;" 같은 HTML 엔티티와 "새로운게시글" 배지가 그대로 메일에 나갔다.
+            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
+            author = _mail_clean_text(it.get("author") or "", limit=80) or "미기재"
+            lines += [f"▸ {title}",
+                      f"  기관: {author} | 마감: {dl or '미기재'}"
                       f" | 등록: {it.get('posted_date') or '날짜불명'}"]
             if it.get("link"):
                 lines.append(f"  링크: {it['link']}")
@@ -5476,7 +5480,8 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
         return ""
     lines = ["| 공고명 | 제외 사유 코드 | 제외 판단 근거 |", "|---|---|---|"]
     for it in items[:limit]:
-        title = str(it.get("title", "")).replace("|", "/")
+        # 표 깨짐 방지(|)뿐 아니라 HTML 엔티티·배지도 걷어낸다(render_all 과 동일 기준).
+        title = strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)).replace("|", "/")
         codes = ", ".join(it.get("exclude_reason_codes", [])) or "LOW_CONFIDENCE"
         basis_parts = []
         if it.get("excluded_keywords"):
