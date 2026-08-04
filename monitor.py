@@ -2197,6 +2197,10 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
     hard_err: Exception | None = None
+    # 앞선 경로가 죽고 뒤 경로가 살려낸 경우를 기록한다. 수집은 성공이라 로그가
+    # INFO 로만 남아 조용히 묻히는데, 그 사이 안전망은 1개로 줄어 있다
+    # (2026-08-02~ data.go.kr 이 매 실행 실패했지만 직결이 받쳐 아무도 몰랐다).
+    failed_paths: list[str] = []
     _allow_empty = os.environ.get("BIZINFO_ALLOW_EMPTY", "").strip().lower() in {
         "1", "true", "yes", "on",
     }
@@ -2214,10 +2218,22 @@ def fetch_bizinfo(site: dict) -> list[dict]:
                 )
         except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
             log.error("기업마당 %s 실패: %s", label, e)
+            failed_paths.append(f"{label}: {str(e)[:200]}")
             if hard_err is None:
                 hard_err = e
             continue
         log.info("%s: %d건 (%s)", site["name"], len(got), label)
+        if failed_paths:
+            log.warning(
+                "기업마당 경로 %d개 사망(%s) — '%s' 로 %d건 복구. "
+                "남은 경로가 실패하면 즉시 0건이다.",
+                len(failed_paths),
+                ", ".join(p.split(":", 1)[0] for p in failed_paths),
+                label, len(got),
+            )
+            _page_stat(site.get("id", ""), fallback_degraded=True,
+                       fallback_failed_paths=failed_paths,
+                       fallback_recovered_by=label)
         return got
 
     # 모든 경로가 하드 실패 → 수집실패 신호로 올린다.
