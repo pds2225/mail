@@ -434,3 +434,24 @@ def test_bizinfo_p0_always_zero_without_baseline():
     assert report["status"] == ca.COLLECT_STATUS_ZERO_SUSPICIOUS
     assert ca.REASON_ZERO_ITEMS_WITH_BASELINE in report["reason_codes"]
     assert report.get("detail", {}).get("p0_always") is True
+
+
+# ── §5-6. 다경로 소스에서 앞 경로만 죽은 경우 ────────────────────────────────
+def test_degraded_fallback_path_is_p1():
+    """수집은 성공했으므로 P0 는 아니지만, 안전망이 줄어든 것은 반드시 보인다."""
+    report = ca.classify_source_status(
+        _row(site_id="bizinfo", site_name="기업마당(Bizinfo)"), _history(),
+        page_stat={"stop_reason": "LAST_PAGE", "fallback_degraded": True,
+                   "fallback_recovered_by": "bizinfo 직결",
+                   "fallback_failed_paths": ["data.go.kr: 04 NO_MANDATORY_REQUEST_PARAMETERS_ERROR"]})
+    assert ca.REASON_FALLBACK_PATH_DEGRADED in report["reason_codes"]
+    assert report["risk_level"] == "P1"
+
+
+def test_healthy_multipath_source_is_not_flagged():
+    """폴백이 멀쩡한 날은 아무 사유코드도 붙지 않는다(오탐 방지)."""
+    report = ca.classify_source_status(
+        _row(site_id="bizinfo"), _history(),
+        page_stat={"stop_reason": "LAST_PAGE"})
+    assert ca.REASON_FALLBACK_PATH_DEGRADED not in report["reason_codes"]
+    assert report["risk_level"] == ""
