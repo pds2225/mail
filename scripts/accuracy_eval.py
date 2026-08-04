@@ -24,6 +24,7 @@ if str(BASE_DIR / "scripts") not in sys.path:
     sys.path.insert(0, str(BASE_DIR / "scripts"))
 
 from mail_core.matching import company_match  # noqa: E402
+from mail_core.paths import resolve_raw_root  # noqa: E402
 from run_company_match import _enrich_for_company  # noqa: E402  (인천고정 버그 수정 반영)
 
 # region_field 가 이 값들이면 기업 지역 무관하게 적격(타지역 아님) — region_FP 대상 아님
@@ -60,7 +61,7 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 pass
 
-    data_root = BASE_DIR / "data" / "raw"
+    data_root = resolve_raw_root()
     if not data_root.exists():
         print(f"[SKIP] raw store 없음: {data_root} (수집 후 측정 가능)")
         return 0

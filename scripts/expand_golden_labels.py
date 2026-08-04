@@ -38,7 +38,10 @@ GOLDEN = BASE_DIR / "data" / "golden" / "region_labels.jsonl"
 REVIEW = BASE_DIR / "data" / "golden" / "review_queue.jsonl"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 from region_title_keywords import RegionVerdict, resolve_title_region  # noqa: E402
+from mail_core.paths import resolve_raw_root  # noqa: E402
 
 
 def _fix_console() -> None:
@@ -200,7 +203,7 @@ def _iter_queue(queue_path: Path):
 def main() -> int:
     _fix_console()
     ap = argparse.ArgumentParser(description="제목 지역키워드 → Tier B 골든 라벨 확대 (append-only)")
-    ap.add_argument("--raw-root", default=str(BASE_DIR / "data" / "raw"))
+    ap.add_argument("--raw-root", default=str(resolve_raw_root()))
     ap.add_argument("--date", default=None, help="특정 날짜만(예: 2026-07-16). 생략=전 날짜")
     ap.add_argument("--from-matrix", action="store_true",
                     help="raw 대신 .omc/accuracy/runs/*/matrix.json 의 제목을 코퍼스로 사용")
