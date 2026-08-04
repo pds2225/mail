@@ -219,3 +219,39 @@ def test_토큰보강이_실제_정크차단력을_해치지_않는다():
     """★사용자가 X 준 실제 사례와 대표 정크는 토큰 보강 후에도 그대로 차단된다."""
     for title in ["사전정보공표", "이용약관", "채용정보", "번호", "기관소개"]:
         assert m.non_notice_reason(notice(title)), title
+
+
+# ── 2026-08-04 실발송 회귀 ────────────────────────────────────────────────
+# 그날 아침 메일 14건 중 3건이 공고가 아니었다. 제목·링크만으로 판정 가능한 유형이다.
+def test_페이지번호_제목은_공고가_아니다():
+    """kovwa 목록의 페이지 번호 '1' 이 공고로 메일에 실렸다."""
+    for title in ["1", "2", "10", "999"]:
+        assert m.non_notice_reason(notice(title)), title
+    # 숫자로 시작하는 진짜 공고는 절대 막지 않는다.
+    for title in ["2026년 지원사업 모집", "1차 참가기업 모집 공고", "2026"]:
+        assert m.non_notice_reason(notice(title)) == "", title
+
+
+def test_사이트_대문_링크는_공고가_아니다():
+    """culture.go.kr/index.do(사이트 메인)가 '문화포털' 이라는 제목으로 실렸다."""
+    for link in ["http://www.culture.go.kr/index.do", "https://example.or.kr/",
+                 "https://example.or.kr", "https://example.or.kr/main.jsp"]:
+        assert m.non_notice_reason({"title": "문화포털", "link": link}), link
+    # 쿼리스트링이 있으면 상세일 수 있으므로 건드리지 않는다(누락 제로 우선).
+    assert m.non_notice_reason({"title": "문화포털", "link": "https://x.or.kr/index.do?id=7"}) == ""
+
+
+def test_실발송_진짜공고는_한건도_막히지_않는다():
+    """2026-08-04 메일에 실제로 실린 진짜 공고 — 오차단 0건이어야 한다."""
+    real = [
+        ("2026년 누리꿈스퀘어 XR기업성장지원센터 입주 기업 모집(2차)",
+         "https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&nttNo=16887"),
+        ("2026년도 소프트웨어 산업발전 유공자 포상계획 연장 공고",
+         "https://www.nipa.kr/home/bsnsAll/0/nttDetail?tab=2&nttNo=16874"),
+        ("[서울] 2026년 하반기 B the B 뷰티테크ㆍ디바이스 테스트베드 지원기업 모집 공고",
+         "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124998"),
+        ("[AI 신약개발][웨비나] 양자컴퓨팅의 신약개발 R&D 적용 현주소",
+         "https://www.khidi.or.kr/board/view?pageNum=1&no1=2570"),
+    ]
+    for title, link in real:
+        assert m.non_notice_reason({"title": title, "link": link}) == "", title
