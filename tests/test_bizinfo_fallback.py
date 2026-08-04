@@ -212,3 +212,46 @@ def test_datagokr_happy_path(monkeypatch):
     monkeypatch.setattr(m, "_http_get", lambda *a, **k: _Resp())
     out = m._fetch_bizinfo_datagokr({**SITE, "datagokr_num_rows": 500})
     assert len(out) == 1 and out[0]["id"] == "x1"
+
+
+def test_dead_earlier_path_is_recorded_even_when_collection_succeeds(monkeypatch):
+    """앞 경로가 죽고 뒤 경로가 살려낸 run 은 page_stat 에 흔적을 남긴다.
+
+    2026-08-02 부터 data.go.kr 이 매 실행 NO_MANDATORY_REQUEST_PARAMETERS_ERROR 로
+    죽었는데 직결이 받쳐 수집은 성공했다. 그래서 INFO 로그만 남고 아무도 몰랐다.
+    안전망이 1개로 줄어든 것을 조용히 넘기면, 남은 경로가 실패하는 날 곧바로 0건이 된다
+    (실제로 2026-07-17~20 에 양쪽 동시 실패로 5회 0건이 났다).
+    """
+    m.reset_page_stats()
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+
+    def _dead(_site):
+        raise RuntimeError("기업마당 data.go.kr 오류: 04 NO_MANDATORY_REQUEST_PARAMETERS_ERROR")
+
+    monkeypatch.setattr(m, "_fetch_bizinfo_datagokr", _dead)
+    monkeypatch.setattr(
+        m, "_fetch_bizinfo_direct",
+        lambda _s: [m._bizinfo_parse_item({"pblancId": "d1", "pblancNm": "T"}, "기업마당", True)])
+
+    got = m.fetch_bizinfo({**SITE, "id": "bizinfo"})
+
+    assert len(got) == 1                      # 수집·발송은 정상 진행(경보는 별개)
+    stat = m.page_stats_snapshot()["bizinfo"]
+    assert stat["fallback_degraded"] is True
+    assert stat["fallback_recovered_by"] == "bizinfo 직결"
+    assert any("data.go.kr" in path for path in stat["fallback_failed_paths"])
+
+
+def test_healthy_first_path_leaves_no_degraded_flag(monkeypatch):
+    """첫 경로가 성공하면 흔적을 남기지 않는다 — 매일 뜨는 경고는 무시당한다."""
+    m.reset_page_stats()
+    monkeypatch.setattr(m, "DATA_GO_KR_KEY", "SVCKEY")
+    monkeypatch.setattr(
+        m, "_fetch_bizinfo_datagokr",
+        lambda _s: [m._bizinfo_parse_item({"pblancId": "g1", "pblancNm": "T"}, "기업마당", True)])
+    monkeypatch.setattr(
+        m, "_fetch_bizinfo_direct",
+        lambda _s: pytest.fail("첫 경로가 성공했는데 폴백을 타면 안 된다"))
+
+    assert len(m.fetch_bizinfo({**SITE, "id": "bizinfo"})) == 1
+    assert m.page_stats_snapshot().get("bizinfo", {}).get("fallback_degraded") is None

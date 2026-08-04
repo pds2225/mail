@@ -520,6 +520,8 @@ NON_NOTICE_TITLES = frozenset(_t.casefold() for _t in [
     "110", "1588-2188",
     # nav/배너 링크가 공고로 저장된 사례 (근본 해결은 해당 소스 셀렉터 수정)
     "oa", "직무 솔루션>", "k-스타트업", "단기수출보험(선적후)", "human rights watch",
+    # 2026-08-04 실발송에서 확인된 게시판 카테고리 메뉴 (kovwa)
+    "유관기관",
 ])
 
 # 링크 스킴·도메인 기반 판정 (오탐 0 — 공고 상세가 tel:/SNS 일 수 없다)
@@ -551,6 +553,12 @@ def non_notice_reason(item: dict) -> str:
     if title_key and title_key in NON_NOTICE_TITLES:
         return raw_title.strip()
 
+    # 페이지네이션 링크를 공고로 오인한 경우 — 제목이 숫자뿐인 공고는 존재하지 않는다.
+    # (2026-08-04 실발송: kovwa 목록의 페이지 번호 "1" 이 공고로 메일에 실렸다.)
+    stripped_title = raw_title.strip()
+    if stripped_title.isdigit() and len(stripped_title) <= 3:
+        return f"페이지번호({stripped_title})"
+
     link = str(item.get("link") or "").strip()
     low = link.lower()
     if low.startswith(NON_NOTICE_LINK_SCHEMES):
@@ -559,6 +567,13 @@ def non_notice_reason(item: dict) -> str:
     host = host[4:] if host.startswith("www.") else host
     if host and host in NON_NOTICE_LINK_DOMAINS:
         return host
+    # 사이트 대문(루트·index·main)은 공고 상세 페이지가 아니다.
+    # 쿼리스트링이 있으면 상세일 수 있으므로 건드리지 않는다(recall 우선).
+    parts = urlsplit(low)
+    if host and not parts.query and not parts.fragment:
+        path = parts.path.rstrip("/")
+        if not path or re.fullmatch(r"/(?:index|main|home)(?:\.\w{2,5})?", path):
+            return f"사이트 대문({host})"
     return ""
 
 REGION_EXCLUDE_PHRASES = [
@@ -2197,6 +2212,10 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
     hard_err: Exception | None = None
+    # 앞선 경로가 죽고 뒤 경로가 살려낸 경우를 기록한다. 수집은 성공이라 로그가
+    # INFO 로만 남아 조용히 묻히는데, 그 사이 안전망은 1개로 줄어 있다
+    # (2026-08-02~ data.go.kr 이 매 실행 실패했지만 직결이 받쳐 아무도 몰랐다).
+    failed_paths: list[str] = []
     _allow_empty = os.environ.get("BIZINFO_ALLOW_EMPTY", "").strip().lower() in {
         "1", "true", "yes", "on",
     }
@@ -2214,10 +2233,22 @@ def fetch_bizinfo(site: dict) -> list[dict]:
                 )
         except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
             log.error("기업마당 %s 실패: %s", label, e)
+            failed_paths.append(f"{label}: {str(e)[:200]}")
             if hard_err is None:
                 hard_err = e
             continue
         log.info("%s: %d건 (%s)", site["name"], len(got), label)
+        if failed_paths:
+            log.warning(
+                "기업마당 경로 %d개 사망(%s) — '%s' 로 %d건 복구. "
+                "남은 경로가 실패하면 즉시 0건이다.",
+                len(failed_paths),
+                ", ".join(p.split(":", 1)[0] for p in failed_paths),
+                label, len(got),
+            )
+            _page_stat(site.get("id", ""), fallback_degraded=True,
+                       fallback_failed_paths=failed_paths,
+                       fallback_recovered_by=label)
         return got
 
     # 모든 경로가 하드 실패 → 수집실패 신호로 올린다.
@@ -5273,6 +5304,22 @@ _MAIL_FOOTER_MARKERS = (
 _MAIL_NAV_TOKENS = (
     "메인", "회원가입", "로그인", "고객센터", "재단소개", "인사말", "연 혁", "조직도",
     "업무안내", "알림마당", "공지사항", "채용정보", "자료실", "홍보마당", "정보공개",
+    # 게시판 목록/메뉴를 통째로 긁었을 때만 나오는 토큰(공고 본문에는 거의 없다).
+    "전체메뉴", "전체보기", "카테고리", "회원서비스", "주요소식", "입주공고", "유관기관",
+    "사업고시", "센터뉴스", "뉴스레터", "글쓴이", "작성시간", "조회수", "좋아요", "검색하기",
+)
+
+# 게시판 목록·상세 페이지의 표 머리글/메타값 — 공고 내용이 아니라 화면 부속물이다.
+# (실측: 메일 '지원내용'에 "주관기관 : 이종석 2026-08-03 777" 처럼 담당자·작성일·조회수가 그대로 노출됨)
+_MAIL_LIST_NOISE_RE = (
+    re.compile(r"제목\s+글쓴이\s+작성시간\s+조회수\s+좋아요"),
+    re.compile(r"구분\s+제목\s+작성일\s+조회\s+접수기간\s+상태"),
+    re.compile(r"전체메뉴\s*닫기"),
+    re.compile(r"총\s*\d[\d,]*\s*건\s*검색하기"),
+    re.compile(r"주관기관\s*[:：]\s*[가-힣]{2,4}(?=\s|$)"),   # 담당자 이름
+    re.compile(r"(?<!\d)\d{4}-\d{2}-\d{2}\s+\d{1,7}(?=\s|$)"),  # 작성일 + 조회수
+    re.compile(r"\(\s*D-\d+\s*\)"),                            # 남은 날짜 카운트다운
+    re.compile(r"(?:^|\s)[가-힣]{2,6}\s*[:：]\s*(?=[가-힣]{2,6}\s*[:：])"),  # 값 없는 빈 라벨
 )
 
 
@@ -5290,12 +5337,20 @@ def _mail_clean_text(value: object, *, limit: int = MAIL_SUPPORT_BLURB_LIMIT) ->
         pos = text.find(marker)
         if pos >= 80:
             text = text[:pos]
+    # 목록성 판정은 노이즈를 지우기 '전'에 한다 — 지우고 나면 판정 근거가 함께 사라진다.
+    # (실측: IDSC 케이스는 "전체메뉴 닫기"·"총 273 건 검색하기" 를 먼저 지우자 토큰이 4개로 줄어 빠져나갔다.)
     nav_hits = sum(1 for token in _MAIL_NAV_TOKENS if token in text[:500])
+    nav_hits += sum(1 for noise_re in _MAIL_LIST_NOISE_RE if noise_re.search(text[:1000]))
+    for noise_re in _MAIL_LIST_NOISE_RE:
+        text = noise_re.sub(" ", text)
     if nav_hits >= 5:
         anchors = [text.find(token) for token in ("지원대상", "사업내용", "지원내용", "모집개요", "신청자격", "☞")]
         anchors = [pos for pos in anchors if pos >= 0]
-        if anchors:
-            text = text[min(anchors):]
+        if not anchors:
+            # 메뉴·게시판 목록만 긁혔고 공고 본문이 없다. 쓰레기를 보여주느니 비운다
+            # (호출부가 다음 후보 필드나 "상세 공고문 확인" 으로 넘어간다).
+            return ""
+        text = text[min(anchors):]
     text = re.sub(r"\s+", " ", text).strip(" -·•|/")
     return (text[:limit].rstrip() + " …") if len(text) > limit else text
 
@@ -5316,6 +5371,9 @@ def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> st
     title = _mail_clean_text(item.get("title"), limit=200)
     if title and candidate.startswith(title):
         candidate = candidate[len(title):].lstrip(" :-·•")
+    # 정제 후 남은 게 라벨 부스러기 수준이면 보여주지 않는다(엉뚱한 글자보다 '확인'이 낫다).
+    if len(candidate.strip()) < 12:
+        return "상세 공고문 확인"
     return candidate or "상세 공고문 확인"
 
 
@@ -5347,28 +5405,33 @@ def fallback_body(items: list[dict]) -> str:
         ))
         lines.append("")
     sections = [
-        ("1. 우선 추천", [it for it in items if it.get("priority_keyword")]),
-        ("2. 일반 추천", [it for it in items if not it.get("priority_keyword")]),
+        ("우선 추천", [it for it in items if it.get("priority_keyword")]),
+        ("일반 추천", [it for it in items if not it.get("priority_keyword")]),
     ]
-    for section_title, section_items in sections:
-        if not section_items:
-            continue
-        lines.append(section_title)
+    # 번호는 '실제로 표시되는' 섹션에만 순서대로 붙인다.
+    # (예전엔 번호가 제목에 박혀 있어, 우선 추천이 비면 본문이 "2. 일반 추천" 부터 시작했다.)
+    visible = [(title, its) for title, its in sections if its]
+    for idx, (section_title, section_items) in enumerate(visible, start=1):
+        lines.append(f"{idx}. {section_title}" if len(visible) > 1 else section_title)
         for it in section_items:
             title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
             _badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(it.get("_change_type"), "")
             title = _badge + title
-            author = _mail_clean_text(it.get("author") or "미기재", limit=80)
+            # 기관명이 비면 수집 출처라도 보여준다("미기재"보다 어디서 온 공고인지가 낫다).
+            author = _mail_clean_text(it.get("author") or it.get("source") or "미기재", limit=80)
             types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
             region = _region_label(it)
             display_region = "제한 없음" if region.endswith("전체") else region
+            # 신청기간(시작~종료)이 잡힌 공고는 '마감' 이 아니라 '접수기간' 으로 적는다.
+            deadline_text = resolve_item_deadline(it) or "미기재"
+            deadline_label = "접수기간" if "~" in deadline_text else "마감"
             lines.extend([
                 "──────────────────",
                 f"📌 {title}",
                 f"• 기관: {author} | 유형: {types}",
                 f"• 대상: {_mail_target_text(it)}",
                 f"• 지원내용: {_mail_support_blurb(it)}",
-                f"• 마감: {resolve_item_deadline(it) or '미기재'} | 지역: {display_region}",
+                f"• {deadline_label}: {deadline_text} | 지역: {display_region}",
                 f"• 적합사유: {_mail_fit_reason(it)}",
                 f"• 원문: {it.get('link') or '미기재'}",
             ])
