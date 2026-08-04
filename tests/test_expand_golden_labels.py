@@ -48,14 +48,16 @@ def test_classify_paren_tag():
     assert rf == "경기도" and reason is None
 
 
-def test_classify_org_tag_goes_review():
+def test_classify_org_tag_now_labels():
+    # (변경) 기관명 태그도 안에 지역명이 있으면 라벨한다 — 구버전은 리뷰 큐로 보냈다
     rf, reason, tag = classify_title("[인천테크노파크] 수출기업 애로상담 창구 운영")
-    assert rf is None and reason == "org_or_ambiguous" and "인천" in tag
+    assert rf == "인천광역시" and reason is None and "인천" in tag
 
 
-def test_classify_sub_region_goes_review():
+def test_classify_sub_region_now_labels():
+    # (변경) 시군구 태그는 광역으로 매핑해 라벨한다
     rf, reason, _ = classify_title("[고양시] 관내기업 지원")
-    assert rf is None and reason == "sub_region"
+    assert rf == "경기도" and reason is None
 
 
 def test_classify_no_tag():

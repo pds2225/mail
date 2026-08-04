@@ -37,6 +37,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 GOLDEN = BASE_DIR / "data" / "golden" / "region_labels.jsonl"
 REVIEW = BASE_DIR / "data" / "golden" / "review_queue.jsonl"
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from region_title_keywords import RegionVerdict, resolve_title_region  # noqa: E402
+
 
 def _fix_console() -> None:
     for stream in (sys.stdout, sys.stderr):
@@ -98,23 +101,19 @@ def canon_region(tag_text: str) -> str | None:
     return v or None  # ""(모호 표기 광주시)·미등재 → None
 
 
+def classify_title_ex(title: str) -> RegionVerdict:
+    """제목 → 지역 판정(전체 결과). 규칙 본체는 region_title_keywords 모듈.
+
+    구버전은 '선두 대괄호 태그가 통째로 광역명'일 때만 라벨했다. 지금은 제목 전체에서
+    광역명·시군구명·권역표기를 읽어 라벨한다([미추홀구]→인천, [전남광주]→전남+광주).
+    """
+    return resolve_title_region(title)
+
+
 def classify_title(title: str) -> tuple[str | None, str | None, str | None]:
     """제목 → (라벨 region_field, 리뷰 사유, 태그원문). 라벨/리뷰 모두 아니면 (None, None, None)."""
-    m = _TAG_RX.match(title or "")
-    if not m:
-        return None, None, None
-    tag = m.group(1).strip()
-    rf = canon_region(tag)
-    if rf:
-        return rf, None, tag
-    compact = re.sub(r"\s+", "", tag)
-    if re.fullmatch(r"[가-힣]{1,6}[시군구]", compact):
-        # 순수 시군구 태그([고양시]·[미추홀구]) — 광역 매핑은 사람확인으로
-        return None, "sub_region", tag
-    if _REGION_HINT_RX.search(tag):
-        # 기관명(인천테크노파크)·모호(광주) 등 — 사람확인 대상
-        return None, "org_or_ambiguous", tag
-    return None, None, None
+    v = classify_title_ex(title)
+    return v.region_field, v.reason, (v.tag or None)
 
 
 def _load_jsonl_ids(path: Path) -> set[str]:
@@ -152,18 +151,79 @@ def _iter_meta(raw_root: Path, date: str | None):
         yield k, d
 
 
+def _iter_matrix(runs_root: Path):
+    """raw store 가 비었을 때의 보조 코퍼스 — 과거 run 의 matrix.json.
+
+    **id·title·source 만 읽는다.** 판정기 결과(companies/groups 의 verdict)와 region_field 는
+    라벨 근거로 절대 쓰지 않는다 — 정답지가 판정기를 재생산하면 채점이 무의미해지기 때문.
+    """
+    seen: set[str] = set()
+    for mp in sorted(runs_root.glob("*/matrix.json"), reverse=True):
+        try:
+            o = json.loads(mp.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            continue
+        for n in o.get("notices") or []:
+            k = str(n.get("id") or "")
+            t = str(n.get("title") or "")
+            if not k or not t or k in seen:
+                continue
+            seen.add(k)
+            yield k, {"title": t, "source": str(n.get("source") or "")}
+
+
+def _iter_queue(queue_path: Path):
+    """이미 리뷰 큐에 쌓인 보류 공고를 새 규칙으로 다시 판정한다(id/title/source 만 사용).
+
+    규칙이 좋아지면 예전에 '애매'로 보류했던 공고가 지금은 확정될 수 있다. 그 몫을
+    사람 손 없이 되살리는 경로다(여전히 애매하면 그대로 큐에 남는다).
+    """
+    seen: set[str] = set()
+    if not queue_path.exists():
+        return
+    for line in queue_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            d = json.loads(line)
+        except Exception:  # noqa: BLE001
+            continue
+        k = str(d.get("id") or "")
+        t = str(d.get("title") or "")
+        if not k or not t or k in seen:
+            continue
+        seen.add(k)
+        yield k, {"title": t, "source": str(d.get("source") or "")}
+
+
 def main() -> int:
     _fix_console()
-    ap = argparse.ArgumentParser(description="제목 지역태그 → Tier B 골든 라벨 확대 (append-only)")
+    ap = argparse.ArgumentParser(description="제목 지역키워드 → Tier B 골든 라벨 확대 (append-only)")
     ap.add_argument("--raw-root", default=str(BASE_DIR / "data" / "raw"))
     ap.add_argument("--date", default=None, help="특정 날짜만(예: 2026-07-16). 생략=전 날짜")
+    ap.add_argument("--from-matrix", action="store_true",
+                    help="raw 대신 .omc/accuracy/runs/*/matrix.json 의 제목을 코퍼스로 사용")
+    ap.add_argument("--runs-root", default=str(BASE_DIR / ".omc" / "accuracy" / "runs"))
+    ap.add_argument("--recheck-queue", action="store_true",
+                    help="리뷰 큐에 보류된 공고를 새 규칙으로 재판정(확정되면 라벨로 승격)")
     ap.add_argument("--dry-run", action="store_true", help="쓰기 없이 통계만")
     args = ap.parse_args()
 
     raw_root = Path(args.raw_root)
-    if not raw_root.exists():
-        print(f"[expand] raw 없음: {raw_root}")
-        return 1
+    if args.recheck_queue:
+        source_iter = _iter_queue(REVIEW)
+    elif args.from_matrix:
+        runs_root = Path(args.runs_root)
+        if not runs_root.exists():
+            print(f"[expand] runs 없음: {runs_root}")
+            return 1
+        source_iter = _iter_matrix(runs_root)
+    else:
+        if not raw_root.exists():
+            print(f"[expand] raw 없음: {raw_root}")
+            return 1
+        source_iter = _iter_meta(raw_root, args.date)
 
     golden_ids = _load_jsonl_ids(GOLDEN)
     review_ids = _load_jsonl_ids(REVIEW)
@@ -174,11 +234,13 @@ def main() -> int:
     reviews: list[dict] = []
     by_region: dict[str, int] = {}
 
-    for k, it in _iter_meta(raw_root, args.date):
+    by_path: dict[str, int] = {}
+    for k, it in source_iter:
         n_scan += 1
         if str(it.get("region_field") or "").strip():
             continue  # Tier A 원천 있음 → extract_golden_labels 소관
-        rf, reason, tag = classify_title(str(it.get("title") or ""))
+        v = classify_title_ex(str(it.get("title") or ""))
+        rf, reason, tag = v.region_field, v.reason, (v.tag or None)
         if rf:
             if k in golden_ids:
                 n_skip_exist += 1
@@ -186,10 +248,12 @@ def main() -> int:
             golden_ids.add(k)
             n_label += 1
             by_region[rf] = by_region.get(rf, 0) + 1
+            by_path[v.labeled_by or "?"] = by_path.get(v.labeled_by or "?", 0) + 1
             labels.append({
                 "id": k, "region_field": rf, "source": str(it.get("source") or ""),
                 "title": str(it.get("title") or "")[:110], "tier": "B",
-                "labeled_by": "title_tag", "tag": tag,
+                "labeled_by": v.labeled_by or "title_tag", "tag": tag,
+                "evidence": v.evidence[:6],
                 "first_seen": now, "last_seen": now,
             })
         elif reason:
@@ -205,6 +269,11 @@ def main() -> int:
 
     print(f"[expand] 스캔 {n_scan}건 → 신규 Tier B 라벨 {n_label}건, "
           f"리뷰 큐 {n_review}건, 기존 보존 {n_skip_exist}건")
+    print(f"[경로별] {by_path}")
+    by_reason: dict[str, int] = {}
+    for r in reviews:
+        by_reason[r["reason"]] = by_reason.get(r["reason"], 0) + 1
+    print(f"[큐사유] {by_reason}")
     for rf, c in sorted(by_region.items(), key=lambda x: -x[1]):
         print(f"  {rf}: {c}")
 
