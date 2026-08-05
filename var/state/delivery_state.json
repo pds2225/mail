@@ -78,5 +78,8 @@
  "2026-08-05#am|default|grp_bnco|hmac_03ca657fe501f743685f327af417a04f",
  "2026-08-05#am|default|grp_bnco|hmac_e0aed7537735a62043866b46c2fa3484",
  "2026-08-05#am|default|grp_prestartup_ai|hmac_03ca657fe501f743685f327af417a04f",
- "2026-08-05#am|default|grp_prestartup_ai|hmac_3bc5decadb442bbefd04a48223e66f3a"
+ "2026-08-05#am|default|grp_prestartup_ai|hmac_3bc5decadb442bbefd04a48223e66f3a",
+ "2026-08-05#pm|default|grp_ai_saas|hmac_03ca657fe501f743685f327af417a04f",
+ "2026-08-05#pm|default|grp_bnco|hmac_03ca657fe501f743685f327af417a04f",
+ "2026-08-05#pm|default|grp_bnco|hmac_e0aed7537735a62043866b46c2fa3484"
 ]
