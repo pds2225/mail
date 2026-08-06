@@ -3,23 +3,23 @@
 POST /api/run
   Header: Authorization: Bearer <MONITOR_SECRET>
     - dry-run: MONITOR_SECRET 이 설정돼 있으면 필수
-    - 실발송: MONITOR_SECRET 미설정이면 거부(fail closed), 설정 시 Bearer 필수
+    - 실발송: 항상 거부(501). /tmp state 로는 멱등이 불가능하다.
   Body(JSON, 모두 선택):
     {
       "dry_run": true,           # 기본 true — 미지정/true 면 미리보기만(발송 없음)
-      "confirm_send": "SEND",    # 실제 발송하려면 정확히 "SEND" 이어야 함
+      "confirm_send": "SEND",    # 서버리스에서는 무시·거부(아래 주의사항)
       "include_raw_all": false,  # 원본전체 보고 메일 포함 여부
-      "persist_seen": false      # 실발송 시 반드시 true (CLI --send/--persist-seen 와 동일)
+      "persist_seen": false      # 실발송 게이트 검사용(실발송 자체는 501)
     }
-  → 실제 발송은 dry_run=false 이고 confirm_send=="SEND" 이고 persist_seen=true 일 때만.
+  → 이 핸들러는 dry-run 전용. 실발송은 GitHub Actions monitor 워크플로만 사용.
 
 GET /api/run?dry_run=1
   → dry-run(미리보기)만 허용. GET 으로는 절대 발송하지 않는다.
 
 주의사항:
   - Vercel Hobby: 10초 / Pro: 60초 타임아웃 — 긴 실행은 GitHub Actions 권장
-  - seen_ids.json 은 /tmp/monitor_ws 에 저장(Lambda warm-reuse 중만 유지)
-  - 실발송·영구 persistence 는 명시적 트리거에서만(자동 스케줄·GET 은 dry-run)
+  - seen_ids/delivery_state/outbox 는 /tmp/monitor_ws 에만 쓰이므로 콜드스타트마다 소멸
+  - 따라서 confirm_send=SEND 실발송은 501 로 차단(중복 메일 사고 방지)
 """
 from __future__ import annotations
 
@@ -138,6 +138,15 @@ class handler(BaseHTTPRequestHandler):
             self._json(400, {
                 "error": "persist_seen=true is required for real sends",
                 "hint": "Omit confirm_send for dry-run, or set persist_seen=true with confirm_send='SEND'.",
+            })
+            return
+
+        # /tmp/monitor_ws 의 seen_ids·delivery_state·outbox 는 콜드스타트마다 증발한다.
+        # persist_seen=true 여도 멱등이 성립하지 않으므로 실발송은 거부한다.
+        if allow_send:
+            self._json(501, {
+                "error": "Real sends are not supported on Vercel serverless",
+                "hint": "Use dry_run=true for preview, or trigger the GitHub Actions monitor workflow for delivery.",
             })
             return
 
