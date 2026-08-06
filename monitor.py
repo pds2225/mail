@@ -885,7 +885,13 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
         if iid not in seen_ids:
             version = max(1, int((previous or {}).get("version", 0) or 0))
             deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
-            updates[iid] = {**base, "version": version, "delivery_id": iid}
+            # NEW 첫 발송은 유지하되, FETCH/PARSE 실패 스냅샷은 delivered_* 로 잠그지 않는다.
+            # (얇은 baseline 이 승격되면 다음 정상 enrich 가 empty→filled 를 EXTENDED/UPDATED
+            #  로 오인해 허위 id@vN 재발송을 만든다 — seed 경로 unreliable 가드와 동일 유형.)
+            update = {**base, "version": version, "delivery_id": iid}
+            if _detail_extraction_unreliable(item):
+                update["unreliable_new"] = True
+            updates[iid] = update
             continue
         # 상세 FETCH/PARSE 실패 스냅샷은 seed 경로에서도 전달 확정본으로 승격하면 안 된다.
         # (seed_only 가 빈 delivered_* 를 심으면, 다음 정상 enrich 가 전 필드 "변경"으로
@@ -947,6 +953,22 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             merged[iid] = record
             continue
         delivery_id = str(update.get("delivery_id") or iid)
+        if update.get("unreliable_new"):
+            # NEW 메일은 나갔을 수 있어도 실패 스냅샷은 delivered_* 로 승격하지 않는다.
+            # 다음 정상 enrich 가 not old_hash → seed_only 로 baseline 만 채운다(허위 @vN 방지).
+            if delivery_id in seen_ids:
+                record.update({
+                    "version": int(update.get("version", record.get("version", 1)) or 1),
+                    "delivery_id": delivery_id,
+                    "change_type": "NEW",
+                    "pending_delivery_id": "",
+                    "last_delivered_at": now.isoformat(),
+                })
+            else:
+                record["version"] = int(update.get("version", record.get("version", 1)) or 1)
+                record["delivery_id"] = delivery_id
+            merged[iid] = record
+            continue
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({
                 "version": int(update.get("version", record.get("version", 1)) or 1),
