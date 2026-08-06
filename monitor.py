@@ -5001,7 +5001,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if notice_type == "unknown":
             notice_type = "general_info"
 
-    # 애매 비지원 — hard 금지(반례 있음)하되 본문 추천에서 분리해 review 로 보낸다.
+    # 애매 비지원 — hard 금지(반례 있음: '환경정보공개 지원사업' 등 진짜 지원사업이 섞임)하되
+    # 본문 추천에서 분리해 review 로 보낸다. 정보공개+모집/공고 조합은 정적 메뉴 오수집과
+    # 진짜 지원사업이 혼재하므로, 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE 로
+    # review_needed=True 로 표시해 사람이 최종 판단한다.
     amb_hit = ambiguous_notice_reason(item)
     if amb_hit:
         reason_codes.append("AMBIGUOUS_NOTICE")
@@ -5132,6 +5135,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
 
+    # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
+    # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
+    # 전자는 evaluate_notice 의 application 게이트, 후자는 제목 앵커 상수 매칭.
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_APPLICATION_LIKE")
 
@@ -5393,8 +5399,6 @@ def refine_included_by_score_llm(
     rejected = []
     for it in out.get("rejected") or []:
         codes = list(it.get("exclude_reason_codes") or [])
-        decision = ""
-        # audit 매칭은 title 기준 — rejected item 에 결정 표시
         codes.append("SCORE_OR_LLM_REJECT")
         rejected.append({
             **it,
