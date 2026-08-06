@@ -6318,6 +6318,7 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
     collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
@@ -6363,6 +6364,12 @@ def execute_monitor(
     groups   = load_groups()
     settings = load_settings()
     seen_ids = load_seen_ids()
+    if group_id:
+        groups = [g for g in groups if g.get("id") == group_id]
+        if not groups:
+            log.error("그룹 '%s' 을(를) 찾을 수 없습니다", group_id)
+            raise SystemExit(1)
+        log.info("단일 그룹 모드: %s", groups[0].get("name", group_id))
     days_back = max(1, int(settings.get("days_back", 3) or 3))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
@@ -6858,6 +6865,7 @@ def main(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     collection_gate: dict | None = None,
+    group_id: str = "",
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -6866,6 +6874,7 @@ def main(
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
         collection_gate=collection_gate,
+        group_id=group_id,
     )
     _post_run_alert(result)
     return result
@@ -7333,6 +7342,7 @@ def run_dry_run(
     fetch_coverage: bool = True,
     allow_coverage_alert: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
 ) -> dict:
     """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증.
 
@@ -7382,6 +7392,7 @@ def run_dry_run(
     result = execute_monitor(
         allow_send=False, include_raw_all=False, persist_seen=False,
         draft_mode=draft_mode, collection_gate=collection_gate,
+        group_id=group_id,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -7482,6 +7493,12 @@ if __name__ == "__main__":
         action="store_true",
         help="원본전체(raw_all) 보고 메일도 함께 발송 대상에 포함한다(기본은 미포함).",
     )
+    parser.add_argument(
+        "--group",
+        default="",
+        metavar="GROUP_ID",
+        help="지정한 그룹만 실행한다(예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.",
+    )
     args = parser.parse_args()
     if args.only_to:
         _ONLY_TO = args.only_to
@@ -7503,6 +7520,7 @@ if __name__ == "__main__":
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
                 draft_mode=True,
+                group_id=args.group,
             )
             _post_run_alert(summary)
             log.info(
@@ -7517,6 +7535,7 @@ if __name__ == "__main__":
             summary = run_dry_run(
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
+                group_id=args.group,
             )
             log.info(
                 "dry-run 완료: 수집=%s 신규=%s review_queue=%s mail_sent=%s seen_changed=%s",
@@ -7636,6 +7655,7 @@ if __name__ == "__main__":
                     include_raw_all=args.include_raw_all,
                     persist_seen=args.persist_seen,
                     collection_gate=_gate,
+                    group_id=args.group,
                 )
     except Exception as e:
         log.exception("치명적 오류: %s", e)
