@@ -73,6 +73,49 @@ def test_title_education_schedule_remains_hard_excluded():
     assert "EDUCATION_ONLY" in result["exclude_reason_codes"]
 
 
+def test_title_recruitment_with_info_session_stays_relevant():
+    """제목에 '모집 및 설명회'가 함께 있어도 실모집으로 통과(INFO_SESSION soft)."""
+    item = _item(
+        "2026 AI 지원사업 참여기업 모집 및 설명회",
+        "서울 소재 기업 신청 접수.",
+    )
+
+    result = monitor.evaluate_notice(item, GROUP, today=TODAY)
+
+    assert result["is_relevant"] is True
+    assert "INFO_SESSION" not in result["exclude_reason_codes"]
+    assert "INFO_SESSION_REVIEW" not in result["exclude_reason_codes"]
+    assert "설명회" in result["soft_excluded_keywords"]
+
+
+def test_info_session_as_recruit_goes_to_review_not_hard():
+    """'설명회 참여기업 모집'은 hard INFO_SESSION이 아니라 review 분리."""
+    item = _item(
+        "수출지원 설명회 참여기업 모집",
+        "서울 소재 기업 대상 설명회 참가 모집.",
+    )
+
+    result = monitor.evaluate_notice(item, GROUP, today=TODAY)
+
+    assert result["is_relevant"] is False
+    assert "INFO_SESSION_REVIEW" in result["exclude_reason_codes"]
+    assert "INFO_SESSION" not in result["exclude_reason_codes"]
+    assert result["review_needed"] is True
+
+
+def test_education_participant_recruit_title_hard_excluded():
+    """'교육참여기업모집' 제목은 교육 모집으로 제외."""
+    item = _item(
+        "00교육참여기업모집",
+        "서울 소재 AI 교육 과정 안내.",
+    )
+
+    result = monitor.evaluate_notice(item, GROUP, today=TODAY)
+
+    assert result["is_relevant"] is False
+    assert "EDUCATION_ONLY" in result["exclude_reason_codes"]
+
+
 def test_recruitment_result_title_does_not_soften_body_exclusion():
     item = _item(
         "2026 AI 참여기업 모집 결과 안내",

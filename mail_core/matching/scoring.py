@@ -33,6 +33,8 @@ DEFAULT_WEIGHTS: dict[str, int] = {
 }
 DEFAULT_THRESHOLD = 50
 DEFAULT_LLM_BAND = (40, 70)
+DEFAULT_LLM_MODEL = "claude-haiku-4-5-20251001"
+# MONITOR_LLM_MODEL 로 override. OpenAI 경로는 MONITOR_LLM_PROVIDER=openai + OPENAI_API_KEY.
 
 # or-키워드가 이 개수 이상 적중하면 군집 보너스 1회 부여
 # (priority 키워드가 없어도 관련 키워드가 다수면 적합 신호로 본다)
@@ -141,25 +143,17 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
 
 
 def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
-    """Claude 2차 판정. 비용 절감을 위해 score 회색지대 아이템에만 호출.
+    """LLM 2차 판정. 비용 절감을 위해 score 회색지대 아이템에만 호출.
 
     실패 시 'is_relevant': True 로 통과 (보수적). 호출 측에서 캐시/상한 제어.
+    모델: group.llm_model > MONITOR_LLM_MODEL > DEFAULT_LLM_MODEL.
+    provider: MONITOR_LLM_PROVIDER=openai 이면 OpenAI, 기본 anthropic.
     """
-    try:
-        from anthropic import Anthropic
-    except ImportError:
-        return {"is_relevant": True, "confidence": 0.0, "reason": "anthropic not installed"}
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return {"is_relevant": True, "confidence": 0.0, "reason": "no api key"}
-
     title = str(item.get("title", ""))[:200]
-    summary = str(item.get("summary", ""))[:500]
+    summary = str(item.get("summary", "") or item.get("description", ""))[:500]
     priority_kw = ", ".join((group.get("priority_keywords") or [])[:10])
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
-
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
         f"그룹 지역: {region}\n"
@@ -169,28 +163,74 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str
         f"제목: {title}\n"
         f"요약: {summary}"
     )
+    model = (
+        str(group.get("llm_model") or "").strip()
+        or os.environ.get("MONITOR_LLM_MODEL", "").strip()
+        or DEFAULT_LLM_MODEL
+    )
+    provider = (os.environ.get("MONITOR_LLM_PROVIDER") or "anthropic").strip().lower()
 
     try:
-        client = Anthropic(api_key=api_key)
-        msg = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = "".join(getattr(b, "text", "") for b in msg.content) if msg.content else ""
-        import json
-        import re
-        m = re.search(r"\{.*\}", raw, re.S)
-        if not m:
-            return {"is_relevant": True, "confidence": 0.0, "reason": "parse fail"}
-        parsed = json.loads(m.group(0))
-        return {
-            "is_relevant": bool(parsed.get("is_relevant", True)),
-            "confidence": float(parsed.get("confidence", 0.5)),
-            "reason": str(parsed.get("reason", ""))[:200],
-        }
+        if provider == "openai":
+            return _llm_openai(prompt, model)
+        return _llm_anthropic(prompt, model)
     except Exception as e:
         return {"is_relevant": True, "confidence": 0.0, "reason": f"err:{type(e).__name__}"}
+
+
+def _parse_llm_json(raw: str) -> dict[str, Any]:
+    import json
+    import re
+    m = re.search(r"\{.*\}", raw or "", re.S)
+    if not m:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "parse fail"}
+    parsed = json.loads(m.group(0))
+    return {
+        "is_relevant": bool(parsed.get("is_relevant", True)),
+        "confidence": float(parsed.get("confidence", 0.5)),
+        "reason": str(parsed.get("reason", ""))[:200],
+    }
+
+
+def _llm_anthropic(prompt: str, model: str) -> dict[str, Any]:
+    try:
+        from anthropic import Anthropic
+    except ImportError:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "anthropic not installed"}
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "no api key"}
+    client = Anthropic(api_key=api_key)
+    msg = client.messages.create(
+        model=model,
+        max_tokens=200,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = "".join(getattr(b, "text", "") for b in msg.content) if msg.content else ""
+    return _parse_llm_json(raw)
+
+
+def _llm_openai(prompt: str, model: str) -> dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "no openai key"}
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "openai not installed"}
+    # 기본 모델명이 anthropic slug 이면 gpt-4o-mini 로 치환
+    if model.startswith("claude"):
+        model = os.environ.get("MONITOR_OPENAI_MODEL", "gpt-4o-mini")
+    client = OpenAI(api_key=api_key)
+    resp = client.chat.completions.create(
+        model=model,
+        max_tokens=200,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = ""
+    if resp.choices:
+        raw = str(getattr(resp.choices[0].message, "content", "") or "")
+    return _parse_llm_json(raw)
 
 
 def score_and_filter(items: list[dict], group: dict) -> dict[str, Any]:

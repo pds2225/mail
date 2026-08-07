@@ -216,3 +216,23 @@ def merge_feedback_labels(records: list[dict], path: Path | None = None) -> dict
             )
     stats["total"] = len(existing)
     return stats
+
+
+def record_local_verdict(
+    notice_id: str,
+    verdict: str,
+    *,
+    title: str = "",
+    source: str = "dashboard-ox",
+    path: Path | None = None,
+) -> dict:
+    """대시보드/CLI 버튼용 — 메일·IMAP 없이 O/X 를 골든에 바로 기록한다."""
+    return merge_feedback_labels(
+        [{
+            "id": str(notice_id).strip(),
+            "verdict": verdict,
+            "title": title,
+            "source": source,
+        }],
+        path=path,
+    )
