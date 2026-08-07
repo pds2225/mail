@@ -4969,6 +4969,27 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
 
+    # P0: 컨설팅·교육·상담 단독 공고 제외 — 사업화자금 등 비용지원이 없으면 제외
+    _item_types = classify_support_type(item)
+    _has_financial = any(t in ("지원금/바우처",) for t in _item_types)
+    _has_consulting_only = "컨설팅·교육·상담" in _item_types and not _has_financial and "그외" not in _item_types
+    if group is not None and _has_consulting_only:
+        reason_codes.append("CONSULTING_ONLY")
+
+    # P0: 투자 단독 공고 제외 — 비용지원(지원금/바우처)이 없으면 제외
+    _has_investment_only = "투자" in _item_types and not _has_financial and "그외" not in _item_types
+    if group is not None and _has_investment_only:
+        reason_codes.append("INVESTMENT_ONLY")
+
+    # P0: 입주공간 단독 공고 제외 — 사업화자금 등 비용지원이 없으면 제외
+    _has_tenant_only = (
+        any(kw in text for kw in ("입주기업", "입주기업 모집", "입주 공고", "입주공간"))
+        and not _has_financial
+        and "그외" not in _item_types
+    )
+    if group is not None and _has_tenant_only:
+        reason_codes.append("TENANT_ONLY")
+
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_GRANT_NOTICE")
 

@@ -1,3 +1,33 @@
+## 🧾 세션 회고 — 2026-08-07 15:30
+**주제:** mail 모니터 예비창업 공고 매칭 정확도 개선 계획 수립 및 P0 구현 시작
+
+### ✅ 한 일
+- 전에는 예비창업 공고 추천 시스템의 매칭 기준이 문서화되지 않고 기존 코드에 산재해 있었음 → 이제 15절+부록 3개짜리 최종 실행계획서(FINAL_PLAN.md, 27,234자)로 전체 아키텍처·판정 기준·데이터 구조·테스트·KPI를 한 곳에 정리함
+- 전에는 "멘토링"이 본문에 있으면 사업화자금 공고도 제외됨 → 이제 groups.json에서 멘토링·컨설팅·교육 키워드를 exclude_keywords에서 제거하고, monitor.py에 컨설팅 단독/투자 단독/입주 단독 제외 로직을 새로 추가함
+- 전에는 "개인"이라는 단어만으로 예비창업자로 인정됨 → 이제 "개인"을 or_keywords에서 제거하고, "개인+창업" 등 결합 조건으로만 인정하도록 변경함
+
+### 🧭 정한 것
+- 매칭 시스템을 4개 계층으로 분리: A.소스관리 B.공고통합·중복제거 C.예비창업매칭 D.메일발송
+- 멘토링·컨설팅이 부가 프로그램인 사업화자금 공고는 포함, 단독이면 제외
+- 입주공간+사업비 결합 공고는 포함, 입주공간만 제공이면 제외
+- 적합도 점수는 1차 구현에서 비활성화 (오제외 방지)
+- AI는 애매한 공고만 판정 (ambiguous_only 모드)
+
+### 📂 손댄 파일
+- `D:\mail\docs\FINAL_PLAN.md` — 최종 실행계획서 전체본 신규 작성
+- `D:\mail\docs\SOURCE_MANAGEMENT_PLAN.md` — 초기 계획서 (FINAL_PLAN로 대체)
+- `D:\mail\docs\MATCHING_ARCHITECTURE.md` — 매칭 아키텍처 ASCII 다이어그램
+- `D:\mail\docs\PLAN_REWRITE_PROMPT.md` — 계획서 전면 수정 요청 프롬프트
+- `D:\mail\config\groups.json` — exclude_keywords에서 멘토링·컨설팅·입주기업 제거, 개인을 or_keywords에서 제거, and_keyword_groups에 개인+창업 조합 추가
+- `D:\mail\monitor.py` — CONSULTING_ONLY, INVESTMENT_ONLY, TENANT_ONLY 제외 로직 추가
+
+### ⏭️ 다음 할 일
+- 테스트 1건 실패 수정 (test_filter_allows_application_notices_with_general_keywords_and_scores_them)
+- P0 나머지 구현: 판정사유 저장, AI 사유코드 기반 호출
+- P1 구현: 소스 상태 관리, 통합 공고 ID, 버전 관리
+
+---
+
 ## 🧾 세션 회고 — 2026-08-04 23:20
 **주제:** kimi·mimo·hermes AI 도구 3종 실전 배선 + monitor.py 분할을 막던 규칙 개정
 
