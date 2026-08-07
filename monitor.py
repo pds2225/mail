@@ -3913,13 +3913,38 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
 # 중복 제거 (주관기관 우선)
 # ══════════════════════════════════════════════════════════════════
 
+def _extract_notice_number(text: str) -> str:
+    """공고번호 추출 (예: '중소벤처기업부 공고 제2026-123호' → '2026-123')."""
+    m = re.search(r"제?\s*(\d{4})\s*[-–]\s*(\d+)\s*호", str(text or ""))
+    return f"{m.group(1)}-{m.group(2)}" if m else ""
+
+
+def _canonical_key(item: dict) -> str | None:
+    """교차 사이트 통합 공고 ID용 키 생성. 없으면 None."""
+    # 1순위: 공식 공고번호
+    num = _extract_notice_number(item.get("title", "")) or _extract_notice_number(item.get("description", ""))
+    if num:
+        return f"num:{num}"
+    # 2순위: 원문 URL (신청 링크가 아닌 공고 원문)
+    link = norm(item.get("link", ""))
+    if link and len(link) > 20:
+        return f"link:{link}"
+    # 3순위: 신청 URL
+    app_url = norm(item.get("application_url", ""))
+    if app_url and len(app_url) > 20:
+        return f"app:{app_url}"
+    return None
+
+
 def dedup_items(items: list[dict]) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
+    P1: 공고번호·URL 기반 교차 사이트 중복 제거 + 통합 공고 ID(canonical_id) 부여.
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
+    canonical_map: dict[str, dict] = {}  # canonical_key → kept item
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -3937,12 +3962,35 @@ def dedup_items(items: list[dict]) -> list[dict]:
             kept.append(item)
             continue
 
+        # P1: 공고번호·URL 기반 중복 먼저 확인
+        canon_key = _canonical_key(item)
+        if canon_key and canon_key in canonical_map:
+            existing = canonical_map[canon_key]
+            if not item["is_aggregator"] and existing["is_aggregator"]:
+                kept.remove(existing)
+                kept.append(item)
+                # canonical_map 업데이트
+                canonical_map[canon_key] = item
+                old_key = similarity_key(existing["title"])
+                if old_key in norm_map and norm_map[old_key] is existing:
+                    del norm_map[old_key]
+                norm_map[key] = item
+                log.info("통합중복(번호/URL): '%s' (%s) → '%s' (%s) 로 교체",
+                         existing["source"], existing["title"][:20],
+                         item["source"], item["title"][:20])
+            else:
+                log.info("통합중복(번호/URL): '%s' 유지, '%s' 제거 (%s)",
+                         existing["title"][:20], item["title"][:20], item["source"])
+            continue
+
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
         if dup_key is None:
             # 신규
             norm_map[key] = item
             kept.append(item)
+            if canon_key:
+                canonical_map[canon_key] = item
         else:
             existing = norm_map[dup_key]
             # 현재 아이템이 주관기관이고 기존이 집계처이면 교체
@@ -3951,12 +3999,22 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 kept.append(item)
                 del norm_map[dup_key]
                 norm_map[key] = item
+                if canon_key:
+                    canonical_map[canon_key] = item
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
             else:
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
+
+    # P1: 통합 공고 ID(canonical_id) 부여
+    for item in kept:
+        canon_key = _canonical_key(item)
+        if canon_key:
+            item["canonical_id"] = canon_key
+        else:
+            item["canonical_id"] = f"title:{normalize_title(item['title'])[:40]}"
 
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
     return kept
@@ -5007,17 +5065,12 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if amount_status == "not_eligible" and g.get("enforce_amount_filter", False):
         reason_codes.append("AMOUNT_TOO_LOW")
 
-    # P0: 애매한 공고 사유코드 — AI 판정 대상 식별용
+    # P0: 애매한 공고 사유코드 — AI 판정 대상 식별용 (별도 필드, reason_codes에 섞지 않음)
     _ambiguous_reason_codes = []
-    if target_type == "unknown":
-        _ambiguous_reason_codes.append("TARGET_NOT_FOUND")
-    if "그외" in _item_types and not _has_financial:
+    if "그외" in _item_types and not _has_financial and not matched_keywords and not priority_keywords:
         _ambiguous_reason_codes.append("FINANCIAL_SUPPORT_UNCLEAR")
     if _mixed_target_roles(item):
         _ambiguous_reason_codes.append("OPERATOR_OR_PARTICIPANT_UNCLEAR")
-    if biz_years_status == "unknown":
-        _ambiguous_reason_codes.append("BUSINESS_HISTORY_CONDITION")
-    reason_codes.extend(_ambiguous_reason_codes)
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
@@ -5088,9 +5141,15 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and group_keyword_pass
         )
     # P0: 애매한 사유코드가 있으면 리뷰 대상으로 표시 (하드 제외가 아닌 경우)
-    _ambiguous_codes = {"TARGET_NOT_FOUND", "FINANCIAL_SUPPORT_UNCLEAR",
-                        "OPERATOR_OR_PARTICIPANT_UNCLEAR", "BUSINESS_HISTORY_CONDITION"}
-    _has_ambiguous = bool(set(reason_codes) & _ambiguous_codes)
+    _has_ambiguous = bool(_ambiguous_reason_codes)
+    _hard_exclusion_codes = {
+        "CLOSED_DEADLINE", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
+        "INDUSTRY_NOT_MATCHED", "NOT_GRANT_NOTICE", "GUIDELINE_OR_MANUAL",
+        "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY", "CONSULTING_ONLY",
+        "INVESTMENT_ONLY", "TENANT_ONLY", "BUSINESS_YEARS_NOT_ELIGIBLE",
+        "SMART_FACTORY_INFO_ONLY", "LOW_PRIORITY_SERVICE_KEYWORD",
+    }
+    _has_hard_exclusion = bool(set(reason_codes) & _hard_exclusion_codes)
     review_needed = (
         not is_relevant
         and (
@@ -5162,6 +5221,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "priority_keywords": priority_keywords,
         "relevance_score": relevance_score,
         "exclude_reason_codes": reason_codes,
+        "ambiguous_reason_codes": _ambiguous_reason_codes,
         "filter_confidence": (
             "medium" if soft_excluded_keywords or detail_failure
             else ("high" if is_relevant or reason_codes else "medium")
