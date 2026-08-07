@@ -4973,6 +4973,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     _item_types = classify_support_type(item)
     _has_financial = any(t in ("지원금/바우처",) for t in _item_types)
     _has_consulting_only = "컨설팅·교육·상담" in _item_types and not _has_financial and "그외" not in _item_types
+    # 수출상담회·바이어상담 등 무역 행사는 컨설팅 서비스가 아님 — 예외 처리
+    if _has_consulting_only and any(kw in text for kw in (
+        "수출", "해외", "글로벌", "전시회", "박람회", "바이어", "베트남", "동남아", "무역", "해외진출",
+    )):
+        _has_consulting_only = False
     if group is not None and _has_consulting_only:
         reason_codes.append("CONSULTING_ONLY")
 
@@ -5001,6 +5006,18 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # 금액은 표시용으로만 유지(support_amount_status). 재활성화: 그룹에 "enforce_amount_filter": true.
     if amount_status == "not_eligible" and g.get("enforce_amount_filter", False):
         reason_codes.append("AMOUNT_TOO_LOW")
+
+    # P0: 애매한 공고 사유코드 — AI 판정 대상 식별용
+    _ambiguous_reason_codes = []
+    if target_type == "unknown":
+        _ambiguous_reason_codes.append("TARGET_NOT_FOUND")
+    if "그외" in _item_types and not _has_financial:
+        _ambiguous_reason_codes.append("FINANCIAL_SUPPORT_UNCLEAR")
+    if _mixed_target_roles(item):
+        _ambiguous_reason_codes.append("OPERATOR_OR_PARTICIPANT_UNCLEAR")
+    if biz_years_status == "unknown":
+        _ambiguous_reason_codes.append("BUSINESS_HISTORY_CONDITION")
+    reason_codes.extend(_ambiguous_reason_codes)
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
@@ -5070,6 +5087,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and application_like
             and group_keyword_pass
         )
+    # P0: 애매한 사유코드가 있으면 리뷰 대상으로 표시 (하드 제외가 아닌 경우)
+    _ambiguous_codes = {"TARGET_NOT_FOUND", "FINANCIAL_SUPPORT_UNCLEAR",
+                        "OPERATOR_OR_PARTICIPANT_UNCLEAR", "BUSINESS_HISTORY_CONDITION"}
+    _has_ambiguous = bool(set(reason_codes) & _ambiguous_codes)
     review_needed = (
         not is_relevant
         and (
@@ -5078,6 +5099,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
                 and not (set(reason_codes) & detail_failure_blockers)
             )
             or detail_failure_review
+            or (_has_ambiguous and not _has_hard_exclusion)
         )
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
@@ -5161,6 +5183,50 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
         "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
     })
+    # P0: 판정사유 저장 — INCLUDE/EXCLUDE/CONDITIONAL/HUMAN_REVIEW + 사람이 읽을 수 있는 사유
+    if is_relevant:
+        _decision = "INCLUDE"
+        _parts = []
+        if priority_keywords:
+            _parts.append(f"우선키워드: {', '.join(priority_keywords[:3])}")
+        if matched_keywords:
+            _parts.append(f"매칭키워드: {', '.join(matched_keywords[:3])}")
+        _types_str = ", ".join(result.get("_types", []))
+        if _types_str and _types_str != "그외":
+            _parts.append(f"지원유형: {_types_str}")
+        _decision_reason = " / ".join(_parts) if _parts else "조건 충족"
+    elif region_unknown_review:
+        _decision = "CONDITIONAL"
+        _decision_reason = "지역 미상 — 수동 확인 필요"
+    elif review_needed:
+        _decision = "CONDITIONAL"
+        _decision_reason = "판정 불확실 — " + ", ".join(reason_codes[:3]) if reason_codes else "상세 확인 필요"
+    elif detail_failure_review:
+        _decision = "HUMAN_REVIEW"
+        _decision_reason = "상세정보 추출 실패 — 원문 재확인 필요"
+    else:
+        _decision = "EXCLUDE"
+        _exclude_labels = {
+            "CLOSED_DEADLINE": "마감",
+            "REGION_NOT_ELIGIBLE": "지역 부적합",
+            "DISTRICT_NOT_ELIGIBLE": "지역 부적합",
+            "INDUSTRY_NOT_MATCHED": "키워드 불일치",
+            "NOT_GRANT_NOTICE": "비공고",
+            "GUIDELINE_OR_MANUAL": "지침/매뉴얼",
+            "EDUCATION_ONLY": "교육 단독",
+            "INFO_SESSION": "설명회 단독",
+            "SUPPLIER_ONLY": "공급기업 모집",
+            "CONSULTING_ONLY": "컨설팅 단독",
+            "INVESTMENT_ONLY": "투자 단독",
+            "TENANT_ONLY": "입주공간 단독",
+            "BUSINESS_YEARS_NOT_ELIGIBLE": "업력 부적합",
+            "SMART_FACTORY_INFO_ONLY": "스마트공장 정보",
+            "LOW_PRIORITY_SERVICE_KEYWORD": "저우선 서비스",
+        }
+        _labels = [_exclude_labels.get(c, c) for c in reason_codes[:3]]
+        _decision_reason = "제외: " + ", ".join(_labels) if _labels else "제외 사유 미분류"
+    result["decision"] = _decision
+    result["decision_reason"] = _decision_reason
     return result
 
 
