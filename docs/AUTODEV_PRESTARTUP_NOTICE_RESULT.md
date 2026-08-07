@@ -11,7 +11,7 @@
 | 구분 | 결과 |
 |------|------|
 | 전체 상태 | **조건부 완료** |
-| P0 | **8/10 완료** |
+| P0 | **9/10 완료** |
 | P1 | 0/12 (미착수) |
 | P2 | 0/7 (미착수) |
 | 테스트 | 통과 **58** / 실패 0 / 스킵 0 |
@@ -92,7 +92,7 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 | 항목 | 원인 | 현재 상태 | 다음 수정방법 |
 |------|------|----------|-------------|
 | P0-2: 신청자/모집대상/수혜자/운영자 역할 분리 추출 | 기존 코드에 이미 부분 구현됨 (`_applicant_target_text`, `_mixed_target_roles`) | **부분 완료** | 별도 `target_extractor` 모듈로 분리 고려 |
-| P0-5: 지원금 수령 주체 판정 | 기존 EXCLUSION_RULES에서 "수행기관" 이미 처리, "운영기관" 추가 필요 | **부분 완료** | EXCLUSION_RULES에 "운영기관" 추가 |
+| P0-5: 지원금 수령 주체 판정 | 기존 EXCLUSION_RULES에서 "수행기관" 이미 처리, "운영기관" 추가 필요 | **완료** | — |
 | P0-7: 마감 상태 세분화 (ALWAYS_OPEN, UNTIL_BUDGET_EXHAUSTED) | 기존 "open"으로 통합 처리 | **부분 완료** | 별도 상태값 추가 고려 |
 | P0-8: 적합도 점수 판정권 제거 | 이미 점수는 판정에 미사용 | **완료** | — |
 | P0-9: AI ambiguous_only 모드 | 이미 AI는 판정에 미사용 (fallback_body만 사용) | **완료** | — |
@@ -116,6 +116,8 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 | 커밋 | 내용 |
 |------|------|
 | `4dc50a8` | feat: P0 prestartup notice pipeline - support type separation and test cases |
+| `7dc0e18` | feat: add operator recruitment keywords to EXCLUSION_RULES (P0-5) |
+| `30b2233` | docs: add overnight autodev result report for prestartup notice pipeline |
 
 ---
 
