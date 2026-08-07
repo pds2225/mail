@@ -377,7 +377,7 @@ APPLICATION_KEYWORDS = [
     "공모", "참가신청",
 ]
 
-GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
+GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원"]
 
 # ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
 # 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
@@ -4811,6 +4811,16 @@ def _normalize_group(group: dict) -> dict:
     return norm
 
 
+def has_primary_support(item: dict) -> bool:
+    """공고에 주된 지원(실질적 비용지원)이 있는지 판정한다.
+
+    주된 지원: 지원금/바우처 (사업화자금, R&D, 시제품, 실증·PoC, 바우처 등)
+    부가 지원만: 교육, 멘토링, 컨설팅, 투자, 입주공간 단독
+    """
+    types = classify_support_type(item)
+    return "지원금/바우처" in types
+
+
 def support_match(item: dict, enabled_types: list[str]) -> bool:
     if not enabled_types or set(enabled_types) == set(ALL_SUPPORT_TYPES):
         return True
@@ -4880,6 +4890,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if "설명회" in hard_service_hits:
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
+        elif has_primary_support(item):
+            # 주된 지원(사업화자금 등)이 있으면 서비스 키워드로 제외하지 않음 (P0-1)
+            soft_excluded_keywords.extend(hard_service_hits)
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
@@ -4968,6 +4981,28 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
+
+    # P0-4: 주된 지원/부가 지원 분리 — 단독 교육·멘토링·컨설팅·투자·입주 제외
+    # 재정 지원 신호(지원금/바우처 키워드, 수출/판로/마케팅 등)가 있으면 부가 지원으로만 제외하지 않음
+    if group is not None:
+        support_types = classify_support_type(item)
+        has_financial = "지원금/바우처" in support_types
+        has_consulting = "컨설팅·교육·상담" in support_types
+        has_investment = "투자" in support_types
+        # 재정 지원 키워드가 본문에 있는지 추가 확인 (classify_support_type이 놓치는 경우 대비)
+        _financial_signal_kws = [
+            "수출", "해외", "판로", "마케팅", "전시회", "박람회", "바이어",
+            "시제품", "사업화", "R&D", "실증", "PoC", "바우처", "보조금",
+        ]
+        has_financial_signal = has_financial or any(kw in text for kw in _financial_signal_kws)
+        # 주된 지원 없이 부가 지원만 있는 경우 제외
+        if not has_financial_signal and not has_investment:
+            if has_consulting:
+                # 교육·멘토링·컨설팅 단독 → 제외
+                reason_codes.append("CONSULTING_ONLY")
+        elif has_investment and not has_financial_signal and not has_consulting:
+            # 투자 단독 → 제외
+            reason_codes.append("INVESTMENT_ONLY")
 
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_GRANT_NOTICE")
