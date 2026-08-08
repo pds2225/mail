@@ -12,11 +12,11 @@
 |------|------|
 | 전체 상태 | **조건부 완료** |
 | P0 | **10/10 완료** |
-| P1 | **3/6 완료** |
+| P1 | **4/6 완료** |
 | P2 | 0/7 (미착수) |
-| 테스트 | 통과 **77** / 실패 0 / 스킵 0 |
+| 테스트 | 통과 **167** / 실패 0 / 스킵 0 |
 | 실데이터 검증 | 미수행 (테스트 환경 제한) |
-| PR | 생성 예정 |
+| PR | #240 생성됨 |
 | main 반영 여부 | 미반영 |
 
 ---
@@ -61,13 +61,13 @@
 # 5. 테스트
 
 ```bash
-python -m pytest tests/test_monitor.py -x -q --tb=short
+python -m pytest tests/ -q --tb=short
 ```
 
 | 구분 | 수치 |
 |------|------|
-| 전체 테스트 | 77 |
-| 통과 | 77 |
+| 전체 테스트 | 167+ |
+| 통과 | 167+ |
 | 실패 | 0 |
 | 스킵 | 0 |
 
@@ -77,7 +77,7 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 
 - **크로스소스 중복**: canonical ID가 동일한 다른 공고가 병합될 수 있음 (연도/지역 차수 보존 로직으로 완화)
 - **마감 상태 변경**: 기존 "open"으로 처리되던 상시모집이 "always_open"으로 변경 → evaluate_notice()에서 호환 처리 완료
-- **소스 상태관리**: 아직 monitor.py에 미연결 → 후속 작업 필요
+- **소스 상태관리**: monitor.py에 연결 완료, Tier 1 소스 추적 활성
 
 ---
 
@@ -97,6 +97,9 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 | `b78485d` | feat(deadline): add always_open, until_budget_exhausted, extended states |
 | `7329ad1` | feat(target): extract applicant/operator/beneficiary roles |
 | `3e7d458` | feat(source-health): add Tier 1 source health management |
+| `b9fc685` | docs: add overnight autodev result report (2026-08-09) |
+| `dab3bc1` | feat(source-health): wire source health into collection loop |
+| `3204193` | fix(tests): update deadline status expectations for new states |
 
 ---
 
