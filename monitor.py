@@ -3970,9 +3970,14 @@ def dedup_items(items: list[dict]) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
+
+    P1-2: canonical_notice_id 기반 크로스소스 중복 제거 추가.
+    - 공고번호/URL/제목+기관으로 canonical ID 생성
+    - 동일 canonical ID면 동일 공고로 판정
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
+    canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -3990,12 +3995,33 @@ def dedup_items(items: list[dict]) -> list[dict]:
             kept.append(item)
             continue
 
+        # P1-2: canonical ID 기반 중복 체크
+        canonical_id = generate_canonical_notice_id(item)
+        item["_canonical_notice_id"] = canonical_id
+
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
         if dup_key is None:
-            # 신규
-            norm_map[key] = item
-            kept.append(item)
+            # 신규 — canonical ID도 체크
+            if canonical_id in canonical_map:
+                existing = canonical_map[canonical_id]
+                # 주관기관 우선
+                if not item["is_aggregator"] and existing["is_aggregator"]:
+                    kept.remove(existing)
+                    kept.append(item)
+                    del norm_map[similarity_key(existing["title"])]
+                    norm_map[key] = item
+                    canonical_map[canonical_id] = item
+                    log.info("크로스소스중복: '%s' (%s) → '%s' (%s) 로 교체 (canonical: %s)",
+                             existing["source"], existing["title"][:20],
+                             item["source"], item["title"][:20], canonical_id)
+                else:
+                    log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
+                             existing["title"][:20], item["title"][:20], canonical_id)
+            else:
+                norm_map[key] = item
+                canonical_map[canonical_id] = item
+                kept.append(item)
         else:
             existing = norm_map[dup_key]
             # 현재 아이템이 주관기관이고 기존이 집계처이면 교체
@@ -4004,6 +4030,11 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 kept.append(item)
                 del norm_map[dup_key]
                 norm_map[key] = item
+                # canonical map도 업데이트
+                old_canonical = existing.get("_canonical_notice_id")
+                if old_canonical and old_canonical in canonical_map:
+                    del canonical_map[old_canonical]
+                canonical_map[canonical_id] = item
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
@@ -4219,6 +4250,61 @@ def _application_like(text: str) -> bool:
 
 _SUPPLIER_ROLE_TERMS = ("공급기업", "수행기관", "서비스 제공자")
 _DEMAND_ROLE_TERMS = ("수요기업", "참여기업", "신청 기업", "지원기업", "제조기업", "중소기업")
+_OPERATOR_ROLE_TERMS = ("운영기관", "운영기관 모집", "주관기관 모집", "수행기관 모집", "위탁기관")
+_BENEFICIARY_ROLE_TERMS = ("수혜자", "수혜기업", "지원대상", "지원 받는")
+
+
+def extract_target_roles(item: dict) -> dict[str, bool]:
+    """P0-9: 공고에서 신청자/모집대상/수혜자/운영자 역할을 추출한다.
+
+    반환: {is_applicant, is_recruitment_target, is_beneficiary, is_operator}
+    """
+    title = norm(item.get("title", "")).lower()
+    target_field = norm(item.get("target_field", "")).lower()
+    description = norm(item.get("description", "")).lower()
+    text = f"{title} {target_field} {description}"
+
+    # 운영자 모집 감지: "운영기관 모집", "수행기관 모집" 등
+    is_operator = any(term in text for term in _OPERATOR_ROLE_TERMS)
+    # 신청자가 운영자인지 확인: "운영기관 모집"이 제목에 있으면 운영자 모집
+    operator_in_title = any(term in title for term in _OPERATOR_ROLE_TERMS)
+
+    # 수요기업(신청자) 신호
+    is_demand = any(term in text for term in _DEMAND_ROLE_TERMS)
+    # 공급기업(수행자) 신호
+    is_supplier = any(term in text for term in _SUPPLIER_ROLE_TERMS)
+
+    # 최종 판정
+    # "예비창업자를 지원할 운영기관 모집" → is_operator=True, is_applicant=False
+    # "예비창업자 모집" → is_operator=False, is_applicant=True
+    if operator_in_title and not is_demand:
+        return {
+            "is_applicant": False,
+            "is_recruitment_target": False,
+            "is_beneficiary": True,  # 수혜자는 예비창업자
+            "is_operator": True,
+        }
+    if is_demand and not is_supplier:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    if is_supplier and is_demand:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    # 기본값: 신청자로 간주
+    return {
+        "is_applicant": True,
+        "is_recruitment_target": True,
+        "is_beneficiary": True,
+        "is_operator": False,
+    }
 
 
 def _mixed_target_roles(item: dict) -> bool:
@@ -4304,8 +4390,14 @@ def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> li
 def classify_deadline_status(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     text = _notice_text(item)
-    if any(term in text for term in OPEN_DEADLINE_TERMS):
-        return "open"
+    # P0-15: ALWAYS_OPEN / UNTIL_BUDGET_EXHAUSTED 세분화
+    if any(term in text for term in ("상시접수", "수시접수", "상시모집", "수시모집", "수시 모집", "연중수시", "연중상시", "선착순")):
+        return "always_open"
+    if any(term in text for term in ("예산 소진 시까지", "예산소진 시까지", "예산 소진시까지", "소진 시", "소진시")):
+        return "until_budget_exhausted"
+    # 마감연장 감지
+    if any(term in text for term in ("마감연장", "마감 연장", "연장공고", "연장 공고", "기한연장", "기한 연장")):
+        return "extended"
     body_text = _notice_body_text(item)
     period = item.get("application_period") or extract_application_period(body_text, _posted_date(item))
     if period.get("end"):
@@ -5086,7 +5178,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
     # recall: 모집·신청 신호 있는데 기간 미파싱(목록 stub)이면 열린 공고로 간주 — 서울·AI 등 누락 방지
-    deadline_ok = deadline_status in {"open", "upcoming"} or (
+    # P0-15: always_open, until_budget_exhausted, extended도 열린 공고로 처리
+    deadline_ok = deadline_status in {"open", "upcoming", "always_open", "until_budget_exhausted", "extended"} or (
         deadline_status == "unknown" and application_like
     )
     is_relevant = (
@@ -6304,6 +6397,37 @@ def execute_monitor(
         log.info("수집 0건. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
     log.info("수집 완료: %d건", len(all_items))
+
+    # P1-17: 소스 상태관리 — 수집 결과를 source_health에 반영
+    try:
+        from mail_core.operations.source_health import (
+            classify_source_status,
+            update_source_health,
+            should_alert,
+            mark_alerted,
+        )
+        from mail_core.operations.source_health import TIER1_SOURCES
+
+        # 소스별 수집 건수 집계
+        items_by_source: dict[str, int] = {}
+        for it in all_items:
+            sid = str(it.get("source") or it.get("site_id") or "unknown")
+            items_by_source[sid] = items_by_source.get(sid, 0) + 1
+
+        # Tier 1 소스 상태 업데이트
+        for site in sites:
+            sid = str(site.get("id") or site.get("name") or "")
+            if sid not in TIER1_SOURCES:
+                continue
+            count = items_by_source.get(sid, 0)
+            status = classify_source_status(sid, item_count=count, parse_rate=1.0)
+            update_source_health(sid, status, item_count=count, parse_rate=1.0)
+            # 알림 확인
+            if should_alert(sid):
+                log.warning("소스 %s 장애 알림 필요", sid)
+                mark_alerted(sid)
+    except Exception as e:
+        log.warning("소스 상태관리 실패(무시): %s", e)
 
     # ② 중복 제거
     deduped = dedup_items(all_items)
