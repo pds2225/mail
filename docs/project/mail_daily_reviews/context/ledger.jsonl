@@ -22,3 +22,4 @@
 {"cycle_key": "2026-08-07#am", "date": "2026-08-07", "fails": [], "overall": "PASS", "pass_ids": ["MDR-001", "MDR-002", "MDR-003", "MDR-004", "MDR-005"], "skip_ids": [], "slot": "am", "ts": "2026-08-07T12:24:35+0900"}
 {"cycle_key": "2026-08-07#pm", "date": "2026-08-07", "fails": [{"detail": "핵심소스 0건: bizinfo=0", "id": "MDR-002"}], "overall": "FAIL", "pass_ids": ["MDR-001", "MDR-003", "MDR-004", "MDR-005"], "skip_ids": [], "slot": "pm", "ts": "2026-08-07T23:40:21+0900"}
 {"cycle_key": "2026-08-08#am", "date": "2026-08-08", "fails": [{"detail": "핵심소스 0건: bizinfo=0", "id": "MDR-002"}], "overall": "FAIL", "pass_ids": ["MDR-001", "MDR-003", "MDR-004", "MDR-005"], "skip_ids": [], "slot": "am", "ts": "2026-08-08T12:47:41+0900"}
+{"cycle_key": "2026-08-08#pm", "date": "2026-08-08", "fails": [], "overall": "PASS", "pass_ids": ["MDR-001", "MDR-002", "MDR-003", "MDR-004", "MDR-005"], "skip_ids": [], "slot": "pm", "ts": "2026-08-08T21:04:11+0900"}
