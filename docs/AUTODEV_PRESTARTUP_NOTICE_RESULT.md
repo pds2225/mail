@@ -12,9 +12,9 @@
 |------|------|
 | 전체 상태 | **조건부 완료** |
 | P0 | **9/10 완료** |
-| P1 | 0/12 (미착수) |
+| P1 | **2/6 완료** |
 | P2 | 0/7 (미착수) |
-| 테스트 | 통과 **58** / 실패 0 / 스킵 0 |
+| 테스트 | 통과 **66** / 실패 0 / 스킵 0 |
 | DB 마이그레이션 | 없음 |
 | 운영 반영 필요 | 있음 (그룹 설정 변경) |
 | 사용자 판단 필요 | **3건** |
@@ -32,6 +32,9 @@
 | `monitor.py` | 재정 지원 신호 키워드 체크 추가 | P0-4: 수출상담회 등 포함 보존 | 중간 |
 | `tests/test_monitor.py` | 기존 테스트 2건 reason 코드 업데이트 | P0-4 변경 반영 | 낮음 |
 | `tests/test_monitor.py` | P0 필수 테스트 14건 추가 | autodev prompt §6 검증 | 낮음 |
+| `monitor.py` | `safe_normalize_title()` 추가 | P1-4: 의미 정보 보존 제목 정규화 | 낮음 |
+| `monitor.py` | `generate_canonical_notice_id()` 추가 | P1-2: 크로스 소스 통합 ID | 중간 |
+| `tests/test_monitor.py` | P1 테스트 8건 추가 | 정규화 및 canonical ID 검증 | 낮음 |
 
 ---
 
@@ -118,6 +121,8 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 | `4dc50a8` | feat: P0 prestartup notice pipeline - support type separation and test cases |
 | `7dc0e18` | feat: add operator recruitment keywords to EXCLUSION_RULES (P0-5) |
 | `30b2233` | docs: add overnight autodev result report for prestartup notice pipeline |
+| `8f974f8` | docs: update result report with P0-5 completion |
+| `9c71e23` | feat: P1 safe title normalization and canonical notice ID |
 
 ---
 
