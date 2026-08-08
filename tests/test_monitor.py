@@ -1407,3 +1407,43 @@ def test_milestone_a_different_round_is_different_notice():
     item1 = {"title": "2026년 AI 창업 1차 모집", "author": "중기부", "deadline": "2026-08-31"}
     item2 = {"title": "2026년 AI 창업 2차 모집", "author": "중기부", "deadline": "2026-12-31"}
     assert generate_canonical_notice_id(item1) != generate_canonical_notice_id(item2)
+
+
+# ══════════════════════════════════════════════════════════════════
+# MILESTONE B 테스트 — Source Health 운영 연결
+# ══════════════════════════════════════════════════════════════════
+
+def test_milestone_b_source_health_ok():
+    """정상 수집 → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.95) == OK
+
+
+def test_milestone_b_source_health_degraded_zero_items():
+    """0건 수집 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=1.0) == DEGRADED
+
+
+def test_milestone_b_source_health_degraded_low_parse_rate():
+    """파싱률 저하 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.5) == DEGRADED
+
+
+def test_milestone_b_source_health_failing_on_error():
+    """에러 → FAILING"""
+    from mail_core.operations.source_health import classify_source_status, FAILING
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=0.0, error="HTTP 500") == FAILING
+
+
+def test_milestone_b_source_health_degraded_on_drop():
+    """수집량 급감 (80% 이상) → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=10, parse_rate=1.0, previous_item_count=100) == DEGRADED
+
+
+def test_milestone_b_source_health_ok_on_normal():
+    """정상 수집 (급감 없음) → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=90, parse_rate=1.0, previous_item_count=100) == OK

@@ -74,6 +74,7 @@ def classify_source_status(
     parse_rate: float,
     error: str | None = None,
     config: dict | None = None,
+    previous_item_count: int | None = None,
 ) -> str:
     """소스 상태를 판정한다.
 
@@ -83,6 +84,7 @@ def classify_source_status(
         parse_rate: 파싱 성공률 (0.0~1.0)
         error: 에러 메시지 (없으면 None)
         config: 설정 (없으면 기본값)
+        previous_item_count: 이전 실행 수집 건수 (급감 감지용)
 
     Returns:
         상태 문자열: OK / DEGRADED / FAILING / STALE / DISABLED / UNKNOWN
@@ -100,6 +102,12 @@ def classify_source_status(
     # 파싱률이 기준 미달이면 DEGRADED
     if parse_rate < cfg["degraded_parse_rate"]:
         return DEGRADED
+
+    # B-4: 이전 실행 대비 수집량 급감 감지
+    if previous_item_count is not None and previous_item_count > 0:
+        drop_ratio = 1.0 - (item_count / previous_item_count)
+        if drop_ratio > 0.8:  # 80% 이상 감소
+            return DEGRADED
 
     return OK
 
