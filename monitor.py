@@ -4250,6 +4250,61 @@ def _application_like(text: str) -> bool:
 
 _SUPPLIER_ROLE_TERMS = ("공급기업", "수행기관", "서비스 제공자")
 _DEMAND_ROLE_TERMS = ("수요기업", "참여기업", "신청 기업", "지원기업", "제조기업", "중소기업")
+_OPERATOR_ROLE_TERMS = ("운영기관", "운영기관 모집", "주관기관 모집", "수행기관 모집", "위탁기관")
+_BENEFICIARY_ROLE_TERMS = ("수혜자", "수혜기업", "지원대상", "지원 받는")
+
+
+def extract_target_roles(item: dict) -> dict[str, bool]:
+    """P0-9: 공고에서 신청자/모집대상/수혜자/운영자 역할을 추출한다.
+
+    반환: {is_applicant, is_recruitment_target, is_beneficiary, is_operator}
+    """
+    title = norm(item.get("title", "")).lower()
+    target_field = norm(item.get("target_field", "")).lower()
+    description = norm(item.get("description", "")).lower()
+    text = f"{title} {target_field} {description}"
+
+    # 운영자 모집 감지: "운영기관 모집", "수행기관 모집" 등
+    is_operator = any(term in text for term in _OPERATOR_ROLE_TERMS)
+    # 신청자가 운영자인지 확인: "운영기관 모집"이 제목에 있으면 운영자 모집
+    operator_in_title = any(term in title for term in _OPERATOR_ROLE_TERMS)
+
+    # 수요기업(신청자) 신호
+    is_demand = any(term in text for term in _DEMAND_ROLE_TERMS)
+    # 공급기업(수행자) 신호
+    is_supplier = any(term in text for term in _SUPPLIER_ROLE_TERMS)
+
+    # 최종 판정
+    # "예비창업자를 지원할 운영기관 모집" → is_operator=True, is_applicant=False
+    # "예비창업자 모집" → is_operator=False, is_applicant=True
+    if operator_in_title and not is_demand:
+        return {
+            "is_applicant": False,
+            "is_recruitment_target": False,
+            "is_beneficiary": True,  # 수혜자는 예비창업자
+            "is_operator": True,
+        }
+    if is_demand and not is_supplier:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    if is_supplier and is_demand:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    # 기본값: 신청자로 간주
+    return {
+        "is_applicant": True,
+        "is_recruitment_target": True,
+        "is_beneficiary": True,
+        "is_operator": False,
+    }
 
 
 def _mixed_target_roles(item: dict) -> bool:

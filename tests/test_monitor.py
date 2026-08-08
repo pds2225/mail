@@ -1188,3 +1188,44 @@ def test_p1_cross_site_aggregator_replaced():
     result = dedup_items(items)
     assert len(result) == 1
     assert result[0]["source"] == "bizinfo", "주관기관이 우선해야 함"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P0-9 테스트 — 신청자/모집대상/수혜자/운영자 역할 분리
+# ══════════════════════════════════════════════════════════════════
+
+def test_p0_operator_recruitment_excluded():
+    """예비창업자를 지원할 운영기관 모집 → EXCLUDE"""
+    item = notice(
+        title="예비창업자 지원 프로그램 운영기관 모집",
+        description="대학, 협회, 창업지원기관 대상 운영기관 모집 공고.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False, f"운영기관 모집은 제외되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_applicant_is_prestartup():
+    """예비창업자 모집 → INCLUDE 가능"""
+    item = notice(
+        title="2026년 AI 창업지원사업 참여자 모집",
+        description="공고일 현재 사업자등록이 없는 예비창업자 대상. 사업화자금 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"예비창업자 모집은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_target_roles_extraction():
+    """역할 추출 함수 테스트"""
+    from monitor import extract_target_roles
+
+    # 운영기관 모집
+    item1 = {"title": "운영기관 모집 공고", "target_field": "", "description": ""}
+    roles1 = extract_target_roles(item1)
+    assert roles1["is_operator"] is True
+    assert roles1["is_applicant"] is False
+
+    # 예비창업자 모집
+    item2 = {"title": "예비창업자 모집 공고", "target_field": "", "description": ""}
+    roles2 = extract_target_roles(item2)
+    assert roles2["is_applicant"] is True
+    assert roles2["is_operator"] is False
