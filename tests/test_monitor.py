@@ -1051,3 +1051,75 @@ def test_p0_financial_support_with_mentoring_is_included():
     )
     result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
     assert result["is_relevant"] is True, f"시제품비+교육은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1 테스트 — 제목 정규화 및 canonical ID
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_safe_normalize_title_preserves_year():
+    """P1-4: 연도 정보 보존"""
+    from monitor import safe_normalize_title
+    assert "2026" in safe_normalize_title("2026년 AI 사업화 지원사업")
+    assert "2025" in safe_normalize_title("2025 예비창업패키지")
+
+
+def test_p1_safe_normalize_title_preserves_region():
+    """P1-4: 지역 정보 보존"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("[서울] AI 창업지원사업")
+    assert "서울" in result
+
+
+def test_p1_safe_normalize_title_preserves_round():
+    """P1-4: 모집 차수 보존"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("2차 모집 공고")
+    assert "2차" in result
+
+
+def test_p1_safe_normalize_title_normalizes_whitespace():
+    """P1-4: 공백 정규화"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("AI  창업   지원사업")
+    assert "  " not in result
+
+
+def test_p1_canonical_id_from_notice_id():
+    """P1-2: 공고번호로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item = {"notice_id": "PBLN_2026_001", "title": "테스트"}
+    cid = generate_canonical_notice_id(item)
+    assert cid.startswith("canon_")
+    assert "PBLN_2026_001" in cid
+
+
+def test_p1_canonical_id_from_url():
+    """P1-2: URL로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"link": "https://example.com/notice/123", "title": "테스트"}
+    item2 = {"link": "http://www.example.com/notice/123", "title": "테스트"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    # www 유무 정규화 후 동일 ID
+    assert cid1 == cid2
+
+
+def test_p1_canonical_id_from_title_org():
+    """P1-2: 제목+기관으로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2026년 AI 창업지원사업", "author": "중소벤처기업부", "deadline": "2026-08-31"}
+    item2 = {"title": "2026년 AI 창업지원사업", "author": "중소벤처기업부", "deadline": "2026-08-31"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    assert cid1 == cid2
+
+
+def test_p1_canonical_id_different_year():
+    """P1-2: 연도가 다르면 다른 canonical ID"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2025 예비창업패키지", "author": "테스트", "deadline": "2025-12-31"}
+    item2 = {"title": "2026 예비창업패키지", "author": "테스트", "deadline": "2026-12-31"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    assert cid1 != cid2

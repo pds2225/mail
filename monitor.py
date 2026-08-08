@@ -969,6 +969,58 @@ def normalize_title(title: str) -> str:
     return re.sub(r"[\s\W]+", "", t)
 
 
+def safe_normalize_title(title: str) -> str:
+    """P1-4: 의미 정보를 보존하는 안전한 제목 정규화.
+
+    보존: 연도, 지역, 모집차수, 재공고, 추가모집, 수정공고
+    제거: 중복 공백, 특수문자, 괄호, 구분기호, URL 파라미터
+    """
+    t = unicodedata.normalize("NFKC", title)
+    # 소문자 변환 (한글은 영향 없음)
+    t = t.lower()
+    # 중복 공백 → 단일 공백
+    t = re.sub(r"\s+", " ", t)
+    # 괄호·구분기호 정규화
+    t = re.sub(r"[()\[\]{}<>「」『』【】]", " ", t)
+    # 중복 구분기호 제거
+    t = re.sub(r"[·•∙‧]", "·", t)
+    # URL 추적 파라미터 제거
+    t = re.sub(r"[?&][\w=&]+", "", t)
+    # 앞뒤 공백 제거
+    return t.strip()
+
+
+def generate_canonical_notice_id(item: dict) -> str:
+    """P1-2: 크로스 소스 통합 ID 생성.
+
+    동일 공고를 다른 소스에서 가져왔을 때 하나로 묶기 위한 ID.
+    우선순위: 공고번호 > URL > 제목+기관+연도+마감
+    """
+    # 1. 공식 공고번호가 있으면 그것으로 통합
+    notice_id = item.get("notice_id") or item.get("pbln_id") or ""
+    if notice_id:
+        return f"canon_{notice_id}"
+
+    # 2. 공식 URL이 있으면 그것으로 통합
+    link = item.get("link") or ""
+    if link:
+        # URL 정규화 (프로토콜, www, 트래커 제거)
+        norm_link = re.sub(r"^https?://(www\.)?", "", link.lower())
+        norm_link = re.sub(r"[?&][\w=&]+", "", norm_link)
+        if norm_link:
+            return f"canon_url_{hashlib.md5(norm_link.encode()).hexdigest()[:12]}"
+
+    # 3. 제목+기관+연도+마감으로 해시
+    title = safe_normalize_title(item.get("title", ""))
+    org = (item.get("author") or item.get("organizer_field") or "").strip()
+    deadline = (item.get("deadline") or "").strip()
+    # 연도 추출
+    year_match = re.search(r"(20\d{2})", title)
+    year = year_match.group(1) if year_match else ""
+    composite = f"{title}|{org}|{year}|{deadline}"
+    return f"canon_{hashlib.md5(composite.encode()).hexdigest()[:12]}"
+
+
 # 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
 # '… 모집 공고 file'·'… 모집 안내 새로운게시글' 처럼 제목이 오염된 채 발송되던 문제.
 _TITLE_BADGE_TAIL_RE = re.compile(
