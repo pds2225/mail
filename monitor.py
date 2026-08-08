@@ -377,7 +377,7 @@ APPLICATION_KEYWORDS = [
     "공모", "참가신청",
 ]
 
-GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
+GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원"]
 
 # ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
 # 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
@@ -444,6 +444,7 @@ EXCLUSION_RULES = [
     ]),
     ("SUPPLIER_ONLY", "application_notice", "supplier", [
         "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
+        "운영기관 모집", "운영기관 사업비", "수행기관 위탁비",
     ]),
     ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
@@ -966,6 +967,58 @@ def normalize_title(title: str) -> str:
     """중복 판별용 제목 정규화: 소문자 + 특수문자/공백 제거"""
     t = unicodedata.normalize("NFKC", title.lower())
     return re.sub(r"[\s\W]+", "", t)
+
+
+def safe_normalize_title(title: str) -> str:
+    """P1-4: 의미 정보를 보존하는 안전한 제목 정규화.
+
+    보존: 연도, 지역, 모집차수, 재공고, 추가모집, 수정공고
+    제거: 중복 공백, 특수문자, 괄호, 구분기호, URL 파라미터
+    """
+    t = unicodedata.normalize("NFKC", title)
+    # 소문자 변환 (한글은 영향 없음)
+    t = t.lower()
+    # 중복 공백 → 단일 공백
+    t = re.sub(r"\s+", " ", t)
+    # 괄호·구분기호 정규화
+    t = re.sub(r"[()\[\]{}<>「」『』【】]", " ", t)
+    # 중복 구분기호 제거
+    t = re.sub(r"[·•∙‧]", "·", t)
+    # URL 추적 파라미터 제거
+    t = re.sub(r"[?&][\w=&]+", "", t)
+    # 앞뒤 공백 제거
+    return t.strip()
+
+
+def generate_canonical_notice_id(item: dict) -> str:
+    """P1-2: 크로스 소스 통합 ID 생성.
+
+    동일 공고를 다른 소스에서 가져왔을 때 하나로 묶기 위한 ID.
+    우선순위: 공고번호 > URL > 제목+기관+연도+마감
+    """
+    # 1. 공식 공고번호가 있으면 그것으로 통합
+    notice_id = item.get("notice_id") or item.get("pbln_id") or ""
+    if notice_id:
+        return f"canon_{notice_id}"
+
+    # 2. 공식 URL이 있으면 그것으로 통합
+    link = item.get("link") or ""
+    if link:
+        # URL 정규화 (프로토콜, www, 트래커 제거)
+        norm_link = re.sub(r"^https?://(www\.)?", "", link.lower())
+        norm_link = re.sub(r"[?&][\w=&]+", "", norm_link)
+        if norm_link:
+            return f"canon_url_{hashlib.md5(norm_link.encode()).hexdigest()[:12]}"
+
+    # 3. 제목+기관+연도+마감으로 해시
+    title = safe_normalize_title(item.get("title", ""))
+    org = (item.get("author") or item.get("organizer_field") or "").strip()
+    deadline = (item.get("deadline") or "").strip()
+    # 연도 추출
+    year_match = re.search(r"(20\d{2})", title)
+    year = year_match.group(1) if year_match else ""
+    composite = f"{title}|{org}|{year}|{deadline}"
+    return f"canon_{hashlib.md5(composite.encode()).hexdigest()[:12]}"
 
 
 # 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
@@ -4811,6 +4864,16 @@ def _normalize_group(group: dict) -> dict:
     return norm
 
 
+def has_primary_support(item: dict) -> bool:
+    """공고에 주된 지원(실질적 비용지원)이 있는지 판정한다.
+
+    주된 지원: 지원금/바우처 (사업화자금, R&D, 시제품, 실증·PoC, 바우처 등)
+    부가 지원만: 교육, 멘토링, 컨설팅, 투자, 입주공간 단독
+    """
+    types = classify_support_type(item)
+    return "지원금/바우처" in types
+
+
 def support_match(item: dict, enabled_types: list[str]) -> bool:
     if not enabled_types or set(enabled_types) == set(ALL_SUPPORT_TYPES):
         return True
@@ -4880,6 +4943,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if "설명회" in hard_service_hits:
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
+        elif has_primary_support(item):
+            # 주된 지원(사업화자금 등)이 있으면 서비스 키워드로 제외하지 않음 (P0-1)
+            soft_excluded_keywords.extend(hard_service_hits)
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
@@ -4968,6 +5034,28 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
+
+    # P0-4: 주된 지원/부가 지원 분리 — 단독 교육·멘토링·컨설팅·투자·입주 제외
+    # 재정 지원 신호(지원금/바우처 키워드, 수출/판로/마케팅 등)가 있으면 부가 지원으로만 제외하지 않음
+    if group is not None:
+        support_types = classify_support_type(item)
+        has_financial = "지원금/바우처" in support_types
+        has_consulting = "컨설팅·교육·상담" in support_types
+        has_investment = "투자" in support_types
+        # 재정 지원 키워드가 본문에 있는지 추가 확인 (classify_support_type이 놓치는 경우 대비)
+        _financial_signal_kws = [
+            "수출", "해외", "판로", "마케팅", "전시회", "박람회", "바이어",
+            "시제품", "사업화", "R&D", "실증", "PoC", "바우처", "보조금",
+        ]
+        has_financial_signal = has_financial or any(kw in text for kw in _financial_signal_kws)
+        # 주된 지원 없이 부가 지원만 있는 경우 제외
+        if not has_financial_signal and not has_investment:
+            if has_consulting:
+                # 교육·멘토링·컨설팅 단독 → 제외
+                reason_codes.append("CONSULTING_ONLY")
+        elif has_investment and not has_financial_signal and not has_consulting:
+            # 투자 단독 → 제외
+            reason_codes.append("INVESTMENT_ONLY")
 
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_GRANT_NOTICE")
