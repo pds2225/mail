@@ -6398,6 +6398,37 @@ def execute_monitor(
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
     log.info("수집 완료: %d건", len(all_items))
 
+    # P1-17: 소스 상태관리 — 수집 결과를 source_health에 반영
+    try:
+        from mail_core.operations.source_health import (
+            classify_source_status,
+            update_source_health,
+            should_alert,
+            mark_alerted,
+        )
+        from mail_core.operations.source_health import TIER1_SOURCES
+
+        # 소스별 수집 건수 집계
+        items_by_source: dict[str, int] = {}
+        for it in all_items:
+            sid = str(it.get("source") or it.get("site_id") or "unknown")
+            items_by_source[sid] = items_by_source.get(sid, 0) + 1
+
+        # Tier 1 소스 상태 업데이트
+        for site in sites:
+            sid = str(site.get("id") or site.get("name") or "")
+            if sid not in TIER1_SOURCES:
+                continue
+            count = items_by_source.get(sid, 0)
+            status = classify_source_status(sid, item_count=count, parse_rate=1.0)
+            update_source_health(sid, status, item_count=count, parse_rate=1.0)
+            # 알림 확인
+            if should_alert(sid):
+                log.warning("소스 %s 장애 알림 필요", sid)
+                mark_alerted(sid)
+    except Exception as e:
+        log.warning("소스 상태관리 실패(무시): %s", e)
+
     # ② 중복 제거
     deduped = dedup_items(all_items)
     dedup_removed = len(all_items) - len(deduped)
