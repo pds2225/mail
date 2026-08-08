@@ -6670,9 +6670,15 @@ def execute_monitor(
         date_excluded = []
 
     # 같은 ID의 중요 변경은 게시일이 과거여도 재처리한다. 여전히 마감된 단순수정은 제외.
+    # P1-5: 새로운 변경 유형 (DEADLINE_EXTENDED, TARGET_CHANGED, REANNOUNCEMENT 등)도 포함
+    _IMPORTANT_CHANGE_TYPES = {
+        "EXTENDED", "REANNOUNCED", "UPDATED",
+        "DEADLINE_EXTENDED", "TARGET_CHANGED", "SUPPORT_AMOUNT_CHANGED",
+        "APPLICATION_URL_CHANGED", "REANNOUNCEMENT", "ADDITIONAL_RECRUITMENT",
+    }
     _filtered_ids = {_delivery_notice_id(it) for it in filtered_new}
     for it in new_items:
-        if it.get("_change_type") not in {"EXTENDED", "REANNOUNCED", "UPDATED"}:
+        if it.get("_change_type") not in _IMPORTANT_CHANGE_TYPES:
             continue
         if classify_deadline_status(it, now.date()) == "closed":
             continue
