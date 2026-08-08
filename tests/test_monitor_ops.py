@@ -168,8 +168,8 @@ def test_save_seen_ids_skipped_when_persist_disabled():
 
 
 def test_dedup_does_not_merge_clearly_different_titles():
-    a = _item("id_a", "2026년 인천 화장품 수출바우처 지원사업 모집")
-    b = _item("id_b", "2026년 부산 로봇 해외전시회 참가지원")
+    a = _item("id_a", "2026년 인천 화장품 수출바우처 지원사업 모집", link="https://example.com/a1")
+    b = _item("id_b", "2026년 부산 로봇 해외전시회 참가지원", link="https://example.com/b1")
     out = dedup_items([a, b])
     assert len(out) == 2
 
