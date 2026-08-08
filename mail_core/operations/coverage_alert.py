@@ -230,6 +230,10 @@ REASON_BASELINE_INSUFFICIENT = "BASELINE_INSUFFICIENT"
 REASON_CONTENT_VALIDATION_FAILED = "CONTENT_VALIDATION_FAILED"
 REASON_SCHEMA_VALIDATION_FAILED = "SCHEMA_VALIDATION_FAILED"
 REASON_COLLECTION_SPIKE_HIGH = "COLLECTION_SPIKE_HIGH"
+# 다경로 소스(기업마당 등)에서 앞선 경로가 하드 실패하고 뒤 경로가 살려낸 상태.
+# 이번 수집은 성공이라 P0 가 아니지만, 남은 경로마저 실패하면 곧바로 0건이다.
+# 조용히 넘어가면 안전망이 몇 주씩 죽은 채 방치된다(2026-08-02 data.go.kr 사례).
+REASON_FALLBACK_PATH_DEGRADED = "FALLBACK_PATH_DEGRADED"
 
 P0_REASONS = frozenset({
     REASON_SOURCE_NOT_EXECUTED,
@@ -247,6 +251,7 @@ P1_REASONS = frozenset({
     REASON_DETAIL_LINK_RATE_LOW,
     REASON_BASELINE_INSUFFICIENT,
     REASON_COLLECTION_SPIKE_HIGH,
+    REASON_FALLBACK_PATH_DEGRADED,
 })
 
 BASELINE_WINDOW_RUNS = 7   # 기준선 = 최근 정상 7회
@@ -530,6 +535,8 @@ def classify_source_status(
             reason_codes.append(REASON_DUPLICATE_PAGE_LOOP)
         elif stop_reason == "MAX_PAGES_HIT":
             reason_codes.append(REASON_PAGINATION_INCOMPLETE)
+        if page_stat.get("fallback_degraded"):
+            reason_codes.append(REASON_FALLBACK_PATH_DEGRADED)
         detail["page_stat"] = page_stat
 
     # 게시일 파싱률 = 날짜를 읽어낸 비율. posted_parsed_count 는 "직전영업일 게시분"이라

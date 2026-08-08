@@ -43,6 +43,52 @@ def test_mail_support_blurb_strips_noise_and_caps_length():
     assert "[신청](" not in text and "사업화 자금" in text
 
 
+# 2026-08-04 실발송 회귀 — 아래 3건은 그날 실제로 나간 메일 본문에서 그대로 가져온 것이다.
+# ① 게시판 메뉴만 긁힌 항목의 '지원내용' 에 메뉴바가 통째로 실렸다.
+# ② 정상 공고도 담당자 이름·조회수·D-N 카운트다운이 그대로 노출됐다.
+# ③ 우선 추천이 비면 본문이 "2. 일반 추천" 부터 시작했다(1번이 없어 보였다).
+_REAL_MENU_ONLY = (
+    "주요소식 공지사항 No 카테고리 전체보기 회원서비스 공지사항 사업공고 교육 행사 입주공고 "
+    "유관기관 제목 글쓴이 작성시간 조회수 좋아요 공지사항 공지사항 [공지] KOVWA 명절마켓 "
+    "추석 특가전 판매기업 모집(~8/17) N 한국여성벤처협회 1일전 조회수 40 0 입주공고 입주공고 [입주"
+)
+_REAL_BOARD_LIST = (
+    "전체메뉴 닫기 전체메뉴 닫기 공지사항 사업고시/공고 사업고시/공고 사업고시/공고 유관사업 "
+    "고시/공고 센터뉴스 뉴스레터신청 총 273 건 검색하기 구분 제목 작성일 조회 접수기간 상태 공지 "
+    "[공지] 2026년도 중소기업 디자인개발지원사업 하반기 일반기업 지원분야 선정결과 안내 [알림] 0"
+)
+_REAL_NOTICE = (
+    "사업구분 : 신청기간 : 2026-08-03 14:00 ~ 2026-08-31 15:00 ( D-27 ) 주관기관 : 이종석 "
+    "2026-08-03 777 내용 2026 년 2 차 XR 기업성장지원센터 입주기업 모집 공고문 신청 자격은 "
+    "XR 분야 창업 7년 이내 중소기업이며 입주 공간과 장비 이용을 지원합니다"
+)
+
+
+def test_support_blurb_hides_board_menu_instead_of_showing_junk():
+    for desc in (_REAL_MENU_ONLY, _REAL_BOARD_LIST):
+        text = m._mail_support_blurb(_item(description=desc, support_field=""))
+        assert text == "상세 공고문 확인", text
+        for junk in ("전체보기", "글쓴이", "좋아요", "전체메뉴", "검색하기"):
+            assert junk not in text
+
+
+def test_support_blurb_keeps_notice_content_but_drops_board_meta():
+    text = m._mail_support_blurb(_item(description=_REAL_NOTICE, support_field=""))
+    for meta in ("이종석", "777", "D-27", "사업구분 :"):
+        assert meta not in text, f"{meta!r} 가 남았다: {text}"
+    assert "XR" in text and "입주" in text
+
+
+def test_fallback_body_numbers_only_visible_sections():
+    only_general = m.fallback_body([_item(1, priority_keyword=False)])
+    first = next(line for line in only_general.splitlines() if line.strip())
+    assert not first.startswith("2."), first
+    assert first.strip() == "일반 추천"
+
+    both = m.fallback_body([_item(1, priority_keyword=True), _item(2, priority_keyword=False)])
+    assert "1. 우선 추천" in both and "2. 일반 추천" in both
+
+
 def test_fallback_body_uses_eight_line_mobile_card():
     body = m.fallback_body([_item()])
     card = body.split("──────────────────", 1)[1].strip().splitlines()

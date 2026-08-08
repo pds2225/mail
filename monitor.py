@@ -377,7 +377,7 @@ APPLICATION_KEYWORDS = [
     "공모", "참가신청",
 ]
 
-GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
+GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원"]
 
 # ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
 # 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
@@ -444,6 +444,7 @@ EXCLUSION_RULES = [
     ]),
     ("SUPPLIER_ONLY", "application_notice", "supplier", [
         "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
+        "운영기관 모집", "운영기관 사업비", "수행기관 위탁비",
     ]),
     ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
@@ -520,6 +521,8 @@ NON_NOTICE_TITLES = frozenset(_t.casefold() for _t in [
     "110", "1588-2188",
     # nav/배너 링크가 공고로 저장된 사례 (근본 해결은 해당 소스 셀렉터 수정)
     "oa", "직무 솔루션>", "k-스타트업", "단기수출보험(선적후)", "human rights watch",
+    # 2026-08-04 실발송에서 확인된 게시판 카테고리 메뉴 (kovwa)
+    "유관기관",
 ])
 
 # 링크 스킴·도메인 기반 판정 (오탐 0 — 공고 상세가 tel:/SNS 일 수 없다)
@@ -551,6 +554,12 @@ def non_notice_reason(item: dict) -> str:
     if title_key and title_key in NON_NOTICE_TITLES:
         return raw_title.strip()
 
+    # 페이지네이션 링크를 공고로 오인한 경우 — 제목이 숫자뿐인 공고는 존재하지 않는다.
+    # (2026-08-04 실발송: kovwa 목록의 페이지 번호 "1" 이 공고로 메일에 실렸다.)
+    stripped_title = raw_title.strip()
+    if stripped_title.isdigit() and len(stripped_title) <= 3:
+        return f"페이지번호({stripped_title})"
+
     link = str(item.get("link") or "").strip()
     low = link.lower()
     if low.startswith(NON_NOTICE_LINK_SCHEMES):
@@ -559,6 +568,13 @@ def non_notice_reason(item: dict) -> str:
     host = host[4:] if host.startswith("www.") else host
     if host and host in NON_NOTICE_LINK_DOMAINS:
         return host
+    # 사이트 대문(루트·index·main)은 공고 상세 페이지가 아니다.
+    # 쿼리스트링이 있으면 상세일 수 있으므로 건드리지 않는다(recall 우선).
+    parts = urlsplit(low)
+    if host and not parts.query and not parts.fragment:
+        path = parts.path.rstrip("/")
+        if not path or re.fullmatch(r"/(?:index|main|home)(?:\.\w{2,5})?", path):
+            return f"사이트 대문({host})"
     return ""
 
 REGION_EXCLUDE_PHRASES = [
@@ -951,6 +967,58 @@ def normalize_title(title: str) -> str:
     """중복 판별용 제목 정규화: 소문자 + 특수문자/공백 제거"""
     t = unicodedata.normalize("NFKC", title.lower())
     return re.sub(r"[\s\W]+", "", t)
+
+
+def safe_normalize_title(title: str) -> str:
+    """P1-4: 의미 정보를 보존하는 안전한 제목 정규화.
+
+    보존: 연도, 지역, 모집차수, 재공고, 추가모집, 수정공고
+    제거: 중복 공백, 특수문자, 괄호, 구분기호, URL 파라미터
+    """
+    t = unicodedata.normalize("NFKC", title)
+    # 소문자 변환 (한글은 영향 없음)
+    t = t.lower()
+    # 중복 공백 → 단일 공백
+    t = re.sub(r"\s+", " ", t)
+    # 괄호·구분기호 정규화
+    t = re.sub(r"[()\[\]{}<>「」『』【】]", " ", t)
+    # 중복 구분기호 제거
+    t = re.sub(r"[·•∙‧]", "·", t)
+    # URL 추적 파라미터 제거
+    t = re.sub(r"[?&][\w=&]+", "", t)
+    # 앞뒤 공백 제거
+    return t.strip()
+
+
+def generate_canonical_notice_id(item: dict) -> str:
+    """P1-2: 크로스 소스 통합 ID 생성.
+
+    동일 공고를 다른 소스에서 가져왔을 때 하나로 묶기 위한 ID.
+    우선순위: 공고번호 > URL > 제목+기관+연도+마감
+    """
+    # 1. 공식 공고번호가 있으면 그것으로 통합
+    notice_id = item.get("notice_id") or item.get("pbln_id") or ""
+    if notice_id:
+        return f"canon_{notice_id}"
+
+    # 2. 공식 URL이 있으면 그것으로 통합
+    link = item.get("link") or ""
+    if link:
+        # URL 정규화 (프로토콜, www, 트래커 제거)
+        norm_link = re.sub(r"^https?://(www\.)?", "", link.lower())
+        norm_link = re.sub(r"[?&][\w=&]+", "", norm_link)
+        if norm_link:
+            return f"canon_url_{hashlib.md5(norm_link.encode()).hexdigest()[:12]}"
+
+    # 3. 제목+기관+연도+마감으로 해시
+    title = safe_normalize_title(item.get("title", ""))
+    org = (item.get("author") or item.get("organizer_field") or "").strip()
+    deadline = (item.get("deadline") or "").strip()
+    # 연도 추출
+    year_match = re.search(r"(20\d{2})", title)
+    year = year_match.group(1) if year_match else ""
+    composite = f"{title}|{org}|{year}|{deadline}"
+    return f"canon_{hashlib.md5(composite.encode()).hexdigest()[:12]}"
 
 
 # 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
@@ -2197,6 +2265,10 @@ def fetch_bizinfo(site: dict) -> list[dict]:
         sources = [("bizinfo 직결", _fetch_bizinfo_direct)]
 
     hard_err: Exception | None = None
+    # 앞선 경로가 죽고 뒤 경로가 살려낸 경우를 기록한다. 수집은 성공이라 로그가
+    # INFO 로만 남아 조용히 묻히는데, 그 사이 안전망은 1개로 줄어 있다
+    # (2026-08-02~ data.go.kr 이 매 실행 실패했지만 직결이 받쳐 아무도 몰랐다).
+    failed_paths: list[str] = []
     _allow_empty = os.environ.get("BIZINFO_ALLOW_EMPTY", "").strip().lower() in {
         "1", "true", "yes", "on",
     }
@@ -2214,10 +2286,22 @@ def fetch_bizinfo(site: dict) -> list[dict]:
                 )
         except Exception as e:  # noqa: BLE001 — 이 경로 하드 실패 → 다음 경로 시도
             log.error("기업마당 %s 실패: %s", label, e)
+            failed_paths.append(f"{label}: {str(e)[:200]}")
             if hard_err is None:
                 hard_err = e
             continue
         log.info("%s: %d건 (%s)", site["name"], len(got), label)
+        if failed_paths:
+            log.warning(
+                "기업마당 경로 %d개 사망(%s) — '%s' 로 %d건 복구. "
+                "남은 경로가 실패하면 즉시 0건이다.",
+                len(failed_paths),
+                ", ".join(p.split(":", 1)[0] for p in failed_paths),
+                label, len(got),
+            )
+            _page_stat(site.get("id", ""), fallback_degraded=True,
+                       fallback_failed_paths=failed_paths,
+                       fallback_recovered_by=label)
         return got
 
     # 모든 경로가 하드 실패 → 수집실패 신호로 올린다.
@@ -4780,6 +4864,16 @@ def _normalize_group(group: dict) -> dict:
     return norm
 
 
+def has_primary_support(item: dict) -> bool:
+    """공고에 주된 지원(실질적 비용지원)이 있는지 판정한다.
+
+    주된 지원: 지원금/바우처 (사업화자금, R&D, 시제품, 실증·PoC, 바우처 등)
+    부가 지원만: 교육, 멘토링, 컨설팅, 투자, 입주공간 단독
+    """
+    types = classify_support_type(item)
+    return "지원금/바우처" in types
+
+
 def support_match(item: dict, enabled_types: list[str]) -> bool:
     if not enabled_types or set(enabled_types) == set(ALL_SUPPORT_TYPES):
         return True
@@ -4849,6 +4943,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         if "설명회" in hard_service_hits:
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
+        elif has_primary_support(item):
+            # 주된 지원(사업화자금 등)이 있으면 서비스 키워드로 제외하지 않음 (P0-1)
+            soft_excluded_keywords.extend(hard_service_hits)
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
@@ -4937,6 +5034,28 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
+
+    # P0-4: 주된 지원/부가 지원 분리 — 단독 교육·멘토링·컨설팅·투자·입주 제외
+    # 재정 지원 신호(지원금/바우처 키워드, 수출/판로/마케팅 등)가 있으면 부가 지원으로만 제외하지 않음
+    if group is not None:
+        support_types = classify_support_type(item)
+        has_financial = "지원금/바우처" in support_types
+        has_consulting = "컨설팅·교육·상담" in support_types
+        has_investment = "투자" in support_types
+        # 재정 지원 키워드가 본문에 있는지 추가 확인 (classify_support_type이 놓치는 경우 대비)
+        _financial_signal_kws = [
+            "수출", "해외", "판로", "마케팅", "전시회", "박람회", "바이어",
+            "시제품", "사업화", "R&D", "실증", "PoC", "바우처", "보조금",
+        ]
+        has_financial_signal = has_financial or any(kw in text for kw in _financial_signal_kws)
+        # 주된 지원 없이 부가 지원만 있는 경우 제외
+        if not has_financial_signal and not has_investment:
+            if has_consulting:
+                # 교육·멘토링·컨설팅 단독 → 제외
+                reason_codes.append("CONSULTING_ONLY")
+        elif has_investment and not has_financial_signal and not has_consulting:
+            # 투자 단독 → 제외
+            reason_codes.append("INVESTMENT_ONLY")
 
     if not application_like and not priority_keywords:
         reason_codes.append("NOT_GRANT_NOTICE")
@@ -5228,8 +5347,12 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
         lines += [f"\n━━━ {label} — {len(src_items)}건 ━━━"]
         for it in src_items:
             dl = resolve_item_deadline(it)
-            lines += [f"▸ {it['title']}",
-                      f"  기관: {it.get('author') or '미기재'} | 마감: {dl or '미기재'}"
+            # 다이제스트와 같은 정제를 태운다 — 예전엔 원본을 그대로 찍어
+            # "&amp;" 같은 HTML 엔티티와 "새로운게시글" 배지가 그대로 메일에 나갔다.
+            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
+            author = _mail_clean_text(it.get("author") or "", limit=80) or "미기재"
+            lines += [f"▸ {title}",
+                      f"  기관: {author} | 마감: {dl or '미기재'}"
                       f" | 등록: {it.get('posted_date') or '날짜불명'}"]
             if it.get("link"):
                 lines.append(f"  링크: {it['link']}")
@@ -5273,6 +5396,22 @@ _MAIL_FOOTER_MARKERS = (
 _MAIL_NAV_TOKENS = (
     "메인", "회원가입", "로그인", "고객센터", "재단소개", "인사말", "연 혁", "조직도",
     "업무안내", "알림마당", "공지사항", "채용정보", "자료실", "홍보마당", "정보공개",
+    # 게시판 목록/메뉴를 통째로 긁었을 때만 나오는 토큰(공고 본문에는 거의 없다).
+    "전체메뉴", "전체보기", "카테고리", "회원서비스", "주요소식", "입주공고", "유관기관",
+    "사업고시", "센터뉴스", "뉴스레터", "글쓴이", "작성시간", "조회수", "좋아요", "검색하기",
+)
+
+# 게시판 목록·상세 페이지의 표 머리글/메타값 — 공고 내용이 아니라 화면 부속물이다.
+# (실측: 메일 '지원내용'에 "주관기관 : 이종석 2026-08-03 777" 처럼 담당자·작성일·조회수가 그대로 노출됨)
+_MAIL_LIST_NOISE_RE = (
+    re.compile(r"제목\s+글쓴이\s+작성시간\s+조회수\s+좋아요"),
+    re.compile(r"구분\s+제목\s+작성일\s+조회\s+접수기간\s+상태"),
+    re.compile(r"전체메뉴\s*닫기"),
+    re.compile(r"총\s*\d[\d,]*\s*건\s*검색하기"),
+    re.compile(r"주관기관\s*[:：]\s*[가-힣]{2,4}(?=\s|$)"),   # 담당자 이름
+    re.compile(r"(?<!\d)\d{4}-\d{2}-\d{2}\s+\d{1,7}(?=\s|$)"),  # 작성일 + 조회수
+    re.compile(r"\(\s*D-\d+\s*\)"),                            # 남은 날짜 카운트다운
+    re.compile(r"(?:^|\s)[가-힣]{2,6}\s*[:：]\s*(?=[가-힣]{2,6}\s*[:：])"),  # 값 없는 빈 라벨
 )
 
 
@@ -5290,12 +5429,20 @@ def _mail_clean_text(value: object, *, limit: int = MAIL_SUPPORT_BLURB_LIMIT) ->
         pos = text.find(marker)
         if pos >= 80:
             text = text[:pos]
+    # 목록성 판정은 노이즈를 지우기 '전'에 한다 — 지우고 나면 판정 근거가 함께 사라진다.
+    # (실측: IDSC 케이스는 "전체메뉴 닫기"·"총 273 건 검색하기" 를 먼저 지우자 토큰이 4개로 줄어 빠져나갔다.)
     nav_hits = sum(1 for token in _MAIL_NAV_TOKENS if token in text[:500])
+    nav_hits += sum(1 for noise_re in _MAIL_LIST_NOISE_RE if noise_re.search(text[:1000]))
+    for noise_re in _MAIL_LIST_NOISE_RE:
+        text = noise_re.sub(" ", text)
     if nav_hits >= 5:
         anchors = [text.find(token) for token in ("지원대상", "사업내용", "지원내용", "모집개요", "신청자격", "☞")]
         anchors = [pos for pos in anchors if pos >= 0]
-        if anchors:
-            text = text[min(anchors):]
+        if not anchors:
+            # 메뉴·게시판 목록만 긁혔고 공고 본문이 없다. 쓰레기를 보여주느니 비운다
+            # (호출부가 다음 후보 필드나 "상세 공고문 확인" 으로 넘어간다).
+            return ""
+        text = text[min(anchors):]
     text = re.sub(r"\s+", " ", text).strip(" -·•|/")
     return (text[:limit].rstrip() + " …") if len(text) > limit else text
 
@@ -5316,6 +5463,9 @@ def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> st
     title = _mail_clean_text(item.get("title"), limit=200)
     if title and candidate.startswith(title):
         candidate = candidate[len(title):].lstrip(" :-·•")
+    # 정제 후 남은 게 라벨 부스러기 수준이면 보여주지 않는다(엉뚱한 글자보다 '확인'이 낫다).
+    if len(candidate.strip()) < 12:
+        return "상세 공고문 확인"
     return candidate or "상세 공고문 확인"
 
 
@@ -5347,28 +5497,33 @@ def fallback_body(items: list[dict]) -> str:
         ))
         lines.append("")
     sections = [
-        ("1. 우선 추천", [it for it in items if it.get("priority_keyword")]),
-        ("2. 일반 추천", [it for it in items if not it.get("priority_keyword")]),
+        ("우선 추천", [it for it in items if it.get("priority_keyword")]),
+        ("일반 추천", [it for it in items if not it.get("priority_keyword")]),
     ]
-    for section_title, section_items in sections:
-        if not section_items:
-            continue
-        lines.append(section_title)
+    # 번호는 '실제로 표시되는' 섹션에만 순서대로 붙인다.
+    # (예전엔 번호가 제목에 박혀 있어, 우선 추천이 비면 본문이 "2. 일반 추천" 부터 시작했다.)
+    visible = [(title, its) for title, its in sections if its]
+    for idx, (section_title, section_items) in enumerate(visible, start=1):
+        lines.append(f"{idx}. {section_title}" if len(visible) > 1 else section_title)
         for it in section_items:
             title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
             _badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(it.get("_change_type"), "")
             title = _badge + title
-            author = _mail_clean_text(it.get("author") or "미기재", limit=80)
+            # 기관명이 비면 수집 출처라도 보여준다("미기재"보다 어디서 온 공고인지가 낫다).
+            author = _mail_clean_text(it.get("author") or it.get("source") or "미기재", limit=80)
             types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
             region = _region_label(it)
             display_region = "제한 없음" if region.endswith("전체") else region
+            # 신청기간(시작~종료)이 잡힌 공고는 '마감' 이 아니라 '접수기간' 으로 적는다.
+            deadline_text = resolve_item_deadline(it) or "미기재"
+            deadline_label = "접수기간" if "~" in deadline_text else "마감"
             lines.extend([
                 "──────────────────",
                 f"📌 {title}",
                 f"• 기관: {author} | 유형: {types}",
                 f"• 대상: {_mail_target_text(it)}",
                 f"• 지원내용: {_mail_support_blurb(it)}",
-                f"• 마감: {resolve_item_deadline(it) or '미기재'} | 지역: {display_region}",
+                f"• {deadline_label}: {deadline_text} | 지역: {display_region}",
                 f"• 적합사유: {_mail_fit_reason(it)}",
                 f"• 원문: {it.get('link') or '미기재'}",
             ])
@@ -5413,7 +5568,8 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
         return ""
     lines = ["| 공고명 | 제외 사유 코드 | 제외 판단 근거 |", "|---|---|---|"]
     for it in items[:limit]:
-        title = str(it.get("title", "")).replace("|", "/")
+        # 표 깨짐 방지(|)뿐 아니라 HTML 엔티티·배지도 걷어낸다(render_all 과 동일 기준).
+        title = strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)).replace("|", "/")
         codes = ", ".join(it.get("exclude_reason_codes", [])) or "LOW_CONFIDENCE"
         basis_parts = []
         if it.get("excluded_keywords"):

@@ -50,3 +50,30 @@ def test_render_all_buckets_in_requested_order():
     i_nat = body.index("━━━ 전국 대상")
     i_inc = body.index("━━━ 인천")
     assert i_corp < i_nat < i_inc
+
+
+# 2026-08-04 회귀 — 다이제스트만 정제를 태우고 '원본전체' 메일·제외표는 원본을 그대로 찍었다.
+# 같은 결함이 출력 경로마다 따로 재발하지 않도록, 사용자에게 보이는 렌더는 모두 같은 기준을 쓴다.
+_DIRTY = {
+    "id": "d1",
+    "title": "2026년 AI 사업화 지원 &amp; 참여기업 모집 새로운게시글",
+    "author": "지원기관 &amp; 센터",
+    "source": "기업마당(Bizinfo)",
+    "posted_date": "2026-08-01",
+    "deadline": "2026-08-31",
+}
+
+
+def test_render_all_strips_html_entities_and_badges():
+    body = m.render_all([dict(_DIRTY)], 0, 0)
+    assert "&amp;" not in body and "새로운게시글" not in body
+    assert "2026년 AI 사업화 지원 & 참여기업 모집" in body
+    assert "지원기관 & 센터" in body
+
+
+def test_render_excluded_summary_strips_html_entities_and_badges():
+    table = m.render_excluded_summary([{**_DIRTY, "exclude_reason_codes": ["LOW_CONFIDENCE"]}])
+    assert "&amp;" not in table and "새로운게시글" not in table
+    # 표 구분자가 깨지지 않도록 제목 안의 '|' 는 계속 '/' 로 바꾼다.
+    piped = m.render_excluded_summary([{**_DIRTY, "title": "가|나", "exclude_reason_codes": ["X"]}])
+    assert "가/나" in piped

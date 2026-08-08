@@ -26,6 +26,7 @@ sys.path.insert(0, str(BASE_DIR))
 sys.path.insert(0, str(BASE_DIR / "scripts"))
 
 from mail_core.matching import company_match  # noqa: E402
+from mail_core.paths import resolve_raw_root  # noqa: E402
 from accuracy_matrix import _load_items, _notice_key  # noqa: E402
 from run_company_match import _enrich_for_company  # noqa: E402
 
@@ -57,7 +58,7 @@ def main() -> int:
         print("[triage] fn_weaklabel_own 후보 0건 — 종료")
         return 0
 
-    items = _load_items(BASE_DIR / "data" / "raw", None, None)
+    items = _load_items(resolve_raw_root(), None, None)
     by_key = {_notice_key(it): it for it in items}
     companies = {c["id"]: c for c in company_match.load_companies()}
 
