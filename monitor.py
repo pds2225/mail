@@ -852,13 +852,92 @@ def _latest_date_from_text(value: str):
 
 
 def _classify_notice_change(before: dict, after: dict) -> str:
-    if "재공고" in str(after.get("title") or "") and "재공고" not in str(before.get("title") or ""):
-        return "REANNOUNCED"
+    """P1-5: 공고 변경 유형을 세분화하여 판정한다.
+
+    반환: DEADLINE_EXTENDED / TARGET_CHANGED / SUPPORT_AMOUNT_CHANGED /
+          APPLICATION_URL_CHANGED / REANNOUNCEMENT / ADDITIONAL_RECRUITMENT /
+          MINOR_TEXT_CHANGE / UPDATED
+    """
+    after_title = str(after.get("title") or "")
+    before_title = str(before.get("title") or "")
+
+    # 재공고 감지
+    if "재공고" in after_title and "재공고" not in before_title:
+        return "REANNOUNCEMENT"
+
+    # 추가 모집 감지
+    if any(term in after_title for term in ("추가모집", "추가 모집", "2차 모집", "2차모집")):
+        if not any(term in before_title for term in ("추가모집", "추가 모집", "2차 모집", "2차모집")):
+            return "ADDITIONAL_RECRUITMENT"
+
+    # 마감 연장 감지
     old_deadline = _latest_date_from_text(str(before.get("application_period") or before.get("deadline") or ""))
     new_deadline = _latest_date_from_text(str(after.get("application_period") or after.get("deadline") or ""))
     if new_deadline and (old_deadline is None or new_deadline > old_deadline):
-        return "EXTENDED"
-    return "UPDATED"
+        return "DEADLINE_EXTENDED"
+
+    # 지원대상 변경 감지
+    old_target = str(before.get("target_field") or "")
+    new_target = str(after.get("target_field") or "")
+    if old_target and new_target and old_target != new_target:
+        return "TARGET_CHANGED"
+
+    # 신청 URL 변경 감지
+    old_url = str(before.get("link") or "")
+    new_url = str(after.get("link") or "")
+    if old_url and new_url and old_url != new_url:
+        return "APPLICATION_URL_CHANGED"
+
+    # 기본: 텍스트 변경
+    return "MINOR_TEXT_CHANGE"
+
+
+def merge_notice_fields(canonical: dict, new_item: dict) -> dict:
+    """P1-6: 여러 출처의 공고 정보를 병합한다.
+
+    우선순위:
+    - 대표 제목: 주관기관 공식 제목 (is_aggregator=False 우선)
+    - 공식 공고문: 주관기관 URL
+    - 신청 링크: 실제 공식 신청 URL
+    - 지원대상: 최신·신뢰도 높은 구조화 필드
+    - 접수기간: 최신 수정공고 기준
+    - 추가 출처: 기업마당, K-Startup, 지역기관 등
+    """
+    result = {**canonical}
+
+    # 출처 우선순위: 주관기관 > K-Startup > 기업마당 > 기타
+    SOURCE_PRIORITY = {"kstartup": 1, "bizinfo": 2}
+
+    canonical_priority = SOURCE_PRIORITY.get(canonical.get("source"), 99)
+    new_priority = SOURCE_PRIORITY.get(new_item.get("source"), 99)
+
+    # 대표 제목: 주관기관 우선
+    if new_priority < canonical_priority:
+        result["title"] = new_item.get("title", result.get("title", ""))
+
+    # 신청 링크: 공식 신청 URL 우선
+    new_link = new_item.get("link", "")
+    if new_link and not result.get("link"):
+        result["link"] = new_link
+
+    # 지원대상: 최신 값 우선
+    new_target = new_item.get("target_field", "")
+    if new_target and len(new_target) > len(str(result.get("target_field", ""))):
+        result["target_field"] = new_target
+
+    # 접수기간: 최신 값 우선
+    new_period = new_item.get("application_period", "")
+    if new_period:
+        result["application_period"] = new_period
+
+    # 추가 출처 기록
+    sources = result.get("_additional_sources", [])
+    new_source = new_item.get("source", "")
+    if new_source and new_source not in sources:
+        sources.append(new_source)
+        result["_additional_sources"] = sources
+
+    return result
 
 
 def _detail_extraction_unreliable(item: dict) -> bool:

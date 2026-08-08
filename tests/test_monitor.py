@@ -1257,3 +1257,69 @@ def test_source_health_classify_failing():
     """에러 → FAILING"""
     from mail_core.operations.source_health import classify_source_status, FAILING
     assert classify_source_status("bizinfo", item_count=0, parse_rate=0.0, error="HTTP 500") == FAILING
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-5 테스트 — 버전 관리 (변경 유형 세분화)
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_change_type_deadline_extended():
+    """마감연장 → DEADLINE_EXTENDED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "deadline": "2026-08-20", "application_period": "2026-08-01 ~ 2026-08-20"}
+    after = {"title": "AI 창업지원 모집", "deadline": "2026-08-31", "application_period": "2026-08-01 ~ 2026-08-31"}
+    assert _classify_notice_change(before, after) == "DEADLINE_EXTENDED"
+
+
+def test_p1_change_type_reannouncement():
+    """재공고 → REANNOUNCEMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 모집 (재공고)"}
+    assert _classify_notice_change(before, after) == "REANNOUNCEMENT"
+
+
+def test_p1_change_type_additional_recruitment():
+    """추가모집 → ADDITIONAL_RECRUITMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 추가모집"}
+    assert _classify_notice_change(before, after) == "ADDITIONAL_RECRUITMENT"
+
+
+def test_p1_change_type_target_changed():
+    """지원대상 변경 → TARGET_CHANGED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "target_field": "예비창업자"}
+    after = {"title": "AI 창업지원 모집", "target_field": "창업 3년 이내 기업"}
+    assert _classify_notice_change(before, after) == "TARGET_CHANGED"
+
+
+def test_p1_change_type_minor_text_change():
+    """단순 텍스트 변경 → MINOR_TEXT_CHANGE"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "deadline": "2026-08-31"}
+    after = {"title": "AI 창업지원 모집", "deadline": "2026-08-31"}
+    assert _classify_notice_change(before, after) == "MINOR_TEXT_CHANGE"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-6 테스트 — 여러 출처 필드 병합
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_merge_fields_preserves_additional_sources():
+    """여러 출처 병합 시 추가 출처 기록"""
+    from monitor import merge_notice_fields
+    canonical = {"title": "AI 창업지원", "source": "bizinfo", "link": "https://bizinfo.go.kr/1"}
+    new_item = {"title": "AI 창업지원", "source": "kstartup", "link": "https://k-startup.go.kr/2"}
+    result = merge_notice_fields(canonical, new_item)
+    assert "kstartup" in result.get("_additional_sources", [])
+
+
+def test_p1_merge_fields_preserves_target():
+    """지원대상이 더 긴 값으로 병합"""
+    from monitor import merge_notice_fields
+    canonical = {"title": "AI 창업지원", "source": "bizinfo", "target_field": "예비창업자"}
+    new_item = {"title": "AI 창업지원", "source": "kstartup", "target_field": "공고일 현재 사업자등록이 없는 예비창업자 또는 창업 3년 이내 기업"}
+    result = merge_notice_fields(canonical, new_item)
+    assert "사업자등록이 없는" in result.get("target_field", "")
