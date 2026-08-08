@@ -1229,3 +1229,31 @@ def test_p0_target_roles_extraction():
     roles2 = extract_target_roles(item2)
     assert roles2["is_applicant"] is True
     assert roles2["is_operator"] is False
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-17 테스트 — 소스 상태관리
+# ══════════════════════════════════════════════════════════════════
+
+def test_source_health_classify_ok():
+    """정상 수집 → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.95) == OK
+
+
+def test_source_health_classify_degraded():
+    """파싱률 낮음 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.5) == DEGRADED
+
+
+def test_source_health_classify_degraded_zero_items():
+    """수집 0건 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=1.0) == DEGRADED
+
+
+def test_source_health_classify_failing():
+    """에러 → FAILING"""
+    from mail_core.operations.source_health import classify_source_status, FAILING
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=0.0, error="HTTP 500") == FAILING
