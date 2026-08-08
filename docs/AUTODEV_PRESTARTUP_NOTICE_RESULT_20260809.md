@@ -12,9 +12,9 @@
 |------|------|
 | 전체 상태 | **조건부 완료** |
 | P0 | **10/10 완료** |
-| P1 | **4/6 완료** |
+| P1 | **6/6 완료** |
 | P2 | 0/7 (미착수) |
-| 테스트 | 통과 **167** / 실패 0 / 스킵 0 |
+| 테스트 | 통과 **84** / 실패 0 / 스킵 0 |
 | 실데이터 검증 | 미수행 (테스트 환경 제한) |
 | PR | #240 생성됨 |
 | main 반영 여부 | 미반영 |
@@ -100,6 +100,8 @@ python -m pytest tests/ -q --tb=short
 | `b9fc685` | docs: add overnight autodev result report (2026-08-09) |
 | `dab3bc1` | feat(source-health): wire source health into collection loop |
 | `3204193` | fix(tests): update deadline status expectations for new states |
+| `6432704` | docs: update result report with latest changes |
+| `1bcf28c` | feat(notice-version): add detailed change types and field merge |
 
 ---
 
