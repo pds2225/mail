@@ -810,24 +810,24 @@ def test_filter_for_group_diagnostics_returns_excluded_summary_for_dry_run():
 # ── 작업 A·C: 키워드 보강 회귀 테스트 ──────────────────────────────────────────
 
 def test_open_deadline_terms_new_items_positive():
-    """OPEN_DEADLINE_TERMS 신규: 상시모집·연중수시가 title/description에 있으면 'open'"""
+    """OPEN_DEADLINE_TERMS 신규: 상시모집·연중수시가 title/description에 있으면 'always_open'"""
     assert classify_deadline_status(
         {"title": "OO사업 상시모집 안내", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     assert classify_deadline_status(
         {"title": "OO 연중수시 모집", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     assert classify_deadline_status(
         {"title": "OO 모집", "description": "연중수시 접수", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     # 단독 '상시'는 추가하지 않음 — '상시 근로자 5인 이상 기업'은 여전히 open이 아님
     assert classify_deadline_status(
         {"title": "상시 근로자 5인 이상 기업", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) != "open"
+    ) not in {"open", "always_open"}
 
 
 def test_application_keywords_positive_chamgasinjung():
@@ -1123,3 +1123,68 @@ def test_p1_canonical_id_different_year():
     cid1 = generate_canonical_notice_id(item1)
     cid2 = generate_canonical_notice_id(item2)
     assert cid1 != cid2
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-2 테스트 — 크로스소스 중복 제거
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_cross_site_same_notice_different_date():
+    """사이트 간 동일 공고 (날짜 하루 차이) → 1건만 발송"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2026년 AI 창업지원사업 모집", "source": "bizinfo",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://bizinfo.go.kr/notice/123", "posted_date": "2026-08-17"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://k-startup.go.kr/notice/456", "posted_date": "2026-08-18"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1, f"동일 공고는 1건이어야 함: {len(result)}건"
+
+
+def test_p1_cross_site_different_year():
+    """2025/2026 같은 사업은 서로 다른 공고"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2025 예비창업패키지 모집", "source": "bizinfo",
+         "author": "중기부", "deadline": "2025-12-31", "is_aggregator": False,
+         "link": "https://example.com/2025", "posted_date": "2025-01-01"},
+        {"id": "b1", "title": "2026 예비창업패키지 모집", "source": "bizinfo",
+         "author": "중기부", "deadline": "2026-12-31", "is_aggregator": False,
+         "link": "https://example.com/2026", "posted_date": "2026-01-01"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 2, f"다른 연도는 별도 공고: {len(result)}건"
+
+
+def test_p1_cross_site_same_url_different_source():
+    """동일 URL, 다른 소스 → 1건만"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "AI 창업지원 공고", "source": "bizinfo",
+         "author": "기관A", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://example.com/notice/100", "posted_date": "2026-08-01"},
+        {"id": "b1", "title": "AI 창업지원 공고 (안내)", "source": "kstartup",
+         "author": "기관A", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://example.com/notice/100", "posted_date": "2026-08-02"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1, f"동일 URL은 1건이어야 함: {len(result)}건"
+
+
+def test_p1_cross_site_aggregator_replaced():
+    """집계처 → 주관기관으로 교체"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2026년 수출바우처 모집", "source": "aggregator_site",
+         "author": "알수없음", "deadline": "2026-08-31", "is_aggregator": True,
+         "link": "https://agg.com/1", "posted_date": "2026-08-01"},
+        {"id": "b1", "title": "2026년 수출바우처 모집", "source": "bizinfo",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://bizinfo.go.kr/2", "posted_date": "2026-08-02"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1
+    assert result[0]["source"] == "bizinfo", "주관기관이 우선해야 함"

@@ -3970,9 +3970,14 @@ def dedup_items(items: list[dict]) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
+
+    P1-2: canonical_notice_id 기반 크로스소스 중복 제거 추가.
+    - 공고번호/URL/제목+기관으로 canonical ID 생성
+    - 동일 canonical ID면 동일 공고로 판정
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
+    canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -3990,12 +3995,33 @@ def dedup_items(items: list[dict]) -> list[dict]:
             kept.append(item)
             continue
 
+        # P1-2: canonical ID 기반 중복 체크
+        canonical_id = generate_canonical_notice_id(item)
+        item["_canonical_notice_id"] = canonical_id
+
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
         if dup_key is None:
-            # 신규
-            norm_map[key] = item
-            kept.append(item)
+            # 신규 — canonical ID도 체크
+            if canonical_id in canonical_map:
+                existing = canonical_map[canonical_id]
+                # 주관기관 우선
+                if not item["is_aggregator"] and existing["is_aggregator"]:
+                    kept.remove(existing)
+                    kept.append(item)
+                    del norm_map[similarity_key(existing["title"])]
+                    norm_map[key] = item
+                    canonical_map[canonical_id] = item
+                    log.info("크로스소스중복: '%s' (%s) → '%s' (%s) 로 교체 (canonical: %s)",
+                             existing["source"], existing["title"][:20],
+                             item["source"], item["title"][:20], canonical_id)
+                else:
+                    log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
+                             existing["title"][:20], item["title"][:20], canonical_id)
+            else:
+                norm_map[key] = item
+                canonical_map[canonical_id] = item
+                kept.append(item)
         else:
             existing = norm_map[dup_key]
             # 현재 아이템이 주관기관이고 기존이 집계처이면 교체
@@ -4004,6 +4030,11 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 kept.append(item)
                 del norm_map[dup_key]
                 norm_map[key] = item
+                # canonical map도 업데이트
+                old_canonical = existing.get("_canonical_notice_id")
+                if old_canonical and old_canonical in canonical_map:
+                    del canonical_map[old_canonical]
+                canonical_map[canonical_id] = item
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
@@ -4304,8 +4335,14 @@ def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> li
 def classify_deadline_status(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     text = _notice_text(item)
-    if any(term in text for term in OPEN_DEADLINE_TERMS):
-        return "open"
+    # P0-15: ALWAYS_OPEN / UNTIL_BUDGET_EXHAUSTED 세분화
+    if any(term in text for term in ("상시접수", "수시접수", "상시모집", "수시모집", "수시 모집", "연중수시", "연중상시", "선착순")):
+        return "always_open"
+    if any(term in text for term in ("예산 소진 시까지", "예산소진 시까지", "예산 소진시까지", "소진 시", "소진시")):
+        return "until_budget_exhausted"
+    # 마감연장 감지
+    if any(term in text for term in ("마감연장", "마감 연장", "연장공고", "연장 공고", "기한연장", "기한 연장")):
+        return "extended"
     body_text = _notice_body_text(item)
     period = item.get("application_period") or extract_application_period(body_text, _posted_date(item))
     if period.get("end"):
@@ -5086,7 +5123,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
     # recall: 모집·신청 신호 있는데 기간 미파싱(목록 stub)이면 열린 공고로 간주 — 서울·AI 등 누락 방지
-    deadline_ok = deadline_status in {"open", "upcoming"} or (
+    # P0-15: always_open, until_budget_exhausted, extended도 열린 공고로 처리
+    deadline_ok = deadline_status in {"open", "upcoming", "always_open", "until_budget_exhausted", "extended"} or (
         deadline_status == "unknown" and application_like
     )
     is_relevant = (
