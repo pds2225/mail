@@ -1886,7 +1886,25 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
 
 #: 오전/오후 발송 회차를 가르는 KST 시각. 예약(07:30·18:30 KST)보다 넉넉히 뒤에 둬서
 #: GitHub Actions 예약 지연(실측 최대 ~1시간)에도 회차 판정이 흔들리지 않게 한다.
+#: 단, 스케줄/수동 실행은 `MONITOR_DELIVERY_SLOT=am|pm` 으로 회차를 고정하는 편이 안전하다
+#: (벽시계만 쓰면 14:00 이후 도착·오후 따라잡기가 `#pm` 키를 저녁 cron 과 공유한다).
 DELIVERY_PM_CUTOFF_HOUR = 14
+
+
+def delivery_slot(now: datetime | None = None) -> str:
+    """발송 회차(`am`/`pm`). `MONITOR_DELIVERY_SLOT` 이 am|pm 이면 벽시계보다 우선.
+
+    벽시계(`DELIVERY_PM_CUTOFF_HOUR`)만 쓰면 다음이 저녁 digest 를 통째로 스킵한다:
+      1) 오전 cron 실패 후 14:00 KST 이후 workflow_dispatch 가 `#pm` 체크포인트 기록
+      2) 오전 cron 이 14:00 이후로 지연 도착해 `#pm` 기록
+      → 18:30 KST 저녁 cron 도 `#pm` → skip_gate already_delivered.
+    GHA `monitor.yml` 은 cron/입력으로 회차를 명시한다.
+    """
+    forced = str(os.environ.get("MONITOR_DELIVERY_SLOT", "")).strip().lower()
+    if forced in {"am", "pm"}:
+        return forced
+    dt = now or datetime.now(KST)
+    return "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
 
 
 def delivery_cycle_date(now: datetime | None = None) -> str:
@@ -1906,10 +1924,10 @@ def delivery_cycle_date(now: datetime | None = None) -> str:
       실행 당일을 쓰면 하루에 정확히 한 세트가 되어 같은 날 재실행은 계속 멱등으로
       막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
     날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
+    회차는 `delivery_slot()` — 환경변수 고정값 우선, 없으면 벽시계.
     """
     dt = now or datetime.now(KST)
-    slot = "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
-    return f"{dt.date()}#{slot}"
+    return f"{dt.date()}#{delivery_slot(dt)}"
 
 
 def select_text(root: Any, selector: str) -> str:
@@ -6778,8 +6796,8 @@ def execute_monitor(
     target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
     # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
-    # 회차 경계는 발송 멱등 키와 같은 DELIVERY_PM_CUTOFF_HOUR 를 쓴다(표기·멱등 불일치 방지).
-    _slot_label = "오전" if now.hour < DELIVERY_PM_CUTOFF_HOUR else "저녁"
+    # 회차는 발송 멱등 키와 같은 delivery_slot() 을 쓴다(표기·멱등 불일치 방지).
+    _slot_label = "오전" if delivery_slot(now) == "am" else "저녁"
     date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
 
     include_unknown = settings.get("include_date_unknown", False)
