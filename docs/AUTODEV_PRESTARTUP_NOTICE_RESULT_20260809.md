@@ -13,7 +13,7 @@
 | 전체 상태 | **완료** | — |
 | P0 | **10/10 완료** | IMPLEMENTED + TESTED |
 | P1 | **6/6 완료** | IMPLEMENTED + TESTED |
-| P2 | **3/7 완료** | IMPLEMENTED + TESTED |
+| P2 | **5/7 완료** | IMPLEMENTED + TESTED |
 | 전체 테스트 | **통과** | TESTED |
 | 실데이터 검증 | **200건 수행** | REAL_DATA_VALIDATED |
 | PR | **#240** | 생성됨, 미병합 |
@@ -185,6 +185,8 @@ python scripts/validate_golden.py
 | `719291c` | feat(source-health): complete MILESTONE B - collection quality and alerts |
 | `977de21` | feat(validation): add golden data validation script |
 | `3c7ff0f` | fix(tests): update deadline status expectations for always_open |
+| `115a009` | docs: final result report update |
+| `0b96113` | feat(dedup): add attachment hash and source contribution stats |
 
 ---
 
