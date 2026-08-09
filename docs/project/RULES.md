@@ -173,3 +173,12 @@ GHA `auto-dev-queue.yml` 의 cron 을 다시 켜기 **전에** 모두 충족:
 
 위가 하나라도 실패하면 cron 을 복구하지 말고 `workflow_dispatch` / 로컬 에이전트로 PENDING 을 소진한다.
 
+## 10. Agent 순환 호출 · Polling Timeout 가드
+
+| # | 규칙 |
+|---|------|
+| 1 | 동일 TASK에서 동일 역할 agent(orchestrator/runner/verifier/fixer 등) 호출은 최대 1회. 허용 예: orchestrator → verifier → fixer → verifier. 두 번째 verifier에서도 동일 failure signature(에러 해시)면 같은 방식으로 다시 시도하지 않고 BLOCKED 종료 — 동일 failure signature 재시도는 최대 2회(§4-7, exit_conditions.md `FAIL_NO_PROGRESS`와 동일 원칙) |
+| 2 | `verifier → fixer → verifier → fixer → verifier ...` 형태의 무한 핑퐁 금지 |
+| 3 | 배포 상태·외부 API 등 polling이 필요한 코드를 추가할 경우 반드시 유한 조건(MAX_POLLS, TOTAL_TIMEOUT)을 둔다. `while status != success: check()` 같은 polling timeout 없는 무한 대기 금지 |
+| 4 | 하나의 검증 실패로 전체 체인(coding-fix → gate-repair → coverage-sentinel …)을 처음부터 재실행하지 않는다. 실패한 단계만 제한적으로 재검증한다 |
+
