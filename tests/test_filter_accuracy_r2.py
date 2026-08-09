@@ -185,14 +185,15 @@ def test_support_field_grant_only_preserves_etc_gate():
 
 
 def test_prestartup_ai_consulting_only_notice_not_dropped():
-    """end-to-end: 정당 공고가 support_field=멘토링이어도 prestartup_ai에서 누락 안 됨.
-    (지원유형 매핑이 매칭 게이트를 좁혀 부당 누락하면 안 된다는 recall 회귀 보존)."""
+    """end-to-end: support_field=멘토링 단독 공고는 CONSULTING_ONLY로 제외.
+    (P0-4 정책: 멘토링/컨설팅/교육 단독은 제외, 재정 지원 신호 없으면 CONSULTING_ONLY)"""
     item = {"title": "서울 AI 솔루션 도입 참여기업 모집 신청접수", "description": "신청",
             "deadline": "2099-12-31", "support_field": "멘토링",
             "region_field": "전국"}
     ev = m.evaluate_notice(item, G["grp_prestartup_ai"])
-    assert ev["is_relevant"] is True
-    assert "그외" not in ev["_types"]   # 표시는 컨설팅·교육으로 정확(그외 숨김)
+    # 새 정책: 멘토링 단독 + 재정 지원 신호 없음 → CONSULTING_ONLY 제외
+    assert ev["is_relevant"] is False
+    assert "CONSULTING_ONLY" in ev["exclude_reason_codes"]
 
 
 # ══════════════════════════════════════════════════════════════════
