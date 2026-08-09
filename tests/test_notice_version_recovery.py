@@ -257,3 +257,91 @@ def test_real_deadline_extension_still_versions_after_reliable_enrich():
     assert deliverable[0]["_change_type"] == "EXTENDED"
     assert deliverable[0]["_delivery_id"] == "extend2@v2"
     assert updates["extend2"]["version"] == 2
+
+
+def test_new_path_fetch_failure_does_not_promote_thin_delivered(
+    monkeypatch,
+    tmp_path,
+):
+    """미seen NEW + DETAIL_FETCH_FAILED 는 첫 메일은 나가되, 얇은 스냅샷을
+    delivered_* 로 잠그지 않는다. 다음 정상 enrich 가 허위 @v2 를 만들면 안 된다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 7, 31, 10, tzinfo=m.KST)
+    thin = item(
+        "newfail",
+        "2026-07-30",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+        detail_extraction={"status": "DETAIL_FETCH_FAILED"},
+    )
+    deliverable, updates = m.classify_notice_versions([thin], set(), {})
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "NEW"
+    assert deliverable[0]["_delivery_id"] == "newfail"
+    assert updates["newfail"].get("unreliable_new") is True
+
+    # 발송 완료 후 seen 에 들어가도 delivered_* 는 비워 둔다
+    committed = m.commit_notice_versions({}, updates, {"newfail"}, now=now)
+    assert not committed["newfail"].get("delivered_hash")
+    assert committed["newfail"].get("change_type") == "NEW"
+    assert committed["newfail"].get("pending_delivery_id") == ""
+
+    full = item("newfail", "2026-07-30")
+    recovered, updates2 = m.classify_notice_versions([full], {"newfail"}, committed)
+    assert recovered == []
+    assert updates2["newfail"].get("seed_only") is True
+    seeded = m.commit_notice_versions(committed, updates2, {"newfail"}, now=now)
+    assert seeded["newfail"].get("delivered_hash")
+    again, _ = m.classify_notice_versions([full], {"newfail"}, seeded)
+    assert again == []
+
+
+def test_new_path_parse_failure_then_enrich_does_not_version_bump(
+    monkeypatch,
+    tmp_path,
+):
+    """PARSE_FAILED NEW 발송 후 필드가 채워져도 EXTENDED/UPDATED @v2 가 아니어야 한다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 7, 31, 10, tzinfo=m.KST)
+    thin = item(
+        "newparse",
+        "2026-07-30",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+        detail_extraction={"status": "PARSE_FAILED"},
+    )
+    _d, updates = m.classify_notice_versions([thin], set(), {})
+    committed = m.commit_notice_versions({}, updates, {"newparse"}, now=now)
+    full = item("newparse", "2026-07-30", deadline="2026-08-15")
+    recovered, updates2 = m.classify_notice_versions([full], {"newparse"}, committed)
+    assert recovered == []
+    assert updates2["newparse"].get("seed_only") is True
+
+
+def test_reliable_new_still_promotes_delivered_snapshot(monkeypatch, tmp_path):
+    """추출 성공 NEW 는 기존처럼 delivered_* 를 승격하고 동일본 재발송이 없다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 7, 31, 10, tzinfo=m.KST)
+    source = item(
+        "newok",
+        "2026-07-30",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    deliverable, updates = m.classify_notice_versions([source], set(), {})
+    assert deliverable[0]["_change_type"] == "NEW"
+    assert updates["newok"].get("unreliable_new") is not True
+    committed = m.commit_notice_versions({}, updates, {"newok"}, now=now)
+    assert committed["newok"].get("delivered_hash")
+    again, _ = m.classify_notice_versions([source], {"newok"}, committed)
+    assert again == []

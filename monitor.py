@@ -1034,7 +1034,13 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
         if iid not in seen_ids:
             version = max(1, int((previous or {}).get("version", 0) or 0))
             deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
-            updates[iid] = {**base, "version": version, "delivery_id": iid}
+            # NEW 첫 발송은 유지하되, FETCH/PARSE 실패 스냅샷은 delivered_* 로 잠그지 않는다.
+            # (얇은 baseline 이 승격되면 다음 정상 enrich 가 empty→filled 를 EXTENDED/UPDATED
+            #  로 오인해 허위 id@vN 재발송을 만든다 — seed 경로 unreliable 가드와 동일 유형.)
+            update = {**base, "version": version, "delivery_id": iid}
+            if _detail_extraction_unreliable(item):
+                update["unreliable_new"] = True
+            updates[iid] = update
             continue
         # 상세 FETCH/PARSE 실패 스냅샷은 seed 경로에서도 전달 확정본으로 승격하면 안 된다.
         # (seed_only 가 빈 delivered_* 를 심으면, 다음 정상 enrich 가 전 필드 "변경"으로
@@ -1096,6 +1102,22 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             merged[iid] = record
             continue
         delivery_id = str(update.get("delivery_id") or iid)
+        if update.get("unreliable_new"):
+            # NEW 메일은 나갔을 수 있어도 실패 스냅샷은 delivered_* 로 승격하지 않는다.
+            # 다음 정상 enrich 가 not old_hash → seed_only 로 baseline 만 채운다(허위 @vN 방지).
+            if delivery_id in seen_ids:
+                record.update({
+                    "version": int(update.get("version", record.get("version", 1)) or 1),
+                    "delivery_id": delivery_id,
+                    "change_type": "NEW",
+                    "pending_delivery_id": "",
+                    "last_delivered_at": now.isoformat(),
+                })
+            else:
+                record["version"] = int(update.get("version", record.get("version", 1)) or 1)
+                record["delivery_id"] = delivery_id
+            merged[iid] = record
+            continue
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({
                 "version": int(update.get("version", record.get("version", 1)) or 1),
@@ -1955,7 +1977,25 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
 
 #: 오전/오후 발송 회차를 가르는 KST 시각. 예약(07:30·18:30 KST)보다 넉넉히 뒤에 둬서
 #: GitHub Actions 예약 지연(실측 최대 ~1시간)에도 회차 판정이 흔들리지 않게 한다.
+#: 단, 스케줄/수동 실행은 `MONITOR_DELIVERY_SLOT=am|pm` 으로 회차를 고정하는 편이 안전하다
+#: (벽시계만 쓰면 14:00 이후 도착·오후 따라잡기가 `#pm` 키를 저녁 cron 과 공유한다).
 DELIVERY_PM_CUTOFF_HOUR = 14
+
+
+def delivery_slot(now: datetime | None = None) -> str:
+    """발송 회차(`am`/`pm`). `MONITOR_DELIVERY_SLOT` 이 am|pm 이면 벽시계보다 우선.
+
+    벽시계(`DELIVERY_PM_CUTOFF_HOUR`)만 쓰면 다음이 저녁 digest 를 통째로 스킵한다:
+      1) 오전 cron 실패 후 14:00 KST 이후 workflow_dispatch 가 `#pm` 체크포인트 기록
+      2) 오전 cron 이 14:00 이후로 지연 도착해 `#pm` 기록
+      → 18:30 KST 저녁 cron 도 `#pm` → skip_gate already_delivered.
+    GHA `monitor.yml` 은 cron/입력으로 회차를 명시한다.
+    """
+    forced = str(os.environ.get("MONITOR_DELIVERY_SLOT", "")).strip().lower()
+    if forced in {"am", "pm"}:
+        return forced
+    dt = now or datetime.now(KST)
+    return "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
 
 
 def delivery_cycle_date(now: datetime | None = None) -> str:
@@ -1975,10 +2015,10 @@ def delivery_cycle_date(now: datetime | None = None) -> str:
       실행 당일을 쓰면 하루에 정확히 한 세트가 되어 같은 날 재실행은 계속 멱등으로
       막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
     날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
+    회차는 `delivery_slot()` — 환경변수 고정값 우선, 없으면 벽시계.
     """
     dt = now or datetime.now(KST)
-    slot = "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
-    return f"{dt.date()}#{slot}"
+    return f"{dt.date()}#{delivery_slot(dt)}"
 
 
 def select_text(root: Any, selector: str) -> str:
@@ -6509,11 +6549,91 @@ def retry_pending_outbox() -> None:
         delivery_outbox.settle(str(entry.get("id") or ""), delivered)
 
 
-def persist_completed_outbox(seen_ids: set[str]) -> set[str]:
-    """Commit completed deliveries to seen_ids, then acknowledge their encrypted records."""
+def _completed_outbox_entries_safe_to_promote(
+    completed: list[dict],
+    *,
+    groups: list[dict] | None,
+    settings: dict | None,
+    watchlist: dict | None,
+    include_raw_all: bool,
+) -> list[dict]:
+    """Return completed outbox rows whose notice_ids are safe to merge into global seen_ids.
+
+    Global ``seen_ids`` is shared across groups. Promoting a notice id after group A finishes
+    but before group B's plan exists permanently drops that notice for B (classify treats it
+    as already-seen / seed_only). Only promote when that entry's cycle date has every planned
+    delivery unit checkpointed and no pending outbox row remains for the same date.
+    """
+    if not completed:
+        return []
+    pending_dates = {
+        str(entry.get("date") or "")
+        for entry in delivery_outbox.pending()
+        if str(entry.get("date") or "")
+    }
+    try:
+        from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
+    except Exception as e:  # pragma: no cover - import is local package
+        log.warning("seen_ids 승격 게이트 import 실패 — completed outbox 보류: %s", e)
+        return []
+
+    safe: list[dict] = []
+    date_ok: dict[str, bool] = {}
+    for entry in completed:
+        date = str(entry.get("date") or "")
+        if not date or date in pending_dates:
+            continue
+        if date not in date_ok:
+            check = should_skip_fetch_already_delivered(
+                target_date=date,
+                groups=groups,
+                settings=settings,
+                watchlist=watchlist,
+                include_raw_all=include_raw_all,
+                delivery_path=DELIVERY_STATE_PATH,
+            )
+            date_ok[date] = bool(check.get("skip"))
+            if not date_ok[date]:
+                log.info(
+                    "completed outbox 보류: date=%s cycle 미완료(%s) — "
+                    "타 그룹 공유 notice_ids 의 seen_ids 조기 승격 방지",
+                    date,
+                    check.get("reason"),
+                )
+        if date_ok[date]:
+            safe.append(entry)
+    return safe
+
+
+def persist_completed_outbox(
+    seen_ids: set[str],
+    *,
+    only_if_cycle_complete: bool = False,
+    groups: list[dict] | None = None,
+    settings: dict | None = None,
+    watchlist: dict | None = None,
+    include_raw_all: bool = False,
+) -> set[str]:
+    """Commit completed deliveries to seen_ids, then acknowledge their encrypted records.
+
+    When ``only_if_cycle_complete`` is True (start-of-run recovery), only entries whose
+    delivery cycle is fully checkpointed are promoted. End-of-run callers leave the flag
+    False: this process already finished every group plan, so promoting is safe even if a
+    sibling group still has pending *recipients* (those retry from the encrypted outbox).
+    """
     completed = delivery_outbox.completed()
     if not completed:
         return seen_ids
+    if only_if_cycle_complete:
+        completed = _completed_outbox_entries_safe_to_promote(
+            completed,
+            groups=groups,
+            settings=settings,
+            watchlist=watchlist,
+            include_raw_all=include_raw_all,
+        )
+        if not completed:
+            return seen_ids
     notice_ids = {
         str(notice_id) for entry in completed
         for notice_id in (entry.get("notice_ids") or []) if str(notice_id)
@@ -6751,12 +6871,22 @@ def execute_monitor(
     days_back = max(1, int(settings.get("days_back", 3) or 3))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
-    # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
+    # 수신자부터 재시도하고, cycle 이 끝난 완료건만 seen_ids 에 반영한다.
+    # (부분 그룹 완료 직후 전역 seen_ids 승격 → 공유 공고가 나머지 그룹에서 영구 누락되는
+    #  사고를 막기 위해 start-of-run 승격은 cycle 완료 게이트를 거친다.)
+    _wl_early = load_watchlist() if (effective_send and persist_seen) else {"keywords": [], "urls": []}
     if effective_send and persist_seen:
         if not delivery_outbox.is_ready():
             raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
         retry_pending_outbox()
-        seen_ids = persist_completed_outbox(seen_ids)
+        seen_ids = persist_completed_outbox(
+            seen_ids,
+            only_if_cycle_complete=True,
+            groups=groups,
+            settings=settings,
+            watchlist=_wl_early,
+            include_raw_all=include_raw_all,
+        )
 
     if not sites:
         log.info("활성 사이트 없음. 종료.")
@@ -6770,7 +6900,6 @@ def execute_monitor(
     if effective_send and persist_seen:
         try:
             from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
-            _wl_early = load_watchlist()
             _skip = should_skip_fetch_already_delivered(
                 target_date=str(target_date_early),
                 groups=groups,
@@ -6780,6 +6909,8 @@ def execute_monitor(
                 delivery_path=DELIVERY_STATE_PATH,
             )
             if _skip.get("skip"):
+                # cycle 완료 — 게이트에 걸렸던 completed outbox 도 여기서 강제 flush
+                seen_ids = persist_completed_outbox(seen_ids)
                 log.info(
                     "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
                     _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
@@ -6968,8 +7099,8 @@ def execute_monitor(
     target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
     # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
-    # 회차 경계는 발송 멱등 키와 같은 DELIVERY_PM_CUTOFF_HOUR 를 쓴다(표기·멱등 불일치 방지).
-    _slot_label = "오전" if now.hour < DELIVERY_PM_CUTOFF_HOUR else "저녁"
+    # 회차는 발송 멱등 키와 같은 delivery_slot() 을 쓴다(표기·멱등 불일치 방지).
+    _slot_label = "오전" if delivery_slot(now) == "am" else "저녁"
     date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
 
     include_unknown = settings.get("include_date_unknown", False)
@@ -8047,6 +8178,16 @@ if __name__ == "__main__":
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             if _skip_fetch:
+                # execute_monitor 를 건너뛰므로, 여기서 completed outbox → seen_ids 를
+                # flush 하지 않으면 마지막 settle 직후 크래시 분이 한 슬롯 동안 고인다.
+                if args.persist_seen:
+                    try:
+                        _ALLOW_PERSIST_SEEN = True
+                        if delivery_outbox.is_ready():
+                            retry_pending_outbox()
+                            persist_completed_outbox(load_seen_ids())
+                    except Exception as e:
+                        log.warning("skip 경로 outbox→seen_ids flush 실패(무시): %s", e)
                 _dur = time.monotonic() - _t0
                 log.info(
                     "skipped_fetch=true duration_sec=%.1f target_date=%s reason=%s"
@@ -8061,7 +8202,7 @@ if __name__ == "__main__":
                 if _dur < 30 and not args.skip_coverage_fetch:
                     log.warning(
                         "SHORT_RUN_ANOMALY skipped_fetch=true duration_sec=%.1f"
-                        " — coverage artifact/수집 누락 의",
+                        " — coverage artifact/수집 누락 의도",
                         _dur,
                     )
             else:

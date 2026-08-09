@@ -5,8 +5,11 @@ on:
     # 하루 2회 발송 (2026-07-30 사용자 지정): 07:30 KST, 18:30 KST
     #   07:30 KST = 22:30 UTC (전날)  /  18:30 KST = 09:30 UTC
     # ※ GitHub 예약 실행은 혼잡 시 지연된다(이 저장소 실측 ~50분). 도착이 늦으면
-    #   cron 을 그만큼 앞으로 당긴다. 회차(am/pm) 판정은 monitor.py 의
-    #   DELIVERY_PM_CUTOFF_HOUR=14 라서 지연 1~6시간까지 흔들리지 않는다.
+    #   cron 을 그만큼 앞으로 당긴다.
+    # ※ 회차(am/pm)는 아래 MONITOR_DELIVERY_SLOT 으로 cron 별로 고정한다.
+    #   벽시계(DELIVERY_PM_CUTOFF_HOUR=14)만 쓰면 오전 cron 이 14:00 KST 이후 도착하거나
+    #   오후 수동 따라잡기가 #pm 키를 써서 저녁 18:30 이 already_delivered 로 스킵된다.
+    #   cron 식을 바꾸면 MONITOR_DELIVERY_SLOT 매핑도 같이 갱신할 것.
     - cron: '30 22 * * *'
     - cron: '30 9 * * *'
   workflow_dispatch:
@@ -16,6 +19,15 @@ on:
         description: '단일 그룹 ID (예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.'
         required: false
         default: ''
+      delivery_slot:
+        description: "발송 회차 (am=오전 따라잡기, pm=저녁, auto=실행 시각 기준)"
+        required: false
+        default: auto
+        type: choice
+        options:
+          - auto
+          - am
+          - pm
 
 # 동시 실행 방지(#17): 수동 실행이 예약 실행과 겹치면 두 개의 발송 run 이 동시에 돌아
 # 중복 발송·seen_ids 커밋백 경쟁이 날 수 있다. 같은 그룹으로 묶어 한 번에 하나만 진행한다.
@@ -82,6 +94,9 @@ jobs:
           MAIL_PRIVATE_CONFIG_KEY:  ${{ secrets.MAIL_PRIVATE_CONFIG_KEY }}
           MAIL_DELIVERY_STATE_SECRET: ${{ secrets.MAIL_DELIVERY_STATE_SECRET }}
           MAIL_FEEDBACK_SECRET: ${{ secrets.MAIL_FEEDBACK_SECRET }}
+          # 발송 회차 고정: schedule 은 cron 식→am/pm, workflow_dispatch 는 inputs.
+          # auto/빈 값은 monitor.delivery_slot 이 벽시계로 폴백.
+          MONITOR_DELIVERY_SLOT: ${{ github.event_name == 'schedule' && (github.event.schedule == '30 22 * * *' && 'am' || github.event.schedule == '30 9 * * *' && 'pm' || 'auto') || inputs.delivery_slot || 'auto' }}
         # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 암호화된 그룹 수신자에게
         # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
