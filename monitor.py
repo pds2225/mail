@@ -4284,6 +4284,64 @@ def dedup_items(items: list[dict]) -> list[dict]:
     return kept
 
 
+def detect_possible_duplicates(items: list[dict]) -> list[dict]:
+    """P2-3: 유사하지만 확정 중복은 아닌 공고를 POSSIBLE_DUPLICATE로 표시한다.
+
+    자동 merge하지 않고 상태만 표시하여 사람이 검토할 수 있게 한다.
+    """
+    SIMILARITY_THRESHOLD = 0.70
+
+    def _title_key(title: str) -> str:
+        t = unicodedata.normalize("NFKC", title).lower()
+        t = re.sub(r"\s+", " ", t).strip()
+        return t
+
+    def _similarity(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        # 간단한 자카드 유사도
+        set_a = set(a.split())
+        set_b = set(b.split())
+        if not set_a or not set_b:
+            return 0.0
+        intersection = len(set_a & set_b)
+        union = len(set_a | set_b)
+        return intersection / union if union > 0 else 0.0
+
+    for i, item_a in enumerate(items):
+        title_a = _title_key(item_a.get("title", ""))
+        if len(title_a) < 5:
+            continue
+        for j in range(i + 1, len(items)):
+            item_b = items[j]
+            title_b = _title_key(item_b.get("title", ""))
+            if len(title_b) < 5:
+                continue
+
+            # 이미 확정 중복이면 건너뛰기
+            cid_a = item_a.get("_canonical_notice_id")
+            cid_b = item_b.get("_canonical_notice_id")
+            if cid_a and cid_b and cid_a == cid_b:
+                continue
+
+            # 유사도 계산
+            ratio = _similarity(title_a, title_b)
+            if ratio >= SIMILARITY_THRESHOLD:
+                # 연도가 다르면 별도 공고
+                year_a = re.search(r"(20\d{2})", title_a)
+                year_b = re.search(r"(20\d{2})", title_b)
+                if year_a and year_b and year_a.group(1) != year_b.group(1):
+                    continue
+
+                # POSSIBLE_DUPLICATE 표시
+                item_a["_possible_duplicate"] = True
+                item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
+                item_b["_possible_duplicate"] = True
+                item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
+
+    return items
+
+
 # ══════════════════════════════════════════════════════════════════
 # 날짜 필터 (D-1: 어제 올라온 공고)
 # ══════════════════════════════════════════════════════════════════
