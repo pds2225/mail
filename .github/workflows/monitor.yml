@@ -65,7 +65,9 @@ jobs:
           restore-keys: |
             source-field-quality-
 
+      # timeout 240: 정상 ~1h40m, hung 3h+ 여유. 자동 re-dispatch 없음(사람 승인).
       - name: 공고 digest 자동발송 (+커버리지 이상탐지·크래시 알림)
+        timeout-minutes: 240
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
           # 선택: 공공데이터포털 기업마당 서비스키. bizinfo.go.kr 직결이 러너 IP 에서
@@ -225,16 +227,20 @@ jobs:
           done
           echo "::warning::커밋백 push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"
 
-      - name: 실패(크래시) 시 폰 알림
-        if: failure()
+      # failure·cancelled 모두 알림. 자동 재실행 금지 — 사람만 re-dispatch.
+      - name: 실패·취소 시 폰 알림(MDR 상태 포함)
+        if: failure() || cancelled()
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
           if [ -n "$NTFY_TOPIC" ]; then
+            mdr_exit="${{ steps.daily_review.outputs.review_exit }}"
+            cov="missing"
+            if ls var/logs/source_coverage_*.json >/dev/null 2>&1; then cov="present"; fi
             curl -s \
-              -H "Title: mail monitor CRASHED" \
+              -H "Title: mail monitor FAIL/CANCEL" \
               -H "Priority: urgent" \
               -H "Tags: rotating_light" \
-              -d "공고 모니터링 실행이 크래시했습니다(메일 발송 안 됨). GitHub Actions 로그 확인 필요." \
+              -d "run=${{ github.run_id }} status=${{ job.status }} MDR_exit=${mdr_exit:-n/a} coverage=${cov}. 자동재실행없음 — Actions에서 확인/수동재실행." \
               "https://ntfy.sh/$NTFY_TOPIC" || true
           fi

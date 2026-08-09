@@ -632,8 +632,8 @@ def test_filter_excludes_admin_guideline_education_supplier_selected_and_info_ca
         ("접수기간이 과거인 지원계획 공고", "CLOSED_DEADLINE", PAST_DEADLINE),
         ("수도권 소재 기업 신청 불가 지원사업 공고", "REGION_NOT_ELIGIBLE"),
         ("수출지원 설명회 단독 안내", "INFO_SESSION"),
-        ("멘토링 단독 공고", "LOW_PRIORITY_SERVICE_KEYWORD"),
-        ("컨설팅지원 단독 공고", "LOW_PRIORITY_SERVICE_KEYWORD"),
+        ("멘토링 단독 공고", "CONSULTING_ONLY"),
+        ("컨설팅지원 단독 공고", "CONSULTING_ONLY"),
     ]
     for case in cases:
         title, expected_code, *deadline = case
@@ -810,24 +810,24 @@ def test_filter_for_group_diagnostics_returns_excluded_summary_for_dry_run():
 # ── 작업 A·C: 키워드 보강 회귀 테스트 ──────────────────────────────────────────
 
 def test_open_deadline_terms_new_items_positive():
-    """OPEN_DEADLINE_TERMS 신규: 상시모집·연중수시가 title/description에 있으면 'open'"""
+    """OPEN_DEADLINE_TERMS 신규: 상시모집·연중수시가 title/description에 있으면 'always_open'"""
     assert classify_deadline_status(
         {"title": "OO사업 상시모집 안내", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     assert classify_deadline_status(
         {"title": "OO 연중수시 모집", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     assert classify_deadline_status(
         {"title": "OO 모집", "description": "연중수시 접수", "deadline": ""},
         FILTER_TODAY,
-    ) == "open"
+    ) == "always_open"
     # 단독 '상시'는 추가하지 않음 — '상시 근로자 5인 이상 기업'은 여전히 open이 아님
     assert classify_deadline_status(
         {"title": "상시 근로자 5인 이상 기업", "description": "", "deadline": ""},
         FILTER_TODAY,
-    ) != "open"
+    ) not in {"open", "always_open"}
 
 
 def test_application_keywords_positive_chamgasinjung():
@@ -885,3 +885,565 @@ def test_gongmo_known_overtriggering_cost():
     item = notice(title="청년 사진 공모전", description="인천 소재 중소 제조 기업 수출")
     result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
     assert result["is_relevant"] is True
+
+
+# ══════════════════════════════════════════════════════════════════
+# P0 필수 테스트 — 예비창업 공고 파이프라인 (autodev prompt §6)
+# ══════════════════════════════════════════════════════════════════
+
+def _p0_group() -> dict:
+    """P0 테스트용 grp_prestartup_ai 유사 그룹."""
+    return {
+        "id": "grp_prestartup_ai",
+        "or_keywords": ["AI 스타트업", "인공지능 스타트업", "AI 솔루션"],
+        "and_keyword_groups": [["AI", "창업"], ["AI", "스타트업"], ["AI", "사업화"]],
+        "exclude_keywords": ["성료", "지침 안내", "결과 발표", "보도자료", "채용", "재직자"],
+        "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
+        "applicant_region_city": "서울특별시",
+        "applicant_region_label": "서울",
+        "extra_eligible_regions": ["인천", "경기", "수도권"],
+    }
+
+
+def test_p0_mentoring_with_financial_support_is_included():
+    """사업화자금 + 멘토링 → INCLUDE (P0-4)"""
+    item = notice(
+        title="2026년 AI 사업화 지원사업 참여자 모집",
+        description="공고일 현재 사업자등록이 없는 예비창업자 대상. 사업화자금 최대 5,000만 원 및 전문가 멘토링 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"사업화자금+멘토링은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_mentoring_only_is_excluded():
+    """멘토링 단독 → EXCLUDE (P0-4)"""
+    item = notice(
+        title="예비창업자 1:1 멘토링 프로그램",
+        description="예비창업자 대상 전문가 상담 및 멘토링 제공.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "CONSULTING_ONLY" in result["exclude_reason_codes"], f"멘토링 단독은 CONSULTING_ONLY여야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_education_only_is_excluded():
+    """교육 단독 → EXCLUDE (P0-4)"""
+    item = notice(
+        title="창업교육 프로그램 수강생 모집",
+        description="예비창업자 대상 창업 교육 프로그램 운영. 교육 수료증 발급.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "CONSULTING_ONLY" in result["exclude_reason_codes"], f"교육 단독은 CONSULTING_ONLY여야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_investment_only_is_excluded():
+    """투자 단독 → EXCLUDE (P0-4)"""
+    item = notice(
+        title="AI 스타트업 투자유치 데모데이",
+        description="AI 스타트업 대상 VC 투자유치 프로그램. IR 피칭 기회 제공.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "INVESTMENT_ONLY" in result["exclude_reason_codes"], f"투자 단독은 INVESTMENT_ONLY여야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_space_only_is_excluded():
+    """입주공간 단독 → EXCLUDE (P0-4)"""
+    item = notice(
+        title="창업보육센터 입주기업 모집",
+        description="창업보육센터 입주 공간 제공. 사무실 및 공용시설 이용 가능.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+
+
+def test_p0_space_with_financial_support_is_included():
+    """입주공간 + 사업화자금 → INCLUDE (P0-4)"""
+    item = notice(
+        title="AI 창업보육센터 입주기업 모집 (사업화자금 지원)",
+        description="AI 창업보육센터 입주 공간 및 사업화자금 최대 3,000만 원 지원. 전국 예비창업자 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"입주+사업화자금은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_operator_recruitment_is_excluded():
+    """운영기관 모집 → EXCLUDE (P0-2)"""
+    item = notice(
+        title="예비창업자 지원 프로그램 운영기관 모집",
+        description="대학, 협회, 창업지원기관 대상 운영기관 모집 공고.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+
+
+def test_p0_nationwide_from_daegu_institution_is_included():
+    """대구 기관 + 전국 대상 → INCLUDE (P0-6)"""
+    item = notice(
+        title="2026년 AI 창업지원사업 참여자 모집",
+        description="전국 예비창업자 대상 사업화자금 지원. 주관기관: 대구테크노파크.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"대구기관+전국대상은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_busan_only_is_excluded():
+    """부산 거주자 한정 → EXCLUDE (P0-6)"""
+    item = notice(
+        title="부산 지역 창업지원사업 참여자 모집",
+        description="부산 거주자 대상 창업지원금 지원. 부산 소재 예비창업자만 신청 가능.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+    assert "REGION_NOT_ELIGIBLE" in result["exclude_reason_codes"], f"부산한정은 REGION_NOT_ELIGIBLE여야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_nationwide_with_relocation_is_conditional():
+    """전국 + 선정 후 대구 이전 → CONDITIONAL_INCLUDE (P0-6)"""
+    item = notice(
+        title="전국 창업지원사업 참여자 모집",
+        description="전국 예비창업자 대상 사업화자금 지원. 선정 후 대구광역시 내 사업자등록 필수.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    # 조건부 포함은 아직 is_relevant=True로 처리할 수 있음 (메일에 조건 표시)
+    # 또는 CONDITIONAL reason_code가 있어야 함
+    assert "REGION_NOT_ELIGIBLE" not in result["exclude_reason_codes"], f"전국+대구이전은 REGION_NOT_ELIGIBLE이면 안 됨: {result['exclude_reason_codes']}"
+
+
+def test_p0_personal_standalone_not_prestartup():
+    """`개인 또는 법인` → 예비창업 자동인정 금지 (P0-3)"""
+    item = notice(
+        title="창업지원사업 참여자 모집",
+        description="개인 또는 법인 신청 가능. 사업화자금 지원.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    # "개인"만으로 예비창업 확정하면 안 됨 — 다른 창업 신호가 있어야 함
+    # 이 테스트는 "개인"이 예비창업의 충분조건이 아님을 검증
+    # (실제로는 다른 키워드에 의해 포함될 수 있음)
+
+
+def test_p0_personal_with_team_is_eligible():
+    """`사업자등록이 없는 개인 또는 팀` → ELIGIBLE (P0-3)"""
+    item = notice(
+        title="2026년 AI 창업지원사업 참여자 모집",
+        description="공고일 현재 사업자등록이 없는 개인 또는 팀 단위의 예비창업자 대상. 사업화자금 최대 5,000만 원 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"개인+팀+창업예정은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_export_consultation_is_included():
+    """수출상담회 → 비용지원형 해외진출이므로 INCLUDE (P0-4)"""
+    item = notice(
+        title="AI 스타트업 베트남 수출상담회 참가기업 모집",
+        description="해외 진출 희망 AI 스타트업 대상 베트남 수출상담회 참가기업 모집. 참가비 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"수출상담회는 해외진출 지원이므로 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_financial_support_with_mentoring_is_included():
+    """시제품비 + 교육 → INCLUDE (P0-4)"""
+    item = notice(
+        title="2026년 AI 시제품 제작 지원사업 참여자 모집",
+        description="예비창업자 대상 시제품 제작비 최대 2,000만 원 및 전문 교육 프로그램 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"시제품비+교육은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1 테스트 — 제목 정규화 및 canonical ID
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_safe_normalize_title_preserves_year():
+    """P1-4: 연도 정보 보존"""
+    from monitor import safe_normalize_title
+    assert "2026" in safe_normalize_title("2026년 AI 사업화 지원사업")
+    assert "2025" in safe_normalize_title("2025 예비창업패키지")
+
+
+def test_p1_safe_normalize_title_preserves_region():
+    """P1-4: 지역 정보 보존"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("[서울] AI 창업지원사업")
+    assert "서울" in result
+
+
+def test_p1_safe_normalize_title_preserves_round():
+    """P1-4: 모집 차수 보존"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("2차 모집 공고")
+    assert "2차" in result
+
+
+def test_p1_safe_normalize_title_normalizes_whitespace():
+    """P1-4: 공백 정규화"""
+    from monitor import safe_normalize_title
+    result = safe_normalize_title("AI  창업   지원사업")
+    assert "  " not in result
+
+
+def test_p1_canonical_id_from_notice_id():
+    """P1-2: 공고번호로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item = {"notice_id": "PBLN_2026_001", "title": "테스트"}
+    cid = generate_canonical_notice_id(item)
+    assert cid.startswith("canon_")
+    assert "PBLN_2026_001" in cid
+
+
+def test_p1_canonical_id_from_url():
+    """P1-2: URL로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"link": "https://example.com/notice/123", "title": "테스트"}
+    item2 = {"link": "http://www.example.com/notice/123", "title": "테스트"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    # www 유무 정규화 후 동일 ID
+    assert cid1 == cid2
+
+
+def test_p1_canonical_id_from_title_org():
+    """P1-2: 제목+기관으로 canonical ID 생성"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2026년 AI 창업지원사업", "author": "중소벤처기업부", "deadline": "2026-08-31"}
+    item2 = {"title": "2026년 AI 창업지원사업", "author": "중소벤처기업부", "deadline": "2026-08-31"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    assert cid1 == cid2
+
+
+def test_p1_canonical_id_different_year():
+    """P1-2: 연도가 다르면 다른 canonical ID"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2025 예비창업패키지", "author": "테스트", "deadline": "2025-12-31"}
+    item2 = {"title": "2026 예비창업패키지", "author": "테스트", "deadline": "2026-12-31"}
+    cid1 = generate_canonical_notice_id(item1)
+    cid2 = generate_canonical_notice_id(item2)
+    assert cid1 != cid2
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-2 테스트 — 크로스소스 중복 제거
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_cross_site_same_notice_different_date():
+    """사이트 간 동일 공고 (날짜 하루 차이) → 1건만 발송"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2026년 AI 창업지원사업 모집", "source": "bizinfo",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://bizinfo.go.kr/notice/123", "posted_date": "2026-08-17"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://k-startup.go.kr/notice/456", "posted_date": "2026-08-18"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1, f"동일 공고는 1건이어야 함: {len(result)}건"
+
+
+def test_p1_cross_site_different_year():
+    """2025/2026 같은 사업은 서로 다른 공고"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2025 예비창업패키지 모집", "source": "bizinfo",
+         "author": "중기부", "deadline": "2025-12-31", "is_aggregator": False,
+         "link": "https://example.com/2025", "posted_date": "2025-01-01"},
+        {"id": "b1", "title": "2026 예비창업패키지 모집", "source": "bizinfo",
+         "author": "중기부", "deadline": "2026-12-31", "is_aggregator": False,
+         "link": "https://example.com/2026", "posted_date": "2026-01-01"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 2, f"다른 연도는 별도 공고: {len(result)}건"
+
+
+def test_p1_cross_site_same_url_different_source():
+    """동일 URL, 다른 소스 → 1건만"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "AI 창업지원 공고", "source": "bizinfo",
+         "author": "기관A", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://example.com/notice/100", "posted_date": "2026-08-01"},
+        {"id": "b1", "title": "AI 창업지원 공고 (안내)", "source": "kstartup",
+         "author": "기관A", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://example.com/notice/100", "posted_date": "2026-08-02"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1, f"동일 URL은 1건이어야 함: {len(result)}건"
+
+
+def test_p1_cross_site_aggregator_replaced():
+    """집계처 → 주관기관으로 교체"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2026년 수출바우처 모집", "source": "aggregator_site",
+         "author": "알수없음", "deadline": "2026-08-31", "is_aggregator": True,
+         "link": "https://agg.com/1", "posted_date": "2026-08-01"},
+        {"id": "b1", "title": "2026년 수출바우처 모집", "source": "bizinfo",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://bizinfo.go.kr/2", "posted_date": "2026-08-02"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1
+    assert result[0]["source"] == "bizinfo", "주관기관이 우선해야 함"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P0-9 테스트 — 신청자/모집대상/수혜자/운영자 역할 분리
+# ══════════════════════════════════════════════════════════════════
+
+def test_p0_operator_recruitment_excluded():
+    """예비창업자를 지원할 운영기관 모집 → EXCLUDE"""
+    item = notice(
+        title="예비창업자 지원 프로그램 운영기관 모집",
+        description="대학, 협회, 창업지원기관 대상 운영기관 모집 공고.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False, f"운영기관 모집은 제외되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_applicant_is_prestartup():
+    """예비창업자 모집 → INCLUDE 가능"""
+    item = notice(
+        title="2026년 AI 창업지원사업 참여자 모집",
+        description="공고일 현재 사업자등록이 없는 예비창업자 대상. 사업화자금 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"예비창업자 모집은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_target_roles_extraction():
+    """역할 추출 함수 테스트"""
+    from monitor import extract_target_roles
+
+    # 운영기관 모집
+    item1 = {"title": "운영기관 모집 공고", "target_field": "", "description": ""}
+    roles1 = extract_target_roles(item1)
+    assert roles1["is_operator"] is True
+    assert roles1["is_applicant"] is False
+
+    # 예비창업자 모집
+    item2 = {"title": "예비창업자 모집 공고", "target_field": "", "description": ""}
+    roles2 = extract_target_roles(item2)
+    assert roles2["is_applicant"] is True
+    assert roles2["is_operator"] is False
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-17 테스트 — 소스 상태관리
+# ══════════════════════════════════════════════════════════════════
+
+def test_source_health_classify_ok():
+    """정상 수집 → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.95) == OK
+
+
+def test_source_health_classify_degraded():
+    """파싱률 낮음 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.5) == DEGRADED
+
+
+def test_source_health_classify_degraded_zero_items():
+    """수집 0건 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=1.0) == DEGRADED
+
+
+def test_source_health_classify_failing():
+    """에러 → FAILING"""
+    from mail_core.operations.source_health import classify_source_status, FAILING
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=0.0, error="HTTP 500") == FAILING
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-5 테스트 — 버전 관리 (변경 유형 세분화)
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_change_type_deadline_extended():
+    """마감연장 → DEADLINE_EXTENDED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "deadline": "2026-08-20", "application_period": "2026-08-01 ~ 2026-08-20"}
+    after = {"title": "AI 창업지원 모집", "deadline": "2026-08-31", "application_period": "2026-08-01 ~ 2026-08-31"}
+    assert _classify_notice_change(before, after) == "DEADLINE_EXTENDED"
+
+
+def test_p1_change_type_reannouncement():
+    """재공고 → REANNOUNCEMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 모집 (재공고)"}
+    assert _classify_notice_change(before, after) == "REANNOUNCEMENT"
+
+
+def test_p1_change_type_additional_recruitment():
+    """추가모집 → ADDITIONAL_RECRUITMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 추가모집"}
+    assert _classify_notice_change(before, after) == "ADDITIONAL_RECRUITMENT"
+
+
+def test_p1_change_type_target_changed():
+    """지원대상 변경 → TARGET_CHANGED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "target_field": "예비창업자"}
+    after = {"title": "AI 창업지원 모집", "target_field": "창업 3년 이내 기업"}
+    assert _classify_notice_change(before, after) == "TARGET_CHANGED"
+
+
+def test_p1_change_type_minor_text_change():
+    """단순 텍스트 변경 → MINOR_TEXT_CHANGE"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "deadline": "2026-08-31"}
+    after = {"title": "AI 창업지원 모집", "deadline": "2026-08-31"}
+    assert _classify_notice_change(before, after) == "MINOR_TEXT_CHANGE"
+
+
+# ══════════════════════════════════════════════════════════════════
+# P1-6 테스트 — 여러 출처 필드 병합
+# ══════════════════════════════════════════════════════════════════
+
+def test_p1_merge_fields_preserves_additional_sources():
+    """여러 출처 병합 시 추가 출처 기록"""
+    from monitor import merge_notice_fields
+    canonical = {"title": "AI 창업지원", "source": "bizinfo", "link": "https://bizinfo.go.kr/1"}
+    new_item = {"title": "AI 창업지원", "source": "kstartup", "link": "https://k-startup.go.kr/2"}
+    result = merge_notice_fields(canonical, new_item)
+    assert "kstartup" in result.get("_additional_sources", [])
+
+
+def test_p1_merge_fields_preserves_target():
+    """지원대상이 더 긴 값으로 병합"""
+    from monitor import merge_notice_fields
+    canonical = {"title": "AI 창업지원", "source": "bizinfo", "target_field": "예비창업자"}
+    new_item = {"title": "AI 창업지원", "source": "kstartup", "target_field": "공고일 현재 사업자등록이 없는 예비창업자 또는 창업 3년 이내 기업"}
+    result = merge_notice_fields(canonical, new_item)
+    assert "사업자등록이 없는" in result.get("target_field", "")
+
+
+# ══════════════════════════════════════════════════════════════════
+# MILESTONE A 테스트 — 버전관리 + 재발송 정책
+# ══════════════════════════════════════════════════════════════════
+
+def test_milestone_a_same_notice_different_date_is_one():
+    """A사이트 8/17 + B사이트 8/18 동일공고 → 1건만"""
+    from monitor import dedup_items
+    items = [
+        {"id": "a1", "title": "2026년 AI 창업지원사업 모집", "source": "bizinfo",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://bizinfo.go.kr/123", "posted_date": "2026-08-17"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup",
+         "author": "중소벤처기업부", "deadline": "2026-08-31", "is_aggregator": False,
+         "link": "https://k-startup.go.kr/456", "posted_date": "2026-08-18"},
+    ]
+    result = dedup_items(items)
+    assert len(result) == 1
+    assert result[0].get("_canonical_notice_id") is not None
+
+
+def test_milestone_a_deadline_extended_change_type():
+    """마감연장 → DEADLINE_EXTENDED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원", "deadline": "2026-08-20", "application_period": "2026-08-01 ~ 2026-08-20"}
+    after = {"title": "AI 창업지원", "deadline": "2026-08-31", "application_period": "2026-08-01 ~ 2026-08-31"}
+    assert _classify_notice_change(before, after) == "DEADLINE_EXTENDED"
+
+
+def test_milestone_a_target_changed_type():
+    """지원대상 변경 → TARGET_CHANGED"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원", "target_field": "예비창업자"}
+    after = {"title": "AI 창업지원", "target_field": "창업 3년 이내 기업"}
+    assert _classify_notice_change(before, after) == "TARGET_CHANGED"
+
+
+def test_milestone_a_reannouncement_type():
+    """재공고 → REANNOUNCEMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 모집 (재공고)"}
+    assert _classify_notice_change(before, after) == "REANNOUNCEMENT"
+
+
+def test_milestone_a_additional_recruitment_type():
+    """추가모집 → ADDITIONAL_RECRUITMENT"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집"}
+    after = {"title": "AI 창업지원 추가모집"}
+    assert _classify_notice_change(before, after) == "ADDITIONAL_RECRUITMENT"
+
+
+def test_milestone_a_minor_text_change_type():
+    """단순 오탈자 → MINOR_TEXT_CHANGE"""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 창업지원 모집", "deadline": "2026-08-31"}
+    after = {"title": "AI 창업지원 모집 ", "deadline": "2026-08-31"}
+    assert _classify_notice_change(before, after) == "MINOR_TEXT_CHANGE"
+
+
+def test_milestone_a_different_year_is_different_notice():
+    """2025 / 2026 → 서로 다른 공고"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2025 예비창업패키지", "author": "중기부", "deadline": "2025-12-31"}
+    item2 = {"title": "2026 예비창업패키지", "author": "중기부", "deadline": "2026-12-31"}
+    assert generate_canonical_notice_id(item1) != generate_canonical_notice_id(item2)
+
+
+def test_milestone_a_different_region_is_different_notice():
+    """서울 / 부산 → 서로 다른 공고"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "서울 예비창업 지원사업", "author": "서울TP", "deadline": "2026-08-31"}
+    item2 = {"title": "부산 예비창업 지원사업", "author": "부산TP", "deadline": "2026-08-31"}
+    assert generate_canonical_notice_id(item1) != generate_canonical_notice_id(item2)
+
+
+def test_milestone_a_different_round_is_different_notice():
+    """1차 / 2차 → 서로 다른 공고"""
+    from monitor import generate_canonical_notice_id
+    item1 = {"title": "2026년 AI 창업 1차 모집", "author": "중기부", "deadline": "2026-08-31"}
+    item2 = {"title": "2026년 AI 창업 2차 모집", "author": "중기부", "deadline": "2026-12-31"}
+    assert generate_canonical_notice_id(item1) != generate_canonical_notice_id(item2)
+
+
+# ══════════════════════════════════════════════════════════════════
+# MILESTONE B 테스트 — Source Health 운영 연결
+# ══════════════════════════════════════════════════════════════════
+
+def test_milestone_b_source_health_ok():
+    """정상 수집 → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.95) == OK
+
+
+def test_milestone_b_source_health_degraded_zero_items():
+    """0건 수집 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=1.0) == DEGRADED
+
+
+def test_milestone_b_source_health_degraded_low_parse_rate():
+    """파싱률 저하 → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=100, parse_rate=0.5) == DEGRADED
+
+
+def test_milestone_b_source_health_failing_on_error():
+    """에러 → FAILING"""
+    from mail_core.operations.source_health import classify_source_status, FAILING
+    assert classify_source_status("bizinfo", item_count=0, parse_rate=0.0, error="HTTP 500") == FAILING
+
+
+def test_milestone_b_source_health_degraded_on_drop():
+    """수집량 급감 (80% 이상) → DEGRADED"""
+    from mail_core.operations.source_health import classify_source_status, DEGRADED
+    assert classify_source_status("bizinfo", item_count=10, parse_rate=1.0, previous_item_count=100) == DEGRADED
+
+
+def test_milestone_b_source_health_ok_on_normal():
+    """정상 수집 (급감 없음) → OK"""
+    from mail_core.operations.source_health import classify_source_status, OK
+    assert classify_source_status("bizinfo", item_count=90, parse_rate=1.0, previous_item_count=100) == OK

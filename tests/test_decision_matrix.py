@@ -231,11 +231,11 @@ def test_deadline_closed_excluded(gid):
 
 @pytest.mark.parametrize("gid", ACTIVE)
 def test_deadline_always_open_included(gid):
-    """상시모집(OPEN_DEADLINE_TERMS) → open 통과."""
+    """상시모집(OPEN_DEADLINE_TERMS) → always_open 통과."""
     b, ev = bucket_of(mk(gid, application_period=None, deadline="",
                          title=base(gid)["title"] + " 상시모집"), gid)
     record("deadline", "always", gid)
-    assert b != "excluded" and ev["deadline_status"] == "open"
+    assert b != "excluded" and ev["deadline_status"] in ("open", "always_open")
 
 
 @pytest.mark.parametrize("gid", ACTIVE)

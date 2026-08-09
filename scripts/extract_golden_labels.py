@@ -23,6 +23,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 GOLDEN = BASE_DIR / "data" / "golden" / "region_labels.jsonl"
 
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+from mail_core.paths import resolve_raw_root  # noqa: E402
+
 
 def _fix_console() -> None:
     for stream in (sys.stdout, sys.stderr):
@@ -60,7 +64,7 @@ def _load_existing() -> dict[str, dict]:
 
 def main() -> int:
     _fix_console()
-    data_root = BASE_DIR / "data" / "raw"
+    data_root = resolve_raw_root()
     if not data_root.exists():
         print(f"[SKIP] raw store 없음: {data_root}")
         return 0

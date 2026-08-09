@@ -34,6 +34,7 @@ for p in (BASE_DIR, BASE_DIR / "scripts"):
         sys.path.insert(0, str(p))
 
 from mail_core.matching import company_match  # noqa: E402
+from mail_core.paths import resolve_raw_root  # noqa: E402
 import monitor  # noqa: E402
 from mail_core.delivery import feedback  # noqa: E402 (사용자 O/X 피드백 = Tier C 사람 정답)
 from run_company_match import _enrich_for_company  # noqa: E402 (#15 인천고정 버그 수정 반영)
@@ -201,7 +202,7 @@ def _load_golden_regions() -> dict[str, str]:
 
 
 def build(date: str | None, cap: int | None) -> dict:
-    data_root = BASE_DIR / "data" / "raw"
+    data_root = resolve_raw_root()
     if not data_root.exists():
         return {"error": f"raw store 없음: {data_root}"}
     items = _load_items(data_root, date, cap)
@@ -472,8 +473,11 @@ def main(argv: list[str] | None = None) -> int:
 
     res = build(args.date, args.max)
     if res.get("error"):
-        print(f"[SKIP] {res['error']}")
-        return 0
+        # 측정 불가는 성공이 아니다. 0 을 돌려주면 수집 원본이 통째로 비어도
+        # CI·오케스트레이터가 조용히 통과시켜 정확도 게이트가 무력화된다.
+        print(f"[FAIL] {res['error']}")
+        print(f"       raw store 위치: {resolve_raw_root()}")
+        return 2
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_dir = Path(args.out) if args.out else (BASE_DIR / ".omc" / "accuracy" / "runs" / today)
