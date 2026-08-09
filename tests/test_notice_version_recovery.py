@@ -35,7 +35,7 @@ def test_deadline_extension_creates_versioned_delivery_id():
     snap = m._notice_version_snapshot(before)
     versions = {"extend": {"version": 1, "list_hash": m._notice_list_hash(before), "delivered_hash": m._notice_snapshot_hash(snap), "delivered_snapshot": snap, "observed_hash": m._notice_snapshot_hash(snap)}}
     deliverable, updates = m.classify_notice_versions([item("extend", "2026-07-20", deadline="2026-08-10")], {"extend"}, versions)
-    assert deliverable[0]["_change_type"] == "EXTENDED"
+    assert deliverable[0]["_change_type"] == "DEADLINE_EXTENDED"
     assert deliverable[0]["_delivery_id"] == "extend@v2"
     assert "deadline" in deliverable[0]["_changed_fields"]
     assert updates["extend"]["version"] == 2
@@ -254,7 +254,7 @@ def test_real_deadline_extension_still_versions_after_reliable_enrich():
         detail_extraction={"status": "SUCCESS"},
     )
     deliverable, updates = m.classify_notice_versions([after], {"extend2"}, versions)
-    assert deliverable[0]["_change_type"] == "EXTENDED"
+    assert deliverable[0]["_change_type"] == "DEADLINE_EXTENDED"
     assert deliverable[0]["_delivery_id"] == "extend2@v2"
     assert updates["extend2"]["version"] == 2
 
