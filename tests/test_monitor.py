@@ -1447,3 +1447,43 @@ def test_milestone_b_source_health_ok_on_normal():
     """정상 수집 (급감 없음) → OK"""
     from mail_core.operations.source_health import classify_source_status, OK
     assert classify_source_status("bizinfo", item_count=90, parse_rate=1.0, previous_item_count=100) == OK
+
+
+# ══════════════════════════════════════════════════════════════════
+# P2-3 테스트 — POSSIBLE_DUPLICATE
+# ══════════════════════════════════════════════════════════════════
+
+def test_p2_possible_duplicate_similar_titles():
+    """유사한 제목 → POSSIBLE_DUPLICATE 표시"""
+    from monitor import detect_possible_duplicates
+    items = [
+        {"id": "a1", "title": "2026년 AI 창업지원사업 모집 공고", "source": "bizinfo"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup"},
+    ]
+    result = detect_possible_duplicates(items)
+    assert result[0].get("_possible_duplicate") is True
+    assert result[1].get("_possible_duplicate") is True
+
+
+def test_p2_possible_duplicate_different_year():
+    """다른 연도 → POSSIBLE_DUPLICATE 아님"""
+    from monitor import detect_possible_duplicates
+    items = [
+        {"id": "a1", "title": "2025년 AI 창업지원사업 모집", "source": "bizinfo"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup"},
+    ]
+    result = detect_possible_duplicates(items)
+    assert result[0].get("_possible_duplicate") is not True
+    assert result[1].get("_possible_duplicate") is not True
+
+
+def test_p2_possible_duplicate_different_region():
+    """다른 지역 → POSSIBLE_DUPLICATE 아님"""
+    from monitor import detect_possible_duplicates
+    items = [
+        {"id": "a1", "title": "서울 AI 창업지원사업 모집", "source": "bizinfo"},
+        {"id": "b1", "title": "부산 AI 창업지원사업 모집", "source": "kstartup"},
+    ]
+    result = detect_possible_duplicates(items)
+    assert result[0].get("_possible_duplicate") is not True
+    assert result[1].get("_possible_duplicate") is not True
