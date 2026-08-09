@@ -27,6 +27,12 @@ try:
 except ImportError:
     _CM_OK = False
 
+try:
+    from mail_core.matching.scoring import score_and_filter as _score_and_filter
+    _SCORE_OK = True
+except ImportError:
+    _SCORE_OK = False
+
 from mail_core.delivery import outbox as delivery_outbox
 from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
@@ -331,6 +337,12 @@ GENERAL_INCLUDE_KEYWORD_ALIASES = [
 ]
 
 PRIORITY_KEYWORD_ALIASES = [
+    # 사업화 직접지원(현금·제작비) — 최우선 추천 신호 (사용자 정책)
+    ("사업화지원금", ["사업화지원금", "사업화 지원금", "사업화자금", "사업화 자금"]),
+    ("시제품제작비", ["시제품제작비", "시제품 제작비", "시제품제작", "시제품 제작"]),
+    ("사업화비용", ["사업화비용", "사업화 비용"]),
+    ("지원금", ["지원금"]),
+    ("직접지원", ["직접지원", "현금지원", "현금 지원"]),
     ("혁신바우처", ["혁신바우처", "혁신 바우처"]),
     ("수출바우처", ["수출바우처", "수출 바우처"]),
     ("스마트공장", ["스마트공장"]),
@@ -341,6 +353,11 @@ PRIORITY_KEYWORD_ALIASES = [
     ("자동화", ["자동화"]),
     ("제조혁신", ["제조혁신"]),
 ]
+
+# 메일 '우선 추천' 정렬에서 사업화 직접지원을 최상단으로 올린다.
+FUND_PRIORITY_LABELS = frozenset({
+    "사업화지원금", "시제품제작비", "사업화비용", "지원금", "직접지원",
+})
 
 FACTORY_KEYWORD_ALIASES = [
     ("공장", ["공장"]),
@@ -397,7 +414,9 @@ GRANT_SIGNAL_KEYWORDS = [
     "지원사업", "지원 사업", "지원금", "보조금", "바우처", "사업화", "사업 공고",
     "모집공고", "모집 공고", "참여기업", "수요기업", "공모", "융자", "정책자금",
     "창업", "육성", "r&d", "연구개발", "기술개발", "수출", "판로", "마케팅",
-    "컨설팅", "멘토링", "인증지원", "시제품", "입주기업", "투자유치",
+    # 컨설팅·멘토링은 GRANT 신호에서 제외 — 단독 안내가 application_like 로 통과하던 과출 방지.
+    # (실지원 공고는 모집/신청/지원사업 등 다른 신호로 충분하다.)
+    "인증지원", "시제품", "입주기업", "투자유치",
     "장려금", "지원 안내", "지원계획", "지원대상", "참가기업", "참가신청",
 ]
 
@@ -422,7 +441,8 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    # '모니터링단'은 REPORT_JUNK hard 제외에서 빼고 AMBIGUOUS_NOTICE(검토 분리)로 보낸다.
+    "회원 모집", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
     "기획위원", "자문위원", "전문위원",
 ]
 
@@ -438,9 +458,12 @@ EXCLUSION_RULES = [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
         "공동인증서", "공인인증서", "매뉴얼", "사용 안내", "유의사항", "시스템 이용 안내",
     ]),
-    ("INFO_SESSION", "info_session", "unknown", ["설명회", "오리엔테이션"]),
+    ("INFO_SESSION", "info_session", "unknown", [
+        "설명회", "오리엔테이션", "사업설명회", "사전설명회", "투자유치설명회",
+    ]),
     ("EDUCATION_ONLY", "education", "unknown", [
         "교육 일정", "교육일정", "분야별 교육", "선정기업 교육", "수요기업 교육", "공급기업 교육",
+        "교육참여기업", "교육 참여기업", "교육생 모집", "수강생 모집", "교육과정 모집", "교육 과정 모집",
     ]),
     ("SUPPLIER_ONLY", "application_notice", "supplier", [
         "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
@@ -449,8 +472,36 @@ EXCLUSION_RULES = [
     ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
     ]),
-    ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
+    # NOT_GRANT_NOTICE: 지원사업이 아닌 제도·요율·안내성 게시. soft/hard 분리는 _split_exclusion_hits.
+    # 키워드 출처: var/state/notice_versions 제목 히스토리(공시송달 53·제도안내 2 등) + 기존 규칙.
+    # 잡공고(결과·채용·총회 등)는 REPORT_JUNK, 행정고지는 ADMIN_NOISE 로 분리.
+    ("NOT_GRANT_NOTICE", "general_info", "unknown", [
+        "산재예방요율제", "보험료율", "제도 안내", "요율 변경", "요율변경",
+        "수수료 안내", "수수료안내", "제도 개편", "제도개편", "규정 개정", "규정개정",
+        "운영 안내", "이용 안내", "사이트 안내",
+        "공시송달", "결정통지", "정보부존재", "과태료 전자고지", "전자고지 서비스",
+        "대출 제도 안내", "온렌딩 대출",
+    ]),
 ]
+
+# 제목 앵커: '교육참여기업모집'처럼 공백 없이 붙어도 교육 모집으로 본다.
+_EDUCATION_RECRUIT_TITLE_RE = re.compile(
+    r"교육\s*참여\s*기업\s*모집|교육생\s*모집|수강생\s*모집|교육\s*과정\s*모집"
+)
+
+# 설명회가 '모집 본체'인 제목(설명회 참여기업 모집 등) → 본문 추천 제외·review 분리(hard 제외 아님).
+_INFO_SESSION_AS_RECRUIT_RE = re.compile(
+    r"(?:사업|투자\s*유치)?설명회\s*(?:개최\s*)?(?:참여자|참여기업|참가기업|참석자|참가)\s*모집|"
+    r"설명회\s*참여기업\s*모집|"
+    r"모집\s*설명회"
+)
+# 실모집 본체 + 부대 설명회(모집 및 설명회 / 설명회 일정 추가) → soft 통과 유지.
+_INFO_SESSION_SECONDARY_RE = re.compile(
+    r"모집\s*및\s*설명회|설명회\s*일정\s*(?:추가|안내)"
+)
+
+# 애매 비지원(부분일치로 hard 금지하되 본문 추천에서 분리해 review로 보냄).
+_AMBIGUOUS_GRANT_OK = ("지원사업", "바우처", "지원금", "보조금", "사업화", "융자", "정책자금")
 
 # ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
 # '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
@@ -575,6 +626,24 @@ def non_notice_reason(item: dict) -> str:
         path = parts.path.rstrip("/")
         if not path or re.fullmatch(r"/(?:index|main|home)(?:\.\w{2,5})?", path):
             return f"사이트 대문({host})"
+    return ""
+
+
+def ambiguous_notice_reason(item: dict) -> str:
+    """hard 제외하기엔 반례가 있으나 본문 추천에 넣기엔 애매한 제목 → review 분리 근거.
+
+    - 정보공개+모집/공고: 정적 메뉴 오수집·모니터링단류와 진짜 '환경정보공개 지원사업'이 섞임
+      → 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE.
+    - 모니터링단: 기업 현금지원 확률 낮음 → review(완전 hard REPORT_JUNK 아님).
+    """
+    title = norm(item.get("title", ""))
+    if not title:
+        return ""
+    if "모니터링단" in title:
+        return "모니터링단"
+    if "정보공개" in title and any(tok in title for tok in ("모집", "공고")):
+        if not any(ok in title for ok in _AMBIGUOUS_GRANT_OK):
+            return "정보공개"
     return ""
 
 REGION_EXCLUDE_PHRASES = [
@@ -4279,7 +4348,9 @@ def assess_date_unknown_risk(item: dict) -> str:
     except Exception:
         pass
     text = _notice_body_text(item)
-    if any(kw in text for kw in APPLICATION_KEYWORDS):
+    # APPLICATION_KEYWORDS 만 보면 '모집' 단독 제목이 낮음으로 떨어져 recall 누락이 난다.
+    # evaluate_notice 의 application_like 와 같은 기준으로 중/고 위험을 판정한다.
+    if _application_like(text):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
             return "높음"
         return "중간"
@@ -4393,13 +4464,20 @@ def _notice_body_text(item: dict) -> str:
 
 
 def _keyword_match_text(item: dict) -> str:
-    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상 필드 포함, 주관기관명 제외."""
+    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상·카테고리 포함, 주관기관명 제외."""
     parts = [
         item.get("title", ""),
         item.get("description", ""),
         item.get("support_field", ""),
         item.get("target_field", ""),
+        item.get("category", ""),
     ]
+    for key in ("hashtags", "tags", "hashTags"):
+        val = item.get(key)
+        if isinstance(val, (list, tuple)):
+            parts.extend(str(x) for x in val if x)
+        elif val:
+            parts.append(str(val))
     try:
         from mail_core.matching.core_sources import keyword_extra_parts
         parts.extend(keyword_extra_parts(item))
@@ -4506,13 +4584,26 @@ def _split_exclusion_hits(item: dict, code: str, hits: list[str]) -> tuple[list[
     제외 단어가 제목에 있거나 제목이 모집 공고가 아니면 기존처럼 hard다.
     반대로 제목이 명백한 모집 공고인데 본문에만 교육·설명회·지침 등이 있으면
     부대 일정/유의사항일 수 있으므로 soft 근거로 남기고 공고 전체를 버리지 않는다.
+
+    INFO_SESSION / EDUCATION_ONLY 특수: 제목에 설명회·교육일정이 있어도
+    동시에 실모집 신호(모집/신청/공모 등)가 있으면 soft — '모집 및 설명회' 실공고 보존.
+    단, 제목이 교육참여기업모집·교육생 모집처럼 교육 모집 자체면 hard 유지.
+    설명회 참여기업 모집처럼 설명회가 모집 본체면 soft로 두되, evaluate_notice 가
+    INFO_SESSION_REVIEW 로 본문 추천에서 분리한다(hard INFO_SESSION 아님).
     """
     if not hits:
         return [], []
     title = norm(item.get("title", "")).lower()
     if code == "SUPPLIER_ONLY" and _mixed_target_roles(item):
         return [], list(hits)
-    if any(hit in title for hit in hits):
+    title_hit = any(hit in title for hit in hits)
+    if code in {"INFO_SESSION", "EDUCATION_ONLY"} and _active_application_title(title):
+        # 교육 모집 전용 제목은 soft 완화 대상이 아니다.
+        if code == "EDUCATION_ONLY" and _EDUCATION_RECRUIT_TITLE_RE.search(title):
+            return list(hits), []
+        # 제목·본문 모두 soft — 실모집 본체 + 부대 설명회/교육일정
+        return [], list(hits)
+    if title_hit:
         return list(hits), []
     if _active_application_title(title):
         return [], list(hits)
@@ -4554,6 +4645,25 @@ def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> li
         if any(_kw_in_text(text, key.lower()) for key in keys):
             matches.append(label)
     return _unique(matches)
+
+
+def _group_priority_hits(item: dict, group: dict | None) -> list[str]:
+    """전역 PRIORITY_KEYWORD_ALIASES + 그룹 priority_keywords 합집합.
+
+    - 전역: 사업화지원금·바우처·스마트공장 등 공통 최우선
+    - 그룹: groups.json 업종별 우선어(예: bnco K-뷰티·디자인)
+    메일 '우선 추천'과 점수/LLM이 같은 그룹 맥락을 쓰게 한다.
+    """
+    body = _notice_text(item)
+    kw_text = _keyword_match_text(item)
+    hits = _find_keyword_aliases(body, PRIORITY_KEYWORD_ALIASES)
+    for kw in (group or {}).get("priority_keywords") or []:
+        raw = str(kw or "").strip()
+        if not raw:
+            continue
+        if _kw_in_text(kw_text, raw.lower()) or _kw_in_text(body, raw.lower()):
+            hits.append(raw)
+    return _unique(hits)
 
 
 def classify_deadline_status(item: dict, today=None) -> str:
@@ -4829,6 +4939,14 @@ def _other_region_block(item: dict, own_meta: dict):
     return None
 
 
+def _metro_peer_districts(city: str, label: str) -> list[str]:
+    """광역 내 구·군 목록. 신청자 구가 있을 때 '타 구 전용' 차단에 쓴다."""
+    blob = f"{city or ''} {label or ''}".lower()
+    if "인천" in blob:
+        return list(INCHEON_DISTRICTS)
+    return []
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -4877,6 +4995,15 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if d.lower() in app_text or (short_d and short_d.lower() in app_text):
             district_hits.append(d)
+
+    # 동일 광역 내 타 구·군만 명시(우리 구 미포함) → not_eligible.
+    # classify_region(인천·남동구)의 '부평구 전용 차단'과 같은 정밀도 — for_group 경로에도 이식.
+    peers = _metro_peer_districts(city, label)
+    if districts and peers:
+        mentioned_peers = [d for d in peers if d in app_text]
+        other_districts = [d for d in mentioned_peers if d not in districts]
+        if other_districts and not district_hits:
+            return result("not_eligible", "not_eligible", [], other_districts)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
     # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
@@ -5069,12 +5196,12 @@ def classify_region(item: dict) -> dict:
     }
 
 
-def region_match(item: dict, group_regions: list[str]) -> bool:
+def region_match(item: dict, group_regions: list[str], region_info: dict | None = None) -> bool:
     """그룹 지역 조건 매칭. 남동구 신청 불가 공고는 인천 그룹에서 제외."""
     if not group_regions:
         return True
-    region_info = classify_region(item)
-    if region_info["region_status"] == "not_eligible" or region_info["district_status"] == "not_eligible":
+    info = region_info if region_info is not None else classify_region(item)
+    if info["region_status"] == "not_eligible" or info["district_status"] == "not_eligible":
         return False
     text = _notice_text(item)
     g_regions = [r.lower() for r in group_regions]
@@ -5082,9 +5209,29 @@ def region_match(item: dict, group_regions: list[str]) -> bool:
         return True
     if "전국" in text:
         return True
-    if region_info["region_status"] == "eligible":
+    if info["region_status"] == "eligible":
         return True
     return False
+
+
+def uses_incheon_region_engine(group: dict | None) -> bool:
+    """인천(+남동구) 정밀 엔진을 쓸지. False면 classify_region_for_group."""
+    if not group:
+        return True
+    city = group.get("applicant_region_city", APPLICANT_REGION_CITY)
+    return city == APPLICANT_REGION_CITY
+
+
+def resolve_region(item: dict, group: dict | None = None) -> dict:
+    """지역 적격 단일 진입점.
+
+    - 인천광역시 그룹(기본 포함): ``classify_region`` — 구 단위 배타(부평구 전용 등)
+    - 그 외 시·도 그룹: ``classify_region_for_group`` — 임의 광역/시·군
+    """
+    g = group or {}
+    if uses_incheon_region_engine(g if group is not None else None):
+        return classify_region(item)
+    return classify_region_for_group(item, g)
 
 
 def keyword_match(item: dict, kw_cfg: dict) -> bool:
@@ -5154,7 +5301,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     notice_type = "unknown"
 
     matched_keywords = _find_keyword_aliases(text, GENERAL_INCLUDE_KEYWORD_ALIASES)
-    priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
+    priority_keywords = _group_priority_hits(item, g)
     factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
     matched_keywords = _unique(matched_keywords + factory_keywords)
     factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
@@ -5180,12 +5327,43 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             if rule_target_type != "unknown":
                 target_type = rule_target_type
 
+    # 제목 앵커: 교육참여기업모집·교육생 모집 등 — EXCLUSION_RULES soft 완화와 무관하게 제외.
+    edu_title = norm(item.get("title", ""))
+    if _EDUCATION_RECRUIT_TITLE_RE.search(edu_title):
+        reason_codes.append("EDUCATION_ONLY")
+        excluded_keywords.append(_EDUCATION_RECRUIT_TITLE_RE.search(edu_title).group(0))
+        if notice_type == "unknown":
+            notice_type = "education"
+
+    # 원본전체용 잡공고·행정고지 판정을 그룹 필터에도 적용(사유코드는 경로별로 분리).
+    if is_report_junk(item):
+        reason_codes.append("REPORT_JUNK")
+        excluded_keywords.append("report_junk")
+        if notice_type == "unknown":
+            notice_type = "general_info"
+    if is_admin_noise(item):
+        reason_codes.append("ADMIN_NOISE")
+        excluded_keywords.append("admin_noise")
+        if notice_type == "unknown":
+            notice_type = "admin_notice"
+
     # [제목 앵커] 비공고 정적 페이지(기관소개·정보공개·약관·nav 링크 등) 제외.
     # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
     nonnotice_hit = non_notice_reason(item)
     if nonnotice_hit:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
+    # 애매 비지원 — hard 금지(반례 있음: '환경정보공개 지원사업' 등 진짜 지원사업이 섞임)하되
+    # 본문 추천에서 분리해 review 로 보낸다. 정보공개+모집/공고 조합은 정적 메뉴 오수집과
+    # 진짜 지원사업이 혼재하므로, 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE 로
+    # review_needed=True 로 표시해 사람이 최종 판단한다.
+    amb_hit = ambiguous_notice_reason(item)
+    if amb_hit:
+        reason_codes.append("AMBIGUOUS_NOTICE")
+        excluded_keywords.append(amb_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
 
@@ -5201,7 +5379,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
         excluded_keywords.extend(hard_service_hits)
-        if "설명회" in hard_service_hits:
+        if "설명회" in hard_service_hits or any("설명회" in h for h in hard_service_hits):
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
         elif has_primary_support(item):
@@ -5210,6 +5388,20 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
+
+    # 설명회가 모집 본체(…설명회 참여기업 모집)이면 hard INFO_SESSION 대신 review 분리.
+    # '모집 및 설명회' 등 부대 설명회는 soft 통과 유지.
+    title_raw = norm(item.get("title", ""))
+    if (
+        "설명회" in title_raw
+        and _INFO_SESSION_AS_RECRUIT_RE.search(title_raw)
+        and not _INFO_SESSION_SECONDARY_RE.search(title_raw)
+    ):
+        reason_codes.append("INFO_SESSION_REVIEW")
+        if "설명회" not in soft_excluded_keywords and "설명회" not in excluded_keywords:
+            soft_excluded_keywords.append("설명회")
+        if notice_type == "unknown":
+            notice_type = "info_session"
 
     if smart_info and notice_type in {"education", "info_session", "general_info", "guideline", "manual"}:
         reason_codes.append("SMART_FACTORY_INFO_ONLY")
@@ -5239,16 +5431,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     elif deadline_status == "unknown" and not application_like:
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
-    applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
-    use_generic_region = bool(group) and applicant_city != APPLICANT_REGION_CITY
-    region_info = classify_region_for_group(item, g) if use_generic_region else classify_region(item)
+    applicant_district = g.get("applicant_region_district", APPLICANT_REGION_DISTRICT)
+    incheon_engine = uses_incheon_region_engine(group)
+    region_info = resolve_region(item, g if group is not None else None)
     if region_info["region_status"] == "not_eligible":
         reason_codes.append("REGION_NOT_ELIGIBLE")
     if region_info["district_status"] == "not_eligible":
         reason_codes.append("DISTRICT_NOT_ELIGIBLE")
     if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
         reason_codes.append("LOW_CONFIDENCE")
-    if not use_generic_region and "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
+    if incheon_engine and "산업단지" in text and "입주기업" in text and applicant_district not in text:
         reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
 
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
@@ -5262,7 +5454,12 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         or region_info["district_status"] == "not_eligible"
     )
     if group is not None and not source_bypass:
-        region_ok = (region_info["region_status"] == "eligible") if use_generic_region else region_match(item, req_regions)
+        # 인천 엔진: required_conditions.regions + 구 배타를 region_match 로 결합.
+        # 기타 광역: classify_region_for_group 의 region_status==eligible 만으로 통과.
+        if incheon_engine:
+            region_ok = region_match(item, req_regions, region_info=region_info)
+        else:
+            region_ok = region_info["region_status"] == "eligible"
         if not region_ok:
             reason_codes.append("REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN")
 
@@ -5278,7 +5475,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     hard_group_hits, soft_group_hits = _split_exclusion_hits(item, "GROUP_EXCLUSION", group_excluded)
     soft_excluded_keywords.extend(soft_group_hits)
     if hard_group_hits:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("GROUP_EXCLUSION")
         excluded_keywords.extend(hard_group_hits)
 
     kw_text = _keyword_match_text(item)
@@ -5318,8 +5515,11 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             # 투자 단독 → 제외
             reason_codes.append("INVESTMENT_ONLY")
 
+    # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
+    # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
+    # 전자는 evaluate_notice 의 application 게이트, 후자는 제목 앵커 상수 매칭.
     if not application_like and not priority_keywords:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("NOT_APPLICATION_LIKE")
 
     biz_years_status = business_years_status(item, g) if group is not None else "n/a"
     amount_status = support_amount_status(item, g) if group is not None else "n/a"
@@ -5368,6 +5568,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
+        "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
+        "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW",
     }
     detail_failure_review = (
         detail_failure
@@ -5399,6 +5601,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and application_like
             and group_keyword_pass
         )
+    # hard 제외 대신 본문 추천에서만 빼는 분리 코드(설명회 모집 본체·정보공개 애매건).
+    _review_separate = {"INFO_SESSION_REVIEW", "AMBIGUOUS_NOTICE"}
     review_needed = (
         not is_relevant
         and (
@@ -5407,6 +5611,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
                 and not (set(reason_codes) & detail_failure_blockers)
             )
             or detail_failure_review
+            or bool(set(reason_codes) & _review_separate)
         )
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
@@ -5493,10 +5698,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     return result
 
 
-def _notice_sort_key(item: dict) -> tuple[int, int, int]:
+def _notice_sort_key(item: dict) -> tuple[int, int, int, int]:
+    pri = item.get("priority_keywords") or []
+    fund_first = 0 if any(p in FUND_PRIORITY_LABELS for p in pri) else 1
     return (
+        fund_first,
         0 if item.get("priority_keyword") else 1,
-        -int(item.get("relevance_score", 0)),
+        -int(item.get("relevance_score", 0) or item.get("_match_score", 0) or 0),
         0 if item.get("deadline_status") == "open" else 1,
     )
 
@@ -5549,6 +5757,56 @@ def refine_included_by_company(
         return included, []
     result = _match_for_company(included, company)
     return result["matched"], result["rejected"]
+
+
+def refine_included_by_score_llm(
+    included: list[dict], group: dict,
+) -> tuple[list[dict], list[dict]]:
+    """evaluate_notice 통과분에 score_and_filter(점수+LLM 회색지대 컷)를 적용.
+
+    group 에 score_threshold 가 없거나 llm_check_enabled 도 없으면 통과분 그대로.
+    llm_check_enabled 만 켠 그룹은 score_threshold 기본 0(점수로는 거의 통과, LLM 밴드만 컷).
+    API 키 없거나 anthropic 미설치 시 scoring.llm_relevance_check 가 보수적으로 통과시킨다.
+    """
+    if not _SCORE_OK:
+        return included, []
+    if "score_threshold" not in group and not group.get("llm_check_enabled"):
+        return included, []
+    g = group
+    if "score_threshold" not in g:
+        g = {**group, "score_threshold": 0}
+    out = _score_and_filter(included, g)
+    passed = list(out.get("passed") or [])
+    rejected = []
+    for it in out.get("rejected") or []:
+        codes = list(it.get("exclude_reason_codes") or [])
+        codes.append("SCORE_OR_LLM_REJECT")
+        rejected.append({
+            **it,
+            "exclude_reason_codes": _unique(codes),
+            "review_needed": True,
+            "is_relevant": False,
+            "filter_confidence": "medium",
+            "notes": list(it.get("notes") or []) + ["점수/LLM 2차 컷오프"],
+        })
+    # 통과분에 점수 부착(정렬·표시용)
+    audit_by_title = {
+        str(a.get("title") or ""): a
+        for a in (out.get("audit") or [])
+        if a.get("decision") == "passed"
+    }
+    enriched = []
+    for it in passed:
+        title_key = str(it.get("title") or "")[:80]
+        a = audit_by_title.get(title_key) or {}
+        enriched.append({
+            **it,
+            "_match_score": a.get("score", it.get("_match_score")),
+            "_score_reasons": a.get("reasons") or [],
+            "_llm_check": a.get("llm"),
+        })
+    enriched.sort(key=_notice_sort_key)
+    return enriched, rejected
 
 
 
@@ -5919,15 +6177,31 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
     return "\n".join(lines)
 
 def claude_summarize(items: list[dict], group: dict) -> str:
-    """Render the digest from collected fields only.
+    """메일 본문 렌더. 기본은 수집 필드만 사용(금액·날짜를 LLM이 지어내지 않게).
 
-    A language model must never be the source of a delivered support amount, posted date,
-    reception period, organization, or link. Keeping this former API name avoids a broad
-    caller refactor while making P0 factual integrity and prompt-injection safety absolute.
+    MONITOR_DIGEST_LLM=1 이면 맨 위에 '한 줄 적합성' 코멘트만 LLM으로 붙인다.
+    공고별 금액·마감·링크는 여전히 fallback_body(원문 필드)만 쓴다.
     """
     if not items:
         return ""
-    return fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    body = fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    if os.environ.get("MONITOR_DIGEST_LLM", "") not in ("1", "true", "True"):
+        return body
+    try:
+        from mail_core.matching.scoring import llm_relevance_check
+    except Exception:
+        return body
+    # 상위 3건만 짧은 코멘트 — 비용·환각 최소화
+    notes = []
+    for it in sorted(items, key=_notice_sort_key)[:3]:
+        r = llm_relevance_check(it, group)
+        reason = str(r.get("reason") or "").strip()
+        if reason and r.get("is_relevant", True):
+            title = strip_title_badges(_mail_clean_text(it.get("title"), limit=40))
+            notes.append(f"- {title}: {reason[:80]}")
+    if not notes:
+        return body
+    return "AI 한줄 메모(참고·원문 수치 아님):\n" + "\n".join(notes) + "\n\n" + body
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -6542,6 +6816,7 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
     collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
@@ -6587,6 +6862,12 @@ def execute_monitor(
     groups   = load_groups()
     settings = load_settings()
     seen_ids = load_seen_ids()
+    if group_id:
+        groups = [g for g in groups if g.get("id") == group_id]
+        if not groups:
+            log.error("그룹 '%s' 을(를) 찾을 수 없습니다", group_id)
+            raise SystemExit(1)
+        log.info("단일 그룹 모드: %s", groups[0].get("name", group_id))
     days_back = max(1, int(settings.get("days_back", 3) or 3))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
@@ -6981,6 +7262,11 @@ def execute_monitor(
         if ru_items:
             write_region_unknown_report(ru_items, str(group.get("name") or "group"), run_at=now)
         excluded_items = diagnostics["excluded"]
+        # 점수+LLM 2차 컷(그룹 score_threshold / llm_check_enabled)
+        g_items, _score_demoted = refine_included_by_score_llm(g_items, group)
+        if _score_demoted:
+            review_items = review_items + _score_demoted
+            log.info("그룹 '%s' 점수/LLM 컷오프: %d건 → 검토 강등", group.get("name"), len(_score_demoted))
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
         if _demoted:
@@ -7125,6 +7411,7 @@ def main(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     collection_gate: dict | None = None,
+    group_id: str = "",
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -7133,6 +7420,7 @@ def main(
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
         collection_gate=collection_gate,
+        group_id=group_id,
     )
     _post_run_alert(result)
     return result
@@ -7600,6 +7888,7 @@ def run_dry_run(
     fetch_coverage: bool = True,
     allow_coverage_alert: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
 ) -> dict:
     """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증.
 
@@ -7649,6 +7938,7 @@ def run_dry_run(
     result = execute_monitor(
         allow_send=False, include_raw_all=False, persist_seen=False,
         draft_mode=draft_mode, collection_gate=collection_gate,
+        group_id=group_id,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -7749,6 +8039,12 @@ if __name__ == "__main__":
         action="store_true",
         help="원본전체(raw_all) 보고 메일도 함께 발송 대상에 포함한다(기본은 미포함).",
     )
+    parser.add_argument(
+        "--group",
+        default="",
+        metavar="GROUP_ID",
+        help="지정한 그룹만 실행한다(예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.",
+    )
     args = parser.parse_args()
     if args.only_to:
         _ONLY_TO = args.only_to
@@ -7770,6 +8066,7 @@ if __name__ == "__main__":
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
                 draft_mode=True,
+                group_id=args.group,
             )
             _post_run_alert(summary)
             log.info(
@@ -7784,6 +8081,7 @@ if __name__ == "__main__":
             summary = run_dry_run(
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
+                group_id=args.group,
             )
             log.info(
                 "dry-run 완료: 수집=%s 신규=%s review_queue=%s mail_sent=%s seen_changed=%s",
@@ -7913,6 +8211,7 @@ if __name__ == "__main__":
                     include_raw_all=args.include_raw_all,
                     persist_seen=args.persist_seen,
                     collection_gate=_gate,
+                    group_id=args.group,
                 )
     except Exception as e:
         log.exception("치명적 오류: %s", e)

@@ -853,13 +853,13 @@ def test_application_keywords_positive_gongmo():
 
 
 def test_negative_gate_guard_ungyongjiwongonggo_excluded():
-    """'지원공고' 미추가 잠금: '운영지원공고'는 여전히 NOT_GRANT_NOTICE로 제외.
+    """'지원공고' 미추가 잠금: '운영지원공고'는 여전히 NOT_APPLICATION_LIKE로 제외.
     region/group은 통과(인천 소재, '지원' in or_keywords), application 게이트만 막힘.
     '지원공고'를 APPLICATION_KEYWORDS에 추가하면 is_relevant=True로 뒤집혀 이 테스트가 red."""
     item = notice(title="운영지원공고", description="인천 소재 중소기업")
     result = evaluate_notice(item, POLICY_GROUP, FILTER_TODAY)
     assert result["is_relevant"] is False
-    assert "NOT_GRANT_NOTICE" in result["exclude_reason_codes"]
+    assert "NOT_APPLICATION_LIKE" in result["exclude_reason_codes"]
     # '지원' in or_keywords → group_keyword_pass=True(통과) — application 게이트만 차단
     assert "지원" in POLICY_GROUP["or_keywords"]
 
@@ -879,7 +879,7 @@ def test_membership_assertions():
 
 def test_gongmo_known_overtriggering_cost():
     # 의도된 과탐 비용 — 비지원 '청년 사진 공모전'이 region/group eligible이면
-    # '공모' substring이 NOT_GRANT_NOTICE 게이트를 열음(2345-2346).
+    # '공모' substring이 NOT_APPLICATION_LIKE 게이트를 연다.
     # '공모' 채택의 알려진·수용된 부작용.
     # 후속 경계매칭 PR에서 이 단언을 is False로 뒤집어 제거할 것.
     item = notice(title="청년 사진 공모전", description="인천 소재 중소 제조 기업 수출")

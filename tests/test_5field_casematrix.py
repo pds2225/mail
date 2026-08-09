@@ -638,12 +638,12 @@ def test_G006_and_keyword_groups_gate(kwline, matched):
 
 
 def test_G006_group_exclude_keywords_not_grant():
-    """그룹별 exclude_keywords 매칭 → NOT_GRANT_NOTICE(2572-2575, 상수 EXCLUSION_RULES 와 별개 경로)."""
+    """그룹별 exclude_keywords 매칭 → GROUP_EXCLUSION(상수 EXCLUSION_RULES 와 별개 경로)."""
     grp = _gate_group(exclude_keywords=["성료"])
     it = _gyeonggi_full_pass()
     it["title"] = "경기도 제조기업 성장지원 신청접수 성료 안내"
     ev = m.evaluate_notice(it, grp, TODAY)
-    assert "NOT_GRANT_NOTICE" in ev["exclude_reason_codes"]
+    assert "GROUP_EXCLUSION" in ev["exclude_reason_codes"]
 
 
 # ══════════════════════════════════════════════════════════════════

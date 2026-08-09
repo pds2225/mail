@@ -96,8 +96,14 @@ def test_non_grant_notices_are_not_recommended(item: dict, expected_hit: str):
 
     assert bucket in {"review", "excluded"}, evaluated
     assert evaluated["is_relevant"] is False
-    assert "NOT_GRANT_NOTICE" in evaluated["exclude_reason_codes"]
-    assert expected_hit in evaluated["excluded_keywords"]
+    # 경로별 사유코드 분리: 위원모집=COMMITTEE/REPORT_JUNK, 그룹제외=GROUP_EXCLUSION 등.
+    # '비지원' 차단이면 충분하고, 구 NOT_GRANT_NOTICE 단일코드에 묶지 않는다.
+    block_codes = {
+        "NOT_GRANT_NOTICE", "NOT_APPLICATION_LIKE", "GROUP_EXCLUSION",
+        "ADMIN_NOISE", "REPORT_JUNK", "COMMITTEE_RECRUITMENT",
+    }
+    assert set(evaluated["exclude_reason_codes"]) & block_codes
+    assert any(expected_hit in kw for kw in evaluated["excluded_keywords"]), evaluated["excluded_keywords"]
 
 
 def test_big_data_academy_without_startup_signal_is_excluded():

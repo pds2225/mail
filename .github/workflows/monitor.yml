@@ -15,6 +15,10 @@ on:
   workflow_dispatch:
     # 수동 실행 버튼 (Actions 탭에서 즉시 실행 가능)
     inputs:
+      group_id:
+        description: '단일 그룹 ID (예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.'
+        required: false
+        default: ''
       delivery_slot:
         description: "발송 회차 (am=오전 따라잡기, pm=저녁, auto=실행 시각 기준)"
         required: false
@@ -97,7 +101,13 @@ jobs:
         # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
         # --coverage-alert: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
-        run: python scripts/monitor_runtime.py --send --persist-seen --coverage-alert
+        # --group: workflow_dispatch 에서 지정한 단일 그룹만 실행(미지정 시 전체).
+        run: |
+          GROUP_FLAG=""
+          if [ -n "${{ github.event.inputs.group_id }}" ]; then
+            GROUP_FLAG="--group ${{ github.event.inputs.group_id }}"
+          fi
+          python scripts/monitor_runtime.py --send --persist-seen --coverage-alert $GROUP_FLAG
 
       - name: 커버리지 baseline 저장(다음 실행 비교용)
         if: always()
