@@ -4053,10 +4053,13 @@ def dedup_items(items: list[dict]) -> list[dict]:
     P1-2: canonical_notice_id 기반 크로스소스 중복 제거 추가.
     - 공고번호/URL/제목+기관으로 canonical ID 생성
     - 동일 canonical ID면 동일 공고로 판정
+
+    P2-A: 첨부파일 해시 기반 중복 보조
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
     canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
+    attachment_map: dict[str, dict] = {}  # attachment_hash → kept item
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -4068,6 +4071,12 @@ def dedup_items(items: list[dict]) -> list[dict]:
         short, long = (a_key, b_key) if len(a_key) <= len(b_key) else (b_key, a_key)
         return len(short) >= 10 and short in long
 
+    def attachment_hash(item: dict) -> str:
+        """P2-A: 첨부파일 해시 생성 (URL+제목 기반)."""
+        parts = [item.get("link", ""), item.get("title", ""), str(item.get("deadline", ""))]
+        composite = "|".join(p for p in parts if p)
+        return hashlib.md5(composite.encode()).hexdigest()[:16] if composite else ""
+
     for item in items:
         key = similarity_key(item["title"])
         if not key:
@@ -4077,6 +4086,10 @@ def dedup_items(items: list[dict]) -> list[dict]:
         # P1-2: canonical ID 기반 중복 체크
         canonical_id = generate_canonical_notice_id(item)
         item["_canonical_notice_id"] = canonical_id
+
+        # P2-A: 첨부파일 해시 기반 중복 체크
+        att_hash = attachment_hash(item)
+        item["_attachment_hash"] = att_hash
 
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
@@ -4097,9 +4110,25 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 else:
                     log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
                              existing["title"][:20], item["title"][:20], canonical_id)
+            # P2-A: 첨부파일 해시로도 체크
+            elif att_hash and att_hash in attachment_map:
+                existing = attachment_map[att_hash]
+                if not item["is_aggregator"] and existing["is_aggregator"]:
+                    kept.remove(existing)
+                    kept.append(item)
+                    del norm_map[similarity_key(existing["title"])]
+                    norm_map[key] = item
+                    attachment_map[att_hash] = item
+                    log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
+                             existing["title"][:20], item["title"][:20], att_hash)
+                else:
+                    log.info("첨부중복: '%s' 유지, '%s' 제거 (hash: %s)",
+                             existing["title"][:20], item["title"][:20], att_hash)
             else:
                 norm_map[key] = item
                 canonical_map[canonical_id] = item
+                if att_hash:
+                    attachment_map[att_hash] = item
                 kept.append(item)
         else:
             existing = norm_map[dup_key]
@@ -4114,6 +4143,12 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 if old_canonical and old_canonical in canonical_map:
                     del canonical_map[old_canonical]
                 canonical_map[canonical_id] = item
+                # attachment map도 업데이트
+                old_att = existing.get("_attachment_hash")
+                if old_att and old_att in attachment_map:
+                    del attachment_map[old_att]
+                if att_hash:
+                    attachment_map[att_hash] = item
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
@@ -4121,7 +4156,22 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
 
+    # P2-D: 소스별 고유 공고 기여도 통계 계산
+    source_stats: dict[str, dict] = {}
+    for item in kept:
+        sid = str(item.get("source") or "unknown")
+        if sid not in source_stats:
+            source_stats[sid] = {"total": 0, "unique": 0}
+        source_stats[sid]["total"] += 1
+        # canonical ID가 이 소스에서 처음 나온 것만 unique로 카운트
+        cid = item.get("_canonical_notice_id", "")
+        if cid and canonical_map.get(cid, {}).get("source") == sid:
+            source_stats[sid]["unique"] += 1
+
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
+    for sid, stats in sorted(source_stats.items()):
+        log.info("  소스 %s: 총 %d건, 고유 %d건", sid, stats["total"], stats["unique"])
+
     return kept
 
 
