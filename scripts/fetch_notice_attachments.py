@@ -32,9 +32,18 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote, unquote_plus, urlparse
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get("MAIL_ATTACH_ROOT", "")).expanduser() if os.environ.get("MAIL_ATTACH_ROOT") else Path()
+if not ROOT or str(ROOT) in (".", ""):
+    if getattr(sys, "frozen", False):
+        ROOT = Path(sys.executable).resolve().parent
+    else:
+        ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+# frozen(exe) 이면 PyInstaller 임시 폴더도 모듈 검색에 넣는다
+_meipass = getattr(sys, "_MEIPASS", None)
+if _meipass and _meipass not in sys.path:
+    sys.path.insert(0, str(_meipass))
 
 # Windows 한글 깨짐 방지 — import/에러 출력보다 먼저 고정
 os.environ.setdefault("PYTHONUTF8", "1")
@@ -96,6 +105,9 @@ def selfcheck_repo_files(verbose: bool = False) -> int:
     복구는 git 인덱스를 잠그지 않는 checkout-index 로 하므로 같은 폴더에서
     작업 중인 다른 세션의 git 작업을 방해하지 않는다.
     """
+    # exe(PyInstaller) 배포본은 git 트리가 없으므로 자가진단을 건너뛴다.
+    if getattr(sys, "frozen", False):
+        return 0
     missing = _deleted_tracked_files()
     if not missing:
         if verbose:

@@ -1,0 +1,67 @@
+name: Build Attach Downloader EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cursor/easy-attach-downloader-install-2420
+      - main
+    paths:
+      - scripts/attach_downloader_app.py
+      - scripts/attach_downloader.spec
+      - scripts/fetch_notice_attachments.py
+      - scripts/download_kstartup_targets.py
+      - scripts/requirements-attach.txt
+      - .github/workflows/build-attach-exe.yml
+      - monitor.py
+      - mail_core/**
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller
+          python -m pip install -r scripts/requirements-attach.txt
+
+      - name: Ensure scripts is a package
+        shell: bash
+        run: |
+          test -f scripts/__init__.py || echo "# package marker for PyInstaller" > scripts/__init__.py
+
+      - name: Build onefile exe
+        run: |
+          pyinstaller --noconfirm --clean scripts/attach_downloader.spec
+
+      - name: List output
+        shell: bash
+        run: |
+          ls -lah dist/
+          file dist/*.exe || true
+
+      - name: Upload exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: notice-attach-downloader-exe
+          path: |
+            dist/지원사업_공고첨부_받기.exe
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload to dist folder artifact (zip for sharing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: notice-attach-downloader-share
+          path: dist/지원사업_공고첨부_받기.exe
+          if-no-files-found: error
+          retention-days: 30

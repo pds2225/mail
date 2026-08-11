@@ -1,0 +1,82 @@
+# PyInstaller onefile for Windows attachment downloader.
+# Built by .github/workflows/build-attach-exe.yml on windows-latest.
+
+block_cipher = None
+
+a = Analysis(
+    ['scripts/attach_downloader_app.py'],
+    pathex=['.'],
+    binaries=[],
+    datas=[
+        ('mail_core', 'mail_core'),
+        ('scripts/requirements-attach.txt', 'scripts'),
+        ('scripts/notice_download_config.json', 'scripts'),
+    ],
+    hiddenimports=[
+        'monitor',
+        'httpx',
+        'bs4',
+        'certifi',
+        'cryptography',
+        'dotenv',
+        'mail_core',
+        'mail_core.paths',
+        'mail_core.delivery',
+        'mail_core.delivery.outbox',
+        'mail_core.delivery.state',
+        'mail_core.operations',
+        'mail_core.operations.run_lock',
+        'mail_core.security',
+        'mail_core.security.net_guard',
+        'mail_core.security.private_config',
+        'mail_core.storage',
+        'mail_core.storage.seen_ids_prune',
+        'mail_core.storage.state_store',
+        'mail_core.storage.secure_store',
+        'scripts',
+        'scripts.fetch_notice_attachments',
+        'scripts.download_kstartup_targets',
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[
+        'streamlit',
+        'flask',
+        'gspread',
+        'google',
+        'googleapiclient',
+        'pytest',
+        'respx',
+        'playwright',
+        'tkinter',
+    ],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='지원사업_공고첨부_받기',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
