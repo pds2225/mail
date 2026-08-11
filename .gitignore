@@ -104,6 +104,9 @@ downloads/
 # 빌드/익스포트 산출물
 *.zip
 !dist/지원사업_공고첨부_받기_설치.zip
+!dist/지원사업_공고첨부_받기_exe.zip
+*.exe
+!dist/지원사업_공고첨부_받기.exe
 
 # raw_store 런타임 저장물(원문 재현용, 커밋 대상 아님)
 data/raw/
