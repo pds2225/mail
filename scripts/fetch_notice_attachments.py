@@ -36,6 +36,22 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# Windows 한글 깨짐 방지 — import/에러 출력보다 먼저 고정
+os.environ.setdefault("PYTHONUTF8", "1")
+os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+
+
+def _force_utf8_console() -> None:
+    """cp949 콘솔에서 한글·이모지 출력이 깨지거나 죽지 않게 한다."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+_force_utf8_console()
+
 try:
     from dotenv import load_dotenv
 
@@ -48,14 +64,6 @@ os.environ.setdefault("BIZINFO_API_KEY", "dummy")
 os.environ.setdefault("ANTHROPIC_API_KEY", "dummy")
 os.environ.setdefault("GMAIL_ADDRESS", "dummy@example.com")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "dummy")
-
-def _force_utf8_console() -> None:
-    """cp949 콘솔에서 한글·이모지 출력이 UnicodeEncodeError 로 죽지 않게 한다."""
-    for stream in (sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
 
 
 def _git(*args: str) -> subprocess.CompletedProcess | None:
@@ -113,7 +121,6 @@ def selfcheck_repo_files(verbose: bool = False) -> int:
     return 0
 
 
-_force_utf8_console()
 if "--selfcheck" in sys.argv:      # 런처(cmd)가 실행 직전에 부르는 진단 전용 모드
     raise SystemExit(selfcheck_repo_files(verbose=True))
 selfcheck_repo_files()             # 평소 실행에서도 무거운 import 전에 먼저 점검

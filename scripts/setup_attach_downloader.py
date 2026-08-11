@@ -19,6 +19,15 @@ import sys
 import venv
 from pathlib import Path
 
+# Windows cp949 콘솔에서 한글·이모지가 깨지지 않게 UTF-8 로 고정
+os.environ.setdefault("PYTHONUTF8", "1")
+os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 ROOT = Path(__file__).resolve().parents[1]
 VENV_DIR = ROOT / ".venv"
 REQ = ROOT / "scripts" / "requirements-attach.txt"
@@ -214,7 +223,12 @@ def main() -> int:
     args = parser.parse_args()
     if args.check:
         return 0 if is_ready() else 1
-    return run_setup(verbose=not args.quiet)
+    try:
+        return run_setup(verbose=not args.quiet)
+    except Exception as exc:  # noqa: BLE001 — 설치 실패 시 한글 안내를 남긴다
+        print(f"\n[오류] 설치 중 예외: {type(exc).__name__}: {exc}")
+        print("위 메시지를 캡처해 보내 주세요. (PYTHONUTF8=1 로 한글 출력을 고정했습니다)")
+        return 1
 
 
 if __name__ == "__main__":
