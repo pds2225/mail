@@ -1,14 +1,14 @@
-# Mail 모니터 예비창업 공고 파이프라인 — 야간 자동개발 실행 프롬프트
+﻿# Mail 모니터 예비창업 공고 파이프라인 — 야간 자동개발 실행 프롬프트
 
 > 이 문서는 **야간 자동개발용 실행 프롬프트**다.
-> 기준 요구사항은 반드시 `docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 먼저 읽고 따른다.
+> 기준 요구사항은 반드시 `docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 먼저 읽고 따른다.
 > 목적은 계획서만 작성하는 것이 아니라, 저장소를 실제 분석하여 가능한 범위까지 구현·테스트하고, 아침에 사용자가 한 번에 검토·수정할 수 있는 결과를 남기는 것이다.
 
 ---
 
 # 0. 최우선 지시
 
-`docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 먼저 전체 읽고, 그 문서의 목적·판정기준·금지사항·아키텍처·테스트·KPI를 **상위 요구사항**으로 사용하라.
+`docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 먼저 전체 읽고, 그 문서의 목적·판정기준·금지사항·아키텍처·테스트·KPI를 **상위 요구사항**으로 사용하라.
 
 이번 작업에서는 계획만 작성하고 종료하지 마라.
 
@@ -585,7 +585,7 @@ P2 때문에 P0/P1 안정성을 훼손하지 마라.
 권장 파일명:
 
 ```text
-docs/AUTODEV_PRESTARTUP_NOTICE_RESULT.md
+docs/autodev/AUTODEV_PRESTARTUP_NOTICE_RESULT.md
 ```
 
 보고서는 다음 형식을 반드시 따른다.
@@ -711,7 +711,7 @@ test: add prestartup notice pipeline regression cases
 
 작업 종료 전 아래를 하나씩 확인한다.
 
-- [ ] `docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 기준 요구사항으로 사용했다.
+- [ ] `docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`를 기준 요구사항으로 사용했다.
 - [ ] 계획만 작성하고 끝내지 않고 실제 코드를 수정했다.
 - [ ] 본문 멘토링/컨설팅/교육 단독 제외 문제를 수정했다.
 - [ ] 실제 신청자와 수혜자를 구분했다.
@@ -751,7 +751,7 @@ test: add prestartup notice pipeline regression cases
 
 외부 의존성 또는 운영 위험 때문에 실행하지 못하는 부분만 명확히 기록하고 다른 독립 작업은 계속 진행하라.
 
-최종적으로 사용자가 아침에 `docs/AUTODEV_PRESTARTUP_NOTICE_RESULT.md` 하나만 읽어도 다음 사항을 모두 알 수 있어야 한다.
+최종적으로 사용자가 아침에 `docs/autodev/AUTODEV_PRESTARTUP_NOTICE_RESULT.md` 하나만 읽어도 다음 사항을 모두 알 수 있어야 한다.
 
 1. 무엇이 실제로 바뀌었는가
 2. 무엇이 테스트됐는가

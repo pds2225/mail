@@ -1,4 +1,4 @@
-# Monitor Engineering Runbook
+﻿# Monitor Engineering Runbook
 
 `monitor.py` is the support-notice pipeline for the Mail project. It collects notices,
 deduplicates them, filters them by date and recipient group rules, summarizes matching
@@ -22,7 +22,7 @@ site configuration, or matching policy.
 
 Optional raw notice archive (local PC): when `raw_store_enabled` is true in
 `config/settings.json`, new notice metadata and enriched detail HTML are saved under
-`data/raw/YYYY-MM-DD/`. See `docs/RAW_STORE.md`.
+`data/raw/YYYY-MM-DD/`. See `docs/analysis/RAW_STORE.md`.
 
 ## Public Configuration Interfaces
 
@@ -173,7 +173,7 @@ python3 scripts/core_sources_checklist.py --json
 python3 scripts/core_sources_checklist.py --live   # optional network fetch
 ```
 
-See `docs/CORE_SOURCES_CHECKLIST.md`. Complements `scripts/recall_zero_gate.py` (recall
+See `docs/ops/CORE_SOURCES_CHECKLIST.md`. Complements `scripts/recall_zero_gate.py` (recall
 pattern regression), which checks matching logic rather than collector completeness.
 
 Do not run `python3 monitor.py` for verification unless an operator explicitly approves

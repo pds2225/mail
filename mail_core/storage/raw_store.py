@@ -1,6 +1,6 @@
-"""공고 원문·메타 로컬 저장 — 누락 재현·재파싱·디버깅용.
+﻿"""공고 원문·메타 로컬 저장 — 누락 재현·재파싱·디버깅용.
 
-설계: docs/RAW_STORE.md
+설계: docs/analysis/RAW_STORE.md
 """
 from __future__ import annotations
 

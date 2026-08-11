@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Loop verification entrypoint — Auto Dev L1 검증 단일 진입점.
 
 eval_rubric.md 의 V1–V3·V9(및 옵션 V6)를 실행한다.
@@ -37,7 +37,7 @@ WORK_ASSETS = (
     "auto_dev/exit_conditions.md",
     "auto_dev/human_gates.md",
     "auto_dev/defects_inbox.md",
-    "docs/LOOP_ENGINEERING_AUTO_DEV.md",
+    "docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md",
     "scripts/auto_dev_queue.py",
     "scripts/auto_dev_executor.py",
     "scripts/decompose_defects.py",

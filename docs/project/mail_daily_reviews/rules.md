@@ -1,4 +1,4 @@
-# MDR 규칙 — Mail Daily Review (L규칙 스타일)
+﻿# MDR 규칙 — Mail Daily Review (L규칙 스타일)
 
 `D:\.omc\agent-learning\lessons.md` 의 L규칙처럼, **매일 발송 산출물**을 규칙 ID로 전수 대조한다.
 구현: `mail_core/operations/daily_review.py` / `scripts/mail_daily_review.py`.
@@ -16,7 +16,7 @@
 | 계층 | 소스 | 어디에 쓰이나 | FAIL/무시 |
 |------|------|---------------|-----------|
 | **핵심 3** | bizinfo · kstartup · nipa | MDR-002 · 사람 일일 판정 1차 | `item_count==0` → FAIL |
-| **2군** | kita 등 | `docs/CORE_SOURCES_CHECKLIST.md` **4대**·`PRIORITY_SOURCE_IDS` | 사람 리뷰에서 핵심과 동급 FAIL 금지 · `send_hold=false`면 한 줄만 |
+| **2군** | kita 등 | `docs/ops/CORE_SOURCES_CHECKLIST.md` **4대**·`PRIORITY_SOURCE_IDS` | 사람 리뷰에서 핵심과 동급 FAIL 금지 · `send_hold=false`면 한 줄만 |
 | **비핵심 P0** | mof·kosme·지역·imp 등 | coverage/P0 알림 | 매일 ignore 가능 · 주 1회 클러스터만 |
 
 PARTIAL(spike·DATE_PARSE 등)은 0건이 아니면 MDR overall FAIL이 아니다. 리포트 **WARN** 섹션에만 남긴다.

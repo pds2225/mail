@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Mail 프로젝트 Loop Engineering 루프 정의. docs/LOOP_ENGINEERING_AUTO_DEV.md 참고.",
+  "description": "Mail 프로젝트 Loop Engineering 루프 정의. docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md 참고.",
   "defaults": {
     "max_retry": 2,
     "protected_files": ["monitor.py", "streamlit_app.py", ".env", ".env.example"],
@@ -158,7 +158,7 @@
       ],
       "memory": [
         "docs/CUSTOMER_INTAKE.md",
-        "docs/HANDOFF_PROMPT.md",
+        "docs/autodev/HANDOFF_PROMPT.md",
         "config/groups.json direction notes"
       ],
       "exit": {

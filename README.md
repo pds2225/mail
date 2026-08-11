@@ -1,4 +1,4 @@
-# 📬 Mail — 정부지원사업 공고를 대신 찾아 메일로 알려주는 프로그램
+﻿# 📬 Mail — 정부지원사업 공고를 대신 찾아 메일로 알려주는 프로그램
 
 > 한 줄 요약: **여러 지원사업 사이트를 매일 자동으로 돌아다니며, 우리 회사에 맞는 공고만 골라서 이메일로 보내주는** 자동화 도구입니다.
 
@@ -119,10 +119,10 @@ python monitor.py
 - 비밀번호·API 키는 화면에 출력하거나 코드에 넣지 않습니다.
 - `main` 브랜치에 바로 올리지 않고, 작업 브랜치 → 검증 → PR 순서로 반영합니다.
 - 현재 Gmail 발송 방식은 소규모용입니다. 안정 운영이 필요하면 Resend·SendGrid·Postmark 같은 이메일 API 전환을 권장합니다.
-- 개발자용 모니터 파이프라인·사이트 수집기·dry-run 점검 절차는 `docs/MONITOR_ENGINEERING_RUNBOOK.md`를 참고하세요.
+- 개발자용 모니터 파이프라인·사이트 수집기·dry-run 점검 절차는 `docs/ops/MONITOR_ENGINEERING_RUNBOOK.md`를 참고하세요.
 
 ### Auto Dev Queue (Loop Engineering)
-- 설계: `docs/LOOP_ENGINEERING_AUTO_DEV.md` — 사람이 에이전트를 매번 지시하지 않고 **루프가 지시**한다.
+- 설계: `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md` — 사람이 에이전트를 매번 지시하지 않고 **루프가 지시**한다.
 - 실행: GitHub Actions → "Auto Dev Queue" / 로컬 `DRY_RUN=true python3 scripts/auto_dev_queue.py`
 - 검증: `python3 scripts/loop_verify.py` · 드리프트 `python3 scripts/loop_verify.py --drift`
 - 안전 실행기: 문서·검토 NOOP은 `scripts/auto_dev_executor.py`가 자동 DONE (허위 DONE 아님)

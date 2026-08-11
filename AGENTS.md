@@ -1,4 +1,4 @@
-# AGENTS.md
+﻿# AGENTS.md
 
 ## Cursor Cloud specific instructions
 
@@ -24,7 +24,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 
 - **Unit tests:** `python3 -m pytest tests/test_monitor.py -v` (API 키 불필요)
 - **Integration tests:** `python3 tests/test_fetch.py` (BIZINFO_API_KEY 필요)
-- **4대 소스 완성 게이트:** `python3 scripts/core_sources_checklist.py` (기업마당·K-Startup·NIPA·KITA, `docs/CORE_SOURCES_CHECKLIST.md`)
+- **4대 소스 완성 게이트:** `python3 scripts/core_sources_checklist.py` (기업마당·K-Startup·NIPA·KITA, `docs/ops/CORE_SOURCES_CHECKLIST.md`)
 - **Recall 게이트:** `python3 scripts/recall_zero_gate.py` (판정 로직 누락 패턴, checklist와 별도)
 
 ### Key Gotchas
@@ -51,7 +51,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 
 ### Auto Dev Queue (Loop Engineering)
 
-사람 개입을 최소화한 방치형 자동개발. 설계: `docs/LOOP_ENGINEERING_AUTO_DEV.md`
+사람 개입을 최소화한 방치형 자동개발. 설계: `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md`
 
 | 파일 | 역할 |
 |------|------|

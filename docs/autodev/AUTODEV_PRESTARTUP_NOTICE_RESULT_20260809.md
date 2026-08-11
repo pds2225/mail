@@ -1,8 +1,8 @@
-# Mail 모니터 예비창업 공고 파이프라인 — 최종 결과보고서 (2026-08-09)
+﻿# Mail 모니터 예비창업 공고 파이프라인 — 최종 결과보고서 (2026-08-09)
 
 > **작업 일시**: 2026-08-09 00:00~16:00
 > **작업 브랜치**: `feat/prestartup-notice-pipeline-v3`
-> **기준 문서**: `docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`, `docs/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md`, `Downloads/mail_20260809.md`, `Downloads/mail_20260809_2.md`, `Downloads/mail_20260809_3.md`, `Downloads/mail_20260809_4.md`
+> **기준 문서**: `docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`, `docs/autodev/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md`, `Downloads/mail_20260809.md`, `Downloads/mail_20260809_2.md`, `Downloads/mail_20260809_3.md`, `Downloads/mail_20260809_4.md`
 
 ---
 
@@ -41,7 +41,7 @@
 | `tests/test_filter_accuracy_r2.py` | CONSULTING_ONLY 정책 반영 | 회귀 수정 | 낮음 |
 | `tests/test_monitor_ops.py` | dedup 테스트 link 분리 | 회귀 수정 | 낮음 |
 | `scripts/validate_golden.py` | 실데이터 검증 스크립트 신규 | MILESTONE C | 낮음 |
-| `docs/AUTODEV_PRESTARTUP_NOTICE_RESULT_20260809.md` | 결과보고서 | 문서 | 낮음 |
+| `docs/autodev/AUTODEV_PRESTARTUP_NOTICE_RESULT_20260809.md` | 결과보고서 | 문서 | 낮음 |
 
 ---
 

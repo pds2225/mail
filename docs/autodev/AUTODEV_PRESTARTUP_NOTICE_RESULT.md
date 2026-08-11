@@ -1,8 +1,8 @@
-# Mail 모니터 예비창업 공고 파이프라인 — 야간 작업 결과보고서
+﻿# Mail 모니터 예비창업 공고 파이프라인 — 야간 작업 결과보고서
 
 > **작업 일시**: 2026-08-08 00:00~
 > **작업 브랜치**: `feat/prestartup-notice-pipeline-v2`
-> **기준 문서**: `docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`, `docs/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md`
+> **기준 문서**: `docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md`, `docs/autodev/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md`
 
 ---
 
@@ -135,7 +135,7 @@ python -m pytest tests/test_monitor.py -x -q --tb=short
 2. grp_prestartup_ai의 support_types에서 "컨설팅·교육·상담","투자" 제거 검토
 3. P1 구현 시작: 소스 상태관리, canonical_notice_id, 크로스소스 중복
 
-기준 문서: docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md, docs/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md
+기준 문서: docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md, docs/autodev/AI_PRESTARTUP_NOTICE_AUTODEV_PROMPT.md
 작업 브랜치: feat/prestartup-notice-pipeline-v2
 테스트: python -m pytest tests/test_monitor.py -x -q
 ```

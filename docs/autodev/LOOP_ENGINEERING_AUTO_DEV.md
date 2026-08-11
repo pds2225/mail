@@ -1,4 +1,4 @@
-# Mail 프로젝트 — Loop Engineering 자동개발 시스템
+﻿# Mail 프로젝트 — Loop Engineering 자동개발 시스템
 
 > 셀렉트스타 뉴스레터(2026-07 3주차)의 **루프 엔지니어링** 개념을
 > 기존 Auto Dev Queue·정확도 하네스·게이트 스크립트 위에 얹은 설계서.
@@ -249,7 +249,7 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 
 | Phase | 산출물 | 사람 |
 |-------|--------|------|
-| **P0** | `docs/LOOP_ENGINEERING_AUTO_DEV.md`, `auto_dev/*`, `loop_verify.py`, 큐·RULES 연동 | ✅ |
+| **P0** | `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md`, `auto_dev/*`, `loop_verify.py`, 큐·RULES 연동 | ✅ |
 | **P1** | GHA drift/verify 게이트, Summary 루프 5요소 | ✅ |
 | **P2** | 안전 실행기(`auto_dev_executor`) — 문서 NOOP/허용 패치 자동 DONE; FIX TASK | ✅ |
 | **P3** | L2 `decompose_defects.py` — G1 `--approve` 후 TASK 분해 | ✅ (G1 훅) |
@@ -274,8 +274,8 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 
 - `docs/project/RULES.md` — 안전규칙
 - `docs/project/TASKS.md` — L1 입력 큐
-- `docs/mail_accuracy_orchestrator_plan.md` — L2 accuracy 파이프라인
-- `docs/CORE_SOURCES_CHECKLIST.md` — 4대 소스 게이트
+- `docs/analysis/mail_accuracy_orchestrator_plan.md` — L2 accuracy 파이프라인
+- `docs/ops/CORE_SOURCES_CHECKLIST.md` — 4대 소스 게이트
 - `AGENTS.md` — Cloud Agent 운영 메모
 
 ---

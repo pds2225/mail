@@ -1,6 +1,6 @@
-# Mail 모니터 공고 수집·통합·예비창업 매칭 아키텍처 — 최종 실행계획서
+﻿# Mail 모니터 공고 수집·통합·예비창업 매칭 아키텍처 — 최종 실행계획서
 
-> **작성 근거**: `docs/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md` 마스터 프롬프트 §22 출력 형식에 따라 작성  
+> **작성 근거**: `docs/autodev/AI_PRESTARTUP_NOTICE_MASTER_PROMPT.md` 마스터 프롬프트 §22 출력 형식에 따라 작성  
 > **코드 분석 범위**: `monitor.py`(7,434줄), `mail_core/` 전 모듈(24개 파일), `config/` 3개 파일, `tests/test_monitor.py`(887줄)  
 > **분석일**: 2026-08-07
 

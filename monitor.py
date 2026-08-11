@@ -1,4 +1,4 @@
-"""수출·지원사업 모니터링 에이전트 v6
+﻿"""수출·지원사업 모니터링 에이전트 v6
 기능: 수집 → 중복제거(주관기관 우선) → 날짜필터(D-1) → 그룹별 조건필터 → Claude요약 → 발송
 설정: config/sites.json / config/groups.json / config/settings.json / var/state/seen_ids.json
 """
@@ -2095,7 +2095,7 @@ def load_settings() -> dict:
         #   strict=제외(검토대기) / recall=신청키워드·마감 살아있는 것만 포함 / all=전부 포함
         #   None이면 legacy include_date_unknown 으로 결정(True→all, False→strict).
         "date_unknown_policy": None,
-        # 원문 저장(PC 로컬): docs/RAW_STORE.md
+        # 원문 저장(PC 로컬): docs/analysis/RAW_STORE.md
         "raw_store_enabled": False,
         "raw_store_retention_days": 30,
         "raw_store_max_detail_bytes": 800_000,

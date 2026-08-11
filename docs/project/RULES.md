@@ -1,4 +1,4 @@
-# Auto Dev Queue — RULES (Vercel Mail 프로젝트 전용)
+﻿# Auto Dev Queue — RULES (Vercel Mail 프로젝트 전용)
 
 > 이 파일은 자동개발 큐가 Vercel Mail 프로젝트에서 준수해야 할 안전규칙을 정의합니다.
 
@@ -127,7 +127,7 @@ docs/project/done_tasks.md
 docs/project/failed_tasks.md
 docs/project/blocked_tasks.md
 auto_dev/*
-docs/LOOP_ENGINEERING_AUTO_DEV.md
+docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md
 scripts/*
 .github/workflows/auto-dev-queue.yml
 .github/workflows/monitor.yml
@@ -145,7 +145,7 @@ docs/project/mail_daily_reviews/*
 
 ## 8. Loop Engineering 규칙
 
-설계서: `docs/LOOP_ENGINEERING_AUTO_DEV.md`  
+설계서: `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md`  
 작업 자산: `auto_dev/loops.json`, `eval_rubric.md`, `exit_conditions.md`, `human_gates.md`
 
 | # | 규칙 |

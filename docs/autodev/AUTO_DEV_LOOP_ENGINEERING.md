@@ -1,6 +1,6 @@
-# Mail 프로젝트 자동개발 시스템 — 루프 엔지니어링 설계
+﻿# Mail 프로젝트 자동개발 시스템 — 루프 엔지니어링 설계
 
-> **상태:** 보조 설계 문서. **구현·운영 기준은 `docs/LOOP_ENGINEERING_AUTO_DEV.md`** (main에 병합된 L1/L2 루프, `loops.json`, `auto_dev_executor.py`).
+> **상태:** 보조 설계 문서. **구현·운영 기준은 `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md`** (main에 병합된 L1/L2 루프, `loops.json`, `auto_dev_executor.py`).
 > **목표:** 사람이 매번 에이전트에게 지시하지 않고, **에이전트를 돌리는 루프**를 설계해 TASK 큐·검증·PR까지 무인으로 이어지게 한다.
 > **원칙:** 판단 기준은 재사용 가능한 **작업 자산(work assets)** 에 담고, 루프 전체가 최적화 단위가 된다.
 
@@ -20,7 +20,7 @@ Mail 프로젝트에는 이미 루프의 조각이 있다.
 - **큐:** `docs/project/TASKS.md`, `scripts/auto_dev_queue.py`, `.github/workflows/auto-dev-queue.yml`
 - **안전 규칙:** `docs/project/RULES.md`
 - **검증 게이트:** `scripts/recall_zero_gate.py`, `scripts/core_sources_checklist.py`, `test_monitor.py`
-- **정확도 루프(별도 트랙):** `docs/mail_accuracy_orchestrator_plan.md`
+- **정확도 루프(별도 트랙):** `docs/analysis/mail_accuracy_orchestrator_plan.md`
 
 이 설계는 조각을 **하나의 루프 스택**으로 묶고, 사람 개입을 **명시적 게이트 3곳**으로 제한한다.
 
@@ -264,7 +264,7 @@ TASK 등록 시 제목 접두로 프로필 추론:
 
 ### Phase A — 지금 (이 PR)
 
-- [x] 설계 문서 (`docs/AUTO_DEV_LOOP_ENGINEERING.md`)
+- [x] 설계 문서 (`docs/autodev/AUTO_DEV_LOOP_ENGINEERING.md`)
 - [x] `auto_dev/loop_config.json`, `task_profiles.json`, `work_assets.json`
 - [x] `scripts/loop_verify.py` — 게이트 실행기
 - [x] `scripts/loop_runner.py` — TASK 프로필·종료 조건 골격
@@ -311,4 +311,4 @@ python3 scripts/loop_drift_check.py
 ## 참고
 
 - [Addy Osmani — Loop Engineering](https://addyosmani.com/blog/loop-engineering/)
-- 프로젝트 내부: `docs/mail_accuracy_orchestrator_plan.md`, `docs/project/RULES.md`, `AGENTS.md`
+- 프로젝트 내부: `docs/analysis/mail_accuracy_orchestrator_plan.md`, `docs/project/RULES.md`, `AGENTS.md`

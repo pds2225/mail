@@ -1,4 +1,4 @@
-# 사이트 추가 구현 계획
+﻿# 사이트 추가 구현 계획
 
 ## 데이터 흐름
 
@@ -48,7 +48,7 @@ flowchart LR
 - `link_arg_re`: `onclick` 또는 `href` 안의 ID를 정규식 그룹으로 추출할 때 사용
 - 합성 규칙이 없는 비상세 링크는 기존 동작처럼 skip
 
-자세한 수집기 계약과 운영 점검은 `docs/MONITOR_ENGINEERING_RUNBOOK.md`를 기준으로 확인합니다.
+자세한 수집기 계약과 운영 점검은 `docs/ops/MONITOR_ENGINEERING_RUNBOOK.md`를 기준으로 확인합니다.
 
 ## 검증 로직 (`web/lib/site-validation.ts`)
 

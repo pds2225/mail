@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """4대 핵심 소스(기업마당·K-Startup·NIPA·KITA) 완성 체크리스트.
 
 수집기 + 상세보강 + 오프라인 회귀테스트를 한 번에 판정한다.
@@ -9,7 +9,7 @@ Usage (PowerShell, D:\\mail):
   python scripts/core_sources_checklist.py --json
   python scripts/core_sources_checklist.py --live   # 네트워크 수집 실측 (API 키 필요)
 
-관련 문서: docs/CORE_SOURCES_CHECKLIST.md
+관련 문서: docs/ops/CORE_SOURCES_CHECKLIST.md
 """
 from __future__ import annotations
 
@@ -307,7 +307,7 @@ def main() -> int:
                 m2 = "OK" if row["ok"] else "NG"
                 print(f"  [{m2}] {row['label']}: {row['detail']}")
         if not out["ok"]:
-            print("\n→ NG 항목부터 수정. 전체: docs/CORE_SOURCES_CHECKLIST.md")
+            print("\n→ NG 항목부터 수정. 전체: docs/ops/CORE_SOURCES_CHECKLIST.md")
     return 0 if out["ok"] else 1
 
 

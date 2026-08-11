@@ -1,4 +1,4 @@
-"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
+﻿"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
@@ -15,7 +15,7 @@
 - 실제 이메일 발송 금지 (dry-run / draft-only 기준)
 - 기존 앱 파일 수정 금지
 - Mail 관련 Secret은 발송 기능 검증 전까지 미사용
-- 설계: docs/LOOP_ENGINEERING_AUTO_DEV.md
+- 설계: docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md
 """
 from __future__ import annotations
 
@@ -251,7 +251,7 @@ def preflight_check() -> list[str]:
         "auto_dev/eval_rubric.md",
         "auto_dev/exit_conditions.md",
         "auto_dev/human_gates.md",
-        "docs/LOOP_ENGINEERING_AUTO_DEV.md",
+        "docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md",
         "scripts/loop_verify.py",
         "scripts/auto_dev_executor.py",
         "scripts/decompose_defects.py",
