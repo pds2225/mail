@@ -1,18 +1,29 @@
-"""P2-6: Golden 데이터 기반 정확도 자동 검증 스크립트
+"""Golden 데이터 기반 검증 스크립트
 
-region_labels.jsonl (2046건)을 읽어 evaluate_notice() 결과와 대조하고
-정밀도/재현율을 측정한다.
+- region_labels.jsonl: 지역 정답지 (지역 ground truth, relevance 정답 아님)
+- feedback_labels.jsonl: O/X 피드백 (relevance ground truth, 소량)
+- unlabeled corpus: 정답 없이 INCLUDE/EXCLUDE 분포만 집계
+
+정밀도/재현율은 relevance 라벨이 있을 때만 계산하고,
+없으면 NOT_MEASURABLE이라고 명확히 표시한다.
 """
 import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
-from monitor import evaluate_notice, classify_deadline_status
+os_environ = __import__("os").environ
+os_environ.setdefault("BIZINFO_API_KEY", "dummy")
+os_environ.setdefault("ANTHROPIC_API_KEY", "dummy")
+os_environ.setdefault("GMAIL_ADDRESS", "dummy@example.com")
+os_environ.setdefault("GMAIL_APP_PASSWORD", "dummy")
+
+from monitor import evaluate_notice, classify_deadline_status  # noqa: E402
 
 
-def load_golden(path: str) -> list[dict]:
+def load_jsonl(path: str) -> list[dict]:
     items = []
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -22,21 +33,20 @@ def load_golden(path: str) -> list[dict]:
     return items
 
 
-def run_accuracy_check(golden_path: str, max_items: int = 200):
-    """Golden labels로 정확도를 측정한다."""
-    items = load_golden(golden_path)[:max_items]
+def load_group_config(group_id: str = "grp_prestartup_ai") -> dict | None:
+    """config/groups.json에서 실제 그룹 설정을 읽는다."""
+    groups_path = ROOT / "config" / "groups.json"
+    if not groups_path.exists():
+        return None
+    groups = json.loads(groups_path.read_text(encoding="utf-8"))
+    for g in groups:
+        if g.get("id") == group_id:
+            return g
+    return None
 
-    group = {
-        "id": "grp_prestartup_ai",
-        "or_keywords": ["AI 스타트업", "인공지능 스타트업", "AI 솔루션", "예비창업", "창업예정"],
-        "and_keyword_groups": [["AI", "창업"], ["AI", "스타트업"], ["AI", "사업화"]],
-        "exclude_keywords": ["성료", "지침 안내", "결과 발표", "보도자료", "채용", "재직자"],
-        "support_types": ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"],
-        "applicant_region_city": "서울특별시",
-        "applicant_region_label": "서울",
-        "extra_eligible_regions": ["인천", "경기", "수도권"],
-    }
 
+def run_corpus_validation(items: list[dict], group: dict) -> dict:
+    """Unlabeled corpus: INCLUDE/EXCLUDE/CONDITIONAL 분포만 집계 (FP/FN 아님)."""
     results = {
         "total": len(items),
         "auto_include": 0,
@@ -45,8 +55,6 @@ def run_accuracy_check(golden_path: str, max_items: int = 200):
         "exclude_reasons": {},
         "support_field_distribution": {},
         "deadline_distribution": {},
-        "fp_cases": [],
-        "fn_cases": [],
     }
 
     for item in items:
@@ -81,46 +89,98 @@ def run_accuracy_check(golden_path: str, max_items: int = 200):
         results["support_field_distribution"][support] = results["support_field_distribution"].get(support, 0) + 1
         results["deadline_distribution"][deadline_status] = results["deadline_distribution"].get(deadline_status, 0) + 1
 
-        # FP: 교육/멘토링 단독인데 포함
-        if any(kw in support for kw in ["교육", "멘토링", "컨설팅", "행사"]):
-            if is_relevant:
-                results["fp_cases"].append({"id": item.get("id"), "title": notice["title"][:50], "support": support})
-
-        # FN: 사업화/R&D인데 제외 (지역 외 이유)
-        if any(kw in support for kw in ["사업화", "기술개발", "R&D"]):
-            if not is_relevant and "REGION_NOT_ELIGIBLE" not in reasons and "CLOSED_DEADLINE" not in reasons:
-                results["fn_cases"].append({"id": item.get("id"), "title": notice["title"][:50], "support": support, "reasons": reasons})
-
     return results
 
 
+def run_labeled_benchmark(feedback_path: str, group: dict) -> dict:
+    """Labeled benchmark: O/X 피드백으로 precision/recall 계산."""
+    items = load_jsonl(feedback_path)
+    if not items:
+        return {"status": "NOT_MEASURABLE", "reason": "no feedback labels found", "labeled_count": 0}
+
+    tp = fp = tn = fn = 0
+    for item in items:
+        verdict = item.get("verdict", "").upper()
+        if verdict not in ("O", "X"):
+            continue
+        notice = {
+            "id": item.get("id", ""),
+            "title": item.get("title", ""),
+            "description": "",
+            "link": "",
+            "author": "",
+            "deadline": item.get("deadline", ""),
+            "source": item.get("source", ""),
+            "is_aggregator": False,
+            "posted_date": item.get("posted_date", ""),
+            "region_field": item.get("region_field", ""),
+            "support_field": item.get("support_field", ""),
+        }
+        result = evaluate_notice(notice, group)
+        predicted = result.get("is_relevant", False)
+        actual = verdict == "O"
+
+        if predicted and actual:
+            tp += 1
+        elif predicted and not actual:
+            fp += 1
+        elif not predicted and actual:
+            fn += 1
+        else:
+            tn += 1
+
+    total = tp + fp + tn + fn
+    if total == 0:
+        return {"status": "NOT_MEASURABLE", "reason": "no valid O/X labels", "labeled_count": 0}
+
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+
+    return {
+        "status": "MEASURED",
+        "labeled_count": total,
+        "tp": tp, "fp": fp, "tn": tn, "fn": fn,
+        "precision": round(precision, 4),
+        "recall": round(recall, 4),
+        "f1": round(f1, 4),
+    }
+
+
 if __name__ == "__main__":
-    golden_path = str(Path(__file__).resolve().parent.parent / "data" / "golden" / "region_labels.jsonl")
-    results = run_accuracy_check(golden_path, max_items=200)
+    # 실제 그룹 설정 사용 (하드코딩 금지)
+    group = load_group_config("grp_prestartup_ai")
+    if not group:
+        print("ERROR: grp_prestartup_ai not found in config/groups.json")
+        sys.exit(1)
 
-    print("\n=== P2-6: 정확도 자동 검증 결과 ===")
-    print(f"총 검증: {results['total']}건")
-    print(f"자동 포함: {results['auto_include']}건")
-    print(f"자동 제외: {results['auto_exclude']}건")
-
+    print("=== Unlabeled Corpus Validation (region_labels.jsonl) ===")
+    print("NOTE: region_labels.jsonl은 지역 정답지입니다. relevance ground truth가 아닙니다.")
+    region_path = str(ROOT / "data" / "golden" / "region_labels.jsonl")
+    region_items = load_jsonl(region_path)
+    corpus = run_corpus_validation(region_items, group)
+    print(f"총 검증: {corpus['total']}건")
+    print(f"INCLUDE: {corpus['auto_include']}건")
+    print(f"EXCLUDE: {corpus['auto_exclude']}건")
     print(f"\n제외 사유 분포:")
-    for reason, count in sorted(results["exclude_reasons"].items(), key=lambda x: -x[1]):
+    for reason, count in sorted(corpus["exclude_reasons"].items(), key=lambda x: -x[1]):
         print(f"  {reason}: {count}건")
-
     print(f"\n지원유형 분포:")
-    for support, count in sorted(results["support_field_distribution"].items(), key=lambda x: -x[1])[:10]:
+    for support, count in sorted(corpus["support_field_distribution"].items(), key=lambda x: -x[1])[:10]:
         print(f"  {support}: {count}건")
-
     print(f"\n마감 상태 분포:")
-    for status, count in sorted(results["deadline_distribution"].items(), key=lambda x: -x[1]):
+    for status, count in sorted(corpus["deadline_distribution"].items(), key=lambda x: -x[1]):
         print(f"  {status}: {count}건")
 
-    if results["fp_cases"]:
-        print(f"\n⚠️ False Positive ({len(results['fp_cases'])}건):")
-        for fp in results["fp_cases"][:5]:
-            print(f"  - {fp['id']}: {fp['title']} ({fp['support']})")
-
-    if results["fn_cases"]:
-        print(f"\n⚠️ False Negative ({len(results['fn_cases'])}건):")
-        for fn in results["fn_cases"][:5]:
-            print(f"  - {fn['id']}: {fn['title']} ({fn['support']}) - {fn['reasons']}")
+    print("\n=== Labeled Benchmark (feedback_labels.jsonl) ===")
+    feedback_path = str(ROOT / "data" / "golden" / "feedback_labels.jsonl")
+    labeled = run_labeled_benchmark(feedback_path, group)
+    print(f"상태: {labeled['status']}")
+    if labeled["status"] == "MEASURED":
+        print(f"라벨 수: {labeled['labeled_count']}건")
+        print(f"TP={labeled['tp']} FP={labeled['fp']} TN={labeled['tn']} FN={labeled['fn']}")
+        print(f"Precision: {labeled['precision']}")
+        print(f"Recall: {labeled['recall']}")
+        print(f"F1: {labeled['f1']}")
+    else:
+        print(f"사유: {labeled.get('reason', 'unknown')}")
