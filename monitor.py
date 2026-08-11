@@ -4154,7 +4154,7 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
 # 중복 제거 (주관기관 우선)
 # ══════════════════════════════════════════════════════════════════
 
-def dedup_items(items: list[dict]) -> list[dict]:
+def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
@@ -4164,11 +4164,16 @@ def dedup_items(items: list[dict]) -> list[dict]:
     - 동일 canonical ID면 동일 공고로 판정
 
     P2-A: 첨부파일 해시 기반 중복 보조
+
+    _stats: 선택적 collector — dedup 원인별 제거 건수를 기록한다.
+        duplicate_removed_total, same_source_duplicate_removed,
+        cross_source_duplicate_removed, attachment_duplicate_removed
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
     canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
     attachment_map: dict[str, dict] = {}  # attachment_hash → kept item
+    _s_title = _s_canonical = _s_attach = 0  # dedup 원인별 카운터
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -4217,6 +4222,7 @@ def dedup_items(items: list[dict]) -> list[dict]:
                              existing["source"], existing["title"][:20],
                              item["source"], item["title"][:20], canonical_id)
                 else:
+                    _s_canonical += 1
                     log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
                              existing["title"][:20], item["title"][:20], canonical_id)
             # P2-A: 첨부파일 해시로도 체크
@@ -4231,6 +4237,7 @@ def dedup_items(items: list[dict]) -> list[dict]:
                     log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
                 else:
+                    _s_attach += 1
                     log.info("첨부중복: '%s' 유지, '%s' 제거 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
             else:
@@ -4262,8 +4269,15 @@ def dedup_items(items: list[dict]) -> list[dict]:
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
             else:
+                _s_title += 1
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
+
+    # dedup 원인별 통계 전달
+    if _stats is not None:
+        _stats["same_source_duplicate_removed"] = _s_title
+        _stats["cross_source_duplicate_removed"] = _s_canonical
+        _stats["attachment_duplicate_removed"] = _s_attach
 
     # P2-D: 소스별 고유 공고 기여도 통계 계산
     source_stats: dict[str, dict] = {}
@@ -7059,7 +7073,8 @@ def execute_monitor(
         log.warning("소스 상태관리 실패(무시): %s", e)
 
     # ② 중복 제거
-    deduped = dedup_items(all_items)
+    dedup_stats: dict = {}
+    deduped = dedup_items(all_items, _stats=dedup_stats)
     dedup_removed = len(all_items) - len(deduped)
 
     # ②-1 POSSIBLE_DUPLICATE detection (확정 중복이 아닌 유사 공고 표시, 자동 merge 금지)
@@ -7480,8 +7495,12 @@ def execute_monitor(
         "p0_source_items_dropped": len(p0_dropped),
         # P2-5: 운영 KPI
         "admin_excluded_count": raw_dropped,
-        "same_source_dedup_count": len(all_items) - len(deduped),
-        "cross_source_dedup_count": sum(1 for it in deduped if it.get("_canonical_notice_id")),
+        "input_count": len(all_items),
+        "output_count": len(deduped),
+        "duplicate_removed_total": dedup_removed,
+        "same_source_dedup_count": dedup_stats.get("same_source_duplicate_removed", 0),
+        "cross_source_dedup_count": dedup_stats.get("cross_source_duplicate_removed", 0),
+        "attachment_dedup_count": dedup_stats.get("attachment_duplicate_removed", 0),
         "version_change_count": changed_count,
         "deadline_excluded_count": len(date_excluded),
         "possible_duplicate_count": possible_dup_count,
