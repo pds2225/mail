@@ -946,14 +946,16 @@ def _classify_notice_change(before: dict, after: dict) -> str:
         return "DEADLINE_EXTENDED"
 
     # 지원대상 변경 감지
-    old_target = str(before.get("target_field") or "")
-    new_target = str(after.get("target_field") or "")
+    # Live classify passes snapshots from `_notice_version_snapshot` (key: target),
+    # while unit helpers may still feed raw items (key: target_field). Accept both.
+    old_target = str(before.get("target") or before.get("target_field") or "")
+    new_target = str(after.get("target") or after.get("target_field") or "")
     if old_target and new_target and old_target != new_target:
         return "TARGET_CHANGED"
 
-    # 신청 URL 변경 감지
-    old_url = str(before.get("link") or "")
-    new_url = str(after.get("link") or "")
+    # 신청 URL 변경 감지 (snapshot/raw 모두 link 키 사용; 없으면 url 폴백)
+    old_url = str(before.get("link") or before.get("url") or "")
+    new_url = str(after.get("link") or after.get("url") or "")
     if old_url and new_url and old_url != new_url:
         return "APPLICATION_URL_CHANGED"
 
@@ -6806,10 +6808,13 @@ def persist_completed_outbox(
 ) -> set[str]:
     """Commit completed deliveries to seen_ids, then acknowledge their encrypted records.
 
-    When ``only_if_cycle_complete`` is True (start-of-run recovery), only entries whose
-    delivery cycle is fully checkpointed are promoted. End-of-run callers leave the flag
-    False: this process already finished every group plan, so promoting is safe even if a
-    sibling group still has pending *recipients* (those retry from the encrypted outbox).
+    When ``only_if_cycle_complete`` is True (start-of-run recovery / single-group runs),
+    only entries whose delivery cycle is fully checkpointed are promoted. Full-group
+    end-of-run callers leave the flag False: that process already finished every group
+    plan, so promoting is safe even if a sibling group still has pending *recipients*
+    (those retry from the encrypted outbox). Single-group (``--group``) end-of-run MUST
+    keep the flag True and pass the unfiltered groups list — otherwise shared notice_ids
+    poison global seen_ids before the other groups are mailed.
     """
     completed = delivery_outbox.completed()
     if not completed:
@@ -7052,6 +7057,10 @@ def execute_monitor(
     groups   = load_groups()
     settings = load_settings()
     seen_ids = load_seen_ids()
+    # Cycle-complete gates must always see the full active group set. `--group` filters
+    # the send loop only — never the seen_ids promotion quorum (reopens #232 otherwise).
+    all_groups = list(groups)
+    single_group_mode = bool(group_id)
     if group_id:
         groups = [g for g in groups if g.get("id") == group_id]
         if not groups:
@@ -7072,7 +7081,7 @@ def execute_monitor(
         seen_ids = persist_completed_outbox(
             seen_ids,
             only_if_cycle_complete=True,
-            groups=groups,
+            groups=all_groups,
             settings=settings,
             watchlist=_wl_early,
             include_raw_all=include_raw_all,
@@ -7101,8 +7110,16 @@ def execute_monitor(
                 delivery_path=DELIVERY_STATE_PATH,
             )
             if _skip.get("skip"):
-                # cycle 완료 — 게이트에 걸렸던 completed outbox 도 여기서 강제 flush
-                seen_ids = persist_completed_outbox(seen_ids)
+                # Skip means *this run's* groups are done. Promote to global seen_ids only
+                # when the full multi-group cycle is checkpointed (critical with --group).
+                seen_ids = persist_completed_outbox(
+                    seen_ids,
+                    only_if_cycle_complete=True,
+                    groups=all_groups,
+                    settings=settings,
+                    watchlist=_wl_early,
+                    include_raw_all=include_raw_all,
+                )
                 log.info(
                     "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
                     _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
@@ -7579,8 +7596,19 @@ def execute_monitor(
                 )
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
+    # 단일 그룹(--group) run 은 "모든 그룹 plan 종료"가 아니므로 cycle 게이트를 유지한다.
     if effective_send and persist_seen:
-        seen_ids = persist_completed_outbox(seen_ids)
+        if single_group_mode:
+            seen_ids = persist_completed_outbox(
+                seen_ids,
+                only_if_cycle_complete=True,
+                groups=all_groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+            )
+        else:
+            seen_ids = persist_completed_outbox(seen_ids)
         commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용

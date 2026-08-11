@@ -191,3 +191,60 @@ def test_partial_group_a_complete_keeps_n1_deliverable_for_group_b(outbox_env):
     assert len(deliverable) == 1
     assert deliverable[0]["_change_type"] == "NEW"
     assert deliverable[0]["id"] == "n1"
+
+
+def test_single_group_mode_must_gate_persist_with_full_group_quorum(outbox_env):
+    """--group A end-of-run must keep cycle gate + full groups (not unconditional).
+
+    Concrete trigger (regression of #232 reopened by ``--group`` / workflow_dispatch
+    ``group_id``):
+      1. Single-group run mails shared notice n1 for A only and settles outbox.
+      2. Old code called ``persist_completed_outbox(seen)`` with
+         ``only_if_cycle_complete=False`` (or gated with groups=[A]) → n1∈seen_ids.
+      3. Later full run classifies n1 as already-seen → group B permanently misses it.
+
+    Fixed call shape: ``only_if_cycle_complete=True`` + unfiltered ``all_groups``.
+    """
+    date = "2026-08-11#am"
+    entry = outbox.upsert(
+        date=date,
+        tenant="default",
+        group="grp_a",
+        subject="[A] 1건",
+        body="body-a",
+        recipients=["a@example.test"],
+        notice_ids=["n1", "n2"],
+    )
+    outbox.settle(entry["id"], {"a@example.test"})
+    delivery_state.mark(
+        outbox_env["delivery"],
+        delivery_state.key(date, "grp_a", "a@example.test"),
+    )
+
+    # Fixed single-group end-of-run / start-of-run call shape.
+    seen = m.persist_completed_outbox(
+        set(),
+        only_if_cycle_complete=True,
+        groups=outbox_env["groups"],
+        settings=outbox_env["settings"],
+        watchlist=outbox_env["watchlist"],
+    )
+    assert seen == set()
+    assert "n1" not in m.load_seen_ids()
+    assert len(outbox.completed()) == 1
+
+    item = {
+        "id": "n1",
+        "title": "AI 지원사업",
+        "url": "https://example.test/n1",
+        "posted_date": "2026-08-10",
+        "deadline": "2026-08-20",
+        "application_period": {"display": "2026-08-20"},
+    }
+    deliverable, _updates = m.classify_notice_versions([item], seen, {})
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "NEW"
+
+    # Contrast: unconditional persist (full-group end-of-run) still promotes when asked.
+    seen_all = m.persist_completed_outbox(set())
+    assert seen_all == {"n1", "n2"}
