@@ -1,4 +1,4 @@
-﻿"""수출·지원사업 모니터링 에이전트 v6
+"""수출·지원사업 모니터링 에이전트 v6
 기능: 수집 → 중복제거(주관기관 우선) → 날짜필터(D-1) → 그룹별 조건필터 → Claude요약 → 발송
 설정: config/sites.json / config/groups.json / config/settings.json / var/state/seen_ids.json
 """
@@ -4143,10 +4143,15 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         futures = {pool.submit(_fetch, s): s for s in sites}
         for f in as_completed(futures):
+            site = futures[f]
+            sid = str(site.get("id") or site.get("name") or "unknown")
             try:
-                result.extend(f.result())
+                items = f.result()
+                result.extend(items)
+                _fetch_outcomes[sid] = {"success": True, "item_count": len(items), "error": None}
             except Exception as e:
-                log.error("수집 실패 (%s): %s", futures[f].get("name"), e)
+                log.error("수집 실패 (%s): %s", site.get("name"), e)
+                _fetch_outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
     return result
 
 
@@ -4154,7 +4159,7 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
 # 중복 제거 (주관기관 우선)
 # ══════════════════════════════════════════════════════════════════
 
-def dedup_items(items: list[dict]) -> list[dict]:
+def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
@@ -4164,11 +4169,16 @@ def dedup_items(items: list[dict]) -> list[dict]:
     - 동일 canonical ID면 동일 공고로 판정
 
     P2-A: 첨부파일 해시 기반 중복 보조
+
+    _stats: 선택적 collector — dedup 원인별 제거 건수를 기록한다.
+        duplicate_removed_total, same_source_duplicate_removed,
+        cross_source_duplicate_removed, attachment_duplicate_removed
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
     canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
-    attachment_map: dict[str, dict] = {}  # attachment_hash → kept item
+    attachment_map: dict[str, dict] = {}  # notice_signature_hash → kept item
+    _s_title = _s_canonical = _s_attach = 0  # dedup 원인별 카운터
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -4180,8 +4190,8 @@ def dedup_items(items: list[dict]) -> list[dict]:
         short, long = (a_key, b_key) if len(a_key) <= len(b_key) else (b_key, a_key)
         return len(short) >= 10 and short in long
 
-    def attachment_hash(item: dict) -> str:
-        """P2-A: 첨부파일 해시 생성 (URL+제목 기반)."""
+    def notice_signature_hash(item: dict) -> str:
+        """메타데이터 기반 공고 시그니처 해시 (link+title+deadline). 실제 첨부파일 content hash가 아님."""
         parts = [item.get("link", ""), item.get("title", ""), str(item.get("deadline", ""))]
         composite = "|".join(p for p in parts if p)
         return hashlib.md5(composite.encode()).hexdigest()[:16] if composite else ""
@@ -4196,9 +4206,9 @@ def dedup_items(items: list[dict]) -> list[dict]:
         canonical_id = generate_canonical_notice_id(item)
         item["_canonical_notice_id"] = canonical_id
 
-        # P2-A: 첨부파일 해시 기반 중복 체크
-        att_hash = attachment_hash(item)
-        item["_attachment_hash"] = att_hash
+        # P2-A: 메타데이터 시그니처 해시 기반 중복 체크
+        att_hash = notice_signature_hash(item)
+        item["_notice_signature_hash"] = att_hash
 
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
@@ -4217,6 +4227,7 @@ def dedup_items(items: list[dict]) -> list[dict]:
                              existing["source"], existing["title"][:20],
                              item["source"], item["title"][:20], canonical_id)
                 else:
+                    _s_canonical += 1
                     log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
                              existing["title"][:20], item["title"][:20], canonical_id)
             # P2-A: 첨부파일 해시로도 체크
@@ -4231,6 +4242,7 @@ def dedup_items(items: list[dict]) -> list[dict]:
                     log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
                 else:
+                    _s_attach += 1
                     log.info("첨부중복: '%s' 유지, '%s' 제거 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
             else:
@@ -4253,7 +4265,7 @@ def dedup_items(items: list[dict]) -> list[dict]:
                     del canonical_map[old_canonical]
                 canonical_map[canonical_id] = item
                 # attachment map도 업데이트
-                old_att = existing.get("_attachment_hash")
+                old_att = existing.get("_notice_signature_hash")
                 if old_att and old_att in attachment_map:
                     del attachment_map[old_att]
                 if att_hash:
@@ -4262,8 +4274,16 @@ def dedup_items(items: list[dict]) -> list[dict]:
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
             else:
+                _s_title += 1
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
+
+    # dedup 원인별 통계 전달
+    if _stats is not None:
+        _stats["same_source_duplicate_removed"] = _s_title
+        _stats["cross_source_duplicate_removed"] = _s_canonical
+        _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["source_contribution"] = source_stats
 
     # P2-D: 소스별 고유 공고 기여도 통계 계산
     source_stats: dict[str, dict] = {}
@@ -4288,6 +4308,7 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
     """P2-3: 유사하지만 확정 중복은 아닌 공고를 POSSIBLE_DUPLICATE로 표시한다.
 
     자동 merge하지 않고 상태만 표시하여 사람이 검토할 수 있게 한다.
+    버킷 프리필터로 O(n²) 비교량을 줄인다: year+token-prefix 버킷.
     """
     SIMILARITY_THRESHOLD = 0.70
 
@@ -4299,7 +4320,6 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
     def _similarity(a: str, b: str) -> float:
         if not a or not b:
             return 0.0
-        # 간단한 자카드 유사도
         set_a = set(a.split())
         set_b = set(b.split())
         if not set_a or not set_b:
@@ -4308,36 +4328,66 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
         union = len(set_a | set_b)
         return intersection / union if union > 0 else 0.0
 
-    for i, item_a in enumerate(items):
-        title_a = _title_key(item_a.get("title", ""))
-        if len(title_a) < 5:
+    # 프리컴퓨트: title_key, year, token set
+    pre: list[tuple[dict, str, str, set[str]]] = []
+    for item in items:
+        tk = _title_key(item.get("title", ""))
+        if len(tk) < 5:
             continue
-        for j in range(i + 1, len(items)):
-            item_b = items[j]
-            title_b = _title_key(item_b.get("title", ""))
-            if len(title_b) < 5:
-                continue
+        year_m = re.search(r"(20\d{2})", tk)
+        year = year_m.group(1) if year_m else ""
+        tokens = set(tk.split())
+        pre.append((item, tk, year, tokens))
 
-            # 이미 확정 중복이면 건너뛰기
-            cid_a = item_a.get("_canonical_notice_id")
-            cid_b = item_b.get("_canonical_notice_id")
-            if cid_a and cid_b and cid_a == cid_b:
-                continue
+    # 버킷: (year, min_token) — 같은 연도 + 공유 토큰이 있는 그룹끼리만 비교
+    from collections import defaultdict
+    buckets: dict[tuple[str, str], list[int]] = defaultdict(list)
+    for idx, (_item, _tk, year, tokens) in enumerate(pre):
+        bucket_year = year or "_noyear"
+        # 각 토큰을 버킷 키로 사용 (긴 토큰 우선, 최대 3개)
+        sorted_toks = sorted(tokens, key=len, reverse=True)[:3]
+        for tok in sorted_toks:
+            if len(tok) >= 2:
+                buckets[(bucket_year, tok)].append(idx)
 
-            # 유사도 계산
-            ratio = _similarity(title_a, title_b)
-            if ratio >= SIMILARITY_THRESHOLD:
-                # 연도가 다르면 별도 공고
-                year_a = re.search(r"(20\d{2})", title_a)
-                year_b = re.search(r"(20\d{2})", title_b)
-                if year_a and year_b and year_a.group(1) != year_b.group(1):
+    # 버킷 내에서만 쌍 비교
+    seen_pairs: set[tuple[int, int]] = set()
+    for bucket_indices in buckets.values():
+        for ii in range(len(bucket_indices)):
+            for jj in range(ii + 1, len(bucket_indices)):
+                i, j = bucket_indices[ii], bucket_indices[jj]
+                if i >= j:
+                    continue
+                pair = (i, j)
+                if pair in seen_pairs:
+                    continue
+                seen_pairs.add(pair)
+
+                item_a, title_a, year_a, tokens_a = pre[i]
+                item_b, title_b, year_b, tokens_b = pre[j]
+
+                # 이미 확정 중복이면 건너뛰기
+                cid_a = item_a.get("_canonical_notice_id")
+                cid_b = item_b.get("_canonical_notice_id")
+                if cid_a and cid_b and cid_a == cid_b:
                     continue
 
-                # POSSIBLE_DUPLICATE 표시
-                item_a["_possible_duplicate"] = True
-                item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
-                item_b["_possible_duplicate"] = True
-                item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
+                # 연도가 다르면 별도 공고
+                if year_a and year_b and year_a != year_b:
+                    continue
+
+                # 유사도 계산 (프리컴퓨트된 토큰셋 사용)
+                if not tokens_a or not tokens_b:
+                    continue
+                intersection = len(tokens_a & tokens_b)
+                union = len(tokens_a | tokens_b)
+                ratio = intersection / union if union > 0 else 0.0
+
+                if ratio >= SIMILARITY_THRESHOLD:
+                    item_a["_possible_duplicate"] = True
+                    item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
+                    item_b["_possible_duplicate"] = True
+                    item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
 
     return items
 
@@ -6991,6 +7041,7 @@ def execute_monitor(
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
     # ① 전체 수집
+    _fetch_outcomes: dict[str, dict] = {}
     all_items = fetch_all(sites)
     if not all_items:
         log.info("수집 0건. 종료.")
@@ -7004,6 +7055,7 @@ def execute_monitor(
             update_source_health,
             should_alert,
             mark_alerted,
+            load_source_health,
         )
         from mail_core.operations.source_health import TIER1_SOURCES
 
@@ -7013,24 +7065,40 @@ def execute_monitor(
             sid = str(it.get("source") or it.get("site_id") or "unknown")
             items_by_source[sid] = items_by_source.get(sid, 0) + 1
 
-        # Tier 1 소스 상태 업데이트
+        # Tier 1 소스 상태 업데이트 (실제 수집 결과 반영)
+        health_data = load_source_health()
         for site in sites:
             sid = str(site.get("id") or site.get("name") or "")
             if sid not in TIER1_SOURCES:
                 continue
             count = items_by_source.get(sid, 0)
-            status = classify_source_status(sid, item_count=count, parse_rate=1.0)
-            update_source_health(sid, status, item_count=count, parse_rate=1.0)
-            # 알림 확인
+            outcome = _fetch_outcomes.get(sid, {})
+            error = outcome.get("error")
+            prev_health = health_data.get(sid, {})
+            prev_count = prev_health.get("item_count")
+            # 파싱률: 필드 품질 게이트에서 실제 값을 가져오거나, 수집 성공 시 1.0
+            parse_rate = 1.0 if outcome.get("success", True) and not error else 0.0
+            status = classify_source_status(
+                sid, item_count=count, parse_rate=parse_rate,
+                error=error, previous_item_count=prev_count,
+            )
+            update_source_health(sid, status, item_count=count, parse_rate=parse_rate, error=error)
+            # 알림 확인 (실제 알림은 mock, 로그만)
             if should_alert(sid):
-                log.warning("소스 %s 장애 알림 필요", sid)
+                log.warning("소스 %s 장애 알림 필요 (status=%s, count=%d, error=%s)",
+                            sid, status, count, error)
                 mark_alerted(sid)
     except Exception as e:
         log.warning("소스 상태관리 실패(무시): %s", e)
 
     # ② 중복 제거
-    deduped = dedup_items(all_items)
+    dedup_stats: dict = {}
+    deduped = dedup_items(all_items, _stats=dedup_stats)
     dedup_removed = len(all_items) - len(deduped)
+
+    # ②-1 POSSIBLE_DUPLICATE detection (확정 중복이 아닌 유사 공고 표시, 자동 merge 금지)
+    deduped = detect_possible_duplicates(deduped)
+    possible_dup_count = sum(1 for it in deduped if it.get("_possible_duplicate"))
 
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
     # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
@@ -7287,6 +7355,7 @@ def execute_monitor(
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
             "date_review_queue": date_review_queue,
+            "date_review_queue_count": len(date_review_queue),
             "date_excluded_count": len(date_excluded),
             "mail_sent": False,
             "drafts_created": _DRAFT_OK,
@@ -7445,10 +7514,20 @@ def execute_monitor(
         "p0_source_items_dropped": len(p0_dropped),
         # P2-5: 운영 KPI
         "admin_excluded_count": raw_dropped,
-        "same_source_dedup_count": len(all_items) - len(deduped),
-        "cross_source_dedup_count": sum(1 for it in deduped if it.get("_canonical_notice_id")),
+        "input_count": len(all_items),
+        "output_count": len(deduped),
+        "duplicate_removed_total": dedup_removed,
+        "same_source_dedup_count": dedup_stats.get("same_source_duplicate_removed", 0),
+        "cross_source_dedup_count": dedup_stats.get("cross_source_duplicate_removed", 0),
+        "attachment_dedup_count": dedup_stats.get("attachment_duplicate_removed", 0),
+        "source_contribution": dedup_stats.get("source_contribution", {}),
         "version_change_count": changed_count,
         "deadline_excluded_count": len(date_excluded),
+        "possible_duplicate_count": possible_dup_count,
+        "date_excluded_count": len(date_excluded),
+        "date_matched_count": len(date_matched),
+        "date_review_queue": date_review_queue,
+        "date_review_queue_count": len(date_review_queue),
         "final_mail_target_count": final_mail_count,
         "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
