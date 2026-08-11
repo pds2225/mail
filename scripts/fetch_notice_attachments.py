@@ -630,6 +630,33 @@ def _load_config() -> dict:
         return {}
 
 
+def _default_out_dir() -> Path:
+    """설정이 비었을 때 쓰는 기본 저장 폴더(바탕화면/지원사업_공고첨부).
+
+    비개발자 PC·OneDrive 한글 바탕화면까지 후보로 본다.
+    """
+    home = Path.home()
+    candidates = [
+        home / "Desktop",
+        home / "OneDrive" / "Desktop",
+        home / "OneDrive" / "바탕 화면",
+        home / "바탕 화면",
+    ]
+    userprofile = os.environ.get("USERPROFILE", "").strip()
+    if userprofile:
+        up = Path(userprofile)
+        candidates.extend([
+            up / "Desktop",
+            up / "OneDrive" / "Desktop",
+            up / "OneDrive" / "바탕 화면",
+            up / "바탕 화면",
+        ])
+    for base in candidates:
+        if base.is_dir():
+            return base / "지원사업_공고첨부"
+    return home / "지원사업_공고첨부"
+
+
 def load_urls(args: argparse.Namespace) -> list[str]:
     urls: list[str] = []
     for raw in args.urls or []:
@@ -776,11 +803,8 @@ def main() -> int:
     if args.quiet:
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
-    out_dir_str = args.out_dir or _load_config().get("out_dir")
-    if not out_dir_str:
-        print("❌ 저장 폴더가 지정되지 않았습니다. --out-dir 또는 notice_download_config.json 을 확인하세요.")
-        return 2
-    out_dir = Path(out_dir_str).expanduser()
+    out_dir_str = (args.out_dir or _load_config().get("out_dir") or "").strip()
+    out_dir = Path(out_dir_str).expanduser() if out_dir_str else _default_out_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     all_results: list[FileResult] = []
