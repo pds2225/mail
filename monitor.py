@@ -4283,6 +4283,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         _stats["same_source_duplicate_removed"] = _s_title
         _stats["cross_source_duplicate_removed"] = _s_canonical
         _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["source_contribution"] = source_stats
 
     # P2-D: 소스별 고유 공고 기여도 통계 계산
     source_stats: dict[str, dict] = {}
@@ -7519,6 +7520,7 @@ def execute_monitor(
         "same_source_dedup_count": dedup_stats.get("same_source_duplicate_removed", 0),
         "cross_source_dedup_count": dedup_stats.get("cross_source_duplicate_removed", 0),
         "attachment_dedup_count": dedup_stats.get("attachment_duplicate_removed", 0),
+        "source_contribution": dedup_stats.get("source_contribution", {}),
         "version_change_count": changed_count,
         "deadline_excluded_count": len(date_excluded),
         "possible_duplicate_count": possible_dup_count,
