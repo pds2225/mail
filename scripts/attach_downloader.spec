@@ -1,16 +1,18 @@
-# PyInstaller onefile for Windows attachment downloader.
-# Built by .github/workflows/build-attach-exe.yml on windows-latest.
+# -*- mode: python ; coding: utf-8 -*-
+# PyInstaller onefile — 저장소 루트에서 실행:
+#   pyinstaller --noconfirm --clean scripts/attach_downloader.spec
+# (이 스펙 파일 위치=scripts/ 기준 상대경로)
 
 block_cipher = None
 
 a = Analysis(
-    ['scripts/attach_downloader_app.py'],
-    pathex=['.'],
+    ['attach_downloader_app.py'],
+    pathex=['..'],
     binaries=[],
     datas=[
-        ('mail_core', 'mail_core'),
-        ('scripts/requirements-attach.txt', 'scripts'),
-        ('scripts/notice_download_config.json', 'scripts'),
+        ('../mail_core', 'mail_core'),
+        ('requirements-attach.txt', 'scripts'),
+        ('notice_download_config.json', 'scripts'),
     ],
     hiddenimports=[
         'monitor',

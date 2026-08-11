@@ -41,7 +41,13 @@ jobs:
 
       - name: Build onefile exe
         run: |
-          pyinstaller --noconfirm --clean scripts/attach_downloader.spec
+          pyinstaller --noconfirm --clean --distpath dist --workpath build scripts/attach_downloader.spec
+          # ensure output under repo dist/
+          if (Test-Path "scripts\\dist\\지원사업_공고첨부_받기.exe") {
+            New-Item -ItemType Directory -Force -Path dist | Out-Null
+            Move-Item -Force "scripts\\dist\\지원사업_공고첨부_받기.exe" "dist\\지원사업_공고첨부_받기.exe"
+          }
+          Get-ChildItem -Recurse -Filter "*.exe" | Select-Object FullName, Length
 
       - name: List output
         shell: bash
