@@ -52,7 +52,7 @@ def main() -> int:
 
     code = int(fetch_main() or 0)
     # exe 더블클릭 시 창이 바로 닫히지 않게
-    if double_click or getattr(sys, "frozen", False):
+    if double_click:
         try:
             input("\nEnter 키를 누르면 종료합니다...")
         except Exception:
