@@ -7032,6 +7032,10 @@ def execute_monitor(
     deduped = dedup_items(all_items)
     dedup_removed = len(all_items) - len(deduped)
 
+    # ②-1 POSSIBLE_DUPLICATE detection (확정 중복이 아닌 유사 공고 표시, 자동 merge 금지)
+    deduped = detect_possible_duplicates(deduped)
+    possible_dup_count = sum(1 for it in deduped if it.get("_possible_duplicate"))
+
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
     # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
     # classify 를 retry 앞에 두면 FETCH 실패 스냅샷으로 허위 UPDATED(@vN) 재발송이 난다.
@@ -7450,6 +7454,7 @@ def execute_monitor(
         "cross_source_dedup_count": sum(1 for it in deduped if it.get("_canonical_notice_id")),
         "version_change_count": changed_count,
         "deadline_excluded_count": len(date_excluded),
+        "possible_duplicate_count": possible_dup_count,
         "date_excluded_count": len(date_excluded),
         "date_matched_count": len(date_matched),
         "date_review_queue": date_review_queue,
