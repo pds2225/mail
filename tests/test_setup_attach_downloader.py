@@ -29,6 +29,16 @@ def test_desktop_out_dir_prefers_existing_desktop(tmp_path, monkeypatch):
     assert _desktop_out_dir() == desk / "지원사업_공고첨부"
 
 
+def test_out_dir_helpers_agree_on_userprofile_onedrive_desktop(tmp_path, monkeypatch):
+    home = tmp_path / "home"
+    userprofile = tmp_path / "profile"
+    desk = userprofile / "OneDrive" / "Desktop"
+    desk.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
+    monkeypatch.setenv("USERPROFILE", str(userprofile))
+    assert _desktop_out_dir() == _default_out_dir() == desk / "지원사업_공고첨부"
+
+
 def test_write_config_creates_json(tmp_path, monkeypatch):
     cfg = tmp_path / "notice_download_config.json"
     monkeypatch.setattr("scripts.setup_attach_downloader.CONFIG", cfg)

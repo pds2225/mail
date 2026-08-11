@@ -26,8 +26,7 @@ $include = @(
     "scripts\setup_attach_downloader.py",
     "scripts\requirements-attach.txt",
     "scripts\notice_download_config.json",
-    "mail_core",
-    "config"
+    "mail_core"
 )
 
 Write-Host "준비 중: $stage"

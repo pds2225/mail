@@ -35,11 +35,18 @@ def _desktop_out_dir() -> Path:
         home / "OneDrive" / "Desktop",
         home / "OneDrive" / "바탕 화면",
         home / "바탕 화면",
-        Path(os.environ.get("USERPROFILE", "")) / "Desktop" if os.environ.get("USERPROFILE") else None,
-        Path(os.environ.get("USERPROFILE", "")) / "OneDrive" / "바탕 화면" if os.environ.get("USERPROFILE") else None,
     ]
+    userprofile = os.environ.get("USERPROFILE", "").strip()
+    if userprofile:
+        up = Path(userprofile)
+        candidates.extend([
+            up / "Desktop",
+            up / "OneDrive" / "Desktop",
+            up / "OneDrive" / "바탕 화면",
+            up / "바탕 화면",
+        ])
     for base in candidates:
-        if base and base.is_dir():
+        if base.is_dir():
             return base / "지원사업_공고첨부"
     return home / "지원사업_공고첨부"
 
