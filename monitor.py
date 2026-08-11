@@ -4143,10 +4143,15 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         futures = {pool.submit(_fetch, s): s for s in sites}
         for f in as_completed(futures):
+            site = futures[f]
+            sid = str(site.get("id") or site.get("name") or "unknown")
             try:
-                result.extend(f.result())
+                items = f.result()
+                result.extend(items)
+                _fetch_outcomes[sid] = {"success": True, "item_count": len(items), "error": None}
             except Exception as e:
-                log.error("수집 실패 (%s): %s", futures[f].get("name"), e)
+                log.error("수집 실패 (%s): %s", site.get("name"), e)
+                _fetch_outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
     return result
 
 
@@ -7035,6 +7040,7 @@ def execute_monitor(
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
     # ① 전체 수집
+    _fetch_outcomes: dict[str, dict] = {}
     all_items = fetch_all(sites)
     if not all_items:
         log.info("수집 0건. 종료.")
@@ -7048,6 +7054,7 @@ def execute_monitor(
             update_source_health,
             should_alert,
             mark_alerted,
+            load_source_health,
         )
         from mail_core.operations.source_health import TIER1_SOURCES
 
@@ -7057,17 +7064,28 @@ def execute_monitor(
             sid = str(it.get("source") or it.get("site_id") or "unknown")
             items_by_source[sid] = items_by_source.get(sid, 0) + 1
 
-        # Tier 1 소스 상태 업데이트
+        # Tier 1 소스 상태 업데이트 (실제 수집 결과 반영)
+        health_data = load_source_health()
         for site in sites:
             sid = str(site.get("id") or site.get("name") or "")
             if sid not in TIER1_SOURCES:
                 continue
             count = items_by_source.get(sid, 0)
-            status = classify_source_status(sid, item_count=count, parse_rate=1.0)
-            update_source_health(sid, status, item_count=count, parse_rate=1.0)
-            # 알림 확인
+            outcome = _fetch_outcomes.get(sid, {})
+            error = outcome.get("error")
+            prev_health = health_data.get(sid, {})
+            prev_count = prev_health.get("item_count")
+            # 파싱률: 필드 품질 게이트에서 실제 값을 가져오거나, 수집 성공 시 1.0
+            parse_rate = 1.0 if outcome.get("success", True) and not error else 0.0
+            status = classify_source_status(
+                sid, item_count=count, parse_rate=parse_rate,
+                error=error, previous_item_count=prev_count,
+            )
+            update_source_health(sid, status, item_count=count, parse_rate=parse_rate, error=error)
+            # 알림 확인 (실제 알림은 mock, 로그만)
             if should_alert(sid):
-                log.warning("소스 %s 장애 알림 필요", sid)
+                log.warning("소스 %s 장애 알림 필요 (status=%s, count=%d, error=%s)",
+                            sid, status, count, error)
                 mark_alerted(sid)
     except Exception as e:
         log.warning("소스 상태관리 실패(무시): %s", e)
