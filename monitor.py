@@ -1,4 +1,4 @@
-﻿"""수출·지원사업 모니터링 에이전트 v6
+"""수출·지원사업 모니터링 에이전트 v6
 기능: 수집 → 중복제거(주관기관 우선) → 날짜필터(D-1) → 그룹별 조건필터 → Claude요약 → 발송
 설정: config/sites.json / config/groups.json / config/settings.json / var/state/seen_ids.json
 """
@@ -7287,6 +7287,7 @@ def execute_monitor(
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
             "date_review_queue": date_review_queue,
+            "date_review_queue_count": len(date_review_queue),
             "date_excluded_count": len(date_excluded),
             "mail_sent": False,
             "drafts_created": _DRAFT_OK,
@@ -7449,6 +7450,10 @@ def execute_monitor(
         "cross_source_dedup_count": sum(1 for it in deduped if it.get("_canonical_notice_id")),
         "version_change_count": changed_count,
         "deadline_excluded_count": len(date_excluded),
+        "date_excluded_count": len(date_excluded),
+        "date_matched_count": len(date_matched),
+        "date_review_queue": date_review_queue,
+        "date_review_queue_count": len(date_review_queue),
         "final_mail_target_count": final_mail_count,
         "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
