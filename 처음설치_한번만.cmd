@@ -8,47 +8,83 @@ echo ================================================
 echo  지원사업 공고첨부 받기 — 처음 설치 (한 번만)
 echo ================================================
 echo.
-echo  이 창이 닫힐 때까지 기다려 주세요. (1~3분)
-echo.
 
-REM ---- Python 찾기 (py 런처 → python) ----
-set "PY="
-where py >nul 2>&1 && set "PY=py -3"
-if not defined PY (
-  where python >nul 2>&1 && set "PY=python"
+if not exist "%~dp0scripts\setup_attach_downloader.py" (
+  echo [오류] scripts 폴더를 찾을 수 없습니다.
+  echo.
+  echo ZIP을 풀었을 때 나온 폴더 안에서 실행하세요.
+  echo cmd 파일과 scripts 폴더가 같은 위치에 있어야 합니다.
+  echo.
+  echo 잘못된 예: 바탕화면에 cmd만 복사
+  echo 올바른 예: ZIP 풀린 폴더 열기 ^> 처음설치_한번만.cmd 실행
+  echo.
+  pause
+  exit /b 1
 )
 
-if defined PY goto :HAVE_PYTHON
+echo  이 창이 닫힐 때까지 기다려 주세요. (1~3분, 인터넷 필요)
+echo.
 
-echo [안내] 이 PC에 Python 이 없습니다.
+REM ---- Python 찾기 ----
+set "PYEXE="
+set "PYARGS="
+if exist "%~dp0.venv\Scripts\python.exe" (
+  set "PYEXE=%~dp0.venv\Scripts\python.exe"
+  goto :HAVE_PYTHON
+)
+
+where py >nul 2>&1
+if not errorlevel 1 (
+  set "PYEXE=py"
+  set "PYARGS=-3"
+  goto :HAVE_PYTHON
+)
+
+where python >nul 2>&1
+if not errorlevel 1 (
+  set "PYEXE=python"
+  goto :HAVE_PYTHON
+)
+
+echo [안내] Python 이 설치되어 있지 않습니다.
 echo.
 where winget >nul 2>&1
 if errorlevel 1 goto :OPEN_PYTHON_DOWNLOAD
 
 echo winget 으로 Python 3.12 설치를 시도합니다…
-echo (관리자 권한이 필요할 수 있습니다)
 winget install -e --id Python.Python.3.12 --accept-package-agreements --accept-source-agreements
 if errorlevel 1 goto :OPEN_PYTHON_DOWNLOAD
 
-set "PY="
-where py >nul 2>&1 && set "PY=py -3"
-if not defined PY where python >nul 2>&1 && set "PY=python"
-if not defined PY (
-  echo.
-  echo Python 을 설치했지만 아직 인식되지 않습니다.
-  echo 이 창을 닫고, PC 를 재시작한 뒤 이 파일을 다시 실행해 주세요.
+set "PYEXE="
+set "PYARGS="
+where py >nul 2>&1 && set "PYEXE=py" && set "PYARGS=-3"
+if not defined PYEXE where python >nul 2>&1 && set "PYEXE=python"
+if not defined PYEXE (
+  echo Python 설치 후 PC 재시작하고 이 파일을 다시 실행하세요.
   pause
   exit /b 1
 )
+goto :HAVE_PYTHON
 
 :HAVE_PYTHON
-echo Python 확인: %PY%
+echo Python: %PYEXE% %PYARGS%
 echo.
-%PY% "%~dp0scripts\setup_attach_downloader.py"
+if defined PYARGS (
+  "%PYEXE%" %PYARGS% "%~dp0scripts\setup_attach_downloader.py"
+) else (
+  "%PYEXE%" "%~dp0scripts\setup_attach_downloader.py"
+)
 set "ERR=%ERRORLEVEL%"
 echo.
 if not "%ERR%"=="0" (
-  echo 설치에 실패했습니다. 위 메시지를 캡처해 보내 주세요.
+  echo.
+  echo 설치 실패. 위 빨간/흰 글씨를 캡처해서 보내 주세요.
+  echo.
+  echo 자주 나는 원인:
+  echo  - Python 설치 시 "Add python.exe to PATH" 를 안 체크함
+  echo  - 회사 PC 방화벽으로 pip 차단
+  echo  - ZIP을 잘못 풀어 scripts 폴더가 없음
+  echo.
   pause
   exit /b %ERR%
 )
@@ -58,11 +94,8 @@ exit /b 0
 
 :OPEN_PYTHON_DOWNLOAD
 echo.
-echo 브라우저에서 Python 설치 페이지를 엽니다.
-echo 설치 화면에서 반드시 아래를 체크하세요:
-echo   [v] Add python.exe to PATH
-echo.
-echo 설치가 끝나면 이 파일(처음설치_한번만.cmd)을 다시 실행하세요.
+echo Python 설치 페이지를 엽니다.
+echo 설치할 때 반드시 체크: [v] Add python.exe to PATH
 echo.
 start "" "https://www.python.org/downloads/windows/"
 pause

@@ -79,19 +79,49 @@ def is_ready() -> bool:
     return _imports_ok(sys.executable)
 
 
+def _pip_ok(py_exe: str | Path) -> bool:
+    try:
+        subprocess.run(
+            [str(py_exe), "-m", "pip", "--version"],
+            check=True,
+            capture_output=True,
+            timeout=60,
+        )
+        return True
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+def _ensure_pip(py_exe: str | Path, say) -> bool:
+    if _pip_ok(py_exe):
+        return True
+    say("   ⚠ pip 없음 → ensurepip 시도…")
+    try:
+        subprocess.run(
+            [str(py_exe), "-m", "ensurepip", "--upgrade"],
+            check=True,
+            capture_output=not False,
+            timeout=120,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        say(f"   ❌ pip 설치 실패: {exc}")
+        return False
+    return _pip_ok(py_exe)
+
+
 def _pip_install(py_exe: str | Path, *, user: bool, verbose: bool) -> None:
-    base = [str(py_exe), "-m", "pip", "install"]
-    if user:
-        base.append("--user")
+    say = (lambda m: print(m)) if verbose else (lambda m: None)
+    if not _ensure_pip(py_exe, say):
+        raise subprocess.CalledProcessError(1, "ensurepip")
+    user_flag = ["--user"] if user else []
     subprocess.run(
-        [str(py_exe), "-m", "pip", "install", "--upgrade", "pip"]
-        + (["--user"] if user else []),
+        [str(py_exe), "-m", "pip", "install", "--upgrade", "pip", *user_flag],
         check=True,
         capture_output=not verbose,
         timeout=300,
     )
     subprocess.run(
-        base + ["-r", str(REQ)],
+        [str(py_exe), "-m", "pip", "install", "-r", str(REQ), *user_flag],
         check=True,
         capture_output=not verbose,
         timeout=600,
@@ -106,11 +136,9 @@ def _ensure_venv(say) -> Path | None:
     if py.is_file() and _pip_ok(py):
         say("   ✅ 기존 가상환경 사용")
         return py
-    # 깨진 .venv(ensurepip 실패 잔해)는 지우고 다시 시도
     if VENV_DIR.exists():
         shutil.rmtree(VENV_DIR, ignore_errors=True)
     try:
-        # Debian/Ubuntu 일부 환경은 ensurepip 부재 시 SystemExit(1) 을 던진다.
         venv.create(str(VENV_DIR), with_pip=True, clear=False)
     except (Exception, SystemExit) as exc:  # noqa: BLE001
         say(f"   ⚠ 가상환경 생성 실패 → 시스템 Python 으로 설치합니다 ({type(exc).__name__})")
@@ -122,19 +150,6 @@ def _ensure_venv(say) -> Path | None:
         return None
     say("   ✅ 가상환경 생성 완료")
     return py
-
-
-def _pip_ok(py_exe: str | Path) -> bool:
-    try:
-        subprocess.run(
-            [str(py_exe), "-m", "pip", "--version"],
-            check=True,
-            capture_output=True,
-            timeout=60,
-        )
-        return True
-    except (OSError, subprocess.SubprocessError):
-        return False
 
 
 def run_setup(verbose: bool = True) -> int:
@@ -166,7 +181,8 @@ def run_setup(verbose: bool = True) -> int:
     except subprocess.CalledProcessError as exc:
         print("❌ 패키지 설치에 실패했습니다.")
         print(f"   상세: {exc}")
-        print("   인터넷 연결·방화벽을 확인한 뒤 다시 실행해 주세요.")
+        print("   Python 재설치 시 [Add python.exe to PATH] 와 [pip] 를 꼭 체크하세요.")
+        print("   인터넷·회사 방화벽을 확인한 뒤 다시 실행해 주세요.")
         return 1
     except subprocess.TimeoutExpired:
         print("❌ 설치 시간이 너무 오래 걸려 중단되었습니다. 다시 실행해 주세요.")
