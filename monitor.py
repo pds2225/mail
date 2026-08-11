@@ -4172,7 +4172,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
     canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
-    attachment_map: dict[str, dict] = {}  # attachment_hash → kept item
+    attachment_map: dict[str, dict] = {}  # notice_signature_hash → kept item
     _s_title = _s_canonical = _s_attach = 0  # dedup 원인별 카운터
 
     def similarity_key(title: str) -> str:
@@ -4185,8 +4185,8 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         short, long = (a_key, b_key) if len(a_key) <= len(b_key) else (b_key, a_key)
         return len(short) >= 10 and short in long
 
-    def attachment_hash(item: dict) -> str:
-        """P2-A: 첨부파일 해시 생성 (URL+제목 기반)."""
+    def notice_signature_hash(item: dict) -> str:
+        """메타데이터 기반 공고 시그니처 해시 (link+title+deadline). 실제 첨부파일 content hash가 아님."""
         parts = [item.get("link", ""), item.get("title", ""), str(item.get("deadline", ""))]
         composite = "|".join(p for p in parts if p)
         return hashlib.md5(composite.encode()).hexdigest()[:16] if composite else ""
@@ -4201,9 +4201,9 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         canonical_id = generate_canonical_notice_id(item)
         item["_canonical_notice_id"] = canonical_id
 
-        # P2-A: 첨부파일 해시 기반 중복 체크
-        att_hash = attachment_hash(item)
-        item["_attachment_hash"] = att_hash
+        # P2-A: 메타데이터 시그니처 해시 기반 중복 체크
+        att_hash = notice_signature_hash(item)
+        item["_notice_signature_hash"] = att_hash
 
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
@@ -4260,7 +4260,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del canonical_map[old_canonical]
                 canonical_map[canonical_id] = item
                 # attachment map도 업데이트
-                old_att = existing.get("_attachment_hash")
+                old_att = existing.get("_notice_signature_hash")
                 if old_att and old_att in attachment_map:
                     del attachment_map[old_att]
                 if att_hash:
