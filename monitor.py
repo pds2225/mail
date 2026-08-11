@@ -4288,6 +4288,7 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
     """P2-3: 유사하지만 확정 중복은 아닌 공고를 POSSIBLE_DUPLICATE로 표시한다.
 
     자동 merge하지 않고 상태만 표시하여 사람이 검토할 수 있게 한다.
+    버킷 프리필터로 O(n²) 비교량을 줄인다: year+token-prefix 버킷.
     """
     SIMILARITY_THRESHOLD = 0.70
 
@@ -4299,7 +4300,6 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
     def _similarity(a: str, b: str) -> float:
         if not a or not b:
             return 0.0
-        # 간단한 자카드 유사도
         set_a = set(a.split())
         set_b = set(b.split())
         if not set_a or not set_b:
@@ -4308,36 +4308,66 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
         union = len(set_a | set_b)
         return intersection / union if union > 0 else 0.0
 
-    for i, item_a in enumerate(items):
-        title_a = _title_key(item_a.get("title", ""))
-        if len(title_a) < 5:
+    # 프리컴퓨트: title_key, year, token set
+    pre: list[tuple[dict, str, str, set[str]]] = []
+    for item in items:
+        tk = _title_key(item.get("title", ""))
+        if len(tk) < 5:
             continue
-        for j in range(i + 1, len(items)):
-            item_b = items[j]
-            title_b = _title_key(item_b.get("title", ""))
-            if len(title_b) < 5:
-                continue
+        year_m = re.search(r"(20\d{2})", tk)
+        year = year_m.group(1) if year_m else ""
+        tokens = set(tk.split())
+        pre.append((item, tk, year, tokens))
 
-            # 이미 확정 중복이면 건너뛰기
-            cid_a = item_a.get("_canonical_notice_id")
-            cid_b = item_b.get("_canonical_notice_id")
-            if cid_a and cid_b and cid_a == cid_b:
-                continue
+    # 버킷: (year, min_token) — 같은 연도 + 공유 토큰이 있는 그룹끼리만 비교
+    from collections import defaultdict
+    buckets: dict[tuple[str, str], list[int]] = defaultdict(list)
+    for idx, (_item, _tk, year, tokens) in enumerate(pre):
+        bucket_year = year or "_noyear"
+        # 각 토큰을 버킷 키로 사용 (긴 토큰 우선, 최대 3개)
+        sorted_toks = sorted(tokens, key=len, reverse=True)[:3]
+        for tok in sorted_toks:
+            if len(tok) >= 2:
+                buckets[(bucket_year, tok)].append(idx)
 
-            # 유사도 계산
-            ratio = _similarity(title_a, title_b)
-            if ratio >= SIMILARITY_THRESHOLD:
-                # 연도가 다르면 별도 공고
-                year_a = re.search(r"(20\d{2})", title_a)
-                year_b = re.search(r"(20\d{2})", title_b)
-                if year_a and year_b and year_a.group(1) != year_b.group(1):
+    # 버킷 내에서만 쌍 비교
+    seen_pairs: set[tuple[int, int]] = set()
+    for bucket_indices in buckets.values():
+        for ii in range(len(bucket_indices)):
+            for jj in range(ii + 1, len(bucket_indices)):
+                i, j = bucket_indices[ii], bucket_indices[jj]
+                if i >= j:
+                    continue
+                pair = (i, j)
+                if pair in seen_pairs:
+                    continue
+                seen_pairs.add(pair)
+
+                item_a, title_a, year_a, tokens_a = pre[i]
+                item_b, title_b, year_b, tokens_b = pre[j]
+
+                # 이미 확정 중복이면 건너뛰기
+                cid_a = item_a.get("_canonical_notice_id")
+                cid_b = item_b.get("_canonical_notice_id")
+                if cid_a and cid_b and cid_a == cid_b:
                     continue
 
-                # POSSIBLE_DUPLICATE 표시
-                item_a["_possible_duplicate"] = True
-                item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
-                item_b["_possible_duplicate"] = True
-                item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
+                # 연도가 다르면 별도 공고
+                if year_a and year_b and year_a != year_b:
+                    continue
+
+                # 유사도 계산 (프리컴퓨트된 토큰셋 사용)
+                if not tokens_a or not tokens_b:
+                    continue
+                intersection = len(tokens_a & tokens_b)
+                union = len(tokens_a | tokens_b)
+                ratio = intersection / union if union > 0 else 0.0
+
+                if ratio >= SIMILARITY_THRESHOLD:
+                    item_a["_possible_duplicate"] = True
+                    item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
+                    item_b["_possible_duplicate"] = True
+                    item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
 
     return items
 
