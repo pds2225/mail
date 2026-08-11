@@ -19,8 +19,8 @@
 | D | TESTED | Source Health 실제 Tier1 연결 — parse_rate 하드코딩 제거 |
 | E | TESTED | accuracy ground-truth 분리 — region≠relevance, real group config |
 | F | TESTED | prestartup 회귀 20개 P0 테스트 |
-| G | IN_PROGRESS | version/delivery/outbox 통합 테스트 (subagent) |
-| H | IN_PROGRESS | pre-existing 실패 조사 (subagent) |
+| G | TESTED | version/delivery/outbox/seen_ids 통합 테스트 7개 |
+| H | TESTED | pre-existing 실패: 3개 환경이슈(BLOCKED), 1개 통과 |
 | SAFE BACKLOG | TESTED | TODO/FIXME/stale report 조사 — 정리 대상 없음 |
 
 ## 발견한 실제 결함
@@ -70,7 +70,8 @@ f3fb7dd fix(metrics): add source_contribution to dedup stats
 - test_monitor.py: 105 passed
 - test_fetch_kstartup_replay.py: 13 passed
 - test_kstartup_attachment_replay.py: 12 passed
-- **총 130 passed**
+- test_version_delivery_integration.py: 7 passed
+- **총 137 passed**
 
 ## 실데이터 검증
 
@@ -82,10 +83,17 @@ f3fb7dd fix(metrics): add source_contribution to dedup stats
 
 - POSSIBLE_DUPLICATE 2,000건: ~4.3초 (bucket 프리필터 적용)
 
-## BLOCKED
+## BLOCKED_WITH_EVIDENCE
 
-- test_core_sources_checklist: Windows pytest temp PermissionError (환경 이슈)
-- test_kstartup_collect_policy: Windows cp949 인코딩 오류 (환경 이슈)
+- test_core_sources_checklist_runs_offline: Windows pytest temp PermissionError — test_source_field_quality.py의 7개 실제 테스트는 전부 통과하지만 pytest cleanup 스레드에서 cp949 UnicodeDecodeError 발생 → subprocess exit code=1 → checklist 게이트 실패. 환경 이슈이므로 코드 수정 불가.
+- test_kstartup_collect_policy::test_sites_json_public_priority_caps: 간헐적 cp949 인코딩 오류 — 직접 실행 시 7개 전부 통과. Windows 환경 의존.
+
+## 통합 커밋 목록 (feat/overnight-parallel-hardening-20260812)
+
+```
+3008062 docs: add unattended autodev result report 2026-08-12
+a2c6352 test(integration): add version/delivery/outbox/seen_ids regression tests
+```
 
 ## main 미병합 확인
 
