@@ -1053,6 +1053,36 @@ def test_p0_financial_support_with_mentoring_is_included():
     assert result["is_relevant"] is True, f"시제품비+교육은 포함되어야 함: {result['exclude_reason_codes']}"
 
 
+def test_p0_voucher_with_consulting_is_included():
+    """바우처 + 컨설팅 → INCLUDE (P0-4)"""
+    item = notice(
+        title="2026년 AI 바우처 지원사업 참여기업 모집",
+        description="예비창업자 및 창업 3년 이내 기업 대상. 바우처 최대 5,000만 원 및 전문 컨설팅 지원. 전국 대상.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is True, f"바우처+컨설팅은 포함되어야 함: {result['exclude_reason_codes']}"
+
+
+def test_p0_performer_recruitment_is_excluded():
+    """수행기관 모집 → EXCLUDE (P0-2)"""
+    item = notice(
+        title="예비창업자 지원 프로그램 수행기관 모집 공고",
+        description="예비창업자 지원 사업의 수행기관을 모집합니다. 사업 수행 역량을 보유한 기관.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+
+
+def test_p0_committee_recruitment_is_excluded():
+    """위원 모집 → EXCLUDE"""
+    item = notice(
+        title="창업지원사업 평가위원 모집 공고",
+        description="창업지원사업 서류평가 및 발표평가 위원을 모집합니다.",
+    )
+    result = evaluate_notice(item, _p0_group(), FILTER_TODAY)
+    assert result["is_relevant"] is False
+
+
 # ══════════════════════════════════════════════════════════════════
 # P1 테스트 — 제목 정규화 및 canonical ID
 # ══════════════════════════════════════════════════════════════════
