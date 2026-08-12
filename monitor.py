@@ -3929,6 +3929,76 @@ def fetch_hanyang_startup(site: dict) -> list[dict]:
     return items
 
 
+# ── 스타트업플러스(서울시 통합 창업 플랫폼) ───────────────────────────────────
+def _startup_plus_date(raw: str) -> str:
+  """API 날짜('2026-08-10 09:00:00.0') → YYYY-MM-DD."""
+  raw = norm(raw)
+  return raw[:10] if len(raw) >= 10 else ""
+
+
+def fetch_startup_plus(site: dict) -> list[dict]:
+    """스타트업플러스 지원사업 목록 수집.
+
+    startup-plus.kr/project 는 Vue/jQuery SPA 라 정적 HTML 에 목록이 없다.
+    목록은 JSON API `/api/project/list?size=N&page=P`(page 는 0-base) 가
+    {data:{contents:[{projectCode,projectName,receiptBeginDate,...}]}} 로 응답한다.
+    상세 링크는 `/project/{projectCode}` 로 합성한다.
+    """
+    base = "https://www.startup-plus.kr"
+    api = f"{base}/api/project/list"
+    headers = {**HTTP_HEADERS, "Referer": site.get("url", f"{base}/project"),
+               "Accept": "application/json,*/*"}
+    agg = site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+    try:
+        page_size = max(1, min(100, int(site.get("page_size", 50))))
+    except (TypeError, ValueError):
+        page_size = 50
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True,
+                          verify=False) as c:
+            for page_no in range(max_pages):
+                r = c.get(api, params={"size": page_size, "page": page_no})
+                r.raise_for_status()
+                payload = r.json()
+                rows = (payload.get("data") or {}).get("contents") or []
+                if not rows:
+                    break
+                for row in rows:
+                    code = norm(row.get("projectCode", ""))
+                    title = norm(row.get("projectName", ""))
+                    if not code or not title or code in seen:
+                        continue
+                    seen.add(code)
+                    link = f"{base}/project/{code}"
+                    posted = _startup_plus_date(row.get("receiptBeginDate", ""))
+                    if not posted:
+                        posted = _startup_plus_date(row.get("createDateTime", ""))
+                    deadline = _startup_plus_date(row.get("receiptEndDate", ""))
+                    author = norm(row.get("organizationName", ""))
+                    cat = norm((row.get("businessCategory") or {}).get("name", ""))
+                    portal = norm(row.get("portalName", ""))
+                    desc_parts = []
+                    if cat:
+                        desc_parts.append(f"[{cat}]")
+                    if portal:
+                        desc_parts.append(portal)
+                    desc = " ".join(desc_parts)
+                    items.append(_item(f"{site['id']}_{code}", title, link,
+                                       author or "스타트업플러스", desc, deadline,
+                                       site["name"], posted, agg))
+    except Exception as e:
+        log.error("%s API 실패: %s", site.get("name", "스타트업플러스"), e)
+        raise RuntimeError(f"{site.get('name', '스타트업플러스')} 수집 실패 (API)")
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 FETCHERS = {
     "bizinfo_api":        fetch_bizinfo,
     "myfair_html":        fetch_myfair,
@@ -3938,6 +4008,7 @@ FETCHERS = {
     "smtech_html":        fetch_smtech,
     "tipa_html":          fetch_tipa,
     "hanyang_startup_api": fetch_hanyang_startup,
+    "startup_plus_api":    fetch_startup_plus,
     "kocca_pims":         fetch_kocca_pims,
     "kocca_bbs":          fetch_kocca_bbs,
     "gtp_html":           fetch_gtp,

@@ -31,6 +31,7 @@ SITE_TYPES = {
     "kocca_bbs":     "KOCCA 금융공고 (전용)",
     "gtp_html":      "경기TP (전용)",
     "gsp_html":      "경기스타트업플랫폼 (전용)",
+    "startup_plus_api": "스타트업플러스 API (서울시)",
     "ccei_html":     "창조경제혁신센터 (전용)",
     "html_table":    "신규 — HTML 테이블",
     "html_card":     "신규 — HTML 카드",

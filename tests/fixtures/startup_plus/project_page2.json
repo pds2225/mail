@@ -1,0 +1,111 @@
+{
+  "result": true,
+  "data": {
+    "pagination": {
+      "currentElements": 3,
+      "last": true,
+      "hasNext": false,
+      "totalCount": 4347,
+      "blockEnd": 9,
+      "totalElements": 4347,
+      "blockStart": 0,
+      "size": 3,
+      "totalPages": 1449,
+      "hasPrevious": false,
+      "page": 2,
+      "currentPage": 1,
+      "first": false
+    },
+    "contents": [
+      {
+        "projectCode": "PRJ007408",
+        "sequenceNumberOfPortal": 360,
+        "projectName": "2026년 서울창업허브 창동-조이시티 오픈이노베이션 참가기업 추가모집",
+        "portalName": "서울창업허브 창동",
+        "portalNameEN": "Seoul Startup Hub Changdong",
+        "businessCategory": {
+          "code": "ACC",
+          "name": "액셀러레이팅"
+        },
+        "projectTarget": {
+          "code": "ALL",
+          "name": "전체 기업"
+        },
+        "receiptBeginDate": "2026-08-10 10:00:00.0",
+        "receiptEndDate": "2026-08-17 23:59:00.0",
+        "hits": 212,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-08-10 10:04:58",
+        "updateDateTime": "2026-08-12 15:14:36",
+        "guide": "<p style=\"text-align:center;\"><span class=\"text-big\"><mark class=\"marker-yellow\"><strong>[2026년 서울창업허브 창동 - 조이시티 오픈이노베이션 참가기업 추가모집]</strong></mark></span></p><p style=\"text-align:center;\">&nbsp;</p><p...",
+        "businessLink": "",
+        "businessTarget": "스타트업",
+        "organizationName": "서울창업허브 창동",
+        "isLink": false,
+        "filePath": "/project/poster/2608101004583. 2026년 서울창업허브 창동-조이시티 오픈이노베이션 추가모집 포스터.png"
+      },
+      {
+        "projectCode": "PRJ007393",
+        "sequenceNumberOfPortal": 334,
+        "projectName": "2026년 2기 서울 AI 허브 신규 멤버십 기업 모집 안내",
+        "portalName": "서울 AI 허브",
+        "portalNameEN": "Seoul AI Hub",
+        "businessCategory": {
+          "code": "ACC",
+          "name": "액셀러레이팅"
+        },
+        "projectTarget": {
+          "code": "ALL",
+          "name": "전체 기업"
+        },
+        "receiptBeginDate": "2026-08-04 18:00:00.0",
+        "receiptEndDate": "2026-08-25 23:59:00.0",
+        "hits": 811,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-08-03 15:57:11",
+        "updateDateTime": "2026-08-12 14:34:07",
+        "guide": "<p style=\"text-align:center;\"><span class=\"text-huge\"><strong>2026년 2기 서울 AI 허브 멤버십 기업 모집 안내</strong></span></p><p style=\"text-align:center;\">&nbsp;</p><p style=\"text-align:center;\"><strong>서울시에서 설립하고...",
+        "businessLink": "",
+        "businessTarget": "예비창업자,스타트업",
+        "organizationName": "서울 AI 허브",
+        "isLink": false,
+        "filePath": "/project/poster/2608031615092026년 2기 서울 AI 허브 멤버십 기업 모집 포스터_page-0001.jpg"
+      },
+      {
+        "projectCode": "PRJ007398",
+        "sequenceNumberOfPortal": 565,
+        "projectName": "[제2서울핀테크랩] 서울 핀테크 위크 2026 제2서울핀테크랩 데모데이 with 네이버클라우드",
+        "portalName": "제2서울핀테크랩",
+        "portalNameEN": "Seoul Fintech Lab2",
+        "businessCategory": {
+          "code": "ACC",
+          "name": "액셀러레이팅"
+        },
+        "projectTarget": {
+          "code": "ALL",
+          "name": "전체 기업"
+        },
+        "receiptBeginDate": "2026-08-10 09:00:00.0",
+        "receiptEndDate": "2026-08-30 23:59:00.0",
+        "hits": 463,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-08-04 10:12:26",
+        "updateDateTime": "2026-08-12 15:14:31",
+        "guide": "<p><strong>제</strong><span lang=\"EN-US\" dir=\"ltr\"><strong>2</strong></span><strong>서울핀테크랩 공고 제</strong><span lang=\"EN-US\" dir=\"ltr\"><strong>2026 - 0001</strong></span><strong>호</strong></p><p>&nbsp;</...",
+        "businessLink": "",
+        "businessTarget": "스타트업",
+        "organizationName": "제2서울핀테크랩",
+        "isLink": false
+      }
+    ]
+  }
+}
