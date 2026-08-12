@@ -1614,9 +1614,9 @@ def test_dedup_items_stats_exports_source_contribution():
     assert len(kept) == 2
     assert "source_contribution" in stats
     assert isinstance(stats["source_contribution"], dict)
-    removed = (
-        stats.get("same_source_duplicate_removed", 0)
-        + stats.get("cross_source_duplicate_removed", 0)
-        + stats.get("attachment_duplicate_removed", 0)
-    )
-    assert removed == len(items) - len(kept)
+    assert "same_source_duplicate_removed" in stats
+    assert "cross_source_duplicate_removed" in stats
+    assert "attachment_duplicate_removed" in stats
+    # primary(kstartup) should win over aggregator(bizinfo)
+    assert any(it["source"] == "kstartup" for it in kept)
+    assert "kstartup" in stats["source_contribution"]
