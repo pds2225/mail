@@ -4127,8 +4127,17 @@ def validate_recipients(recipients: list[str]) -> dict[str, list[str]]:
     }
 
 
-def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
-    """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트."""
+def fetch_all(
+    sites: list[dict],
+    max_workers: int = 8,
+    *,
+    outcomes: dict[str, dict] | None = None,
+) -> list[dict]:
+    """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트.
+
+    outcomes: optional collector — source id → {success, item_count, error}.
+    When omitted, behavior matches the historical list-only API (call-site compatible).
+    """
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
     result: list[dict] = []
@@ -4148,10 +4157,12 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
             try:
                 items = f.result()
                 result.extend(items)
-                _fetch_outcomes[sid] = {"success": True, "item_count": len(items), "error": None}
+                if outcomes is not None:
+                    outcomes[sid] = {"success": True, "item_count": len(items), "error": None}
             except Exception as e:
                 log.error("수집 실패 (%s): %s", site.get("name"), e)
-                _fetch_outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
+                if outcomes is not None:
+                    outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
     return result
 
 
@@ -4278,13 +4289,6 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
 
-    # dedup 원인별 통계 전달
-    if _stats is not None:
-        _stats["same_source_duplicate_removed"] = _s_title
-        _stats["cross_source_duplicate_removed"] = _s_canonical
-        _stats["attachment_duplicate_removed"] = _s_attach
-        _stats["source_contribution"] = source_stats
-
     # P2-D: 소스별 고유 공고 기여도 통계 계산
     source_stats: dict[str, dict] = {}
     for item in kept:
@@ -4297,9 +4301,16 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         if cid and canonical_map.get(cid, {}).get("source") == sid:
             source_stats[sid]["unique"] += 1
 
+    # dedup 원인별 통계 전달 (source_stats 계산 이후에만 export)
+    if _stats is not None:
+        _stats["same_source_duplicate_removed"] = _s_title
+        _stats["cross_source_duplicate_removed"] = _s_canonical
+        _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["source_contribution"] = source_stats
+
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
-    for sid, stats in sorted(source_stats.items()):
-        log.info("  소스 %s: 총 %d건, 고유 %d건", sid, stats["total"], stats["unique"])
+    for sid, src_stat in sorted(source_stats.items()):
+        log.info("  소스 %s: 총 %d건, 고유 %d건", sid, src_stat["total"], src_stat["unique"])
 
     return kept
 
@@ -7042,13 +7053,9 @@ def execute_monitor(
 
     # ① 전체 수집
     _fetch_outcomes: dict[str, dict] = {}
-    all_items = fetch_all(sites)
-    if not all_items:
-        log.info("수집 0건. 종료.")
-        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
-    log.info("수집 완료: %d건", len(all_items))
+    all_items = fetch_all(sites, outcomes=_fetch_outcomes)
 
-    # P1-17: 소스 상태관리 — 수집 결과를 source_health에 반영
+    # P1-17: 소스 상태관리 — 수집 0건(전면 장애) early return 전에 반영해야 한다.
     try:
         from mail_core.operations.source_health import (
             classify_source_status,
@@ -7090,6 +7097,11 @@ def execute_monitor(
                 mark_alerted(sid)
     except Exception as e:
         log.warning("소스 상태관리 실패(무시): %s", e)
+
+    if not all_items:
+        log.info("수집 0건. 종료.")
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
+    log.info("수집 완료: %d건", len(all_items))
 
     # ② 중복 제거
     dedup_stats: dict = {}
