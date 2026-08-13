@@ -70,6 +70,14 @@ def test_next_task_id_increments():
     assert q.next_task_id(sections) == "TASK-012"
 
 
+def test_outstanding_audit_skips_active_checkout(monkeypatch):
+    monkeypatch.setenv("GITHUB_HEAD_REF", "task/MAIL-001-hotfix")
+    oda = _load("outstanding_dev_audit_skip_test", "scripts/outstanding_dev_audit.py")
+    assert oda.is_active_checkout_ref("origin/task/MAIL-001-hotfix") is True
+    assert oda.is_active_checkout_ref("task/MAIL-001-hotfix") is True
+    assert oda.is_active_checkout_ref("origin/unrelated-leftover") is False
+
+
 def test_drift_verify_ok():
     result = lv.run_verify(drift_only=True)
     assert result["ok"] is True

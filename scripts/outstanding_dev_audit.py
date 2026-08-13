@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -71,6 +72,25 @@ def is_noise_ref(ref: str) -> bool:
     return any(check.startswith(p) or r.startswith(p.removeprefix("origin/")) for p in SKIP_PREFIXES)
 
 
+def is_active_checkout_ref(ref: str) -> bool:
+    """현재 작업 중인 PR/브랜치는 leftover UNIQUE_CANDIDATE가 아니다."""
+    names: set[str] = set()
+    head_ref = (os.environ.get("GITHUB_HEAD_REF") or "").strip()
+    if head_ref:
+        names.add(head_ref)
+        names.add(f"origin/{head_ref}")
+    code, cur = _run(["git", "branch", "--show-current"])
+    if code == 0 and cur.strip():
+        names.add(cur.strip())
+        names.add(f"origin/{cur.strip()}")
+    r = ref.replace("refs/remotes/", "").replace("refs/heads/", "")
+    if r in names:
+        return True
+    head = resolve_ref("HEAD")
+    tip = resolve_ref(ref)
+    return bool(head and tip and head == tip)
+
+
 def list_remote_branches() -> list[str]:
     code, out = _run(["git", "branch", "-r", "--format=%(refname:short)"])
     if code != 0:
@@ -80,6 +100,8 @@ def list_remote_branches() -> list[str]:
         if ln.endswith("/HEAD") or ln == "origin/HEAD":
             continue
         if ln == "origin/main" or ln == "origin/master":
+            continue
+        if is_active_checkout_ref(ln):
             continue
         refs.append(ln)
     return refs
