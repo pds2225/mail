@@ -8,6 +8,7 @@
       "title_keywords": ["README", "문서", "RULES", "AGENTS", "가이드", "정리"],
       "allowed_path_prefixes": [
         "README",
+        "TASK.md",
         "docs/project/RULES.md",
         "AGENTS.md",
         "docs/project/TASKS.md",
