@@ -5709,6 +5709,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         _has_tenant_only = (
             any(kw in text for kw in ("입주기업", "입주기업 모집", "입주 공고", "입주공간"))
             and not has_financial_signal
+            and not any(kw in text for kw in ("사업화", "성장 지원", "보육", "프로그램"))
         )
         if _has_tenant_only:
             reason_codes.append("TENANT_ONLY")
