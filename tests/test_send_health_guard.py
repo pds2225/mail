@@ -70,5 +70,8 @@ def test_dedup_persist_present():
 def test_crash_alert_present():
     """완전 크래시 시 알림 스텝(if: failure)이 있어야 한다(조용한 정지 방지)."""
     wf = _load()
-    assert any(str(s.get("if", "")).replace(" ", "") == "failure()" for s in _steps(wf)), \
+    def _is_failure_alert(step_if: str) -> bool:
+        normalized = str(step_if).replace(" ", "")
+        return normalized == "failure()" or normalized.startswith("failure()||")
+    assert any(_is_failure_alert(s.get("if", "")) for s in _steps(wf)), \
         "크래시 알림(if: failure()) 스텝이 없다"

@@ -4349,13 +4349,6 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
 
-    # dedup 원인별 통계 전달
-    if _stats is not None:
-        _stats["same_source_duplicate_removed"] = _s_title
-        _stats["cross_source_duplicate_removed"] = _s_canonical
-        _stats["attachment_duplicate_removed"] = _s_attach
-        _stats["source_contribution"] = source_stats
-
     # P2-D: 소스별 고유 공고 기여도 통계 계산
     source_stats: dict[str, dict] = {}
     for item in kept:
@@ -4367,6 +4360,13 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         cid = item.get("_canonical_notice_id", "")
         if cid and canonical_map.get(cid, {}).get("source") == sid:
             source_stats[sid]["unique"] += 1
+
+    # dedup 원인별 통계 전달
+    if _stats is not None:
+        _stats["same_source_duplicate_removed"] = _s_title
+        _stats["cross_source_duplicate_removed"] = _s_canonical
+        _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["source_contribution"] = source_stats
 
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
     for sid, stats in sorted(source_stats.items()):
@@ -7069,10 +7069,12 @@ def execute_monitor(
 
     if not sites:
         log.info("활성 사이트 없음. 종료.")
-        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites"})
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites",
+                                      "collected": 0, "deduped": 0})
     if not groups:
         log.info("활성 그룹 없음. 종료.")
-        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups",
+                                      "collected": 0, "deduped": 0})
 
     target_date_early = delivery_cycle_date(now)
     # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)

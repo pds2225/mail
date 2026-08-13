@@ -58,19 +58,21 @@ def test_deadline_extension_classified_correctly():
     """마감 연장 → DEADLINE_EXTENDED change_type."""
     old_item = _item("n1", "AI 창업지원 모집", deadline="2026-08-01")
     new_item = _item("n1", "AI 창업지원 모집", deadline="2026-08-31")
+    old_snapshot = m._notice_version_snapshot(old_item)
+    old_hash = m._notice_snapshot_hash(old_snapshot)
 
     versions = {
         "n1": {
             "version": 1,
             "delivery_id": "n1@v1",
-            "delivered_snapshot": {"title": old_item["title"], "deadline": old_item["deadline"]},
-            "observed_snapshot": {"title": old_item["title"], "deadline": old_item["deadline"]},
-            "delivered_hash": "oldhash",
-            "observed_hash": "oldhash",
+            "delivered_snapshot": old_snapshot,
+            "observed_snapshot": old_snapshot,
+            "delivered_hash": old_hash,
+            "observed_hash": old_hash,
             "last_delivered_at": "2026-08-01T10:00:00",
         }
     }
-    seen_ids = {"n1@v1"}
+    seen_ids = {"n1"}
 
     deliverable, updates = m.classify_notice_versions([new_item], seen_ids, versions)
     # 마감 연장이면 deliverable에 포함
@@ -93,24 +95,24 @@ def test_outbox_entry_survives_mock_crash(tmp_path, monkeypatch):
     monkeypatch.setattr(outbox, "OUTBOX_PATH", out_path)
 
     # entry 추가 (실제 발송 없이)
-    outbox.upsert({
-        "id": "test_entry_1",
-        "date": "2026-08-12",
-        "tenant": "default",
-        "group": "grp_test",
-        "subject": "test",
-        "body": "test body",
-        "recipients": ["test@test.com"],
-        "notice_ids": ["n1"],
-    })
+    entry = outbox.upsert(
+        date="2026-08-12",
+        tenant="default",
+        group="grp_test",
+        subject="test",
+        body="test body",
+        recipients=["test@test.com"],
+        notice_ids=["n1"],
+        path=out_path,
+    )
 
     # 파일 존재 확인
     assert out_path.exists()
 
     # 다시 로드 — entry가 살아있어야 함
-    entries = outbox.load_entries()
+    entries = outbox.load(out_path)["entries"]
     ids = [e["id"] for e in entries]
-    assert "test_entry_1" in ids
+    assert entry["id"] in ids
 
 
 # ── 4) multi-group seen_ids gating ───────────────────────────────────────
@@ -136,16 +138,16 @@ def test_seen_ids_not_promoted_until_cycle_complete(tmp_path, monkeypatch):
     monkeypatch.setattr(m, "DELIVERY_STATE_PATH", delivery_path)
 
     # incomplete entry 추가
-    outbox.upsert({
-        "id": "incomplete_1",
-        "date": "2026-08-12",
-        "tenant": "default",
-        "group": "grp_a",
-        "subject": "test",
-        "body": "test",
-        "recipients": ["a@test.com"],
-        "notice_ids": ["n_incomplete"],
-    })
+    outbox.upsert(
+        date="2026-08-12",
+        tenant="default",
+        group="grp_a",
+        subject="test",
+        body="test",
+        recipients=["a@test.com"],
+        notice_ids=["n_incomplete"],
+        path=out_path,
+    )
 
     # only_if_cycle_complete=True — 미완료 cycle이면 seen_ids에 반영 안 됨
     seen_ids = m.load_seen_ids()
