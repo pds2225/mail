@@ -36,6 +36,51 @@ def _run(cmd: list[str], *, check: bool = False) -> subprocess.CompletedProcess[
     return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=check)
 
 
+def resolve_pr_number(
+    *,
+    payload_pr: str = "",
+    head_branch: str = "",
+    head_sha: str = "",
+    runner=None,
+) -> str:
+    """Resolve PR number without GET /actions/runs/{id}/pull-requests.
+
+    That endpoint 404s from workflow_run jobs even with actions:read
+    (runs 31662894294, 31660656278). Prefer the workflow_run payload, then
+    ``gh pr list`` by branch / SHA. Empty string means skip, not fail.
+    """
+    run = runner or _run
+    payload = str(payload_pr or "").strip()
+    if payload.isdigit():
+        return payload
+
+    branch = str(head_branch or "").strip()
+    if branch:
+        proc = run(
+            [
+                "gh", "pr", "list", "--state", "open", "--head", branch,
+                "--json", "number", "--jq", ".[0].number // empty",
+            ]
+        )
+        num = (proc.stdout or "").strip()
+        if num.isdigit():
+            return num
+
+    sha = str(head_sha or "").strip()
+    if sha:
+        proc = run(
+            [
+                "gh", "pr", "list", "--state", "open", "--search", sha,
+                "--json", "number", "--jq", ".[0].number // empty",
+            ]
+        )
+        num = (proc.stdout or "").strip()
+        if num.isdigit():
+            return num
+
+    return ""
+
+
 def load_loop_config() -> dict:
     return json.loads(LOOP_CONFIG.read_text(encoding="utf-8"))
 
@@ -156,10 +201,31 @@ def merge_pr(pr_number: int, cfg: dict, *, dry_run: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Auto-merge eligible PRs after CI")
-    parser.add_argument("--pr", type=int, required=True, help="PR number")
+    parser.add_argument("--pr", type=int, default=0, help="PR number")
     parser.add_argument("--base-ref", default="origin/main", help="Diff base ref")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--print-pr-number",
+        action="store_true",
+        help="Resolve PR number from workflow_run payload/branch/SHA and print number=<n>",
+    )
+    parser.add_argument("--payload-pr", default="", help="github.event.workflow_run.pull_requests[0].number")
+    parser.add_argument("--head-branch", default="", help="workflow_run.head_branch")
+    parser.add_argument("--head-sha", default="", help="workflow_run.head_sha")
     args = parser.parse_args(argv)
+
+    if args.print_pr_number:
+        num = resolve_pr_number(
+            payload_pr=args.payload_pr,
+            head_branch=args.head_branch,
+            head_sha=args.head_sha,
+        )
+        print(f"number={num}")
+        return 0
+
+    if not args.pr:
+        print("--pr 또는 --print-pr-number 가 필요합니다", file=sys.stderr)
+        return 1
 
     cfg = load_loop_config()
     pr = gh_json(["pr", "view", str(args.pr)])
