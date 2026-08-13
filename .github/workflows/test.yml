@@ -14,7 +14,14 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
+
+      - name: Fetch PR/base SHAs for docs-only classify
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=50 origin \
+            ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }}
 
       - name: Classify docs-only
         id: classify
