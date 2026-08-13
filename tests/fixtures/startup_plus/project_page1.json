@@ -1,0 +1,111 @@
+{
+  "result": true,
+  "data": {
+    "pagination": {
+      "currentElements": 3,
+      "last": false,
+      "hasNext": true,
+      "totalCount": 4347,
+      "blockEnd": 9,
+      "totalElements": 4347,
+      "blockStart": 0,
+      "size": 3,
+      "totalPages": 1449,
+      "hasPrevious": false,
+      "page": 1,
+      "currentPage": 0,
+      "first": true
+    },
+    "contents": [
+      {
+        "projectCode": "PRJ007410",
+        "sequenceNumberOfPortal": 409,
+        "projectName": "제2회 SOAR IR DAY - IR 라운드 테이블",
+        "portalName": "서울창업허브 엠플러스",
+        "portalNameEN": "M Plus",
+        "businessCategory": {
+          "code": "NET",
+          "name": "창업행사·네트워크"
+        },
+        "projectTarget": {
+          "code": "ALL",
+          "name": "전체 기업"
+        },
+        "receiptBeginDate": "2026-08-10 09:00:00.0",
+        "receiptEndDate": "2026-08-12 23:59:00.0",
+        "hits": 197,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-08-10 15:24:52",
+        "updateDateTime": "2026-08-12 15:05:56",
+        "guide": "<p>&nbsp;</p><p>안녕하세요, 서울경제진흥원 클러스터혁신팀입니다.&nbsp;</p><p>&nbsp;</p><p>서울의 유망 창업기업들이 초기 투자자들과 직접 만나는 자리, 제2회 SOAR IR DAY에 서울 기업 여러분을 초대합니다.&nbsp;</p><p>SOAR IR DAY는 서울창업허브 엠플러스와 초기투자액셀러레이터협회가 함께 만드는 오프라인...",
+        "businessLink": "",
+        "businessTarget": "스타트업",
+        "organizationName": "서울경제진흥원",
+        "isLink": false,
+        "filePath": "/project/poster/260810152452SOAR IR DAY_홍보 포스터.png"
+      },
+      {
+        "projectCode": "PRJ007321",
+        "sequenceNumberOfPortal": 316,
+        "projectName": "2026 서울창업허브 프랑스 진출 프로그램 참가 결과보고 제출",
+        "portalName": "서울창업허브 공덕",
+        "portalNameEN": "Seoul Startup Hub Gongdeok",
+        "businessCategory": {
+          "code": "ACC",
+          "name": "액셀러레이팅"
+        },
+        "projectTarget": {
+          "code": "ALL",
+          "name": "전체 기업"
+        },
+        "receiptBeginDate": "2026-07-09 18:00:00.0",
+        "receiptEndDate": "2026-08-14 23:59:00.0",
+        "hits": 896,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-07-08 14:38:22",
+        "updateDateTime": "2026-08-12 13:50:50",
+        "guide": "<h2><strong>[안내] </strong><span style=\"color:rgb(77,77,230);\"><strong>2026 서울창업허브 프랑스 진출 프로그램 참가기업</strong></span><strong>을 대상으로 </strong><span style=\"color:rgb(230,153,77);\"><strong>결과보고서 및 증빙서류</str...",
+        "businessLink": "",
+        "businessTarget": "스타트업",
+        "organizationName": "서울경제진흥원",
+        "isLink": false
+      },
+      {
+        "projectCode": "PRJ006452",
+        "sequenceNumberOfPortal": 327,
+        "projectName": "2026년 서울창업디딤터 입주기업 상시 멘토링 프로그램 ",
+        "portalName": "서울창업디딤터",
+        "portalNameEN": "Seoul Startup Didimteo",
+        "businessCategory": {
+          "code": "MEN",
+          "name": "멘토링·컨설팅"
+        },
+        "projectTarget": {
+          "code": "MOV",
+          "name": "입주 기업"
+        },
+        "receiptBeginDate": "2026-02-05 12:00:00.0",
+        "receiptEndDate": "2026-08-15 18:00:00.0",
+        "hits": 5524,
+        "status": {
+          "code": "EXPECTED",
+          "name": "예정"
+        },
+        "createDateTime": "2026-02-05 09:45:53",
+        "updateDateTime": "2026-08-12 13:25:49",
+        "guide": "<h2>2026년 서울창업디딤터 입주기업 상시 멘토링 프로그램</h2><h3>■ 개요</h3><p>서울창업디딤터는 입주기업의 안정적인 성장과 사업 고도화를 지원하기 위해<br><strong>분야별 전문가와 함께하는 1:1 심화 상시 멘토링 프로그램</strong>을 운영합니다.</p><p>&nbsp;</p><h3>■ 운영 기간</h3><ul><li>2026...",
+        "businessLink": "",
+        "businessTarget": "예비창업자,스타트업",
+        "organizationName": "서울창업디딤터",
+        "isLink": false,
+        "filePath": "/project/poster/260205094553상시멘토링 프로그램 포스터.jpg"
+      }
+    ]
+  }
+}

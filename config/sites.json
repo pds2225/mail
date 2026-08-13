@@ -25,6 +25,17 @@
     "note": "Next.js SPA — /api/board/content?boardEnName=startup_info JSON. 창업 교육·행사·사업화·R&D 공고 / 주기:주 2~3회"
   },
   {
+    "id": "startup_plus",
+    "name": "스타트업플러스(서울시)",
+    "type": "startup_plus_api",
+    "url": "https://www.startup-plus.kr/project",
+    "enabled": true,
+    "is_aggregator": false,
+    "max_pages": 3,
+    "page_size": 50,
+    "note": "서울시 통합 창업 플랫폼 — /api/project/list JSON(SPA). 지원사업·교육·액셀러레이팅·멘토링 모집"
+  },
+  {
     "id": "kstartup",
     "name": "K-Startup",
     "type": "kstartup_html",

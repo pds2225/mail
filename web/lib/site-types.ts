@@ -10,6 +10,7 @@ export const COLLECTOR_TYPES = [
   "kocca_bbs",
   "gtp_html",
   "gsp_html",
+  "startup_plus_api",
   "ccei_html",
   "nipa_html",
   "mss_html",
