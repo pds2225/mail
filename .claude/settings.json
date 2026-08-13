@@ -36,6 +36,16 @@
             "command": "python \"C:\\Users\\ekth3\\.claude\\skills\\omc-auto-router\\scripts\\omc_prompt_router.py\""
           }
         ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:\\Users\\ekth3\\.claude\\skills\\omc-auto-router\\scripts\\absorb_skills_hook.py\" --if-stale",
+            "timeout": 120
+          }
+        ]
       }
     ],
     "PostToolUse": [
