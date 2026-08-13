@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from auto_merge_pr import assess_pr, match_profile  # noqa: E402
+from auto_merge_pr import assess_pr, match_profile, resolve_pr_number  # noqa: E402
 
 
 def _profiles():
@@ -71,4 +71,48 @@ def test_auto_merge_workflow_uses_github_token_not_pat():
     assert "actions: read" in text
     assert "contents: write" in text
     assert "pull-requests: write" in text
+    assert "actions/runs/" not in text
+    assert "gh api" not in text
+    assert "--print-pr-number" in text
+
+
+class _FakeProc:
+    def __init__(self, stdout: str, returncode: int = 0):
+        self.stdout = stdout
+        self.returncode = returncode
+        self.stderr = ""
+
+
+def test_resolve_pr_prefers_payload():
+    calls = []
+
+    def runner(cmd):
+        calls.append(cmd)
+        return _FakeProc("99")
+
+    assert resolve_pr_number(payload_pr="248", head_branch="x", runner=runner) == "248"
+    assert calls == []
+
+
+def test_resolve_pr_falls_back_to_head_branch():
+    def runner(cmd):
+        assert "--head" in cmd
+        return _FakeProc("244\n")
+
+    assert resolve_pr_number(payload_pr="", head_branch="fix/foo", runner=runner) == "244"
+
+
+def test_resolve_pr_falls_back_to_sha_when_branch_empty():
+    def runner(cmd):
+        assert "--search" in cmd
+        return _FakeProc("250")
+
+    assert resolve_pr_number(head_sha="abc123", runner=runner) == "250"
+
+
+def test_resolve_pr_empty_is_skip_not_error():
+    def runner(cmd):
+        return _FakeProc("")
+
+    assert resolve_pr_number(runner=runner) == ""
 
