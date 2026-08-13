@@ -4,6 +4,7 @@ region_FP = matched 공고의 region_field(정답 지역)가 기업 지역도 �
 전수 측정(main)은 raw store·시간 의존이라 수동 실행으로 두고, 여기선 판정 로직만 가드한다.
 self-contained (네트워크/raw 불필요).
 """
+import json
 import os
 import sys
 from pathlib import Path
@@ -38,3 +39,41 @@ def test_region_fp_false_on_nationwide_or_metro():
     assert ae._is_region_fp("수도권", "부산") is False
     assert ae._is_region_fp("", "서울") is False
     assert ae._is_region_fp(None, "서울") is False
+
+
+def test_featureless_feedback_is_not_measured(tmp_path):
+    import validate_golden as vg
+
+    path = tmp_path / "feedback.jsonl"
+    rows = [
+        {"id": "a", "verdict": "X", "title": ""},
+        {"id": "b", "verdict": "O", "title": "   ", "description": ""},
+    ]
+    path.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows), encoding="utf-8")
+    group = {"id": "g1", "keywords": ["AI"], "exclude_keywords": []}
+    labeled = vg.run_labeled_benchmark(str(path), group)
+    assert labeled["status"] == "NOT_MEASURABLE"
+    assert labeled["reason"] == "all labels are featureless"
+    assert labeled["labeled_count"] == 0
+    assert labeled["skipped_featureless"] == 2
+
+
+def test_titled_feedback_still_measured(tmp_path):
+    import validate_golden as vg
+
+    path = tmp_path / "feedback.jsonl"
+    rows = [
+        {"id": "a", "verdict": "X", "title": ""},
+        {
+            "id": "b",
+            "verdict": "X",
+            "title": "2026년 예비창업패키지 모집",
+            "description": "예비창업자 대상",
+        },
+    ]
+    path.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows), encoding="utf-8")
+    group = {"id": "g1", "keywords": ["AI"], "exclude_keywords": []}
+    labeled = vg.run_labeled_benchmark(str(path), group)
+    assert labeled["status"] == "MEASURED"
+    assert labeled["labeled_count"] == 1
+    assert labeled["skipped_featureless"] == 1
