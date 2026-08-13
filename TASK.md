@@ -15,7 +15,7 @@ TASK 1개 = 반드시 1줄. LIST의 TASK_ID와 DETAILS의 TASK_ID는 반드시 1
 REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 -->
 
-[~] MAIL-001 | 기존 메일 오류가 남아 있는지 확인하고 있으면 고친다
+[x] MAIL-001 | 기존 메일 오류가 남아 있는지 확인하고 있으면 고친다
 [ ] MAIL-002 | 공고 안내 메일을 8개 칸 표로 바꾼다
 
 
@@ -301,6 +301,21 @@ TRACK A(MAIL-001)가 선행이다. MAIL-002는 MAIL-001에 의존한다.
 
 ### 8-4. 현재상태
 
+PINNING (E2E 2026-08-13):
+- TASK_ID: MAIL-001
+- TASK_START_SHA: 8fc2e7e8e21ddb72b2c76296aed02abd1cc76949
+- TASK_BLOB_SHA: ab6b4642ec8b97dd22eb7026b6ed3f4d5960fe01
+- WORK_BRANCH: task/MAIL-001-hotfix
+- origin: https://github.com/pds2225/mail.git (일치)
+- 로컬 D:\mail dirty+behind → worktree D:\tmp\wt-mail-MAIL-001 에서 origin/main 최신으로 작업
+- AGENTS.md 충돌: "monitor.py 수정 금지" vs 이 hotfix가 monitor.py를 요구. 최신 사용자 요청(MAIL-001 E2E) 우선. AGENTS.md는 수정하지 않고 TASK가 명시한 hotfix만 수행. 선택지: (1) TASK 우선 hotfix(채택) (2) AGENTS.md 예외 문구 추가(이번 범위 밖) (3) BLOCKED
+
+Already Done 실코드 확인 (문서 DONE 불신):
+- fetch_all outcomes / source_stats 초기화: 이미 있음 (#248). 런타임 재확인 대상.
+- 남은 결함: yearless possible-duplicate 버킷 누락, dedup replacement KPI 미기록, featureless feedback 허위 MEASURED, source-health error 필드 미저장.
+
+USER_E2E (preview, 실발송 없음): `execute_monitor(allow_send=False, persist_seen=False)` mock 수집 2건 → dedup 1건, mode=preview, mail_sent=false, NameError/UnboundLocalError 없음. 산출물 `var/logs/mail-001-e2e-smoke.json`. targeted pytest 120 passed (`test_monitor.py` + `test_validate_golden.py` + `test_version_delivery_integration.py`).
+
 - 현재 구현: 기존 TASK에 PR #245/#246 이후 P1/P2 hotfix가 등록돼 있었음
 - 현재 문제: 최신 main에서 이미 해결됐을 수 있음. 문서만 믿지 말 것
 - 이미 구현된 부분: 확인 대상 hotfix 목록은 위에 있음
@@ -310,16 +325,16 @@ TRACK A(MAIL-001)가 선행이다. MAIL-002는 MAIL-001에 의존한다.
 
 ### 8-5. MUST — 반드시 구현
 
-- [ ] 최신 main에서 기존 targeted tests와 `tests/test_version_delivery_integration.py` 실행
-- [ ] 이미 해결됐으면 코드 수정 없이 `ALREADY_FIXED` 근거 기록
-- [ ] 재현되는 항목만 최소 수정하고 regression test 추가
-- [ ] 실제 alert/email 발송 금지
+- [x] 최신 main에서 기존 targeted tests와 `tests/test_version_delivery_integration.py` 실행
+- [x] 이미 해결됐으면 코드 수정 없이 `ALREADY_FIXED` 근거 기록 (`fetch_all` outcomes / `source_stats` 초기화는 #248)
+- [x] 재현되는 항목만 최소 수정하고 regression test 추가
+- [x] 실제 alert/email 발송 금지
 
 ### 8-6. KEEP — 유지
 
-- [ ] 기존 수집·중복제거·매칭·발송 정책
-- [ ] 기존 dry-run/preview 경로
-- [ ] 사용자가 변경 요청하지 않은 기존 동작
+- [x] 기존 수집·중복제거·매칭·발송 정책
+- [x] 기존 dry-run/preview 경로
+- [x] 사용자가 변경 요청하지 않은 기존 동작
 
 ### 8-7. REMOVE — 제거
 

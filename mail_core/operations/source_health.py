@@ -135,6 +135,8 @@ def update_source_health(
         "item_count": item_count,
         "parse_rate": parse_rate,
     }
+    if error:
+        record["error"] = str(error)
 
     # 상태 전환 시 이력 기록
     if status != prev_status:

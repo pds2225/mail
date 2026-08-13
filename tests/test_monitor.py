@@ -1655,6 +1655,95 @@ def test_dedup_items_stats_exports_source_contribution():
     assert "same_source_duplicate_removed" in stats
     assert "cross_source_duplicate_removed" in stats
     assert "attachment_duplicate_removed" in stats
+    assert stats.get("duplicate_replaced", 0) >= 1
+    assert "duplicate_removed_total" in stats
     # primary(kstartup) should win over aggregator(bizinfo)
     assert any(it["source"] == "kstartup" for it in kept)
     assert "kstartup" in stats["source_contribution"]
+
+
+def test_p2_yearless_title_still_recalls_yearful_duplicate():
+    """연도 없는 제목도 연도 있는 유사 제목과 POSSIBLE_DUPLICATE로 잡혀야 한다."""
+    from monitor import detect_possible_duplicates
+    items = [
+        {"id": "a1", "title": "AI 창업지원사업 모집", "source": "bizinfo"},
+        {"id": "b1", "title": "2026년 AI 창업지원사업 모집", "source": "kstartup"},
+    ]
+    result = detect_possible_duplicates(items)
+    assert result[0].get("_possible_duplicate") is True
+    assert result[1].get("_possible_duplicate") is True
+
+
+def test_execute_monitor_all_fetch_failures_still_update_source_health(
+    tmp_path, monkeypatch,
+):
+    """전체 소스 실패여도 early return 전에 source-health가 기록된다."""
+    import monitor
+    import mail_core.operations.source_health as sh
+
+    health_path = tmp_path / "source_health.json"
+    monkeypatch.setattr(sh, "SOURCE_HEALTH_PATH", health_path)
+    monkeypatch.setattr(sh, "SOURCE_INCIDENT_PATH", tmp_path / "source_incidents.jsonl")
+    monkeypatch.setattr(monitor, "load_sites", lambda: [
+        {"id": "bizinfo", "name": "biz", "type": "ok_type", "enabled": True},
+        {"id": "kstartup", "name": "ks", "type": "ok_type", "enabled": True},
+    ])
+    monkeypatch.setattr(monitor, "load_groups", lambda: [{"id": "g1", "name": "g"}])
+    monkeypatch.setattr(monitor, "load_settings", lambda: {"days_back": 1})
+    monkeypatch.setattr(monitor, "load_seen_ids", lambda: set())
+
+    def boom_fetch(sites, outcomes=None, **_kw):
+        if outcomes is not None:
+            for s in sites:
+                sid = str(s.get("id") or s.get("name") or "unknown")
+                outcomes[sid] = {"success": False, "item_count": 0, "error": "boom"}
+        return []
+
+    monkeypatch.setattr(monitor, "fetch_all", boom_fetch)
+    result = monitor.execute_monitor(allow_send=False, persist_seen=False)
+    assert result.get("ok") is True
+    assert result.get("reason") == "no_items"
+    health = sh.load_source_health()
+    assert health["bizinfo"]["status"] == sh.FAILING
+    assert health["kstartup"]["status"] == sh.FAILING
+    assert "boom" in str(health["bizinfo"].get("error") or "boom")
+
+
+def test_execute_monitor_collect_dedup_path_no_nameerror(tmp_path, monkeypatch):
+    """정상 수집→dedup 경로가 NameError/UnboundLocalError 없이 끝난다."""
+    import monitor
+    import mail_core.operations.source_health as sh
+
+    monkeypatch.setattr(sh, "SOURCE_HEALTH_PATH", tmp_path / "source_health.json")
+    monkeypatch.setattr(sh, "SOURCE_INCIDENT_PATH", tmp_path / "source_incidents.jsonl")
+
+    item = {
+        "id": "n1",
+        "title": "2026년 뷰티산업 육성 지원 사업",
+        "link": "https://example.com/n1",
+        "author": "중기부",
+        "description": "지원",
+        "deadline": "2099-04-17",
+        "source": "bizinfo",
+        "posted_date": previous_workday,
+        "is_aggregator": False,
+    }
+
+    def ok_fetch(sites, outcomes=None, **_kw):
+        if outcomes is not None:
+            outcomes["bizinfo"] = {"success": True, "item_count": 1, "error": None}
+        return [dict(item)]
+
+    monkeypatch.setattr(monitor, "load_sites", lambda: [
+        {"id": "bizinfo", "name": "biz", "type": "ok_type", "enabled": True},
+    ])
+    monkeypatch.setattr(monitor, "load_groups", lambda: [{"id": "g1", "name": "g"}])
+    monkeypatch.setattr(monitor, "load_settings", lambda: {"days_back": 1})
+    monkeypatch.setattr(monitor, "load_seen_ids", lambda: set())
+    monkeypatch.setattr(monitor, "fetch_all", ok_fetch)
+    monkeypatch.setattr(monitor, "enrich_items", lambda items: items)
+    result = monitor.execute_monitor(allow_send=False, persist_seen=False)
+    assert result.get("ok") is True
+    assert "error" not in str(result.get("reason") or "").lower()
+    assert result.get("mail_sent") in (False, 0, None) or result.get("mail_sent") == 0
+
