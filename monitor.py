@@ -1014,18 +1014,16 @@ def merge_notice_fields(canonical: dict, new_item: dict) -> dict:
 def _detail_extraction_unreliable(item: dict) -> bool:
     """상세 FETCH/PARSE 실패·빈 마감 스냅샷은 버전 baseline 으로 쓰면 안 된다.
 
-    ``DETAIL_FETCH_FAILED`` / ``PARSE_FAILED`` 는 기존과 동일. 추가로 enrich 가
-    ``SUCCESS`` 이어도 마감/접수기간이 비어 있으면 delivered_* 로 잠그지 않는다.
-    (empty→filled 가 ``DEADLINE_EXTENDED`` ``id@vN`` 허위 재발송을 만든다.)
-    ``detail_extraction`` 자체가 없는 얇은 리스트-온리 행은 별도 수정(PR #262).
+    ``DETAIL_FETCH_FAILED`` / ``PARSE_FAILED`` 는 항상 unreliable.
+    enrich 가 ``SUCCESS`` 이어도 마감/접수기간이 비면 delivered_* 로 잠그지 않는다.
+    ``detail_extraction`` 자체가 없고 마감도 비어 있는 얇은 리스트-온리 행도 같다.
+    리스트에 마감이 이미 있으면 enrich 없이도 baseline 승격을 허용한다(실연장 감지).
     """
     extraction = item.get("detail_extraction")
-    if not isinstance(extraction, dict):
-        return False
-    status = str(extraction.get("status") or "").strip().upper()
-    if status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}:
-        return True
-    # Enriched but still no dates: same empty→filled @vN trap as failed fetches.
+    if isinstance(extraction, dict):
+        status = str(extraction.get("status") or "").strip().upper()
+        if status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}:
+            return True
     deadline = str(resolve_item_deadline(item) or "").strip()
     period = item.get("application_period") or {}
     if isinstance(period, dict):
