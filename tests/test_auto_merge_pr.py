@@ -74,6 +74,13 @@ def test_auto_merge_workflow_uses_github_token_not_pat():
     assert "actions/runs/" not in text
     assert "gh api" not in text
     assert "--print-pr-number" in text
+    assert "head_repository.full_name == github.repository" in text
+
+
+def test_task_md_doc_only_eligible():
+    verdict = match_profile(["TASK.md"], _profiles())
+    assert verdict.ok
+    assert verdict.profile == "doc_only"
 
 
 class _FakeProc:
