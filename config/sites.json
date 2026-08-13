@@ -2964,6 +2964,30 @@
     }
   },
   {
+    "id": "gov24_consultant",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EC%BB%A8%EC%84%A4%ED%84%B4%ED%8A%B8&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-컨설턴트 / 주기:주 2~3회 / 우선순위:상 / 컨설턴트 신청·모집 공고",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
+    "id": "gov24_mgmt_consultant",
+    "name": "정부24",
+    "type": "html_table",
+    "url": "https://www.gov.kr/portal/locgovNews?srchTxt=%EA%B2%BD%EC%98%81%EC%A7%80%EB%8F%84%EC%82%AC&srchSort=01",
+    "enabled": true,
+    "is_aggregator": false,
+    "note": "지자체 소식-경영지도사 / 주기:주 2~3회 / 우선순위:상 / 컨설턴트 신청공고 인접 검색",
+    "selectors": {
+      "row": "ul.list li"
+    }
+  },
+  {
     "id": "imp_82068114",
     "name": "제주경영자총협회",
     "type": "html_table",
