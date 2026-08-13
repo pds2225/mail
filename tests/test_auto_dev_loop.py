@@ -80,7 +80,11 @@ def test_outstanding_audit_skips_active_checkout(monkeypatch):
 
 def test_drift_verify_ok():
     result = lv.run_verify(drift_only=True)
-    assert result["ok"] is True
+    failed = [
+        c for c in result.get("checks") or []
+        if c.get("id") in {"D1", "D2", "D3", "D5", "D6"} and not c.get("ok")
+    ]
+    assert result["ok"] is True, failed
     assert result["mode"] == "drift"
 
 

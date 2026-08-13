@@ -287,6 +287,12 @@ def run_audit(*, base: str = "origin/main") -> dict:
         by_status[r["status"]] = by_status.get(r["status"], 0) + 1
 
     unique = [r for r in remote_results if r["status"] == "UNIQUE_CANDIDATE"]
+    head_added = set(tip_only_paths(base, "HEAD"))
+    if head_added:
+        unique = [
+            r for r in unique
+            if not (set(r.get("unique_paths") or []) and set(r.get("unique_paths") or []) <= head_added)
+        ]
     report = {
         "ok": len(unique) == 0 and len(stashes) == 0,
         "base": base,
