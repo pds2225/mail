@@ -1325,6 +1325,44 @@ def test_p1_change_type_target_changed():
     assert _classify_notice_change(before, after) == "TARGET_CHANGED"
 
 
+def test_p1_change_type_target_changed_uses_snapshot_keys():
+    """Live path feeds snapshots (key: target), not raw target_field."""
+    from monitor import _classify_notice_change, _notice_version_snapshot, classify_notice_versions, _notice_snapshot_hash
+
+    before_item = {
+        "title": "AI 창업지원 모집",
+        "target_field": "예비창업자",
+        "deadline": "2026-08-31",
+        "application_period": {"display": "2026-08-01 ~ 2026-08-31"},
+        "support_field": "최대 1억원",
+        "region_field": "전국",
+        "link": "https://example.test/a",
+    }
+    after_item = {
+        **before_item,
+        "id": "n-target",
+        "target_field": "창업 3년 이내 기업",
+        "detail_extraction": {"status": "SUCCESS"},
+    }
+    before_snap = _notice_version_snapshot(before_item)
+    after_snap = _notice_version_snapshot(after_item)
+    assert "target" in before_snap and "target_field" not in before_snap
+    assert _classify_notice_change(before_snap, after_snap) == "TARGET_CHANGED"
+
+    versions = {
+        "n-target": {
+            "version": 1,
+            "delivery_id": "n-target",
+            "delivered_hash": _notice_snapshot_hash(before_snap),
+            "delivered_snapshot": before_snap,
+            "list_hash": "x",
+        }
+    }
+    deliverable, _updates = classify_notice_versions([after_item], {"n-target"}, versions)
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "TARGET_CHANGED"
+
+
 def test_p1_change_type_minor_text_change():
     """단순 텍스트 변경 → MINOR_TEXT_CHANGE"""
     from monitor import _classify_notice_change
