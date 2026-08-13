@@ -80,6 +80,21 @@ score = priority×30 + or×5 + (or≥3 → +15) + region×20
 
 LLM은 기본 밴드(예: 40–70)에서만. AI 그룹 `score_threshold: 1`이면 점수 게이트는 거의 no-op.
 
+## 컨설턴트 신청·모집 (워치리스트)
+
+그룹 메일은 **기업이 신청하는 지원금 공고**용이다. 제목이 `컨설턴트 모집`이어도 `evaluate_notice`가 재정 신호 없는 컨설팅으로 보면 `CONSULTING_ONLY`로 제외한다.
+
+전국 대상 활성 그룹을 하나 더 넣으면 `tests/test_decision_matrix.py`가 `ACTIVE` 전 그룹에 지역 배타를 걸어 깨진다. 컨설턴트 신청 공고는 그룹이 아니라 **워치리스트**로 보낸다.
+
+| 항목 | 내용 |
+|------|------|
+| 전달 | `config/watchlist.json` `keywords` — 제목·주관기관만 매칭, 본문 무시 |
+| 수집 | 기존 소스 + 정부24 `gov24_consultant`·`gov24_mgmt_consultant` (`ul.list li`, 전문가 소스와 동일) |
+| 0건 | locgovNews `컨설턴트`/`경영지도사` 검색은 비는 날이 많다. detector는 `warning` |
+| 키워드 | `컨설턴트 모집`·`컨설턴트 신청` 등 구(句). 단독 `컨설턴트`는 결과발표·우수사례 오탐 |
+| 구 키워드 | IP나래 등은 `_keywords_보존`. `keywords`를 비우면 🎯 발송이 멈춘다 |
+| 회귀 | `tests/test_consultant_notices.py` · PR #251 |
+
 ## 관련 파일
 
 | 경로 | 역할 |
@@ -89,9 +104,10 @@ LLM은 기본 밴드(예: 40–70)에서만. AI 그룹 `score_threshold: 1`이�
 | `mail_core/delivery/feedback.py` | O/X 로컬 라벨 |
 | `streamlit_app.py` | 검수·O/X 탭 |
 | `tests/test_filter_selector_fixes.py` | 셀렉터·지역 회귀 |
+| `tests/test_consultant_notices.py` | 컨설턴트 신청 소스·워치리스트 |
 | `docs/wiki/ox-title-review.md` | O/X UI 상세 |
 
 ## 관련 링크
 
-- PR: https://github.com/pds2225/mail/pull/229
+- PR: https://github.com/pds2225/mail/pull/229 · 컨설턴트 신청 수집 https://github.com/pds2225/mail/pull/251
 - [[ox-title-review]] · [[region-resolve]]
