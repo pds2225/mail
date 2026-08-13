@@ -26,6 +26,12 @@
 | `ANTHROPIC_API_KEY` | Claude AI 요약 | 선택 |
 | `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
 
+> **Auto Merge checkout:** `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에
+> `github.token` 만 쓴다. Secret `AUTO_DEV_PAT` 이 만료돼 있어도
+> `secrets.AUTO_DEV_PAT || github.token` 은 빈 값이 아니라 만료 토큰을 넘기므로
+> checkout 이 `could not read Username for 'https://github.com'` 로 실패한다
+> (2026-08-13 run 31660085605). 유효 PAT 가 준비되기 전에는 Auto Merge에 PAT를 넣지 않는다.
+
 ### Vercel Environment Variables
 
 | 환경변수 이름 | 용도 | dry-run 상태 |
