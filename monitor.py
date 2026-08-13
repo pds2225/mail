@@ -4262,7 +4262,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
     canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
     attachment_map: dict[str, dict] = {}  # notice_signature_hash → kept item
-    _s_title = _s_canonical = _s_attach = 0  # dedup 원인별 카운터
+    _s_title = _s_canonical = _s_attach = _s_replaced = 0  # dedup 원인별 카운터
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -4307,6 +4307,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del norm_map[similarity_key(existing["title"])]
                     norm_map[key] = item
                     canonical_map[canonical_id] = item
+                    _s_replaced += 1
                     log.info("크로스소스중복: '%s' (%s) → '%s' (%s) 로 교체 (canonical: %s)",
                              existing["source"], existing["title"][:20],
                              item["source"], item["title"][:20], canonical_id)
@@ -4323,6 +4324,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del norm_map[similarity_key(existing["title"])]
                     norm_map[key] = item
                     attachment_map[att_hash] = item
+                    _s_replaced += 1
                     log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
                 else:
@@ -4354,6 +4356,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del attachment_map[old_att]
                 if att_hash:
                     attachment_map[att_hash] = item
+                _s_replaced += 1
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
@@ -4379,6 +4382,8 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
         _stats["same_source_duplicate_removed"] = _s_title
         _stats["cross_source_duplicate_removed"] = _s_canonical
         _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["duplicate_replaced"] = _s_replaced
+        _stats["duplicate_removed_total"] = _s_title + _s_canonical + _s_attach
         _stats["source_contribution"] = source_stats
 
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
@@ -4423,16 +4428,18 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
         tokens = set(tk.split())
         pre.append((item, tk, year, tokens))
 
-    # 버킷: (year, min_token) — 같은 연도 + 공유 토큰이 있는 그룹끼리만 비교
+    # 버킷: (year, token) — 같은 연도 + 공유 토큰이 있는 그룹끼리만 비교.
+    # 연도 없는 제목은 연도 있는 동일 토큰 공고와도 비교해야 재현율이 떨어지지 않는다.
     from collections import defaultdict
+    years_seen = {year for (_item, _tk, year, _tokens) in pre if year}
     buckets: dict[tuple[str, str], list[int]] = defaultdict(list)
     for idx, (_item, _tk, year, tokens) in enumerate(pre):
-        bucket_year = year or "_noyear"
-        # 각 토큰을 버킷 키로 사용 (긴 토큰 우선, 최대 3개)
+        year_keys = {year} if year else (years_seen | {"_noyear"})
         sorted_toks = sorted(tokens, key=len, reverse=True)[:3]
-        for tok in sorted_toks:
-            if len(tok) >= 2:
-                buckets[(bucket_year, tok)].append(idx)
+        for y in year_keys:
+            for tok in sorted_toks:
+                if len(tok) >= 2:
+                    buckets[(y, tok)].append(idx)
 
     # 버킷 내에서만 쌍 비교
     seen_pairs: set[tuple[int, int]] = set()

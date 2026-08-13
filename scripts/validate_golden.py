@@ -99,14 +99,20 @@ def run_labeled_benchmark(feedback_path: str, group: dict) -> dict:
         return {"status": "NOT_MEASURABLE", "reason": "no feedback labels found", "labeled_count": 0}
 
     tp = fp = tn = fn = 0
+    skipped_featureless = 0
     for item in items:
         verdict = item.get("verdict", "").upper()
         if verdict not in ("O", "X"):
             continue
+        title = str(item.get("title") or "").strip()
+        description = str(item.get("description") or "").strip()
+        if not title and not description:
+            skipped_featureless += 1
+            continue
         notice = {
             "id": item.get("id", ""),
-            "title": item.get("title", ""),
-            "description": "",
+            "title": title,
+            "description": description,
             "link": "",
             "author": "",
             "deadline": item.get("deadline", ""),
@@ -131,7 +137,17 @@ def run_labeled_benchmark(feedback_path: str, group: dict) -> dict:
 
     total = tp + fp + tn + fn
     if total == 0:
-        return {"status": "NOT_MEASURABLE", "reason": "no valid O/X labels", "labeled_count": 0}
+        reason = (
+            "all labels are featureless"
+            if skipped_featureless
+            else "no valid O/X labels"
+        )
+        return {
+            "status": "NOT_MEASURABLE",
+            "reason": reason,
+            "labeled_count": 0,
+            "skipped_featureless": skipped_featureless,
+        }
 
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
@@ -140,6 +156,7 @@ def run_labeled_benchmark(feedback_path: str, group: dict) -> dict:
     return {
         "status": "MEASURED",
         "labeled_count": total,
+        "skipped_featureless": skipped_featureless,
         "tp": tp, "fp": fp, "tn": tn, "fn": fn,
         "precision": round(precision, 4),
         "recall": round(recall, 4),
