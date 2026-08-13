@@ -182,7 +182,7 @@ def test_stable_id_changes_when_link_changes():
 def test_execute_monitor_dry_run_flags(monkeypatch):
     monkeypatch.setattr(
         "monitor.fetch_all",
-        lambda sites: [_item("n1", "테스트", previous_business_day(days_back=1).strftime("%Y-%m-%d"))],
+        lambda sites, **_kw: [_item("n1", "테스트", previous_business_day(days_back=1).strftime("%Y-%m-%d"))],
     )
     monkeypatch.setattr("monitor.enrich_items", lambda items: items)
     result = execute_monitor(allow_send=False, persist_seen=False)
