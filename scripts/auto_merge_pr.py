@@ -8,13 +8,11 @@ Usage:
   python3 scripts/auto_merge_pr.py --pr 42
   python3 scripts/auto_merge_pr.py --pr 42 --dry-run
   python3 scripts/auto_merge_pr.py --pr 42 --base-ref origin/main
-  python3 scripts/auto_merge_pr.py --head-branch feat/x --head-sha abc --event-pr 0
 """
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -25,9 +23,6 @@ LOOP_CONFIG = ROOT / "auto_dev" / "loop_config.json"
 PROFILES_PATH = ROOT / "auto_dev" / "task_profiles.json"
 PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
 BLOCKED_LABELS = frozenset({"needs-human", "blocked"})
-PR_VIEW_FIELDS = (
-    "number,title,isDraft,labels,mergeable,headRefName,baseRefName,state"
-)
 
 
 @dataclass
@@ -41,6 +36,51 @@ def _run(cmd: list[str], *, check: bool = False) -> subprocess.CompletedProcess[
     return subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=check)
 
 
+def resolve_pr_number(
+    *,
+    payload_pr: str = "",
+    head_branch: str = "",
+    head_sha: str = "",
+    runner=None,
+) -> str:
+    """Resolve PR number without GET /actions/runs/{id}/pull-requests.
+
+    That endpoint 404s from workflow_run jobs even with actions:read
+    (runs 31662894294, 31660656278). Prefer the workflow_run payload, then
+    ``gh pr list`` by branch / SHA. Empty string means skip, not fail.
+    """
+    run = runner or _run
+    payload = str(payload_pr or "").strip()
+    if payload.isdigit():
+        return payload
+
+    branch = str(head_branch or "").strip()
+    if branch:
+        proc = run(
+            [
+                "gh", "pr", "list", "--state", "open", "--head", branch,
+                "--json", "number", "--jq", ".[0].number // empty",
+            ]
+        )
+        num = (proc.stdout or "").strip()
+        if num.isdigit():
+            return num
+
+    sha = str(head_sha or "").strip()
+    if sha:
+        proc = run(
+            [
+                "gh", "pr", "list", "--state", "open", "--search", sha,
+                "--json", "number", "--jq", ".[0].number // empty",
+            ]
+        )
+        num = (proc.stdout or "").strip()
+        if num.isdigit():
+            return num
+
+    return ""
+
+
 def load_loop_config() -> dict:
     return json.loads(LOOP_CONFIG.read_text(encoding="utf-8"))
 
@@ -49,21 +89,8 @@ def load_profiles() -> dict:
     return json.loads(PROFILES_PATH.read_text(encoding="utf-8"))
 
 
-def optional_positive_int(value: object) -> int | None:
-    if value is None or isinstance(value, bool):
-        return None
-    text = str(value).strip()
-    if not text:
-        return None
-    try:
-        n = int(text)
-    except ValueError:
-        return None
-    return n if n > 0 else None
-
-
 def gh_json(args: list[str]) -> dict | list:
-    proc = _run(["gh", *args, "--json", PR_VIEW_FIELDS])
+    proc = _run(["gh", *args, "--json", "number,title,isDraft,labels,mergeable,headRefName,baseRefName"])
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr.strip() or "gh command failed")
     data = json.loads(proc.stdout or "null")
@@ -115,10 +142,6 @@ def assess_pr(pr: dict, changed: list[str], cfg: dict) -> Eligibility:
     auto_cfg = cfg.get("auto_merge") or {}
     if not auto_cfg.get("enabled"):
         return Eligibility(False, "loop_config.auto_merge.enabled=false")
-
-    state = str(pr.get("state") or "OPEN").upper()
-    if state != "OPEN":
-        return Eligibility(False, f"PR state={state}")
 
     if pr.get("isDraft"):
         return Eligibility(False, "Draft PR")
@@ -176,95 +199,49 @@ def merge_pr(pr_number: int, cfg: dict, *, dry_run: bool) -> int:
     return 1
 
 
-def resolve_pr_number(
-    *,
-    event_pr: object = None,
-    head_branch: str = "",
-    head_sha: str = "",
-    repo: str = "",
-) -> int | None:
-    """workflow_run 의 Actions pull-requests API 는 GITHUB_TOKEN 에서 404 가 난다.
-
-    대신 이벤트 payload → `gh pr list --head` → commit associated pulls 순으로 찾는다.
-    """
-    found = optional_positive_int(event_pr)
-    if found:
-        return found
-
-    branch = (head_branch or "").strip()
-    if branch:
-        proc = _run([
-            "gh", "pr", "list",
-            "--head", branch,
-            "--base", "main",
-            "--state", "open",
-            "--json", "number",
-        ])
-        if proc.returncode == 0:
-            try:
-                rows = json.loads(proc.stdout or "[]")
-            except json.JSONDecodeError:
-                rows = []
-            if isinstance(rows, list) and rows:
-                n = optional_positive_int((rows[0] or {}).get("number"))
-                if n:
-                    return n
-
-    sha = (head_sha or "").strip()
-    repo = (repo or os.environ.get("GITHUB_REPOSITORY") or "").strip()
-    if sha and repo:
-        proc = _run([
-            "gh", "api",
-            f"repos/{repo}/commits/{sha}/pulls",
-            "-H", "Accept: application/vnd.github+json",
-        ])
-        if proc.returncode == 0:
-            try:
-                rows = json.loads(proc.stdout or "[]")
-            except json.JSONDecodeError:
-                rows = []
-            if isinstance(rows, list) and rows:
-                n = optional_positive_int((rows[0] or {}).get("number"))
-                if n:
-                    return n
-    return None
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Auto-merge eligible PRs after CI")
-    parser.add_argument("--pr", default=None, help="PR number (optional if head-branch/sha given)")
-    parser.add_argument("--event-pr", default="", help="workflow_run.pull_requests[0].number")
-    parser.add_argument("--head-branch", default="", help="workflow_run.head_branch")
-    parser.add_argument("--head-sha", default="", help="workflow_run.head_sha")
-    parser.add_argument("--repo", default="", help="owner/name (default GITHUB_REPOSITORY)")
+    parser.add_argument("--pr", type=int, default=0, help="PR number")
     parser.add_argument("--base-ref", default="origin/main", help="Diff base ref")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--print-pr-number",
+        action="store_true",
+        help="Resolve PR number from workflow_run payload/branch/SHA and print number=<n>",
+    )
+    parser.add_argument("--payload-pr", default="", help="github.event.workflow_run.pull_requests[0].number")
+    parser.add_argument("--head-branch", default="", help="workflow_run.head_branch")
+    parser.add_argument("--head-sha", default="", help="workflow_run.head_sha")
     args = parser.parse_args(argv)
 
-    pr_number = optional_positive_int(args.pr) or resolve_pr_number(
-        event_pr=args.event_pr,
-        head_branch=args.head_branch,
-        head_sha=args.head_sha,
-        repo=args.repo,
-    )
-    if not pr_number:
-        print("PR 번호 없음 — skip")
+    if args.print_pr_number:
+        num = resolve_pr_number(
+            payload_pr=args.payload_pr,
+            head_branch=args.head_branch,
+            head_sha=args.head_sha,
+        )
+        print(f"number={num}")
         return 0
 
+    if not args.pr:
+        print("--pr 또는 --print-pr-number 가 필요합니다", file=sys.stderr)
+        return 1
+
     cfg = load_loop_config()
-    pr = gh_json(["pr", "view", str(pr_number)])
+    pr = gh_json(["pr", "view", str(args.pr)])
+    head = f"origin/{pr.get('headRefName') or ''}"
     if not pr.get("headRefName"):
         print("head ref 없음", file=sys.stderr)
         return 1
 
-    _run(["git", "fetch", "origin", f"pull/{pr_number}/head:pr-{pr_number}"], check=False)
-    files = changed_files(args.base_ref, f"pr-{pr_number}")
+    _run(["git", "fetch", "origin", f"pull/{args.pr}/head:pr-{args.pr}"], check=False)
+    files = changed_files(args.base_ref, f"pr-{args.pr}")
     verdict = assess_pr(pr, files, cfg)
-    print(f"PR #{pr_number} profile={verdict.profile or '-'} → {verdict.reason}")
+    print(f"PR #{args.pr} profile={verdict.profile or '-'} → {verdict.reason}")
     if not verdict.ok:
         return 0
 
-    return merge_pr(pr_number, cfg, dry_run=args.dry_run)
+    return merge_pr(args.pr, cfg, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

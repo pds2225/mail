@@ -34,7 +34,7 @@
 >
 > PR 번호는 `GET .../actions/runs/{id}/pull-requests` 를 쓰지 않는다. 이 API 는
 > GITHUB_TOKEN 에서 404 가 난다 (run 31662894294). `workflow_run.pull_requests`,
-> `gh pr list --head`, `GET .../commits/{sha}/pulls` 순으로 찾는다. 없으면 skip
+> `gh pr list --head`, `gh pr list --search SHA` 순으로 찾는다. 없으면 skip
 > (job 실패 아님). 같은 저장소 브랜치 PR만 대상이다.
 
 ### Vercel Environment Variables

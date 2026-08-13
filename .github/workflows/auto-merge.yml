@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: read
 
 jobs:
   auto-merge:
@@ -36,14 +37,26 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 자동 병합 (eligible PR만)
+      - name: PR 번호 확인
+        id: pr
         env:
           GH_TOKEN: ${{ github.token }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          PAYLOAD_PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # workflow_run 잡에서 run-id→PR API 는 404 난다
+          # (runs 31662894294, 31660656278). payload → gh pr list 로 해석하고
+          # PR 이 없으면 빈 number 로 skip (잡 실패 아님).
+          python3 scripts/auto_merge_pr.py --print-pr-number \
+            --payload-pr "${PAYLOAD_PR}" \
+            --head-branch "${HEAD_BRANCH}" \
+            --head-sha "${HEAD_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: 자동 병합 (eligible PR만)
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git fetch origin main
-          python3 scripts/auto_merge_pr.py \
-            --event-pr "${{ github.event.workflow_run.pull_requests[0].number || 0 }}" \
-            --head-branch "${{ github.event.workflow_run.head_branch }}" \
-            --head-sha "${{ github.event.workflow_run.head_sha }}" \
-            --base-ref origin/main
+          python3 scripts/auto_merge_pr.py --pr "${{ steps.pr.outputs.number }}" --base-ref origin/main
