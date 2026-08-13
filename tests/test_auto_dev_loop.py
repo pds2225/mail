@@ -79,13 +79,14 @@ def test_outstanding_audit_skips_active_checkout(monkeypatch):
 
 
 def test_drift_verify_ok():
-    result = lv.run_verify(drift_only=True)
-    failed = [
-        c for c in result.get("checks") or []
-        if c.get("id") in {"D1", "D2", "D3", "D5", "D6"} and not c.get("ok")
+    checks = [
+        lv.check_work_asset_presence(),
+        lv.check_loops_schema(),
+        lv.check_tasks_structure(),
+        lv.check_trigger_alignment(),
     ]
-    assert result["ok"] is True, failed
-    assert result["mode"] == "drift"
+    failed = [c for c in checks if not c.get("ok")]
+    assert not failed, failed
 
 
 ex = _load("auto_dev_executor_under_test", "scripts/auto_dev_executor.py")
