@@ -68,10 +68,13 @@ def test_dedup_persist_present():
 
 
 def test_crash_alert_present():
-    """완전 크래시 시 알림 스텝(if: failure)이 있어야 한다(조용한 정지 방지)."""
+    """완전 크래시 시 알림 스텝(if: failure)이 있어야 한다(조용한 정지 방지).
+
+    `failure() || cancelled()` 도 허용 — cancelled 재실행 금지 정책과 함께 쓰인다.
+    """
     wf = _load()
-    def _is_failure_alert(step_if: str) -> bool:
-        normalized = str(step_if).replace(" ", "")
-        return normalized == "failure()" or normalized.startswith("failure()||")
-    assert any(_is_failure_alert(s.get("if", "")) for s in _steps(wf)), \
-        "크래시 알림(if: failure()) 스텝이 없다"
+    conds = [str(s.get("if", "")).replace(" ", "") for s in _steps(wf)]
+    assert any(
+        c == "failure()" or c.startswith("failure()||") or "||failure()" in c
+        for c in conds
+    ), "크래시 알림(if: failure() …) 스텝이 없다"
