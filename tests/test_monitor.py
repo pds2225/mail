@@ -1709,9 +1709,13 @@ def test_execute_monitor_all_fetch_failures_still_update_source_health(
     assert "boom" in str(health["bizinfo"].get("error") or "boom")
 
 
-def test_execute_monitor_collect_dedup_path_no_nameerror(monkeypatch):
+def test_execute_monitor_collect_dedup_path_no_nameerror(tmp_path, monkeypatch):
     """정상 수집→dedup 경로가 NameError/UnboundLocalError 없이 끝난다."""
     import monitor
+    import mail_core.operations.source_health as sh
+
+    monkeypatch.setattr(sh, "SOURCE_HEALTH_PATH", tmp_path / "source_health.json")
+    monkeypatch.setattr(sh, "SOURCE_INCIDENT_PATH", tmp_path / "source_incidents.jsonl")
 
     item = {
         "id": "n1",
