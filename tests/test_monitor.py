@@ -1517,3 +1517,106 @@ def test_p2_possible_duplicate_different_region():
     result = detect_possible_duplicates(items)
     assert result[0].get("_possible_duplicate") is not True
     assert result[1].get("_possible_duplicate") is not True
+
+
+# ══════════════════════════════════════════════════════════════════
+# Hotfix — fetch_all outcomes + dedup _stats order
+# ══════════════════════════════════════════════════════════════════
+
+def test_fetch_all_without_outcomes_remains_compatible():
+    """outcomes 미전달 시 기존 list-only API가 NameError 없이 동작한다."""
+    import monitor
+
+    items = monitor.fetch_all([{"id": "x", "name": "x", "type": "__no_such_type__"}])
+    assert items == []
+
+
+def test_fetch_all_records_success_and_failure_outcomes(monkeypatch):
+    """성공/실패 소스가 섞여도 outcomes collector에 기록되고 수집은 중단되지 않는다."""
+    import monitor
+
+    def ok_fetcher(site):
+        return [{
+            "id": f"{site['id']}_1",
+            "title": "ok notice",
+            "link": "https://example.com/1",
+            "author": "",
+            "description": "",
+            "deadline": "",
+            "source": site["id"],
+            "posted_date": previous_workday,
+            "is_aggregator": False,
+        }]
+
+    def bad_fetcher(site):
+        raise RuntimeError("boom")
+
+    monkeypatch.setitem(monitor.FETCHERS, "ok_type", ok_fetcher)
+    monkeypatch.setitem(monitor.FETCHERS, "bad_type", bad_fetcher)
+
+    outcomes: dict = {}
+    sites = [
+        {"id": "bizinfo", "name": "biz", "type": "ok_type"},
+        {"id": "kstartup", "name": "ks", "type": "bad_type"},
+    ]
+    items = monitor.fetch_all(sites, outcomes=outcomes)
+
+    assert len(items) == 1
+    assert items[0]["id"] == "bizinfo_1"
+    assert outcomes["bizinfo"]["success"] is True
+    assert outcomes["bizinfo"]["item_count"] == 1
+    assert outcomes["bizinfo"]["error"] is None
+    assert outcomes["kstartup"]["success"] is False
+    assert outcomes["kstartup"]["item_count"] == 0
+    assert "boom" in str(outcomes["kstartup"]["error"])
+
+
+def test_dedup_items_stats_exports_source_contribution():
+    """_stats 전달 시 source_contribution export가 UnboundLocalError 없이 동작한다."""
+    items = [
+        {
+            "id": "a1",
+            "title": "2026년 뷰티산업 육성 지원 사업",
+            "link": "https://bizinfo.go.kr/a1",
+            "author": "중기부",
+            "description": "지원",
+            "deadline": "2099-04-17",
+            "source": "bizinfo",
+            "posted_date": previous_workday,
+            "is_aggregator": True,
+        },
+        {
+            "id": "b1",
+            "title": "2026년 뷰티산업 육성 지원 사업",
+            "link": "https://k-startup.go.kr/b1",
+            "author": "중기부",
+            "description": "지원",
+            "deadline": "2099-04-17",
+            "source": "kstartup",
+            "posted_date": previous_workday,
+            "is_aggregator": False,
+        },
+        {
+            "id": "c1",
+            "title": "완전 다른 공고 제목입니다",
+            "link": "https://nipa.kr/c1",
+            "author": "NIPA",
+            "description": "지원",
+            "deadline": "2099-05-01",
+            "source": "nipa",
+            "posted_date": previous_workday,
+            "is_aggregator": False,
+        },
+    ]
+    stats: dict = {}
+    kept = dedup_items(items, _stats=stats)
+
+    assert len(kept) == 2
+    assert "source_contribution" in stats
+    assert isinstance(stats["source_contribution"], dict)
+    assert "same_source_duplicate_removed" in stats
+    assert "cross_source_duplicate_removed" in stats
+    assert "attachment_duplicate_removed" in stats
+    # primary(kstartup) should win over aggregator(bizinfo)
+    assert any(it["source"] == "kstartup" for it in kept)
+    assert "kstartup" in stats["source_contribution"]
