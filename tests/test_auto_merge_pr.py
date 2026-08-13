@@ -54,3 +54,21 @@ def test_assess_disabled_config():
     verdict = assess_pr(pr, ["docs/foo.md"], _cfg(enabled=False))
     assert not verdict.ok
     assert "enabled=false" in verdict.reason
+
+
+def test_auto_merge_workflow_uses_github_token_not_pat():
+    """만료 PAT 를 checkout token 으로 쓰면 인증 실패 (run 31660085605)."""
+    text = (ROOT / ".github/workflows/auto-merge.yml").read_text(encoding="utf-8")
+    token_lines = [
+        ln.strip()
+        for ln in text.splitlines()
+        if ln.strip().startswith("token:") or ln.strip().startswith("GH_TOKEN:")
+    ]
+    assert token_lines, "checkout token / GH_TOKEN 설정이 없다"
+    for ln in token_lines:
+        assert "github.token" in ln
+        assert "AUTO_DEV_PAT" not in ln
+    assert "actions: read" in text
+    assert "contents: write" in text
+    assert "pull-requests: write" in text
+
