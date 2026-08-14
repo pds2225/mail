@@ -6205,49 +6205,164 @@ def _mail_fit_reason(item: dict) -> str:
     return " / ".join(parts) or "그룹 조건과 일치"
 
 
-def fallback_body(items: list[dict]) -> str:
-    """모바일 메일용 8줄 카드. 내부판정값·원문전체·연락처는 표시하지 않는다."""
-    lines: list[str] = []
+def _mail_status_cell(item: dict, today=None) -> str:
+    """기존 D-Day·신규 판정만 표시. 🆕 는 _change_type=NEW 일 때만."""
+    today = today or datetime.now(KST).date()
+    prefix = "🆕 " if item.get("_change_type") == "NEW" else ""
+    try:
+        status = classify_deadline_status(item, today)
+    except Exception:
+        return prefix + "추출실패" if prefix else "추출실패"
+    if status == "closed":
+        return f"{prefix}마감".strip()
+    if status == "always_open":
+        return f"{prefix}상시".strip()
+    try:
+        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
+        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+        end = max(dates) if dates else None
+    except Exception:
+        return f"{prefix}추출실패".strip() or "추출실패"
+    if end is None:
+        return (prefix + "확인필요").strip()
+    days = (end - today).days
+    if days < 0:
+        return f"{prefix}마감".strip()
+    if days <= 3:
+        mark = "🔴"
+    elif days <= 7:
+        mark = "🟠"
+    else:
+        mark = "🟢"
+    return f"{prefix}D-{days} {mark}".strip()
+
+
+def _mail_fit_cell(item: dict) -> str:
+    """기존 매칭 결과만 3값으로 표시. 점수 계산은 바꾸지 않는다."""
+    if item.get("is_relevant") is False:
+        return "대상아님"
+    if item.get("region_status") == "not_eligible" or item.get("district_status") == "not_eligible":
+        return "대상아님"
+    if item.get("region_status") == "unknown":
+        return "확인필요"
+    return "지원가능"
+
+
+def _mail_support_cell(item: dict) -> str:
+    """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
+    try:
+        types = " ".join(str(v) for v in (item.get("_types") or []) if str(v).strip())
+        blob = " ".join((
+            types,
+            str(item.get("support_field") or ""),
+            str(item.get("title") or ""),
+            str(item.get("description") or "")[:400],
+        ))
+        if "바우처" in blob:
+            return "바우처"
+        if any(tok in blob for tok in ("지원금", "사업비", "자금")):
+            return "지원금/사업비"
+        if any(tok in blob for tok in ("입주", "시설", "공간")):
+            return "시설/입주"
+        if any(tok in blob for tok in ("판로", "실증")):
+            return "판로/실증"
+        if "비용" in blob:
+            return "비용지원"
+        blurb = _mail_support_blurb(item)
+        if blurb and blurb != "상세 공고문 확인":
+            return "기타 핵심지원"
+        return "확인필요"
+    except Exception:
+        return "추출실패"
+
+
+def _mail_target_cell(item: dict) -> str:
+    try:
+        value = _mail_target_text(item)
+        if not value or value == "공고문 확인":
+            return "확인필요"
+        return value
+    except Exception:
+        return "추출실패"
+
+
+def _mail_org_cell(item: dict) -> str:
+    try:
+        author = _mail_clean_text(item.get("author") or "", limit=80)
+        if author:
+            return author
+        return "확인필요"
+    except Exception:
+        return "추출실패"
+
+
+def _mail_region_cell(item: dict) -> str:
+    try:
+        scope = _resolve_applicant_region_scope(item)
+        if scope.get("nationwide"):
+            return "전국"
+        label = _region_label(item)
+        if not label or label == "확인 필요":
+            return "확인필요"
+        return label
+    except Exception:
+        return "추출실패"
+
+
+def _mail_deadline_cell(item: dict, today=None) -> str:
+    today = today or datetime.now(KST).date()
+    try:
+        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
+        if not raw.strip():
+            return "확인필요"
+        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+        if not dates:
+            return "확인필요"
+        end = max(dates)
+        if end.year == today.year:
+            return f"{end.month}/{end.day}"
+        return f"{end.year}/{end.month}/{end.day}"
+    except Exception:
+        return "추출실패"
+
+
+def _digest_row(item: dict, today=None) -> dict:
+    from mail_core.delivery.digest_table import notice_url
+
+    title = strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160))
+    if not title:
+        title = "(제목없음)"
+    badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(
+        item.get("_change_type"), ""
+    )
+    return {
+        "상태": _mail_status_cell(item, today=today),
+        "적합": _mail_fit_cell(item),
+        "공고": badge + title,
+        "url": notice_url(item),
+        "지원": _mail_support_cell(item),
+        "대상": _mail_target_cell(item),
+        "기관": _mail_org_cell(item),
+        "지역": _mail_region_cell(item),
+        "마감": _mail_deadline_cell(item, today=today),
+    }
+
+
+def fallback_body(items: list[dict], today=None) -> str:
+    """공고 안내 8컬럼 표(plain). 추천이유·바로가기·사이트명 컬럼 없음."""
+    from mail_core.delivery.digest_table import render_plain
+
+    if not items:
+        return render_plain([])
     items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
+    preamble = ""
     if imminent:
-        lines.append("⚠️ 7일 이내 마감: " + ", ".join(
+        preamble = "⚠️ 7일 이내 마감: " + ", ".join(
             _mail_clean_text(it.get("title"), limit=45) for it in imminent[:5]
-        ))
-        lines.append("")
-    sections = [
-        ("우선 추천", [it for it in items if it.get("priority_keyword")]),
-        ("일반 추천", [it for it in items if not it.get("priority_keyword")]),
-    ]
-    # 번호는 '실제로 표시되는' 섹션에만 순서대로 붙인다.
-    # (예전엔 번호가 제목에 박혀 있어, 우선 추천이 비면 본문이 "2. 일반 추천" 부터 시작했다.)
-    visible = [(title, its) for title, its in sections if its]
-    for idx, (section_title, section_items) in enumerate(visible, start=1):
-        lines.append(f"{idx}. {section_title}" if len(visible) > 1 else section_title)
-        for it in section_items:
-            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
-            _badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(it.get("_change_type"), "")
-            title = _badge + title
-            # 기관명이 비면 수집 출처라도 보여준다("미기재"보다 어디서 온 공고인지가 낫다).
-            author = _mail_clean_text(it.get("author") or it.get("source") or "미기재", limit=80)
-            types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
-            region = _region_label(it)
-            display_region = "제한 없음" if region.endswith("전체") else region
-            # 신청기간(시작~종료)이 잡힌 공고는 '마감' 이 아니라 '접수기간' 으로 적는다.
-            deadline_text = resolve_item_deadline(it) or "미기재"
-            deadline_label = "접수기간" if "~" in deadline_text else "마감"
-            lines.extend([
-                "──────────────────",
-                f"📌 {title}",
-                f"• 기관: {author} | 유형: {types}",
-                f"• 대상: {_mail_target_text(it)}",
-                f"• 지원내용: {_mail_support_blurb(it)}",
-                f"• {deadline_label}: {deadline_text} | 지역: {display_region}",
-                f"• 적합사유: {_mail_fit_reason(it)}",
-                f"• 원문: {it.get('link') or '미기재'}",
-            ])
-        lines.append("")
-    return "\n".join(lines).strip()
+        )
+    rows = [_digest_row(it, today=today) for it in items]
+    return render_plain(rows, preamble=preamble)
 
 def _region_label(item: dict) -> str:
     district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
@@ -6485,13 +6600,17 @@ def _render_feedback_block(items: list[dict]) -> str:
 
 def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
+    from mail_core.delivery.digest_table import html_email_inner
+
     msg = MIMEMultipart("alternative")
     msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
     msg.attach(MIMEText(body, "plain", "utf-8"))
+    inner = html_email_inner(body, _linkify_html)
     msg.attach(MIMEText(
-        f"<html><body style='font-family:Arial;line-height:1.7'>"
-        f"<pre style='white-space:pre-wrap;font-family:inherit'>{_linkify_html(body)}</pre>"
-        f"</body></html>", "html", "utf-8"))
+        f"<html><body style='font-family:Arial;line-height:1.7'>{inner}</body></html>",
+        "html",
+        "utf-8",
+    ))
     return msg
 
 

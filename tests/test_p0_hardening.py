@@ -163,7 +163,11 @@ def test_digest_never_uses_model_and_always_uses_collected_facts(monkeypatch):
         "link": "https://example.test/notice", "_types": ["지원금/바우처"],
     }]
     body = m.claude_summarize(items, {"id": "g"})
-    assert "500만원" in body and "2026-08-01" in body and "https://example.test/notice" in body
+    # 수집 필드만 사용: 제목의 금액·원문 URL·마감 표시. 모델 문장 없음.
+    assert "500만원" in body
+    assert "https://example.test/notice" in body
+    assert m._mail_deadline_cell(items[0]) in body
+    assert "MODEL" not in body
 
 
 def test_unsigned_feedback_links_are_hidden(monkeypatch):

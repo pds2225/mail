@@ -80,24 +80,33 @@ def test_support_blurb_keeps_notice_content_but_drops_board_meta():
 
 
 def test_fallback_body_numbers_only_visible_sections():
+    from mail_core.delivery.digest_table import HEADER_LINE, parse_plain_table
+
     only_general = m.fallback_body([_item(1, priority_keyword=False)])
-    first = next(line for line in only_general.splitlines() if line.strip())
-    assert not first.startswith("2."), first
-    assert first.strip() == "일반 추천"
+    assert HEADER_LINE in only_general
+    assert "1. 우선 추천" not in only_general
+    assert "2. 일반 추천" not in only_general
 
     both = m.fallback_body([_item(1, priority_keyword=True), _item(2, priority_keyword=False)])
-    assert "1. 우선 추천" in both and "2. 일반 추천" in both
+    assert HEADER_LINE in both
+    assert "1. 우선 추천" not in both and "2. 일반 추천" not in both
+    _, rows, _ = parse_plain_table(both)
+    assert rows is not None and len(rows) == 2
 
 
-def test_fallback_body_uses_eight_line_mobile_card():
+def test_fallback_body_uses_eight_column_table():
+    from mail_core.delivery.digest_table import COLUMNS, HEADER_LINE, parse_plain_table
+
     body = m.fallback_body([_item()])
-    card = body.split("──────────────────", 1)[1].strip().splitlines()
-    assert len(card) == 7
-    assert "📌 2026년 AI 사업화 지원 & 참여기업 모집" in body
-    assert "• 대상: 서울 소재 AI 중소기업" in body and "• 지원내용:" in body
-    assert "• 원문: https://example.com/1" in body
+    assert HEADER_LINE in body
+    _, rows, _ = parse_plain_table(body)
+    assert rows and list(COLUMNS) == ["상태", "적합", "공고", "지원", "대상", "기관", "지역", "마감"]
+    assert "2026년 AI 사업화 지원 & 참여기업 모집" in rows[0]["공고"]
+    assert "서울 소재 AI 중소기업" in rows[0]["대상"]
+    assert "• 원문:" not in body
     assert "등록일:" not in body and "출처:" not in body and "담당자" not in body
     assert "&amp;" not in body
+    assert "추천이유" not in body and "바로가기" not in body
 
 
 def test_region_unknown_mail_is_limited_to_ten_and_filters_junk(monkeypatch, tmp_path):
@@ -120,8 +129,9 @@ def test_mime_plain_and_html_render_same_clean_content():
              for part in parsed.walk() if part.get_content_maintype() != "multipart"}
     plain = parts["text/plain"]
     html_part = parts["text/html"]
-    assert "사업화 자금" in plain and "사업화 자금" in html_part
+    assert "2026년 AI 사업화 지원" in plain and "2026년 AI 사업화 지원" in html_part
     assert "&amp;amp;" not in html_part and '<a href="https://example.com/1">' in html_part
+    assert "<table" in html_part
     assert "test@example.com" not in plain and "개인정보처리방침" not in html_part
 
 
@@ -135,6 +145,8 @@ def test_mail_support_blurb_long_text_stays_within_one_mobile_screen():
     text = m._mail_support_blurb(item)
     assert len(text) <= 162
     assert text.endswith(" …")
+    from mail_core.delivery.digest_table import parse_plain_table
     body = m.fallback_body([item])
-    support_line = next(line for line in body.splitlines() if line.startswith("• 지원내용:"))
-    assert len(support_line.removeprefix("• 지원내용: ")) <= 162
+    _, rows, _ = parse_plain_table(body)
+    assert rows and len(rows[0]["지원"]) <= 20
+    assert "만원" not in rows[0]["지원"]
