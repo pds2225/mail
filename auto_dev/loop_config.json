@@ -50,7 +50,7 @@
   },
   "auto_merge": {
     "enabled": true,
-    "allowed_profiles": ["doc_only", "script_safe", "test_fix"],
+    "allowed_profiles": [],
     "required_labels_absent": ["needs-human", "blocked"],
     "merge_method": "squash",
     "use_github_auto_merge": true,

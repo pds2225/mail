@@ -26,7 +26,11 @@
 | `ANTHROPIC_API_KEY` | Claude AI 요약 | 선택 |
 | `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
 
-> **Auto Merge:** `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에
+> **Auto Merge:** 자동 머지가 기본이다. Checks 초록·충돌 없으면 squash-merge 한다.
+> 예외는 Draft, `needs-human`/`blocked`, merge conflict, `.env*`.
+> `monitor.py` / `streamlit_app.py` 변경도 기본 병합한다. `--admin` 은 금지.
+>
+> `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에
 > `github.token` 만 쓴다. Secret `AUTO_DEV_PAT` 이 만료돼 있어도
 > `secrets.AUTO_DEV_PAT || github.token` 은 빈 값이 아니라 만료 토큰을 넘기므로
 > checkout 이 `could not read Username for 'https://github.com'` 로 실패한다

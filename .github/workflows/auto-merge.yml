@@ -1,7 +1,8 @@
 name: Auto Merge
 
-# 테스트 워크플로우 성공 후, 자동병합 가능한 PR만 merge (G2).
-# 저장소 Settings → Allow auto-merge 가 꺼져 있어도 fallback_direct_merge 로 동작 가능.
+# 테스트 워크플로우 성공 후 같은 저장소 PR을 기본 자동병합한다.
+# 예외: Draft, needs-human/blocked, 충돌, .env. Settings Allow auto-merge 가
+# 꺼져 있어도 fallback_direct_merge 로 동작 가능.
 on:
   workflow_run:
     workflows: ["테스트"]
@@ -53,7 +54,7 @@ jobs:
             --head-branch "${HEAD_BRANCH}" \
             --head-sha "${HEAD_SHA}" >> "$GITHUB_OUTPUT"
 
-      - name: 자동 병합 (eligible PR만)
+      - name: 자동 병합 (기본 병합, 예외만 스킵)
         if: steps.pr.outputs.number != ''
         env:
           GH_TOKEN: ${{ github.token }}

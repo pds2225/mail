@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""CI 통과 후 자동 병합 가능한 PR만 main에 merge한다 (G2 게이트).
+"""CI 통과 후 PR을 main에 squash-merge한다. 자동 머지가 기본이다.
 
 loop_config.json 의 auto_merge.enabled 가 true 일 때만 동작한다.
-보호 파일(monitor.py·streamlit_app.py)·차단 라벨·Draft·비허용 경로는 스킵한다.
+예외(opt-out): Draft, needs-human/blocked, merge conflict, .env* .
+monitor.py / streamlit_app.py 변경도 기본 병합한다.
 
 Usage:
   python3 scripts/auto_merge_pr.py --pr 42
@@ -21,7 +22,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LOOP_CONFIG = ROOT / "auto_dev" / "loop_config.json"
 PROFILES_PATH = ROOT / "auto_dev" / "task_profiles.json"
-PROTECTED = ("monitor.py", "streamlit_app.py", ".env", ".env.example")
+# Secret/env files never auto-merge. App files (monitor.py, streamlit_app.py)
+# are eligible — auto-merge is the default for all work.
+SECRET_FILES = (".env", ".env.local", ".env.example")
+CORE_FILES = ("monitor.py", "streamlit_app.py")
 BLOCKED_LABELS = frozenset({"needs-human", "blocked"})
 
 
@@ -107,35 +111,70 @@ def changed_files(base_ref: str, head_ref: str) -> list[str]:
 
 
 def _profile_rank(name: str) -> int:
-    order = {"test_fix": 3, "script_safe": 2, "doc_only": 1}
+    order = {
+        "test_fix": 3,
+        "script_safe": 2,
+        "config_data": 2,
+        "accuracy": 2,
+        "doc_only": 1,
+        "core_logic": 0,
+        "default": 0,
+    }
     return order.get(name, 0)
 
 
+def _secret_hits(changed: list[str]) -> list[str]:
+    hits: list[str] = []
+    for path in changed:
+        name = Path(path).name
+        if path in SECRET_FILES or name in SECRET_FILES:
+            hits.append(path)
+    return hits
+
+
+def _covers(changed: list[str], prefixes: list[str]) -> bool:
+    if not prefixes:
+        return False
+    return all(
+        any(path == pref or path.startswith(pref) for pref in prefixes)
+        for path in changed
+    )
+
+
+def _profile_opted_out(name: str, spec: dict) -> Eligibility | None:
+    if spec.get("blocked") or spec.get("auto_merge_eligible") is False:
+        return Eligibility(False, f"프로필 {name!r} 은 자동병합 제외", profile=name)
+    return None
+
+
 def match_profile(changed: list[str], profiles: dict) -> Eligibility:
+    """Classify changed files. Eligible by default unless secrets or a profile opts out."""
     if not changed:
         return Eligibility(False, "변경 파일 없음")
 
-    for pf in PROTECTED:
-        if pf in changed:
-            return Eligibility(False, f"보호 파일 변경: {pf}")
+    secrets = _secret_hits(changed)
+    if secrets:
+        return Eligibility(False, f"secret file: {', '.join(secrets)}")
 
+    specs = profiles.get("profiles") or {}
     matches: list[tuple[str, dict]] = []
-    for name, cfg in profiles.get("profiles", {}).items():
-        if not cfg.get("auto_merge_eligible"):
-            continue
-        allowed = cfg.get("allowed_path_prefixes") or []
-        if not allowed:
-            continue
-        bad = [p for p in changed if not any(p == pref or p.startswith(pref) for pref in allowed)]
-        if not bad:
+    for name, cfg in specs.items():
+        prefixes = cfg.get("allowed_path_prefixes") or []
+        if _covers(changed, prefixes):
             matches.append((name, cfg))
 
-    if not matches:
-        bad_sample = ", ".join(changed[:5])
-        return Eligibility(False, f"자동병합 허용 프로필 없음 (예: {bad_sample})")
+    if matches:
+        best, spec = max(matches, key=lambda pair: _profile_rank(pair[0]))
+        opted = _profile_opted_out(best, spec)
+        if opted:
+            return opted
+        return Eligibility(True, "eligible", profile=best)
 
-    best = max(matches, key=lambda pair: _profile_rank(pair[0]))[0]
-    return Eligibility(True, "eligible", profile=best)
+    profile = "core_logic" if any(path in CORE_FILES for path in changed) else "default"
+    opted = _profile_opted_out(profile, specs.get(profile) or {})
+    if opted:
+        return opted
+    return Eligibility(True, "eligible", profile=profile)
 
 
 def assess_pr(pr: dict, changed: list[str], cfg: dict) -> Eligibility:

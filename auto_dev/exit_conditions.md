@@ -9,7 +9,7 @@
 |------|------|------|
 | `SUCCESS_VERIFIED` | `loop_verify` 통과 + TASK DONE | 다음 PENDING |
 | `SUCCESS_NOOP` | 변경 불필요 확인 | DONE 또는 SKIPPED |
-| `SUCCESS_PR_OPEN` | 게이트 통과 PR 생성 | 사람 G2(핵심파일) 또는 자동 병합 정책 |
+| `SUCCESS_PR_OPEN` | 게이트 통과 PR 생성 | 자동 병합(기본). G2는 Draft/`needs-human`/`blocked` opt-out일 때만 |
 
 ## 2. 실패 후 재시도
 
