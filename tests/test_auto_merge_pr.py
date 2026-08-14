@@ -6,7 +6,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from auto_merge_pr import assess_pr, match_profile, resolve_pr_number  # noqa: E402
+from auto_merge_pr import (  # noqa: E402
+    assess_pr,
+    head_sha_matches,
+    match_profile,
+    resolve_pr_number,
+)
 
 
 def _profiles():
@@ -91,6 +96,54 @@ def test_assess_disabled_config():
     assert "enabled=false" in verdict.reason
 
 
+def test_head_sha_matches_full_and_prefix():
+    full = "abcdef0123456789abcdef0123456789abcdef01"
+    assert head_sha_matches(full, full)
+    assert head_sha_matches(full[:12], full)
+    assert head_sha_matches(full, full[:12])
+    assert not head_sha_matches(full, "ffffffffffffffffffffffffffffffffffffffff")
+    assert not head_sha_matches("", full)
+    assert not head_sha_matches("abc", full)  # too short to be unambiguous
+
+
+def test_assess_refuses_when_pr_head_moved_after_ci():
+    """CI-green SHA A must not merge PR head B (push race + fallback_direct_merge)."""
+    ci_sha = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    pr_sha = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    pr = {
+        "isDraft": False,
+        "labels": [],
+        "mergeable": "MERGEABLE",
+        "headRefOid": pr_sha,
+    }
+    verdict = assess_pr(
+        pr,
+        ["monitor.py"],
+        _cfg(),
+        expected_head_sha=ci_sha,
+    )
+    assert not verdict.ok
+    assert "head SHA mismatch" in verdict.reason
+
+
+def test_assess_allows_when_pr_head_matches_ci_sha():
+    sha = "cccccccccccccccccccccccccccccccccccccccc"
+    pr = {
+        "isDraft": False,
+        "labels": [],
+        "mergeable": "MERGEABLE",
+        "headRefOid": sha,
+    }
+    verdict = assess_pr(pr, ["docs/foo.md"], _cfg(), expected_head_sha=sha)
+    assert verdict.ok
+
+
+def test_auto_merge_workflow_pins_expected_head_sha():
+    text = (ROOT / ".github/workflows/auto-merge.yml").read_text(encoding="utf-8")
+    assert "--expected-head-sha" in text
+    assert "workflow_run.head_sha" in text
+
+
 def test_auto_merge_workflow_uses_github_token_not_pat():
     """만료 PAT 를 checkout token 으로 쓰면 인증 실패 (run 31660085605)."""
     text = (ROOT / ".github/workflows/auto-merge.yml").read_text(encoding="utf-8")
@@ -157,4 +210,3 @@ def test_resolve_pr_empty_is_skip_not_error():
         return _FakeProc("")
 
     assert resolve_pr_number(runner=runner) == ""
-
