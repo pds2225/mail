@@ -94,13 +94,30 @@ def load_profiles() -> dict:
 
 
 def gh_json(args: list[str]) -> dict | list:
-    proc = _run(["gh", *args, "--json", "number,title,isDraft,labels,mergeable,headRefName,baseRefName"])
+    proc = _run([
+        "gh", *args,
+        "--json",
+        "number,title,isDraft,labels,mergeable,headRefName,baseRefName,headRefOid",
+    ])
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr.strip() or "gh command failed")
     data = json.loads(proc.stdout or "null")
     if isinstance(data, list):
         return data[0] if data else {}
     return data
+
+
+def head_sha_matches(expected: str, actual: str) -> bool:
+    """True when expected CI head equals current PR head (full or unambiguous prefix)."""
+    exp = str(expected or "").strip().lower()
+    act = str(actual or "").strip().lower()
+    if not exp or not act:
+        return False
+    if exp == act:
+        return True
+    # Accept unambiguous prefix either way (workflow_run may hand a full SHA).
+    shorter, longer = (exp, act) if len(exp) <= len(act) else (act, exp)
+    return len(shorter) >= 7 and longer.startswith(shorter)
 
 
 def changed_files(base_ref: str, head_ref: str) -> list[str]:
@@ -182,7 +199,13 @@ def match_profile(changed: list[str], profiles: dict) -> Eligibility:
     return Eligibility(True, "eligible", profile=profile)
 
 
-def assess_pr(pr: dict, changed: list[str], cfg: dict) -> Eligibility:
+def assess_pr(
+    pr: dict,
+    changed: list[str],
+    cfg: dict,
+    *,
+    expected_head_sha: str = "",
+) -> Eligibility:
     auto_cfg = cfg.get("auto_merge") or {}
     if not auto_cfg.get("enabled"):
         return Eligibility(False, "loop_config.auto_merge.enabled=false")
@@ -199,6 +222,20 @@ def assess_pr(pr: dict, changed: list[str], cfg: dict) -> Eligibility:
     if str(pr.get("mergeable", "")).upper() == "CONFLICTING":
         return Eligibility(False, "merge conflict")
 
+    # workflow_run fires for the SHA that passed CI. If the PR head moved before
+    # we merge (push race), refuse — especially with fallback_direct_merge, which
+    # would otherwise squash-merge untested commits including monitor.py.
+    expected = str(expected_head_sha or "").strip()
+    if expected:
+        actual = str(pr.get("headRefOid") or "").strip()
+        if not head_sha_matches(expected, actual):
+            short_exp = expected[:12] or "-"
+            short_act = (actual[:12] if actual else "-")
+            return Eligibility(
+                False,
+                f"head SHA mismatch (CI={short_exp}, PR={short_act})",
+            )
+
     profiles = load_profiles()
     path_check = match_profile(changed, profiles)
     if not path_check.ok:
@@ -211,15 +248,25 @@ def assess_pr(pr: dict, changed: list[str], cfg: dict) -> Eligibility:
     return path_check
 
 
-def merge_pr(pr_number: int, cfg: dict, *, dry_run: bool) -> int:
+def merge_pr(
+    pr_number: int,
+    cfg: dict,
+    *,
+    dry_run: bool,
+    expected_head_sha: str = "",
+) -> int:
     auto_cfg = cfg.get("auto_merge") or {}
     method = str(auto_cfg.get("merge_method") or "squash")
     use_auto = bool(auto_cfg.get("use_github_auto_merge", True))
     fallback = bool(auto_cfg.get("fallback_direct_merge", True))
+    pin = str(expected_head_sha or "").strip()
 
     cmd = ["gh", "pr", "merge", str(pr_number), f"--{method}"]
     if use_auto:
         cmd.append("--auto")
+    if pin:
+        # GitHub-side pin: merge aborts if head moved after our assess check.
+        cmd.extend(["--match-head-commit", pin])
 
     if dry_run:
         print(f"[dry-run] would run: {' '.join(cmd)}")
@@ -233,6 +280,8 @@ def merge_pr(pr_number: int, cfg: dict, *, dry_run: bool) -> int:
     err = (proc.stderr or proc.stdout or "").strip()
     if use_auto and fallback and "allow_auto_merge" in err.lower():
         direct = ["gh", "pr", "merge", str(pr_number), f"--{method}"]
+        if pin:
+            direct.extend(["--match-head-commit", pin])
         proc2 = _run(direct)
         if proc2.returncode == 0:
             print(f"PR #{pr_number} 직접 merge 완료 (GitHub auto-merge 미설정 → fallback)")
@@ -256,6 +305,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--payload-pr", default="", help="github.event.workflow_run.pull_requests[0].number")
     parser.add_argument("--head-branch", default="", help="workflow_run.head_branch")
     parser.add_argument("--head-sha", default="", help="workflow_run.head_sha")
+    parser.add_argument(
+        "--expected-head-sha",
+        default="",
+        help="CI-green commit SHA (workflow_run.head_sha). Refuse merge if PR head differs.",
+    )
     args = parser.parse_args(argv)
 
     if args.print_pr_number:
@@ -273,19 +327,24 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg = load_loop_config()
     pr = gh_json(["pr", "view", str(args.pr)])
-    head = f"origin/{pr.get('headRefName') or ''}"
     if not pr.get("headRefName"):
         print("head ref 없음", file=sys.stderr)
         return 1
 
+    expected_sha = str(args.expected_head_sha or args.head_sha or "").strip()
     _run(["git", "fetch", "origin", f"pull/{args.pr}/head:pr-{args.pr}"], check=False)
     files = changed_files(args.base_ref, f"pr-{args.pr}")
-    verdict = assess_pr(pr, files, cfg)
+    verdict = assess_pr(pr, files, cfg, expected_head_sha=expected_sha)
     print(f"PR #{args.pr} profile={verdict.profile or '-'} → {verdict.reason}")
     if not verdict.ok:
         return 0
 
-    return merge_pr(args.pr, cfg, dry_run=args.dry_run)
+    return merge_pr(
+        args.pr,
+        cfg,
+        dry_run=args.dry_run,
+        expected_head_sha=expected_sha,
+    )
 
 
 if __name__ == "__main__":
