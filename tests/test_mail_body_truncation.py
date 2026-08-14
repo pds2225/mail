@@ -49,7 +49,10 @@ def test_summary_never_truncates_or_omits_collected_notices():
     body = m.claude_summarize(_items(), _group())
     assert "인천 화장품 제조" in body
     assert "뒤쪽 공고" in body
-    assert "이 공고 본문이 요약 잘림으로 사라지면 안 된다" in body
+    from mail_core.delivery.digest_table import HEADER_LINE, parse_plain_table
+    assert HEADER_LINE in body
+    _, rows, _ = parse_plain_table(body)
+    assert rows is not None and len(rows) == 2
 
 
 def test_summary_never_uses_model_text():
