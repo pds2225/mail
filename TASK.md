@@ -17,7 +17,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 
 [x] MAIL-001 | 기존 메일 오류가 남아 있는지 확인하고 있으면 고친다
 [x] MAIL-002 | 공고 안내 메일을 8개 칸 표로 바꾼다
-[~] MAIL-004 | 모든 작업은 자동 머지가 기본이다
+[x] MAIL-004 | 모든 작업은 자동 머지가 기본이다
 
 
 ---
@@ -599,33 +599,36 @@ PINNING:
 - TASK_BLOB_SHA: 4d98899ae105381195dbff04ba383b9469a947b7
 - WORK_BRANCH: cursor/auto-merge-default-e94f
 
-- 현재 구현: Auto Merge는 `doc_only`/`script_safe`/`test_fix`만 허용하고 `monitor.py`를 막음. TASK.md §17은 명시 없으면 병합 금지
-- 현재 문제: 완료된 작업 PR이 사람 확인을 기다림
-- 이미 구현된 부분: squash, Checks 초록, Draft/라벨/충돌 스킵, github.token, PR 번호 해석
-- 확인 필요한 부분: `match_profile`이 기본 eligible인지, 시크릿 파일은 그대로 막히는지
+- 현재 구현: Auto Merge는 Checks 초록이면 기본 squash-merge. `allowed_profiles` 빈 목록. `monitor.py` 포함
+- 현재 문제: 해결됨 (PR #265 `8dbc98c1`, MAIL-002는 #263 `f2f34c7f`)
+- 이미 구현된 부분: squash, Checks 초록, Draft/라벨/충돌/.env* 스킵, github.token, PR 번호 해석
+- 확인 필요한 부분: 없음 — 단위 테스트 21건 + test_monitor 회귀 통과 후 병합
 
 문서의 DONE 표시만 믿지 말고 실제 코드/runtime을 확인한다.
 
+USER_E2E: `match_profile(["monitor.py"])` eligible, `.env` blocked, Draft/needs-human skip. Open PR 평가: #263/#265 merge, #264/#262 draft skip, #243 test fail skip, #260 `--auto` queued (base 최신화 필요).
+MAIN_MERGED: YES (2026-08-14T02:00:16Z, #265)
+
 ### 8-5. MUST — 반드시 구현
 
-- [ ] 자동 머지를 기본으로 바꾼다 (`allowed_profiles` 빈 목록 = 제한 없음)
-- [ ] `monitor.py` / `streamlit_app.py` 변경 PR도 Checks 초록이면 병합
-- [ ] Draft, `needs-human`, `blocked`, 충돌, `.env*` 는 계속 스킵
-- [ ] TASK.md §17을 “자동 머지 기본”으로 고친다
-- [ ] `--admin` 머지 금지 유지
+- [x] 자동 머지를 기본으로 바꾼다 (`allowed_profiles` 빈 목록 = 제한 없음)
+- [x] `monitor.py` / `streamlit_app.py` 변경 PR도 Checks 초록이면 병합
+- [x] Draft, `needs-human`, `blocked`, 충돌, `.env*` 는 계속 스킵
+- [x] TASK.md §17을 “자동 머지 기본”으로 고친다
+- [x] `--admin` 머지 금지 유지
 
 ### 8-6. KEEP — 유지
 
-- [ ] squash merge
-- [ ] GitHub Checks 초록 필수
-- [ ] 실제 이메일/알림 발송 금지
-- [ ] Auto Merge 워크플로의 `github.token` (만료 PAT 우회 금지)
+- [x] squash merge
+- [x] GitHub Checks 초록 필수
+- [x] 실제 이메일/알림 발송 금지
+- [x] Auto Merge 워크플로의 `github.token` (만료 PAT 우회 금지)
 
 ### 8-7. REMOVE — 제거
 
-- [ ] `monitor.py` 자동병합 금지
-- [ ] 프로필 allowlist로 인한 기본 스킵
-- [ ] “명시 없으면 기본 브랜치 병합 금지” 규칙
+- [x] `monitor.py` 자동병합 금지
+- [x] 프로필 allowlist로 인한 기본 스킵
+- [x] “명시 없으면 기본 브랜치 병합 금지” 규칙
 
 ### 8-8. FORBIDDEN — 금지
 
