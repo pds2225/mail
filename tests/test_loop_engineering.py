@@ -27,10 +27,11 @@ def test_task_profiles_classify_doc():
     assert cfg.get("auto_merge_eligible") is True
 
 
-def test_task_profiles_classify_blocked():
+def test_task_profiles_classify_core_logic_mergeable():
     name, cfg = classify_profile("monitor.py 발송 로직 수정")
     assert name == "core_logic"
-    assert cfg.get("blocked") is True
+    assert cfg.get("blocked") is False
+    assert cfg.get("auto_merge_eligible") is True
 
 
 def test_work_assets_registry():

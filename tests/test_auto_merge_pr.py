@@ -17,7 +17,7 @@ def _cfg(enabled: bool = True) -> dict:
     return {
         "auto_merge": {
             "enabled": enabled,
-            "allowed_profiles": ["doc_only", "script_safe", "test_fix"],
+            "allowed_profiles": [],
             "required_labels_absent": ["needs-human", "blocked"],
         }
     }
@@ -29,10 +29,45 @@ def test_doc_only_paths_eligible():
     assert verdict.profile == "doc_only"
 
 
-def test_monitor_py_blocked():
+def test_monitor_py_eligible_by_default():
+    """Standing policy: auto-merge is the default, including monitor.py."""
     verdict = match_profile(["monitor.py", "tests/test_x.py"], _profiles())
+    assert verdict.ok
+    assert verdict.profile == "core_logic"
+
+
+def test_secret_file_still_blocked():
+    verdict = match_profile([".env"], _profiles())
     assert not verdict.ok
-    assert "보호 파일" in verdict.reason
+    assert "secret" in verdict.reason
+
+
+def test_mixed_app_paths_eligible():
+    verdict = match_profile(["mail_core/matching/scoring.py", ".github/workflows/test.yml"], _profiles())
+    assert verdict.ok
+    assert verdict.profile == "default"
+
+
+def test_assess_allowlist_still_restricts_when_set():
+    cfg = _cfg()
+    cfg["auto_merge"]["allowed_profiles"] = ["doc_only"]
+    pr = {"isDraft": False, "labels": [], "mergeable": "MERGEABLE"}
+    verdict = assess_pr(pr, ["scripts/foo.py"], cfg)
+    assert not verdict.ok
+    assert "allowed_profiles" in verdict.reason
+
+
+def test_loop_config_default_allowlist_is_empty():
+    cfg = json.loads((ROOT / "auto_dev" / "loop_config.json").read_text(encoding="utf-8"))
+    assert cfg["auto_merge"]["enabled"] is True
+    assert cfg["auto_merge"]["allowed_profiles"] == []
+
+
+def test_assess_monitor_py_eligible():
+    pr = {"isDraft": False, "labels": [], "mergeable": "MERGEABLE"}
+    verdict = assess_pr(pr, ["monitor.py"], _cfg())
+    assert verdict.ok
+    assert verdict.profile == "core_logic"
 
 
 def test_assess_skips_draft():

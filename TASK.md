@@ -17,6 +17,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 
 [x] MAIL-001 | 기존 메일 오류가 남아 있는지 확인하고 있으면 고친다
 [x] MAIL-002 | 공고 안내 메일을 8개 칸 표로 바꾼다
+[~] MAIL-004 | 모든 작업은 자동 머지가 기본이다
 
 
 ---
@@ -565,6 +566,125 @@ MAIL-001이 실제로 DONE(또는 ALREADY_DONE)이 아니면 이 작업을 완�
 
 ---
 
+## MAIL-004
+
+### 8-1. 사용자 원문 요청
+
+> 모든작업은 자동머지가 기본이다
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+모든 작업은 자동 머지가 기본이다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 실제로 사용했을 때:
+
+- Checks 초록인 작업 PR은 물어보지 않고 squash-merge 된다
+- `monitor.py` 변경만으로 자동 머지가 막히지 않는다
+- Draft / `needs-human` / `blocked` / 충돌 / `.env*` 만 예외다
+- 실패 체크를 무시하는 `--admin` 머지는 없다
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+PINNING:
+- TASK_ID: MAIL-004
+- TASK_START_SHA: 55f3251f15a4780f490b291afffef37a93211de8
+- TASK_BLOB_SHA: 4d98899ae105381195dbff04ba383b9469a947b7
+- WORK_BRANCH: cursor/auto-merge-default-e94f
+
+- 현재 구현: Auto Merge는 `doc_only`/`script_safe`/`test_fix`만 허용하고 `monitor.py`를 막음. TASK.md §17은 명시 없으면 병합 금지
+- 현재 문제: 완료된 작업 PR이 사람 확인을 기다림
+- 이미 구현된 부분: squash, Checks 초록, Draft/라벨/충돌 스킵, github.token, PR 번호 해석
+- 확인 필요한 부분: `match_profile`이 기본 eligible인지, 시크릿 파일은 그대로 막히는지
+
+문서의 DONE 표시만 믿지 말고 실제 코드/runtime을 확인한다.
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] 자동 머지를 기본으로 바꾼다 (`allowed_profiles` 빈 목록 = 제한 없음)
+- [ ] `monitor.py` / `streamlit_app.py` 변경 PR도 Checks 초록이면 병합
+- [ ] Draft, `needs-human`, `blocked`, 충돌, `.env*` 는 계속 스킵
+- [ ] TASK.md §17을 “자동 머지 기본”으로 고친다
+- [ ] `--admin` 머지 금지 유지
+
+### 8-6. KEEP — 유지
+
+- [ ] squash merge
+- [ ] GitHub Checks 초록 필수
+- [ ] 실제 이메일/알림 발송 금지
+- [ ] Auto Merge 워크플로의 `github.token` (만료 PAT 우회 금지)
+
+### 8-7. REMOVE — 제거
+
+- [ ] `monitor.py` 자동병합 금지
+- [ ] 프로필 allowlist로 인한 기본 스킵
+- [ ] “명시 없으면 기본 브랜치 병합 금지” 규칙
+
+### 8-8. FORBIDDEN — 금지
+
+- 사용자 요청에 없는 기능 임의 추가 금지
+- 불필요한 대규모 리팩토링 금지
+- 관련 없는 DB/API/UI 변경 금지
+- 테스트를 통과시키기 위한 기능 삭제 금지
+- 기존 실패 테스트 skip 금지
+- 근거 없는 값/데이터 생성 금지
+
+TASK별 추가 금지사항:
+
+- `gh pr merge --admin`
+- 실제 이메일/ntfy 발송
+- `.env` 내용 커밋·로그
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON:
+
+- NONE
+
+최신 사용자 요청이 기존 TASK.md 머지 금지보다 우선한다.
+
+### 8-10. 구현범위
+
+수정 가능 범위:
+
+- `scripts/auto_merge_pr.py`
+- `auto_dev/loop_config.json`, `auto_dev/task_profiles.json`
+- `.github/workflows/auto-merge.yml` 주석
+- 관련 테스트·TASK.md·게이트 문서
+
+기존 구조를 최대한 유지하고 최소 변경한다.
+
+### 8-11. 입력검증
+
+- 정상 PR + Checks 초록 → eligible
+- Draft / 차단 라벨 / 충돌 / `.env` → not eligible
+- `monitor.py` 포함 diff → eligible
+- `auto_merge.enabled=false` → not eligible
+- 빈 allowlist → 프로필 제한 없음
+
+### 8-12. 빈상태
+
+- 열린 PR 0건: 스크립트 성공 종료, merge 없음
+- 변경 파일 없음: not eligible
+
+### 8-13. 로딩상태
+
+Checks pending이면 기존처럼 병합하지 않는다 (워크플로는 테스트 성공 후에만 돈다).
+
+### 8-14. 오류상태
+
+- `gh` 실패는 merge 실패로 남기고 `--admin`으로 우회하지 않는다
+- PR 번호 없으면 skip (잡 실패 아님)
+
+---
+
 # 9. 실제사용 시나리오
 
 TASK 완료 전에 반드시 실제 사용자 관점으로 검증한다.
@@ -779,7 +899,15 @@ WORK_BRANCH_PUSHED: YES | NO
 - PR
 - merge
 
-머지는 이 TASK가 허용한 경우만 한다. 명시가 없으면 기본 브랜치 병합 금지.
+머지는 기본이다. Checks 초록 + 충돌 없으면 squash-merge 한다.
+TASK에 “머지 금지”가 없는 한 작업 브랜치 PR은 자동 병합한다.
+
+예외(opt-out)만 머지하지 않는다:
+
+- Draft
+- 라벨 `needs-human` 또는 `blocked`
+- merge conflict
+- `.env` / `.env.local` / `.env.example`
 
 조건:
 

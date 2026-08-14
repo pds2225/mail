@@ -85,7 +85,7 @@ flowchart TB
 | 게이트 | 시점 | 자동 통과 조건 | 사람 필수 조건 |
 |--------|------|----------------|----------------|
 | **G1** 정확도 배치 | accuracy 오케스트레이터 S3 후 | — | 결함 후보 일괄 승인 (`mail_accuracy_orchestrator_plan.md`) |
-| **G2** PR 병합 | L1 검증 통과 후 | 허용 파일만 수정 + 전 게이트 PASS | `monitor.py` / `streamlit_app.py` / 위험9종 터치 |
+| **G2** PR 병합 | L1 검증 통과 후 | Checks 초록 + 충돌 없음 (기본 자동병합) | Draft / `needs-human` / `blocked` / `.env*` |
 | **G3** 운영 발송 | 실제 SMTP/IMAP | — | `allow_send=True` 명시 승인 (RULES #6) |
 
 L1이 G2 자동 통과 조건을 만족하면 **PR은 draft → ready → auto-merge** (브랜치 보호 규칙 설정 시).
@@ -218,9 +218,9 @@ docs/project/TASKS.md / docs/project/RULES.md / var/state/auto_dev_state.json   
 | `doc_only` | README, RULES, AGENTS 문서 | Tier 0+1 | 가능 |
 | `script_safe` | `scripts/*` 신규·수정 | Tier 0+1+2 | 가능 |
 | `test_fix` | 테스트·픽스처만 | Tier 0+1+2 | 가능 |
-| `config_data` | config/sites.json, config/groups.json | Tier 0+1+2 | **불가** (G2 사람) |
-| `core_logic` | monitor.py 등 | — | **금지** (BLOCKED) |
-| `accuracy` | 정확도 오케스트레이터 | Tier 3 | G1+G2 |
+| `config_data` | config/sites.json, config/groups.json | Tier 0+1+2 | 가능 (기본) |
+| `core_logic` | monitor.py 등 | — | 가능 (기본). 사람 리뷰는 opt-out 라벨 |
+| `accuracy` | 정확도 오케스트레이터 | Tier 3 | 가능 (기본). G1은 빈틈 승인용 |
 
 TASK 등록 시 제목 접두로 프로필 추론:
 

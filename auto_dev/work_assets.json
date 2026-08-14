@@ -78,7 +78,7 @@
       "id": "loop_config",
       "path": "auto_dev/loop_config.json",
       "role": "루프 한도·종료 조건",
-      "drift_signals": ["max_retry 상향", "auto_merge 무조건 활성"]
+      "drift_signals": ["max_retry 상향", "auto_merge.enabled=false"]
     },
     {
       "id": "site_add_packet",
