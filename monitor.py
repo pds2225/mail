@@ -1012,12 +1012,26 @@ def merge_notice_fields(canonical: dict, new_item: dict) -> dict:
 
 
 def _detail_extraction_unreliable(item: dict) -> bool:
-    """상세 FETCH/PARSE 실패면 스냅샷이 불완전해 버전 재발송 근거로 쓰면 안 된다."""
+    """상세가 없거나 FETCH/PARSE 실패면 스냅샷을 버전 baseline 으로 쓰면 안 된다.
+
+    ``DETAIL_FETCH_FAILED`` / ``PARSE_FAILED`` 는 기존과 동일. 추가로 enrich 예산
+    스킵·비대상 호스트로 ``detail_extraction`` 자체가 없고 마감 필드도 비어 있는
+    얇은 리스트-온리 행을 잠그면, 다음 정상 enrich 의 empty→filled 가
+    ``DEADLINE_EXTENDED`` ``id@vN`` 허위 재발송을 만든다. 리스트에 마감이 이미
+    있으면 enrich 없이도 baseline 승격을 허용한다(실연장 감지 유지).
+    """
     extraction = item.get("detail_extraction")
-    if not isinstance(extraction, dict):
-        return False
-    status = str(extraction.get("status") or "").strip().upper()
-    return status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}
+    if isinstance(extraction, dict):
+        status = str(extraction.get("status") or "").strip().upper()
+        return status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}
+    # Never enriched: only thin (no deadline/period) snapshots are unreliable.
+    deadline = str(resolve_item_deadline(item) or "").strip()
+    period = item.get("application_period") or {}
+    if isinstance(period, dict):
+        period_display = str(period.get("display") or "").strip()
+    else:
+        period_display = str(period or "").strip()
+    return not (deadline or period_display)
 
 
 def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:

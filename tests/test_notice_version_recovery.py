@@ -345,3 +345,76 @@ def test_reliable_new_still_promotes_delivered_snapshot(monkeypatch, tmp_path):
     assert committed["newok"].get("delivered_hash")
     again, _ = m.classify_notice_versions([source], {"newok"}, committed)
     assert again == []
+
+
+def test_new_missing_detail_extraction_thin_does_not_promote(
+    monkeypatch,
+    tmp_path,
+):
+    """enrich 예산 스킵 등으로 detail_extraction 없는 얇은 NEW 는 첫 메일은 나가되
+    delivered_* 를 잠그지 않는다. 다음 SUCCESS enrich 가 DEADLINE_EXTENDED @v2 를
+    만들면 안 된다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 8, 13, 10, tzinfo=m.KST)
+    thin = item(
+        "newskip",
+        "2026-08-12",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+    )
+    # enrich 미실행: detail_extraction 키 없음
+    thin.pop("application_period", None)
+    assert "detail_extraction" not in thin
+
+    deliverable, updates = m.classify_notice_versions([thin], set(), {})
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "NEW"
+    assert updates["newskip"].get("unreliable_new") is True
+
+    committed = m.commit_notice_versions({}, updates, {"newskip"}, now=now)
+    assert not committed["newskip"].get("delivered_hash")
+
+    full = item(
+        "newskip",
+        "2026-08-12",
+        deadline="2026-09-30",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    recovered, updates2 = m.classify_notice_versions([full], {"newskip"}, committed)
+    assert recovered == []
+    assert updates2["newskip"].get("seed_only") is True
+    seeded = m.commit_notice_versions(committed, updates2, {"newskip"}, now=now)
+    assert seeded["newskip"].get("delivered_hash")
+    again, _ = m.classify_notice_versions([full], {"newskip"}, seeded)
+    assert again == []
+
+
+def test_list_complete_without_detail_extraction_still_promotes(monkeypatch, tmp_path):
+    """리스트에 마감이 이미 있으면 detail_extraction 없이도 baseline 승격·실연장 감지."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 8, 13, 10, tzinfo=m.KST)
+    source = item("listok", "2026-08-12", deadline="2026-08-31")
+    assert "detail_extraction" not in source
+
+    deliverable, updates = m.classify_notice_versions([source], set(), {})
+    assert deliverable[0]["_change_type"] == "NEW"
+    assert updates["listok"].get("unreliable_new") is not True
+    committed = m.commit_notice_versions({}, updates, {"listok"}, now=now)
+    assert committed["listok"].get("delivered_hash")
+
+    extended = item(
+        "listok",
+        "2026-08-12",
+        deadline="2026-09-15",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    bumped, _ = m.classify_notice_versions([extended], {"listok"}, committed)
+    assert len(bumped) == 1
+    assert bumped[0]["_change_type"] == "DEADLINE_EXTENDED"
+    assert bumped[0]["_delivery_id"] == "listok@v2"
