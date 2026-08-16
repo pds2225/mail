@@ -42,6 +42,14 @@ def test_secret_file_still_blocked():
     assert "secret" in verdict.reason
 
 
+def test_env_star_variants_blocked():
+    """MAIL-004 docstring says `.env*`; production/staging basenames must not auto-merge."""
+    for path in (".env.production", ".env.staging", "deploy/.env.local", ".env.backup"):
+        verdict = match_profile([path], _profiles())
+        assert not verdict.ok, path
+        assert "secret" in verdict.reason
+
+
 def test_mixed_app_paths_eligible():
     verdict = match_profile(["mail_core/matching/scoring.py", ".github/workflows/test.yml"], _profiles())
     assert verdict.ok

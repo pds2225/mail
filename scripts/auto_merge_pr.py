@@ -123,13 +123,18 @@ def _profile_rank(name: str) -> int:
     return order.get(name, 0)
 
 
+def _is_secret_path(path: str) -> bool:
+    """True for exact secret filenames and any `.env*` basename (MAIL-004 opt-out)."""
+    name = Path(path).name
+    if path in SECRET_FILES or name in SECRET_FILES:
+        return True
+    # Docstring promises `.env*`; a bare allow-list missed .env.production / .env.staging
+    # and would auto-merge secrets onto main after MAIL-004 made merge the default.
+    return name.startswith(".env")
+
+
 def _secret_hits(changed: list[str]) -> list[str]:
-    hits: list[str] = []
-    for path in changed:
-        name = Path(path).name
-        if path in SECRET_FILES or name in SECRET_FILES:
-            hits.append(path)
-    return hits
+    return [path for path in changed if _is_secret_path(path)]
 
 
 def _covers(changed: list[str], prefixes: list[str]) -> bool:
