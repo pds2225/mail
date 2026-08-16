@@ -345,3 +345,89 @@ def test_reliable_new_still_promotes_delivered_snapshot(monkeypatch, tmp_path):
     assert committed["newok"].get("delivered_hash")
     again, _ = m.classify_notice_versions([source], {"newok"}, committed)
     assert again == []
+
+
+def test_success_enrich_empty_deadline_does_not_lock_false_vn(
+    monkeypatch,
+    tmp_path,
+):
+    """SUCCESS enrich 인데 마감이 비어 있으면 delivered_* 를 잠그지 않는다.
+
+    본문 파싱이 마감을 못 찾은 채 SUCCESS 로 끝나면 empty baseline 이 승격되고,
+    다음 수집에서 마감이 채워질 때 허위 DEADLINE_EXTENDED id@vN 이 나간다.
+    """
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 7, 31, 10, tzinfo=m.KST)
+    thin = item(
+        "success_empty",
+        "2026-07-30",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    deliverable, updates = m.classify_notice_versions([thin], set(), {})
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "NEW"
+    assert updates["success_empty"].get("unreliable_new") is True
+
+    committed = m.commit_notice_versions({}, updates, {"success_empty"}, now=now)
+    assert not committed["success_empty"].get("delivered_hash")
+
+    filled = item(
+        "success_empty",
+        "2026-07-30",
+        deadline="2026-08-15",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    recovered, updates2 = m.classify_notice_versions(
+        [filled], {"success_empty"}, committed
+    )
+    assert recovered == []
+    assert updates2["success_empty"].get("seed_only") is True
+    seeded = m.commit_notice_versions(committed, updates2, {"success_empty"}, now=now)
+    assert seeded["success_empty"].get("delivered_hash")
+    again, _ = m.classify_notice_versions([filled], {"success_empty"}, seeded)
+    assert again == []
+
+
+def test_success_enrich_empty_deadline_observe_does_not_seed(
+    monkeypatch,
+    tmp_path,
+):
+    """이미 seen 인 SUCCESS+빈마감 관찰도 seed_only 로 빈 baseline 을 심지 않는다."""
+    monkeypatch.setattr(m, "NOTICE_VERSIONS_PATH", tmp_path / "notice_versions.json")
+    monkeypatch.setattr(m, "_ALLOW_PERSIST_SEEN", True)
+    now = datetime(2026, 7, 31, 10, tzinfo=m.KST)
+    before = item("obs_empty", "2026-07-20", deadline="2026-07-25")
+    snap = m._notice_version_snapshot(before)
+    versions = {
+        "obs_empty": {
+            "version": 1,
+            "list_hash": m._notice_list_hash(before),
+            "delivered_hash": m._notice_snapshot_hash(snap),
+            "delivered_snapshot": snap,
+            "observed_hash": m._notice_snapshot_hash(snap),
+        }
+    }
+    thin = item(
+        "obs_empty",
+        "2026-07-20",
+        deadline="",
+        support_field="",
+        target_field="",
+        region_field="",
+        description="",
+        author="",
+        detail_extraction={"status": "SUCCESS"},
+    )
+    deliverable, updates = m.classify_notice_versions([thin], {"obs_empty"}, versions)
+    assert deliverable == []
+    assert updates["obs_empty"].get("unreliable_observe") is True
+    committed = m.commit_notice_versions(versions, updates, {"obs_empty"}, now=now)
+    assert committed["obs_empty"].get("delivered_hash") == versions["obs_empty"]["delivered_hash"]
+    assert committed["obs_empty"].get("delivered_snapshot") == snap
