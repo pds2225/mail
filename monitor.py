@@ -110,6 +110,9 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
+# Legacy Claude digest batch size. Deterministic fallback_body mails every matched
+# notice; do not reintroduce a silent body cap — deliver_with_outbox marks all
+# notice_ids seen, so omitting rows from the digest permanently drops them.
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -6508,10 +6511,13 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 
     MONITOR_DIGEST_LLM=1 이면 맨 위에 '한 줄 적합성' 코멘트만 LLM으로 붙인다.
     공고별 금액·마감·링크는 여전히 fallback_body(원문 필드)만 쓴다.
+
+    본문은 매칭 공고 전량을 담는다. ``[:MAX_FOR_CLAUDE]`` 로 자르면 표에는 안 나오는데
+    ``notice_ids`` 는 전량이 seen 으로 잠겨 16번째 이후가 영구 누락된다.
     """
     if not items:
         return ""
-    body = fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    body = fallback_body(sorted(items, key=_notice_sort_key))
     if os.environ.get("MONITOR_DIGEST_LLM", "") not in ("1", "true", "True"):
         return body
     try:
