@@ -106,7 +106,7 @@ def test_start_of_run_persist_does_not_poison_shared_seen_ids(outbox_env):
     # Completed outbox row kept for a later safe flush.
     assert len(outbox.completed()) == 1
 
-    # Unconditional end-of-run persist (all groups finished in-process) still works.
+    # Unconditional end-of-run persist (legacy API, no trust_dates) still works.
     seen = m.persist_completed_outbox(set())
     assert seen == {"n1", "n2"}
     assert outbox.completed() == []
@@ -245,6 +245,96 @@ def test_single_group_mode_must_gate_persist_with_full_group_quorum(outbox_env):
     assert len(deliverable) == 1
     assert deliverable[0]["_change_type"] == "NEW"
 
-    # Contrast: unconditional persist (full-group end-of-run) still promotes when asked.
+    # Contrast: unconditional persist (legacy API) still promotes when asked.
     seen_all = m.persist_completed_outbox(set())
     assert seen_all == {"n1", "n2"}
+
+
+def test_full_run_end_persist_must_not_promote_stale_incomplete_cycle(outbox_env):
+    """Full-group end-of-run must not flush stale A-only settles into seen_ids.
+
+    Concrete trigger:
+      1. Slot D1#am: group A settles shared n1; process dies before B is planned.
+      2. Start-of-run gated persist correctly holds n1 out of seen_ids.
+      3. Slot D2#am: a successful full run used to call ungated
+         ``persist_completed_outbox(seen)`` → D1's completed row promoted →
+         n1∈seen_ids → group B permanently misses n1 on any later recover.
+
+    Fixed call shape: ``trust_dates={current}`` so only this run's date is
+    trusted; other dates still require cycle completion.
+    """
+    stale = "2026-08-10#am"
+    current = "2026-08-11#am"
+
+    stale_entry = outbox.upsert(
+        date=stale,
+        tenant="default",
+        group="grp_a",
+        subject="[A] stale",
+        body="body-stale",
+        recipients=["a@example.test"],
+        notice_ids=["n1"],
+    )
+    outbox.settle(stale_entry["id"], {"a@example.test"})
+    delivery_state.mark(
+        outbox_env["delivery"],
+        delivery_state.key(stale, "grp_a", "a@example.test"),
+    )
+
+    # Current-date full cycle completed in this process (both groups).
+    cur_a = outbox.upsert(
+        date=current,
+        tenant="default",
+        group="grp_a",
+        subject="[A] today",
+        body="body-a",
+        recipients=["a@example.test"],
+        notice_ids=["n9"],
+    )
+    cur_b = outbox.upsert(
+        date=current,
+        tenant="default",
+        group="grp_b",
+        subject="[B] today",
+        body="body-b",
+        recipients=["b@example.test"],
+        notice_ids=["n9"],
+    )
+    outbox.settle(cur_a["id"], {"a@example.test"})
+    outbox.settle(cur_b["id"], {"b@example.test"})
+    delivery_state.mark(
+        outbox_env["delivery"],
+        delivery_state.key(current, "grp_a", "a@example.test"),
+    )
+    delivery_state.mark(
+        outbox_env["delivery"],
+        delivery_state.key(current, "grp_b", "b@example.test"),
+    )
+
+    seen = m.persist_completed_outbox(
+        set(),
+        trust_dates={current},
+        groups=outbox_env["groups"],
+        settings=outbox_env["settings"],
+        watchlist=outbox_env["watchlist"],
+    )
+    assert seen == {"n9"}
+    assert "n1" not in seen
+    assert "n1" not in m.load_seen_ids()
+    # Stale incomplete row kept for a later safe flush; current rows acknowledged.
+    remaining = outbox.completed()
+    assert len(remaining) == 1
+    assert remaining[0].get("date") == stale
+    assert set(remaining[0].get("notice_ids") or []) == {"n1"}
+
+    item = {
+        "id": "n1",
+        "title": "AI 지원사업",
+        "url": "https://example.test/n1",
+        "posted_date": "2026-08-09",
+        "deadline": "2026-08-20",
+        "application_period": {"display": "2026-08-20"},
+    }
+    deliverable, _updates = m.classify_notice_versions([item], seen, {})
+    assert len(deliverable) == 1
+    assert deliverable[0]["_change_type"] == "NEW"
