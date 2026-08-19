@@ -177,3 +177,22 @@ def test_p2_korean_keyword_substring_still_matches_compound():
     grp = _group(or_keywords=["화장품"], priority_keywords=[], required_conditions={})
     s = scoring.compute_score(_item("화장품산업 활성화 공고"), grp)
     assert s["breakdown"]["or_hits"] == 1
+
+
+def test_prestartup_or_keywords_keep_package_notice_above_threshold():
+    """MAIL-003 재현: 예비창업패키지는 OR 적합 단어로 2차 점수 컷을 통과해야 한다."""
+    from pathlib import Path
+    import json
+
+    groups = json.loads((Path(__file__).resolve().parent.parent / "config" / "groups.json").read_text(encoding="utf-8"))
+    grp = next(g for g in groups if g["id"] == "grp_prestartup_ai")
+    item = {
+        "title": "2026년 AI 예비창업패키지 참여자 모집",
+        "description": "사업자등록이 없는 예비창업자를 대상으로 사업화자금을 지원합니다. 전국 모집.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["or_hits"] >= 1
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+    assert not out["rejected"]

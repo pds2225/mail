@@ -223,3 +223,28 @@ def test_real_application_notices_remain_included(item: dict):
 
     assert bucket == "included", evaluated
     assert evaluated["is_relevant"] is True
+
+
+def test_prestartup_or_keywords_include_fit_terms():
+    """2차 점수가 예비창업 본공고를 살리려면 OR에 적합 단어가 있어야 한다."""
+    for kw in ("예비창업", "예비창업자", "창업예정자"):
+        assert kw in GROUP["or_keywords"]
+
+
+def test_ai_prestartup_package_survives_score_refine():
+    """MAIL-003: AI 예비창업패키지는 1차 포함 후 2차 점수 컷에서 떨어지면 안 된다."""
+    item = _item(
+        "2026년 AI 예비창업패키지 참여자 모집",
+        "사업자등록이 없는 예비창업자를 대상으로 사업화자금을 지원합니다. 전국 모집.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    assert evaluated["is_relevant"] is True
+
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed, {
+        "rejected": [it.get("exclude_reason_codes") for it in rejected],
+        "score": evaluated.get("_match_score"),
+    }
+    assert passed[0].get("_match_score", 0) >= GROUP.get("score_threshold", 1)
+    assert not rejected
