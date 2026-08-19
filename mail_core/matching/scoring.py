@@ -69,11 +69,20 @@ def _kw_hit(text_lower: str, kw: str) -> bool:
       'email' 안의 'ai' 같은 부분문자열 오매칭 방지 (precision).
     - 한글 등 비ASCII 키워드는 부분문자열 매칭 유지 →
       한국어는 띄어쓰기 없는 합성어가 흔하므로 substring 이 맞다 (recall).
+    - 공고 원문은 '예비 창업'처럼 합성어 중간에 공백을 넣는 경우가 많다.
+      precision_keep/exclude 가 공백 유무만으로 어긋나면 1차 통과 공고가
+      2차에서 잘못 탈락한다 → 비ASCII 는 공백 제거본도 함께 본다.
     """
     kw_l = kw.lower()
     if kw.isascii():
         return re.search(r"(?<![a-z0-9])" + re.escape(kw_l) + r"(?![a-z0-9])", text_lower) is not None
-    return kw_l in text_lower
+    if kw_l in text_lower:
+        return True
+    kw_compact = re.sub(r"\s+", "", kw_l)
+    if not kw_compact:
+        return False
+    text_compact = re.sub(r"\s+", "", text_lower)
+    return kw_compact in text_compact
 
 
 def _count_hits(text: str, keywords: list[str]) -> int:
