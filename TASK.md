@@ -22,6 +22,10 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-005 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 한다
 [x] MAIL-006 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다
 [x] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
+[~] MAIL-008 | 15건이 넘는 공고가 메일에서 빠지지 않게 한다
+[ ] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
+[ ] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
+[ ] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 
 
 ---
@@ -1113,6 +1117,180 @@ parser가 DONE 항목을 READY로 세면 FAIL. 점수 컷 회귀가 깨지면 FA
 
 ---
 
+## MAIL-008
+
+### 8-1. 사용자 원문 요청
+
+> 과거사용자가 요청했ㄷ너것중 미완료된거 task에추가하고 개발
+>
+> (미완료 원문 — 메일 누락제로 / 열린 Draft #269: 그룹 매칭이 15건을 넘으면 표에는 15행만 나오고 나머지는 seen_ids 에 잠겨 다시 안 온다)
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+15건이 넘는 공고가 메일에서 빠지지 않게 한다
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- 그룹 매칭 20건이면 메일 표에도 20행
+- 16번째 이후가 seen 만 되고 본문에서 빠지지 않음
+- 실제 이메일 발송 없음
+- `claude_summarize` / `fallback_body` 경로
+
+### 8-4. 현재상태
+
+PINNING:
+- TASK_ID: MAIL-008
+- TASK_START_SHA: 41fdd39123d1e21f86cbe80c4317db01e9bc3724
+- TASK_BLOB_SHA: 016b0e803d7d0790298325c96483d8d9f8141d85
+- WORK_BRANCH: cursor/unfinished-past-requests-7dc1
+
+- 현재 문제: `claude_summarize` 가 `[:MAX_FOR_CLAUDE]` (15) 로 본문을 자른다. Draft #269 미머지.
+
+### 8-5. MUST
+
+- [ ] 매칭 N건이면 본문 행도 N건 (N>15 포함)
+- [ ] 회귀 테스트
+- [ ] 실발송 금지
+
+### 8-6. KEEP
+
+MAIL-002 8칸 표, 수집·매칭 정책, 수신자·스케줄
+
+### 8-8. FORBIDDEN
+
+실발송, Secret 로그, 기존 실패 테스트 skip
+
+### 8-9. DEPENDS_ON
+
+없음. MAIL-009/010과 monitor.py가 겹치면 이 TASK를 먼저.
+
+### 8-10. 구현범위
+
+`monitor.py` `claude_summarize`, `tests/test_mail_body_truncation.py`
+
+---
+
+## MAIL-009
+
+### 8-1. 사용자 원문 요청
+
+> 과거사용자가 요청했ㄷ너것중 미완료된거 task에추가하고 개발
+>
+> (미완료 원문 — 발송 누락 / 열린 Draft #270: 그룹 A만 보낸 채 죽으면 나중에 전체 실행이 stale outbox 를 seen_ids 로 올려 그룹 B가 영원히 못 받는다)
+
+### 8-2. 비개발자용 1줄 요약
+
+일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- 어제 A만 완료된 공유 공고가 오늘 전체 실행에서 seen 으로 잠기지 않음
+- 오늘 날짜 전체 그룹 완료분은 정상 승격
+- 실발송 없음
+
+### 8-4. 현재상태
+
+PINNING: MAIL-009 / 동일 브랜치 `cursor/unfinished-past-requests-7dc1`
+- 현재 문제: 전체 그룹 end-of-run 과 skip 경로가 `persist_completed_outbox(seen)` 무게이트. Draft #270 미머지.
+
+### 8-5. MUST
+
+- [ ] 전체 그룹 end-of-run 은 `trust_dates={target_date}`
+- [ ] skip 경로 flush 는 `only_if_cycle_complete=True`
+- [ ] stale A-only 가 seen_ids 에 안 들어감
+- [ ] 실발송 금지
+
+### 8-8. FORBIDDEN
+
+실발송, Secret 로그, MAIL-008 본문 전량 발송 회귀 후퇴
+
+### 8-9. DEPENDS_ON
+
+MAIL-008과 같은 `monitor.py` — 순차.
+
+### 8-10. 구현범위
+
+`monitor.py` `persist_completed_outbox` / end-of-run / skip flush, `tests/test_outbox_seen_ids_multigroup.py`
+
+---
+
+## MAIL-010
+
+### 8-1. 사용자 원문 요청
+
+> 과거사용자가 요청했ㄷ너것중 미완료된거 task에추가하고 개발
+>
+> (미완료 원문 — MAIL-004 자동머지 기본 이후 / Draft #269: `.github/workflows/*` 만 바꾼 PR이 docs-only 로 pytest 를 건너뛰고도 자동머지된다)
+
+### 8-2. 비개발자용 1줄 요약
+
+워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- `.github/workflows/*` 변경은 auto-merge 스킵 (사람 머지)
+- test.yml 이 워크플로를 docs-only 로 취급하지 않음
+- Draft / needs-human / .env* 예외 유지
+
+### 8-4. 현재상태
+
+PINNING: MAIL-010 / 동일 브랜치
+- 현재 문제: `test.yml` 이 workflow 를 docs_only 로 분류. `match_profile` 이 workflow 를 막지 않음. #267 SHA 핀은 이미 main.
+
+### 8-5. MUST
+
+- [ ] workflow 경로 auto-merge 거부
+- [ ] test.yml 에서 workflow 를 docs-only 에서 제외
+- [ ] 회귀 테스트
+- [ ] `--admin` 머지 금지
+
+### 8-8. FORBIDDEN
+
+`gh pr merge --admin`, 실발송, SHA 핀(#267) 제거
+
+### 8-9. DEPENDS_ON
+
+MAIL-004. 파일군이 MAIL-008/009와 다름 → 같은 브랜치에 넣되 독립 검증.
+
+### 8-10. 구현범위
+
+`scripts/auto_merge_pr.py`, `tests/test_auto_merge_pr.py`, `.github/workflows/test.yml`, `.github/workflows/auto-merge.yml` 주석, `docs/project/RULES.md`
+
+---
+
+## MAIL-011
+
+### 8-1. 사용자 원문 요청
+
+> 비개발자용 공고첨부 받기 — 원클릭 설치·배포
+>
+> (열린 PR #243, UNIQUE_CANDIDATE. MAIL-008~010과 파일군이 다름)
+
+### 8-2. 비개발자용 1줄 요약
+
+비개발자용 공고첨부 원클릭 설치를 마친다
+
+### 8-3. 사용자가 원하는 최종 결과
+
+비개발자가 공고 첨부를 원클릭으로 받아 설치할 수 있다. 이번 실행의 ACTIVE는 MAIL-008~010(누락·발송 안전)이 우선이라 이 TASK는 READY로 등록만 한다.
+
+### 8-4. 현재상태
+
+열린 PR #243. 이번 브랜치에서 구현하지 않음 (순차: 누락제로 먼저).
+
+### 8-5. MUST
+
+- [ ] 원클릭 설치·배포가 main 에 있다
+- [ ] 실발송 금지
+
+### 8-9. DEPENDS_ON
+
+MAIL-008~010 완료 후. 병렬 가능하나 이번 실행은 누락제로 우선.
+
+---
+
 # 9. 실제사용 시나리오
 
 TASK 완료 전에 반드시 실제 사용자 관점으로 검증한다.
@@ -1336,6 +1514,7 @@ TASK에 “머지 금지”가 없는 한 작업 브랜치 PR은 자동 병합�
 - 라벨 `needs-human` 또는 `blocked`
 - merge conflict
 - `.env` / `.env.local` / `.env.example`
+- `.github/workflows/*` (CI 게이트는 사람 머지)
 
 조건:
 
