@@ -236,6 +236,31 @@ def test_precision_keep_overrides_solution_intro_penalty():
     assert out["audit"][0]["decision"] == "passed"
 
 
+def test_precision_keep_matches_spaced_yebi_changup():
+    """공고 원문의 '예비 창업' 띄어쓰기도 keep 으로 인정한다.
+
+    #272 precision_exclude 가 '솔루션 도입'/'참여기업'을 감점할 때, keep 키워드
+    '예비창업'이 공백 때문에 빗나가면 1차 통과 본공고가 2차에서 score 0 탈락한다.
+    """
+    grp = _prestartup_group()
+    item = {
+        "title": "2026년 예비 창업 패키지(AI) 모집 공고",
+        "description": "예비 창업자를 대상으로 하며 AI 솔루션 도입을 지원합니다. 참여기업 연계 포함.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+
+
+def test_kw_hit_non_ascii_ignores_internal_whitespace():
+    assert scoring._kw_hit("예비 창업 패키지", "예비창업")
+    assert scoring._kw_hit("예비창업패키지", "예비 창업")
+    assert not scoring._kw_hit("일반 모집 공고", "예비창업")
+
+
 def test_precision_exclude_absent_is_backward_compatible():
     """precision 키가 없는 그룹은 기존 점수와 같다."""
     grp = _group()
