@@ -22,9 +22,9 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-005 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 한다
 [x] MAIL-006 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다
 [x] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
-[~] MAIL-008 | 15건이 넘는 공고가 메일에서 빠지지 않게 한다
-[ ] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
-[ ] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
+[x] MAIL-008 | 15건이 넘는 공고가 메일에서 빠지지 않게 한다
+[x] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
+[x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [ ] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 
 
@@ -1146,13 +1146,14 @@ PINNING:
 - TASK_BLOB_SHA: 016b0e803d7d0790298325c96483d8d9f8141d85
 - WORK_BRANCH: cursor/unfinished-past-requests-7dc1
 
-- 현재 문제: `claude_summarize` 가 `[:MAX_FOR_CLAUDE]` (15) 로 본문을 자른다. Draft #269 미머지.
+- 현재 문제: 해결됨. `claude_summarize` 가 전량 렌더. pytest + 20건 E2E 행수=20, mail_sent=false.
+REQUEST_SOLVED: YES
 
 ### 8-5. MUST
 
-- [ ] 매칭 N건이면 본문 행도 N건 (N>15 포함)
-- [ ] 회귀 테스트
-- [ ] 실발송 금지
+- [x] 매칭 N건이면 본문 행도 N건 (N>15 포함)
+- [x] 회귀 테스트
+- [x] 실발송 금지
 
 ### 8-6. KEEP
 
@@ -1193,14 +1194,15 @@ MAIL-002 8칸 표, 수집·매칭 정책, 수신자·스케줄
 ### 8-4. 현재상태
 
 PINNING: MAIL-009 / 동일 브랜치 `cursor/unfinished-past-requests-7dc1`
-- 현재 문제: 전체 그룹 end-of-run 과 skip 경로가 `persist_completed_outbox(seen)` 무게이트. Draft #270 미머지.
+- 현재 문제: 해결됨. `trust_dates={target_date}` + skip 경로 cycle 게이트. stale A-only 는 seen 에 안 들어감.
+REQUEST_SOLVED: YES
 
 ### 8-5. MUST
 
-- [ ] 전체 그룹 end-of-run 은 `trust_dates={target_date}`
-- [ ] skip 경로 flush 는 `only_if_cycle_complete=True`
-- [ ] stale A-only 가 seen_ids 에 안 들어감
-- [ ] 실발송 금지
+- [x] 전체 그룹 end-of-run 은 `trust_dates={target_date}`
+- [x] skip 경로 flush 는 `only_if_cycle_complete=True`
+- [x] stale A-only 가 seen_ids 에 안 들어감
+- [x] 실발송 금지
 
 ### 8-8. FORBIDDEN
 
@@ -1237,14 +1239,15 @@ MAIL-008과 같은 `monitor.py` — 순차.
 ### 8-4. 현재상태
 
 PINNING: MAIL-010 / 동일 브랜치
-- 현재 문제: `test.yml` 이 workflow 를 docs_only 로 분류. `match_profile` 이 workflow 를 막지 않음. #267 SHA 핀은 이미 main.
+- 현재 문제: 해결됨. workflow 경로 auto-merge 거부, test.yml docs-only 제외. #267 SHA 핀은 유지.
+REQUEST_SOLVED: YES
 
 ### 8-5. MUST
 
-- [ ] workflow 경로 auto-merge 거부
-- [ ] test.yml 에서 workflow 를 docs-only 에서 제외
-- [ ] 회귀 테스트
-- [ ] `--admin` 머지 금지
+- [x] workflow 경로 auto-merge 거부
+- [x] test.yml 에서 workflow 를 docs-only 에서 제외
+- [x] 회귀 테스트
+- [x] `--admin` 머지 금지
 
 ### 8-8. FORBIDDEN
 
