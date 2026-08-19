@@ -1355,21 +1355,32 @@ PINNING:
 - 2차는 `or_keywords`에 사업화지원금이 없고, MAIL-006 `참여기업` 감점이 keep을 못 만나면 점수 0으로 DROP
 - 창업진흥원(KISED) 소스 2개가 `enabled:false`, IITP 소스 없음 → 수집 공백은 슬라이스 2
 
+슬라이스 1 검증 (실발송 없음):
+- pytest `test_ai_commercialization_grant_recall.py` + scoring + digest + consultant + `test_monitor.py` → 190 passed
+- `recall_zero_gate` 신규 스위트 18 passed. bizinfo/kstartup replay는 환경에 `respx` 없으면 collect error (기존 이슈, 설치 후 통과)
+- `auto_dev_overnight_ready.py` → local_agent=True, MAIL-012 pending. GHA cron 꺼짐 유지
+
+슬라이스 2 실측 (켜지 않음):
+- `kised` URL `menu.es?mid=a10201000000` → HTTP 200이지만 본문 ERROR 404, table row 0
+- `imp_6e8c8360` 사업공고 페이지는 메뉴 HTML만 있고 `table tbody tr` 0건 (목록은 JS/다른 엔드포인트)
+- IITP `businessPblancList.it` → `/web/index.do` 홈으로 리다이렉트, SPA `{{item.title}}` 템플릿만. html_table로 켜면 0건
+- FORBIDDEN 준수: 셀렉터 실측 없이 enabled 하지 않음. 슬라이스 2는 공개 API/목록 URL을 찾은 다음 실행
+
 ### 8-5. MUST — 반드시 구현
 
 밤샘 슬라이스 (순서 고정, 한 슬라이스 실패해도 허위 DONE 금지):
 
 슬라이스 1 — 판정 누락 차단 (이번 실행)
 
-- [ ] `grp_prestartup_ai` OR에 `AI 사업화` / `인공지능 사업화` / 사업화지원금·자금 복합어 추가
-- [ ] AND에 `AI+지원금`, `AI+사업화자금`, `인공지능+지원금`, `인공지능+사업화자금` 추가
-- [ ] `precision_keep_keywords`에 `사업화지원금` / `사업화자금` / `사업화지원` 추가 (참여기업 감점 무력화)
-- [ ] 워치리스트에 AI 사업화지원금·자금 제목 변형 추가 (기존 컨설턴트 키워드 유지)
-- [ ] 회귀 테스트: 사업화지원금은 2차 PASS, 기창업 솔루션은 2차 DROP, 비AI 사업화지원금은 예비창업 그룹 미통과
-- [ ] `recall_zero_gate.py`에 해당 테스트 편입
-- [ ] `monitor.py` / `streamlit_app.py` 미수정
-- [ ] GHA cron 미활성 유지
-- [ ] 실제 이메일/알림 발송 금지
+- [x] `grp_prestartup_ai` OR에 `AI 사업화` / `인공지능 사업화` / 사업화지원금·자금 복합어 추가
+- [x] AND에 `AI+지원금`, `AI+사업화자금`, `인공지능+지원금`, `인공지능+사업화자금` 추가
+- [x] `precision_keep_keywords`에 `사업화지원금` / `사업화자금` / `사업화지원` 추가 (참여기업 감점 무력화)
+- [x] 워치리스트에 AI 사업화지원금·자금 제목 변형 추가 (기존 컨설턴트 키워드 유지)
+- [x] 회귀 테스트: 사업화지원금은 2차 PASS, 기창업 솔루션은 2차 DROP, 비AI 사업화지원금은 예비창업 그룹 미통과
+- [x] `recall_zero_gate.py`에 해당 테스트 편입
+- [x] `monitor.py` / `streamlit_app.py` 미수정
+- [x] GHA cron 미활성 유지
+- [x] 실제 이메일/알림 발송 금지
 
 슬라이스 2 — 수집 소스 공백 (후속, 이 TASK 미완료 조건)
 
@@ -1380,8 +1391,8 @@ PINNING:
 
 슬라이스 3 — 운영 게이트
 
-- [ ] `python3 scripts/auto_dev_overnight_ready.py --require-local` 가 MAIL-012를 pending으로 본다
-- [ ] REQUEST_SOLVED는 슬라이스 1+2가 끝난 뒤에만 YES
+- [x] `python3 scripts/auto_dev_overnight_ready.py --require-local` 가 MAIL-012를 pending으로 본다
+- [ ] REQUEST_SOLVED는 슬라이스 1+2가 끝난 뒤에만 YES. 지금은 PARTIAL (판정 누락은 막음, KISED/IITP 수집 공백은 남음)
 
 ### 8-6. KEEP — 유지
 
