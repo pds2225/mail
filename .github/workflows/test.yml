@@ -46,7 +46,9 @@ jobs:
           while IFS= read -r f; do
             [ -z "${f}" ] && continue
             case "${f}" in
-              TASK.md|*.md|docs|docs/*|.github/workflows|.github/workflows/*) ;;
+              # Workflow YAML is not docs-only: a green docs_only check would let
+              # Auto Merge land CI gate changes without pytest (MAIL-004 default merge).
+              TASK.md|*.md|docs|docs/*) ;;
               *) docs_only=false ;;
             esac
           done <<EOF

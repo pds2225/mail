@@ -56,9 +56,27 @@ def test_env_star_variants_blocked():
 
 
 def test_mixed_app_paths_eligible():
-    verdict = match_profile(["mail_core/matching/scoring.py", ".github/workflows/test.yml"], _profiles())
+    verdict = match_profile(["mail_core/matching/scoring.py", "tests/test_x.py"], _profiles())
     assert verdict.ok
     assert verdict.profile == "default"
+
+
+def test_ci_workflow_paths_blocked():
+    """Workflow-only (or mixed) CI edits must not auto-merge after MAIL-004.
+
+    test.yml used to classify `.github/workflows/*` as docs_only (pytest skipped),
+    so a green check alone could land gate-weakening YAML via fallback_direct_merge.
+    """
+    verdict = match_profile([".github/workflows/auto-merge.yml"], _profiles())
+    assert not verdict.ok
+    assert "CI workflow" in verdict.reason
+
+    mixed = match_profile(
+        ["mail_core/matching/scoring.py", ".github/workflows/test.yml"],
+        _profiles(),
+    )
+    assert not mixed.ok
+    assert "CI workflow" in mixed.reason
 
 
 def test_assess_allowlist_still_restricts_when_set():

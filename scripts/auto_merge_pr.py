@@ -2,7 +2,8 @@
 """CI 통과 후 PR을 main에 squash-merge한다. 자동 머지가 기본이다.
 
 loop_config.json 의 auto_merge.enabled 가 true 일 때만 동작한다.
-예외(opt-out): Draft, needs-human/blocked, merge conflict, .env* .
+예외(opt-out): Draft, needs-human/blocked, merge conflict, .env*,
+.github/workflows/* (CI 게이트는 사람 머지).
 monitor.py / streamlit_app.py 변경도 기본 병합한다.
 
 Usage:
@@ -150,8 +151,20 @@ def _is_secret_path(path: str) -> bool:
     return name.startswith(".env")
 
 
+def _is_ci_workflow_path(path: str) -> bool:
+    """True for GitHub Actions workflow paths that can weaken merge/test gates."""
+    normalized = str(path or "").replace("\\", "/")
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized == ".github/workflows" or normalized.startswith(".github/workflows/")
+
+
 def _secret_hits(changed: list[str]) -> list[str]:
     return [path for path in changed if _is_secret_path(path)]
+
+
+def _ci_workflow_hits(changed: list[str]) -> list[str]:
+    return [path for path in changed if _is_ci_workflow_path(path)]
 
 
 def _covers(changed: list[str], prefixes: list[str]) -> bool:
@@ -177,6 +190,15 @@ def match_profile(changed: list[str], profiles: dict) -> Eligibility:
     secrets = _secret_hits(changed)
     if secrets:
         return Eligibility(False, f"secret file: {', '.join(secrets)}")
+
+    # test.yml treats workflow-only diffs as docs_only (pytest skipped). After MAIL-004
+    # that green check alone would auto-merge CI edits that can disable secret/SHA gates.
+    workflows = _ci_workflow_hits(changed)
+    if workflows:
+        return Eligibility(
+            False,
+            f"CI workflow change requires human merge: {', '.join(workflows)}",
+        )
 
     specs = profiles.get("profiles") or {}
     matches: list[tuple[str, dict]] = []

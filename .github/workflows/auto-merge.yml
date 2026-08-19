@@ -1,8 +1,8 @@
 name: Auto Merge
 
 # 테스트 워크플로우 성공 후 같은 저장소 PR을 기본 자동병합한다.
-# 예외: Draft, needs-human/blocked, 충돌, .env*. Settings Allow auto-merge 가
-# 꺼져 있어도 fallback_direct_merge 로 동작 가능.
+# 예외: Draft, needs-human/blocked, 충돌, .env*, .github/workflows/*.
+# Settings Allow auto-merge 가 꺼져 있어도 fallback_direct_merge 로 동작 가능.
 on:
   workflow_run:
     workflows: ["테스트"]
