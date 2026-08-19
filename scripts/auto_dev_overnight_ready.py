@@ -23,6 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS = ROOT / "docs" / "project" / "TASKS.md"
+TASK_MD = ROOT / "TASK.md"
 LOOP_CFG = ROOT / "auto_dev" / "loop_config.json"
 WORKFLOW = ROOT / ".github" / "workflows" / "auto-dev-queue.yml"
 
@@ -43,6 +44,34 @@ def _pending_tasks(text: str) -> list[str]:
     return out
 
 
+def _task_md_ready(text: str) -> list[str]:
+    """Parse root TASK.md list. [ ] READY and [~] ACTIVE are overnight work.
+
+    TASK.md is the sole AI work-instruction file. docs/project/TASKS.md remains
+    the GHA deterministic queue. Local overnight agents drain TASK.md first.
+    """
+    out: list[str] = []
+    in_list = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("# 0. TASK LIST"):
+            in_list = True
+            continue
+        if in_list and stripped.startswith("# ") and not stripped.startswith("# 0."):
+            break
+        m = re.match(r"^\[([ ~])\]\s+(MAIL-\d+)\s+\|\s+(.+)$", stripped)
+        if m:
+            out.append(f"{m.group(2)}: {m.group(3).strip()}")
+    return out
+
+
+def collect_pending(tasks_text: str = "", task_md_text: str = "") -> list[str]:
+    """Merge GHA TASKS.md PENDING with root TASK.md READY/ACTIVE rows."""
+    pending = _pending_tasks(tasks_text)
+    pending.extend(_task_md_ready(task_md_text))
+    return pending
+
+
 def _user_priority_first(pending: list[str]) -> list[str]:
     """Prefer TASK lines that mention user-priority keywords."""
     keys = (
@@ -56,7 +85,10 @@ def _user_priority_first(pending: list[str]) -> list[str]:
         "source_field",
         "overnight",
         "야간",
+        "밤샘",
         "audit",
+        "task.md",
+        "mail-",
     )
 
     def score(line: str) -> int:
@@ -68,7 +100,9 @@ def _user_priority_first(pending: list[str]) -> list[str]:
 
 def run_check() -> dict:
     tasks_text = TASKS.read_text(encoding="utf-8") if TASKS.exists() else ""
-    pending = _pending_tasks(tasks_text)
+    task_md_text = TASK_MD.read_text(encoding="utf-8") if TASK_MD.exists() else ""
+    task_md_ready = _task_md_ready(task_md_text)
+    pending = collect_pending(tasks_text, task_md_text)
     ordered = _user_priority_first(pending)
 
     cfg = {}
@@ -89,7 +123,9 @@ def run_check() -> dict:
 
     blockers: list[str] = []
     if not pending:
-        blockers.append("PENDING queue empty — refill user-priority tasks before overnight")
+        blockers.append(
+            "PENDING queue empty — refill TASK.md [ ]/[~] or docs/project/TASKS.md PENDING before overnight"
+        )
     if not schedule_enabled:
         blockers.append("loop_config trigger.schedule_enabled=false")
     if not cron_active:
@@ -112,6 +148,7 @@ def run_check() -> dict:
         "ok_local_agent": local_agent_ready,
         "ok_live_gha": live_ready,
         "pending_count": len(pending),
+        "task_md_ready_count": len(task_md_ready),
         "pending_user_priority_order": ordered,
         "schedule_enabled": schedule_enabled,
         "gha_cron_active": cron_active,
@@ -119,8 +156,9 @@ def run_check() -> dict:
         "pat_or_token_present": pat_env,
         "blockers": blockers,
         "advice": (
-            "Drain PENDING locally tonight with a coding agent (user-priority order). "
-            "Do not re-enable GHA cron until schedule_enabled + valid AUTO_DEV_PAT + AUTO_DEV_AGENT."
+            "Drain TASK.md [ ]/[~] and docs/project/TASKS.md PENDING locally tonight "
+            "(user-priority order). Do not re-enable GHA cron until schedule_enabled + "
+            "valid AUTO_DEV_PAT + AUTO_DEV_AGENT."
         ),
     }
 

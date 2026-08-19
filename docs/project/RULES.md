@@ -182,7 +182,7 @@ GHA `auto-dev-queue.yml` 의 cron 을 다시 켜기 **전에** 모두 충족:
 1. GitHub Secret `AUTO_DEV_PAT` 가 유효하고 `contents`/`pull-requests` 권한이 있다.
 2. 워크플로에서 `AUTO_DEV_AGENT=true` 로 코딩 슬롯이 실제로 연결되어 있다 (아니면 AWAITING_AGENT만 반복).
 3. `auto_dev/loop_config.json` → `trigger.schedule_enabled=true` 와 워크플로 `schedule:` 블록이 동시에 활성이다 (`loop_verify --drift` D5).
-4. `docs/project/TASKS.md` PENDING 이 비어 있지 않다 (user-priority TASK 우선).
+4. `docs/project/TASKS.md` PENDING **또는** 루트 `TASK.md` 의 `[ ]`/`[~]` 가 비어 있지 않다 (TASK.md 우선, user-priority TASK 다음).
 5. `python3 scripts/auto_dev_overnight_ready.py --require-live` 가 exit 0 이다.
 6. `python3 scripts/outstanding_dev_audit.py --strict` 가 UNIQUE_CANDIDATE 없이 통과한다.
 
