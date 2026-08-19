@@ -26,6 +26,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [ ] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
+[~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 
 
 ---
@@ -1291,6 +1292,133 @@ MAIL-004. 파일군이 MAIL-008/009와 다름 → 같은 브랜치에 넣되 독
 ### 8-9. DEPENDS_ON
 
 MAIL-008~010 완료 후. 병렬 가능하나 이번 실행은 누락제로 우선.
+
+---
+
+## MAIL-012
+
+### 8-1. 사용자 원문 요청
+
+> ㅇ예비창업자 ai공고수집 개선 pr어디갔어
+> 적용된거? 우선 AI 사업화지원금 공고 모두수집원함
+> 그러기위한 개발방안 task에 추가하고 밤샘개발
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+AI 사업화지원금 공고를 빠짐없이 수집한다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 실제로 사용했을 때:
+
+- 제목에 AI/인공지능 + 사업화지원금(또는 사업화자금·사업화 지원)이 있는 공고는 예비창업 AI 메일에서 빠지지 않는다
+- `참여기업`이 제목에 있어도 사업화지원금이면 유지한다 (MAIL-006의 기창업 솔루션 제외는 그대로)
+- 기창업 `AI 솔루션 도입`만 있는 공고는 예비창업 메일에서 계속 빠진다
+- 워치리스트가 `AI 사업화지원금` 변형을 강제포함한다
+- 이전 예비창업 PR 상태가 TASK에 사실대로 적혀 있다
+- GHA cron은 켜지지 않는다
+- `monitor.py`는 수정하지 않는다
+- 실제 이메일은 발송되지 않는다
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+PINNING:
+- TASK_ID: MAIL-012
+- TASK_START_SHA: 8a048dd6
+- WORK_BRANCH: cursor/ai-grant-full-recall-b14b
+- origin: https://github.com/pds2225/mail.git (일치)
+
+이전 예비창업자 AI 공고 PR (적용 여부):
+
+| PR | 내용 | 상태 | main 적용 |
+|---|---|---|---|
+| #271 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 OR 키워드 추가 | MERGED 2026-08-19 | 예 |
+| #272 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다 | MERGED 2026-08-19 | 예 |
+| #274 | 밤샘이 TASK.md를 읽고 `예비 창업` 띄어쓰기를 살린다 | MERGED 2026-08-19 | 예 |
+| #239/#240 | P0/P1 예비창업 공고 파이프라인 | MERGED 2026-08-08 | 예 |
+| #179 | 예비창업 AI digest 정밀도 | MERGED 2026-07-24 | 예 |
+| #264 | MAIL-003 원인 분석 문서 | Draft, 충돌로 미머지. 분석은 #271이 TASK에 흡수 | 아니오 (내용 흡수) |
+| #260 | 로컬 P0 잔여분(키워드·판정사유·계획서, monitor.py 포함) | OPEN | 아니오 |
+| #273 | spaced 예비 창업 precision_keep | Draft. #274가 scoring 공백무시로 대체 | 아니오 (내용 대체) |
+
+핵심: 개선 PR은 사라지지 않았고 **#271/#272/#274가 main에 들어가 있다.** 다만 그건 **적합도(2차 점수·기창업 제외)** 패치다. **AI 사업화지원금 전수 수집**은 별 문제였다.
+
+현재 구멍 (슬라이스 1에서 막음):
+
+- 1차 AND `["AI","사업화"]`는 `AI 사업화지원금`을 통과시킨다
+- 2차는 `or_keywords`에 사업화지원금이 없고, MAIL-006 `참여기업` 감점이 keep을 못 만나면 점수 0으로 DROP
+- 창업진흥원(KISED) 소스 2개가 `enabled:false`, IITP 소스 없음 → 수집 공백은 슬라이스 2
+
+### 8-5. MUST — 반드시 구현
+
+밤샘 슬라이스 (순서 고정, 한 슬라이스 실패해도 허위 DONE 금지):
+
+슬라이스 1 — 판정 누락 차단 (이번 실행)
+
+- [ ] `grp_prestartup_ai` OR에 `AI 사업화` / `인공지능 사업화` / 사업화지원금·자금 복합어 추가
+- [ ] AND에 `AI+지원금`, `AI+사업화자금`, `인공지능+지원금`, `인공지능+사업화자금` 추가
+- [ ] `precision_keep_keywords`에 `사업화지원금` / `사업화자금` / `사업화지원` 추가 (참여기업 감점 무력화)
+- [ ] 워치리스트에 AI 사업화지원금·자금 제목 변형 추가 (기존 컨설턴트 키워드 유지)
+- [ ] 회귀 테스트: 사업화지원금은 2차 PASS, 기창업 솔루션은 2차 DROP, 비AI 사업화지원금은 예비창업 그룹 미통과
+- [ ] `recall_zero_gate.py`에 해당 테스트 편입
+- [ ] `monitor.py` / `streamlit_app.py` 미수정
+- [ ] GHA cron 미활성 유지
+- [ ] 실제 이메일/알림 발송 금지
+
+슬라이스 2 — 수집 소스 공백 (후속, 이 TASK 미완료 조건)
+
+- [ ] 창업진흥원 `kised` / `imp_6e8c8360` 셀렉터 실측 후 켜기. 메뉴·사진뉴스면 원복
+- [ ] IITP(정보통신기획평가원) 사업공고 소스 추가. 로그인 전용 링크면 공개 URL로 정규화
+- [ ] NIPA·기업마당·K-Startup AI 사업화 키워드 재생 테스트가 살아 있는지 확인
+- [ ] live 수집은 Cloud TLS 제한이 있으면 replay/fixture로 증거. 실발송 없음
+
+슬라이스 3 — 운영 게이트
+
+- [ ] `python3 scripts/auto_dev_overnight_ready.py --require-local` 가 MAIL-012를 pending으로 본다
+- [ ] REQUEST_SOLVED는 슬라이스 1+2가 끝난 뒤에만 YES
+
+### 8-6. KEEP — 유지
+
+- MAIL-005 OR(예비창업/예비창업자/창업예정자)
+- MAIL-006 기창업 솔루션 도입 제외
+- 컨설턴트 워치리스트 키워드
+- 기존 수집 소스 enabled 상태 (슬라이스 2에서 고른 소스만 켬)
+- preview/dry-run, 수신자 목록
+
+### 8-7. REMOVE — 제거
+
+AI 사업화지원금이 `참여기업` 감점만으로 2차에서 점수 0 탈락하는 동작.
+
+### 8-8. FORBIDDEN — 금지
+
+- `monitor.py` / `streamlit_app.py` 수정
+- GHA cron 재활성
+- 실제 이메일/알림 발송
+- Secret/API Key 로그
+- 기존 실패 테스트 skip
+- 비AI 사업화지원금까지 예비창업 AI 그룹에 넣는 것
+- KISED를 셀렉터 실측 없이 enabled:true
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: MAIL-005, MAIL-006 (main 머지됨). MAIL-011과 파일군이 달라 병렬 가능. 이번 실행은 MAIL-012가 최신 사용자 요청이므로 우선.
+
+### 8-10. 구현범위
+
+- `config/groups.json` `grp_prestartup_ai`
+- `config/watchlist.json` keywords 추가만
+- `tests/test_ai_commercialization_grant_recall.py` (신규)
+- `tests/test_scoring.py` / `tests/test_prestartup_ai_digest_regression.py` 보강
+- `scripts/recall_zero_gate.py` RECALL_SUITES
+- `TASK.md` / `docs/project/TASKS.md`
+
+슬라이스 2는 `config/sites.json` + replay 테스트. 이번 커밋에 소스 활성화 넣지 않는다.
 
 ---
 

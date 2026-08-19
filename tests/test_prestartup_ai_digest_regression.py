@@ -275,3 +275,19 @@ def test_mixed_prestartup_solution_notice_survives_score_refine():
     passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
     assert passed
     assert not rejected
+
+
+def test_ai_commercialization_grant_survives_participant_word():
+    """MAIL-012: AI 사업화지원금은 참여기업 문구가 있어도 2차에 남긴다."""
+    item = _item(
+        "2026년 AI 사업화지원금 참여기업 모집",
+        "인공지능 예비·초기기업에 사업화자금을 지원합니다. 전국 모집.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed, {
+        "rejected": [it.get("exclude_reason_codes") for it in rejected],
+        "score": evaluated.get("_match_score"),
+    }
+    assert not rejected
