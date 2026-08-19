@@ -21,7 +21,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-004 | 모든 작업은 자동 머지가 기본이다
 [x] MAIL-005 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 한다
 [x] MAIL-006 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다
-[~] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
+[x] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
 
 
 ---
@@ -1033,22 +1033,26 @@ PINNING:
 - origin: https://github.com/pds2225/mail.git (일치)
 - 작업 시작 시 ahead=0 behind=0 (origin/main `08a18e7d`)
 
-- 현재 구현: 밤샘 판정이 `docs/project/TASKS.md` PENDING만 봐서 TASK.md 대기 작업을 빈 큐로 오판. `_kw_hit`가 비ASCII 공백을 무시하지 않아 `예비 창업` keep 실패 (열린 Draft #273과 동일 결함, main 미반영)
-- 현재 문제: 수정 중
-- 확인 필요한 부분: overnight parser 단위 테스트, 띄어쓰기 keep 회귀, 기창업 솔루션 DROP 유지
+- 현재 구현: 밤샘 판정이 `TASK.md` `[ ]`/`[~]` 와 `docs/project/TASKS.md` PENDING을 합친다. `_kw_hit` 비ASCII는 공백 제거본도 본다.
+- 현재 문제: 해결됨. GHA cron은 의도적으로 꺼 둠. UNIQUE_CANDIDATE(첨부다운로더·prestartup P0 문서)와 V9 `respx` 미설치는 기존 이슈라 이번 범위 밖.
+- 확인: pytest 180 passed. 실발송 없음. `monitor.py` 미수정. overnight `[~]` 상태에서 pending=1, `[x]` 후 NO_ACTIVE_TASK.
+
+REQUEST_SOLVED: YES
+USER_E2E: PASS (`score_and_filter` preview: `예비 창업`+솔루션 도입 → passed score 30 keep=2; 기창업 솔루션 → rejected_by_score; mail_sent=false)
+MAIN_MERGED: YES (2026-08-19, #274 squash `9581950b`)
 
 문서의 DONE 표시만 믿지 말고 실제 코드/runtime을 확인한다.
 
 ### 8-5. MUST — 반드시 구현
 
-- [ ] `auto_dev_overnight_ready.py`가 `TASK.md` `[ ]`/`[~]` 를 pending에 합친다
-- [ ] `--require-local`이 TASK.md READY가 있으면 통과한다
-- [ ] `예비 창업` 띄어쓰기 본공고는 2차 PASS
-- [ ] 기창업 솔루션 도입만 있으면 2차 DROP 유지
-- [ ] ASCII 키워드 단어경계는 유지 (`email` 안의 `ai` 오매칭 없음)
-- [ ] `monitor.py` / `streamlit_app.py` 미수정
-- [ ] GHA `auto-dev-queue.yml` cron 미활성 유지
-- [ ] 실제 이메일/알림 발송 금지
+- [x] `auto_dev_overnight_ready.py`가 `TASK.md` `[ ]`/`[~]` 를 pending에 합친다
+- [x] `--require-local`이 TASK.md READY가 있으면 통과한다
+- [x] `예비 창업` 띄어쓰기 본공고는 2차 PASS
+- [x] 기창업 솔루션 도입만 있으면 2차 DROP 유지
+- [x] ASCII 키워드 단어경계는 유지 (`email` 안의 `ai` 오매칭 없음)
+- [x] `monitor.py` / `streamlit_app.py` 미수정
+- [x] GHA `auto-dev-queue.yml` cron 미활성 유지
+- [x] 실제 이메일/알림 발송 금지
 
 ### 8-6. KEEP — 유지
 
