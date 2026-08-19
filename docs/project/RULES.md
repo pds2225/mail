@@ -27,7 +27,8 @@
 | `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
 
 > **Auto Merge:** 자동 머지가 기본이다. Checks 초록·충돌 없으면 squash-merge 한다.
-> 예외는 Draft, `needs-human`/`blocked`, merge conflict, `.env*`.
+> 예외는 Draft, `needs-human`/`blocked`, merge conflict, `.env*`,
+> `.github/workflows/*` (CI 게이트는 사람 머지).
 > `monitor.py` / `streamlit_app.py` 변경도 기본 병합한다. `--admin` 은 금지.
 >
 > `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에

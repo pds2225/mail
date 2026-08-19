@@ -110,6 +110,9 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
+# Legacy Claude digest batch size. Deterministic fallback_body mails every matched
+# notice; do not reintroduce a silent body cap — deliver_with_outbox marks all
+# notice_ids seen, so omitting rows from the digest permanently drops them.
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -6508,10 +6511,13 @@ def claude_summarize(items: list[dict], group: dict) -> str:
 
     MONITOR_DIGEST_LLM=1 이면 맨 위에 '한 줄 적합성' 코멘트만 LLM으로 붙인다.
     공고별 금액·마감·링크는 여전히 fallback_body(원문 필드)만 쓴다.
+
+    본문은 매칭 공고 전량을 담는다. ``[:MAX_FOR_CLAUDE]`` 로 자르면 표에는 안 나오는데
+    ``notice_ids`` 는 전량이 seen 으로 잠겨 16번째 이후가 영구 누락된다.
     """
     if not items:
         return ""
-    body = fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    body = fallback_body(sorted(items, key=_notice_sort_key))
     if os.environ.get("MONITOR_DIGEST_LLM", "") not in ("1", "true", "True"):
         return body
     try:
@@ -6940,6 +6946,7 @@ def persist_completed_outbox(
     seen_ids: set[str],
     *,
     only_if_cycle_complete: bool = False,
+    trust_dates: set[str] | None = None,
     groups: list[dict] | None = None,
     settings: dict | None = None,
     watchlist: dict | None = None,
@@ -6947,13 +6954,20 @@ def persist_completed_outbox(
 ) -> set[str]:
     """Commit completed deliveries to seen_ids, then acknowledge their encrypted records.
 
-    When ``only_if_cycle_complete`` is True (start-of-run recovery / single-group runs),
-    only entries whose delivery cycle is fully checkpointed are promoted. Full-group
-    end-of-run callers leave the flag False: that process already finished every group
-    plan, so promoting is safe even if a sibling group still has pending *recipients*
-    (those retry from the encrypted outbox). Single-group (``--group``) end-of-run MUST
-    keep the flag True and pass the unfiltered groups list — otherwise shared notice_ids
-    poison global seen_ids before the other groups are mailed.
+    When ``only_if_cycle_complete`` is True (start-of-run recovery / single-group runs /
+    skip-path flush), only entries whose delivery cycle is fully checkpointed are
+    promoted.
+
+    Full-group end-of-run MUST pass ``trust_dates={current target_date}`` (not a bare
+    ungated call). This process finished every group plan for that date, so those
+    completions are safe even if a sibling still has pending *recipients* (they retry
+    from the encrypted outbox) or an empty-match group never checkpointed. Completions
+    for any *other* date still go through the cycle gate — otherwise a stale A-only
+    settle from a prior crashed slot is promoted and shared notice_ids permanently
+    disappear for group B.
+
+    Single-group (``--group``) end-of-run MUST keep ``only_if_cycle_complete=True`` and
+    pass the unfiltered groups list.
     """
     completed = delivery_outbox.completed()
     if not completed:
@@ -6966,6 +6980,31 @@ def persist_completed_outbox(
             watchlist=watchlist,
             include_raw_all=include_raw_all,
         )
+        if not completed:
+            return seen_ids
+    elif trust_dates is not None:
+        trusted = {
+            str(d).strip()
+            for d in trust_dates
+            if str(d or "").strip()
+        }
+        trusted_entries = [
+            entry for entry in completed
+            if str(entry.get("date") or "").strip() in trusted
+        ]
+        other_entries = [
+            entry for entry in completed
+            if str(entry.get("date") or "").strip() not in trusted
+        ]
+        if other_entries:
+            other_entries = _completed_outbox_entries_safe_to_promote(
+                other_entries,
+                groups=groups,
+                settings=settings,
+                watchlist=watchlist,
+                include_raw_all=include_raw_all,
+            )
+        completed = trusted_entries + other_entries
         if not completed:
             return seen_ids
     notice_ids = {
@@ -7736,6 +7775,8 @@ def execute_monitor(
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
     # 단일 그룹(--group) run 은 "모든 그룹 plan 종료"가 아니므로 cycle 게이트를 유지한다.
+    # 전체 그룹 end-of-run 은 이번 target_date 만 신뢰하고, 다른 날짜 completed 는
+    # cycle 게이트를 통과한 것만 승격한다(크래시 슬롯 A-only settle 의 seen_ids 독극물 방지).
     if effective_send and persist_seen:
         if single_group_mode:
             seen_ids = persist_completed_outbox(
@@ -7747,7 +7788,14 @@ def execute_monitor(
                 include_raw_all=include_raw_all,
             )
         else:
-            seen_ids = persist_completed_outbox(seen_ids)
+            seen_ids = persist_completed_outbox(
+                seen_ids,
+                trust_dates={str(target_date)},
+                groups=all_groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+            )
         commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
@@ -8567,12 +8615,21 @@ if __name__ == "__main__":
             if _skip_fetch:
                 # execute_monitor 를 건너뛰므로, 여기서 completed outbox → seen_ids 를
                 # flush 하지 않으면 마지막 settle 직후 크래시 분이 한 슬롯 동안 고인다.
+                # 반드시 cycle 게이트를 켠다 — 무조건부 flush 는 다른 슬롯의 미완료
+                # A-only settle 까지 승격해 공유 notice_ids 를 타 그룹에서 영구 누락시킨다.
                 if args.persist_seen:
                     try:
                         _ALLOW_PERSIST_SEEN = True
                         if delivery_outbox.is_ready():
                             retry_pending_outbox()
-                            persist_completed_outbox(load_seen_ids())
+                            persist_completed_outbox(
+                                load_seen_ids(),
+                                only_if_cycle_complete=True,
+                                groups=_groups_ee,
+                                settings=_settings_ee,
+                                watchlist=_wl_ee,
+                                include_raw_all=args.include_raw_all,
+                            )
                     except Exception as e:
                         log.warning("skip 경로 outbox→seen_ids flush 실패(무시): %s", e)
                 _dur = time.monotonic() - _t0

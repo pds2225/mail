@@ -55,6 +55,43 @@ def test_summary_never_truncates_or_omits_collected_notices():
     assert rows is not None and len(rows) == 2
 
 
+def test_summary_includes_beyond_legacy_max_for_claude():
+    """MAX_FOR_CLAUDE(15) 초과분도 본문에 포함돼야 한다.
+
+    예전엔 ``claude_summarize`` 가 ``[:15]`` 로 표를 잘랐는데, 발송 경로는
+    ``g_items`` 전량을 ``notice_ids`` 로 seen 승격한다. 16번째 이후는 메일에
+    안 보이면서 영구 누락된다.
+    """
+    from mail_core.delivery.digest_table import parse_plain_table
+
+    items = []
+    for i in range(20):
+        items.append({
+            "id": f"n{i}",
+            "title": f"대량공고{i:02d}",
+            "description": "본문",
+            "author": "기관",
+            "deadline": "2099-12-31",
+            "source": "기업마당",
+            "posted_date": "2026-08-01",
+            "link": f"https://example.com/{i}",
+            "source_url": f"https://example.com/{i}",
+            "is_aggregator": False,
+            "_change_type": "NEW",
+            "_types": ["자금"],
+            "is_relevant": True,
+        })
+    body = m.claude_summarize(items, _group())
+    _, rows, _ = parse_plain_table(body)
+    assert rows is not None
+    assert len(rows) == 20
+    titles = " ".join(r.get("공고") or "" for r in rows)
+    assert "대량공고00" in titles
+    assert "대량공고15" in titles
+    assert "대량공고19" in titles
+    assert len(rows) == len(items)
+
+
 def test_summary_never_uses_model_text():
     """환경 변수와 무관하게 환각 가능한 모델 문장은 발송 본문으로 쓰지 않는다."""
     body = m.claude_summarize(_items(), _group())
