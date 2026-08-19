@@ -20,6 +20,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-003 | 예비창업 AI 그룹 적합도가 떨어진 원인을 분석한다
 [x] MAIL-004 | 모든 작업은 자동 머지가 기본이다
 [x] MAIL-005 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 한다
+[x] MAIL-006 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다
 
 
 ---
@@ -886,6 +887,110 @@ N/A
 ### 8-14. 오류상태
 
 점수 컷 회귀가 깨지면 FAIL. 테스트를 skip으로 숨기지 않음.
+
+---
+
+## MAIL-006
+
+### 8-1. 사용자 원문 요청
+
+> ㅇㅇ 지금 task.md 읽고 하고있나?
+>
+> (직전 제안 ③: 기창업 솔루션을 2차에서 걸러 적합도를 맞춘다. MAIL-005는 예비창업 본공고 회복만 했고 기창업 `AI 솔루션 도입`은 그대로 PASS.)
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+기창업 솔루션 공고는 예비창업 메일에서 뺀다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 실제로 사용했을 때:
+
+- 예비창업자가 신청할 수 없는 `AI 솔루션 도입 참여기업` 같은 기창업 공고가 예비창업 AI 메일 대상에서 빠짐
+- `AI 예비창업패키지` 같은 진짜 예비창업 공고는 계속 남음
+- 예비창업 신호와 솔루션 도입이 같이 있으면 포함 (동시 모집)
+- `monitor.py`는 수정하지 않음
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+PINNING:
+- TASK_ID: MAIL-006
+- TASK_START_SHA: ccc6a1b4b03d3d52bf1720bd248ac449716acf80
+- TASK_BLOB_SHA: 733d796c7b3026b5de068033e86a21a338ff1136
+- WORK_BRANCH: cursor/prestartup-fit-exclude-e101
+- origin: https://github.com/pds2225/mail.git (일치)
+- 작업 시작 시 ahead=0 behind=0 (origin/main `ccc6a1b4`, MAIL-005 squash-merge 반영)
+
+- 현재 구현: `scoring.compute_score`가 `precision_exclude_keywords`를 `precision_keep_keywords` 없을 때만 감점. `grp_prestartup_ai`에 솔루션 도입/기창업/참여기업 vs 예비창업 유지 키워드 설정
+- 현재 문제: 해결됨 — 기창업 솔루션 도입은 2차 `rejected_by_score`, 예비창업패키지는 PASS
+- 확인: pytest 215 passed. 실발송 없음. `monitor.py` 미수정
+
+REQUEST_SOLVED: YES
+
+### 8-5. MUST — 반드시 구현
+
+- [x] 기창업 솔루션 도입 공고는 `grp_prestartup_ai` 2차에서 DROP
+- [x] 예비창업패키지 공고는 2차 PASS 유지
+- [x] 예비창업 신호가 있으면 솔루션 도입이 있어도 포함
+- [x] 회귀 테스트
+- [x] `monitor.py` 미수정
+- [x] 실제 이메일/알림 발송 금지
+
+### 8-6. KEEP — 유지
+
+- MAIL-005 OR 키워드 (예비창업/예비창업자/창업예정자, AI 솔루션, 서울 AI 허브)
+- AND 키워드 그룹
+- 1차 `evaluate_notice` 광역 통과 (2차에서 적합도 컷)
+- 수신자·스케줄
+
+### 8-7. REMOVE — 제거
+
+예비창업 신호가 없는 기창업 솔루션 도입 공고의 2차 통과
+
+### 8-8. FORBIDDEN — 금지
+
+- `monitor.py` / `streamlit_app.py` 수정
+- 실제 이메일/알림 발송
+- Secret/API Key 로그
+- 예비창업 본공고 recall 후퇴
+- 기존 실패 테스트 skip
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: MAIL-003 원인, MAIL-005 OR 키워드 (main에 머지됨 #271).
+
+### 8-10. 구현범위
+
+- `mail_core/matching/scoring.py`
+- `config/groups.json`
+- `tests/test_scoring.py`
+- `tests/test_prestartup_ai_digest_regression.py`
+- `TASK.md`
+
+### 8-11. 입력검증
+
+- 기창업 `AI 솔루션 도입 참여기업` → 2차 DROP
+- 예비창업패키지 → 2차 PASS
+- 예비창업 + 솔루션 도입 동시 → 2차 PASS
+- precision 설정 없는 그룹 → 기존 점수 그대로
+
+### 8-12. 빈상태
+
+precision 키 없음 = 감점 없음 (하위호환).
+
+### 8-13. 로딩상태
+
+N/A
+
+### 8-14. 오류상태
+
+점수 컷 회귀가 깨지면 FAIL. skip 금지.
 
 ---
 
