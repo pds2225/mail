@@ -196,3 +196,50 @@ def test_prestartup_or_keywords_keep_package_notice_above_threshold():
     out = scoring.score_and_filter([item], grp)
     assert out["audit"][0]["decision"] == "passed"
     assert not out["rejected"]
+
+
+def _prestartup_group():
+    from pathlib import Path
+    import json
+
+    groups = json.loads((Path(__file__).resolve().parent.parent / "config" / "groups.json").read_text(encoding="utf-8"))
+    return next(g for g in groups if g["id"] == "grp_prestartup_ai")
+
+
+def test_precision_exclude_drops_established_solution_notice():
+    """MAIL-006: 기창업 솔루션 도입은 예비창업 신호가 없으면 2차에서 떨어진다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "AI 솔루션 도입 참여기업 모집",
+        "description": "기창업 중소기업의 AI 솔루션 도입 비용을 지원합니다.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_penalty"] == 1
+    assert s["breakdown"]["precision_keep_hits"] == 0
+    assert s["score"] < int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "rejected_by_score"
+
+
+def test_precision_keep_overrides_solution_intro_penalty():
+    """예비창업 신호와 솔루션 도입이 같이 있으면 동시 모집으로 통과한다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "예비창업자 AI 솔루션 도입 지원 모집",
+        "description": "예비창업자와 초기기업에 AI 솔루션 도입 비용을 지원합니다.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+
+
+def test_precision_exclude_absent_is_backward_compatible():
+    """precision 키가 없는 그룹은 기존 점수와 같다."""
+    grp = _group()
+    item = _item("인천 스마트공장 지원사업")
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["breakdown"]["precision_exclude_hits"] == 0

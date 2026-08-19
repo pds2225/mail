@@ -335,6 +335,16 @@
     ],
     "recipients": [],
     "score_threshold": 1,
+    "precision_exclude_keywords": [
+      "솔루션 도입",
+      "기창업",
+      "참여기업"
+    ],
+    "precision_keep_keywords": [
+      "예비창업",
+      "예비창업자",
+      "창업예정자"
+    ],
     "llm_check_enabled": true,
     "llm_check_threshold_band": [
       40,
