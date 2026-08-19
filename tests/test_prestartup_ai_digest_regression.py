@@ -248,3 +248,30 @@ def test_ai_prestartup_package_survives_score_refine():
     }
     assert passed[0].get("_match_score", 0) >= GROUP.get("score_threshold", 1)
     assert not rejected
+
+
+def test_established_ai_solution_dropped_by_score_refine():
+    """MAIL-006: 기창업 AI 솔루션 도입은 1차 통과 후 2차에서 메일 대상에서 빠진다."""
+    item = _item(
+        "AI 솔루션 도입 참여기업 모집",
+        "기창업 중소기업의 AI 솔루션 도입 비용을 지원합니다.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert not passed
+    assert rejected
+    assert "SCORE_OR_LLM_REJECT" in (rejected[0].get("exclude_reason_codes") or [])
+
+
+def test_mixed_prestartup_solution_notice_survives_score_refine():
+    """예비창업 신호와 솔루션 도입이 같이 있으면 2차에 남긴다."""
+    item = _item(
+        "예비창업자 AI 솔루션 도입 지원 모집",
+        "예비창업자와 초기기업에 AI 솔루션 도입 비용을 지원합니다.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed
+    assert not rejected

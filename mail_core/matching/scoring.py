@@ -15,7 +15,8 @@ zero-match 개선(양방향 정확도):
 
 하위호환: group에 'score_threshold' 키가 없으면 score_and_filter는 입력 전체를
 그대로 통과시킨다 (monitor.py 회귀 방지). 신규 가중치(or_cluster_bonus,
-region_mismatch_penalty)는 group.weights 로 override 가능.
+region_mismatch_penalty, precision_exclude_penalty)는 group.weights 로 override 가능.
+precision_exclude_keywords 는 precision_keep_keywords 가 없을 때만 감점한다.
 """
 from __future__ import annotations
 
@@ -30,6 +31,7 @@ DEFAULT_WEIGHTS: dict[str, int] = {
     "region_match": 20,
     "or_cluster_bonus": 15,          # or-키워드 다중 히트(>=OR_CLUSTER_MIN_HITS) 1회 보너스 — recall 회복
     "region_mismatch_penalty": -25,  # 그룹 지역 부재 + 타 광역만 언급 시 감점 — precision
+    "precision_exclude_penalty": -50,  # 신청 유형 오매칭(기창업 솔루션 등). precision_keep 히트 시 미적용
 }
 DEFAULT_THRESHOLD = 50
 DEFAULT_LLM_BAND = (40, 70)
@@ -87,6 +89,9 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     priority_hits = _count_hits(text, group.get("priority_keywords") or [])
     or_hits = _count_hits(text, group.get("or_keywords") or [])
     exclude_hits = _count_hits(text, group.get("exclude_keywords") or [])
+    precision_exclude_hits = _count_hits(text, group.get("precision_exclude_keywords") or [])
+    precision_keep_hits = _count_hits(text, group.get("precision_keep_keywords") or [])
+    precision_penalty = 1 if precision_exclude_hits and not precision_keep_hits else 0
 
     # or-키워드 군집 보너스: priority 가 없어도 관련 키워드가 다수면 적합 신호 (recall)
     or_cluster = 1 if or_hits >= OR_CLUSTER_MIN_HITS else 0
@@ -111,6 +116,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         + exclude_hits * weights["exclude_penalty"]
         + region_match * weights["region_match"]
         + region_mismatch * weights["region_mismatch_penalty"]
+        + precision_penalty * weights["precision_exclude_penalty"]
     )
     score = max(0, min(100, score))
 
@@ -123,6 +129,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         reasons.append("or cluster bonus")
     if exclude_hits:
         reasons.append(f"exclude {exclude_hits}x (penalty)")
+    if precision_penalty:
+        reasons.append("precision exclude (penalty)")
     if region_match:
         reasons.append("region match")
     if region_mismatch:
@@ -135,6 +143,9 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
             "or_hits": or_hits,
             "or_cluster": or_cluster,
             "exclude_hits": exclude_hits,
+            "precision_exclude_hits": precision_exclude_hits,
+            "precision_keep_hits": precision_keep_hits,
+            "precision_penalty": precision_penalty,
             "region_match": region_match,
             "region_mismatch": region_mismatch,
         },
