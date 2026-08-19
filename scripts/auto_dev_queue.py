@@ -449,7 +449,20 @@ def main() -> int:
 
     pending = sections.get("PENDING", [])
     if not pending:
-        log("  ℹ️ PENDING 작업 없음 — drift verify만 수행")
+        task_md_ready: list[str] = []
+        task_md_path = ROOT / "TASK.md"
+        if task_md_path.exists():
+            for line in task_md_path.read_text(encoding="utf-8").splitlines():
+                m = re.match(r"^\[([ ~])\]\s+(MAIL-\d+)\s+\|\s+(.+)$", line.strip())
+                if m:
+                    task_md_ready.append(f"{m.group(2)}: {m.group(3).strip()}")
+        if task_md_ready:
+            log(
+                f"  ℹ️ TASKS.md PENDING 없음 — TASK.md READY/ACTIVE {len(task_md_ready)}건은 "
+                "로컬 에이전트가 소진 (이 큐는 TASKS.md만 처리)"
+            )
+        else:
+            log("  ℹ️ PENDING 작업 없음 — drift verify만 수행")
         verify = run_loop_verify()
         drift_cmd = [sys.executable, str(ROOT / "scripts" / "loop_verify.py"), "--drift", "--json"]
         try:
@@ -457,10 +470,16 @@ def main() -> int:
             drift = json.loads(drift_proc.stdout or "{}")
         except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
             drift = {"ok": False}
+        extra = ""
+        if task_md_ready:
+            extra = "\n- TASK.md READY/ACTIVE (local agent drain, not this queue):\n" + "\n".join(
+                f"  - {row}" for row in task_md_ready
+            )
         write_summary(
-            "## ✅ Auto Dev Queue\n\n처리할 PENDING 작업이 없습니다.\n\n"
+            "## ✅ Auto Dev Queue\n\n처리할 TASKS.md PENDING 작업이 없습니다.\n\n"
             f"- loop_verify: {'pass' if verify.get('ok') else 'fail'}\n"
             f"- drift: {'pass' if drift.get('ok') else 'fail'}\n"
+            f"{extra}\n"
         )
         save_state(state)
         return 0 if verify.get("ok", False) else 1

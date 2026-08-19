@@ -71,8 +71,14 @@
     {
       "id": "overnight_ready",
       "path": "scripts/auto_dev_overnight_ready.py",
-      "role": "야간 자동개발 준비 상태 (큐·스케줄·에이전트·PAT)",
-      "drift_signals": ["PENDING 공백 방치", "PAT 없이 cron 강제 활성"]
+      "role": "야간 자동개발 준비 상태 (TASK.md READY + 큐·스케줄·에이전트·PAT)",
+      "drift_signals": ["PENDING 공백 방치", "TASK.md [ ] 무시", "PAT 없이 cron 강제 활성"]
+    },
+    {
+      "id": "task_md",
+      "path": "TASK.md",
+      "role": "유일한 AI 작업지시 — 밤샘 로컬 에이전트가 [ ]/[~] 를 소진",
+      "drift_signals": ["READY 항목을 docs/project/TASKS.md만 보고 무시", "허위 [x] DONE"]
     },
     {
       "id": "loop_config",

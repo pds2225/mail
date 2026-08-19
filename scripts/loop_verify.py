@@ -40,8 +40,10 @@ WORK_ASSETS = (
     "docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md",
     "scripts/auto_dev_queue.py",
     "scripts/auto_dev_executor.py",
+    "scripts/auto_dev_overnight_ready.py",
     "scripts/decompose_defects.py",
     "scripts/loop_verify.py",
+    "TASK.md",
 )
 
 

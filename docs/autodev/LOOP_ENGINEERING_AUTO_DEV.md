@@ -273,7 +273,8 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 ## 11. 관련 문서
 
 - `docs/project/RULES.md` — 안전규칙
-- `docs/project/TASKS.md` — L1 입력 큐
+- `docs/project/TASKS.md` — GHA L1 입력 큐 (결정적 안전 실행기)
+- `TASK.md` — 유일한 AI 작업지시. 밤샘 로컬 에이전트는 여기 `[ ]`/`[~]` 를 소진한다
 - `docs/analysis/mail_accuracy_orchestrator_plan.md` — L2 accuracy 파이프라인
 - `docs/ops/CORE_SOURCES_CHECKLIST.md` — 4대 소스 게이트
 - `AGENTS.md` — Cloud Agent 운영 메모
@@ -293,6 +294,7 @@ scripts/loop_verify.py             ← 검증 단일 진입점
 4. 병합 후 같은 브랜치가 다시 UNIQUE 로 잡히면 감사 휴리스틱을 고친다(허위 양성 방지).
 
 야간 준비: `python3 scripts/auto_dev_overnight_ready.py`  
+로컬 에이전트는 `TASK.md` `[ ]`/`[~]` 와 `docs/project/TASKS.md` PENDING 을 함께 본다.  
 GHA cron 은 `AUTO_DEV_PAT` + `AUTO_DEV_AGENT=true` + `loop_config.trigger.schedule_enabled=true` 가 모두 준비되기 전에는 복구하지 않는다.
 
 ---

@@ -75,7 +75,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 로컬: `python3 scripts/auto_dev_queue.py` (`DRY_RUN=true` 권장)  
 검증: `python3 scripts/loop_verify.py` / `--drift`  
 미반영 감사: `python3 scripts/outstanding_dev_audit.py --strict`  
-야간 준비: `python3 scripts/auto_dev_overnight_ready.py` (`--require-local` / `--require-live`)
+야간 준비: `python3 scripts/auto_dev_overnight_ready.py` (`--require-local` / `--require-live`) — `TASK.md` `[ ]`/`[~]` 와 `docs/project/TASKS.md` PENDING 을 함께 본다.
 
 **핵심 안전규칙:**
 - 기존 앱 파일(`monitor.py`, `streamlit_app.py`) 수정 금지

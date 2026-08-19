@@ -21,6 +21,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-004 | 모든 작업은 자동 머지가 기본이다
 [x] MAIL-005 | 예비창업 본공고가 2차 점수에서 떨어지지 않게 한다
 [x] MAIL-006 | 기창업 솔루션 공고는 예비창업 메일에서 뺀다
+[~] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
 
 
 ---
@@ -991,6 +992,120 @@ N/A
 ### 8-14. 오류상태
 
 점수 컷 회귀가 깨지면 FAIL. skip 금지.
+
+---
+
+## MAIL-007
+
+### 8-1. 사용자 원문 요청
+
+> 밤샘자동개발 task./md
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+밤샘 자동개발이 TASK.md를 읽고 남은 결함을 고친다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 실제로 사용했을 때:
+
+- 밤샘 준비 판정(`auto_dev_overnight_ready.py`)이 루트 `TASK.md`의 `[ ]`/`[~]` 를 대기 작업으로 본다
+- `docs/project/TASKS.md` PENDING만 비어 있어도, `TASK.md`에 할 일이 있으면 로컬 에이전트 준비는 참
+- MAIL-006 이후 `예비 창업`(띄어쓰기) 본공고가 2차 점수에서 떨어지지 않는다
+- 기창업 `AI 솔루션 도입`만 있는 공고는 예비창업 메일에서 계속 빠진다
+- GHA cron 은 켜지지 않는다
+- `monitor.py`는 수정하지 않는다
+- 실제 이메일은 발송되지 않는다
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+PINNING:
+- TASK_ID: MAIL-007
+- TASK_START_SHA: 08a18e7d33d993cc90ed5cdea57ba8b1f6af2a23
+- TASK_BLOB_SHA: b4d2efc683fc52f4958339fecae3a43733267f07
+- WORK_BRANCH: cursor/overnight-task-md-7dc1
+- origin: https://github.com/pds2225/mail.git (일치)
+- 작업 시작 시 ahead=0 behind=0 (origin/main `08a18e7d`)
+
+- 현재 구현: 밤샘 판정이 `docs/project/TASKS.md` PENDING만 봐서 TASK.md 대기 작업을 빈 큐로 오판. `_kw_hit`가 비ASCII 공백을 무시하지 않아 `예비 창업` keep 실패 (열린 Draft #273과 동일 결함, main 미반영)
+- 현재 문제: 수정 중
+- 확인 필요한 부분: overnight parser 단위 테스트, 띄어쓰기 keep 회귀, 기창업 솔루션 DROP 유지
+
+문서의 DONE 표시만 믿지 말고 실제 코드/runtime을 확인한다.
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] `auto_dev_overnight_ready.py`가 `TASK.md` `[ ]`/`[~]` 를 pending에 합친다
+- [ ] `--require-local`이 TASK.md READY가 있으면 통과한다
+- [ ] `예비 창업` 띄어쓰기 본공고는 2차 PASS
+- [ ] 기창업 솔루션 도입만 있으면 2차 DROP 유지
+- [ ] ASCII 키워드 단어경계는 유지 (`email` 안의 `ai` 오매칭 없음)
+- [ ] `monitor.py` / `streamlit_app.py` 미수정
+- [ ] GHA `auto-dev-queue.yml` cron 미활성 유지
+- [ ] 실제 이메일/알림 발송 금지
+
+### 8-6. KEEP — 유지
+
+- `TASK.md`가 유일한 AI 작업지시
+- `docs/project/TASKS.md`는 GHA 결정적 큐
+- MAIL-005 OR 키워드, MAIL-006 precision_exclude
+- 스케줄/수신자
+- 허위 DONE 금지 (AUTO_DEV_AGENT 없으면 AWAITING_AGENT)
+
+### 8-7. REMOVE — 제거
+
+밤샘 판정이 `TASK.md` 대기 작업을 무시하는 동작. `예비창업` keep이 공백 때문에 빗나가는 동작.
+
+### 8-8. FORBIDDEN — 금지
+
+- `monitor.py` / `streamlit_app.py` 수정
+- GHA cron 재활성 (`schedule_enabled` true로 바꾸지 않음)
+- 실제 이메일/알림 발송
+- Secret/API Key 로그
+- 기존 실패 테스트 skip
+- `git add -A` / force push / reset --hard
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: MAIL-006 (precision_keep/exclude 가 main에 있음).
+
+### 8-10. 구현범위
+
+- `scripts/auto_dev_overnight_ready.py`
+- `scripts/auto_dev_queue.py` (TASK.md READY 안내만, TASK.md 체크박스 자동 변경 금지)
+- `mail_core/matching/scoring.py` (`_kw_hit` 공백 정규화)
+- `tests/test_scoring.py`
+- `tests/test_outstanding_dev_audit.py`
+- `docs/project/RULES.md` §9
+- `auto_dev/work_assets.json`
+- `TASK.md`
+
+### 8-11. 입력검증
+
+- `[ ]`/`[~]` → pending, `[x]`/`[!]`/`[-]` → 무시
+- TASKS.md PENDING + TASK.md READY 병합
+- 둘 다 비면 local_agent_ready false
+- `예비 창업` + 솔루션 도입 → keep hit, PASS
+- 기창업 솔루션만 → DROP
+- ASCII `ai` in `email` → miss
+
+### 8-12. 빈상태
+
+TASK.md 리스트에 `[x]`만 있으면 overnight local ready 아님 (NO_ACTIVE_TASK). GHA cron은 그대로 끔.
+
+### 8-13. 로딩상태
+
+N/A
+
+### 8-14. 오류상태
+
+parser가 DONE 항목을 READY로 세면 FAIL. 점수 컷 회귀가 깨지면 FAIL.
 
 ---
 
