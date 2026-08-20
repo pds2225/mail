@@ -25,7 +25,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-008 | 15건이 넘는 공고가 메일에서 빠지지 않게 한다
 [x] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
-[ ] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
+[~] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 
 
@@ -1278,20 +1278,49 @@ MAIL-004. 파일군이 MAIL-008/009와 다름 → 같은 브랜치에 넣되 독
 
 ### 8-3. 사용자가 원하는 최종 결과
 
-비개발자가 공고 첨부를 원클릭으로 받아 설치할 수 있다. 이번 실행의 ACTIVE는 MAIL-008~010(누락·발송 안전)이 우선이라 이 TASK는 READY로 등록만 한다.
+비개발자가 공고 첨부를 원클릭으로 받아 설치할 수 있다.
+
+- Windows에서 `처음설치_한번만.cmd` 한 번 → `지원사업 공고첨부_받기.cmd` 로 URL 붙여넣기
+- Python이 없으면 winget으로 설치를 시도한다
+- 남에게 줄 때는 `배포용_압축하기.cmd` 가 `.env` 없이 ZIP을 만든다
+- 실제 이메일은 발송되지 않는다
+- `dist/*.exe` 는 커밋하지 않는다
 
 ### 8-4. 현재상태
 
-열린 PR #243. 이번 브랜치에서 구현하지 않음 (순차: 누락제로 먼저).
+PINNING:
+- TASK_ID: MAIL-011
+- TASK_START_SHA: 3bda7763d85e44bac6ccdbd226e099323b96b121
+- TASK_BLOB_SHA: 11220bd23c7b97550acf907df304a549b0af99c3
+- WORK_BRANCH: cursor/mail011-attach-oneclick-7dc1
+- origin: https://github.com/pds2225/mail.git (일치)
+
+선행: MAIL-008~010은 main에 머지됨. UNIQUE_CANDIDATE는 PR #243 (`origin/cursor/easy-attach-downloader-install-2420`). 이번 브랜치는 #243 소스를 최신 main에 이식하되 `dist/*.exe` / `dist/*.zip` 은 커밋하지 않는다. `.github/workflows/build-attach-exe.yml` 은 MAIL-010(워크플로 사람 머지) 때문에 넣지 않는다. 원클릭은 Python+cmd 경로다.
+
+MAIL-012(`[~]` PARTIAL, 슬라이스 2 남음)와 파일군이 달라 병렬 허용. 이 실행의 ACTIVE는 MAIL-011.
 
 ### 8-5. MUST
 
-- [ ] 원클릭 설치·배포가 main 에 있다
+- [ ] 원클릭 설치·배포가 이 브랜치에 있다 (`처음설치_한번만.cmd` / `지원사업 공고첨부_받기.cmd` / `배포용_압축하기.cmd`)
 - [ ] 실발송 금지
+- [ ] exe/zip 바이너리 미커밋
+
+### 8-6. KEEP
+
+- 기존 `scripts/fetch_notice_attachments.py` 첨부 파서·안전가드
+- 메일 수집·발송 경로 미변경
+- MAIL-012 슬라이스 1 판정 로직 미변경
+
+### 8-8. FORBIDDEN
+
+- 실발송, Secret 로그
+- `dist/*.exe` / 설치 zip 커밋
+- `monitor.py` / `streamlit_app.py` 수정 (이 TASK는 불필요)
+- `.github/workflows/*` 추가 (MAIL-010 사람 머지 회피)
 
 ### 8-9. DEPENDS_ON
 
-MAIL-008~010 완료 후. 병렬 가능하나 이번 실행은 누락제로 우선.
+MAIL-008~010 완료(main). MAIL-012와 병렬 가능.
 
 ---
 
