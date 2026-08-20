@@ -1299,11 +1299,26 @@ PINNING:
 
 MAIL-012(`[~]` PARTIAL, 슬라이스 2 남음)와 파일군이 달라 병렬 허용. 이 실행의 ACTIVE는 MAIL-011.
 
+구현 (브랜치 `cursor/mail011-attach-oneclick-7dc1`, PR #278):
+- 런처 3개 + setup 스크립트 + 최소 requirements + 배포 ZIP 스크립트
+- 설정 `out_dir` 비움 → 바탕화면 `지원사업_공고첨부` 기본
+- exe/zip 미커밋, workflow YAML 미추가
+
+USER_E2E (Cloud Linux, 실발송 없음):
+- `pytest` 설치 7 + 안전 7 + fetch 38 = 52 passed
+- `setup_attach_downloader.py` exit 0 (ensurepip 없음 → 시스템 Python 폴백)
+- `--check` exit 0
+- `fetch --selfcheck` exit 0, URL 없이 `--dry-run` exit 2
+- Windows `.cmd` 더블클릭은 이 VM에서 불가
+
+REQUEST_SOLVED: NO (main 머지 전). 머지 후 `[x]`.
+
 ### 8-5. MUST
 
-- [ ] 원클릭 설치·배포가 이 브랜치에 있다 (`처음설치_한번만.cmd` / `지원사업 공고첨부_받기.cmd` / `배포용_압축하기.cmd`)
-- [ ] 실발송 금지
-- [ ] exe/zip 바이너리 미커밋
+- [x] 원클릭 설치·배포가 이 브랜치에 있다 (`처음설치_한번만.cmd` / `지원사업 공고첨부_받기.cmd` / `배포용_압축하기.cmd`)
+- [x] 실발송 금지
+- [x] exe/zip 바이너리 미커밋
+- [ ] 원클릭 설치·배포가 main 에 있다 (PR #278)
 
 ### 8-6. KEEP
 
