@@ -5729,6 +5729,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         elif has_investment and not has_financial_signal and not has_consulting:
             # 투자 단독 → 제외
             reason_codes.append("INVESTMENT_ONLY")
+        _has_tenant_only = (
+            any(kw in text for kw in ("입주기업", "입주기업 모집", "입주 공고", "입주공간"))
+            and not has_financial_signal
+            and not any(kw in text for kw in ("사업화", "성장 지원", "보육", "프로그램"))
+        )
+        if _has_tenant_only:
+            reason_codes.append("TENANT_ONLY")
 
     # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
     # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
@@ -5785,6 +5792,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
         "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
         "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW",
+        "CONSULTING_ONLY", "INVESTMENT_ONLY", "TENANT_ONLY",
     }
     detail_failure_review = (
         detail_failure
@@ -5910,6 +5918,60 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
         "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
     })
+    # P0: 애매 사유는 hard 제외와 분리해 저장 (AI 판정 대상 식별)
+    _item_types = classify_support_type(item)
+    _has_financial = "지원금/바우처" in _item_types
+    _ambiguous_reason_codes: list[str] = []
+    if "그외" in _item_types and not _has_financial and not matched_keywords and not priority_keywords:
+        _ambiguous_reason_codes.append("FINANCIAL_SUPPORT_UNCLEAR")
+    if _mixed_target_roles(item):
+        _ambiguous_reason_codes.append("OPERATOR_OR_PARTICIPANT_UNCLEAR")
+    result["ambiguous_reason_codes"] = _ambiguous_reason_codes
+    if is_relevant:
+        _decision = "INCLUDE"
+        _parts = []
+        if priority_keywords:
+            _parts.append(f"우선키워드: {', '.join(priority_keywords[:3])}")
+        if matched_keywords:
+            _parts.append(f"매칭키워드: {', '.join(matched_keywords[:3])}")
+        _types_str = ", ".join(result.get("_types", []))
+        if _types_str and _types_str != "그외":
+            _parts.append(f"지원유형: {_types_str}")
+        _decision_reason = " / ".join(_parts) if _parts else "조건 충족"
+    elif region_unknown_review:
+        _decision = "CONDITIONAL"
+        _decision_reason = "지역 미상 — 수동 확인 필요"
+    elif review_needed:
+        _decision = "CONDITIONAL"
+        _decision_reason = (
+            "판정 불확실 — " + ", ".join(reason_codes[:3]) if reason_codes else "상세 확인 필요"
+        )
+    elif detail_failure_review:
+        _decision = "HUMAN_REVIEW"
+        _decision_reason = "상세정보 추출 실패 — 원문 재확인 필요"
+    else:
+        _decision = "EXCLUDE"
+        _exclude_labels = {
+            "CLOSED_DEADLINE": "마감",
+            "REGION_NOT_ELIGIBLE": "지역 부적합",
+            "DISTRICT_NOT_ELIGIBLE": "지역 부적합",
+            "INDUSTRY_NOT_MATCHED": "키워드 불일치",
+            "NOT_GRANT_NOTICE": "비공고",
+            "GUIDELINE_OR_MANUAL": "지침/매뉴얼",
+            "EDUCATION_ONLY": "교육 단독",
+            "INFO_SESSION": "설명회 단독",
+            "SUPPLIER_ONLY": "공급기업 모집",
+            "CONSULTING_ONLY": "컨설팅 단독",
+            "INVESTMENT_ONLY": "투자 단독",
+            "TENANT_ONLY": "입주공간 단독",
+            "BUSINESS_YEARS_NOT_ELIGIBLE": "업력 부적합",
+            "SMART_FACTORY_INFO_ONLY": "스마트공장 정보",
+            "LOW_PRIORITY_SERVICE_KEYWORD": "저우선 서비스",
+        }
+        _labels = [_exclude_labels.get(c, c) for c in reason_codes[:3]]
+        _decision_reason = "제외: " + ", ".join(_labels) if _labels else "제외 사유 미분류"
+    result["decision"] = _decision
+    result["decision_reason"] = _decision_reason
     return result
 
 
