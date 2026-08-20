@@ -63,6 +63,12 @@
       "drift_signals": ["recall_zero_gate 편입 해제", "정추천 사례 축소"]
     },
     {
+      "id": "ai_commercialization_grant_recall",
+      "path": "tests/test_ai_commercialization_grant_recall.py",
+      "role": "AI 사업화지원금 전수 수집(1·2차·워치리스트) 회귀",
+      "drift_signals": ["recall_zero_gate 편입 해제", "사업화지원금 정추천 사례 축소"]
+    },
+    {
       "id": "outstanding_dev_audit",
       "path": "scripts/outstanding_dev_audit.py",
       "role": "원격·worktree·stash 미반영 개발 감사 (user-priority merge-all)",

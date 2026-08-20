@@ -12,6 +12,7 @@
 - 별칭: G01=계약TASK-01 … G06=계약TASK-06 (기존 DONE TASK-001~018과 충돌 방지)
 
 ## PENDING
+- TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
 
 ## RUNNING
 

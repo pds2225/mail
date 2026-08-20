@@ -236,6 +236,23 @@ def test_precision_keep_overrides_solution_intro_penalty():
     assert out["audit"][0]["decision"] == "passed"
 
 
+def test_ai_commercialization_grant_keep_beats_participant_penalty():
+    """MAIL-012: 사업화지원금은 참여기업 감점과 무관하게 2차를 통과한다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "2026년 AI 사업화지원금 참여기업 모집",
+        "description": "인공지능 사업화자금을 지원합니다. 전국 모집.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["or_hits"] >= 1
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+    assert not out["rejected"]
+
+
 def test_precision_keep_matches_spaced_yebi_changup():
     """공고 원문의 '예비 창업' 띄어쓰기도 keep 으로 인정한다.
 
