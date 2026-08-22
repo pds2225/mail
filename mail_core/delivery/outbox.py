@@ -153,3 +153,25 @@ def acknowledge_completed(ids: set[str], path: str | Path | None = None) -> None
         if not (entry.get("completed_at") and str(entry.get("id")) in ids)
     ]
     save(payload, target)
+
+
+def abandon(outbox_id: str, path: str | Path | None = None) -> bool:
+    """Drop an outbox row without completing it (no seen_ids promotion).
+
+    Used when every recipient was an idempotent SMTP skip for a *new* body/notice_ids
+    set — settling would mark those notice_ids complete and permanently suppress
+    notices the user never received.
+    """
+    target = _outbox_path(path)
+    oid = str(outbox_id or "")
+    if not oid:
+        return False
+    payload = load(target)
+    before = len(payload["entries"])
+    payload["entries"] = [
+        entry for entry in payload["entries"] if str(entry.get("id") or "") != oid
+    ]
+    if len(payload["entries"]) == before:
+        return False
+    save(payload, target)
+    return True

@@ -170,6 +170,19 @@ def test_auto_merge_workflow_pins_expected_head_sha():
     assert "workflow_run.head_sha" in text
 
 
+def test_pytest_classify_includes_deletions():
+    """Deletion-only PRs must not be docs_only (ACMR omitted D → empty FILES).
+
+    With MAIL-004 auto-merge of monitor.py, a PR that only deleted core files
+    got a green docs_only check and still merged via match_profile(core_logic).
+    """
+    text = (ROOT / ".github/workflows/test.yml").read_text(encoding="utf-8")
+    assert "--diff-filter=ACMRD" in text
+    assert "--diff-filter=ACMR\"" not in text
+    assert "--diff-filter=ACMR '" not in text
+    # No bare ACMR without trailing D in the classify step.
+    assert text.count("diff-filter=ACMRD") >= 3
+
 def test_auto_merge_workflow_uses_github_token_not_pat():
     """만료 PAT 를 checkout token 으로 쓰면 인증 실패 (run 31660085605)."""
     text = (ROOT / ".github/workflows/auto-merge.yml").read_text(encoding="utf-8")
