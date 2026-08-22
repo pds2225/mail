@@ -27,6 +27,7 @@ from typing import Any
 DEFAULT_WEIGHTS: dict[str, int] = {
     "priority_match": 30,
     "or_keyword_match": 5,
+    "and_group_match": 15,           # 1차 and_keyword_groups 완전 일치 1회당 — OR 문구 없이도 2차 통과
     "exclude_penalty": -50,
     "region_match": 20,
     "or_cluster_bonus": 15,          # or-키워드 다중 히트(>=OR_CLUSTER_MIN_HITS) 1회 보너스 — recall 회복
@@ -102,6 +103,16 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     precision_keep_hits = _count_hits(text, group.get("precision_keep_keywords") or [])
     precision_penalty = 1 if precision_exclude_hits and not precision_keep_hits else 0
 
+    # 1차 evaluate_notice 는 and_keyword_groups 완전 일치만으로도 통과시킨다.
+    # 2차가 OR/priority 만 보면 MAIL-012 처럼 AND 로만 걸린 공고가 score 0 으로
+    # 다이제스트에서 영구 탈락한다 → 완전 일치 그룹 수만큼 가산.
+    and_groups = group.get("and_keyword_groups") or []
+    and_group_hits = 0
+    for ag in and_groups:
+        kws = [k for k in (ag or []) if k]
+        if kws and all(_kw_hit(text, k) for k in kws):
+            and_group_hits += 1
+
     # or-키워드 군집 보너스: priority 가 없어도 관련 키워드가 다수면 적합 신호 (recall)
     or_cluster = 1 if or_hits >= OR_CLUSTER_MIN_HITS else 0
 
@@ -121,6 +132,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     score = (
         priority_hits * weights["priority_match"]
         + or_hits * weights["or_keyword_match"]
+        + and_group_hits * weights["and_group_match"]
         + or_cluster * weights["or_cluster_bonus"]
         + exclude_hits * weights["exclude_penalty"]
         + region_match * weights["region_match"]
@@ -134,6 +146,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         reasons.append(f"priority {priority_hits}x")
     if or_hits:
         reasons.append(f"or {or_hits}x")
+    if and_group_hits:
+        reasons.append(f"and-group {and_group_hits}x")
     if or_cluster:
         reasons.append("or cluster bonus")
     if exclude_hits:
@@ -150,6 +164,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         "breakdown": {
             "priority_hits": priority_hits,
             "or_hits": or_hits,
+            "and_group_hits": and_group_hits,
             "or_cluster": or_cluster,
             "exclude_hits": exclude_hits,
             "precision_exclude_hits": precision_exclude_hits,
