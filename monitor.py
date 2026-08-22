@@ -6857,12 +6857,29 @@ def deliver_with_outbox(
         recipients=targets,
         notice_ids=notice_ids,
     )
+    state_path = str(DELIVERY_STATE_PATH)
+    # Snapshot checkpoints before SMTP so we can detect all-idempotent-skip runs.
+    # send_to_list treats prior (date|group|recipient) success as delivered, which is
+    # correct for crash retry of the *same* body — but a *new* digest in the same slot
+    # (extra notice_ids) must not settle/complete or persist_completed_outbox will
+    # permanently suppress notices that never appeared in any mailed body.
+    checkpoints_before = delivery_state.load(state_path)
     delivered = send_to_list(
         subject,
         body,
         targets,
-        idem={"date": date, "tenant": tenant, "group": group, "path": str(DELIVERY_STATE_PATH)},
+        idem={"date": date, "tenant": tenant, "group": group, "path": state_path},
     )
+    checkpoints_after = delivery_state.load(state_path)
+    smtp_newly_marked = checkpoints_after - checkpoints_before
+    if delivered and not smtp_newly_marked:
+        delivery_outbox.abandon(entry["id"])
+        log.warning(
+            "멱등 skip only — outbox 폐기(seen_ids 미승격): group=%s notices=%d",
+            group,
+            len(notice_ids),
+        )
+        return
     delivery_outbox.settle(entry["id"], delivered)
 
 
