@@ -25,7 +25,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-008 | 15건이 넘는 공고가 메일에서 빠지지 않게 한다
 [x] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
-[~] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
+[x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 
 
@@ -1311,14 +1311,17 @@ USER_E2E (Cloud Linux, 실발송 없음):
 - `fetch --selfcheck` exit 0, URL 없이 `--dry-run` exit 2
 - Windows `.cmd` 더블클릭은 이 VM에서 불가
 
-REQUEST_SOLVED: NO (main 머지 전). 머지 후 `[x]`.
+REQUEST_SOLVED: YES
+MAIN_MERGED: YES (2026-08-23, #278 squash `ea1ff047`)
+
+Auto Merge는 테스트 완료 시점에 PR이 아직 Draft로 보여 skip 했다. 사용자 「다하고 자동병합」에 따라 Checks 초록 확인 후 squash-merge (`--admin` 없음).
 
 ### 8-5. MUST
 
 - [x] 원클릭 설치·배포가 이 브랜치에 있다 (`처음설치_한번만.cmd` / `지원사업 공고첨부_받기.cmd` / `배포용_압축하기.cmd`)
 - [x] 실발송 금지
 - [x] exe/zip 바이너리 미커밋
-- [ ] 원클릭 설치·배포가 main 에 있다 (PR #278)
+- [x] 원클릭 설치·배포가 main 에 있다 (PR #278)
 
 ### 8-6. KEEP
 
