@@ -32,9 +32,34 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote, unquote_plus, urlparse
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get("MAIL_ATTACH_ROOT", "")).expanduser() if os.environ.get("MAIL_ATTACH_ROOT") else Path()
+if not ROOT or str(ROOT) in (".", ""):
+    if getattr(sys, "frozen", False):
+        ROOT = Path(sys.executable).resolve().parent
+    else:
+        ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+# frozen(exe) 이면 PyInstaller 임시 폴더도 모듈 검색에 넣는다
+_meipass = getattr(sys, "_MEIPASS", None)
+if _meipass and _meipass not in sys.path:
+    sys.path.insert(0, str(_meipass))
+
+# Windows 한글 깨짐 방지 — import/에러 출력보다 먼저 고정
+os.environ.setdefault("PYTHONUTF8", "1")
+os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+
+
+def _force_utf8_console() -> None:
+    """cp949 콘솔에서 한글·이모지 출력이 UnicodeEncodeError 로 죽지 않게 한다."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+_force_utf8_console()
 
 try:
     from dotenv import load_dotenv
@@ -48,14 +73,6 @@ os.environ.setdefault("BIZINFO_API_KEY", "dummy")
 os.environ.setdefault("ANTHROPIC_API_KEY", "dummy")
 os.environ.setdefault("GMAIL_ADDRESS", "dummy@example.com")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "dummy")
-
-def _force_utf8_console() -> None:
-    """cp949 콘솔에서 한글·이모지 출력이 UnicodeEncodeError 로 죽지 않게 한다."""
-    for stream in (sys.stdout, sys.stderr):
-        try:
-            stream.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
 
 
 def _git(*args: str) -> subprocess.CompletedProcess | None:
@@ -88,6 +105,9 @@ def selfcheck_repo_files(verbose: bool = False) -> int:
     복구는 git 인덱스를 잠그지 않는 checkout-index 로 하므로 같은 폴더에서
     작업 중인 다른 세션의 git 작업을 방해하지 않는다.
     """
+    # exe(PyInstaller) 배포본은 git 트리가 없으므로 자가진단을 건너뛴다.
+    if getattr(sys, "frozen", False):
+        return 0
     missing = _deleted_tracked_files()
     if not missing:
         if verbose:
@@ -630,6 +650,33 @@ def _load_config() -> dict:
         return {}
 
 
+def _default_out_dir() -> Path:
+    """설정이 비었을 때 쓰는 기본 저장 폴더(바탕화면/지원사업_공고첨부).
+
+    비개발자 PC·OneDrive 한글 바탕화면까지 후보로 본다.
+    """
+    home = Path.home()
+    candidates = [
+        home / "Desktop",
+        home / "OneDrive" / "Desktop",
+        home / "OneDrive" / "바탕 화면",
+        home / "바탕 화면",
+    ]
+    userprofile = os.environ.get("USERPROFILE", "").strip()
+    if userprofile:
+        up = Path(userprofile)
+        candidates.extend([
+            up / "Desktop",
+            up / "OneDrive" / "Desktop",
+            up / "OneDrive" / "바탕 화면",
+            up / "바탕 화면",
+        ])
+    for base in candidates:
+        if base.is_dir():
+            return base / "지원사업_공고첨부"
+    return home / "지원사업_공고첨부"
+
+
 def load_urls(args: argparse.Namespace) -> list[str]:
     urls: list[str] = []
     for raw in args.urls or []:
@@ -758,7 +805,7 @@ def main() -> int:
         description="공고 상세 페이지 링크의 첨부파일을 모두 다운로드한다.")
     parser.add_argument("urls", nargs="*", help="공고 상세 페이지 URL(여러 개 가능)")
     parser.add_argument("--url-file", help="URL 목록 파일(한 줄에 1개)")
-    parser.add_argument("--out-dir", help="저장 폴더(미지정 시 notice_download_config.json 의 out_dir 사용)")
+    parser.add_argument("--out-dir", help="저장 폴더(미지정 시 설정 파일, 그것도 비면 바탕화면/지원사업_공고첨부)")
     parser.add_argument("--dry-run", action="store_true", help="받지 않고 받을 목록만 미리보기")
     parser.add_argument("--open", action="store_true", help="완료 후 저장 폴더 열기(Windows)")
     parser.add_argument("--notify", action="store_true",
@@ -776,11 +823,8 @@ def main() -> int:
     if args.quiet:
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
-    out_dir_str = args.out_dir or _load_config().get("out_dir")
-    if not out_dir_str:
-        print("❌ 저장 폴더가 지정되지 않았습니다. --out-dir 또는 notice_download_config.json 을 확인하세요.")
-        return 2
-    out_dir = Path(out_dir_str).expanduser()
+    out_dir_str = (args.out_dir or _load_config().get("out_dir") or "").strip()
+    out_dir = Path(out_dir_str).expanduser() if out_dir_str else _default_out_dir()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     all_results: list[FileResult] = []
