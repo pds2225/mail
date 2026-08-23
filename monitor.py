@@ -962,7 +962,21 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     if old_url and new_url and old_url != new_url:
         return "APPLICATION_URL_CHANGED"
 
-    # 기본: 텍스트 변경
+    # 지원내용/금액 변경 (snapshot key: support; raw may use support_field/support_amount)
+    old_support = str(
+        before.get("support") or before.get("support_field") or before.get("support_amount") or ""
+    ).strip()
+    new_support = str(
+        after.get("support") or after.get("support_field") or after.get("support_amount") or ""
+    ).strip()
+    if old_support and new_support and old_support != new_support:
+        return "SUPPORT_AMOUNT_CHANGED"
+
+    # 제목 실질 변경(공백-only 제외) — material @vN 이 날짜창 밖으로 영구 누락되지 않게 함
+    if before_title.strip() and after_title.strip() and before_title.strip() != after_title.strip():
+        return "UPDATED"
+
+    # 기본: 공백·오탈자 수준 텍스트 변경
     return "MINOR_TEXT_CHANGE"
 
 
@@ -4903,12 +4917,20 @@ def _kw_in_text(text_lower: str, kw_lower: str) -> bool:
     ASCII 전용 키워드(AI/SaaS/MES/ERP/IP/VC 등)는 단어경계 매칭으로 'email'의 'ai',
     'enterprise'의 'erp', 'equipment'의 'ip' 같은 부분문자열 오매칭을 막는다(precision).
     한글 등 비ASCII 키워드는 띄어쓰기 없는 합성어가 흔하므로 부분문자열 매칭을 유지한다(recall).
-    scoring._kw_hit 와 동일 정책 — 두 모듈의 키워드 매칭 일관성 유지."""
+    공고 원문은 '디지털 전환'처럼 합성어 중간에 공백을 넣는 경우가 많다 — 비ASCII 는
+    공백 제거본도 함께 본다(scoring._kw_hit 과 동일; 1차 게이트만 어긋나면 영구 누락).
+    """
     if not kw_lower:
         return False
     if kw_lower.isascii():
         return re.search(r"(?<![a-z0-9])" + re.escape(kw_lower) + r"(?![a-z0-9])", text_lower) is not None
-    return kw_lower in text_lower
+    if kw_lower in text_lower:
+        return True
+    kw_compact = re.sub(r"\s+", "", kw_lower)
+    if not kw_compact:
+        return False
+    text_compact = re.sub(r"\s+", "", text_lower)
+    return kw_compact in text_compact
 
 
 def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
@@ -7613,6 +7635,8 @@ def execute_monitor(
 
     # 같은 ID의 중요 변경은 게시일이 과거여도 재처리한다. 여전히 마감된 단순수정은 제외.
     # P1-5: 새로운 변경 유형 (DEADLINE_EXTENDED, TARGET_CHANGED, REANNOUNCEMENT 등)도 포함
+    # Material-field @vN (title/support/…) must also bypass the date window — otherwise
+    # classify emits a deliverable that partition_posted_dates drops forever.
     _IMPORTANT_CHANGE_TYPES = {
         "EXTENDED", "REANNOUNCED", "UPDATED",
         "DEADLINE_EXTENDED", "TARGET_CHANGED", "SUPPORT_AMOUNT_CHANGED",
@@ -7620,7 +7644,9 @@ def execute_monitor(
     }
     _filtered_ids = {_delivery_notice_id(it) for it in filtered_new}
     for it in new_items:
-        if it.get("_change_type") not in _IMPORTANT_CHANGE_TYPES:
+        change_type = it.get("_change_type")
+        changed_material = set(it.get("_changed_fields") or []) & _NOTICE_VERSION_MATERIAL_FIELDS
+        if change_type not in _IMPORTANT_CHANGE_TYPES and not changed_material:
             continue
         if classify_deadline_status(it, now.date()) == "closed":
             continue
