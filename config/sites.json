@@ -311,13 +311,31 @@
     "id": "kised",
     "name": "창업진흥원(KISED)",
     "type": "html_table",
-    "url": "https://www.kised.or.kr/menu.es?mid=a10201000000",
-    "enabled": false,
+    "url": "https://www.kised.or.kr/misAnnouncement/index.es?mid=a10302000000",
+    "enabled": true,
     "is_aggregator": false,
     "selectors": {
-      "row": "table tbody tr"
+      "row": "ul.lstyle_list > li",
+      "title": "b.ls_tit",
+      "link": "a[href*='k-startup.go.kr']"
     },
-    "note": "창업 패키지/사관학교 [PC 실행 시 정상 접속]"
+    "note": "알림마당 사업공고 목록(ul.lstyle_list). 상세는 K-Startup. 2026-08-23 실측 30건. 옛 menu.es?mid=a10201000000 는 본문 404"
+  },
+  {
+    "id": "iitp",
+    "name": "정보통신기획평가원(IITP) 사업공고",
+    "type": "html_table",
+    "url": "https://ezone.iitp.kr/main/main",
+    "enabled": true,
+    "is_aggregator": false,
+    "selectors": {
+      "row": "#main_01 li:has(a[onclick*='PMS_TSK_PBNC_ID'])",
+      "title": "a[onclick*='PMS_TSK_PBNC_ID']",
+      "link": "a[onclick*='PMS_TSK_PBNC_ID']",
+      "link_template": "/common/anno/02/form.tab?PMS_TSK_PBNC_ID={0}",
+      "link_arg_re": "PMS_TSK_PBNC_ID=([A-Za-z0-9]+)"
+    },
+    "note": "IITP 사업관리시스템 메인 접수중(#main_01) 공고. SPA 홈(www.iitp.kr)은 목록 0건. onclick PMS_TSK_PBNC_ID 실측. 로그인 불필요"
   },
   {
     "id": "kocca_pims",
@@ -3288,7 +3306,12 @@
     "url": "https://www.kised.or.kr/misAnnouncement/index.es?mid=a10302000000",
     "enabled": false,
     "is_aggregator": false,
-    "note": "사업공고 / 주기:주 1회 / 우선순위:상"
+    "selectors": {
+      "row": "ul.lstyle_list > li",
+      "title": "b.ls_tit",
+      "link": "a[href*='k-startup.go.kr']"
+    },
+    "note": "kised 와 동일 사업공고 목록. 중복 수집 방지로 꺼 둠. 셀렉터는 실측됨"
   },
   {
     "id": "imp_1fd1e6dd",

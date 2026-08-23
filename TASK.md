@@ -1377,8 +1377,9 @@ AI 사업화지원금 공고를 빠짐없이 수집한다
 
 PINNING:
 - TASK_ID: MAIL-012
-- TASK_START_SHA: 8a048dd6
-- WORK_BRANCH: cursor/ai-grant-full-recall-b14b
+- TASK_START_SHA: f4ee88ad6b405b742109db5254e0edd500798fc7
+- TASK_BLOB_SHA: 331f93325304cd234257787a079c66184a5eb332
+- WORK_BRANCH: cursor/mail012-kised-iitp-collect-7dc1
 - origin: https://github.com/pds2225/mail.git (일치)
 
 이전 예비창업자 AI 공고 PR (적용 여부):
@@ -1407,11 +1408,12 @@ PINNING:
 - `recall_zero_gate` 신규 스위트 18 passed. bizinfo/kstartup replay는 환경에 `respx` 없으면 collect error (기존 이슈, 설치 후 통과)
 - `auto_dev_overnight_ready.py` → local_agent=True, MAIL-012 pending. GHA cron 꺼짐 유지
 
-슬라이스 2 실측 (켜지 않음):
-- `kised` URL `menu.es?mid=a10201000000` → HTTP 200이지만 본문 ERROR 404, table row 0
-- `imp_6e8c8360` 사업공고 페이지는 메뉴 HTML만 있고 `table tbody tr` 0건 (목록은 JS/다른 엔드포인트)
-- IITP `businessPblancList.it` → `/web/index.do` 홈으로 리다이렉트, SPA `{{item.title}}` 템플릿만. html_table로 켜면 0건
-- FORBIDDEN 준수: 셀렉터 실측 없이 enabled 하지 않음. 슬라이스 2는 공개 API/목록 URL을 찾은 다음 실행
+슬라이스 2 실측 (2026-08-23, 실발송 없음):
+- `kised` 옛 URL `menu.es?mid=a10201000000` → 본문 ERROR 404, table 0행. **실제 목록** `misAnnouncement/index.es?mid=a10302000000` 의 `ul.lstyle_list > li` + `b.ls_tit` → live 30건, 상세는 K-Startup
+- `imp_6e8c8360` 은 같은 목록. 셀렉터는 실측했으나 중복 수집 방지로 enabled=false
+- IITP `businessPblancList.it` → SPA 홈, table 0건. **공개 목록** `https://ezone.iitp.kr/main/main` `#main_01 li:has(a[onclick*='PMS_TSK_PBNC_ID'])` → live 7건(접수중), 로그인 없음
+- NIPA·기업마당·K-Startup replay + recall_zero_gate PASS
+- monitor.py 미수정. html_table 셀렉터만 사용
 
 ### 8-5. MUST — 반드시 구현
 
@@ -1429,17 +1431,17 @@ PINNING:
 - [x] GHA cron 미활성 유지
 - [x] 실제 이메일/알림 발송 금지
 
-슬라이스 2 — 수집 소스 공백 (후속, 이 TASK 미완료 조건)
+슬라이스 2 — 수집 소스 공백
 
-- [ ] 창업진흥원 `kised` / `imp_6e8c8360` 셀렉터 실측 후 켜기. 메뉴·사진뉴스면 원복
-- [ ] IITP(정보통신기획평가원) 사업공고 소스 추가. 로그인 전용 링크면 공개 URL로 정규화
-- [ ] NIPA·기업마당·K-Startup AI 사업화 키워드 재생 테스트가 살아 있는지 확인
-- [ ] live 수집은 Cloud TLS 제한이 있으면 replay/fixture로 증거. 실발송 없음
+- [x] 창업진흥원 `kised` 셀렉터 실측 후 켜기 (`ul.lstyle_list`). `imp_6e8c8360` 은 동일 목록이라 중복 방지로 꺼 둠
+- [x] IITP 사업공고 소스 추가 (`iitp`, ezone 접수중 탭, 로그인 불필요)
+- [x] NIPA·기업마당·K-Startup AI 사업화 키워드 재생 테스트가 살아 있는지 확인
+- [x] live 수집은 Cloud에서 실측 + replay/fixture로 증거. 실발송 없음
 
 슬라이스 3 — 운영 게이트
 
 - [x] `python3 scripts/auto_dev_overnight_ready.py --require-local` 가 MAIL-012를 pending으로 본다
-- [ ] REQUEST_SOLVED는 슬라이스 1+2가 끝난 뒤에만 YES. 지금은 PARTIAL (판정 누락은 막음, KISED/IITP 수집 공백은 남음)
+- [ ] REQUEST_SOLVED는 main 머지 뒤에만 YES. 지금은 슬라이스 2 구현 완료, PR 대기
 
 ### 8-6. KEEP — 유지
 
