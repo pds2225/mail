@@ -1453,6 +1453,44 @@ def test_milestone_a_minor_text_change_type():
     assert _classify_notice_change(before, after) == "MINOR_TEXT_CHANGE"
 
 
+def test_classify_support_amount_changed():
+    """지원금액/내용 변경 → SUPPORT_AMOUNT_CHANGED (날짜창 강제재처리 대상)."""
+    from monitor import _classify_notice_change
+    before = {"title": "AI 바우처", "support": "최대 1천만원"}
+    after = {"title": "AI 바우처", "support": "최대 3천만원"}
+    assert _classify_notice_change(before, after) == "SUPPORT_AMOUNT_CHANGED"
+
+
+def test_classify_material_title_change_is_updated_not_minor():
+    """실질 제목 변경은 UPDATED — MINOR 로 남으면 과거 게시일이 영구 누락된다."""
+    from monitor import _classify_notice_change
+    before = {"title": "2026 AI 바우처 지원사업 모집", "deadline": "2026-12-31"}
+    after = {"title": "2026 AI 바우처 지원사업 모집 (예산 증액)", "deadline": "2026-12-31"}
+    assert _classify_notice_change(before, after) == "UPDATED"
+
+
+def test_kw_in_text_matches_spaced_hangul_compounds():
+    """1차 게이트도 scoring._kw_hit 처럼 한글 합성어 중간 공백을 무시한다.
+
+    '디지털 전환' 제목이 or_keyword '디지털전환' 에만 걸릴 때 _kw_in_text 가
+    False 이면 INDUSTRY_NOT_MATCHED 로 매 회차 영구 누락된다.
+    """
+    from monitor import _kw_in_text
+    from mail_core.matching import scoring
+    cases = [
+        ("2026년 디지털 전환 지원사업 모집 공고", "디지털전환"),
+        ("사물 인터넷 실증 지원사업", "사물인터넷"),
+        ("머신 러닝 인력양성 과정", "머신러닝"),
+        ("예비 창업 패키지", "예비창업"),
+    ]
+    for text, kw in cases:
+        assert _kw_in_text(text.lower(), kw.lower()), (text, kw)
+        assert scoring._kw_hit(text.lower(), kw)
+    # ASCII precision: still no substring hit inside email
+    assert _kw_in_text("email notice", "ai") is False
+    assert _kw_in_text("ai voucher", "ai") is True
+
+
 def test_milestone_a_different_year_is_different_notice():
     """2025 / 2026 → 서로 다른 공고"""
     from monitor import generate_canonical_notice_id
