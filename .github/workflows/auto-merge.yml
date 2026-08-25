@@ -1,0 +1,70 @@
+name: Auto Merge
+
+# 테스트 워크플로우 성공 후 같은 저장소 PR을 기본 자동병합한다.
+# 예외: Draft, needs-human/blocked, 충돌, .env*, .github/workflows/*.
+# Settings Allow auto-merge 가 꺼져 있어도 fallback_direct_merge 로 동작 가능.
+on:
+  workflow_run:
+    workflows: ["테스트"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  auto-merge:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.head_branch != 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # github.token 만 사용. Secret AUTO_DEV_PAT 이 저장소에 있으면
+          # `secrets.AUTO_DEV_PAT || github.token` 은 만료·무효 PAT 를 그대로 넘긴다.
+          # 그 경우 checkout fetch 가
+          # "could not read Username for 'https://github.com'" 로 실패한다
+          # (2026-08-13 run 31660085605). auto-dev-queue.yml 스케줄도 같은 이유.
+          token: ${{ github.token }}
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: PR 번호 확인
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAYLOAD_PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # workflow_run 잡에서 run-id→PR API 는 404 난다
+          # (runs 31662894294, 31660656278). payload → gh pr list 로 해석하고
+          # PR 이 없으면 빈 number 로 skip (잡 실패 아님).
+          python3 scripts/auto_merge_pr.py --print-pr-number \
+            --payload-pr "${PAYLOAD_PR}" \
+            --head-branch "${HEAD_BRANCH}" \
+            --head-sha "${HEAD_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: 자동 병합 (기본 병합, 예외만 스킵)
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          git fetch origin main
+          # Pin merge to the CI-green SHA. Without this, a push between
+          # workflow_run completion and merge can land untested commits
+          # (fallback_direct_merge bypasses GitHub auto-merge waits).
+          python3 scripts/auto_merge_pr.py \
+            --pr "${{ steps.pr.outputs.number }}" \
+            --base-ref origin/main \
+            --expected-head-sha "${HEAD_SHA}"

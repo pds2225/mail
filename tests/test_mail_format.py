@@ -36,16 +36,14 @@ def test_fallback_body_hides_html_and_internal_fields():
     }
     body = m.fallback_body([it])
     # HTML/코드 노출 없음
-    assert "<p>" not in body and "style" not in body
+    assert "<p>" not in body and "style=" not in body
     # 내부정보 숨김
     assert "매칭 키워드" not in body
     assert "우선 키워드" not in body
     assert "스마트공장 관련성" not in body
     assert "글로벌" not in body          # 매칭키워드(캐럿글로벌 류) 노출 안 함
-    # 비제약 지역('서울특별시 전체')은 생략
-    assert "전체" not in body
-    # 필요한 정보는 평문으로 보임
-    assert "AI 도입 지원" in body and "맞춤 컨설팅" in body
+    # 필요한 정보는 평문으로 보임 (8컬럼: 제목·기관)
+    assert "2026년 중소기업 AI 훈련 참여기업 모집" in body
     assert "고용노동부" in body
 
 

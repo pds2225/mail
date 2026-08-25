@@ -481,12 +481,19 @@ def test_G005_single_future_without_yejeong_is_open():
     assert m.classify_deadline_status(it, TODAY) == "open"
 
 
-@pytest.mark.parametrize("term", ["상시접수", "수시접수", "예산 소진 시까지", "예산소진 시까지",
-                                  "예산 소진시까지", "상시모집", "연중수시"])
-def test_G005_open_deadline_terms(term):
-    """상시/수시/예산소진/상시모집/연중수시 → open(마감 없는 모집)."""
+@pytest.mark.parametrize("term,expected", [
+    ("상시접수", "always_open"),
+    ("수시접수", "always_open"),
+    ("예산 소진 시까지", "until_budget_exhausted"),
+    ("예산소진 시까지", "until_budget_exhausted"),
+    ("예산 소진시까지", "until_budget_exhausted"),
+    ("상시모집", "always_open"),
+    ("연중수시", "always_open"),
+])
+def test_G005_open_deadline_terms(term, expected):
+    """상시/수시/예산소진/상시모집/연중수시 → always_open 또는 until_budget_exhausted."""
     it = {"id": "x", "title": f"{term} 공고", "description": term, "author": "", "deadline": ""}
-    assert m.classify_deadline_status(it, TODAY) == "open"
+    assert m.classify_deadline_status(it, TODAY) == expected
 
 
 # ── 라운드3 보강(2026-06-22): 접수기간 경계값(오늘마감/오늘시작/deadline필드 상시/과거~미래 range) ──
@@ -505,9 +512,9 @@ def test_G005_yejeong_starts_today_is_open():
 
 
 def test_G005_open_term_in_deadline_field():
-    """상시 표현이 deadline 필드에만 있어도 open(_notice_text 가 deadline 포함 → 2008행 매칭, 누락 금지)."""
+    """상시 표현이 deadline 필드에만 있어도 always_open(_notice_text 가 deadline 포함 → 매칭, 누락 금지)."""
     it = {"id": "x", "title": "지원 공고", "description": "사업 안내", "author": "", "deadline": "상시접수"}
-    assert m.classify_deadline_status(it, TODAY) == "open"
+    assert m.classify_deadline_status(it, TODAY) == "always_open"
 
 
 def test_G005_range_past_to_future_is_open():
@@ -631,12 +638,12 @@ def test_G006_and_keyword_groups_gate(kwline, matched):
 
 
 def test_G006_group_exclude_keywords_not_grant():
-    """그룹별 exclude_keywords 매칭 → NOT_GRANT_NOTICE(2572-2575, 상수 EXCLUSION_RULES 와 별개 경로)."""
+    """그룹별 exclude_keywords 매칭 → GROUP_EXCLUSION(상수 EXCLUSION_RULES 와 별개 경로)."""
     grp = _gate_group(exclude_keywords=["성료"])
     it = _gyeonggi_full_pass()
     it["title"] = "경기도 제조기업 성장지원 신청접수 성료 안내"
     ev = m.evaluate_notice(it, grp, TODAY)
-    assert "NOT_GRANT_NOTICE" in ev["exclude_reason_codes"]
+    assert "GROUP_EXCLUSION" in ev["exclude_reason_codes"]
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -1057,19 +1064,19 @@ def test_G001_seoul_group_region_field_other_region_not_eligible_round6():
 #   '소진 시'/'소진시'(예산·재원·물량·기금 소진 공통)를 추가. '소진으로 종료'(과거형 마감)는
 #   '소진 시'·'소진시' 어디에도 안 걸려 closed 유지 → precision 회귀 가드(아래 테스트로 고정).
 # ══════════════════════════════════════════════════════════════════
-@pytest.mark.parametrize("phrase", [
-    "선착순 마감",          # 선착순 모집(소진까지 열림) — 마감일 없는 모집
-    "연중상시 모집",        # 연중상시(기존 '연중수시'의 짝)
-    "재원 소진 시 마감",    # '소진 시'(예산 아닌 재원도) — 공백 표기
-    "물량 소진시 종료",     # '소진시'(공백 없는 표기)
-    "예산 소진 시 마감",    # '예산 소진' 의 '마감' 변형(기존엔 '…까지'만 등록)
+@pytest.mark.parametrize("phrase,expected", [
+    ("선착순 마감", "always_open"),
+    ("연중상시 모집", "always_open"),
+    ("재원 소진 시 마감", "until_budget_exhausted"),
+    ("물량 소진시 종료", "until_budget_exhausted"),
+    ("예산 소진 시 마감", "until_budget_exhausted"),
 ])
-def test_G005_open_until_full_terms_round7(phrase):
-    """recall 갭 수정(round7): 과거 시작일이 함께 적힌 '마감 없는 모집' 공고를 open 으로 인식.
+def test_G005_open_until_full_terms_round7(phrase, expected):
+    """recall 갭 수정(round7): 과거 시작일이 함께 적힌 '마감 없는 모집' 공고를 always_open/until_budget_exhausted 으로 인식.
     기존엔 OPEN_DEADLINE_TERMS 미등록 → 날짜 로직이 과거 시작일(03.01)만 보고 closed 오판 → 누락."""
     it = {"id": "x", "title": "청년창업 지원사업",
           "description": f"접수기간 2026.03.01 부터 {phrase}", "author": "", "deadline": ""}
-    assert m.classify_deadline_status(it, TODAY) == "open"
+    assert m.classify_deadline_status(it, TODAY) == expected
 
 
 def test_G005_budget_exhausted_past_tense_still_closed_round7():

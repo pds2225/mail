@@ -142,6 +142,14 @@ python -m loan.semas.collector --run-mode dry-run --send-email false
 ```
 결과 보고서는 `var\reports\loan\semas_loan_scan.md`에 생깁니다.
 
+추가로, 공고 상세 페이지 URL만 붙여 첨부파일(hwp/pdf 등)을 받는 **원클릭 다운로더**가 있습니다. 메일·API 키는 필요 없습니다.
+
+1. `처음설치_한번만.cmd` 더블클릭 (처음 1회)
+2. `지원사업 공고첨부_받기.cmd` 더블클릭 → URL 붙여넣기
+3. 파일은 바탕화면 `지원사업_공고첨부` 폴더에 저장됩니다
+
+자세한 안내는 `사용방법_공고첨부.txt`, `docs/공고첨부_받기_사용법.md` 를 보세요. 남에게 줄 때는 `배포용_압축하기.cmd` 로 ZIP을 만듭니다 (`.env` 제외).
+
 ---
 
 ## 🛠️ 문제가 생겼을 때
@@ -174,4 +182,4 @@ python -m loan.semas.collector --run-mode dry-run --send-email false
 | 진짜 발송 (실제 메일 나감) | `python monitor.py` |
 | 웹 화면으로 보기 | `python -m streamlit run streamlit_app.py` → `http://localhost:8501` |
 | 정책자금 점검 (미리보기) | `python -m loan.semas.collector --run-mode dry-run --send-email false` |
-| 결과 보고서 보기 | `var\logs\` 폴더 (정책자금은 `var\reports\loan\`) |
+| 공고 첨부만 받기 (메일 안 보냄) | `처음설치_한번만.cmd` 후 `지원사업 공고첨부_받기.cmd` |

@@ -13,16 +13,66 @@ jobs:
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch PR/base SHAs for docs-only classify
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=50 origin \
+            ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }}
+
+      - name: Classify docs-only
+        id: classify
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ "${EVENT_NAME}" = "pull_request" ] && [ -n "${PR_BASE}" ] && [ -n "${PR_HEAD}" ]; then
+            FILES="$(git diff --name-only --diff-filter=ACMR "${PR_BASE}...${PR_HEAD}" || true)"
+          elif [ -n "${BEFORE_SHA}" ] && [ "${BEFORE_SHA}" != "0000000000000000000000000000000000000000" ]; then
+            FILES="$(git diff --name-only --diff-filter=ACMR "${BEFORE_SHA}" "${GITHUB_SHA}" || true)"
+          else
+            FILES="$(git diff --name-only --diff-filter=ACMR HEAD~1 "${GITHUB_SHA}" 2>/dev/null || git ls-files)"
+          fi
+          echo "Changed files:"
+          printf '%s\n' "${FILES}"
+          docs_only=true
+          while IFS= read -r f; do
+            [ -z "${f}" ] && continue
+            case "${f}" in
+              # Workflow YAML is not docs-only: a green docs_only check would let
+              # Auto Merge land CI gate changes without pytest (MAIL-004 default merge).
+              TASK.md|*.md|docs|docs/*) ;;
+              *) docs_only=false ;;
+            esac
+          done <<EOF
+          ${FILES}
+          EOF
+          echo "docs_only=${docs_only}" >> "${GITHUB_OUTPUT}"
+          echo "docs_only=${docs_only}"
 
       - name: Python 설정
+        if: steps.classify.outputs.docs_only != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: 패키지 설치
+        if: steps.classify.outputs.docs_only != 'true'
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
       - name: pytest 실행
+        if: steps.classify.outputs.docs_only != 'true'
         run: python -m pytest -q
+
+      - name: Docs-only skip
+        if: steps.classify.outputs.docs_only == 'true'
+        run: echo "docs/workflow-only change; pytest skipped"

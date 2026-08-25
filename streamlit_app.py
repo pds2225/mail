@@ -31,6 +31,7 @@ SITE_TYPES = {
     "kocca_bbs":     "KOCCA 금융공고 (전용)",
     "gtp_html":      "경기TP (전용)",
     "gsp_html":      "경기스타트업플랫폼 (전용)",
+    "startup_plus_api": "스타트업플러스 API (서울시)",
     "ccei_html":     "창조경제혁신센터 (전용)",
     "html_table":    "신규 — HTML 테이블",
     "html_card":     "신규 — HTML 카드",
@@ -169,7 +170,7 @@ st.set_page_config(page_title="지원사업 메일링 자동화", page_icon="�
 st.title("📡 지원사업 메일링 자동화")
 
 tab_sites, tab_groups, tab_settings, tab_run, tab_review = st.tabs(
-    ["📡 소스 관리", "👥 그룹 관리", "⚙️ 설정", "▶ 실행", "🔍 공고 검수"]
+    ["📡 소스 관리", "👥 그룹 관리", "⚙️ 설정", "▶ 실행", "🔍 검수·O/X"]
 )
 
 
@@ -635,3 +636,51 @@ with tab_review:
                 )
     else:
         st.info("검수 결과가 없습니다. '▶ 샘플 데이터로 검수'를 눌러 먼저 실행하세요.")
+
+    st.divider()
+    st.subheader("👍 제목 O/X (메일 발송 없음)")
+    st.caption(
+        "제목만 보고 맞으면 O, 아니면 X를 누릅니다. "
+        "메일이 나가지 않고 `data/golden/feedback_labels.jsonl`에 바로 저장됩니다."
+    )
+    ox_queue_path = Path("data/golden/ox_title_queue.json")
+    if st.button("🔄 제목 큐 다시 만들기", help="notice_versions 히스토리에서 제목 100건 샘플"):
+        proc = subprocess.run(
+            [sys.executable, "scripts/build_ox_title_queue.py"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+        )
+        if proc.returncode == 0:
+            st.success(proc.stdout.strip() or "큐 갱신 완료")
+            st.rerun()
+        else:
+            st.error((proc.stdout + proc.stderr)[:1500])
+
+    if ox_queue_path.exists():
+        from mail_core.delivery import feedback as _fb
+
+        queue = load_json(ox_queue_path, {"items": []})
+        items = list(queue.get("items") or [])
+        labeled = _fb.feedback_verdicts()
+        pending = [it for it in items if str(it.get("id") or "") not in labeled]
+        st.markdown(f"대기 **{len(pending)}** / 전체 큐 {len(items)} · 누적 라벨 {len(labeled)}")
+        show = pending[:15] if pending else items[:5]
+        if not pending:
+            st.info("이 큐는 모두 판정했습니다. 큐를 다시 만들거나 아래에서 수정하세요.")
+        for it in show:
+            nid = str(it.get("id") or "")
+            title = str(it.get("title") or "")
+            prev = labeled.get(nid, "")
+            c1, c2, c3 = st.columns([6, 1, 1])
+            with c1:
+                mark = f" _(현재 {prev})_" if prev else ""
+                st.markdown(f"**{title}**{mark}")
+            with c2:
+                if st.button("O 맞음", key=f"ox_o_{nid}", use_container_width=True):
+                    _fb.record_local_verdict(nid, "O", title=title, source="dashboard-ox")
+                    st.rerun()
+            with c3:
+                if st.button("X 아님", key=f"ox_x_{nid}", use_container_width=True):
+                    _fb.record_local_verdict(nid, "X", title=title, source="dashboard-ox")
+                    st.rerun()
+    else:
+        st.warning("`data/golden/ox_title_queue.json` 없음 → 위 '제목 큐 다시 만들기'를 누르세요.")

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>K-Startup 공공(PBC010) 엣지케이스 픽스처</title></head>
+<body>
+<!-- 엣지케이스: 필드 누락·빈값·비정상 구조 카드 -->
+<ul class="notice_list">
+  <!-- 1) deadline 없는 카드 — 상시모집 -->
+  <li class="notice">
+    <span class="flag day">상시</span>
+    <span class="flag">상시모집</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=5001">2026년 상시 창업지원 프로그램 모집 공고</a>
+    <button type="button" onclick="goView('5001'); return false;">상세보기</button>
+    <span class="list">창업진흥원</span>
+    <span class="list">접수기간 : 2026.01.01 ~ 2026.12.31</span>
+  </li>
+  <!-- 2) org( span.list) 없는 카드 -->
+  <li class="notice">
+    <span class="flag day">D-5</span>
+    <span class="flag">R&D 지원</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=5002">2026년 AI 바우처 지원사업 공고</a>
+    <button type="button" onclick="goView('5002'); return false;">상세보기</button>
+    <span class="list">마감일자 2026-09-01</span>
+  </li>
+  <!-- 3) flag(desc) 없는 카드 -->
+  <li class="notice">
+    <span class="flag day">D-10</span>
+    <span class="flag flag_agency">중소벤처기업부</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=5003">2026년 스마트공장 보급사업 공고</a>
+    <button type="button" onclick="goView('5003'); return false;">상세보기</button>
+    <span class="list">중소기업기술정보진흥원</span>
+    <span class="list">마감일자 2026-08-30</span>
+  </li>
+  <!-- 4) button 없는 카드 — sn은 a[href]에서 추출 -->
+  <li class="notice">
+    <span class="flag day">D-3</span>
+    <span class="flag">해외진출</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=5004">2026년 글로벌 창업사관학교 모집 공고</a>
+    <span class="list">KOTRA</span>
+    <span class="list">마감일자 2026-08-15</span>
+  </li>
+  <!-- 5) a 태그 없는 카드 — title 추출 불가, 스킵 대상 -->
+  <li class="notice">
+    <span class="flag day">D-1</span>
+    <button type="button" onclick="goView('5005'); return false;">상세보기</button>
+    <span class="list">빈 제목 카드</span>
+    <span class="list">마감일자 2026-08-10</span>
+  </li>
+  <!-- 6) 등록일자(posted_date) 포함 카드 -->
+  <li class="notice">
+    <span class="flag day">D-20</span>
+    <span class="flag">창업교육</span>
+    <a href="/web/contents/bizpbanc-ongoing.do?pbancSn=5006">2026년 예비창업패키지 교육과정 모집</a>
+    <button type="button" onclick="goView('5006'); return false;">상세보기</button>
+    <span class="list">한국창업보육협회</span>
+    <span class="list">등록일자 2026.07.20</span>
+    <span class="list">마감일자 2026-09-30</span>
+  </li>
+</ul>
+</body>
+</html>

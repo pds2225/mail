@@ -193,3 +193,109 @@ def test_kstartup_stops_on_duplicate_streak_not_only_max():
     assert len(items) == 4
     # 10+10 전량 호출하지 않음 (연속 신규0 종료)
     assert len(respx.calls) < 12
+
+
+# ── 엣지케이스: 필드 누락·비정상 구조 ──────────────────────────────────────
+
+SPARSE = pathlib.Path(__file__).parent / "fixtures" / "kstartup" / "kstartup_public_sparse.html"
+
+
+def _load_sparse():
+    return SPARSE.read_text(encoding="utf-8")
+
+
+@respx.mock
+def test_kstartup_sparse_fields_missing_deadline_and_org():
+    """deadline 없는 카드(상시모집)와 org 없는 카드가 파싱된다."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    by_id = {it["id"]: it for it in items}
+
+    # deadline 없는 카드(sn=5001) — deadline="" 이고 title은 정상 추출
+    card_5001 = by_id["kstartup_5001"]
+    assert card_5001["title"] == "2026년 상시 창업지원 프로그램 모집 공고"
+    assert card_5001["deadline"] == ""
+
+    # org 없는 카드(sn=5002) — span.list[0]이 마감일자 라벨이므로 fallback로 author에 들어감
+    card_5002 = by_id["kstartup_5002"]
+    assert card_5002["title"] == "2026년 AI 바우처 지원사업 공고"
+
+
+@respx.mock
+def test_kstartup_sparse_no_button_sn_from_href():
+    """button 없는 카드는 a[href]에서 sn 추출."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    by_id = {it["id"]: it for it in items}
+
+    # button 없이 a[href]에서 sn=5004 추출
+    assert "kstartup_5004" in by_id
+    assert "pbancSn=5004" in by_id["kstartup_5004"]["link"]
+
+
+@respx.mock
+def test_kstartup_sparse_no_flag_desc():
+    """flag(desc) 없는 카드는 description=""."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    by_id = {it["id"]: it for it in items}
+
+    # flag_agency만 있고 desc flag 없는 sn=5003
+    card_5003 = by_id["kstartup_5003"]
+    assert card_5003["description"] == ""
+
+
+@respx.mock
+def test_kstartup_sparse_no_anchor_skipped():
+    """a 태그 없는 카드(sn=5005)는 title="" → 스킵."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    ids = [it["id"] for it in items]
+
+    # a 없는 카드는 스킵 → sn=5005 없음
+    assert "kstartup_5005" not in ids
+
+
+@respx.mock
+def test_kstartup_sparse_posted_date_extracted():
+    """등록일자 포함 카드는 posted_date 추출."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    by_id = {it["id"]: it for it in items}
+
+    # sn=5006 — 등록일자 2026.07.20
+    card_5006 = by_id["kstartup_5006"]
+    assert card_5006["posted_date"] == "2026-07-20"
+
+
+@respx.mock
+def test_kstartup_sparse_total_count():
+    """엣지케이스 픽스처: a 없는 1건 스킵 → 5건 수집."""
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC010"}).mock(
+        return_value=httpx.Response(200, html=_load_sparse()))
+    respx.get(KSTARTUP_URL, params__contains={"pbancClssCd": "PBC020"}).mock(
+        return_value=httpx.Response(200, html=""))
+
+    items = monitor.fetch_kstartup(_site())
+    # sn 5001~5006 중 a 없는 5005 스킵 = 5건
+    assert len(items) == 5

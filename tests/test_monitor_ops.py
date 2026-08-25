@@ -168,8 +168,8 @@ def test_save_seen_ids_skipped_when_persist_disabled():
 
 
 def test_dedup_does_not_merge_clearly_different_titles():
-    a = _item("id_a", "2026년 인천 화장품 수출바우처 지원사업 모집")
-    b = _item("id_b", "2026년 부산 로봇 해외전시회 참가지원")
+    a = _item("id_a", "2026년 인천 화장품 수출바우처 지원사업 모집", link="https://example.com/a1")
+    b = _item("id_b", "2026년 부산 로봇 해외전시회 참가지원", link="https://example.com/b1")
     out = dedup_items([a, b])
     assert len(out) == 2
 
@@ -182,7 +182,7 @@ def test_stable_id_changes_when_link_changes():
 def test_execute_monitor_dry_run_flags(monkeypatch):
     monkeypatch.setattr(
         "monitor.fetch_all",
-        lambda sites: [_item("n1", "테스트", previous_business_day(days_back=1).strftime("%Y-%m-%d"))],
+        lambda sites, **_kw: [_item("n1", "테스트", previous_business_day(days_back=1).strftime("%Y-%m-%d"))],
     )
     monkeypatch.setattr("monitor.enrich_items", lambda items: items)
     result = execute_monitor(allow_send=False, persist_seen=False)

@@ -105,3 +105,11 @@ downloads/
 
 # raw_store 런타임 저장물(원문 재현용, 커밋 대상 아님)
 data/raw/
+var/state/source_health.json
+var/state/source_incidents.jsonl
+
+# One-click attach downloader: local setup marker (generated)
+.attach_setup_ok
+
+# Attach downloader Windows exe (generated locally / CI artifact — do not commit)
+dist/*.exe

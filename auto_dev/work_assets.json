@@ -63,6 +63,12 @@
       "drift_signals": ["recall_zero_gate 편입 해제", "정추천 사례 축소"]
     },
     {
+      "id": "ai_commercialization_grant_recall",
+      "path": "tests/test_ai_commercialization_grant_recall.py",
+      "role": "AI 사업화지원금 전수 수집(1·2차·워치리스트) 회귀",
+      "drift_signals": ["recall_zero_gate 편입 해제", "사업화지원금 정추천 사례 축소"]
+    },
+    {
       "id": "outstanding_dev_audit",
       "path": "scripts/outstanding_dev_audit.py",
       "role": "원격·worktree·stash 미반영 개발 감사 (user-priority merge-all)",
@@ -71,14 +77,20 @@
     {
       "id": "overnight_ready",
       "path": "scripts/auto_dev_overnight_ready.py",
-      "role": "야간 자동개발 준비 상태 (큐·스케줄·에이전트·PAT)",
-      "drift_signals": ["PENDING 공백 방치", "PAT 없이 cron 강제 활성"]
+      "role": "야간 자동개발 준비 상태 (TASK.md READY + 큐·스케줄·에이전트·PAT)",
+      "drift_signals": ["PENDING 공백 방치", "TASK.md [ ] 무시", "PAT 없이 cron 강제 활성"]
+    },
+    {
+      "id": "task_md",
+      "path": "TASK.md",
+      "role": "유일한 AI 작업지시 — 밤샘 로컬 에이전트가 [ ]/[~] 를 소진",
+      "drift_signals": ["READY 항목을 docs/project/TASKS.md만 보고 무시", "허위 [x] DONE"]
     },
     {
       "id": "loop_config",
       "path": "auto_dev/loop_config.json",
       "role": "루프 한도·종료 조건",
-      "drift_signals": ["max_retry 상향", "auto_merge 무조건 활성"]
+      "drift_signals": ["max_retry 상향", "auto_merge.enabled=false"]
     },
     {
       "id": "site_add_packet",

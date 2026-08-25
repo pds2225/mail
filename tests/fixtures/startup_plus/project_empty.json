@@ -1,0 +1,11 @@
+{
+  "result": true,
+  "data": {
+    "pagination": {
+      "hasNext": false,
+      "last": true,
+      "totalElements": 0
+    },
+    "contents": []
+  }
+}

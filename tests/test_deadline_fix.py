@@ -57,8 +57,8 @@ def test_application_period_label_path_unchanged():
 
 
 def test_open_deadline_terms_unchanged():
-    assert m.classify_deadline_status(_it("상시접수 공고", "상시접수 중"), TODAY) == "open"
-    assert m.classify_deadline_status(_it("수시접수 공고", "수시접수"), TODAY) == "open"
+    assert m.classify_deadline_status(_it("상시접수 공고", "상시접수 중"), TODAY) == "always_open"
+    assert m.classify_deadline_status(_it("수시접수 공고", "수시접수"), TODAY) == "always_open"
 
 
 def test_no_dates_unknown():

@@ -96,8 +96,14 @@ def test_non_grant_notices_are_not_recommended(item: dict, expected_hit: str):
 
     assert bucket in {"review", "excluded"}, evaluated
     assert evaluated["is_relevant"] is False
-    assert "NOT_GRANT_NOTICE" in evaluated["exclude_reason_codes"]
-    assert expected_hit in evaluated["excluded_keywords"]
+    # 경로별 사유코드 분리: 위원모집=COMMITTEE/REPORT_JUNK, 그룹제외=GROUP_EXCLUSION 등.
+    # '비지원' 차단이면 충분하고, 구 NOT_GRANT_NOTICE 단일코드에 묶지 않는다.
+    block_codes = {
+        "NOT_GRANT_NOTICE", "NOT_APPLICATION_LIKE", "GROUP_EXCLUSION",
+        "ADMIN_NOISE", "REPORT_JUNK", "COMMITTEE_RECRUITMENT",
+    }
+    assert set(evaluated["exclude_reason_codes"]) & block_codes
+    assert any(expected_hit in kw for kw in evaluated["excluded_keywords"]), evaluated["excluded_keywords"]
 
 
 def test_big_data_academy_without_startup_signal_is_excluded():
@@ -217,3 +223,71 @@ def test_real_application_notices_remain_included(item: dict):
 
     assert bucket == "included", evaluated
     assert evaluated["is_relevant"] is True
+
+
+def test_prestartup_or_keywords_include_fit_terms():
+    """2차 점수가 예비창업 본공고를 살리려면 OR에 적합 단어가 있어야 한다."""
+    for kw in ("예비창업", "예비창업자", "창업예정자"):
+        assert kw in GROUP["or_keywords"]
+
+
+def test_ai_prestartup_package_survives_score_refine():
+    """MAIL-003: AI 예비창업패키지는 1차 포함 후 2차 점수 컷에서 떨어지면 안 된다."""
+    item = _item(
+        "2026년 AI 예비창업패키지 참여자 모집",
+        "사업자등록이 없는 예비창업자를 대상으로 사업화자금을 지원합니다. 전국 모집.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    assert evaluated["is_relevant"] is True
+
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed, {
+        "rejected": [it.get("exclude_reason_codes") for it in rejected],
+        "score": evaluated.get("_match_score"),
+    }
+    assert passed[0].get("_match_score", 0) >= GROUP.get("score_threshold", 1)
+    assert not rejected
+
+
+def test_established_ai_solution_dropped_by_score_refine():
+    """MAIL-006: 기창업 AI 솔루션 도입은 1차 통과 후 2차에서 메일 대상에서 빠진다."""
+    item = _item(
+        "AI 솔루션 도입 참여기업 모집",
+        "기창업 중소기업의 AI 솔루션 도입 비용을 지원합니다.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert not passed
+    assert rejected
+    assert "SCORE_OR_LLM_REJECT" in (rejected[0].get("exclude_reason_codes") or [])
+
+
+def test_mixed_prestartup_solution_notice_survives_score_refine():
+    """예비창업 신호와 솔루션 도입이 같이 있으면 2차에 남긴다."""
+    item = _item(
+        "예비창업자 AI 솔루션 도입 지원 모집",
+        "예비창업자와 초기기업에 AI 솔루션 도입 비용을 지원합니다.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed
+    assert not rejected
+
+
+def test_ai_commercialization_grant_survives_participant_word():
+    """MAIL-012: AI 사업화지원금은 참여기업 문구가 있어도 2차에 남긴다."""
+    item = _item(
+        "2026년 AI 사업화지원금 참여기업 모집",
+        "인공지능 예비·초기기업에 사업화자금을 지원합니다. 전국 모집.",
+    )
+    bucket, evaluated = _bucket(item)
+    assert bucket == "included", evaluated
+    passed, rejected = monitor.refine_included_by_score_llm([evaluated], GROUP)
+    assert passed, {
+        "rejected": [it.get("exclude_reason_codes") for it in rejected],
+        "score": evaluated.get("_match_score"),
+    }
+    assert not rejected

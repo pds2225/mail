@@ -32,9 +32,9 @@ def test_all_support_types_unchanged_gate_neutral():
 
 
 def test_susi_recruit_open():
-    """'수시모집' 은 상시(open) 로 판정 — 마감불명이던 것 복구(recall)."""
+    """'수시모집' 은 always_open 로 판정 — 마감불명이던 것 복구(recall)."""
     it = {"title": "1인 기업실 사용기업 수시모집 공고", "posted_date": "2026-07-01", "description": ""}
-    assert monitor.classify_deadline_status(it) == "open"
+    assert monitor.classify_deadline_status(it) == "always_open"
 
 
 def test_plain_notice_still_그외():

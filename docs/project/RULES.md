@@ -1,4 +1,4 @@
-# Auto Dev Queue — RULES (Vercel Mail 프로젝트 전용)
+﻿# Auto Dev Queue — RULES (Vercel Mail 프로젝트 전용)
 
 > 이 파일은 자동개발 큐가 Vercel Mail 프로젝트에서 준수해야 할 안전규칙을 정의합니다.
 
@@ -25,6 +25,22 @@
 | `OPENAI_API_KEY` | AI 기능 | 선택 |
 | `ANTHROPIC_API_KEY` | Claude AI 요약 | 선택 |
 | `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
+
+> **Auto Merge:** 자동 머지가 기본이다. Checks 초록·충돌 없으면 squash-merge 한다.
+> 예외는 Draft, `needs-human`/`blocked`, merge conflict, `.env*`,
+> `.github/workflows/*` (CI 게이트는 사람 머지).
+> `monitor.py` / `streamlit_app.py` 변경도 기본 병합한다. `--admin` 은 금지.
+>
+> `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에
+> `github.token` 만 쓴다. Secret `AUTO_DEV_PAT` 이 만료돼 있어도
+> `secrets.AUTO_DEV_PAT || github.token` 은 빈 값이 아니라 만료 토큰을 넘기므로
+> checkout 이 `could not read Username for 'https://github.com'` 로 실패한다
+> (2026-08-13 run 31660085605). 유효 PAT 가 준비되기 전에는 Auto Merge에 PAT를 넣지 않는다.
+>
+> PR 번호는 `GET .../actions/runs/{id}/pull-requests` 를 쓰지 않는다. 이 API 는
+> GITHUB_TOKEN 에서 404 가 난다 (run 31662894294). `workflow_run.pull_requests`,
+> `gh pr list --head`, `gh pr list --search SHA` 순으로 찾는다. 없으면 skip
+> (job 실패 아님). 같은 저장소 브랜치 PR만 대상이다.
 
 ### Vercel Environment Variables
 
@@ -127,7 +143,7 @@ docs/project/done_tasks.md
 docs/project/failed_tasks.md
 docs/project/blocked_tasks.md
 auto_dev/*
-docs/LOOP_ENGINEERING_AUTO_DEV.md
+docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md
 scripts/*
 .github/workflows/auto-dev-queue.yml
 .github/workflows/monitor.yml
@@ -145,7 +161,7 @@ docs/project/mail_daily_reviews/*
 
 ## 8. Loop Engineering 규칙
 
-설계서: `docs/LOOP_ENGINEERING_AUTO_DEV.md`  
+설계서: `docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md`  
 작업 자산: `auto_dev/loops.json`, `eval_rubric.md`, `exit_conditions.md`, `human_gates.md`
 
 | # | 규칙 |
@@ -167,9 +183,18 @@ GHA `auto-dev-queue.yml` 의 cron 을 다시 켜기 **전에** 모두 충족:
 1. GitHub Secret `AUTO_DEV_PAT` 가 유효하고 `contents`/`pull-requests` 권한이 있다.
 2. 워크플로에서 `AUTO_DEV_AGENT=true` 로 코딩 슬롯이 실제로 연결되어 있다 (아니면 AWAITING_AGENT만 반복).
 3. `auto_dev/loop_config.json` → `trigger.schedule_enabled=true` 와 워크플로 `schedule:` 블록이 동시에 활성이다 (`loop_verify --drift` D5).
-4. `docs/project/TASKS.md` PENDING 이 비어 있지 않다 (user-priority TASK 우선).
+4. `docs/project/TASKS.md` PENDING **또는** 루트 `TASK.md` 의 `[ ]`/`[~]` 가 비어 있지 않다 (TASK.md 우선, user-priority TASK 다음).
 5. `python3 scripts/auto_dev_overnight_ready.py --require-live` 가 exit 0 이다.
 6. `python3 scripts/outstanding_dev_audit.py --strict` 가 UNIQUE_CANDIDATE 없이 통과한다.
 
 위가 하나라도 실패하면 cron 을 복구하지 말고 `workflow_dispatch` / 로컬 에이전트로 PENDING 을 소진한다.
+
+## 10. Agent 순환 호출 · Polling Timeout 가드
+
+| # | 규칙 |
+|---|------|
+| 1 | 동일 TASK에서 동일 역할 agent(orchestrator/runner/verifier/fixer 등) 호출은 최대 1회. 허용 예: orchestrator → verifier → fixer → verifier. 두 번째 verifier에서도 동일 failure signature(에러 해시)면 같은 방식으로 다시 시도하지 않고 BLOCKED 종료 — 동일 failure signature 재시도는 최대 2회(§4-7, exit_conditions.md `FAIL_NO_PROGRESS`와 동일 원칙) |
+| 2 | `verifier → fixer → verifier → fixer → verifier ...` 형태의 무한 핑퐁 금지 |
+| 3 | 배포 상태·외부 API 등 polling이 필요한 코드를 추가할 경우 반드시 유한 조건(MAX_POLLS, TOTAL_TIMEOUT)을 둔다. `while status != success: check()` 같은 polling timeout 없는 무한 대기 금지 |
+| 4 | 하나의 검증 실패로 전체 체인(coding-fix → gate-repair → coverage-sentinel …)을 처음부터 재실행하지 않는다. 실패한 단계만 제한적으로 재검증한다 |
 

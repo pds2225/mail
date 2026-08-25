@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Auto Dev Safe Executor — LLM 없이 닫을 수 있는 TASK만 처리.
 
 Loop Engineering L1의 '실행' 슬롯 중 결정적(deterministic) 부분.
@@ -50,7 +50,7 @@ def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
     readme = _read("README.md")
     workflow = _read(".github/workflows/auto-dev-queue.yml")
     queue_src = _read("scripts/auto_dev_queue.py")
-    design = _read("docs/LOOP_ENGINEERING_AUTO_DEV.md")
+    design = _read("docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md")
 
     checks: list[tuple[tuple[str, ...], bool, str]] = [
         (

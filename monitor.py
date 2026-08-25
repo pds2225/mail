@@ -27,6 +27,12 @@ try:
 except ImportError:
     _CM_OK = False
 
+try:
+    from mail_core.matching.scoring import score_and_filter as _score_and_filter
+    _SCORE_OK = True
+except ImportError:
+    _SCORE_OK = False
+
 from mail_core.delivery import outbox as delivery_outbox
 from mail_core.delivery import state as delivery_state
 from mail_core.operations import run_lock
@@ -104,6 +110,9 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
+# Legacy Claude digest batch size. Deterministic fallback_body mails every matched
+# notice; do not reintroduce a silent body cap — deliver_with_outbox marks all
+# notice_ids seen, so omitting rows from the digest permanently drops them.
 MAX_FOR_CLAUDE = 15
 COLLECTOR_FILE = "monitor.py"
 _HTTP_RETRY_BACKOFF = 1.0  # 초 단위. 재시도 간 대기(선형 백오프). 테스트는 이 값을 낮춰 즉시 실행.
@@ -331,6 +340,12 @@ GENERAL_INCLUDE_KEYWORD_ALIASES = [
 ]
 
 PRIORITY_KEYWORD_ALIASES = [
+    # 사업화 직접지원(현금·제작비) — 최우선 추천 신호 (사용자 정책)
+    ("사업화지원금", ["사업화지원금", "사업화 지원금", "사업화자금", "사업화 자금"]),
+    ("시제품제작비", ["시제품제작비", "시제품 제작비", "시제품제작", "시제품 제작"]),
+    ("사업화비용", ["사업화비용", "사업화 비용"]),
+    ("지원금", ["지원금"]),
+    ("직접지원", ["직접지원", "현금지원", "현금 지원"]),
     ("혁신바우처", ["혁신바우처", "혁신 바우처"]),
     ("수출바우처", ["수출바우처", "수출 바우처"]),
     ("스마트공장", ["스마트공장"]),
@@ -341,6 +356,11 @@ PRIORITY_KEYWORD_ALIASES = [
     ("자동화", ["자동화"]),
     ("제조혁신", ["제조혁신"]),
 ]
+
+# 메일 '우선 추천' 정렬에서 사업화 직접지원을 최상단으로 올린다.
+FUND_PRIORITY_LABELS = frozenset({
+    "사업화지원금", "시제품제작비", "사업화비용", "지원금", "직접지원",
+})
 
 FACTORY_KEYWORD_ALIASES = [
     ("공장", ["공장"]),
@@ -377,7 +397,7 @@ APPLICATION_KEYWORDS = [
     "공모", "참가신청",
 ]
 
-GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원", "멘토링"]
+GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원"]
 
 # ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
 # 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
@@ -397,7 +417,9 @@ GRANT_SIGNAL_KEYWORDS = [
     "지원사업", "지원 사업", "지원금", "보조금", "바우처", "사업화", "사업 공고",
     "모집공고", "모집 공고", "참여기업", "수요기업", "공모", "융자", "정책자금",
     "창업", "육성", "r&d", "연구개발", "기술개발", "수출", "판로", "마케팅",
-    "컨설팅", "멘토링", "인증지원", "시제품", "입주기업", "투자유치",
+    # 컨설팅·멘토링은 GRANT 신호에서 제외 — 단독 안내가 application_like 로 통과하던 과출 방지.
+    # (실지원 공고는 모집/신청/지원사업 등 다른 신호로 충분하다.)
+    "인증지원", "시제품", "입주기업", "투자유치",
     "장려금", "지원 안내", "지원계획", "지원대상", "참가기업", "참가신청",
 ]
 
@@ -422,7 +444,8 @@ REPORT_JUNK_KEYWORDS = [
     "후기", "보도자료", "휴관", "휴무", "시스템 점검", "점검 안내", "일정변경", "일정 변경",
     "연기 안내", "당첨자", "간담회 개최", "설명회 개최", "공지 안내", "운영 중단",
     "교육생 모집", "수강생 모집", "서포터즈", "체험단", "기자단", "홍보단", "자원봉사",
-    "회원 모집", "모니터링단", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
+    # '모니터링단'은 REPORT_JUNK hard 제외에서 빼고 AMBIGUOUS_NOTICE(검토 분리)로 보낸다.
+    "회원 모집", "평가위원", "심사위원", "멘토 모집", "운영위원", "강사 모집",
     "기획위원", "자문위원", "전문위원",
 ]
 
@@ -438,18 +461,50 @@ EXCLUSION_RULES = [
         "부정수급", "정부 지침", "관리지침", "운영지침", "지침 개정",
         "공동인증서", "공인인증서", "매뉴얼", "사용 안내", "유의사항", "시스템 이용 안내",
     ]),
-    ("INFO_SESSION", "info_session", "unknown", ["설명회", "오리엔테이션"]),
+    ("INFO_SESSION", "info_session", "unknown", [
+        "설명회", "오리엔테이션", "사업설명회", "사전설명회", "투자유치설명회",
+    ]),
     ("EDUCATION_ONLY", "education", "unknown", [
         "교육 일정", "교육일정", "분야별 교육", "선정기업 교육", "수요기업 교육", "공급기업 교육",
+        "교육참여기업", "교육 참여기업", "교육생 모집", "수강생 모집", "교육과정 모집", "교육 과정 모집",
     ]),
     ("SUPPLIER_ONLY", "application_notice", "supplier", [
         "공급기업", "수행기관", "서비스 제공자", "컨설팅분야 수행", "수행 관련 안내", "공급기업 추가모집",
+        "운영기관 모집", "운영기관 사업비", "수행기관 위탁비",
     ]),
     ("SELECTED_COMPANY_ONLY", "post_selection", "selected_company", [
         "선금신청", "정산", "협약", "결과보고", "중간점검", "기선정", "선정기업 대상",
     ]),
-    ("NOT_GRANT_NOTICE", "general_info", "unknown", ["산재예방요율제", "보험료율", "제도 안내"]),
+    # NOT_GRANT_NOTICE: 지원사업이 아닌 제도·요율·안내성 게시. soft/hard 분리는 _split_exclusion_hits.
+    # 키워드 출처: var/state/notice_versions 제목 히스토리(공시송달 53·제도안내 2 등) + 기존 규칙.
+    # 잡공고(결과·채용·총회 등)는 REPORT_JUNK, 행정고지는 ADMIN_NOISE 로 분리.
+    ("NOT_GRANT_NOTICE", "general_info", "unknown", [
+        "산재예방요율제", "보험료율", "제도 안내", "요율 변경", "요율변경",
+        "수수료 안내", "수수료안내", "제도 개편", "제도개편", "규정 개정", "규정개정",
+        "운영 안내", "이용 안내", "사이트 안내",
+        "공시송달", "결정통지", "정보부존재", "과태료 전자고지", "전자고지 서비스",
+        "대출 제도 안내", "온렌딩 대출",
+    ]),
 ]
+
+# 제목 앵커: '교육참여기업모집'처럼 공백 없이 붙어도 교육 모집으로 본다.
+_EDUCATION_RECRUIT_TITLE_RE = re.compile(
+    r"교육\s*참여\s*기업\s*모집|교육생\s*모집|수강생\s*모집|교육\s*과정\s*모집"
+)
+
+# 설명회가 '모집 본체'인 제목(설명회 참여기업 모집 등) → 본문 추천 제외·review 분리(hard 제외 아님).
+_INFO_SESSION_AS_RECRUIT_RE = re.compile(
+    r"(?:사업|투자\s*유치)?설명회\s*(?:개최\s*)?(?:참여자|참여기업|참가기업|참석자|참가)\s*모집|"
+    r"설명회\s*참여기업\s*모집|"
+    r"모집\s*설명회"
+)
+# 실모집 본체 + 부대 설명회(모집 및 설명회 / 설명회 일정 추가) → soft 통과 유지.
+_INFO_SESSION_SECONDARY_RE = re.compile(
+    r"모집\s*및\s*설명회|설명회\s*일정\s*(?:추가|안내)"
+)
+
+# 애매 비지원(부분일치로 hard 금지하되 본문 추천에서 분리해 review로 보냄).
+_AMBIGUOUS_GRANT_OK = ("지원사업", "바우처", "지원금", "보조금", "사업화", "융자", "정책자금")
 
 # ── 위원(개인 전문가) 위촉·모집 공고 제외 — 기업 지원사업이 아니다 ────────────────
 # '기획위원(후보자) 모집공고'(경남TP, 2026-07-24 그룹메일 오발송 실사례) 같은 공고를
@@ -574,6 +629,24 @@ def non_notice_reason(item: dict) -> str:
         path = parts.path.rstrip("/")
         if not path or re.fullmatch(r"/(?:index|main|home)(?:\.\w{2,5})?", path):
             return f"사이트 대문({host})"
+    return ""
+
+
+def ambiguous_notice_reason(item: dict) -> str:
+    """hard 제외하기엔 반례가 있으나 본문 추천에 넣기엔 애매한 제목 → review 분리 근거.
+
+    - 정보공개+모집/공고: 정적 메뉴 오수집·모니터링단류와 진짜 '환경정보공개 지원사업'이 섞임
+      → 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE.
+    - 모니터링단: 기업 현금지원 확률 낮음 → review(완전 hard REPORT_JUNK 아님).
+    """
+    title = norm(item.get("title", ""))
+    if not title:
+        return ""
+    if "모니터링단" in title:
+        return "모니터링단"
+    if "정보공개" in title and any(tok in title for tok in ("모집", "공고")):
+        if not any(ok in title for ok in _AMBIGUOUS_GRANT_OK):
+            return "정보공개"
     return ""
 
 REGION_EXCLUDE_PHRASES = [
@@ -851,22 +924,116 @@ def _latest_date_from_text(value: str):
 
 
 def _classify_notice_change(before: dict, after: dict) -> str:
-    if "재공고" in str(after.get("title") or "") and "재공고" not in str(before.get("title") or ""):
-        return "REANNOUNCED"
+    """P1-5: 공고 변경 유형을 세분화하여 판정한다.
+
+    반환: DEADLINE_EXTENDED / TARGET_CHANGED / SUPPORT_AMOUNT_CHANGED /
+          APPLICATION_URL_CHANGED / REANNOUNCEMENT / ADDITIONAL_RECRUITMENT /
+          MINOR_TEXT_CHANGE / UPDATED
+    """
+    after_title = str(after.get("title") or "")
+    before_title = str(before.get("title") or "")
+
+    # 재공고 감지
+    if "재공고" in after_title and "재공고" not in before_title:
+        return "REANNOUNCEMENT"
+
+    # 추가 모집 감지
+    if any(term in after_title for term in ("추가모집", "추가 모집", "2차 모집", "2차모집")):
+        if not any(term in before_title for term in ("추가모집", "추가 모집", "2차 모집", "2차모집")):
+            return "ADDITIONAL_RECRUITMENT"
+
+    # 마감 연장 감지
     old_deadline = _latest_date_from_text(str(before.get("application_period") or before.get("deadline") or ""))
     new_deadline = _latest_date_from_text(str(after.get("application_period") or after.get("deadline") or ""))
     if new_deadline and (old_deadline is None or new_deadline > old_deadline):
-        return "EXTENDED"
-    return "UPDATED"
+        return "DEADLINE_EXTENDED"
+
+    # 지원대상 변경 감지
+    # Live classify passes snapshots from `_notice_version_snapshot` (key: target),
+    # while unit helpers may still feed raw items (key: target_field). Accept both.
+    old_target = str(before.get("target") or before.get("target_field") or "")
+    new_target = str(after.get("target") or after.get("target_field") or "")
+    if old_target and new_target and old_target != new_target:
+        return "TARGET_CHANGED"
+
+    # 신청 URL 변경 감지 (snapshot/raw 모두 link 키 사용; 없으면 url 폴백)
+    old_url = str(before.get("link") or before.get("url") or "")
+    new_url = str(after.get("link") or after.get("url") or "")
+    if old_url and new_url and old_url != new_url:
+        return "APPLICATION_URL_CHANGED"
+
+    # 기본: 텍스트 변경
+    return "MINOR_TEXT_CHANGE"
+
+
+def merge_notice_fields(canonical: dict, new_item: dict) -> dict:
+    """P1-6: 여러 출처의 공고 정보를 병합한다.
+
+    우선순위:
+    - 대표 제목: 주관기관 공식 제목 (is_aggregator=False 우선)
+    - 공식 공고문: 주관기관 URL
+    - 신청 링크: 실제 공식 신청 URL
+    - 지원대상: 최신·신뢰도 높은 구조화 필드
+    - 접수기간: 최신 수정공고 기준
+    - 추가 출처: 기업마당, K-Startup, 지역기관 등
+    """
+    result = {**canonical}
+
+    # 출처 우선순위: 주관기관 > K-Startup > 기업마당 > 기타
+    SOURCE_PRIORITY = {"kstartup": 1, "bizinfo": 2}
+
+    canonical_priority = SOURCE_PRIORITY.get(canonical.get("source"), 99)
+    new_priority = SOURCE_PRIORITY.get(new_item.get("source"), 99)
+
+    # 대표 제목: 주관기관 우선
+    if new_priority < canonical_priority:
+        result["title"] = new_item.get("title", result.get("title", ""))
+
+    # 신청 링크: 공식 신청 URL 우선
+    new_link = new_item.get("link", "")
+    if new_link and not result.get("link"):
+        result["link"] = new_link
+
+    # 지원대상: 최신 값 우선
+    new_target = new_item.get("target_field", "")
+    if new_target and len(new_target) > len(str(result.get("target_field", ""))):
+        result["target_field"] = new_target
+
+    # 접수기간: 최신 값 우선
+    new_period = new_item.get("application_period", "")
+    if new_period:
+        result["application_period"] = new_period
+
+    # 추가 출처 기록
+    sources = result.get("_additional_sources", [])
+    new_source = new_item.get("source", "")
+    if new_source and new_source not in sources:
+        sources.append(new_source)
+        result["_additional_sources"] = sources
+
+    return result
 
 
 def _detail_extraction_unreliable(item: dict) -> bool:
-    """상세 FETCH/PARSE 실패면 스냅샷이 불완전해 버전 재발송 근거로 쓰면 안 된다."""
+    """상세 FETCH/PARSE 실패·빈 마감 스냅샷은 버전 baseline 으로 쓰면 안 된다.
+
+    ``DETAIL_FETCH_FAILED`` / ``PARSE_FAILED`` 는 항상 unreliable.
+    enrich 가 ``SUCCESS`` 이어도 마감/접수기간이 비면 delivered_* 로 잠그지 않는다.
+    ``detail_extraction`` 자체가 없고 마감도 비어 있는 얇은 리스트-온리 행도 같다.
+    리스트에 마감이 이미 있으면 enrich 없이도 baseline 승격을 허용한다(실연장 감지).
+    """
     extraction = item.get("detail_extraction")
-    if not isinstance(extraction, dict):
-        return False
-    status = str(extraction.get("status") or "").strip().upper()
-    return status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}
+    if isinstance(extraction, dict):
+        status = str(extraction.get("status") or "").strip().upper()
+        if status in {"DETAIL_FETCH_FAILED", "PARSE_FAILED"}:
+            return True
+    deadline = str(resolve_item_deadline(item) or "").strip()
+    period = item.get("application_period") or {}
+    if isinstance(period, dict):
+        period_display = str(period.get("display") or "").strip()
+    else:
+        period_display = str(period or "").strip()
+    return not (deadline or period_display)
 
 
 def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:
@@ -885,7 +1052,13 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
         if iid not in seen_ids:
             version = max(1, int((previous or {}).get("version", 0) or 0))
             deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
-            updates[iid] = {**base, "version": version, "delivery_id": iid}
+            # NEW 첫 발송은 유지하되, FETCH/PARSE 실패 스냅샷은 delivered_* 로 잠그지 않는다.
+            # (얇은 baseline 이 승격되면 다음 정상 enrich 가 empty→filled 를 EXTENDED/UPDATED
+            #  로 오인해 허위 id@vN 재발송을 만든다 — seed 경로 unreliable 가드와 동일 유형.)
+            update = {**base, "version": version, "delivery_id": iid}
+            if _detail_extraction_unreliable(item):
+                update["unreliable_new"] = True
+            updates[iid] = update
             continue
         # 상세 FETCH/PARSE 실패 스냅샷은 seed 경로에서도 전달 확정본으로 승격하면 안 된다.
         # (seed_only 가 빈 delivered_* 를 심으면, 다음 정상 enrich 가 전 필드 "변경"으로
@@ -947,6 +1120,22 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             merged[iid] = record
             continue
         delivery_id = str(update.get("delivery_id") or iid)
+        if update.get("unreliable_new"):
+            # NEW 메일은 나갔을 수 있어도 실패 스냅샷은 delivered_* 로 승격하지 않는다.
+            # 다음 정상 enrich 가 not old_hash → seed_only 로 baseline 만 채운다(허위 @vN 방지).
+            if delivery_id in seen_ids:
+                record.update({
+                    "version": int(update.get("version", record.get("version", 1)) or 1),
+                    "delivery_id": delivery_id,
+                    "change_type": "NEW",
+                    "pending_delivery_id": "",
+                    "last_delivered_at": now.isoformat(),
+                })
+            else:
+                record["version"] = int(update.get("version", record.get("version", 1)) or 1)
+                record["delivery_id"] = delivery_id
+            merged[iid] = record
+            continue
         if update.get("seed_only") or delivery_id in seen_ids:
             record.update({
                 "version": int(update.get("version", record.get("version", 1)) or 1),
@@ -966,6 +1155,58 @@ def normalize_title(title: str) -> str:
     """중복 판별용 제목 정규화: 소문자 + 특수문자/공백 제거"""
     t = unicodedata.normalize("NFKC", title.lower())
     return re.sub(r"[\s\W]+", "", t)
+
+
+def safe_normalize_title(title: str) -> str:
+    """P1-4: 의미 정보를 보존하는 안전한 제목 정규화.
+
+    보존: 연도, 지역, 모집차수, 재공고, 추가모집, 수정공고
+    제거: 중복 공백, 특수문자, 괄호, 구분기호, URL 파라미터
+    """
+    t = unicodedata.normalize("NFKC", title)
+    # 소문자 변환 (한글은 영향 없음)
+    t = t.lower()
+    # 중복 공백 → 단일 공백
+    t = re.sub(r"\s+", " ", t)
+    # 괄호·구분기호 정규화
+    t = re.sub(r"[()\[\]{}<>「」『』【】]", " ", t)
+    # 중복 구분기호 제거
+    t = re.sub(r"[·•∙‧]", "·", t)
+    # URL 추적 파라미터 제거
+    t = re.sub(r"[?&][\w=&]+", "", t)
+    # 앞뒤 공백 제거
+    return t.strip()
+
+
+def generate_canonical_notice_id(item: dict) -> str:
+    """P1-2: 크로스 소스 통합 ID 생성.
+
+    동일 공고를 다른 소스에서 가져왔을 때 하나로 묶기 위한 ID.
+    우선순위: 공고번호 > URL > 제목+기관+연도+마감
+    """
+    # 1. 공식 공고번호가 있으면 그것으로 통합
+    notice_id = item.get("notice_id") or item.get("pbln_id") or ""
+    if notice_id:
+        return f"canon_{notice_id}"
+
+    # 2. 공식 URL이 있으면 그것으로 통합
+    link = item.get("link") or ""
+    if link:
+        # URL 정규화 (프로토콜, www, 트래커 제거)
+        norm_link = re.sub(r"^https?://(www\.)?", "", link.lower())
+        norm_link = re.sub(r"[?&][\w=&]+", "", norm_link)
+        if norm_link:
+            return f"canon_url_{hashlib.md5(norm_link.encode()).hexdigest()[:12]}"
+
+    # 3. 제목+기관+연도+마감으로 해시
+    title = safe_normalize_title(item.get("title", ""))
+    org = (item.get("author") or item.get("organizer_field") or "").strip()
+    deadline = (item.get("deadline") or "").strip()
+    # 연도 추출
+    year_match = re.search(r"(20\d{2})", title)
+    year = year_match.group(1) if year_match else ""
+    composite = f"{title}|{org}|{year}|{deadline}"
+    return f"canon_{hashlib.md5(composite.encode()).hexdigest()[:12]}"
 
 
 # 게시판 목록 제목 꼬리의 아이콘 대체텍스트 — 앵커 안에 첨부/새글 아이콘이 같이 들어있어
@@ -1754,7 +1995,25 @@ def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
 
 #: 오전/오후 발송 회차를 가르는 KST 시각. 예약(07:30·18:30 KST)보다 넉넉히 뒤에 둬서
 #: GitHub Actions 예약 지연(실측 최대 ~1시간)에도 회차 판정이 흔들리지 않게 한다.
+#: 단, 스케줄/수동 실행은 `MONITOR_DELIVERY_SLOT=am|pm` 으로 회차를 고정하는 편이 안전하다
+#: (벽시계만 쓰면 14:00 이후 도착·오후 따라잡기가 `#pm` 키를 저녁 cron 과 공유한다).
 DELIVERY_PM_CUTOFF_HOUR = 14
+
+
+def delivery_slot(now: datetime | None = None) -> str:
+    """발송 회차(`am`/`pm`). `MONITOR_DELIVERY_SLOT` 이 am|pm 이면 벽시계보다 우선.
+
+    벽시계(`DELIVERY_PM_CUTOFF_HOUR`)만 쓰면 다음이 저녁 digest 를 통째로 스킵한다:
+      1) 오전 cron 실패 후 14:00 KST 이후 workflow_dispatch 가 `#pm` 체크포인트 기록
+      2) 오전 cron 이 14:00 이후로 지연 도착해 `#pm` 기록
+      → 18:30 KST 저녁 cron 도 `#pm` → skip_gate already_delivered.
+    GHA `monitor.yml` 은 cron/입력으로 회차를 명시한다.
+    """
+    forced = str(os.environ.get("MONITOR_DELIVERY_SLOT", "")).strip().lower()
+    if forced in {"am", "pm"}:
+        return forced
+    dt = now or datetime.now(KST)
+    return "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
 
 
 def delivery_cycle_date(now: datetime | None = None) -> str:
@@ -1774,10 +2033,10 @@ def delivery_cycle_date(now: datetime | None = None) -> str:
       실행 당일을 쓰면 하루에 정확히 한 세트가 되어 같은 날 재실행은 계속 멱등으로
       막히고(주말 재실행 2h+ 낭비 방지 의도 유지), 설정 변경이 미래 발송을 막지 못한다.
     날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
+    회차는 `delivery_slot()` — 환경변수 고정값 우선, 없으면 벽시계.
     """
     dt = now or datetime.now(KST)
-    slot = "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
-    return f"{dt.date()}#{slot}"
+    return f"{dt.date()}#{delivery_slot(dt)}"
 
 
 def select_text(root: Any, selector: str) -> str:
@@ -1854,7 +2113,7 @@ def load_settings() -> dict:
         #   strict=제외(검토대기) / recall=신청키워드·마감 살아있는 것만 포함 / all=전부 포함
         #   None이면 legacy include_date_unknown 으로 결정(True→all, False→strict).
         "date_unknown_policy": None,
-        # 원문 저장(PC 로컬): docs/RAW_STORE.md
+        # 원문 저장(PC 로컬): docs/analysis/RAW_STORE.md
         "raw_store_enabled": False,
         "raw_store_retention_days": 30,
         "raw_store_max_detail_bytes": 800_000,
@@ -3688,6 +3947,76 @@ def fetch_hanyang_startup(site: dict) -> list[dict]:
     return items
 
 
+# ── 스타트업플러스(서울시 통합 창업 플랫폼) ───────────────────────────────────
+def _startup_plus_date(raw: str) -> str:
+  """API 날짜('2026-08-10 09:00:00.0') → YYYY-MM-DD."""
+  raw = norm(raw)
+  return raw[:10] if len(raw) >= 10 else ""
+
+
+def fetch_startup_plus(site: dict) -> list[dict]:
+    """스타트업플러스 지원사업 목록 수집.
+
+    startup-plus.kr/project 는 Vue/jQuery SPA 라 정적 HTML 에 목록이 없다.
+    목록은 JSON API `/api/project/list?size=N&page=P`(page 는 0-base) 가
+    {data:{contents:[{projectCode,projectName,receiptBeginDate,...}]}} 로 응답한다.
+    상세 링크는 `/project/{projectCode}` 로 합성한다.
+    """
+    base = "https://www.startup-plus.kr"
+    api = f"{base}/api/project/list"
+    headers = {**HTTP_HEADERS, "Referer": site.get("url", f"{base}/project"),
+               "Accept": "application/json,*/*"}
+    agg = site.get("is_aggregator", False)
+    try:
+        max_pages = max(1, int(site.get("max_pages", 3)))
+    except (TypeError, ValueError):
+        max_pages = 3
+    try:
+        page_size = max(1, min(100, int(site.get("page_size", 50))))
+    except (TypeError, ValueError):
+        page_size = 50
+    items: list[dict] = []
+    seen: set[str] = set()
+    try:
+        with httpx.Client(timeout=30, headers=headers, follow_redirects=True,
+                          verify=False) as c:
+            for page_no in range(max_pages):
+                r = c.get(api, params={"size": page_size, "page": page_no})
+                r.raise_for_status()
+                payload = r.json()
+                rows = (payload.get("data") or {}).get("contents") or []
+                if not rows:
+                    break
+                for row in rows:
+                    code = norm(row.get("projectCode", ""))
+                    title = norm(row.get("projectName", ""))
+                    if not code or not title or code in seen:
+                        continue
+                    seen.add(code)
+                    link = f"{base}/project/{code}"
+                    posted = _startup_plus_date(row.get("receiptBeginDate", ""))
+                    if not posted:
+                        posted = _startup_plus_date(row.get("createDateTime", ""))
+                    deadline = _startup_plus_date(row.get("receiptEndDate", ""))
+                    author = norm(row.get("organizationName", ""))
+                    cat = norm((row.get("businessCategory") or {}).get("name", ""))
+                    portal = norm(row.get("portalName", ""))
+                    desc_parts = []
+                    if cat:
+                        desc_parts.append(f"[{cat}]")
+                    if portal:
+                        desc_parts.append(portal)
+                    desc = " ".join(desc_parts)
+                    items.append(_item(f"{site['id']}_{code}", title, link,
+                                       author or "스타트업플러스", desc, deadline,
+                                       site["name"], posted, agg))
+    except Exception as e:
+        log.error("%s API 실패: %s", site.get("name", "스타트업플러스"), e)
+        raise RuntimeError(f"{site.get('name', '스타트업플러스')} 수집 실패 (API)")
+    log.info("%s: %d건", site["name"], len(items))
+    return items
+
+
 FETCHERS = {
     "bizinfo_api":        fetch_bizinfo,
     "myfair_html":        fetch_myfair,
@@ -3697,6 +4026,7 @@ FETCHERS = {
     "smtech_html":        fetch_smtech,
     "tipa_html":          fetch_tipa,
     "hanyang_startup_api": fetch_hanyang_startup,
+    "startup_plus_api":    fetch_startup_plus,
     "kocca_pims":         fetch_kocca_pims,
     "kocca_bbs":          fetch_kocca_bbs,
     "gtp_html":           fetch_gtp,
@@ -3886,8 +4216,17 @@ def validate_recipients(recipients: list[str]) -> dict[str, list[str]]:
     }
 
 
-def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
-    """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트."""
+def fetch_all(
+    sites: list[dict],
+    max_workers: int = 8,
+    *,
+    outcomes: dict[str, dict] | None = None,
+) -> list[dict]:
+    """병렬 수집 (ThreadPoolExecutor). playwright 포함 전체 사이트.
+
+    outcomes: optional collector — source id → {success, item_count, error}.
+    When omitted, behavior matches the historical list-only API (call-site compatible).
+    """
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
     result: list[dict] = []
@@ -3902,10 +4241,17 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
         futures = {pool.submit(_fetch, s): s for s in sites}
         for f in as_completed(futures):
+            site = futures[f]
+            sid = str(site.get("id") or site.get("name") or "unknown")
             try:
-                result.extend(f.result())
+                items = f.result()
+                result.extend(items)
+                if outcomes is not None:
+                    outcomes[sid] = {"success": True, "item_count": len(items), "error": None}
             except Exception as e:
-                log.error("수집 실패 (%s): %s", futures[f].get("name"), e)
+                log.error("수집 실패 (%s): %s", site.get("name"), e)
+                if outcomes is not None:
+                    outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
     return result
 
 
@@ -3913,38 +4259,26 @@ def fetch_all(sites: list[dict], max_workers: int = 8) -> list[dict]:
 # 중복 제거 (주관기관 우선)
 # ══════════════════════════════════════════════════════════════════
 
-def _extract_notice_number(text: str) -> str:
-    """공고번호 추출 (예: '중소벤처기업부 공고 제2026-123호' → '2026-123')."""
-    m = re.search(r"제?\s*(\d{4})\s*[-–]\s*(\d+)\s*호", str(text or ""))
-    return f"{m.group(1)}-{m.group(2)}" if m else ""
-
-
-def _canonical_key(item: dict) -> str | None:
-    """교차 사이트 통합 공고 ID용 키 생성. 없으면 None."""
-    # 1순위: 공식 공고번호
-    num = _extract_notice_number(item.get("title", "")) or _extract_notice_number(item.get("description", ""))
-    if num:
-        return f"num:{num}"
-    # 2순위: 원문 URL (신청 링크가 아닌 공고 원문)
-    link = norm(item.get("link", ""))
-    if link and len(link) > 20:
-        return f"link:{link}"
-    # 3순위: 신청 URL
-    app_url = norm(item.get("application_url", ""))
-    if app_url and len(app_url) > 20:
-        return f"app:{app_url}"
-    return None
-
-
-def dedup_items(items: list[dict]) -> list[dict]:
+def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
     두 제목의 정규화 결과가 동일하거나, 짧은 쪽이 긴 쪽에 포함되면 중복으로 판정.
-    P1: 공고번호·URL 기반 교차 사이트 중복 제거 + 통합 공고 ID(canonical_id) 부여.
+
+    P1-2: canonical_notice_id 기반 크로스소스 중복 제거 추가.
+    - 공고번호/URL/제목+기관으로 canonical ID 생성
+    - 동일 canonical ID면 동일 공고로 판정
+
+    P2-A: 첨부파일 해시 기반 중복 보조
+
+    _stats: 선택적 collector — dedup 원인별 제거 건수를 기록한다.
+        duplicate_removed_total, same_source_duplicate_removed,
+        cross_source_duplicate_removed, attachment_duplicate_removed
     """
     kept: list[dict] = []
     norm_map: dict[str, dict] = {}  # normalized_title → kept item
-    canonical_map: dict[str, dict] = {}  # canonical_key → kept item
+    canonical_map: dict[str, dict] = {}  # canonical_notice_id → kept item
+    attachment_map: dict[str, dict] = {}  # notice_signature_hash → kept item
+    _s_title = _s_canonical = _s_attach = _s_replaced = 0  # dedup 원인별 카운터
 
     def similarity_key(title: str) -> str:
         return normalize_title(title)
@@ -3956,41 +4290,69 @@ def dedup_items(items: list[dict]) -> list[dict]:
         short, long = (a_key, b_key) if len(a_key) <= len(b_key) else (b_key, a_key)
         return len(short) >= 10 and short in long
 
+    def notice_signature_hash(item: dict) -> str:
+        """메타데이터 기반 공고 시그니처 해시 (link+title+deadline). 실제 첨부파일 content hash가 아님."""
+        parts = [item.get("link", ""), item.get("title", ""), str(item.get("deadline", ""))]
+        composite = "|".join(p for p in parts if p)
+        return hashlib.md5(composite.encode()).hexdigest()[:16] if composite else ""
+
     for item in items:
         key = similarity_key(item["title"])
         if not key:
             kept.append(item)
             continue
 
-        # P1: 공고번호·URL 기반 중복 먼저 확인
-        canon_key = _canonical_key(item)
-        if canon_key and canon_key in canonical_map:
-            existing = canonical_map[canon_key]
-            if not item["is_aggregator"] and existing["is_aggregator"]:
-                kept.remove(existing)
-                kept.append(item)
-                # canonical_map 업데이트
-                canonical_map[canon_key] = item
-                old_key = similarity_key(existing["title"])
-                if old_key in norm_map and norm_map[old_key] is existing:
-                    del norm_map[old_key]
-                norm_map[key] = item
-                log.info("통합중복(번호/URL): '%s' (%s) → '%s' (%s) 로 교체",
-                         existing["source"], existing["title"][:20],
-                         item["source"], item["title"][:20])
-            else:
-                log.info("통합중복(번호/URL): '%s' 유지, '%s' 제거 (%s)",
-                         existing["title"][:20], item["title"][:20], item["source"])
-            continue
+        # P1-2: canonical ID 기반 중복 체크
+        canonical_id = generate_canonical_notice_id(item)
+        item["_canonical_notice_id"] = canonical_id
+
+        # P2-A: 메타데이터 시그니처 해시 기반 중복 체크
+        att_hash = notice_signature_hash(item)
+        item["_notice_signature_hash"] = att_hash
 
         dup_key = next((k for k in norm_map if is_duplicate(key, k)), None)
 
         if dup_key is None:
-            # 신규
-            norm_map[key] = item
-            kept.append(item)
-            if canon_key:
-                canonical_map[canon_key] = item
+            # 신규 — canonical ID도 체크
+            if canonical_id in canonical_map:
+                existing = canonical_map[canonical_id]
+                # 주관기관 우선
+                if not item["is_aggregator"] and existing["is_aggregator"]:
+                    kept.remove(existing)
+                    kept.append(item)
+                    del norm_map[similarity_key(existing["title"])]
+                    norm_map[key] = item
+                    canonical_map[canonical_id] = item
+                    _s_replaced += 1
+                    log.info("크로스소스중복: '%s' (%s) → '%s' (%s) 로 교체 (canonical: %s)",
+                             existing["source"], existing["title"][:20],
+                             item["source"], item["title"][:20], canonical_id)
+                else:
+                    _s_canonical += 1
+                    log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
+                             existing["title"][:20], item["title"][:20], canonical_id)
+            # P2-A: 첨부파일 해시로도 체크
+            elif att_hash and att_hash in attachment_map:
+                existing = attachment_map[att_hash]
+                if not item["is_aggregator"] and existing["is_aggregator"]:
+                    kept.remove(existing)
+                    kept.append(item)
+                    del norm_map[similarity_key(existing["title"])]
+                    norm_map[key] = item
+                    attachment_map[att_hash] = item
+                    _s_replaced += 1
+                    log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
+                             existing["title"][:20], item["title"][:20], att_hash)
+                else:
+                    _s_attach += 1
+                    log.info("첨부중복: '%s' 유지, '%s' 제거 (hash: %s)",
+                             existing["title"][:20], item["title"][:20], att_hash)
+            else:
+                norm_map[key] = item
+                canonical_map[canonical_id] = item
+                if att_hash:
+                    attachment_map[att_hash] = item
+                kept.append(item)
         else:
             existing = norm_map[dup_key]
             # 현재 아이템이 주관기관이고 기존이 집계처이면 교체
@@ -3999,25 +4361,142 @@ def dedup_items(items: list[dict]) -> list[dict]:
                 kept.append(item)
                 del norm_map[dup_key]
                 norm_map[key] = item
-                if canon_key:
-                    canonical_map[canon_key] = item
+                # canonical map도 업데이트
+                old_canonical = existing.get("_canonical_notice_id")
+                if old_canonical and old_canonical in canonical_map:
+                    del canonical_map[old_canonical]
+                canonical_map[canonical_id] = item
+                # attachment map도 업데이트
+                old_att = existing.get("_notice_signature_hash")
+                if old_att and old_att in attachment_map:
+                    del attachment_map[old_att]
+                if att_hash:
+                    attachment_map[att_hash] = item
+                _s_replaced += 1
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
             else:
+                _s_title += 1
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
 
-    # P1: 통합 공고 ID(canonical_id) 부여
+    # P2-D: 소스별 고유 공고 기여도 통계 계산
+    source_stats: dict[str, dict] = {}
     for item in kept:
-        canon_key = _canonical_key(item)
-        if canon_key:
-            item["canonical_id"] = canon_key
-        else:
-            item["canonical_id"] = f"title:{normalize_title(item['title'])[:40]}"
+        sid = str(item.get("source") or "unknown")
+        if sid not in source_stats:
+            source_stats[sid] = {"total": 0, "unique": 0}
+        source_stats[sid]["total"] += 1
+        # canonical ID가 이 소스에서 처음 나온 것만 unique로 카운트
+        cid = item.get("_canonical_notice_id", "")
+        if cid and canonical_map.get(cid, {}).get("source") == sid:
+            source_stats[sid]["unique"] += 1
+
+    # dedup 원인별 통계 전달 (source_stats 계산 이후에만 export)
+    if _stats is not None:
+        _stats["same_source_duplicate_removed"] = _s_title
+        _stats["cross_source_duplicate_removed"] = _s_canonical
+        _stats["attachment_duplicate_removed"] = _s_attach
+        _stats["duplicate_replaced"] = _s_replaced
+        _stats["duplicate_removed_total"] = _s_title + _s_canonical + _s_attach
+        _stats["source_contribution"] = source_stats
 
     log.info("중복제거: %d건 → %d건", len(items), len(kept))
+    for sid, src_stat in sorted(source_stats.items()):
+        log.info("  소스 %s: 총 %d건, 고유 %d건", sid, src_stat["total"], src_stat["unique"])
+
     return kept
+
+
+def detect_possible_duplicates(items: list[dict]) -> list[dict]:
+    """P2-3: 유사하지만 확정 중복은 아닌 공고를 POSSIBLE_DUPLICATE로 표시한다.
+
+    자동 merge하지 않고 상태만 표시하여 사람이 검토할 수 있게 한다.
+    버킷 프리필터로 O(n²) 비교량을 줄인다: year+token-prefix 버킷.
+    """
+    SIMILARITY_THRESHOLD = 0.70
+
+    def _title_key(title: str) -> str:
+        t = unicodedata.normalize("NFKC", title).lower()
+        t = re.sub(r"\s+", " ", t).strip()
+        return t
+
+    def _similarity(a: str, b: str) -> float:
+        if not a or not b:
+            return 0.0
+        set_a = set(a.split())
+        set_b = set(b.split())
+        if not set_a or not set_b:
+            return 0.0
+        intersection = len(set_a & set_b)
+        union = len(set_a | set_b)
+        return intersection / union if union > 0 else 0.0
+
+    # 프리컴퓨트: title_key, year, token set
+    pre: list[tuple[dict, str, str, set[str]]] = []
+    for item in items:
+        tk = _title_key(item.get("title", ""))
+        if len(tk) < 5:
+            continue
+        year_m = re.search(r"(20\d{2})", tk)
+        year = year_m.group(1) if year_m else ""
+        tokens = set(tk.split())
+        pre.append((item, tk, year, tokens))
+
+    # 버킷: (year, token) — 같은 연도 + 공유 토큰이 있는 그룹끼리만 비교.
+    # 연도 없는 제목은 연도 있는 동일 토큰 공고와도 비교해야 재현율이 떨어지지 않는다.
+    from collections import defaultdict
+    years_seen = {year for (_item, _tk, year, _tokens) in pre if year}
+    buckets: dict[tuple[str, str], list[int]] = defaultdict(list)
+    for idx, (_item, _tk, year, tokens) in enumerate(pre):
+        year_keys = {year} if year else (years_seen | {"_noyear"})
+        sorted_toks = sorted(tokens, key=len, reverse=True)[:3]
+        for y in year_keys:
+            for tok in sorted_toks:
+                if len(tok) >= 2:
+                    buckets[(y, tok)].append(idx)
+
+    # 버킷 내에서만 쌍 비교
+    seen_pairs: set[tuple[int, int]] = set()
+    for bucket_indices in buckets.values():
+        for ii in range(len(bucket_indices)):
+            for jj in range(ii + 1, len(bucket_indices)):
+                i, j = bucket_indices[ii], bucket_indices[jj]
+                if i >= j:
+                    continue
+                pair = (i, j)
+                if pair in seen_pairs:
+                    continue
+                seen_pairs.add(pair)
+
+                item_a, title_a, year_a, tokens_a = pre[i]
+                item_b, title_b, year_b, tokens_b = pre[j]
+
+                # 이미 확정 중복이면 건너뛰기
+                cid_a = item_a.get("_canonical_notice_id")
+                cid_b = item_b.get("_canonical_notice_id")
+                if cid_a and cid_b and cid_a == cid_b:
+                    continue
+
+                # 연도가 다르면 별도 공고
+                if year_a and year_b and year_a != year_b:
+                    continue
+
+                # 유사도 계산 (프리컴퓨트된 토큰셋 사용)
+                if not tokens_a or not tokens_b:
+                    continue
+                intersection = len(tokens_a & tokens_b)
+                union = len(tokens_a | tokens_b)
+                ratio = intersection / union if union > 0 else 0.0
+
+                if ratio >= SIMILARITY_THRESHOLD:
+                    item_a["_possible_duplicate"] = True
+                    item_a.setdefault("_possible_duplicate_with", []).append(item_b.get("id", ""))
+                    item_b["_possible_duplicate"] = True
+                    item_b.setdefault("_possible_duplicate_with", []).append(item_a.get("id", ""))
+
+    return items
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -4084,7 +4563,9 @@ def assess_date_unknown_risk(item: dict) -> str:
     except Exception:
         pass
     text = _notice_body_text(item)
-    if any(kw in text for kw in APPLICATION_KEYWORDS):
+    # APPLICATION_KEYWORDS 만 보면 '모집' 단독 제목이 낮음으로 떨어져 recall 누락이 난다.
+    # evaluate_notice 의 application_like 와 같은 기준으로 중/고 위험을 판정한다.
+    if _application_like(text):
         if item.get("link") and any(h in item["link"] for h in DETAIL_ENRICH_HOSTS):
             return "높음"
         return "중간"
@@ -4198,13 +4679,20 @@ def _notice_body_text(item: dict) -> str:
 
 
 def _keyword_match_text(item: dict) -> str:
-    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상 필드 포함, 주관기관명 제외."""
+    """그룹 키워드(AI·SaaS 등) 매칭용 — 지원분야·대상·카테고리 포함, 주관기관명 제외."""
     parts = [
         item.get("title", ""),
         item.get("description", ""),
         item.get("support_field", ""),
         item.get("target_field", ""),
+        item.get("category", ""),
     ]
+    for key in ("hashtags", "tags", "hashTags"):
+        val = item.get(key)
+        if isinstance(val, (list, tuple)):
+            parts.extend(str(x) for x in val if x)
+        elif val:
+            parts.append(str(val))
     try:
         from mail_core.matching.core_sources import keyword_extra_parts
         parts.extend(keyword_extra_parts(item))
@@ -4224,6 +4712,61 @@ def _application_like(text: str) -> bool:
 
 _SUPPLIER_ROLE_TERMS = ("공급기업", "수행기관", "서비스 제공자")
 _DEMAND_ROLE_TERMS = ("수요기업", "참여기업", "신청 기업", "지원기업", "제조기업", "중소기업")
+_OPERATOR_ROLE_TERMS = ("운영기관", "운영기관 모집", "주관기관 모집", "수행기관 모집", "위탁기관")
+_BENEFICIARY_ROLE_TERMS = ("수혜자", "수혜기업", "지원대상", "지원 받는")
+
+
+def extract_target_roles(item: dict) -> dict[str, bool]:
+    """P0-9: 공고에서 신청자/모집대상/수혜자/운영자 역할을 추출한다.
+
+    반환: {is_applicant, is_recruitment_target, is_beneficiary, is_operator}
+    """
+    title = norm(item.get("title", "")).lower()
+    target_field = norm(item.get("target_field", "")).lower()
+    description = norm(item.get("description", "")).lower()
+    text = f"{title} {target_field} {description}"
+
+    # 운영자 모집 감지: "운영기관 모집", "수행기관 모집" 등
+    is_operator = any(term in text for term in _OPERATOR_ROLE_TERMS)
+    # 신청자가 운영자인지 확인: "운영기관 모집"이 제목에 있으면 운영자 모집
+    operator_in_title = any(term in title for term in _OPERATOR_ROLE_TERMS)
+
+    # 수요기업(신청자) 신호
+    is_demand = any(term in text for term in _DEMAND_ROLE_TERMS)
+    # 공급기업(수행자) 신호
+    is_supplier = any(term in text for term in _SUPPLIER_ROLE_TERMS)
+
+    # 최종 판정
+    # "예비창업자를 지원할 운영기관 모집" → is_operator=True, is_applicant=False
+    # "예비창업자 모집" → is_operator=False, is_applicant=True
+    if operator_in_title and not is_demand:
+        return {
+            "is_applicant": False,
+            "is_recruitment_target": False,
+            "is_beneficiary": True,  # 수혜자는 예비창업자
+            "is_operator": True,
+        }
+    if is_demand and not is_supplier:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    if is_supplier and is_demand:
+        return {
+            "is_applicant": True,
+            "is_recruitment_target": True,
+            "is_beneficiary": True,
+            "is_operator": False,
+        }
+    # 기본값: 신청자로 간주
+    return {
+        "is_applicant": True,
+        "is_recruitment_target": True,
+        "is_beneficiary": True,
+        "is_operator": False,
+    }
 
 
 def _mixed_target_roles(item: dict) -> bool:
@@ -4256,13 +4799,26 @@ def _split_exclusion_hits(item: dict, code: str, hits: list[str]) -> tuple[list[
     제외 단어가 제목에 있거나 제목이 모집 공고가 아니면 기존처럼 hard다.
     반대로 제목이 명백한 모집 공고인데 본문에만 교육·설명회·지침 등이 있으면
     부대 일정/유의사항일 수 있으므로 soft 근거로 남기고 공고 전체를 버리지 않는다.
+
+    INFO_SESSION / EDUCATION_ONLY 특수: 제목에 설명회·교육일정이 있어도
+    동시에 실모집 신호(모집/신청/공모 등)가 있으면 soft — '모집 및 설명회' 실공고 보존.
+    단, 제목이 교육참여기업모집·교육생 모집처럼 교육 모집 자체면 hard 유지.
+    설명회 참여기업 모집처럼 설명회가 모집 본체면 soft로 두되, evaluate_notice 가
+    INFO_SESSION_REVIEW 로 본문 추천에서 분리한다(hard INFO_SESSION 아님).
     """
     if not hits:
         return [], []
     title = norm(item.get("title", "")).lower()
     if code == "SUPPLIER_ONLY" and _mixed_target_roles(item):
         return [], list(hits)
-    if any(hit in title for hit in hits):
+    title_hit = any(hit in title for hit in hits)
+    if code in {"INFO_SESSION", "EDUCATION_ONLY"} and _active_application_title(title):
+        # 교육 모집 전용 제목은 soft 완화 대상이 아니다.
+        if code == "EDUCATION_ONLY" and _EDUCATION_RECRUIT_TITLE_RE.search(title):
+            return list(hits), []
+        # 제목·본문 모두 soft — 실모집 본체 + 부대 설명회/교육일정
+        return [], list(hits)
+    if title_hit:
         return list(hits), []
     if _active_application_title(title):
         return [], list(hits)
@@ -4306,11 +4862,36 @@ def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> li
     return _unique(matches)
 
 
+def _group_priority_hits(item: dict, group: dict | None) -> list[str]:
+    """전역 PRIORITY_KEYWORD_ALIASES + 그룹 priority_keywords 합집합.
+
+    - 전역: 사업화지원금·바우처·스마트공장 등 공통 최우선
+    - 그룹: groups.json 업종별 우선어(예: bnco K-뷰티·디자인)
+    메일 '우선 추천'과 점수/LLM이 같은 그룹 맥락을 쓰게 한다.
+    """
+    body = _notice_text(item)
+    kw_text = _keyword_match_text(item)
+    hits = _find_keyword_aliases(body, PRIORITY_KEYWORD_ALIASES)
+    for kw in (group or {}).get("priority_keywords") or []:
+        raw = str(kw or "").strip()
+        if not raw:
+            continue
+        if _kw_in_text(kw_text, raw.lower()) or _kw_in_text(body, raw.lower()):
+            hits.append(raw)
+    return _unique(hits)
+
+
 def classify_deadline_status(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     text = _notice_text(item)
-    if any(term in text for term in OPEN_DEADLINE_TERMS):
-        return "open"
+    # P0-15: ALWAYS_OPEN / UNTIL_BUDGET_EXHAUSTED 세분화
+    if any(term in text for term in ("상시접수", "수시접수", "상시모집", "수시모집", "수시 모집", "연중수시", "연중상시", "선착순")):
+        return "always_open"
+    if any(term in text for term in ("예산 소진 시까지", "예산소진 시까지", "예산 소진시까지", "소진 시", "소진시")):
+        return "until_budget_exhausted"
+    # 마감연장 감지
+    if any(term in text for term in ("마감연장", "마감 연장", "연장공고", "연장 공고", "기한연장", "기한 연장")):
+        return "extended"
     body_text = _notice_body_text(item)
     period = item.get("application_period") or extract_application_period(body_text, _posted_date(item))
     if period.get("end"):
@@ -4573,6 +5154,14 @@ def _other_region_block(item: dict, own_meta: dict):
     return None
 
 
+def _metro_peer_districts(city: str, label: str) -> list[str]:
+    """광역 내 구·군 목록. 신청자 구가 있을 때 '타 구 전용' 차단에 쓴다."""
+    blob = f"{city or ''} {label or ''}".lower()
+    if "인천" in blob:
+        return list(INCHEON_DISTRICTS)
+    return []
+
+
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
@@ -4621,6 +5210,15 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
         short_d = d.replace("시", "").replace("군", "").replace("구", "")
         if d.lower() in app_text or (short_d and short_d.lower() in app_text):
             district_hits.append(d)
+
+    # 동일 광역 내 타 구·군만 명시(우리 구 미포함) → not_eligible.
+    # classify_region(인천·남동구)의 '부평구 전용 차단'과 같은 정밀도 — for_group 경로에도 이식.
+    peers = _metro_peer_districts(city, label)
+    if districts and peers:
+        mentioned_peers = [d for d in peers if d in app_text]
+        other_districts = [d for d in mentioned_peers if d not in districts]
+        if other_districts and not district_hits:
+            return result("not_eligible", "not_eligible", [], other_districts)
 
     # ── recall-safe 타지역 override (공유헬퍼 _other_region_block; own-metro 파라미터화) ──
     # 권역(경상/호남/충청권 등) 멤버 적격 — own 광역이 명시 권역의 멤버면 적격(차단보다 우선=recall,
@@ -4813,12 +5411,12 @@ def classify_region(item: dict) -> dict:
     }
 
 
-def region_match(item: dict, group_regions: list[str]) -> bool:
+def region_match(item: dict, group_regions: list[str], region_info: dict | None = None) -> bool:
     """그룹 지역 조건 매칭. 남동구 신청 불가 공고는 인천 그룹에서 제외."""
     if not group_regions:
         return True
-    region_info = classify_region(item)
-    if region_info["region_status"] == "not_eligible" or region_info["district_status"] == "not_eligible":
+    info = region_info if region_info is not None else classify_region(item)
+    if info["region_status"] == "not_eligible" or info["district_status"] == "not_eligible":
         return False
     text = _notice_text(item)
     g_regions = [r.lower() for r in group_regions]
@@ -4826,9 +5424,29 @@ def region_match(item: dict, group_regions: list[str]) -> bool:
         return True
     if "전국" in text:
         return True
-    if region_info["region_status"] == "eligible":
+    if info["region_status"] == "eligible":
         return True
     return False
+
+
+def uses_incheon_region_engine(group: dict | None) -> bool:
+    """인천(+남동구) 정밀 엔진을 쓸지. False면 classify_region_for_group."""
+    if not group:
+        return True
+    city = group.get("applicant_region_city", APPLICANT_REGION_CITY)
+    return city == APPLICANT_REGION_CITY
+
+
+def resolve_region(item: dict, group: dict | None = None) -> dict:
+    """지역 적격 단일 진입점.
+
+    - 인천광역시 그룹(기본 포함): ``classify_region`` — 구 단위 배타(부평구 전용 등)
+    - 그 외 시·도 그룹: ``classify_region_for_group`` — 임의 광역/시·군
+    """
+    g = group or {}
+    if uses_incheon_region_engine(g if group is not None else None):
+        return classify_region(item)
+    return classify_region_for_group(item, g)
 
 
 def keyword_match(item: dict, kw_cfg: dict) -> bool:
@@ -4869,6 +5487,16 @@ def _normalize_group(group: dict) -> dict:
     return norm
 
 
+def has_primary_support(item: dict) -> bool:
+    """공고에 주된 지원(실질적 비용지원)이 있는지 판정한다.
+
+    주된 지원: 지원금/바우처 (사업화자금, R&D, 시제품, 실증·PoC, 바우처 등)
+    부가 지원만: 교육, 멘토링, 컨설팅, 투자, 입주공간 단독
+    """
+    types = classify_support_type(item)
+    return "지원금/바우처" in types
+
+
 def support_match(item: dict, enabled_types: list[str]) -> bool:
     if not enabled_types or set(enabled_types) == set(ALL_SUPPORT_TYPES):
         return True
@@ -4888,7 +5516,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     notice_type = "unknown"
 
     matched_keywords = _find_keyword_aliases(text, GENERAL_INCLUDE_KEYWORD_ALIASES)
-    priority_keywords = _find_keyword_aliases(text, PRIORITY_KEYWORD_ALIASES)
+    priority_keywords = _group_priority_hits(item, g)
     factory_keywords = _find_keyword_aliases(text, FACTORY_KEYWORD_ALIASES)
     matched_keywords = _unique(matched_keywords + factory_keywords)
     factory_required = any(term in text for term in FACTORY_REQUIRED_TERMS)
@@ -4914,12 +5542,43 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             if rule_target_type != "unknown":
                 target_type = rule_target_type
 
+    # 제목 앵커: 교육참여기업모집·교육생 모집 등 — EXCLUSION_RULES soft 완화와 무관하게 제외.
+    edu_title = norm(item.get("title", ""))
+    if _EDUCATION_RECRUIT_TITLE_RE.search(edu_title):
+        reason_codes.append("EDUCATION_ONLY")
+        excluded_keywords.append(_EDUCATION_RECRUIT_TITLE_RE.search(edu_title).group(0))
+        if notice_type == "unknown":
+            notice_type = "education"
+
+    # 원본전체용 잡공고·행정고지 판정을 그룹 필터에도 적용(사유코드는 경로별로 분리).
+    if is_report_junk(item):
+        reason_codes.append("REPORT_JUNK")
+        excluded_keywords.append("report_junk")
+        if notice_type == "unknown":
+            notice_type = "general_info"
+    if is_admin_noise(item):
+        reason_codes.append("ADMIN_NOISE")
+        excluded_keywords.append("admin_noise")
+        if notice_type == "unknown":
+            notice_type = "admin_notice"
+
     # [제목 앵커] 비공고 정적 페이지(기관소개·정보공개·약관·nav 링크 등) 제외.
     # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
     nonnotice_hit = non_notice_reason(item)
     if nonnotice_hit:
         reason_codes.append("NOT_GRANT_NOTICE")
         excluded_keywords.append(nonnotice_hit)
+        if notice_type == "unknown":
+            notice_type = "general_info"
+
+    # 애매 비지원 — hard 금지(반례 있음: '환경정보공개 지원사업' 등 진짜 지원사업이 섞임)하되
+    # 본문 추천에서 분리해 review 로 보낸다. 정보공개+모집/공고 조합은 정적 메뉴 오수집과
+    # 진짜 지원사업이 혼재하므로, 지원사업/바우처 등 명확 신호가 없으면 AMBIGUOUS_NOTICE 로
+    # review_needed=True 로 표시해 사람이 최종 판단한다.
+    amb_hit = ambiguous_notice_reason(item)
+    if amb_hit:
+        reason_codes.append("AMBIGUOUS_NOTICE")
+        excluded_keywords.append(amb_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
 
@@ -4935,12 +5594,29 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     soft_excluded_keywords.extend(soft_service_hits)
     if hard_service_hits:
         excluded_keywords.extend(hard_service_hits)
-        if "설명회" in hard_service_hits:
+        if "설명회" in hard_service_hits or any("설명회" in h for h in hard_service_hits):
             reason_codes.append("INFO_SESSION")
             notice_type = "info_session"
+        elif has_primary_support(item):
+            # 주된 지원(사업화자금 등)이 있으면 서비스 키워드로 제외하지 않음 (P0-1)
+            soft_excluded_keywords.extend(hard_service_hits)
         elif not application_like or ("단독" in text and not priority_keywords):
             reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
             notice_type = "general_info"
+
+    # 설명회가 모집 본체(…설명회 참여기업 모집)이면 hard INFO_SESSION 대신 review 분리.
+    # '모집 및 설명회' 등 부대 설명회는 soft 통과 유지.
+    title_raw = norm(item.get("title", ""))
+    if (
+        "설명회" in title_raw
+        and _INFO_SESSION_AS_RECRUIT_RE.search(title_raw)
+        and not _INFO_SESSION_SECONDARY_RE.search(title_raw)
+    ):
+        reason_codes.append("INFO_SESSION_REVIEW")
+        if "설명회" not in soft_excluded_keywords and "설명회" not in excluded_keywords:
+            soft_excluded_keywords.append("설명회")
+        if notice_type == "unknown":
+            notice_type = "info_session"
 
     if smart_info and notice_type in {"education", "info_session", "general_info", "guideline", "manual"}:
         reason_codes.append("SMART_FACTORY_INFO_ONLY")
@@ -4970,16 +5646,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     elif deadline_status == "unknown" and not application_like:
         reason_codes.append("MISSING_APPLICATION_PERIOD")
 
-    applicant_city = g.get("applicant_region_city", APPLICANT_REGION_CITY)
-    use_generic_region = bool(group) and applicant_city != APPLICANT_REGION_CITY
-    region_info = classify_region_for_group(item, g) if use_generic_region else classify_region(item)
+    applicant_district = g.get("applicant_region_district", APPLICANT_REGION_DISTRICT)
+    incheon_engine = uses_incheon_region_engine(group)
+    region_info = resolve_region(item, g if group is not None else None)
     if region_info["region_status"] == "not_eligible":
         reason_codes.append("REGION_NOT_ELIGIBLE")
     if region_info["district_status"] == "not_eligible":
         reason_codes.append("DISTRICT_NOT_ELIGIBLE")
     if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
         reason_codes.append("LOW_CONFIDENCE")
-    if not use_generic_region and "산업단지" in text and "입주기업" in text and APPLICANT_REGION_DISTRICT not in text:
+    if incheon_engine and "산업단지" in text and "입주기업" in text and applicant_district not in text:
         reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
 
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
@@ -4993,7 +5669,12 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         or region_info["district_status"] == "not_eligible"
     )
     if group is not None and not source_bypass:
-        region_ok = (region_info["region_status"] == "eligible") if use_generic_region else region_match(item, req_regions)
+        # 인천 엔진: required_conditions.regions + 구 배타를 region_match 로 결합.
+        # 기타 광역: classify_region_for_group 의 region_status==eligible 만으로 통과.
+        if incheon_engine:
+            region_ok = region_match(item, req_regions, region_info=region_info)
+        else:
+            region_ok = region_info["region_status"] == "eligible"
         if not region_ok:
             reason_codes.append("REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN")
 
@@ -5009,7 +5690,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     hard_group_hits, soft_group_hits = _split_exclusion_hits(item, "GROUP_EXCLUSION", group_excluded)
     soft_excluded_keywords.extend(soft_group_hits)
     if hard_group_hits:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("GROUP_EXCLUSION")
         excluded_keywords.extend(hard_group_hits)
 
     kw_text = _keyword_match_text(item)
@@ -5027,34 +5708,33 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
         reason_codes.append("INDUSTRY_NOT_MATCHED")
 
-    # P0: 컨설팅·교육·상담 단독 공고 제외 — 사업화자금 등 비용지원이 없으면 제외
-    _item_types = classify_support_type(item)
-    _has_financial = any(t in ("지원금/바우처",) for t in _item_types)
-    _has_consulting_only = "컨설팅·교육·상담" in _item_types and not _has_financial and "그외" not in _item_types
-    # 수출상담회·바이어상담 등 무역 행사는 컨설팅 서비스가 아님 — 예외 처리
-    if _has_consulting_only and any(kw in text for kw in (
-        "수출", "해외", "글로벌", "전시회", "박람회", "바이어", "베트남", "동남아", "무역", "해외진출",
-    )):
-        _has_consulting_only = False
-    if group is not None and _has_consulting_only:
-        reason_codes.append("CONSULTING_ONLY")
+    # P0-4: 주된 지원/부가 지원 분리 — 단독 교육·멘토링·컨설팅·투자·입주 제외
+    # 재정 지원 신호(지원금/바우처 키워드, 수출/판로/마케팅 등)가 있으면 부가 지원으로만 제외하지 않음
+    if group is not None:
+        support_types = classify_support_type(item)
+        has_financial = "지원금/바우처" in support_types
+        has_consulting = "컨설팅·교육·상담" in support_types
+        has_investment = "투자" in support_types
+        # 재정 지원 키워드가 본문에 있는지 추가 확인 (classify_support_type이 놓치는 경우 대비)
+        _financial_signal_kws = [
+            "수출", "해외", "판로", "마케팅", "전시회", "박람회", "바이어",
+            "시제품", "사업화", "R&D", "실증", "PoC", "바우처", "보조금",
+        ]
+        has_financial_signal = has_financial or any(kw in text for kw in _financial_signal_kws)
+        # 주된 지원 없이 부가 지원만 있는 경우 제외
+        if not has_financial_signal and not has_investment:
+            if has_consulting:
+                # 교육·멘토링·컨설팅 단독 → 제외
+                reason_codes.append("CONSULTING_ONLY")
+        elif has_investment and not has_financial_signal and not has_consulting:
+            # 투자 단독 → 제외
+            reason_codes.append("INVESTMENT_ONLY")
 
-    # P0: 투자 단독 공고 제외 — 비용지원(지원금/바우처)이 없으면 제외
-    _has_investment_only = "투자" in _item_types and not _has_financial and "그외" not in _item_types
-    if group is not None and _has_investment_only:
-        reason_codes.append("INVESTMENT_ONLY")
-
-    # P0: 입주공간 단독 공고 제외 — 사업화자금 등 비용지원이 없으면 제외
-    _has_tenant_only = (
-        any(kw in text for kw in ("입주기업", "입주기업 모집", "입주 공고", "입주공간"))
-        and not _has_financial
-        and "그외" not in _item_types
-    )
-    if group is not None and _has_tenant_only:
-        reason_codes.append("TENANT_ONLY")
-
+    # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
+    # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
+    # 전자는 evaluate_notice 의 application 게이트, 후자는 제목 앵커 상수 매칭.
     if not application_like and not priority_keywords:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        reason_codes.append("NOT_APPLICATION_LIKE")
 
     biz_years_status = business_years_status(item, g) if group is not None else "n/a"
     amount_status = support_amount_status(item, g) if group is not None else "n/a"
@@ -5064,13 +5744,6 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # 금액은 표시용으로만 유지(support_amount_status). 재활성화: 그룹에 "enforce_amount_filter": true.
     if amount_status == "not_eligible" and g.get("enforce_amount_filter", False):
         reason_codes.append("AMOUNT_TOO_LOW")
-
-    # P0: 애매한 공고 사유코드 — AI 판정 대상 식별용 (별도 필드, reason_codes에 섞지 않음)
-    _ambiguous_reason_codes = []
-    if "그외" in _item_types and not _has_financial and not matched_keywords and not priority_keywords:
-        _ambiguous_reason_codes.append("FINANCIAL_SUPPORT_UNCLEAR")
-    if _mixed_target_roles(item):
-        _ambiguous_reason_codes.append("OPERATOR_OR_PARTICIPANT_UNCLEAR")
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
@@ -5089,7 +5762,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     district_status = region_info["district_status"]
     hard_reasons = set(reason_codes) - {"FACTORY_REQUIRED_BUT_UNKNOWN"}
     # recall: 모집·신청 신호 있는데 기간 미파싱(목록 stub)이면 열린 공고로 간주 — 서울·AI 등 누락 방지
-    deadline_ok = deadline_status in {"open", "upcoming"} or (
+    # P0-15: always_open, until_budget_exhausted, extended도 열린 공고로 처리
+    deadline_ok = deadline_status in {"open", "upcoming", "always_open", "until_budget_exhausted", "extended"} or (
         deadline_status == "unknown" and application_like
     )
     is_relevant = (
@@ -5109,6 +5783,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "GUIDELINE_OR_MANUAL", "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY",
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
+        "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
+        "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW",
     }
     detail_failure_review = (
         detail_failure
@@ -5140,16 +5816,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and application_like
             and group_keyword_pass
         )
-    # P0: 애매한 사유코드가 있으면 리뷰 대상으로 표시 (하드 제외가 아닌 경우)
-    _has_ambiguous = bool(_ambiguous_reason_codes)
-    _hard_exclusion_codes = {
-        "CLOSED_DEADLINE", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
-        "INDUSTRY_NOT_MATCHED", "NOT_GRANT_NOTICE", "GUIDELINE_OR_MANUAL",
-        "EDUCATION_ONLY", "INFO_SESSION", "SUPPLIER_ONLY", "CONSULTING_ONLY",
-        "INVESTMENT_ONLY", "TENANT_ONLY", "BUSINESS_YEARS_NOT_ELIGIBLE",
-        "SMART_FACTORY_INFO_ONLY", "LOW_PRIORITY_SERVICE_KEYWORD",
-    }
-    _has_hard_exclusion = bool(set(reason_codes) & _hard_exclusion_codes)
+    # hard 제외 대신 본문 추천에서만 빼는 분리 코드(설명회 모집 본체·정보공개 애매건).
+    _review_separate = {"INFO_SESSION_REVIEW", "AMBIGUOUS_NOTICE"}
     review_needed = (
         not is_relevant
         and (
@@ -5158,7 +5826,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
                 and not (set(reason_codes) & detail_failure_blockers)
             )
             or detail_failure_review
-            or (_has_ambiguous and not _has_hard_exclusion)
+            or bool(set(reason_codes) & _review_separate)
         )
     )
     # 지역 미상 surface(사용자 정책 2026-06-19): 지역만 모르고 그 외 조건은 적격이면
@@ -5221,7 +5889,6 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "priority_keywords": priority_keywords,
         "relevance_score": relevance_score,
         "exclude_reason_codes": reason_codes,
-        "ambiguous_reason_codes": _ambiguous_reason_codes,
         "filter_confidence": (
             "medium" if soft_excluded_keywords or detail_failure
             else ("high" if is_relevant or reason_codes else "medium")
@@ -5243,57 +5910,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
         "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
     })
-    # P0: 판정사유 저장 — INCLUDE/EXCLUDE/CONDITIONAL/HUMAN_REVIEW + 사람이 읽을 수 있는 사유
-    if is_relevant:
-        _decision = "INCLUDE"
-        _parts = []
-        if priority_keywords:
-            _parts.append(f"우선키워드: {', '.join(priority_keywords[:3])}")
-        if matched_keywords:
-            _parts.append(f"매칭키워드: {', '.join(matched_keywords[:3])}")
-        _types_str = ", ".join(result.get("_types", []))
-        if _types_str and _types_str != "그외":
-            _parts.append(f"지원유형: {_types_str}")
-        _decision_reason = " / ".join(_parts) if _parts else "조건 충족"
-    elif region_unknown_review:
-        _decision = "CONDITIONAL"
-        _decision_reason = "지역 미상 — 수동 확인 필요"
-    elif review_needed:
-        _decision = "CONDITIONAL"
-        _decision_reason = "판정 불확실 — " + ", ".join(reason_codes[:3]) if reason_codes else "상세 확인 필요"
-    elif detail_failure_review:
-        _decision = "HUMAN_REVIEW"
-        _decision_reason = "상세정보 추출 실패 — 원문 재확인 필요"
-    else:
-        _decision = "EXCLUDE"
-        _exclude_labels = {
-            "CLOSED_DEADLINE": "마감",
-            "REGION_NOT_ELIGIBLE": "지역 부적합",
-            "DISTRICT_NOT_ELIGIBLE": "지역 부적합",
-            "INDUSTRY_NOT_MATCHED": "키워드 불일치",
-            "NOT_GRANT_NOTICE": "비공고",
-            "GUIDELINE_OR_MANUAL": "지침/매뉴얼",
-            "EDUCATION_ONLY": "교육 단독",
-            "INFO_SESSION": "설명회 단독",
-            "SUPPLIER_ONLY": "공급기업 모집",
-            "CONSULTING_ONLY": "컨설팅 단독",
-            "INVESTMENT_ONLY": "투자 단독",
-            "TENANT_ONLY": "입주공간 단독",
-            "BUSINESS_YEARS_NOT_ELIGIBLE": "업력 부적합",
-            "SMART_FACTORY_INFO_ONLY": "스마트공장 정보",
-            "LOW_PRIORITY_SERVICE_KEYWORD": "저우선 서비스",
-        }
-        _labels = [_exclude_labels.get(c, c) for c in reason_codes[:3]]
-        _decision_reason = "제외: " + ", ".join(_labels) if _labels else "제외 사유 미분류"
-    result["decision"] = _decision
-    result["decision_reason"] = _decision_reason
     return result
 
 
-def _notice_sort_key(item: dict) -> tuple[int, int, int]:
+def _notice_sort_key(item: dict) -> tuple[int, int, int, int]:
+    pri = item.get("priority_keywords") or []
+    fund_first = 0 if any(p in FUND_PRIORITY_LABELS for p in pri) else 1
     return (
+        fund_first,
         0 if item.get("priority_keyword") else 1,
-        -int(item.get("relevance_score", 0)),
+        -int(item.get("relevance_score", 0) or item.get("_match_score", 0) or 0),
         0 if item.get("deadline_status") == "open" else 1,
     )
 
@@ -5346,6 +5972,56 @@ def refine_included_by_company(
         return included, []
     result = _match_for_company(included, company)
     return result["matched"], result["rejected"]
+
+
+def refine_included_by_score_llm(
+    included: list[dict], group: dict,
+) -> tuple[list[dict], list[dict]]:
+    """evaluate_notice 통과분에 score_and_filter(점수+LLM 회색지대 컷)를 적용.
+
+    group 에 score_threshold 가 없거나 llm_check_enabled 도 없으면 통과분 그대로.
+    llm_check_enabled 만 켠 그룹은 score_threshold 기본 0(점수로는 거의 통과, LLM 밴드만 컷).
+    API 키 없거나 anthropic 미설치 시 scoring.llm_relevance_check 가 보수적으로 통과시킨다.
+    """
+    if not _SCORE_OK:
+        return included, []
+    if "score_threshold" not in group and not group.get("llm_check_enabled"):
+        return included, []
+    g = group
+    if "score_threshold" not in g:
+        g = {**group, "score_threshold": 0}
+    out = _score_and_filter(included, g)
+    passed = list(out.get("passed") or [])
+    rejected = []
+    for it in out.get("rejected") or []:
+        codes = list(it.get("exclude_reason_codes") or [])
+        codes.append("SCORE_OR_LLM_REJECT")
+        rejected.append({
+            **it,
+            "exclude_reason_codes": _unique(codes),
+            "review_needed": True,
+            "is_relevant": False,
+            "filter_confidence": "medium",
+            "notes": list(it.get("notes") or []) + ["점수/LLM 2차 컷오프"],
+        })
+    # 통과분에 점수 부착(정렬·표시용)
+    audit_by_title = {
+        str(a.get("title") or ""): a
+        for a in (out.get("audit") or [])
+        if a.get("decision") == "passed"
+    }
+    enriched = []
+    for it in passed:
+        title_key = str(it.get("title") or "")[:80]
+        a = audit_by_title.get(title_key) or {}
+        enriched.append({
+            **it,
+            "_match_score": a.get("score", it.get("_match_score")),
+            "_score_reasons": a.get("reasons") or [],
+            "_llm_check": a.get("llm"),
+        })
+    enriched.sort(key=_notice_sort_key)
+    return enriched, rejected
 
 
 
@@ -5406,8 +6082,12 @@ def render_all(items: list[dict], dedup_count: int, date_unknown: int, include_u
         lines += [f"\n━━━ {label} — {len(src_items)}건 ━━━"]
         for it in src_items:
             dl = resolve_item_deadline(it)
-            lines += [f"▸ {it['title']}",
-                      f"  기관: {it.get('author') or '미기재'} | 마감: {dl or '미기재'}"
+            # 다이제스트와 같은 정제를 태운다 — 예전엔 원본을 그대로 찍어
+            # "&amp;" 같은 HTML 엔티티와 "새로운게시글" 배지가 그대로 메일에 나갔다.
+            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
+            author = _mail_clean_text(it.get("author") or "", limit=80) or "미기재"
+            lines += [f"▸ {title}",
+                      f"  기관: {author} | 마감: {dl or '미기재'}"
                       f" | 등록: {it.get('posted_date') or '날짜불명'}"]
             if it.get("link"):
                 lines.append(f"  링크: {it['link']}")
@@ -5541,49 +6221,164 @@ def _mail_fit_reason(item: dict) -> str:
     return " / ".join(parts) or "그룹 조건과 일치"
 
 
-def fallback_body(items: list[dict]) -> str:
-    """모바일 메일용 8줄 카드. 내부판정값·원문전체·연락처는 표시하지 않는다."""
-    lines: list[str] = []
+def _mail_status_cell(item: dict, today=None) -> str:
+    """기존 D-Day·신규 판정만 표시. 🆕 는 _change_type=NEW 일 때만."""
+    today = today or datetime.now(KST).date()
+    prefix = "🆕 " if item.get("_change_type") == "NEW" else ""
+    try:
+        status = classify_deadline_status(item, today)
+    except Exception:
+        return prefix + "추출실패" if prefix else "추출실패"
+    if status == "closed":
+        return f"{prefix}마감".strip()
+    if status == "always_open":
+        return f"{prefix}상시".strip()
+    try:
+        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
+        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+        end = max(dates) if dates else None
+    except Exception:
+        return f"{prefix}추출실패".strip() or "추출실패"
+    if end is None:
+        return (prefix + "확인필요").strip()
+    days = (end - today).days
+    if days < 0:
+        return f"{prefix}마감".strip()
+    if days <= 3:
+        mark = "🔴"
+    elif days <= 7:
+        mark = "🟠"
+    else:
+        mark = "🟢"
+    return f"{prefix}D-{days} {mark}".strip()
+
+
+def _mail_fit_cell(item: dict) -> str:
+    """기존 매칭 결과만 3값으로 표시. 점수 계산은 바꾸지 않는다."""
+    if item.get("is_relevant") is False:
+        return "대상아님"
+    if item.get("region_status") == "not_eligible" or item.get("district_status") == "not_eligible":
+        return "대상아님"
+    if item.get("region_status") == "unknown":
+        return "확인필요"
+    return "지원가능"
+
+
+def _mail_support_cell(item: dict) -> str:
+    """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
+    try:
+        types = " ".join(str(v) for v in (item.get("_types") or []) if str(v).strip())
+        blob = " ".join((
+            types,
+            str(item.get("support_field") or ""),
+            str(item.get("title") or ""),
+            str(item.get("description") or "")[:400],
+        ))
+        if "바우처" in blob:
+            return "바우처"
+        if any(tok in blob for tok in ("지원금", "사업비", "자금")):
+            return "지원금/사업비"
+        if any(tok in blob for tok in ("입주", "시설", "공간")):
+            return "시설/입주"
+        if any(tok in blob for tok in ("판로", "실증")):
+            return "판로/실증"
+        if "비용" in blob:
+            return "비용지원"
+        blurb = _mail_support_blurb(item)
+        if blurb and blurb != "상세 공고문 확인":
+            return "기타 핵심지원"
+        return "확인필요"
+    except Exception:
+        return "추출실패"
+
+
+def _mail_target_cell(item: dict) -> str:
+    try:
+        value = _mail_target_text(item)
+        if not value or value == "공고문 확인":
+            return "확인필요"
+        return value
+    except Exception:
+        return "추출실패"
+
+
+def _mail_org_cell(item: dict) -> str:
+    try:
+        author = _mail_clean_text(item.get("author") or "", limit=80)
+        if author:
+            return author
+        return "확인필요"
+    except Exception:
+        return "추출실패"
+
+
+def _mail_region_cell(item: dict) -> str:
+    try:
+        scope = _resolve_applicant_region_scope(item)
+        if scope.get("nationwide"):
+            return "전국"
+        label = _region_label(item)
+        if not label or label == "확인 필요":
+            return "확인필요"
+        return label
+    except Exception:
+        return "추출실패"
+
+
+def _mail_deadline_cell(item: dict, today=None) -> str:
+    today = today or datetime.now(KST).date()
+    try:
+        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
+        if not raw.strip():
+            return "확인필요"
+        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+        if not dates:
+            return "확인필요"
+        end = max(dates)
+        if end.year == today.year:
+            return f"{end.month}/{end.day}"
+        return f"{end.year}/{end.month}/{end.day}"
+    except Exception:
+        return "추출실패"
+
+
+def _digest_row(item: dict, today=None) -> dict:
+    from mail_core.delivery.digest_table import notice_url
+
+    title = strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160))
+    if not title:
+        title = "(제목없음)"
+    badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(
+        item.get("_change_type"), ""
+    )
+    return {
+        "상태": _mail_status_cell(item, today=today),
+        "적합": _mail_fit_cell(item),
+        "공고": badge + title,
+        "url": notice_url(item),
+        "지원": _mail_support_cell(item),
+        "대상": _mail_target_cell(item),
+        "기관": _mail_org_cell(item),
+        "지역": _mail_region_cell(item),
+        "마감": _mail_deadline_cell(item, today=today),
+    }
+
+
+def fallback_body(items: list[dict], today=None) -> str:
+    """공고 안내 8컬럼 표(plain). 추천이유·바로가기·사이트명 컬럼 없음."""
+    from mail_core.delivery.digest_table import render_plain
+
+    if not items:
+        return render_plain([])
     items = sorted(items, key=_notice_sort_key)
     imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
+    preamble = ""
     if imminent:
-        lines.append("⚠️ 7일 이내 마감: " + ", ".join(
+        preamble = "⚠️ 7일 이내 마감: " + ", ".join(
             _mail_clean_text(it.get("title"), limit=45) for it in imminent[:5]
-        ))
-        lines.append("")
-    sections = [
-        ("우선 추천", [it for it in items if it.get("priority_keyword")]),
-        ("일반 추천", [it for it in items if not it.get("priority_keyword")]),
-    ]
-    # 번호는 '실제로 표시되는' 섹션에만 순서대로 붙인다.
-    # (예전엔 번호가 제목에 박혀 있어, 우선 추천이 비면 본문이 "2. 일반 추천" 부터 시작했다.)
-    visible = [(title, its) for title, its in sections if its]
-    for idx, (section_title, section_items) in enumerate(visible, start=1):
-        lines.append(f"{idx}. {section_title}" if len(visible) > 1 else section_title)
-        for it in section_items:
-            title = strip_title_badges(_mail_clean_text(it.get("title") or "(제목없음)", limit=160))
-            _badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(it.get("_change_type"), "")
-            title = _badge + title
-            # 기관명이 비면 수집 출처라도 보여준다("미기재"보다 어디서 온 공고인지가 낫다).
-            author = _mail_clean_text(it.get("author") or it.get("source") or "미기재", limit=80)
-            types = " · ".join(str(v) for v in (it.get("_types") or ["미분류"])[:2])
-            region = _region_label(it)
-            display_region = "제한 없음" if region.endswith("전체") else region
-            # 신청기간(시작~종료)이 잡힌 공고는 '마감' 이 아니라 '접수기간' 으로 적는다.
-            deadline_text = resolve_item_deadline(it) or "미기재"
-            deadline_label = "접수기간" if "~" in deadline_text else "마감"
-            lines.extend([
-                "──────────────────",
-                f"📌 {title}",
-                f"• 기관: {author} | 유형: {types}",
-                f"• 대상: {_mail_target_text(it)}",
-                f"• 지원내용: {_mail_support_blurb(it)}",
-                f"• {deadline_label}: {deadline_text} | 지역: {display_region}",
-                f"• 적합사유: {_mail_fit_reason(it)}",
-                f"• 원문: {it.get('link') or '미기재'}",
-            ])
-        lines.append("")
-    return "\n".join(lines).strip()
+        )
+    rows = [_digest_row(it, today=today) for it in items]
+    return render_plain(rows, preamble=preamble)
 
 def _region_label(item: dict) -> str:
     district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
@@ -5623,7 +6418,8 @@ def render_excluded_summary(items: list[dict], limit: int = 30) -> str:
         return ""
     lines = ["| 공고명 | 제외 사유 코드 | 제외 판단 근거 |", "|---|---|---|"]
     for it in items[:limit]:
-        title = str(it.get("title", "")).replace("|", "/")
+        # 표 깨짐 방지(|)뿐 아니라 HTML 엔티티·배지도 걷어낸다(render_all 과 동일 기준).
+        title = strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)).replace("|", "/")
         codes = ", ".join(it.get("exclude_reason_codes", [])) or "LOW_CONFIDENCE"
         basis_parts = []
         if it.get("excluded_keywords"):
@@ -5711,15 +6507,34 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
     return "\n".join(lines)
 
 def claude_summarize(items: list[dict], group: dict) -> str:
-    """Render the digest from collected fields only.
+    """메일 본문 렌더. 기본은 수집 필드만 사용(금액·날짜를 LLM이 지어내지 않게).
 
-    A language model must never be the source of a delivered support amount, posted date,
-    reception period, organization, or link. Keeping this former API name avoids a broad
-    caller refactor while making P0 factual integrity and prompt-injection safety absolute.
+    MONITOR_DIGEST_LLM=1 이면 맨 위에 '한 줄 적합성' 코멘트만 LLM으로 붙인다.
+    공고별 금액·마감·링크는 여전히 fallback_body(원문 필드)만 쓴다.
+
+    본문은 매칭 공고 전량을 담는다. ``[:MAX_FOR_CLAUDE]`` 로 자르면 표에는 안 나오는데
+    ``notice_ids`` 는 전량이 seen 으로 잠겨 16번째 이후가 영구 누락된다.
     """
     if not items:
         return ""
-    return fallback_body(sorted(items, key=_notice_sort_key)[:MAX_FOR_CLAUDE])
+    body = fallback_body(sorted(items, key=_notice_sort_key))
+    if os.environ.get("MONITOR_DIGEST_LLM", "") not in ("1", "true", "True"):
+        return body
+    try:
+        from mail_core.matching.scoring import llm_relevance_check
+    except Exception:
+        return body
+    # 상위 3건만 짧은 코멘트 — 비용·환각 최소화
+    notes = []
+    for it in sorted(items, key=_notice_sort_key)[:3]:
+        r = llm_relevance_check(it, group)
+        reason = str(r.get("reason") or "").strip()
+        if reason and r.get("is_relevant", True):
+            title = strip_title_badges(_mail_clean_text(it.get("title"), limit=40))
+            notes.append(f"- {title}: {reason[:80]}")
+    if not notes:
+        return body
+    return "AI 한줄 메모(참고·원문 수치 아님):\n" + "\n".join(notes) + "\n\n" + body
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -5804,13 +6619,17 @@ def _render_feedback_block(items: list[dict]) -> str:
 
 def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
+    from mail_core.delivery.digest_table import html_email_inner
+
     msg = MIMEMultipart("alternative")
     msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
     msg.attach(MIMEText(body, "plain", "utf-8"))
+    inner = html_email_inner(body, _linkify_html)
     msg.attach(MIMEText(
-        f"<html><body style='font-family:Arial;line-height:1.7'>"
-        f"<pre style='white-space:pre-wrap;font-family:inherit'>{_linkify_html(body)}</pre>"
-        f"</body></html>", "html", "utf-8"))
+        f"<html><body style='font-family:Arial;line-height:1.7'>{inner}</body></html>",
+        "html",
+        "utf-8",
+    ))
     return msg
 
 
@@ -6067,11 +6886,127 @@ def retry_pending_outbox() -> None:
         delivery_outbox.settle(str(entry.get("id") or ""), delivered)
 
 
-def persist_completed_outbox(seen_ids: set[str]) -> set[str]:
-    """Commit completed deliveries to seen_ids, then acknowledge their encrypted records."""
+def _completed_outbox_entries_safe_to_promote(
+    completed: list[dict],
+    *,
+    groups: list[dict] | None,
+    settings: dict | None,
+    watchlist: dict | None,
+    include_raw_all: bool,
+) -> list[dict]:
+    """Return completed outbox rows whose notice_ids are safe to merge into global seen_ids.
+
+    Global ``seen_ids`` is shared across groups. Promoting a notice id after group A finishes
+    but before group B's plan exists permanently drops that notice for B (classify treats it
+    as already-seen / seed_only). Only promote when that entry's cycle date has every planned
+    delivery unit checkpointed and no pending outbox row remains for the same date.
+    """
+    if not completed:
+        return []
+    pending_dates = {
+        str(entry.get("date") or "")
+        for entry in delivery_outbox.pending()
+        if str(entry.get("date") or "")
+    }
+    try:
+        from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
+    except Exception as e:  # pragma: no cover - import is local package
+        log.warning("seen_ids 승격 게이트 import 실패 — completed outbox 보류: %s", e)
+        return []
+
+    safe: list[dict] = []
+    date_ok: dict[str, bool] = {}
+    for entry in completed:
+        date = str(entry.get("date") or "")
+        if not date or date in pending_dates:
+            continue
+        if date not in date_ok:
+            check = should_skip_fetch_already_delivered(
+                target_date=date,
+                groups=groups,
+                settings=settings,
+                watchlist=watchlist,
+                include_raw_all=include_raw_all,
+                delivery_path=DELIVERY_STATE_PATH,
+            )
+            date_ok[date] = bool(check.get("skip"))
+            if not date_ok[date]:
+                log.info(
+                    "completed outbox 보류: date=%s cycle 미완료(%s) — "
+                    "타 그룹 공유 notice_ids 의 seen_ids 조기 승격 방지",
+                    date,
+                    check.get("reason"),
+                )
+        if date_ok[date]:
+            safe.append(entry)
+    return safe
+
+
+def persist_completed_outbox(
+    seen_ids: set[str],
+    *,
+    only_if_cycle_complete: bool = False,
+    trust_dates: set[str] | None = None,
+    groups: list[dict] | None = None,
+    settings: dict | None = None,
+    watchlist: dict | None = None,
+    include_raw_all: bool = False,
+) -> set[str]:
+    """Commit completed deliveries to seen_ids, then acknowledge their encrypted records.
+
+    When ``only_if_cycle_complete`` is True (start-of-run recovery / single-group runs /
+    skip-path flush), only entries whose delivery cycle is fully checkpointed are
+    promoted.
+
+    Full-group end-of-run MUST pass ``trust_dates={current target_date}`` (not a bare
+    ungated call). This process finished every group plan for that date, so those
+    completions are safe even if a sibling still has pending *recipients* (they retry
+    from the encrypted outbox) or an empty-match group never checkpointed. Completions
+    for any *other* date still go through the cycle gate — otherwise a stale A-only
+    settle from a prior crashed slot is promoted and shared notice_ids permanently
+    disappear for group B.
+
+    Single-group (``--group``) end-of-run MUST keep ``only_if_cycle_complete=True`` and
+    pass the unfiltered groups list.
+    """
     completed = delivery_outbox.completed()
     if not completed:
         return seen_ids
+    if only_if_cycle_complete:
+        completed = _completed_outbox_entries_safe_to_promote(
+            completed,
+            groups=groups,
+            settings=settings,
+            watchlist=watchlist,
+            include_raw_all=include_raw_all,
+        )
+        if not completed:
+            return seen_ids
+    elif trust_dates is not None:
+        trusted = {
+            str(d).strip()
+            for d in trust_dates
+            if str(d or "").strip()
+        }
+        trusted_entries = [
+            entry for entry in completed
+            if str(entry.get("date") or "").strip() in trusted
+        ]
+        other_entries = [
+            entry for entry in completed
+            if str(entry.get("date") or "").strip() not in trusted
+        ]
+        if other_entries:
+            other_entries = _completed_outbox_entries_safe_to_promote(
+                other_entries,
+                groups=groups,
+                settings=settings,
+                watchlist=watchlist,
+                include_raw_all=include_raw_all,
+            )
+        completed = trusted_entries + other_entries
+        if not completed:
+            return seen_ids
     notice_ids = {
         str(notice_id) for entry in completed
         for notice_id in (entry.get("notice_ids") or []) if str(notice_id)
@@ -6254,6 +7189,7 @@ def execute_monitor(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
     collection_gate: dict | None = None,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
@@ -6299,29 +7235,50 @@ def execute_monitor(
     groups   = load_groups()
     settings = load_settings()
     seen_ids = load_seen_ids()
+    # Cycle-complete gates must always see the full active group set. `--group` filters
+    # the send loop only — never the seen_ids promotion quorum (reopens #232 otherwise).
+    all_groups = list(groups)
+    single_group_mode = bool(group_id)
+    if group_id:
+        groups = [g for g in groups if g.get("id") == group_id]
+        if not groups:
+            log.error("그룹 '%s' 을(를) 찾을 수 없습니다", group_id)
+            raise SystemExit(1)
+        log.info("단일 그룹 모드: %s", groups[0].get("name", group_id))
     days_back = max(1, int(settings.get("days_back", 3) or 3))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
-    # 수신자부터 재시도하고, 이미 완료된 건은 seen_ids 에 반영한 뒤 대기열에서 제거한다.
+    # 수신자부터 재시도하고, cycle 이 끝난 완료건만 seen_ids 에 반영한다.
+    # (부분 그룹 완료 직후 전역 seen_ids 승격 → 공유 공고가 나머지 그룹에서 영구 누락되는
+    #  사고를 막기 위해 start-of-run 승격은 cycle 완료 게이트를 거친다.)
+    _wl_early = load_watchlist() if (effective_send and persist_seen) else {"keywords": [], "urls": []}
     if effective_send and persist_seen:
         if not delivery_outbox.is_ready():
             raise RuntimeError("실발송에는 MAIL_PRIVATE_CONFIG_KEY 또는 로컬 암호화 키가 필요합니다")
         retry_pending_outbox()
-        seen_ids = persist_completed_outbox(seen_ids)
+        seen_ids = persist_completed_outbox(
+            seen_ids,
+            only_if_cycle_complete=True,
+            groups=all_groups,
+            settings=settings,
+            watchlist=_wl_early,
+            include_raw_all=include_raw_all,
+        )
 
     if not sites:
         log.info("활성 사이트 없음. 종료.")
-        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites"})
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_sites",
+                                      "collected": 0, "deduped": 0})
     if not groups:
         log.info("활성 그룹 없음. 종료.")
-        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups"})
+        return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_active_groups",
+                                      "collected": 0, "deduped": 0})
 
     target_date_early = delivery_cycle_date(now)
     # 기준일 전 수신자 멱등 완료면 수집 생략(주말 재실행 낭비 방지)
     if effective_send and persist_seen:
         try:
             from mail_core.delivery.skip_gate import should_skip_fetch_already_delivered
-            _wl_early = load_watchlist()
             _skip = should_skip_fetch_already_delivered(
                 target_date=str(target_date_early),
                 groups=groups,
@@ -6331,6 +7288,16 @@ def execute_monitor(
                 delivery_path=DELIVERY_STATE_PATH,
             )
             if _skip.get("skip"):
+                # Skip means *this run's* groups are done. Promote to global seen_ids only
+                # when the full multi-group cycle is checkpointed (critical with --group).
+                seen_ids = persist_completed_outbox(
+                    seen_ids,
+                    only_if_cycle_complete=True,
+                    groups=all_groups,
+                    settings=settings,
+                    watchlist=_wl_early,
+                    include_raw_all=include_raw_all,
+                )
                 log.info(
                     "기준일 %s 발송 단위 %s개 멱등 완료 — 수집·발송 생략 (%s)",
                     _skip.get("target_date"), _skip.get("units"), _skip.get("reason"),
@@ -6353,15 +7320,65 @@ def execute_monitor(
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
     # ① 전체 수집
-    all_items = fetch_all(sites)
+    _fetch_outcomes: dict[str, dict] = {}
+    all_items = fetch_all(sites, outcomes=_fetch_outcomes)
+
+    # P1-17: 소스 상태관리 — 수집 0건(전면 장애) early return 전에 반영해야 한다.
+    try:
+        from mail_core.operations.source_health import (
+            classify_source_status,
+            update_source_health,
+            should_alert,
+            mark_alerted,
+            load_source_health,
+        )
+        from mail_core.operations.source_health import TIER1_SOURCES
+
+        # 소스별 수집 건수 집계
+        items_by_source: dict[str, int] = {}
+        for it in all_items:
+            sid = str(it.get("source") or it.get("site_id") or "unknown")
+            items_by_source[sid] = items_by_source.get(sid, 0) + 1
+
+        # Tier 1 소스 상태 업데이트 (실제 수집 결과 반영)
+        health_data = load_source_health()
+        for site in sites:
+            sid = str(site.get("id") or site.get("name") or "")
+            if sid not in TIER1_SOURCES:
+                continue
+            count = items_by_source.get(sid, 0)
+            outcome = _fetch_outcomes.get(sid, {})
+            error = outcome.get("error")
+            prev_health = health_data.get(sid, {})
+            prev_count = prev_health.get("item_count")
+            # 파싱률: 필드 품질 게이트에서 실제 값을 가져오거나, 수집 성공 시 1.0
+            parse_rate = 1.0 if outcome.get("success", True) and not error else 0.0
+            status = classify_source_status(
+                sid, item_count=count, parse_rate=parse_rate,
+                error=error, previous_item_count=prev_count,
+            )
+            update_source_health(sid, status, item_count=count, parse_rate=parse_rate, error=error)
+            # 알림 확인 (실제 알림은 mock, 로그만)
+            if should_alert(sid):
+                log.warning("소스 %s 장애 알림 필요 (status=%s, count=%d, error=%s)",
+                            sid, status, count, error)
+                mark_alerted(sid)
+    except Exception as e:
+        log.warning("소스 상태관리 실패(무시): %s", e)
+
     if not all_items:
         log.info("수집 0건. 종료.")
         return _with_raw_store_stats({"ok": True, "mode": mode, "reason": "no_items"})
     log.info("수집 완료: %d건", len(all_items))
 
     # ② 중복 제거
-    deduped = dedup_items(all_items)
+    dedup_stats: dict = {}
+    deduped = dedup_items(all_items, _stats=dedup_stats)
     dedup_removed = len(all_items) - len(deduped)
+
+    # ②-1 POSSIBLE_DUPLICATE detection (확정 중복이 아닌 유사 공고 표시, 자동 merge 금지)
+    deduped = detect_possible_duplicates(deduped)
+    possible_dup_count = sum(1 for it in deduped if it.get("_possible_duplicate"))
 
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
     # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
@@ -6488,8 +7505,8 @@ def execute_monitor(
     target_date = delivery_cycle_date(now)
     window_label = f"{recheck_dates[0]} ~ {recheck_dates[-1]}"
     # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
-    # 회차 경계는 발송 멱등 키와 같은 DELIVERY_PM_CUTOFF_HOUR 를 쓴다(표기·멱등 불일치 방지).
-    _slot_label = "오전" if now.hour < DELIVERY_PM_CUTOFF_HOUR else "저녁"
+    # 회차는 발송 멱등 키와 같은 delivery_slot() 을 쓴다(표기·멱등 불일치 방지).
+    _slot_label = "오전" if delivery_slot(now) == "am" else "저녁"
     date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
 
     include_unknown = settings.get("include_date_unknown", False)
@@ -6521,9 +7538,15 @@ def execute_monitor(
         date_excluded = []
 
     # 같은 ID의 중요 변경은 게시일이 과거여도 재처리한다. 여전히 마감된 단순수정은 제외.
+    # P1-5: 새로운 변경 유형 (DEADLINE_EXTENDED, TARGET_CHANGED, REANNOUNCEMENT 등)도 포함
+    _IMPORTANT_CHANGE_TYPES = {
+        "EXTENDED", "REANNOUNCED", "UPDATED",
+        "DEADLINE_EXTENDED", "TARGET_CHANGED", "SUPPORT_AMOUNT_CHANGED",
+        "APPLICATION_URL_CHANGED", "REANNOUNCEMENT", "ADDITIONAL_RECRUITMENT",
+    }
     _filtered_ids = {_delivery_notice_id(it) for it in filtered_new}
     for it in new_items:
-        if it.get("_change_type") not in {"EXTENDED", "REANNOUNCED", "UPDATED"}:
+        if it.get("_change_type") not in _IMPORTANT_CHANGE_TYPES:
             continue
         if classify_deadline_status(it, now.date()) == "closed":
             continue
@@ -6612,6 +7635,7 @@ def execute_monitor(
             "filtered_items": 0,
             "date_unknown_items": len(date_unknown),
             "date_review_queue": date_review_queue,
+            "date_review_queue_count": len(date_review_queue),
             "date_excluded_count": len(date_excluded),
             "mail_sent": False,
             "drafts_created": _DRAFT_OK,
@@ -6645,6 +7669,11 @@ def execute_monitor(
         if ru_items:
             write_region_unknown_report(ru_items, str(group.get("name") or "group"), run_at=now)
         excluded_items = diagnostics["excluded"]
+        # 점수+LLM 2차 컷(그룹 score_threshold / llm_check_enabled)
+        g_items, _score_demoted = refine_included_by_score_llm(g_items, group)
+        if _score_demoted:
+            review_items = review_items + _score_demoted
+            log.info("그룹 '%s' 점수/LLM 컷오프: %d건 → 검토 강등", group.get("name"), len(_score_demoted))
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
         g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
         if _demoted:
@@ -6745,8 +7774,28 @@ def execute_monitor(
                 )
     # ⑦ 모든 그룹의 delivery plan 이 끝난 뒤에만 seen_ids 를 갱신한다. 중간 크래시 때는
     # outbox + recipient checkpoint 가 남으므로 다음 run 이 중복 없이 미완료분을 이어 보낸다.
+    # 단일 그룹(--group) run 은 "모든 그룹 plan 종료"가 아니므로 cycle 게이트를 유지한다.
+    # 전체 그룹 end-of-run 은 이번 target_date 만 신뢰하고, 다른 날짜 completed 는
+    # cycle 게이트를 통과한 것만 승격한다(크래시 슬롯 A-only settle 의 seen_ids 독극물 방지).
     if effective_send and persist_seen:
-        seen_ids = persist_completed_outbox(seen_ids)
+        if single_group_mode:
+            seen_ids = persist_completed_outbox(
+                seen_ids,
+                only_if_cycle_complete=True,
+                groups=all_groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+            )
+        else:
+            seen_ids = persist_completed_outbox(
+                seen_ids,
+                trust_dates={str(target_date)},
+                groups=all_groups,
+                settings=settings,
+                watchlist=_wl_early,
+                include_raw_all=include_raw_all,
+            )
         commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
@@ -6763,14 +7812,22 @@ def execute_monitor(
         "date_window": window_label,
         "filtered_items": len(filtered_new),
         "p0_source_items_dropped": len(p0_dropped),
-        "send_hold": bool(send_hold),
-        "send_hold_reason": hold_reason if send_hold else "",
-        "run_status": gate.get("run_status") or "",
-        "date_matched_count": len(date_matched) if settings.get("date_filter_enabled", True) else len(filtered_new),
-        "date_unknown_items": len(date_unknown),
+        # P2-5: 운영 KPI
+        "admin_excluded_count": raw_dropped,
+        "input_count": len(all_items),
+        "output_count": len(deduped),
+        "duplicate_removed_total": dedup_removed,
+        "same_source_dedup_count": dedup_stats.get("same_source_duplicate_removed", 0),
+        "cross_source_dedup_count": dedup_stats.get("cross_source_duplicate_removed", 0),
+        "attachment_dedup_count": dedup_stats.get("attachment_duplicate_removed", 0),
+        "source_contribution": dedup_stats.get("source_contribution", {}),
+        "version_change_count": changed_count,
+        "deadline_excluded_count": len(date_excluded),
+        "possible_duplicate_count": possible_dup_count,
+        "date_excluded_count": len(date_excluded),
+        "date_matched_count": len(date_matched),
         "date_review_queue": date_review_queue,
         "date_review_queue_count": len(date_review_queue),
-        "date_excluded_count": len(date_excluded),
         "final_mail_target_count": final_mail_count,
         "mail_sent": bool(effective_send and _ALLOW_SMTP_SEND),
         "drafts_created": _DRAFT_OK,
@@ -6789,6 +7846,7 @@ def main(
     include_raw_all: bool = False,
     persist_seen: bool = False,
     collection_gate: dict | None = None,
+    group_id: str = "",
 ) -> dict:
     # safe-by-default: 인자를 명시적으로 True 로 주지 않으면 발송·원본전체·seen_ids 저장을
     # 모두 하지 않는다(preview-only). 실발송은 호출자가 allow_send=True 를 명시할 때만.
@@ -6797,6 +7855,7 @@ def main(
         include_raw_all=include_raw_all,
         persist_seen=persist_seen,
         collection_gate=collection_gate,
+        group_id=group_id,
     )
     _post_run_alert(result)
     return result
@@ -7264,6 +8323,7 @@ def run_dry_run(
     fetch_coverage: bool = True,
     allow_coverage_alert: bool = False,
     draft_mode: bool = False,
+    group_id: str = "",
 ) -> dict:
     """실제 발송·seen_ids 저장 없이 전체 파이프라인 검증.
 
@@ -7313,6 +8373,7 @@ def run_dry_run(
     result = execute_monitor(
         allow_send=False, include_raw_all=False, persist_seen=False,
         draft_mode=draft_mode, collection_gate=collection_gate,
+        group_id=group_id,
     )
     result["coverage"] = coverage_rows
     result["coverage_anomalies"] = coverage_anomalies
@@ -7413,6 +8474,12 @@ if __name__ == "__main__":
         action="store_true",
         help="원본전체(raw_all) 보고 메일도 함께 발송 대상에 포함한다(기본은 미포함).",
     )
+    parser.add_argument(
+        "--group",
+        default="",
+        metavar="GROUP_ID",
+        help="지정한 그룹만 실행한다(예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.",
+    )
     args = parser.parse_args()
     if args.only_to:
         _ONLY_TO = args.only_to
@@ -7434,6 +8501,7 @@ if __name__ == "__main__":
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
                 draft_mode=True,
+                group_id=args.group,
             )
             _post_run_alert(summary)
             log.info(
@@ -7448,6 +8516,7 @@ if __name__ == "__main__":
             summary = run_dry_run(
                 fetch_coverage=not args.skip_coverage_fetch,
                 allow_coverage_alert=args.coverage_alert,
+                group_id=args.group,
             )
             log.info(
                 "dry-run 완료: 수집=%s 신규=%s review_queue=%s mail_sent=%s seen_changed=%s",
@@ -7544,6 +8613,25 @@ if __name__ == "__main__":
                 except Exception as e:
                     log.warning("커버리지 점검 실패(무시): %s", e)
             if _skip_fetch:
+                # execute_monitor 를 건너뛰므로, 여기서 completed outbox → seen_ids 를
+                # flush 하지 않으면 마지막 settle 직후 크래시 분이 한 슬롯 동안 고인다.
+                # 반드시 cycle 게이트를 켠다 — 무조건부 flush 는 다른 슬롯의 미완료
+                # A-only settle 까지 승격해 공유 notice_ids 를 타 그룹에서 영구 누락시킨다.
+                if args.persist_seen:
+                    try:
+                        _ALLOW_PERSIST_SEEN = True
+                        if delivery_outbox.is_ready():
+                            retry_pending_outbox()
+                            persist_completed_outbox(
+                                load_seen_ids(),
+                                only_if_cycle_complete=True,
+                                groups=_groups_ee,
+                                settings=_settings_ee,
+                                watchlist=_wl_ee,
+                                include_raw_all=args.include_raw_all,
+                            )
+                    except Exception as e:
+                        log.warning("skip 경로 outbox→seen_ids flush 실패(무시): %s", e)
                 _dur = time.monotonic() - _t0
                 log.info(
                     "skipped_fetch=true duration_sec=%.1f target_date=%s reason=%s"
@@ -7558,7 +8646,7 @@ if __name__ == "__main__":
                 if _dur < 30 and not args.skip_coverage_fetch:
                     log.warning(
                         "SHORT_RUN_ANOMALY skipped_fetch=true duration_sec=%.1f"
-                        " — coverage artifact/수집 누락 의",
+                        " — coverage artifact/수집 누락 의도",
                         _dur,
                     )
             else:
@@ -7567,6 +8655,7 @@ if __name__ == "__main__":
                     include_raw_all=args.include_raw_all,
                     persist_seen=args.persist_seen,
                     collection_gate=_gate,
+                    group_id=args.group,
                 )
     except Exception as e:
         log.exception("치명적 오류: %s", e)

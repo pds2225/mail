@@ -177,3 +177,113 @@ def test_p2_korean_keyword_substring_still_matches_compound():
     grp = _group(or_keywords=["화장품"], priority_keywords=[], required_conditions={})
     s = scoring.compute_score(_item("화장품산업 활성화 공고"), grp)
     assert s["breakdown"]["or_hits"] == 1
+
+
+def test_prestartup_or_keywords_keep_package_notice_above_threshold():
+    """MAIL-003 재현: 예비창업패키지는 OR 적합 단어로 2차 점수 컷을 통과해야 한다."""
+    from pathlib import Path
+    import json
+
+    groups = json.loads((Path(__file__).resolve().parent.parent / "config" / "groups.json").read_text(encoding="utf-8"))
+    grp = next(g for g in groups if g["id"] == "grp_prestartup_ai")
+    item = {
+        "title": "2026년 AI 예비창업패키지 참여자 모집",
+        "description": "사업자등록이 없는 예비창업자를 대상으로 사업화자금을 지원합니다. 전국 모집.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["or_hits"] >= 1
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+    assert not out["rejected"]
+
+
+def _prestartup_group():
+    from pathlib import Path
+    import json
+
+    groups = json.loads((Path(__file__).resolve().parent.parent / "config" / "groups.json").read_text(encoding="utf-8"))
+    return next(g for g in groups if g["id"] == "grp_prestartup_ai")
+
+
+def test_precision_exclude_drops_established_solution_notice():
+    """MAIL-006: 기창업 솔루션 도입은 예비창업 신호가 없으면 2차에서 떨어진다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "AI 솔루션 도입 참여기업 모집",
+        "description": "기창업 중소기업의 AI 솔루션 도입 비용을 지원합니다.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_penalty"] == 1
+    assert s["breakdown"]["precision_keep_hits"] == 0
+    assert s["score"] < int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "rejected_by_score"
+
+
+def test_precision_keep_overrides_solution_intro_penalty():
+    """예비창업 신호와 솔루션 도입이 같이 있으면 동시 모집으로 통과한다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "예비창업자 AI 솔루션 도입 지원 모집",
+        "description": "예비창업자와 초기기업에 AI 솔루션 도입 비용을 지원합니다.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+
+
+def test_ai_commercialization_grant_keep_beats_participant_penalty():
+    """MAIL-012: 사업화지원금은 참여기업 감점과 무관하게 2차를 통과한다."""
+    grp = _prestartup_group()
+    item = {
+        "title": "2026년 AI 사업화지원금 참여기업 모집",
+        "description": "인공지능 사업화자금을 지원합니다. 전국 모집.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["or_hits"] >= 1
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+    assert not out["rejected"]
+
+
+def test_precision_keep_matches_spaced_yebi_changup():
+    """공고 원문의 '예비 창업' 띄어쓰기도 keep 으로 인정한다.
+
+    MAIL-006 precision_exclude 가 '솔루션 도입'/'참여기업'을 감점할 때, keep 키워드
+    '예비창업'이 공백 때문에 빗나가면 1차 통과 본공고가 2차에서 score 0 탈락한다.
+    """
+    grp = _prestartup_group()
+    item = {
+        "title": "2026년 예비 창업 패키지(AI) 모집 공고",
+        "description": "예비 창업자를 대상으로 하며 AI 솔루션 도입을 지원합니다. 참여기업 연계 포함.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_keep_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+
+
+def test_kw_hit_non_ascii_ignores_internal_whitespace():
+    assert scoring._kw_hit("예비 창업 패키지", "예비창업")
+    assert scoring._kw_hit("예비창업패키지", "예비 창업")
+    assert not scoring._kw_hit("일반 모집 공고", "예비창업")
+    assert scoring._kw_hit("ai 솔루션", "AI") is True
+    assert scoring._kw_hit("email notice", "ai") is False
+
+
+def test_precision_exclude_absent_is_backward_compatible():
+    """precision 키가 없는 그룹은 기존 점수와 같다."""
+    grp = _group()
+    item = _item("인천 스마트공장 지원사업")
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["precision_penalty"] == 0
+    assert s["breakdown"]["precision_exclude_hits"] == 0

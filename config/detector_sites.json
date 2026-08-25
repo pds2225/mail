@@ -94,6 +94,16 @@
       "fetch_failed_risk": "P0",
       "ignore_env_tls": true,
       "minimum_baseline": 5
+    },
+    "gov24_consultant": {
+      "zero_item_policy": "warning",
+      "expected_frequency": "weekly",
+      "minimum_baseline": 1
+    },
+    "gov24_mgmt_consultant": {
+      "zero_item_policy": "warning",
+      "expected_frequency": "weekly",
+      "minimum_baseline": 1
     }
   }
 }

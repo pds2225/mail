@@ -15,13 +15,13 @@ zero-match 개선(양방향 정확도):
 
 하위호환: group에 'score_threshold' 키가 없으면 score_and_filter는 입력 전체를
 그대로 통과시킨다 (monitor.py 회귀 방지). 신규 가중치(or_cluster_bonus,
-region_mismatch_penalty)는 group.weights 로 override 가능.
+region_mismatch_penalty, precision_exclude_penalty)는 group.weights 로 override 가능.
+precision_exclude_keywords 는 precision_keep_keywords 가 없을 때만 감점한다.
 """
 from __future__ import annotations
 
 import os
 import re
-from datetime import datetime, timedelta, timezone
 from typing import Any
 
 DEFAULT_WEIGHTS: dict[str, int] = {
@@ -31,9 +31,12 @@ DEFAULT_WEIGHTS: dict[str, int] = {
     "region_match": 20,
     "or_cluster_bonus": 15,          # or-키워드 다중 히트(>=OR_CLUSTER_MIN_HITS) 1회 보너스 — recall 회복
     "region_mismatch_penalty": -25,  # 그룹 지역 부재 + 타 광역만 언급 시 감점 — precision
+    "precision_exclude_penalty": -50,  # 신청 유형 오매칭(기창업 솔루션 등). precision_keep 히트 시 미적용
 }
 DEFAULT_THRESHOLD = 50
 DEFAULT_LLM_BAND = (40, 70)
+DEFAULT_LLM_MODEL = "claude-haiku-4-5-20251001"
+# MONITOR_LLM_MODEL 로 override. OpenAI 경로는 MONITOR_LLM_PROVIDER=openai + OPENAI_API_KEY.
 
 # or-키워드가 이 개수 이상 적중하면 군집 보너스 1회 부여
 # (priority 키워드가 없어도 관련 키워드가 다수면 적합 신호로 본다)
@@ -66,11 +69,20 @@ def _kw_hit(text_lower: str, kw: str) -> bool:
       'email' 안의 'ai' 같은 부분문자열 오매칭 방지 (precision).
     - 한글 등 비ASCII 키워드는 부분문자열 매칭 유지 →
       한국어는 띄어쓰기 없는 합성어가 흔하므로 substring 이 맞다 (recall).
+    - 공고 원문은 '예비 창업'처럼 합성어 중간에 공백을 넣는 경우가 많다.
+      precision_keep/exclude 가 공백 유무만으로 어긋나면 1차 통과 공고가
+      2차에서 잘못 탈락한다 → 비ASCII 는 공백 제거본도 함께 본다.
     """
     kw_l = kw.lower()
     if kw.isascii():
         return re.search(r"(?<![a-z0-9])" + re.escape(kw_l) + r"(?![a-z0-9])", text_lower) is not None
-    return kw_l in text_lower
+    if kw_l in text_lower:
+        return True
+    kw_compact = re.sub(r"\s+", "", kw_l)
+    if not kw_compact:
+        return False
+    text_compact = re.sub(r"\s+", "", text_lower)
+    return kw_compact in text_compact
 
 
 def _count_hits(text: str, keywords: list[str]) -> int:
@@ -86,6 +98,9 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     priority_hits = _count_hits(text, group.get("priority_keywords") or [])
     or_hits = _count_hits(text, group.get("or_keywords") or [])
     exclude_hits = _count_hits(text, group.get("exclude_keywords") or [])
+    precision_exclude_hits = _count_hits(text, group.get("precision_exclude_keywords") or [])
+    precision_keep_hits = _count_hits(text, group.get("precision_keep_keywords") or [])
+    precision_penalty = 1 if precision_exclude_hits and not precision_keep_hits else 0
 
     # or-키워드 군집 보너스: priority 가 없어도 관련 키워드가 다수면 적합 신호 (recall)
     or_cluster = 1 if or_hits >= OR_CLUSTER_MIN_HITS else 0
@@ -110,6 +125,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         + exclude_hits * weights["exclude_penalty"]
         + region_match * weights["region_match"]
         + region_mismatch * weights["region_mismatch_penalty"]
+        + precision_penalty * weights["precision_exclude_penalty"]
     )
     score = max(0, min(100, score))
 
@@ -122,6 +138,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         reasons.append("or cluster bonus")
     if exclude_hits:
         reasons.append(f"exclude {exclude_hits}x (penalty)")
+    if precision_penalty:
+        reasons.append("precision exclude (penalty)")
     if region_match:
         reasons.append("region match")
     if region_mismatch:
@@ -134,6 +152,9 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
             "or_hits": or_hits,
             "or_cluster": or_cluster,
             "exclude_hits": exclude_hits,
+            "precision_exclude_hits": precision_exclude_hits,
+            "precision_keep_hits": precision_keep_hits,
+            "precision_penalty": precision_penalty,
             "region_match": region_match,
             "region_mismatch": region_mismatch,
         },
@@ -142,31 +163,19 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
 
 
 def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
-    """Claude 2차 판정. 비용 절감을 위해 score 회색지대 아이템에만 호출.
+    """LLM 2차 판정. 비용 절감을 위해 score 회색지대 아이템에만 호출.
 
     실패 시 'is_relevant': True 로 통과 (보수적). 호출 측에서 캐시/상한 제어.
+    모델: group.llm_model > MONITOR_LLM_MODEL > DEFAULT_LLM_MODEL.
+    provider: MONITOR_LLM_PROVIDER=openai 이면 OpenAI, 기본 anthropic.
     """
-    try:
-        from anthropic import Anthropic
-    except ImportError:
-        return {"is_relevant": True, "confidence": 0.0, "reason": "anthropic not installed"}
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return {"is_relevant": True, "confidence": 0.0, "reason": "no api key"}
-
     title = str(item.get("title", ""))[:200]
-    summary = str(item.get("summary", ""))[:500]
+    summary = str(item.get("summary", "") or item.get("description", ""))[:500]
     priority_kw = ", ".join((group.get("priority_keywords") or [])[:10])
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
-    # 오늘(KST) 미주입 시 "2026년 공고라 신청 불가"처럼 연도만으로 오판하는 사고 방지
-    today_kst = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
-
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
-        f"오늘(KST): {today_kst}\n"
-        "연도만으로 마감/신청불가 판정 금지. 마감일이 명시되지 않았거나 오늘 이후면 연도 숫자만으로 제외하지 말 것.\n"
         f"그룹 지역: {region}\n"
         f"우선 키워드: {priority_kw}\n"
         f"제외 키워드: {exclude_kw}\n"
@@ -174,28 +183,74 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str
         f"제목: {title}\n"
         f"요약: {summary}"
     )
+    model = (
+        str(group.get("llm_model") or "").strip()
+        or os.environ.get("MONITOR_LLM_MODEL", "").strip()
+        or DEFAULT_LLM_MODEL
+    )
+    provider = (os.environ.get("MONITOR_LLM_PROVIDER") or "anthropic").strip().lower()
 
     try:
-        client = Anthropic(api_key=api_key)
-        msg = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = "".join(getattr(b, "text", "") for b in msg.content) if msg.content else ""
-        import json
-        import re
-        m = re.search(r"\{.*\}", raw, re.S)
-        if not m:
-            return {"is_relevant": True, "confidence": 0.0, "reason": "parse fail"}
-        parsed = json.loads(m.group(0))
-        return {
-            "is_relevant": bool(parsed.get("is_relevant", True)),
-            "confidence": float(parsed.get("confidence", 0.5)),
-            "reason": str(parsed.get("reason", ""))[:200],
-        }
+        if provider == "openai":
+            return _llm_openai(prompt, model)
+        return _llm_anthropic(prompt, model)
     except Exception as e:
         return {"is_relevant": True, "confidence": 0.0, "reason": f"err:{type(e).__name__}"}
+
+
+def _parse_llm_json(raw: str) -> dict[str, Any]:
+    import json
+    import re
+    m = re.search(r"\{.*\}", raw or "", re.S)
+    if not m:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "parse fail"}
+    parsed = json.loads(m.group(0))
+    return {
+        "is_relevant": bool(parsed.get("is_relevant", True)),
+        "confidence": float(parsed.get("confidence", 0.5)),
+        "reason": str(parsed.get("reason", ""))[:200],
+    }
+
+
+def _llm_anthropic(prompt: str, model: str) -> dict[str, Any]:
+    try:
+        from anthropic import Anthropic
+    except ImportError:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "anthropic not installed"}
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "no api key"}
+    client = Anthropic(api_key=api_key)
+    msg = client.messages.create(
+        model=model,
+        max_tokens=200,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = "".join(getattr(b, "text", "") for b in msg.content) if msg.content else ""
+    return _parse_llm_json(raw)
+
+
+def _llm_openai(prompt: str, model: str) -> dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "no openai key"}
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return {"is_relevant": True, "confidence": 0.0, "reason": "openai not installed"}
+    # 기본 모델명이 anthropic slug 이면 gpt-4o-mini 로 치환
+    if model.startswith("claude"):
+        model = os.environ.get("MONITOR_OPENAI_MODEL", "gpt-4o-mini")
+    client = OpenAI(api_key=api_key)
+    resp = client.chat.completions.create(
+        model=model,
+        max_tokens=200,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = ""
+    if resp.choices:
+        raw = str(getattr(resp.choices[0].message, "content", "") or "")
+    return _parse_llm_json(raw)
 
 
 def score_and_filter(items: list[dict], group: dict) -> dict[str, Any]:

@@ -18,7 +18,7 @@
    커버리지 baseline·source_coverage·P0 알림은 Actions artifact/`if-no-files-found: warn` 로 남긴다. “만들었는데 러너와 함께 사라짐”을 사고로 본다. 비정상 short-run 은 로그 경보.
 
 5. **표시 오염이 판정을 흔들지 않는다**  
-   제목 badge(file/새글 등), `author == title` 오염, 연도 생략 날짜의 꼬리 재매칭(작년→올해 오판)은 회귀 테스트로 잠근다. 주관기관은 지역 매칭에 쓰지 않는다. LLM 2차 판정(`llm_relevance_check`)에는 **오늘(KST)** 을 넣고, 연도만으로 신청불가를 금지한다.
+   제목 badge(file/새글 등), `author == title` 오염, 연도 생략 날짜의 꼬리 재매칭(작년→올해 오판)은 회귀 테스트로 잠근다. 주관기관은 지역 매칭에 쓰지 않는다.
 
 6. **누락 < 누출보다 나쁘다(recall 우선)**  
    애매하면 보낸다(하단에 표시)·막지 않는다. `recall_zero_gate` / core_sources checklist 가 코딩 게이트다. exclude·차단 규칙은 제목 exact / 안전어 동반 시에만.

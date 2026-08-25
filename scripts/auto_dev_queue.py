@@ -1,4 +1,4 @@
-"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
+﻿"""Auto Dev Queue — Vercel Mail 프로젝트 자동개발 큐 실행기
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
@@ -15,7 +15,7 @@
 - 실제 이메일 발송 금지 (dry-run / draft-only 기준)
 - 기존 앱 파일 수정 금지
 - Mail 관련 Secret은 발송 기능 검증 전까지 미사용
-- 설계: docs/LOOP_ENGINEERING_AUTO_DEV.md
+- 설계: docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md
 """
 from __future__ import annotations
 
@@ -251,7 +251,7 @@ def preflight_check() -> list[str]:
         "auto_dev/eval_rubric.md",
         "auto_dev/exit_conditions.md",
         "auto_dev/human_gates.md",
-        "docs/LOOP_ENGINEERING_AUTO_DEV.md",
+        "docs/autodev/LOOP_ENGINEERING_AUTO_DEV.md",
         "scripts/loop_verify.py",
         "scripts/auto_dev_executor.py",
         "scripts/decompose_defects.py",
@@ -449,7 +449,20 @@ def main() -> int:
 
     pending = sections.get("PENDING", [])
     if not pending:
-        log("  ℹ️ PENDING 작업 없음 — drift verify만 수행")
+        task_md_ready: list[str] = []
+        task_md_path = ROOT / "TASK.md"
+        if task_md_path.exists():
+            for line in task_md_path.read_text(encoding="utf-8").splitlines():
+                m = re.match(r"^\[([ ~])\]\s+(MAIL-\d+)\s+\|\s+(.+)$", line.strip())
+                if m:
+                    task_md_ready.append(f"{m.group(2)}: {m.group(3).strip()}")
+        if task_md_ready:
+            log(
+                f"  ℹ️ TASKS.md PENDING 없음 — TASK.md READY/ACTIVE {len(task_md_ready)}건은 "
+                "로컬 에이전트가 소진 (이 큐는 TASKS.md만 처리)"
+            )
+        else:
+            log("  ℹ️ PENDING 작업 없음 — drift verify만 수행")
         verify = run_loop_verify()
         drift_cmd = [sys.executable, str(ROOT / "scripts" / "loop_verify.py"), "--drift", "--json"]
         try:
@@ -457,10 +470,16 @@ def main() -> int:
             drift = json.loads(drift_proc.stdout or "{}")
         except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
             drift = {"ok": False}
+        extra = ""
+        if task_md_ready:
+            extra = "\n- TASK.md READY/ACTIVE (local agent drain, not this queue):\n" + "\n".join(
+                f"  - {row}" for row in task_md_ready
+            )
         write_summary(
-            "## ✅ Auto Dev Queue\n\n처리할 PENDING 작업이 없습니다.\n\n"
+            "## ✅ Auto Dev Queue\n\n처리할 TASKS.md PENDING 작업이 없습니다.\n\n"
             f"- loop_verify: {'pass' if verify.get('ok') else 'fail'}\n"
             f"- drift: {'pass' if drift.get('ok') else 'fail'}\n"
+            f"{extra}\n"
         )
         save_state(state)
         return 0 if verify.get("ok", False) else 1

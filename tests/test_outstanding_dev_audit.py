@@ -128,3 +128,45 @@ def test_overnight_pending_parser():
         "TASK-014: outstanding audit",
         "TASK-015: overnight ready",
     ]
+
+
+def test_task_md_ready_parser_ignores_done_and_blocked():
+    text = """# 0. TASK LIST
+
+[x] MAIL-001 | 끝난 작업
+[~] MAIL-007 | 밤샘 자동개발이 TASK.md를 읽게 한다
+[ ] MAIL-008 | 다음 대기
+[!] MAIL-009 | 막힘
+[-] MAIL-010 | 취소
+
+---
+
+# 1. REPOSITORY
+"""
+    ready = overnight._task_md_ready(text)
+    assert ready == [
+        "MAIL-007: 밤샘 자동개발이 TASK.md를 읽게 한다",
+        "MAIL-008: 다음 대기",
+    ]
+
+
+def test_collect_pending_merges_task_md_and_tasks_md():
+    tasks = """## PENDING
+- TASK-020: housekeeping
+## DONE
+"""
+    task_md = """# 0. TASK LIST
+
+[ ] MAIL-007 | overnight task.md drain
+
+# 1. REPOSITORY
+"""
+    pending = overnight.collect_pending(tasks, task_md)
+    assert "TASK-020: housekeeping" in pending
+    assert "MAIL-007: overnight task.md drain" in pending
+    ordered = overnight._user_priority_first(pending)
+    assert ordered[0].startswith("MAIL-007")
+
+
+def test_overnight_empty_both_queues():
+    assert overnight.collect_pending("", "# 0. TASK LIST\n\n[x] MAIL-001 | done\n") == []

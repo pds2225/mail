@@ -30,6 +30,7 @@ RECALL_SUITES = [
     "test_priority_recall_paths.py",
     "test_decision_matrix.py",
     "test_download_kstartup_targets.py",
+    "test_ai_commercialization_grant_recall.py",
 ]
 
 CRITICAL_SOURCE_SUITES = [

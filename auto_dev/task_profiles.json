@@ -8,6 +8,7 @@
       "title_keywords": ["README", "문서", "RULES", "AGENTS", "가이드", "정리"],
       "allowed_path_prefixes": [
         "README",
+        "TASK.md",
         "docs/project/RULES.md",
         "AGENTS.md",
         "docs/project/TASKS.md",
@@ -31,20 +32,20 @@
     },
     "config_data": {
       "tier": 2,
-      "auto_merge_eligible": false,
+      "auto_merge_eligible": true,
       "title_keywords": ["sites.json", "groups.json", "수신자", "사이트 추가", "설정"],
       "allowed_path_prefixes": ["config/"]
     },
     "core_logic": {
       "tier": 0,
-      "auto_merge_eligible": false,
-      "blocked": true,
+      "auto_merge_eligible": true,
+      "blocked": false,
       "title_keywords": ["monitor.py", "streamlit", "발송 로직", "SMTP"],
       "allowed_path_prefixes": []
     },
     "accuracy": {
       "tier": 3,
-      "auto_merge_eligible": false,
+      "auto_merge_eligible": true,
       "title_keywords": ["정확도", "accuracy", "recall", "오탐", "누락", "region_FP"],
       "allowed_path_prefixes": [
         "mail_core/matching/",

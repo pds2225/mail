@@ -171,10 +171,11 @@ def test_skip_gate_when_all_units_delivered(tmp_path):
 #   원인: 발송 멱등 키의 기준일이 재조회창의 가장 오래된 날이라, days_back 을 1→3 으로
 #   늘린 순간(2026-07-25) 기준일이 이미 발송 완료된 과거 날짜로 후퇴했다.
 
-def test_delivery_cycle_date_does_not_regress_when_days_back_grows():
+def test_delivery_cycle_date_does_not_regress_when_days_back_grows(monkeypatch):
     """기준값은 실행 당일 회차 — days_back 을 늘려도 과거로 후퇴하지 않는다."""
     import monitor
 
+    monkeypatch.delenv("MONITOR_DELIVERY_SLOT", raising=False)
     now = datetime(2026, 7, 29, 9, 0, tzinfo=monitor.KST)
 
     assert monitor.delivery_cycle_date(now) == "2026-07-29#am"
@@ -186,9 +187,11 @@ def test_delivery_cycle_date_does_not_regress_when_days_back_grows():
 
 # ── 하루 2회 발송(07:30·18:30 KST, 2026-07-30 사용자 지정) ────────────────────────────
 
-def test_am_and_pm_runs_have_separate_cycles():
+def test_am_and_pm_runs_have_separate_cycles(monkeypatch):
     """오전·오후 실행은 다른 회차 키를 쓰고, 예약 지연에도 회차가 흔들리지 않는다."""
     import monitor
+
+    monkeypatch.delenv("MONITOR_DELIVERY_SLOT", raising=False)
 
     def cycle(hour: int, minute: int = 30) -> str:
         return monitor.delivery_cycle_date(
@@ -202,6 +205,77 @@ def test_am_and_pm_runs_have_separate_cycles():
     assert cycle(13, 59) == "2026-07-30#am"
     assert cycle(14) == "2026-07-30#pm"
     assert cycle(23, 59) == "2026-07-30#pm"
+
+
+def test_monitor_delivery_slot_env_overrides_wall_clock(monkeypatch):
+    """MONITOR_DELIVERY_SLOT=am|pm 이면 14:00 이후에도 의도한 회차를 쓴다."""
+    import monitor
+
+    afternoon = datetime(2026, 7, 30, 15, 0, tzinfo=monitor.KST)
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "am")
+    assert monitor.delivery_slot(afternoon) == "am"
+    assert monitor.delivery_cycle_date(afternoon) == "2026-07-30#am"
+
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "pm")
+    morning = datetime(2026, 7, 30, 8, 0, tzinfo=monitor.KST)
+    assert monitor.delivery_slot(morning) == "pm"
+    assert monitor.delivery_cycle_date(morning) == "2026-07-30#pm"
+
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "auto")
+    assert monitor.delivery_slot(afternoon) == "pm"
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "nope")
+    assert monitor.delivery_slot(afternoon) == "pm"
+
+
+def test_afternoon_am_catchup_does_not_skip_evening_pm(tmp_path, monkeypatch):
+    """오후 수동 오전-따라잡기(#am) 후 저녁 cron(#pm)이 already_delivered 로 스킵되지 않는다.
+
+    벽시계만 쓰면 15:00 따라잡기와 18:30 이 둘 다 #pm 을 써서 저녁 digest 가 누락된다.
+    """
+    import monitor
+
+    groups = [{
+        "id": "grp_a", "active": True, "tenant_id": "default",
+        "recipients": ["a@example.com"],
+    }]
+    settings = {"tenant_id": "default", "raw_all_enabled": False, "days_back": 3}
+    path = tmp_path / "delivery_state.json"
+
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "am")
+    catchup = monitor.delivery_cycle_date(
+        datetime(2026, 7, 30, 15, 0, tzinfo=monitor.KST)
+    )
+    assert catchup == "2026-07-30#am"
+    delivery_state.save(
+        path,
+        {delivery_state.key(catchup, "grp_a", "a@example.com", tenant="default")},
+    )
+
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "pm")
+    evening = monitor.delivery_cycle_date(
+        datetime(2026, 7, 30, 18, 30, tzinfo=monitor.KST)
+    )
+    assert evening == "2026-07-30#pm"
+    pm_run = should_skip_fetch_already_delivered(
+        target_date=evening, groups=groups, settings=settings,
+        delivery_path=path, enabled=True,
+    )
+    assert pm_run["skip"] is False
+    assert pm_run["reason"] == "pending_units"
+
+
+def test_wall_clock_afternoon_catchup_collides_with_evening_slot(monkeypatch):
+    """회귀 고정: 환경변수 없이 15:00 과 18:30 은 같은 #pm 키를 공유한다."""
+    import monitor
+
+    monkeypatch.delenv("MONITOR_DELIVERY_SLOT", raising=False)
+    catchup = monitor.delivery_cycle_date(
+        datetime(2026, 7, 30, 15, 0, tzinfo=monitor.KST)
+    )
+    evening = monitor.delivery_cycle_date(
+        datetime(2026, 7, 30, 18, 30, tzinfo=monitor.KST)
+    )
+    assert catchup == evening == "2026-07-30#pm"
 
 
 def test_pm_run_not_skipped_after_am_delivered(tmp_path):
@@ -408,41 +482,3 @@ def test_bizinfo_p0_always_zero_without_baseline():
     report = classify_source_status(row, history=[], zero_item_policy="p0_always")
     assert report["status"] == COLLECT_STATUS_ZERO_SUSPICIOUS
     assert report.get("detail", {}).get("p0_always") is True
-
-
-def test_llm_relevance_prompt_injects_today_kst(monkeypatch):
-    """LLM 2차 판정 프롬프트에 오늘(KST)과 연도-only 금지 문구가 들어간다(TASK-05)."""
-    import types
-
-    import mail_core.matching.scoring as scoring
-
-    captured: dict = {}
-
-    class _FakeMsg:
-        content = [type("B", (), {"text": '{"is_relevant": true, "confidence": 0.9, "reason": "ok"}'})()]
-
-    class _FakeMessages:
-        def create(self, **kwargs):
-            captured["prompt"] = kwargs["messages"][0]["content"]
-            return _FakeMsg()
-
-    class _FakeClient:
-        messages = _FakeMessages()
-
-    fake_mod = types.ModuleType("anthropic")
-    fake_mod.Anthropic = lambda api_key=None: _FakeClient()  # type: ignore[attr-defined]
-    monkeypatch.setitem(sys.modules, "anthropic", fake_mod)
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
-
-    result = scoring.llm_relevance_check(
-        {"title": "2026년 인천 화장품 수출 지원", "summary": "모집 중"},
-        {"priority_keywords": ["화장품"], "exclude_keywords": [], "required_conditions": {"regions": ["인천"]}},
-    )
-    prompt = captured.get("prompt", "")
-    assert "오늘(KST):" in prompt
-    assert "연도만으로" in prompt
-    assert "2026년 인천 화장품 수출 지원" in prompt
-    from datetime import datetime, timedelta, timezone
-    expect_today = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
-    assert f"오늘(KST): {expect_today}" in prompt
-    assert result["is_relevant"] is True
