@@ -16,12 +16,19 @@ from pathlib import Path
 from typing import Any
 
 from mail_core.paths import SECRETS_DIR
-from mail_core.storage.secure_store import decrypt_json, encrypt_json, get_fernet
+from mail_core.storage.secure_store import (
+    SecureStoreDecryptError,
+    SecureStoreUnavailable,
+    decrypt_json,
+    encrypt_json,
+    get_fernet,
+)
 
 
 PRIVATE_DB_PATH = SECRETS_DIR / "mail_private.sqlite3"
 PRIVATE_ENV = "MAIL_PRIVATE_CONFIG_JSON"
 _TENANT_RE = re.compile(r"^[A-Za-z0-9_.-]{1,64}$")
+_MISSING = object()
 
 
 def normalize_tenant_id(value: Any) -> str:
@@ -44,6 +51,40 @@ def _payload(value: Any) -> dict[str, Any]:
     }
 
 
+def _read_ciphertext_row(db_path: Path) -> bytes | None:
+    """Return stored ciphertext for namespace=mail, or None if absent/unreadable schema."""
+    try:
+        with sqlite3.connect(db_path) as conn:
+            row = conn.execute(
+                "SELECT ciphertext FROM private_config WHERE namespace = ?", ("mail",)
+            ).fetchone()
+    except sqlite3.Error:
+        return None
+    if not row or not row[0]:
+        return None
+    return bytes(row[0])
+
+
+def _decrypt_private_ciphertext(token: bytes, *, db_path: Path) -> dict[str, Any]:
+    """Decrypt private payload or raise — never treat key mismatch as empty config.
+
+    Returning ``{}`` on InvalidToken let the Streamlit dashboard render zero recipients
+    and then ``save_private_payload`` overwrite live PII with an empty encrypted row.
+    Mirror ``load_encrypted_json`` / outbox: ciphertext present + wrong key → error.
+    """
+    if get_fernet(create_local_key=False) is None:
+        raise SecureStoreDecryptError(
+            f"private config at {db_path} is present but no MAIL_PRIVATE_CONFIG_KEY "
+            "(or local key) is available to decrypt it"
+        )
+    value = decrypt_json(token, _MISSING)
+    if value is _MISSING:
+        raise SecureStoreDecryptError(
+            f"private config at {db_path} is present but undecryptable with the active key"
+        )
+    return _payload(value)
+
+
 def load_private_payload(path: str | os.PathLike[str] = PRIVATE_DB_PATH) -> dict[str, Any]:
     raw = os.environ.get(PRIVATE_ENV, "").strip()
     if raw:
@@ -52,28 +93,36 @@ def load_private_payload(path: str | os.PathLike[str] = PRIVATE_DB_PATH) -> dict
         except json.JSONDecodeError:
             return {}
     db_path = Path(path)
-    if not db_path.exists() or get_fernet(create_local_key=False) is None:
+    if not db_path.exists():
         return {}
-    try:
-        with sqlite3.connect(db_path) as conn:
-            row = conn.execute(
-                "SELECT ciphertext FROM private_config WHERE namespace = ?", ("mail",)
-            ).fetchone()
-    except sqlite3.Error:
+    token = _read_ciphertext_row(db_path)
+    if token is None:
         return {}
-    if not row:
-        return {}
-    return _payload(decrypt_json(bytes(row[0]), {}))
+    return _decrypt_private_ciphertext(token, db_path=db_path)
 
 
 def save_private_payload(
     value: dict[str, Any],
     path: str | os.PathLike[str] = PRIVATE_DB_PATH,
 ) -> None:
-    """Store PII in a SQLite transaction whose value column is Fernet encrypted."""
+    """Store PII in a SQLite transaction whose value column is Fernet encrypted.
+
+    Refuses to overwrite an existing ciphertext row that will not decrypt with the
+    active key (and will not mint a new local key over live data). Same hazard the
+    outbox ``save`` path already closes for delivery recovery state.
+    """
     db_path = Path(path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    token = encrypt_json(_payload(value), create_local_key=True)
+    existing = _read_ciphertext_row(db_path) if db_path.exists() else None
+    if existing is not None:
+        # Prove we can read current PII before replacing it.
+        _decrypt_private_ciphertext(existing, db_path=db_path)
+        token = encrypt_json(_payload(value), create_local_key=False)
+    else:
+        try:
+            token = encrypt_json(_payload(value), create_local_key=True)
+        except SecureStoreUnavailable:
+            raise
     with sqlite3.connect(db_path) as conn:
         conn.execute(
             "CREATE TABLE IF NOT EXISTS private_config ("
