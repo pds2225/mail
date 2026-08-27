@@ -102,7 +102,18 @@ def save_groups_config(groups: list[dict]) -> None:
 
 
 def save_settings_config(settings: dict) -> None:
-    _save_private_bundle(load_groups_config(), settings)
+    """Persist settings without dropping keys the UI form does not edit.
+
+    A bare ``{date_filter, days_back, raw_all_*}`` overwrite used to erase
+    ``date_unknown_policy=recall`` (and company_match / raw_store / …), so the
+    next monitor run fell back to ``strict`` and permanently skipped date-unknown
+    notices that recall would have mailed.
+    """
+    on_disk = load_json(SETTINGS_PATH, {})
+    if not isinstance(on_disk, dict):
+        on_disk = {}
+    merged = {**on_disk, **(settings or {})}
+    _save_private_bundle(load_groups_config(), merged)
 
 def new_group_id() -> str:
     import time
@@ -480,7 +491,11 @@ with tab_settings:
                                height=100, disabled=not raw_on)
 
     if st.button("💾 설정 저장", type="primary"):
+        # Preserve keys the UI does not edit (date_unknown_policy, company_match_*,
+        # raw_store_*, filter_trace_*, …). Replacing the whole dict used to wipe them
+        # and flip production recall → strict on the next monitor run.
         new_settings = {
+            **settings,
             "date_filter_enabled": df_on,
             "days_back": int(days_b),
             "raw_all_enabled": raw_on,
