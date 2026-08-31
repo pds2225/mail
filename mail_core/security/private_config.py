@@ -85,14 +85,14 @@ def _decrypt_private_ciphertext(token: bytes, *, db_path: Path) -> dict[str, Any
     return _payload(value)
 
 
-def load_private_payload(path: str | os.PathLike[str] = PRIVATE_DB_PATH) -> dict[str, Any]:
+def load_private_payload(path: str | os.PathLike[str] | None = None) -> dict[str, Any]:
     raw = os.environ.get(PRIVATE_ENV, "").strip()
     if raw:
         try:
             return _payload(json.loads(raw))
         except json.JSONDecodeError:
             return {}
-    db_path = Path(path)
+    db_path = Path(PRIVATE_DB_PATH if path is None else path)
     if not db_path.exists():
         return {}
     token = _read_ciphertext_row(db_path)
@@ -103,7 +103,7 @@ def load_private_payload(path: str | os.PathLike[str] = PRIVATE_DB_PATH) -> dict
 
 def save_private_payload(
     value: dict[str, Any],
-    path: str | os.PathLike[str] = PRIVATE_DB_PATH,
+    path: str | os.PathLike[str] | None = None,
 ) -> None:
     """Store PII in a SQLite transaction whose value column is Fernet encrypted.
 
@@ -111,7 +111,7 @@ def save_private_payload(
     active key (and will not mint a new local key over live data). Same hazard the
     outbox ``save`` path already closes for delivery recovery state.
     """
-    db_path = Path(path)
+    db_path = Path(PRIVATE_DB_PATH if path is None else path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
     existing = _read_ciphertext_row(db_path) if db_path.exists() else None
     if existing is not None:
