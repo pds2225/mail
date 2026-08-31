@@ -73,7 +73,7 @@ export default function SiteAddPage() {
         <h1 className="page-title">사이트 추가</h1>
         <p className="page-desc">
           검증 후 <strong>GitHub에 반영</strong>하면 운영 <code>config/sites.json</code>이 바로
-          바뀝니다. 위쪽 반영 암호를 먼저 입력하세요.
+          바뀝니다. 위쪽에 GitHub 토큰을 먼저 붙여넣으세요.
         </p>
       </header>
 

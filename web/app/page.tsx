@@ -7,7 +7,8 @@ export default function HomePage() {
         <h1 className="page-title">수출·지원사업 모니터</h1>
         <p className="page-desc">
           사이트 목록을 보고, 추가·수정한 뒤 <strong>GitHub에 반영</strong>하면 운영{" "}
-          <code>config/sites.json</code>이 바로 바뀝니다. 메일 발송은 하지 않습니다.
+          <code>config/sites.json</code>이 바로 바뀝니다. Vercel 대시보드 설정 없이, 위쪽 GitHub
+          토큰만 있으면 됩니다. 메일 발송은 하지 않습니다.
         </p>
       </header>
 
@@ -29,7 +30,10 @@ export default function HomePage() {
       <section className="card">
         <h2 className="card-title">쓰는 방법</h2>
         <ol>
-          <li>오른쪽 위 <strong>반영 암호</strong>에 Vercel <code>CONFIG_APPLY_SECRET</code>을 입력</li>
+          <li>
+            오른쪽 위 <strong>토큰 만들기</strong> → <code>public_repo</code> 권한으로 발급 → 같은
+            칸에 붙여넣기 (이 탭 세션에만 저장)
+          </li>
           <li>사이트 추가 또는 편집</li>
           <li>
             <strong>GitHub에 반영</strong> → <code>main</code>의 <code>config/sites.json</code> 커밋

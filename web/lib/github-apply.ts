@@ -1,4 +1,3 @@
-import { githubApplyToken } from "./apply-auth";
 import type { SiteRecord } from "./site-types";
 
 const API = "https://api.github.com";
@@ -17,14 +16,14 @@ export function serializeSitesJson(sites: SiteRecord[]): string {
   return `${JSON.stringify(sites, null, 2)}\n`;
 }
 
-function authHeaders(): HeadersInit {
-  const token = githubApplyToken();
-  return {
-    Authorization: `Bearer ${token}`,
+function authHeaders(token: string): HeadersInit {
+  const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
     "User-Agent": "mail-admin-web",
   };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
 }
 
 export type RepoFile = {
@@ -32,11 +31,11 @@ export type RepoFile = {
   text: string;
 };
 
-export async function getRepoTextFile(filePath: string): Promise<RepoFile> {
+export async function getRepoTextFile(filePath: string, token = ""): Promise<RepoFile> {
   const { owner, repo } = githubRepo();
   const branch = githubBranch();
   const url = `${API}/repos/${owner}/${repo}/contents/${filePath}?ref=${encodeURIComponent(branch)}`;
-  const response = await fetch(url, { headers: authHeaders(), cache: "no-store" });
+  const response = await fetch(url, { headers: authHeaders(token), cache: "no-store" });
   const body = (await response.json()) as {
     message?: string;
     sha?: string;
@@ -55,13 +54,14 @@ export async function putRepoTextFile(opts: {
   text: string;
   sha: string;
   message: string;
+  token: string;
 }): Promise<{ sha: string; htmlUrl: string; commitUrl: string }> {
   const { owner, repo } = githubRepo();
   const branch = githubBranch();
   const url = `${API}/repos/${owner}/${repo}/contents/${opts.filePath}`;
   const response = await fetch(url, {
     method: "PUT",
-    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    headers: { ...authHeaders(opts.token), "Content-Type": "application/json" },
     body: JSON.stringify({
       message: opts.message,
       content: Buffer.from(opts.text, "utf-8").toString("base64"),
@@ -75,6 +75,11 @@ export async function putRepoTextFile(opts: {
     commit?: { html_url?: string; sha?: string };
   };
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new Error(
+        "GitHub가 토큰을 거부했습니다. public_repo 또는 Contents 쓰기 권한을 확인하세요.",
+      );
+    }
     throw new Error(body.message || `GitHub에 ${opts.filePath} 를 쓰지 못했습니다.`);
   }
   return {

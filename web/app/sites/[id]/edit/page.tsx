@@ -121,7 +121,8 @@ export default function SiteEditPage() {
         <div>
           <h1 className="page-title">사이트 편집</h1>
           <p className="page-desc">
-            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. 위쪽 반영 암호를 먼저 입력하세요.
+            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. 위쪽에 GitHub 토큰을 먼저
+            붙여넣으세요.
           </p>
         </div>
         <Link className="btn btn-secondary" href="/sites">
