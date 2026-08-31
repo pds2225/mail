@@ -148,11 +148,8 @@ code {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  flex-wrap: nowrap;
-  /* allow horizontal scroll instead of cramping on small screens */
+  flex-wrap: wrap;
   max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
 
 .nav-links::-webkit-scrollbar {
@@ -182,6 +179,26 @@ code {
   background: var(--brand-50);
   color: var(--brand-hover);
   font-weight: 600;
+}
+
+.apply-secret {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.apply-secret-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.apply-secret-input {
+  width: 9.5rem;
+  min-height: 32px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
 }
 
 /* ============================================================

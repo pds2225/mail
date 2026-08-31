@@ -139,10 +139,10 @@ export default function RecipientsPage() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">수신자 편집 · PR 패킷</h1>
+        <h1 className="page-title">수신자</h1>
         <p className="page-desc">
-          GitHub JSON의 현재 수신자를 마스킹해 표시하고, 그룹별 추가·제거 제안을 만듭니다. 운영 설정과
-          실제 메일 발송은 직접 실행하지 않습니다.
+          수신자 이메일은 GitHub <code>groups.json</code>에 없습니다. 암호화된 private store
+          (Streamlit/로컬)에서만 바꿉니다. 이 화면은 마스킹된 목록 확인용입니다.
         </p>
       </header>
 

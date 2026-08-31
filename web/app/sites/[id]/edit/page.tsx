@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { applyHeaders } from "@/lib/apply-client";
 import { COLLECTOR_TYPES, type SiteEditInput, type SiteRecord } from "@/lib/site-types";
 
 type ValidationView = {
@@ -15,8 +16,9 @@ type UpdateResponse = {
   ok?: boolean;
   error?: string;
   notice?: string;
-  branch?: string;
-  packetMarkdown?: string;
+  applied?: boolean;
+  commitUrl?: string;
+  htmlUrl?: string;
   changedFields?: string[];
   validation?: ValidationView;
 };
@@ -73,16 +75,31 @@ export default function SiteEditPage() {
     setResult(null);
   }
 
-  async function submit(createPacket: boolean) {
+  async function submit(apply: boolean) {
     setSubmitting(true);
     setError("");
     try {
+      if (apply) {
+        const response = await fetch("/api/sites/apply", {
+          method: "POST",
+          headers: applyHeaders(),
+          body: JSON.stringify({
+            ...form,
+            mode: "update",
+            probeUrl: form.testCollect,
+          }),
+        });
+        const data = (await response.json()) as UpdateResponse;
+        setResult(data);
+        if (!response.ok && data.error) setError(data.error);
+        return;
+      }
       const response = await fetch("/api/sites/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          createPacket,
+          createPacket: false,
           probeUrl: form.testCollect,
         }),
       });
@@ -104,7 +121,7 @@ export default function SiteEditPage() {
         <div>
           <h1 className="page-title">사이트 편집</h1>
           <p className="page-desc">
-            기존 JSON을 보존한 변경 제안만 생성합니다. 운영 파일은 직접 수정하지 않습니다.
+            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. 위쪽 반영 암호를 먼저 입력하세요.
           </p>
         </div>
         <Link className="btn btn-secondary" href="/sites">
@@ -234,7 +251,7 @@ export default function SiteEditPage() {
               onClick={() => submit(true)}
               disabled={submitting}
             >
-              {submitting ? "처리 중…" : "수정 PR 패킷 생성"}
+              {submitting ? "처리 중…" : "GitHub에 반영"}
             </button>
           </div>
         </div>
@@ -279,18 +296,17 @@ export default function SiteEditPage() {
         </div>
       ) : null}
 
-      {result?.packetMarkdown ? (
+      {result?.notice ? (
         <div className="card">
-          <h3 className="card-title">SITE_UPDATE_PR_PACKET</h3>
+          <h3 className="card-title">{result.applied ? "반영됨" : "결과"}</h3>
           <p className="stat">{result.notice}</p>
-          <pre className="pre">{result.packetMarkdown}</pre>
-          <button
-            type="button"
-            className="btn btn-secondary mt"
-            onClick={() => navigator.clipboard.writeText(result.packetMarkdown || "")}
-          >
-            패킷 복사
-          </button>
+          {result.commitUrl ? (
+            <p>
+              <a href={result.commitUrl} target="_blank" rel="noreferrer">
+                커밋 보기
+              </a>
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>
