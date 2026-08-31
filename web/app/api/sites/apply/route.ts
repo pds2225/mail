@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { applyAuthError } from "@/lib/apply-auth";
+import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
 import {
   getRepoTextFile,
   githubBranch,
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
   }
 
   try {
+    const token = githubApplyToken(req);
     const body = (await req.json()) as ApplyBody;
     const mode = body.mode || ("id" in body && body.id ? "update" : "add");
     const remote = await getRepoTextFile("config/sites.json");
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
         text: serializeSitesJson(next),
         sha: remote.sha,
         message: `chore(sites): update ${site.id} via Vercel admin`,
+        token,
       });
       return NextResponse.json({
         ok: true,
@@ -86,6 +88,7 @@ export async function POST(req: Request) {
       text: serializeSitesJson(next),
       sha: remote.sha,
       message: `feat(sites): add ${site.id} via Vercel admin`,
+      token,
     });
     return NextResponse.json({
       ok: true,

@@ -14,6 +14,9 @@ export function writeApplySecret(value: string): void {
 export function applyHeaders(): HeadersInit {
   const secret = readApplySecret();
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (secret) headers["x-config-apply-secret"] = secret;
+  if (secret) {
+    headers["x-config-apply-secret"] = secret;
+    headers["x-github-token"] = secret;
+  }
   return headers;
 }

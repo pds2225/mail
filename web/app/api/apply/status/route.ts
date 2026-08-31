@@ -7,7 +7,6 @@ export async function GET() {
   const status = applyStatus();
   return NextResponse.json({
     ok: true,
-    applyReady: status.hasApplySecret && status.hasGithubToken,
     ...status,
   });
 }

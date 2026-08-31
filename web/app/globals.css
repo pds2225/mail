@@ -195,10 +195,20 @@ code {
 }
 
 .apply-secret-input {
-  width: 9.5rem;
+  width: 11.5rem;
   min-height: 32px;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;
+}
+
+.apply-secret-link {
+  font-size: 0.75rem;
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.apply-secret-link:hover {
+  text-decoration: underline;
 }
 
 /* ============================================================
