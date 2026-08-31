@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const token = githubApplyToken(req);
     const body = (await req.json()) as ApplyBody;
     const mode = body.mode || ("id" in body && body.id ? "update" : "add");
-    const remote = await getRepoTextFile("config/sites.json", token);
+    const remote = await getRepoTextFile("config/sites.json");
     const existing = parseSitesJson(remote.text);
 
     if (mode === "update") {
