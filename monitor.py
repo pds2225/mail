@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, quote, urlsplit
+from urllib.parse import parse_qsl, urljoin, quote, urlsplit
 
 import httpx
 from bs4 import BeautifulSoup
@@ -962,7 +962,21 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     if old_url and new_url and old_url != new_url:
         return "APPLICATION_URL_CHANGED"
 
-    # 기본: 텍스트 변경
+    # 지원내용/금액 변경 (snapshot key: support; raw may use support_field/support_amount)
+    old_support = str(
+        before.get("support") or before.get("support_field") or before.get("support_amount") or ""
+    ).strip()
+    new_support = str(
+        after.get("support") or after.get("support_field") or after.get("support_amount") or ""
+    ).strip()
+    if old_support and new_support and old_support != new_support:
+        return "SUPPORT_AMOUNT_CHANGED"
+
+    # 제목 실질 변경(공백-only 제외) — material @vN 이 날짜창 밖으로 영구 누락되지 않게 함
+    if before_title.strip() and after_title.strip() and before_title.strip() != after_title.strip():
+        return "UPDATED"
+
+    # 기본: 공백·오탈자 수준 텍스트 변경
     return "MINOR_TEXT_CHANGE"
 
 
@@ -1178,23 +1192,63 @@ def safe_normalize_title(title: str) -> str:
     return t.strip()
 
 
+# 목록·상세 URL 에서 공고를 가르는 쿼리 키(소문자). 트래커(utm_/gclid)는 제외한다.
+# pbancSn·PMS_TSK_PBNC_ID 등을 지우면 K-Startup/KISED/IITP 전 공고가 같은 canon_url 로
+# 붕괴해 dedup 이 1건만 남긴다(#281 회귀).
+_CANON_ID_QUERY_KEYS = frozenset({
+    "pbancsn", "pms_tsk_pbnc_id", "nttno", "nttid", "bbsid",
+    "seq", "idx", "no", "id", "pblancid", "announcementid",
+    "bltn_no", "bbsctt_no", "wr_id", "article_seq", "board_seq",
+    "articleno", "boardno", "noticeno", "sn",
+})
+_CANON_TRACKING_QUERY_KEYS = frozenset({
+    "fbclid", "gclid", "ref", "mc_cid", "mc_eid",
+})
+
+
+def _canonical_link_key(link: str) -> str:
+    """호스트+경로 + 식별 쿼리만 남긴 canonical URL 키. 식별 쿼리가 없으면 빈 문자열.
+
+    공유 목록 경로(`bizpbanc-ongoing.do`)에 쿼리만 다른 공고가 붙는 사이트에서
+    쿼리 전체를 지우면 전 공고가 하나로 묶인다. 식별 키가 없을 때는 path-only 를
+    쓰지 않고 호출측이 제목 해시로 폴백하게 빈 문자열을 돌린다.
+    """
+    parts = urlsplit(str(link or "").strip())
+    if not parts.netloc and not parts.path:
+        return ""
+    host_path = re.sub(r"^www\.", "", f"{parts.netloc}{parts.path}".lower())
+    kept: list[tuple[str, str]] = []
+    for key, value in parse_qsl(parts.query, keep_blank_values=False):
+        lk = key.lower()
+        if lk.startswith("utm_") or lk in _CANON_TRACKING_QUERY_KEYS:
+            continue
+        if lk in _CANON_ID_QUERY_KEYS or lk.endswith(("sn", "seq", "no", "id")):
+            kept.append((lk, value))
+    if not kept:
+        # 쿼리 없는 path 고유 URL(기업마당 /notice/123 등)만 path-only 허용
+        if not parts.query and host_path:
+            return host_path
+        return ""
+    kept.sort()
+    query = "&".join(f"{k}={v}" for k, v in kept)
+    return f"{host_path}?{query}"
+
+
 def generate_canonical_notice_id(item: dict) -> str:
     """P1-2: 크로스 소스 통합 ID 생성.
 
     동일 공고를 다른 소스에서 가져왔을 때 하나로 묶기 위한 ID.
-    우선순위: 공고번호 > URL > 제목+기관+연도+마감
+    우선순위: 공고번호 > URL(식별 쿼리 보존) > 제목+기관+연도+마감
     """
     # 1. 공식 공고번호가 있으면 그것으로 통합
     notice_id = item.get("notice_id") or item.get("pbln_id") or ""
     if notice_id:
         return f"canon_{notice_id}"
 
-    # 2. 공식 URL이 있으면 그것으로 통합
+    # 2. 공식 URL이 있으면 그것으로 통합(식별 쿼리 유지 — pbancSn 등)
     link = item.get("link") or ""
     if link:
-        # URL 정규화 (프로토콜, www, 트래커 제거)
-        norm_link = re.sub(r"^https?://(www\.)?", "", link.lower())
-        norm_link = re.sub(r"[?&][\w=&]+", "", norm_link)
+        norm_link = _canonical_link_key(link)
         if norm_link:
             return f"canon_url_{hashlib.md5(norm_link.encode()).hexdigest()[:12]}"
 
@@ -2763,6 +2817,23 @@ def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[
             deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
         posted = select_date(row, date_selector) or posted
         deadline = select_date(row, deadline_selector) or deadline
+        # 목록에 등록일 라벨이 없고 마감/공고·접수기간만 있으면 그 날짜를 posted_date 로 쓰지 않는다.
+        # KISED(마감일자만) → 미래 마감이 posted 로 들어가 days_back 에서 영구 제외(#281).
+        # IITP(공고기간·접수기간만) → 기간 시작일이 posted 가 되어 접수중 공고가 N일 후 탈락.
+        # posted 를 비우면 date_unknown_policy=recall 이 살린다. enrich 가 등록일을 채울 수도 있다.
+        _POSTED_LABELS = ("등록일", "등록일자", "게시일", "작성일", "공고일")
+        _DEADLINE_LABELS = ("마감일자", "마감일", "접수마감")
+        _PERIOD_LABELS = ("공고기간", "접수기간", "모집기간", "신청기간", "지원신청기간")
+        has_posted_label = any(lbl in row_text for lbl in _POSTED_LABELS)
+        has_deadline_label = any(lbl in row_text for lbl in _DEADLINE_LABELS)
+        has_period_label = bool(period.get("display")) or any(lbl in row_text for lbl in _PERIOD_LABELS)
+        if not date_selector and not has_posted_label:
+            if has_deadline_label and dates:
+                if not deadline:
+                    deadline = dates[-1].replace(".", "-").replace("/", "-")
+                posted = ""
+            elif has_period_label:
+                posted = ""
         author = select_text(row, selectors.get("author", ""))
         desc = select_text(row, selectors.get("description", ""))
         items.append(_item(f"{site['id']}_{stable_id(title+link)}",
@@ -4846,12 +4917,20 @@ def _kw_in_text(text_lower: str, kw_lower: str) -> bool:
     ASCII 전용 키워드(AI/SaaS/MES/ERP/IP/VC 등)는 단어경계 매칭으로 'email'의 'ai',
     'enterprise'의 'erp', 'equipment'의 'ip' 같은 부분문자열 오매칭을 막는다(precision).
     한글 등 비ASCII 키워드는 띄어쓰기 없는 합성어가 흔하므로 부분문자열 매칭을 유지한다(recall).
-    scoring._kw_hit 와 동일 정책 — 두 모듈의 키워드 매칭 일관성 유지."""
+    공고 원문은 '디지털 전환'처럼 합성어 중간에 공백을 넣는 경우가 많다 — 비ASCII 는
+    공백 제거본도 함께 본다(scoring._kw_hit 과 동일; 1차 게이트만 어긋나면 영구 누락).
+    """
     if not kw_lower:
         return False
     if kw_lower.isascii():
         return re.search(r"(?<![a-z0-9])" + re.escape(kw_lower) + r"(?![a-z0-9])", text_lower) is not None
-    return kw_lower in text_lower
+    if kw_lower in text_lower:
+        return True
+    kw_compact = re.sub(r"\s+", "", kw_lower)
+    if not kw_compact:
+        return False
+    text_compact = re.sub(r"\s+", "", text_lower)
+    return kw_compact in text_compact
 
 
 def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
@@ -6857,12 +6936,29 @@ def deliver_with_outbox(
         recipients=targets,
         notice_ids=notice_ids,
     )
+    state_path = str(DELIVERY_STATE_PATH)
+    # Snapshot checkpoints before SMTP so we can detect all-idempotent-skip runs.
+    # send_to_list treats prior (date|group|recipient) success as delivered, which is
+    # correct for crash retry of the *same* body — but a *new* digest in the same slot
+    # (extra notice_ids) must not settle/complete or persist_completed_outbox will
+    # permanently suppress notices that never appeared in any mailed body.
+    checkpoints_before = delivery_state.load(state_path)
     delivered = send_to_list(
         subject,
         body,
         targets,
-        idem={"date": date, "tenant": tenant, "group": group, "path": str(DELIVERY_STATE_PATH)},
+        idem={"date": date, "tenant": tenant, "group": group, "path": state_path},
     )
+    checkpoints_after = delivery_state.load(state_path)
+    smtp_newly_marked = checkpoints_after - checkpoints_before
+    if delivered and not smtp_newly_marked:
+        delivery_outbox.abandon(entry["id"])
+        log.warning(
+            "멱등 skip only — outbox 폐기(seen_ids 미승격): group=%s notices=%d",
+            group,
+            len(notice_ids),
+        )
+        return
     delivery_outbox.settle(entry["id"], delivered)
 
 
@@ -7539,6 +7635,8 @@ def execute_monitor(
 
     # 같은 ID의 중요 변경은 게시일이 과거여도 재처리한다. 여전히 마감된 단순수정은 제외.
     # P1-5: 새로운 변경 유형 (DEADLINE_EXTENDED, TARGET_CHANGED, REANNOUNCEMENT 등)도 포함
+    # Material-field @vN (title/support/…) must also bypass the date window — otherwise
+    # classify emits a deliverable that partition_posted_dates drops forever.
     _IMPORTANT_CHANGE_TYPES = {
         "EXTENDED", "REANNOUNCED", "UPDATED",
         "DEADLINE_EXTENDED", "TARGET_CHANGED", "SUPPORT_AMOUNT_CHANGED",
@@ -7546,7 +7644,9 @@ def execute_monitor(
     }
     _filtered_ids = {_delivery_notice_id(it) for it in filtered_new}
     for it in new_items:
-        if it.get("_change_type") not in _IMPORTANT_CHANGE_TYPES:
+        change_type = it.get("_change_type")
+        changed_material = set(it.get("_changed_fields") or []) & _NOTICE_VERSION_MATERIAL_FIELDS
+        if change_type not in _IMPORTANT_CHANGE_TYPES and not changed_material:
             continue
         if classify_deadline_status(it, now.date()) == "closed":
             continue

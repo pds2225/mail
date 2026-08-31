@@ -27,15 +27,52 @@ SITE_TYPES = {
     "kita_html":     "한국무역협회 KITA (전용)",
     "iris_api":      "IRIS 범부처통합연구지원 (전용 API)",
     "smtech_html":   "SMTECH 중소기업기술개발 (전용)",
+    "tipa_html":     "TIPA 중소기업기술정보진흥원 (전용)",
+    "hanyang_startup_api": "한양대 창업지원단 API (전용)",
+    "startup_plus_api": "스타트업플러스 API (서울시)",
     "kocca_pims":    "KOCCA 사업공고 (전용)",
     "kocca_bbs":     "KOCCA 금융공고 (전용)",
     "gtp_html":      "경기TP (전용)",
     "gsp_html":      "경기스타트업플랫폼 (전용)",
-    "startup_plus_api": "스타트업플러스 API (서울시)",
     "ccei_html":     "창조경제혁신센터 (전용)",
+    "nipa_html":     "NIPA 정보통신산업진흥원 (전용)",
+    "mss_html":      "중소벤처기업부 (전용)",
+    "itp_html":      "인천테크노파크 (전용)",
+    "bizok_html":    "비즈오케이(BizOK) (전용)",
+    "incheon_city_html": "인천광역시청 공고/고시 (전용)",
+    "exportvoucher_html": "수출바우처 (전용)",
+    "mssmiv_html":   "중소기업 혁신바우처 (전용)",
+    "keit_html":     "KEIT (전용)",
+    "sba_html":      "SBA (전용)",
+    "semas_loan_ols": "소진공 정책자금 OLS (전용)",
+    "smartfactory_api": "스마트공장 사업관리 (전용 API)",
+    "ripc_api":      "지역지식재산센터 RIPC (전용 API)",
+    "kotra_biz_api": "KOTRA 무역투자24 (전용 API)",
+    "kosme_api":     "중진공 KOSME (전용 API)",
     "html_table":    "신규 — HTML 테이블",
     "html_card":     "신규 — HTML 카드",
 }
+
+
+def site_type_choices(current_type: str | None = None) -> list[str]:
+    """Selectbox keys for a site row.
+
+    Always includes the on-disk type even when it is absent from SITE_TYPES.
+    Otherwise Streamlit falls back to index 0 (bizinfo_api) and a Save click
+    permanently rewrites the collector — silent miss for that source.
+    """
+    keys = list(SITE_TYPES.keys())
+    cur = str(current_type or "").strip()
+    if cur and cur not in keys:
+        keys = [cur] + keys
+    return keys
+
+
+def site_type_label(type_key: str) -> str:
+    """Human label for selectbox; unknown keys render as the raw type id."""
+    return SITE_TYPES.get(type_key, type_key)
+
+
 ALL_SUPPORT_TYPES = ["지원금/바우처", "컨설팅·교육·상담", "투자", "그외"]
 SUPPORT_ICONS     = {"지원금/바우처": "💰", "컨설팅·교육·상담": "🎓", "투자": "📈", "그외": "📋"}
 SUPPORT_DESC      = {
@@ -102,7 +139,18 @@ def save_groups_config(groups: list[dict]) -> None:
 
 
 def save_settings_config(settings: dict) -> None:
-    _save_private_bundle(load_groups_config(), settings)
+    """Persist settings without dropping keys the UI form does not edit.
+
+    A bare ``{date_filter, days_back, raw_all_*}`` overwrite used to erase
+    ``date_unknown_policy=recall`` (and company_match / raw_store / …), so the
+    next monitor run fell back to ``strict`` and permanently skipped date-unknown
+    notices that recall would have mailed.
+    """
+    on_disk = load_json(SETTINGS_PATH, {})
+    if not isinstance(on_disk, dict):
+        on_disk = {}
+    merged = {**on_disk, **(settings or {})}
+    _save_private_bundle(load_groups_config(), merged)
 
 def new_group_id() -> str:
     import time
@@ -191,10 +239,11 @@ with tab_sites:
                 n_url  = st.text_input("URL",       value=site.get("url",""), key=f"s_url_{i}")
                 n_note = st.text_input("메모",       value=site.get("note",""), key=f"s_note_{i}")
             with c2:
-                type_keys = list(SITE_TYPES.keys())
-                cur_idx   = type_keys.index(site["type"]) if site["type"] in type_keys else 0
+                type_keys = site_type_choices(site.get("type"))
+                cur_type  = str(site.get("type") or "")
+                cur_idx   = type_keys.index(cur_type) if cur_type in type_keys else 0
                 n_type    = st.selectbox("타입", type_keys, index=cur_idx,
-                                         format_func=lambda x: SITE_TYPES[x], key=f"s_type_{i}")
+                                         format_func=site_type_label, key=f"s_type_{i}")
                 n_on      = st.checkbox("활성화", value=site.get("enabled", True), key=f"s_on_{i}")
                 n_agg     = st.checkbox("통합포털 (중복시 후순위)",
                                         value=site.get("is_aggregator", False), key=f"s_agg_{i}")
@@ -480,7 +529,11 @@ with tab_settings:
                                height=100, disabled=not raw_on)
 
     if st.button("💾 설정 저장", type="primary"):
+        # Preserve keys the UI does not edit (date_unknown_policy, company_match_*,
+        # raw_store_*, filter_trace_*, …). Replacing the whole dict used to wipe them
+        # and flip production recall → strict on the next monitor run.
         new_settings = {
+            **settings,
             "date_filter_enabled": df_on,
             "days_back": int(days_b),
             "raw_all_enabled": raw_on,

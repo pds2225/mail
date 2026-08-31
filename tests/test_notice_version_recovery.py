@@ -504,3 +504,71 @@ def test_list_complete_without_detail_extraction_still_promotes(monkeypatch, tmp
     assert len(bumped) == 1
     assert bumped[0]["_change_type"] == "DEADLINE_EXTENDED"
     assert bumped[0]["_delivery_id"] == "listok@v2"
+
+
+def test_material_support_change_outside_days_back_is_force_reprocessed():
+    """이미 seen 이고 게시일이 days_back 밖이어도 지원내용 material @vN 은 재처리한다.
+
+    Pre-fix: support/title material 변경이 MINOR_TEXT_CHANGE 로 분류되면
+    partition_posted_dates 가 제외하고 _IMPORTANT_CHANGE_TYPES 강제재처리도
+    빗나가 영구 침묵 누락이 난다.
+    """
+    now = datetime(2026, 8, 23, 10, tzinfo=m.KST)
+    before = item(
+        "old-support",
+        "2026-01-05",
+        deadline="2026-12-31",
+        support_field="최대 1천만원",
+        description="최대 1천만원",
+    )
+    after = item(
+        "old-support",
+        "2026-01-05",
+        deadline="2026-12-31",
+        support_field="최대 3천만원",
+        description="최대 3천만원",
+        title="2026년 AI 사업화 지원사업 (예산 증액)",
+    )
+    snap = m._notice_version_snapshot(before)
+    versions = {
+        "old-support": {
+            "version": 1,
+            "delivery_id": "old-support",
+            "delivered_hash": m._notice_snapshot_hash(snap),
+            "delivered_snapshot": snap,
+            "list_hash": m._notice_list_hash(before),
+        }
+    }
+    deliverable, _ = m.classify_notice_versions([after], {"old-support"}, versions)
+    assert len(deliverable) == 1
+    assert deliverable[0]["_delivery_id"] == "old-support@v2"
+    assert deliverable[0]["_change_type"] in {
+        "SUPPORT_AMOUNT_CHANGED",
+        "UPDATED",
+    }
+    assert set(deliverable[0]["_changed_fields"]) & m._NOTICE_VERSION_MATERIAL_FIELDS
+
+    matched, _, excluded = m.partition_posted_dates(deliverable, days_back=3, now_dt=now)
+    assert matched == []
+    assert len(excluded) == 1
+
+    # Mirror execute_monitor force-reprocess gate
+    important = {
+        "EXTENDED", "REANNOUNCED", "UPDATED",
+        "DEADLINE_EXTENDED", "TARGET_CHANGED", "SUPPORT_AMOUNT_CHANGED",
+        "APPLICATION_URL_CHANGED", "REANNOUNCEMENT", "ADDITIONAL_RECRUITMENT",
+    }
+    filtered = list(matched)
+    filtered_ids = {m._delivery_notice_id(it) for it in filtered}
+    for it in deliverable:
+        changed_material = set(it.get("_changed_fields") or []) & m._NOTICE_VERSION_MATERIAL_FIELDS
+        if it.get("_change_type") not in important and not changed_material:
+            raise AssertionError("material @vN must qualify for force reprocess")
+        if m.classify_deadline_status(it, now.date()) == "closed":
+            continue
+        did = m._delivery_notice_id(it)
+        if did and did not in filtered_ids:
+            filtered.append({**it, "_forced_change_reprocess": True})
+            filtered_ids.add(did)
+    assert len(filtered) == 1
+    assert filtered[0].get("_forced_change_reprocess") is True

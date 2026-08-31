@@ -22,11 +22,13 @@ from __future__ import annotations
 
 import os
 import re
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 DEFAULT_WEIGHTS: dict[str, int] = {
     "priority_match": 30,
     "or_keyword_match": 5,
+    "and_group_match": 15,           # 1차 and_keyword_groups 완전 일치 1회당 — OR 문구 없이도 2차 통과
     "exclude_penalty": -50,
     "region_match": 20,
     "or_cluster_bonus": 15,          # or-키워드 다중 히트(>=OR_CLUSTER_MIN_HITS) 1회 보너스 — recall 회복
@@ -102,6 +104,16 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     precision_keep_hits = _count_hits(text, group.get("precision_keep_keywords") or [])
     precision_penalty = 1 if precision_exclude_hits and not precision_keep_hits else 0
 
+    # 1차 evaluate_notice 는 and_keyword_groups 완전 일치만으로도 통과시킨다.
+    # 2차가 OR/priority 만 보면 MAIL-012 처럼 AND 로만 걸린 공고가 score 0 으로
+    # 다이제스트에서 영구 탈락한다 → 완전 일치 그룹 수만큼 가산.
+    and_groups = group.get("and_keyword_groups") or []
+    and_group_hits = 0
+    for ag in and_groups:
+        kws = [k for k in (ag or []) if k]
+        if kws and all(_kw_hit(text, k) for k in kws):
+            and_group_hits += 1
+
     # or-키워드 군집 보너스: priority 가 없어도 관련 키워드가 다수면 적합 신호 (recall)
     or_cluster = 1 if or_hits >= OR_CLUSTER_MIN_HITS else 0
 
@@ -121,6 +133,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     score = (
         priority_hits * weights["priority_match"]
         + or_hits * weights["or_keyword_match"]
+        + and_group_hits * weights["and_group_match"]
         + or_cluster * weights["or_cluster_bonus"]
         + exclude_hits * weights["exclude_penalty"]
         + region_match * weights["region_match"]
@@ -134,6 +147,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         reasons.append(f"priority {priority_hits}x")
     if or_hits:
         reasons.append(f"or {or_hits}x")
+    if and_group_hits:
+        reasons.append(f"and-group {and_group_hits}x")
     if or_cluster:
         reasons.append("or cluster bonus")
     if exclude_hits:
@@ -150,6 +165,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         "breakdown": {
             "priority_hits": priority_hits,
             "or_hits": or_hits,
+            "and_group_hits": and_group_hits,
             "or_cluster": or_cluster,
             "exclude_hits": exclude_hits,
             "precision_exclude_hits": precision_exclude_hits,
@@ -174,8 +190,12 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str
     priority_kw = ", ".join((group.get("priority_keywords") or [])[:10])
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
+    # 오늘(KST) 미주입 시 "2026년 공고라 신청 불가"처럼 연도만으로 오판하는 사고 방지
+    today_kst = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
+        f"오늘(KST): {today_kst}\n"
+        "연도만으로 마감/신청불가 판정 금지. 마감일이 명시되지 않았거나 오늘 이후면 연도 숫자만으로 제외하지 말 것.\n"
         f"그룹 지역: {region}\n"
         f"우선 키워드: {priority_kw}\n"
         f"제외 키워드: {exclude_kw}\n"

@@ -482,3 +482,41 @@ def test_bizinfo_p0_always_zero_without_baseline():
     report = classify_source_status(row, history=[], zero_item_policy="p0_always")
     assert report["status"] == COLLECT_STATUS_ZERO_SUSPICIOUS
     assert report.get("detail", {}).get("p0_always") is True
+
+
+def test_llm_relevance_prompt_injects_today_kst(monkeypatch):
+    """LLM 2차 판정 프롬프트에 오늘(KST)과 연도-only 금지 문구가 들어간다."""
+    import types
+    from datetime import timedelta, timezone
+
+    import mail_core.matching.scoring as scoring
+
+    captured: dict = {}
+
+    class _FakeMsg:
+        content = [type("B", (), {"text": '{"is_relevant": true, "confidence": 0.9, "reason": "ok"}'})()]
+
+    class _FakeMessages:
+        def create(self, **kwargs):
+            captured["prompt"] = kwargs["messages"][0]["content"]
+            return _FakeMsg()
+
+    class _FakeClient:
+        messages = _FakeMessages()
+
+    fake_mod = types.ModuleType("anthropic")
+    fake_mod.Anthropic = lambda api_key=None: _FakeClient()  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "anthropic", fake_mod)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+
+    result = scoring.llm_relevance_check(
+        {"title": "2026년 인천 화장품 수출 지원", "summary": "모집 중"},
+        {"priority_keywords": ["화장품"], "exclude_keywords": [], "required_conditions": {"regions": ["인천"]}},
+    )
+    prompt = captured.get("prompt", "")
+    assert "오늘(KST):" in prompt
+    assert "연도만으로" in prompt
+    assert "2026년 인천 화장품 수출 지원" in prompt
+    expect_today = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
+    assert f"오늘(KST): {expect_today}" in prompt
+    assert result["is_relevant"] is True
