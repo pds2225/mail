@@ -4,7 +4,7 @@ import NavBar from "./components/NavBar";
 
 export const metadata: Metadata = {
   title: "Mail Monitor Admin",
-  description: "사이트·수신자 설정 관리 (GitHub PR 패킷)",
+  description: "사이트 설정을 GitHub main에 반영하는 관리 화면",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
