@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { applyHeaders } from "@/lib/apply-client";
+import { applyHeaders, followApplyResult } from "@/lib/apply-client";
 import { COLLECTOR_TYPES, SITE_CATEGORIES } from "@/lib/site-types";
 
 const defaultForm = {
@@ -54,6 +54,7 @@ export default function SiteAddPage() {
       const data = await res.json();
       setApplyResult(data);
       if (data.validation) setValidation(data);
+      followApplyResult(data);
     } finally {
       setLoading(false);
     }
@@ -72,8 +73,8 @@ export default function SiteAddPage() {
       <header className="page-header">
         <h1 className="page-title">사이트 추가</h1>
         <p className="page-desc">
-          검증 후 <strong>GitHub에 반영</strong>하면 운영 <code>config/sites.json</code>이 바로
-          바뀝니다. 위쪽에 GitHub 토큰을 먼저 붙여넣으세요.
+          검증 후 <strong>GitHub에 반영</strong>하면 GitHub 커밋 화면이 열립니다. Commit 만
+          누르면 됩니다. 토큰은 필요 없습니다.
         </p>
       </header>
 
@@ -247,6 +248,13 @@ export default function SiteAddPage() {
             <p>
               <a href={String(applyResult.commitUrl)} target="_blank" rel="noreferrer">
                 커밋 보기
+              </a>
+            </p>
+          ) : null}
+          {applyResult.githubCommitUrl ? (
+            <p>
+              <a href={String(applyResult.githubCommitUrl)} target="_blank" rel="noreferrer">
+                GitHub에서 커밋
               </a>
             </p>
           ) : null}

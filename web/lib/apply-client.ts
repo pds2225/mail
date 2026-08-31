@@ -20,3 +20,12 @@ export function applyHeaders(): HeadersInit {
   }
   return headers;
 }
+
+export function followApplyResult(data: {
+  applied?: boolean;
+  githubCommitUrl?: string;
+}): void {
+  if (data.applied) return;
+  const url = data.githubCommitUrl;
+  if (url) window.open(url, "_blank", "noopener,noreferrer");
+}

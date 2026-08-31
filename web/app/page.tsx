@@ -6,9 +6,10 @@ export default function HomePage() {
       <header className="page-header">
         <h1 className="page-title">수출·지원사업 모니터</h1>
         <p className="page-desc">
-          사이트 목록을 보고, 추가·수정한 뒤 <strong>GitHub에 반영</strong>하면 운영{" "}
-          <code>config/sites.json</code>이 바로 바뀝니다. Vercel 대시보드 설정 없이, 위쪽 GitHub
-          토큰만 있으면 됩니다. 메일 발송은 하지 않습니다.
+          사이트 목록을 보고, 추가·수정한 뒤 <strong>GitHub에 반영</strong>하면 GitHub 커밋 화면이
+          열립니다. 로그인된 저장소 계정으로 Commit 만 누르면 운영{" "}
+          <code>config/sites.json</code>이 바뀝니다. 토큰을 만들 필요 없습니다. 메일 발송은 하지
+          않습니다.
         </p>
       </header>
 
@@ -30,13 +31,12 @@ export default function HomePage() {
       <section className="card">
         <h2 className="card-title">쓰는 방법</h2>
         <ol>
-          <li>
-            오른쪽 위 <strong>토큰 만들기</strong> → <code>public_repo</code> 권한으로 발급 → 같은
-            칸에 붙여넣기 (이 탭 세션에만 저장)
-          </li>
           <li>사이트 추가 또는 편집</li>
           <li>
-            <strong>GitHub에 반영</strong> → <code>main</code>의 <code>config/sites.json</code> 커밋
+            <strong>GitHub에 반영</strong> → GitHub 커밋 페이지가 열림
+          </li>
+          <li>
+            <strong>Commit changes</strong> 클릭 (GitHub에 로그인된 pds2225 계정)
           </li>
           <li>1~2분 뒤 이 화면 목록이 갱신됩니다</li>
         </ol>
@@ -47,6 +47,7 @@ export default function HomePage() {
         <ul>
           <li>실제 메일 발송 없음</li>
           <li>수신자 이메일은 GitHub JSON에 없습니다 (암호화 private store)</li>
+          <li>GitHub 토큰을 Vercel에 넣지 않습니다</li>
         </ul>
       </section>
     </div>
