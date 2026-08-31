@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
+import { pendingApplyCommitUrl } from "@/lib/github-commit-url";
 import {
   getRepoTextFile,
   githubBranch,
@@ -17,6 +18,18 @@ type ApplyBody = (SiteAddInput | SiteEditInput) & {
   mode?: "add" | "update";
   probeUrl?: boolean;
 };
+
+function githubWebApply(mode: "add" | "update", site: SiteRecord) {
+  const githubCommitUrl = pendingApplyCommitUrl({ v: 1, mode, site });
+  return {
+    ok: true,
+    applied: false,
+    githubCommitUrl,
+    site,
+    notice:
+      "GitHub 커밋 화면을 열었습니다. 로그인된 저장소 계정으로 Commit changes 를 누르면 1~2분 뒤 목록에 반영됩니다. 토큰은 필요 없습니다.",
+  };
+}
 
 export async function POST(req: Request) {
   const authError = applyAuthError(req);
@@ -49,9 +62,19 @@ export async function POST(req: Request) {
           changedFields: [],
         });
       }
-      const next = replaceSite(existing, original.id, site);
       const urlReachable =
         body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
+      if (!token) {
+        return NextResponse.json({
+          ...githubWebApply("update", site),
+          changedFields: fields,
+          validation: {
+            ...validation,
+            checks: { ...validation.checks, urlReachable },
+          },
+        });
+      }
+      const next = replaceSite(existing, original.id, site);
       const written = await putRepoTextFile({
         filePath: "config/sites.json",
         text: serializeSitesJson(next),
@@ -82,6 +105,15 @@ export async function POST(req: Request) {
     const site = validation.normalized as SiteRecord;
     const urlReachable =
       body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
+    if (!token) {
+      return NextResponse.json({
+        ...githubWebApply("add", site),
+        validation: {
+          ...validation,
+          checks: { ...validation.checks, urlReachable },
+        },
+      });
+    }
     const next = buildSitesPatch(existing, site);
     const written = await putRepoTextFile({
       filePath: "config/sites.json",

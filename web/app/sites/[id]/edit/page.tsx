@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { applyHeaders } from "@/lib/apply-client";
+import { applyHeaders, followApplyResult } from "@/lib/apply-client";
 import { COLLECTOR_TYPES, type SiteEditInput, type SiteRecord } from "@/lib/site-types";
 
 type ValidationView = {
@@ -19,6 +19,7 @@ type UpdateResponse = {
   applied?: boolean;
   commitUrl?: string;
   htmlUrl?: string;
+  githubCommitUrl?: string;
   changedFields?: string[];
   validation?: ValidationView;
 };
@@ -92,6 +93,7 @@ export default function SiteEditPage() {
         const data = (await response.json()) as UpdateResponse;
         setResult(data);
         if (!response.ok && data.error) setError(data.error);
+        else followApplyResult(data);
         return;
       }
       const response = await fetch("/api/sites/update", {
@@ -121,8 +123,8 @@ export default function SiteEditPage() {
         <div>
           <h1 className="page-title">사이트 편집</h1>
           <p className="page-desc">
-            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. 위쪽에 GitHub 토큰을 먼저
-            붙여넣으세요.
+            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. GitHub 커밋 화면에서 Commit
+            만 누르면 됩니다.
           </p>
         </div>
         <Link className="btn btn-secondary" href="/sites">
@@ -305,6 +307,13 @@ export default function SiteEditPage() {
             <p>
               <a href={result.commitUrl} target="_blank" rel="noreferrer">
                 커밋 보기
+              </a>
+            </p>
+          ) : null}
+          {result.githubCommitUrl ? (
+            <p>
+              <a href={result.githubCommitUrl} target="_blank" rel="noreferrer">
+                GitHub에서 커밋
               </a>
             </p>
           ) : null}

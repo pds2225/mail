@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { serializeSitesJson, parseSitesJson } from "@/lib/github-apply";
+import { pendingApplyCommitUrl } from "@/lib/github-commit-url";
 import {
   applyAuthError,
   applyStatus,
@@ -54,29 +55,43 @@ describe("serializeSitesJson", () => {
   });
 });
 
-describe("applyAuthError", () => {
-  it("allows a client GitHub token when Vercel has no shared secret", () => {
-    withEnv({}, () => {
-      const req = new Request("https://example.test/api/sites/apply", {
-        headers: { [GITHUB_TOKEN_HEADER]: "ghp_client_token" },
-      });
-      expect(applyAuthError(req)).toBeNull();
-      expect(applyStatus().mode).toBe("client-token");
-      expect(applyStatus().applyReady).toBe(false);
+describe("pendingApplyCommitUrl", () => {
+  it("opens GitHub new-file for .apply/pending.json", () => {
+    const url = pendingApplyCommitUrl({
+      v: 1,
+      mode: "add",
+      site: {
+        id: "demo",
+        name: "Demo",
+        type: "html_table",
+        url: "https://example.com/demo",
+        enabled: true,
+        is_aggregator: false,
+      },
     });
+    expect(url).toContain("https://github.com/pds2225/mail/new/main/.apply?");
+    expect(url).toContain("filename=pending.json");
+    expect(url).toContain("example.com");
   });
+});
 
-  it("refuses when there is no client token and no shared secret", () => {
+describe("applyAuthError", () => {
+  it("does not require a GitHub token when Vercel has no shared secret", () => {
     withEnv({}, () => {
       const req = new Request("https://example.test/api/sites/apply");
-      expect(applyAuthError(req)).toMatch(/GitHub 토큰/);
+      expect(applyAuthError(req)).toBeNull();
+      expect(applyStatus().mode).toBe("github-web");
+      expect(applyStatus().applyReady).toBe(true);
     });
   });
 
   it("does not let a server GitHub token apply without CONFIG_APPLY_SECRET", () => {
     withEnv({ GITHUB_APPLY_TOKEN: "ghp_server" }, () => {
-      const req = new Request("https://example.test/api/sites/apply");
-      expect(applyAuthError(req)).toMatch(/GitHub 토큰/);
+      const req = new Request("https://example.test/api/sites/apply", {
+        headers: { [GITHUB_TOKEN_HEADER]: "ghp_client" },
+      });
+      expect(applyAuthError(req)).toBeNull();
+      expect(applyStatus().mode).toBe("github-web");
     });
   });
 

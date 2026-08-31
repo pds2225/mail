@@ -5,8 +5,7 @@ import { readApplySecret, writeApplySecret } from "@/lib/apply-client";
 
 type Status = {
   applyReady?: boolean;
-  mode?: "server" | "client-token";
-  tokenUrl?: string;
+  mode?: "server" | "github-web";
 };
 
 export default function ApplySecretField() {
@@ -21,41 +20,31 @@ export default function ApplySecretField() {
       .catch(() => setStatus(null));
   }, []);
 
-  function onChange(value: string) {
-    setSecret(value);
-    writeApplySecret(value);
+  if (status?.mode !== "server") {
+    return (
+      <span className="apply-secret">
+        <span className="badge badge-green">반영 가능</span>
+      </span>
+    );
   }
-
-  const serverReady = Boolean(status?.applyReady);
-  const clientMode = status?.mode !== "server";
-  const ready = serverReady || (clientMode && Boolean(secret.trim()));
-  const label = serverReady ? "반영 암호" : "GitHub 토큰";
-  const placeholder = serverReady ? "CONFIG_APPLY_SECRET" : "ghp_… 또는 github_pat_…";
 
   return (
     <label className="apply-secret">
-      <span className="apply-secret-label">{label}</span>
+      <span className="apply-secret-label">반영 암호</span>
       <input
         type="password"
         className="input apply-secret-input"
         value={secret}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
+        onChange={(event) => {
+          setSecret(event.target.value);
+          writeApplySecret(event.target.value);
+        }}
+        placeholder="CONFIG_APPLY_SECRET"
         autoComplete="off"
-        aria-label={label}
+        aria-label="반영 암호"
       />
-      {clientMode && status?.tokenUrl ? (
-        <a
-          className="apply-secret-link"
-          href={status.tokenUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          토큰 만들기
-        </a>
-      ) : null}
-      <span className={ready ? "badge badge-green" : "badge badge-gray"}>
-        {ready ? "반영 가능" : "토큰 필요"}
+      <span className={secret.trim() ? "badge badge-green" : "badge badge-gray"}>
+        {secret.trim() ? "반영 가능" : "암호 필요"}
       </span>
     </label>
   );
