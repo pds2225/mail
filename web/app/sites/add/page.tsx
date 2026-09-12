@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { applyHeaders, followApplyResult } from "@/lib/apply-client";
 import { COLLECTOR_TYPES, SITE_CATEGORIES } from "@/lib/site-types";
 
 const defaultForm = {
@@ -17,18 +18,18 @@ const defaultForm = {
 export default function SiteAddPage() {
   const [form, setForm] = useState(defaultForm);
   const [validation, setValidation] = useState<Record<string, unknown> | null>(null);
-  const [packet, setPacket] = useState<Record<string, unknown> | null>(null);
+  const [applyResult, setApplyResult] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
     setValidation(null);
-    setPacket(null);
+    setApplyResult(null);
   }
 
   async function runValidate() {
     setLoading(true);
-    setPacket(null);
+    setApplyResult(null);
     try {
       const res = await fetch("/api/sites/validate", {
         method: "POST",
@@ -42,17 +43,18 @@ export default function SiteAddPage() {
     }
   }
 
-  async function generatePacket() {
+  async function applyToGithub() {
     setLoading(true);
     try {
-      const res = await fetch("/api/sites/packet", {
+      const res = await fetch("/api/sites/apply", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, probeUrl: form.testCollect }),
+        headers: applyHeaders(),
+        body: JSON.stringify({ ...form, mode: "add", probeUrl: form.testCollect }),
       });
       const data = await res.json();
-      setPacket(data);
+      setApplyResult(data);
       if (data.validation) setValidation(data);
+      followApplyResult(data);
     } finally {
       setLoading(false);
     }
@@ -71,7 +73,8 @@ export default function SiteAddPage() {
       <header className="page-header">
         <h1 className="page-title">사이트 추가</h1>
         <p className="page-desc">
-          저장은 PR 패킷 생성입니다. 운영 <code>config/sites.json</code>은 자동 변경되지 않습니다.
+          검증 후 <strong>GitHub에 반영</strong>하면 GitHub 커밋 화면이 열립니다. Commit 만
+          누르면 됩니다. 토큰은 필요 없습니다.
         </p>
       </header>
 
@@ -189,10 +192,10 @@ export default function SiteAddPage() {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={generatePacket}
+            onClick={applyToGithub}
             disabled={loading}
           >
-            {loading ? "처리 중…" : "PR 패킷 생성"}
+            {loading ? "처리 중…" : "GitHub에 반영"}
           </button>
         </div>
       </div>
@@ -236,21 +239,25 @@ export default function SiteAddPage() {
         </div>
       )}
 
-      {packet?.packetMarkdown ? (
+      {applyResult ? (
         <div className="card">
-          <h3 className="card-title">PR 패킷</h3>
-          <p style={{ fontSize: 14 }}>{String(packet.notice)}</p>
-          <p>
-            브랜치 제안: <code>{String(packet.branch)}</code>
-          </p>
-          <pre className="pre">{String(packet.packetMarkdown)}</pre>
-          <button
-            type="button"
-            className="btn btn-secondary mt"
-            onClick={() => navigator.clipboard.writeText(String(packet.packetMarkdown))}
-          >
-            패킷 복사
-          </button>
+          <h3 className="card-title">{applyResult.applied ? "반영됨" : "반영 결과"}</h3>
+          {applyResult.error ? <p className="error">{String(applyResult.error)}</p> : null}
+          {applyResult.notice ? <p>{String(applyResult.notice)}</p> : null}
+          {applyResult.commitUrl ? (
+            <p>
+              <a href={String(applyResult.commitUrl)} target="_blank" rel="noreferrer">
+                커밋 보기
+              </a>
+            </p>
+          ) : null}
+          {applyResult.githubCommitUrl ? (
+            <p>
+              <a href={String(applyResult.githubCommitUrl)} target="_blank" rel="noreferrer">
+                GitHub에서 커밋
+              </a>
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -100,3 +100,30 @@ def test_max_seen_ids_raised_above_saturation():
     """실측 5000 포화 재발 여유 — 상한이 기존 하드캡보다 커야 한다."""
     assert MAX_SEEN_IDS > 5000
     assert m.MAX_SEEN_IDS == MAX_SEEN_IDS
+
+
+def test_failed_write_does_not_truncate_existing_seen_ids(tmp_path, monkeypatch):
+    """Regression: Path.write_text('w') truncates before write; ENOSPC left empty JSON.
+
+    GHA checkout has no state_backups/, so load_json_with_recovery → [] wiped history.
+    atomic_write_json must leave the prior file intact when the write fails.
+    """
+    from mail_core.storage import state_store
+
+    local = tmp_path / "seen.json"
+    remote = tmp_path / "remote.json"
+    prior = ["keep_1", "keep_2", "keep_3"]
+    _write(local, prior)
+    _write(remote, ["new_4"])
+
+    def boom(path, data, **kwargs):
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(state_store, "_atomic_write_bytes_unlocked", boom)
+    try:
+        m.merge_files(local, remote)
+        raised = False
+    except OSError:
+        raised = True
+    assert raised
+    assert json.loads(local.read_text(encoding="utf-8")) == prior

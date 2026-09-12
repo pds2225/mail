@@ -336,3 +336,73 @@ def test_full_run_end_persist_must_not_promote_stale_incomplete_cycle(outbox_env
     deliverable, _updates = m.classify_notice_versions([item], seen, {})
     assert len(deliverable) == 1
     assert deliverable[0]["_change_type"] == "NEW"
+
+
+def test_idempotent_skip_new_digest_does_not_poison_seen_ids(outbox_env, monkeypatch):
+    """Same-slot re-run with new notice_ids must not mark them seen without SMTP.
+
+    Concrete trigger:
+      1. deliver_with_outbox sends n1; settle + persist → n1∈seen_ids.
+      2. Later same date/group: new digest body carries only n2; every recipient
+         is an idempotent skip (delivery_state already checkpointed).
+      3. Pre-fix: settle still completed the outbox → persist promoted n2 even
+         though SMTP never sent the n2 body → permanent silent miss.
+
+    Fix: all-skip runs abandon the outbox row (no completed → no seen promotion).
+    """
+    monkeypatch.setattr(m, "_ALLOW_SMTP_SEND", True)
+    monkeypatch.setattr(m, "_DRAFT_MODE", False)
+    monkeypatch.setattr(m, "_ONLY_TO", "")
+
+    sent: list[tuple[str, str, str]] = []
+
+    def _fake_send(subject, body, to):
+        sent.append((subject, body, to))
+
+    monkeypatch.setattr(m, "send_email", _fake_send)
+
+    date = "2026-08-22#am"
+    m.deliver_with_outbox(
+        "[A] 1건",
+        "body with n1",
+        ["a@example.test"],
+        date=date,
+        tenant="default",
+        group="grp_a",
+        notice_ids=["n1"],
+    )
+    assert len(sent) == 1
+    seen = m.persist_completed_outbox(
+        set(),
+        trust_dates={date},
+        groups=outbox_env["groups"],
+        settings=outbox_env["settings"],
+        watchlist=outbox_env["watchlist"],
+    )
+    assert seen == {"n1"}
+    assert outbox.completed() == []
+    assert outbox.pending() == []
+
+    sent.clear()
+    m.deliver_with_outbox(
+        "[A] 1건",
+        "body with n2 ONLY — never mailed",
+        ["a@example.test"],
+        date=date,
+        tenant="default",
+        group="grp_a",
+        notice_ids=["n2"],
+    )
+    assert sent == []
+    assert outbox.completed() == []
+    assert outbox.pending() == []
+
+    seen2 = m.persist_completed_outbox(
+        set(seen),
+        trust_dates={date},
+        groups=outbox_env["groups"],
+        settings=outbox_env["settings"],
+        watchlist=outbox_env["watchlist"],
+    )
+    assert "n2" not in seen2
+    assert "n2" not in m.load_seen_ids()

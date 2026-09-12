@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ApplySecretField from "./ApplySecretField";
 
 const LINKS = [
   { href: "/", label: "개요" },
@@ -34,6 +35,7 @@ export default function NavBar() {
               </Link>
             );
           })}
+          <ApplySecretField />
         </div>
       </nav>
     </header>

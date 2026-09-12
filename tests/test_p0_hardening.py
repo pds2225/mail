@@ -141,6 +141,45 @@ def test_encrypted_outbox_refuses_wipe_on_wrong_key(tmp_path, monkeypatch):
     assert len(pending) == 1 and pending[0]["notice_ids"] == ["n1"]
 
 
+def test_private_payload_refuses_wipe_on_wrong_key(tmp_path, monkeypatch):
+    """Key mismatch must not soft-fail to {} then overwrite recipient PII."""
+    from cryptography.fernet import Fernet
+
+    monkeypatch.delenv("MAIL_PRIVATE_CONFIG_KEY", raising=False)
+    monkeypatch.delenv("MAIL_PRIVATE_CONFIG_JSON", raising=False)
+    monkeypatch.setattr(secure_store, "DEFAULT_KEY_PATH", tmp_path / "mail.key")
+    key1 = secure_store.ensure_local_key(tmp_path / "mail.key")
+    db = tmp_path / "private.sqlite3"
+    groups = [{"id": "g-a", "tenant_id": "tenant-a", "recipients": ["ceo@example.test"]}]
+    settings = {"tenant_id": "tenant-a", "raw_all_recipients": ["owner@example.test"]}
+    watchlist = {"tenant_id": "tenant-a", "recipients": []}
+    companies = []
+    *_, payload = pc.split_public_private(groups, settings, watchlist, companies)
+    pc.save_private_payload(payload, db)
+    original = db.read_bytes()
+
+    # Rotate to a different Fernet key — load/save must fail closed, not wipe.
+    (tmp_path / "mail.key").write_bytes(Fernet.generate_key() + b"\n")
+    with pytest.raises(secure_store.SecureStoreDecryptError):
+        pc.load_private_payload(db)
+    empty = {
+        "version": 1,
+        "tenants": {"tenant-a": {"recipients": []}},
+        "groups": {"g-a": {"tenant_id": "tenant-a", "recipients": []}},
+        "settings": {"tenant_id": "tenant-a", "raw_all_recipients": []},
+        "watchlist": {"tenant_id": "tenant-a", "recipients": []},
+        "companies": {},
+    }
+    with pytest.raises(secure_store.SecureStoreDecryptError):
+        pc.save_private_payload(empty, db)
+    assert db.read_bytes() == original
+
+    (tmp_path / "mail.key").write_bytes(key1 + b"\n")
+    restored = pc.load_private_payload(db)
+    assert restored["groups"]["g-a"]["recipients"] == ["ceo@example.test"]
+    assert restored["settings"]["raw_all_recipients"] == ["owner@example.test"]
+
+
 
 def test_local_run_lock_allows_only_one_active_sender(tmp_path):
     path = tmp_path / "monitor.run.lock"

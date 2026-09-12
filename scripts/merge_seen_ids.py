@@ -10,8 +10,8 @@ r"""merge_seen_ids — 두 seen_ids.json(문자열 id 리스트)을 합집합으
 
 동작:
   monitor.save_seen_ids 와 동일하게 mail_core.storage.seen_ids_prune 상한·정렬을 적용하고,
-  save_json 과 동일한 직렬화(indent=2·ensure_ascii=False·트레일링 개행 없음)로 로컬 경로에
-  덮어쓴다 → git diff 최소화.
+  atomic_write_json(tmp→replace) 으로 기록한다. Path.write_text('w') 는 열자마자 truncate
+  하므로 ENOSPC/킬 시 빈·부분 JSON 이 커밋될 수 있었다(GHA checkout 엔 state_backups 없음).
 
 사용 (repo 루트):
   python scripts/merge_seen_ids.py <local.json> <remote.json>   # 결과를 local 에 기록
@@ -27,6 +27,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from mail_core.storage.seen_ids_prune import MAX_SEEN_IDS, prune_seen_ids  # noqa: E402
+from mail_core.storage.state_store import atomic_write_json  # noqa: E402
 
 
 def _load(path: str | Path) -> set[str]:
@@ -41,10 +42,9 @@ def merge_files(local_path: str | Path, remote_path: str | Path) -> list[str]:
     """local ∪ remote → 정렬·상한 적용 후 local 에 기록. 병합 결과 리스트 반환."""
     ids = _load(local_path) | _load(remote_path)
     merged = prune_seen_ids(ids, max_keep=MAX_SEEN_IDS)
-    # save_json 과 동일 포맷(트레일링 개행 없음) — 불필요한 diff 방지.
-    Path(local_path).write_text(
-        json.dumps(merged, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    # monitor.save_json 과 동일 포맷(indent=2·ensure_ascii=False·트레일링 개행 없음).
+    # 반드시 atomic — write_text('w') truncate-then-write 는 실패 시 seen_ids 를 비운다.
+    atomic_write_json(local_path, merged, indent=2, backup=True)
     return merged
 
 

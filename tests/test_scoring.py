@@ -287,3 +287,39 @@ def test_precision_exclude_absent_is_backward_compatible():
     s = scoring.compute_score(item, grp)
     assert s["breakdown"]["precision_penalty"] == 0
     assert s["breakdown"]["precision_exclude_hits"] == 0
+
+
+def test_and_keyword_group_hit_credits_score_without_or_phrase():
+    """1차 AND 통과 공고가 OR 문구 없이도 2차에서 살아남는다 (MAIL-012 gap).
+
+    evaluate_notice accepts and_keyword_groups like ["AI","지원금"] alone, but
+    compute_score used to count only or/priority — score 0 → rejected_by_score
+    → digest miss for titles that never contain the longer OR phrases.
+    """
+    grp = _prestartup_group()
+    item = {
+        "title": "AI 지원금 신청 안내",
+        "description": "전국 모집. 인공지능 지원금을 신청하세요.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["and_group_hits"] >= 1
+    assert s["breakdown"]["or_hits"] == 0
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"
+    assert not out["rejected"]
+
+
+def test_and_group_with_spaced_businessization_still_passes():
+    """'AI … 사업화 …' AND match + keep beats 참여기업 penalty."""
+    grp = _prestartup_group()
+    item = {
+        "title": "AI 기술 기반 사업화 지원사업 참여기업 모집",
+        "description": "전국 대상 사업화 지원.",
+    }
+    s = scoring.compute_score(item, grp)
+    assert s["breakdown"]["and_group_hits"] >= 1
+    assert s["breakdown"]["precision_penalty"] == 0  # 사업화지원 keep
+    assert s["score"] >= int(grp.get("score_threshold", 1))
+    out = scoring.score_and_filter([item], grp)
+    assert out["audit"][0]["decision"] == "passed"

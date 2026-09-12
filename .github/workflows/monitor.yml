@@ -217,15 +217,18 @@ jobs:
               cp -f docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || true
             fi
             git reset --hard origin/main
-            python scripts/merge_seen_ids.py var/state/seen_ids.json /tmp/local_seen_ids.json || true
+            # Do NOT `|| true` these merges: a failed merge after reset would commit
+            # remote-only state and drop this run's seen_ids / versions (duplicate mail).
+            # Writers are atomic (tmp→replace); ENOSPC mid-write keeps the prior file.
+            python scripts/merge_seen_ids.py var/state/seen_ids.json /tmp/local_seen_ids.json
             if [ -f /tmp/local_notice_versions.json ]; then
-              python scripts/merge_notice_versions.py var/state/notice_versions.json /tmp/local_notice_versions.json || true
+              python scripts/merge_notice_versions.py var/state/notice_versions.json /tmp/local_notice_versions.json
             fi
             if [ -f /tmp/local_delivery_state.json ]; then
-              python scripts/merge_delivery_state.py var/state/delivery_state.json /tmp/local_delivery_state.json || true
+              python scripts/merge_delivery_state.py var/state/delivery_state.json /tmp/local_delivery_state.json
             fi
             if [ -f /tmp/local_delivery_outbox.enc ]; then
-              python scripts/merge_delivery_outbox.py var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc || true
+              python scripts/merge_delivery_outbox.py var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc
             fi
             if [ -f /tmp/local_mail_daily_ledger.jsonl ]; then
               python scripts/merge_jsonl_append.py docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || \

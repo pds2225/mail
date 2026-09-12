@@ -43,8 +43,43 @@ def _task_mentions(title: str, *needles: str) -> bool:
     return any(n.lower() in t for n in needles)
 
 
+# 제품/구현 TASK 신호 — 문서 충족 NOOP 로 닫으면 안 되는 제목.
+# (예: PENDING 의 "…실발송 금지" 가 "발송 금지" 문서 체크에 오인되던 회귀)
+_PRODUCT_WORK_RE = re.compile(
+    r"user-priority|overnight|MAIL-\d+|전수\s*수집|워치리스트|강제포함|"
+    r"버그|수정|구현|개선|고치|강화|monitor\.py|streamlit|"
+    r"파서|selector|소스\s*공백|머지되는|"
+    r"안정화|KISED|IITP|공고첨부|첨부\s*다운로드",
+    re.IGNORECASE,
+)
+
+
+def _is_product_work_title(title: str) -> bool:
+    """코딩·수집·제품 작업 제목이면 True — try_satisfy_docs DONE_NOOP 금지."""
+    return bool(_PRODUCT_WORK_RE.search(title or ""))
+
+
+def _needle_hits_title(title_l: str, needle: str) -> bool:
+    """제목 부분문자열 매칭. '실발송 금지'(제품 TASK 안전문구) ≠ '발송 금지'(문서 TASK)."""
+    n = (needle or "").lower()
+    if not n:
+        return False
+    if n == "발송 금지":
+        # "실발송 금지" 만 있고 문서형 "발송 금지" 가 아니면 문서 주제로 보지 않는다.
+        stripped = title_l.replace("실발송 금지", "")
+        return "발송 금지" in stripped
+    return n in title_l
+
+
 def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
-    """문서/규칙이 이미 요구사항을 충족하면 NOOP 완료."""
+    """문서/규칙이 이미 요구사항을 충족하면 NOOP 완료.
+
+    제품·구현 제목(수집/수정/버그/user-priority 등)은 절대 DONE_NOOP 하지 않는다.
+    짧은 바늘(루프/자동개발/발송 금지)만으로 코딩 TASK 를 닫던 허위 DONE 을 막는다.
+    """
+    if _is_product_work_title(title):
+        return None
+
     rules = _read("docs/project/RULES.md")
     agents = _read("AGENTS.md")
     readme = _read("README.md")
@@ -75,7 +110,8 @@ def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
             "RULES.md에 Vercel/GHA Secret 목록 존재",
         ),
         (
-            ("loop_verify", "5요소", "루프"),
+            # bare "루프" 제외 — "루프 검증…고치기" 류 구현 TASK 허위 DONE 방지
+            ("loop_verify", "5요소", "루프 5요소", "루프 엔지니어링"),
             ("loop_verify" in workflow and "format_loop_summary" in queue_src),
             "GHA·큐에 loop_verify 및 루프 5요소 Summary 존재",
         ),
@@ -94,7 +130,8 @@ def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
             "decompose_defects + defects_inbox + G1 게이트 문서 존재",
         ),
         (
-            ("loop engineering", "자동개발"),
+            # bare "자동개발" 제외 — overnight/큐 구현 TASK 가 설계문서 존재만으로 DONE 되던 회귀
+            ("loop engineering", "루프 엔지니어링", "설계 문서"),
             "Loop Engineering" in design or "루프 엔지니어링" in design,
             "설계 문서 존재",
         ),
@@ -102,8 +139,8 @@ def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
 
     title_l = title.lower()
     for needles, ok, reason in checks:
-        # 제목이 해당 주제면 충족 여부 판정
-        if any(n in title_l for n in needles) or _task_mentions(title, *needles):
+        # 제목이 해당 주제면 충족 여부 판정 (실발송≠발송 금지 구분)
+        if any(_needle_hits_title(title_l, n) for n in needles):
             if ok:
                 return ExecResult("DONE_NOOP", f"{task_id}: {reason}")
             # 주제는 맞지만 미충족 → 에이전트/패치 필요
@@ -113,6 +150,8 @@ def try_satisfy_docs(task_id: str, title: str) -> ExecResult | None:
 
 def try_patch_force_done_docs(task_id: str, title: str) -> ExecResult | None:
     """FORCE_DONE / 허위 DONE 문서가 약하면 RULES §8에 한 줄 보강."""
+    if _is_product_work_title(title):
+        return None
     if not _task_mentions(title, "FORCE_DONE", "허위 DONE", "AWAITING_AGENT"):
         return None
     rules_path = ROOT / "docs" / "project" / "RULES.md"
@@ -180,7 +219,11 @@ def execute_task(task_id: str, title: str, *, dry_run: bool = False) -> ExecResu
     # 3) FORCE_DONE 문서 패치
     if dry_run:
         # 패치 계열은 dry-run에서 NEEDS_AGENT/예상만
-        if _task_mentions(title, "FORCE_DONE", "허위 DONE"):
+        # 제품/구현 제목은 문서 존재만으로 DONE_NOOP 하지 않는다(허위 DONE 방지).
+        if (
+            not _is_product_work_title(title)
+            and _task_mentions(title, "FORCE_DONE", "허위 DONE")
+        ):
             rules = _read("docs/project/RULES.md")
             if "AUTO_DEV_FORCE_DONE" in rules:
                 return ExecResult("DONE_NOOP", "dry-run: FORCE_DONE 문서 이미 존재")

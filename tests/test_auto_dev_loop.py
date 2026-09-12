@@ -144,3 +144,44 @@ def test_executor_loan_review_noop():
         dry_run=True,
     )
     assert r.status == "DONE_NOOP", r.reason
+
+
+def test_executor_rejects_silbalsoong_as_email_docs_noop():
+    """제품 TASK 안전문구 '실발송 금지' 가 RULES '발송 금지' NOOP 로 오인되면 안 된다."""
+    r = ex.execute_task(
+        "TASK-020",
+        "user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. "
+        "예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 "
+        "워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. "
+        "monitor.py 수정 금지. 실발송 금지.",
+        dry_run=True,
+    )
+    assert r.status == "NEEDS_AGENT", r.reason
+    assert "발송 금지" not in r.reason
+
+
+def test_executor_rejects_broad_autodev_loop_false_done():
+    """bare '자동개발'/'루프' 제목만으로 설계문서·loop_verify 존재 NOOP 금지."""
+    r1 = ex.execute_task(
+        "TASK-019",
+        "자동개발 overnight ready 게이트에 user-priority 큐를 우선한다",
+        dry_run=True,
+    )
+    assert r1.status == "NEEDS_AGENT", r1.reason
+
+    r2 = ex.execute_task(
+        "TASK-998",
+        "루프 검증이 실패해도 머지되는 문제 고치기",
+        dry_run=True,
+    )
+    assert r2.status == "NEEDS_AGENT", r2.reason
+
+
+def test_executor_rejects_force_done_strengthen_as_noop():
+    """FORCE_DONE '강화' 구현 TASK 는 코드 경로 존재만으로 DONE_NOOP 하면 안 된다."""
+    r = ex.execute_task(
+        "TASK-996",
+        "FORCE_DONE 허위 DONE 방지 강화",
+        dry_run=True,
+    )
+    assert r.status == "NEEDS_AGENT", r.reason
