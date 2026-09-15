@@ -26,8 +26,7 @@ function githubWebApply(mode: "add" | "update", site: SiteRecord) {
     applied: false,
     githubCommitUrl,
     site,
-    notice:
-      "GitHub 커밋 화면을 열었습니다. 로그인된 저장소 계정으로 Commit changes 를 누르면 1~2분 뒤 목록에 반영됩니다. 토큰은 필요 없습니다.",
+    notice: "저장 확인 화면이 열립니다. Commit changes를 누르면 운영 설정에 반영됩니다.",
   };
 }
 
@@ -62,8 +61,7 @@ export async function POST(req: Request) {
           changedFields: [],
         });
       }
-      const urlReachable =
-        body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
+      const urlReachable = body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
       if (!token) {
         return NextResponse.json({
           ...githubWebApply("update", site),
@@ -94,7 +92,7 @@ export async function POST(req: Request) {
         },
         commitUrl: written.commitUrl,
         htmlUrl: written.htmlUrl,
-        notice: "GitHub main의 config/sites.json 에 반영했습니다. 1~2분 뒤 이 화면에 새 목록이 보입니다.",
+        notice: "소스 설정을 저장했습니다. 잠시 뒤 목록에 반영됩니다.",
       });
     }
 
@@ -103,8 +101,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, validation }, { status: 400 });
     }
     const site = validation.normalized as SiteRecord;
-    const urlReachable =
-      body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
+    const urlReachable = body.probeUrl && site.url ? await probeUrlReachable(site.url) : null;
     if (!token) {
       return NextResponse.json({
         ...githubWebApply("add", site),
@@ -133,7 +130,7 @@ export async function POST(req: Request) {
       },
       commitUrl: written.commitUrl,
       htmlUrl: written.htmlUrl,
-      notice: "GitHub main의 config/sites.json 에 추가했습니다. 1~2분 뒤 사이트 목록에 나타납니다.",
+      notice: "새 소스를 저장했습니다. 잠시 뒤 소스 목록에 나타납니다.",
     });
   } catch (error) {
     return NextResponse.json(
