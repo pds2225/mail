@@ -3,8 +3,8 @@ import "./globals.css";
 import NavBar from "./components/NavBar";
 
 export const metadata: Metadata = {
-  title: "Mail Monitor Admin",
-  description: "사이트 설정을 GitHub main에 반영하는 관리 화면",
+  title: "정부지원사업 메일링",
+  description: "정부지원사업 수집·추천조건·실행·공고검수를 한곳에서 관리하는 모바일 운영 화면",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
