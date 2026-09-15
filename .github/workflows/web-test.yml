@@ -1,0 +1,39 @@
+name: web-test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/web-test.yml"
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/web-test.yml"
+
+jobs:
+  web-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: 패키지 설치
+        working-directory: web
+        run: npm ci
+
+      - name: 웹 테스트
+        working-directory: web
+        run: npm test
+
+      - name: Next.js 빌드
+        working-directory: web
+        run: npm run build
