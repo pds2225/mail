@@ -43,26 +43,24 @@ export default function SitesPage() {
     <div>
       <header className="page-header page-header-row">
         <div>
-          <h1 className="page-title">사이트 목록</h1>
-          <p className="page-desc">
-            GitHub <code>config/sites.json</code> 기준 · 활성 {active} / 전체 {sites.length}
-          </p>
+          <h1 className="page-title">소스 관리</h1>
+          <p className="page-desc">등록된 공고 수집 사이트를 검색하고 추가·수정·활성화합니다. 활성 {active} / 전체 {sites.length}</p>
         </div>
         <Link className="btn btn-primary" href="/sites/add">
-          ＋ 사이트 추가
+          ＋ 소스 추가
         </Link>
       </header>
 
       {error && <p className="error">{error}</p>}
       {loading && !error && <div className="empty">불러오는 중…</div>}
       {!loading && !error && sites.length === 0 && (
-        <div className="empty">등록된 사이트가 없습니다.</div>
+        <div className="empty">등록된 소스가 없습니다.</div>
       )}
 
       {!loading && sites.length ? (
-        <div className="field card-tight">
+        <div className="field card card-tight">
           <label className="label" htmlFor="site-search">
-            사이트 검색
+            소스 검색
           </label>
           <input
             id="site-search"
@@ -71,9 +69,7 @@ export default function SitesPage() {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="이름, ID, URL, 수집 방식"
           />
-          <p className="hint">
-            검색 결과 {filtered.length}건 · 모든 사이트는 검색 후 편집할 수 있습니다.
-          </p>
+          <p className="hint">검색 결과 {filtered.length}건</p>
         </div>
       ) : null}
 
@@ -88,12 +84,10 @@ export default function SitesPage() {
               {s.name}
               <span className="tag">{s.type}</span>
             </div>
-            <div className="site-url" title={s.url}>
-              {s.url}
-            </div>
+            <div className="site-url" title={s.url}>{s.url}</div>
           </div>
           <span className={s.enabled !== false ? "badge badge-green" : "badge badge-gray"}>
-              {s.enabled !== false ? "활성" : "비활성"}
+            {s.enabled !== false ? "활성" : "비활성"}
           </span>
           <Link className="btn btn-secondary btn-small" href={`/sites/${encodeURIComponent(s.id)}/edit`}>
             편집
