@@ -27,6 +27,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
+[ ] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
 
 
 ---
@@ -1479,6 +1480,169 @@ DEPENDS_ON: MAIL-005, MAIL-006 (main 머지됨). MAIL-011과 파일군이 달라
 - `TASK.md` / `docs/project/TASKS.md`
 
 슬라이스 2는 `config/sites.json` + replay 테스트. 이번 커밋에 소스 활성화 넣지 않는다.
+
+---
+
+## MAIL-013
+
+### 8-1. 사용자 원문 요청
+
+> 저장이안되네 활성비황성
+>
+> Task.md에 추가
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 모바일 웹 관리화면에서 소스의 `활성` 체크를 바꾸고 `저장`했을 때:
+
+- `활성 → 비활성`, `비활성 → 활성`이 실제 운영 설정에 저장됨
+- 화면 새로고침 후에도 변경한 상태가 유지됨
+- `config/sites.json`의 해당 소스 `enabled` 값과 화면 배지가 일치함
+- 이후 GitHub Actions/메일 수집 실행도 저장된 `enabled` 값을 사용함
+- 다른 소스의 설정은 같이 바뀌지 않음
+- 저장이 아직 GitHub 반영 대기라면 `저장됨`처럼 오인시키지 않고 사용자가 해야 할 다음 동작을 모바일에서 명확히 제공함
+- 실제 이메일은 발송되지 않음
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+현재 코드 확인:
+
+- `web/app/sites/[id]/edit/page.tsx`에 `enabled` 체크박스와 `저장` 버튼이 있고 `/api/sites/apply`로 POST한다.
+- `web/app/api/sites/apply/route.ts`는 GitHub 토큰이 있으면 `config/sites.json`을 직접 커밋하고, 토큰이 없으면 `.apply/pending.json` 생성용 GitHub 웹 URL을 반환한다.
+- `.github/workflows/apply-sites.yml`은 사용자가 `.apply/pending.json`을 실제 커밋한 뒤 `scripts/apply_sites_payload.py`로 `config/sites.json`에 반영하고 pending 파일을 제거한다.
+- `web/lib/apply-client.ts`는 비토큰 경로에서 비동기 응답 뒤 `window.open()`으로 GitHub 확인 화면을 열려고 한다. 모바일 브라우저의 팝업 차단 가능성은 **원인 후보일 뿐 아직 확정하지 않는다.**
+- 편집 화면에는 `githubCommitUrl`이 있으면 `저장 확인하기` 링크도 렌더한다.
+
+사용자 실사용 보고: 활성/비활성 변경이 저장되지 않는다.
+
+따라서 체크박스 UI만 고치지 말고 다음 구간 중 실제 실패 지점을 먼저 재현한다.
+
+`checkbox state → POST body → /api/sites/apply → GitHub web/token fallback → pending commit → apply-sites Action → config/sites.json → /api/config → 새로고침 화면`
+
+REQUEST_SOLVED: NO
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] 모바일 웹 기준으로 `활성 → 비활성`, `비활성 → 활성` 저장 실패를 먼저 재현하고 실패 단계 기록
+- [ ] `enabled` boolean이 편집 form → POST → validation/normalized site → GitHub 반영 payload까지 손실되지 않는지 확인
+- [ ] 토큰이 있는 경로와 없는 기본 경로를 분리해서 검증
+- [ ] 토큰 없는 기본 경로에서는 `.apply/pending.json` → `apply-sites` → `config/sites.json` 반영이 끝나야 실제 저장 완료로 판정
+- [ ] 모바일에서 자동 새창이 차단돼도 사용자가 한 번 탭해서 GitHub 반영 화면으로 이동할 수 있는 명시적 링크/버튼을 유지하거나 보강
+- [ ] `Commit changes` 등 추가 사용자 동작이 필요한 상태를 `저장 완료`와 구분해서 표시
+- [ ] `config/sites.json` 반영 후 `/api/config` 재조회/새로고침에서 동일 상태 유지
+- [ ] 해당 소스 한 건만 변경되고 다른 소스 필드는 보존되는 회귀 테스트 추가
+- [ ] `enabled=true → false`, `false → true` 양방향 테스트 추가
+- [ ] 저장 실패/401/500/네트워크 실패 때 성공 메시지를 표시하지 않고 기존 상태를 임의로 저장 완료 처리하지 않음
+- [ ] 실제 이메일/알림 발송 금지
+
+### 8-6. KEEP — 유지
+
+- Vercel에 장기 GitHub PAT/토큰을 코드로 넣지 않는 현재 보안 원칙
+- `config/sites.json`을 운영 source of truth로 쓰는 구조
+- 기존 사이트 ID·URL·collector·selector·note 등 사용자가 바꾸지 않은 필드
+- 기존 `/api/sites/update` 검증 기능
+- 기존 `.apply/pending.json` + GitHub Actions 적용 구조가 정상이라면 그대로 유지하고 최소 수정
+- dry-run/preview 및 수신자/발송 설정
+
+### 8-7. REMOVE — 제거
+
+- 화면에서 체크 상태만 바뀌고 실제 운영 설정에는 반영되지 않는 동작
+- GitHub 반영 대기 상태를 실제 저장 완료처럼 보이게 하는 표현
+- 새로고침 시 이전 `enabled` 값으로 되돌아가는 원인이 확인되면 해당 원인만 최소 제거
+
+### 8-8. FORBIDDEN — 금지
+
+- GitHub PAT/API Key/Secret을 코드·로그·TASK에 기록
+- `main`에 직접 위험한 변경
+- 사용자 확인 없이 실제 메일 발송
+- 다른 사이트를 대량 활성/비활성 처리
+- `config/sites.json`의 unrelated source를 테스트 목적으로 임의 변경
+- 기존 수집·판정·메일 로직 대규모 리팩터링
+- 원인 확인 없이 `apply-sites.yml`을 임의 수정
+- 모바일에서 PC 로컬 사용을 요구하는 해결책
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: 논리적 기능 의존성은 없음.
+
+다만 MAIL-012가 `config/sites.json`을 변경할 수 있으므로 MAIL-013 구현 시작 시 반드시 최신 `origin/main`을 다시 받아 충돌 여부를 확인한다. MAIL-012가 아직 ACTIVE면 현재 작업에 섞지 않고 MAIL-013은 READY로 유지한다.
+
+### 8-10. 구현범위
+
+원인에 따라 최소 범위만 수정:
+
+- `web/app/sites/[id]/edit/page.tsx`
+- `web/app/api/sites/apply/route.ts`
+- `web/lib/apply-client.ts`
+- `web/lib/github-commit-url.ts`
+- `scripts/apply_sites_payload.py`
+- 관련 web/Python regression tests
+- 필요한 경우에만 `.github/workflows/apply-sites.yml` (워크플로 변경이면 사람 머지 규칙 준수)
+
+### 8-11. 입력검증
+
+- 기존 `enabled=true`를 false로 변경
+- 기존 `enabled=false`를 true로 변경
+- 변경 없음
+- 존재하지 않는 site id
+- 잘못된 boolean/누락 payload
+- GitHub token 있음/없음
+- pending 파일 존재/충돌 상태
+
+### 8-12. 빈상태
+
+- 사이트 목록 0건이면 저장 대상 없음 상태를 명확히 표시
+- 대상 site가 없으면 다른 site를 수정하지 않고 오류 처리
+
+### 8-13. 로딩상태
+
+- 저장 중 중복 클릭 방지
+- GitHub 반영 대기와 실제 적용 완료를 구분
+- 적용 완료 후 화면 상태를 서버 source of truth와 재동기화
+
+### 8-14. 오류상태
+
+반드시 검증:
+
+- `/api/sites/apply` 401/400/500
+- GitHub 새창/팝업 차단
+- GitHub commit 미완료
+- `apply-sites` Action 실패
+- `config/sites.json` commit 충돌
+- 네트워크 중단
+- 적용 후 `/api/config` stale 응답
+
+오류가 있어도 다른 사이트 상태를 훼손하지 않는다.
+
+### 8-15. VERIFY / DONE
+
+최소 검증:
+
+1. Preview 또는 안전한 테스트 데이터에서 활성 → 비활성 저장
+2. 실제 source of truth 재조회에서 `enabled=false` 확인
+3. 새로고침 후 비활성 배지 유지
+4. 비활성 → 활성 역방향 반복 후 `enabled=true` 확인
+5. 다른 source 값 변경 0건 확인
+6. 모바일 브라우저에서 자동 팝업이 막혀도 명시적 링크로 GitHub 반영 절차 진행 가능 확인
+7. 실메일 발송 0건
+
+다음이 모두 만족될 때만 `REQUEST_SOLVED: YES`:
+
+- 양방향 저장 지속성 PASS
+- 새로고침 지속성 PASS
+- 수집기가 저장된 enabled 값을 사용함을 확인
+- 실패 상태가 성공으로 표시되지 않음
+- 회귀 테스트 PASS
 
 ---
 
