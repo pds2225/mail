@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/copy-config.mjs",
     "build": "next build",
     "start": "next start",
+    "pretest": "node scripts/copy-config.mjs",
     "test": "vitest run",
     "lint": "next lint"
   },
