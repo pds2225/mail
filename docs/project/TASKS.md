@@ -10,9 +10,36 @@
 - 금지: Secret/API Key 로그 출력, 허위 DONE, force push, 사용자 확인 없이 외부 발송 삭제/정지
 - 순서: TASK-G01 → TASK-G03. TASK-G02는 조사만(병렬 가능). TASK-G04∥G05는 G01 이후. TASK-G06은 P2 문서.
 - 별칭: G01=계약TASK-01 … G06=계약TASK-06 (기존 DONE TASK-001~018과 충돌 방지)
+- MAIL-014 원자 큐: `TASK-021~044` ↔ Google Sheet `AI_TASK_QUEUE`의 `MAIL-P0C-01~MAIL-P1C-03`.
+- MAIL-014 상세 실행계약: `docs/project/MAIL014_AI_TASK_SPEC.md`. 각 TASK는 반드시 해당 섹션의 OBJECTIVE / MODIFY_SCOPE / FORBIDDEN / IMPLEMENTATION / ACCEPTANCE_CRITERIA / TEST를 읽고 실행한다.
+- 의존 TASK가 DONE이 아니면 구현하지 않고 BLOCKED 처리한다. P0가 DONE 또는 근거 있는 BLOCKED가 되기 전 P1을 시작하지 않는다.
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
+- TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — DEPENDS=없음 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-022: loop:coding-fix MAIL-P0C-02 [P0] Canonical ID·중복 유형 분류 — DEPENDS=TASK-021 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-023: loop:coding-fix MAIL-P0C-03 [P0] Notice version·content hash — DEPENDS=TASK-022 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — DEPENDS=TASK-023 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — DEPENDS=TASK-021~024 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — DEPENDS=TASK-025 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — DEPENDS=TASK-026 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — DEPENDS=TASK-027 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — DEPENDS=TASK-026~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — DEPENDS=TASK-027~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — DEPENDS=TASK-030 DONE + 모든 P0 종료 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-033: loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-034: loop:coding-fix MAIL-P1A-04 [P1] 지역 자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-035: loop:coding-fix MAIL-P1A-05 [P1] 기업 기본자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-036: loop:coding-fix MAIL-P1A-06 [P1] Hard Gate 조합·우선순위 — DEPENDS=TASK-032~035 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-037: loop:coding-fix MAIL-P1A-07 [P1] Hard/Soft Exclusion 분리 — DEPENDS=TASK-036 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-038: loop:coding-fix MAIL-P1B-01 [P1] 관련성 점수 엔진 — DEPENDS=TASK-037 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-039: loop:coding-fix MAIL-P1B-02 [P1] 문서구역·동의어 기반 매칭 — DEPENDS=TASK-038 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-040: loop:coding-fix MAIL-P1B-03 [P1] 기업별 추가 적합성 판정 — DEPENDS=TASK-038~039 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-041: loop:coding-fix MAIL-P1B-04 [P1] 버킷·신뢰도 결합 — DEPENDS=TASK-040 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-042: loop:coding-fix MAIL-P1C-01 [P1] 사실필드 직접출력 — DEPENDS=TASK-041 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-043: loop:coding-fix MAIL-P1C-02 [P1] 구조화 출력·fallback — DEPENDS=TASK-042 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-044: loop:coding-fix MAIL-P1C-03 [P1] 통합 회귀·dry-run — DEPENDS=TASK-037,TASK-041,TASK-043 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 
 ## RUNNING
 
