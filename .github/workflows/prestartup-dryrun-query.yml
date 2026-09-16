@@ -8,7 +8,7 @@ on:
 jobs:
   query:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
@@ -31,17 +31,39 @@ jobs:
           ALERT_ON_ZERO: '0'
         run: |
           python - <<'PY'
+          import copy
           import json
           import monitor
 
+          # Safety: no notification/email side effects.
           monitor.alert_ntfy = lambda *a, **k: None
           monitor.alert_email = lambda *a, **k: None
+
+          # Use the real Mail collectors/pipeline, but limit to the core sources that
+          # cover nationwide + Seoul startup/grant notices so this ad-hoc query finishes fast.
+          source_ids = {'bizinfo', 'kstartup', 'startup_plus', 'hanyang_startup', 'mss', 'nipa'}
+          original_load_sites = monitor.load_sites
+          monitor.load_sites = lambda: [
+              s for s in original_load_sites()
+              if s.get('id') in source_ids and s.get('enabled', True)
+          ]
+
+          captured = []
+          original_filter = monitor.filter_for_group_with_diagnostics
+          def capture_filter(items, group, *args, **kwargs):
+              diagnostics = original_filter(items, group, *args, **kwargs)
+              if group.get('id') == 'grp_prestartup_ai':
+                  captured.append(copy.deepcopy(diagnostics))
+              return diagnostics
+          monitor.filter_for_group_with_diagnostics = capture_filter
+
           result = monitor.execute_monitor(
               allow_send=False,
               persist_seen=False,
               include_raw_all=False,
               group_id='grp_prestartup_ai',
           )
+
           public = {
               'ok': result.get('ok'),
               'mode': result.get('mode'),
@@ -51,6 +73,7 @@ jobs:
               'filtered_items': result.get('filtered_items'),
               'preview_groups': result.get('preview_groups', []),
               'date_review_queue': result.get('date_review_queue', []),
+              'diagnostics_calls': captured,
           }
           print('MAIL_QUERY_RESULT_BEGIN')
           print(json.dumps(public, ensure_ascii=False, indent=2, default=str))
