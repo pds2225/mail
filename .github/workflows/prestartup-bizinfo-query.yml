@@ -1,0 +1,53 @@
+name: Temporary Bizinfo Prestartup Funding Query
+
+on:
+  push:
+    branches:
+      - ops/prestartup-bizinfo-query-20260916
+
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Query using existing Mail Bizinfo collector
+        env:
+          BIZINFO_API_KEY: ${{ secrets.BIZINFO_API_KEY }}
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          MONITOR_NO_PERSIST_SEEN: '1'
+          ALERT_ON_ZERO: '0'
+        run: |
+          python - <<'PY'
+          import json
+          import monitor
+
+          sites = {s.get('id'): s for s in monitor.load_sites()}
+          items = monitor.fetch_bizinfo(sites['bizinfo'])
+
+          pre = ('예비창업', '예비 창업', '창업예정', '창업 예정', '사업자등록 전', '사업자 등록 전')
+          money = ('사업화자금', '사업화 자금', '사업화지원금', '사업화 지원금', '지원금', '보조금', '바우처', '사업화')
+          rows = []
+          for it in items:
+              text = ' '.join(str(it.get(k) or '') for k in ('title','description','target','support','region','deadline','application_period'))
+              if not any(k in text for k in pre):
+                  continue
+              if not any(k in text for k in money):
+                  continue
+              rows.append({
+                  'id': it.get('id'), 'title': it.get('title'), 'author': it.get('author'),
+                  'deadline': it.get('deadline'), 'application_period': it.get('application_period'),
+                  'target': it.get('target'), 'support': it.get('support'), 'region': it.get('region'),
+                  'link': it.get('link') or it.get('url'), 'published_at': it.get('published_at'),
+              })
+          print('MAIL_BIZINFO_QUERY_BEGIN')
+          print(json.dumps({'collected': len(items), 'candidate_count': len(rows), 'candidates': rows}, ensure_ascii=False, indent=2, default=str))
+          print('MAIL_BIZINFO_QUERY_END')
+          PY
