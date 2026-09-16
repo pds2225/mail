@@ -22,6 +22,9 @@ jobs:
         env:
           BIZINFO_API_KEY: ${{ secrets.BIZINFO_API_KEY }}
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           MONITOR_NO_PERSIST_SEEN: '1'
           ALERT_ON_ZERO: '0'
         run: |
