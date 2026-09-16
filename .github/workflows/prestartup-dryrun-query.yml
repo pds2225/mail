@@ -1,0 +1,58 @@
+name: Temporary Prestartup Dry Run Query
+
+on:
+  push:
+    branches:
+      - ops/prestartup-dryrun-20260916
+
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run existing mail monitor in preview only
+        env:
+          BIZINFO_API_KEY: ${{ secrets.BIZINFO_API_KEY }}
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: dry-run@example.invalid
+          GMAIL_APP_PASSWORD: dry-run-not-used
+          MAIL_VAR_DIR: /tmp/mail-prestartup-query/var
+          MONITOR_NO_PERSIST_SEEN: '1'
+          MONITOR_SKIP_FIELD_QUALITY: '1'
+          ALERT_ON_ZERO: '0'
+        run: |
+          python - <<'PY'
+          import json
+          import monitor
+
+          monitor.alert_ntfy = lambda *a, **k: None
+          monitor.alert_email = lambda *a, **k: None
+          result = monitor.execute_monitor(
+              allow_send=False,
+              persist_seen=False,
+              include_raw_all=False,
+              group_id='grp_prestartup_ai',
+          )
+          public = {
+              'ok': result.get('ok'),
+              'mode': result.get('mode'),
+              'collected': result.get('collected'),
+              'deduped': result.get('deduped'),
+              'new_items': result.get('new_items'),
+              'filtered_items': result.get('filtered_items'),
+              'preview_groups': result.get('preview_groups', []),
+              'date_review_queue': result.get('date_review_queue', []),
+          }
+          print('MAIL_QUERY_RESULT_BEGIN')
+          print(json.dumps(public, ensure_ascii=False, indent=2, default=str))
+          print('MAIL_QUERY_RESULT_END')
+          PY
