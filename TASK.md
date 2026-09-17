@@ -29,7 +29,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [ ] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
 [ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
-[~] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
+[x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 
 
 ---
@@ -298,17 +298,17 @@ TRACK A(MAIL-001)가 선행이다. MAIL-002는 MAIL-001에 의존한다.
 ### 8-4. 현재상태
 
 - PINNING: TASK_START_SHA=534f680f3198dcf46ce3445717b1f469602f2500
-- WORK_BRANCH=docs/task-mail-015-history-restore (TASK 등록 후 구현 브랜치로 분리)
+- WORK_BRANCH=feat/mail-015-history-restore (TASK 등록 PR #297 병합 후 구현 브랜치)
 - 현재 로컬 main에는 기존 사용자 변경 `web/auto_mail_web.html`이 있어 보존한다.
 - 실제 메일 발송·라벨 변경·삭제는 하지 않는다.
 
 ### 8-5. MUST — 반드시 구현
 
-- [ ] 현재 파일·전체 Git log/log-by-file/blame·브랜치·삭제/이름변경 파일·README/AGENTS/TASKS/DONE/CHANGELOG·설정·키워드 사전·company/group·메일 코드·테스트를 조사한다.
-- [ ] 지정된 과거 키워드와 지역·공장·신청자격·날짜·제외 기준을 Git 증거와 함께 복원표에 기록한다.
-- [ ] 특별키워드는 priority/boost/force-review 과거 동작이 확인될 때만 복원하고 Hard Gate는 우회하지 않는다.
-- [ ] 누락분만 최소 변경하고 주요 판정에 reason_code와 회귀테스트를 남긴다.
-- [ ] 실제 이메일·라벨 변경·삭제·Secret 출력은 하지 않는다.
+- [x] 현재 파일·전체 Git log/log-by-file/blame·브랜치·삭제/이름변경 파일·README/AGENTS/TASKS/DONE/CHANGELOG·설정·키워드 사전·company/group·메일 코드·테스트를 조사한다.
+- [x] 지정된 과거 키워드와 지역·공장·신청자격·날짜·제외 기준을 Git 증거와 함께 복원표에 기록한다.
+- [x] 특별키워드는 priority/boost/force-review 과거 동작이 확인될 때만 복원하고 Hard Gate는 우회하지 않는다.
+- [x] 누락분만 최소 변경하고 주요 판정에 reason_code와 회귀테스트를 남긴다. `TENANT_ONLY` reason_code를 P0-4에 추가해 "입주공간/사무공간 단독, 자금·성장지원·컨설팅·투자 신호 없음" 공고만 제외한다. 명시적 자금 부정 문구("지원금은 없습니다" 등)는 자금 신호로 세지 않되, 사업화·성장지원·바우처 등 다른 실질 지원 신호가 있으면 여전히 제외하지 않아 AI 허브 정상 사례를 보존한다(`docs/PAST_FILTER_CRITERIA_RESTORATION.md` "실제 재현" 절 참조).
+- [x] 실제 이메일·라벨 변경·삭제·Secret 출력은 하지 않는다.
 
 ### 8-6. KEEP — 유지
 
@@ -354,15 +354,15 @@ GitHub 인증·원격 이력·기존 테스트 권한 오류는 숨기지 않고
 
 ### 8-15. VERIFY
 
-- `python -m py_compile monitor.py`
-- `python -m json.tool config/groups.json > NUL`
-- 관련 pytest 및 최소 18개 회귀 사례
-- 실제 발송 없음, `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
-- 변경 파일·기존 사용자 변경·Secret 포함 여부 최종 확인
+- [x] `python -m py_compile monitor.py`
+- [x] `python -m json.tool config/groups.json > NUL`
+- [x] MAIL-015 회귀 19개 + 관련 스위트 12개 파일(test_monitor, test_digest_fp_hardening, test_5field_casematrix, test_p1_context_exclusions, test_consultant_notices, test_filter_accuracy_r2, test_scoring, test_prestartup_ai_digest_regression, test_digest_eight_columns, test_fetch_notice_attachments, test_mail_digest_mobile, test_nonnotice_title_filter) 총 536개 직접 재실행 통과, 회귀 없음(2026-09-17 최종 검증). 전체 pytest 1,432 passed/6 skipped는 이전 세션 보고치이며 이번 세션에서 전체 재실행은 하지 않음(부분 검증으로 대체).
+- [x] 실제 발송 없음, `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
+- [x] 변경 파일·기존 사용자 변경·Secret 포함 여부 최종 확인
 
 ### 8-16. DONE
 
-REQUEST_SOLVED=YES는 복원표·변경 전후 근거·테스트 결과·실제 발송 없음이 모두 확인될 때만 표시한다.
+REQUEST_SOLVED=YES — 복원표·19개 MAIL-015 회귀테스트·TENANT_ONLY 최소 구현을 커밋했고(f878126a), 관련 스위트 536개 재실행으로 회귀 없음을 확인했다. 실제 발송·라벨 변경·삭제 없음. push·PR은 아직(로컬 커밋만).
 
 ---
 
