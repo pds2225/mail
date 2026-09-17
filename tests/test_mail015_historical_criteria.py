@@ -296,6 +296,16 @@ def test_tenant_only_boundary_keeps_ai_hub_and_does_not_infer_factory():
         "입주 공간 제공과 사무실 이용만 가능합니다.",
     )
     assert generic["is_relevant"] is False
+    assert "TENANT_ONLY" in generic["exclude_reason_codes"]
+
+    ai_space_only = _evaluated(
+        "grp_prestartup_ai",
+        "서울 AI 창업허브 입주기업 모집",
+        "AI 스타트업 대상 사무공간과 네트워킹을 무상 제공합니다. 별도 지원금은 없습니다.",
+        region_field="서울특별시",
+    )
+    assert ai_space_only["is_relevant"] is False
+    assert "TENANT_ONLY" in ai_space_only["exclude_reason_codes"]
 
     ai_hub = _evaluated(
         "grp_prestartup_ai",

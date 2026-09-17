@@ -37,7 +37,7 @@
 | 본사·사업장·공장 소재 조건 | `37db10d1`, `597297eb`, `a7ec9580`; `mail_core/matching/company_match.py` | 공고기관 지역이 아니라 신청자 대상 문장에서 소재 조건을 추출했다. 본사/사업장/공장 조건은 신청 확인 정보로 남겼다. | `monitor.py:1478-1590`, `mail_core/matching/company_match.py`, `required_conditions` | 유지 |
 | 선정 후 이전 가능 | `tests/test_monitor.py:1000-1015`, 관련 지역 이력 | 선정 후 이전 조건은 현재 지역 불일치로 단정하지 않고 조건부 검토로 남겼다. | `monitor.py:1478-1590`, `region_unknown_review` | 유지 |
 | 공장 보유 필수 | `3942977e`, `a7ec9580`; `tests/test_digest_fp_hardening.py:152-166`, `tests/test_5field_casematrix.py` | 공고 자체는 수집·분류하고 공장 조건을 별도 표시한다. `입주기업`만으로 공장 보유를 요구하지 않는다. | `monitor.py:365-388`, `factory_required`, `required_conditions` | 유지; 자동 적격 판정 아님 |
-| 단독 입주공간 | `4dc50a85`의 P0-4 설명·테스트 `test_p0_space_only_is_excluded`; `tests/test_monitor.py:952-970` | 과거 의도는 단독 교육·멘토링·컨설팅·투자·입주공간을 제외하고, 입주공간+사업화자금은 포함하는 것이었다. | 현재 P0-4에는 금융/컨설팅/투자 분리와 입주 관련 지역 판정은 있으나 독립 `TENANT_ONLY` reason code는 없음 | 보강 후보; 회귀 재현 후 최소 추가 |
+| 단독 입주공간 | `4dc50a85`의 P0-4 설명·테스트 `test_p0_space_only_is_excluded`; `tests/test_monitor.py:952-970` | 과거 의도는 단독 교육·멘토링·컨설팅·투자·입주공간을 제외하고, 입주공간+사업화자금은 포함하는 것이었다. | `TENANT_SPACE_ONLY_TERMS`와 `TENANT_ONLY` reason code를 추가해 자금·사업화·성장지원 없는 입주공간만 제외한다. AI 허브 성장지원·사업화·재정지원 공고는 보존한다. | 복원 |
 | 수정·연장·재공고 | `b78485d4`, `eae23d2e`, `71e45889`, `8d1b88aa`, `3bceb69c`; `tests/test_notice_version_recovery.py`, `tests/test_version_delivery_integration.py` | 연장/재공고/중요 수정은 최근 게시일 범위를 넘어 재판정하고, 닫힌 수정은 제외했다. | `monitor.py:1053-...`, `monitor.py:4963-...`, `monitor.py:7282-...` | 유지 |
 | 최근 공고·날짜불명 | `eae23d2e`, `71e45889`, `8d1b88aa`; `config/settings.json`; date tests | 최근 영업일 재조회, 날짜불명 recall 정책, 본문 날짜의 오래된 공고 제한을 함께 사용했다. | `config/settings.json`, `monitor.py:8420-8475`, `tests/test_date_unknown_policy.py` | 유지 |
 | 중복 추천 방지 | `3942977e`, `f029b668`, `eb973565`, `d7f19b86`; `tests/test_notice_version_recovery.py`, `tests/test_outbox_seen_ids_multigroup.py` | 동일 공고 canonical ID/유사도와 발송 상태를 분리해 중복을 막고, 부분 그룹 실행이 전역 seen을 오염시키지 않게 했다. | `monitor.py:4333-...`, `monitor.py:7282-7890`, delivery/version tests | 유지 |
@@ -78,20 +78,21 @@
 
 ## 다음 최소 작업
 
-1. ~~현재 P0-4의 단독 입주공간 케이스를 `AI + 입주공간 + 금융지원 없음`으로 재현한다.~~ → 완료(아래 재현 결과).
-2. 과거 18개 최소 사례와 중복/버전 사례를 하나의 MAIL-015 회귀 테스트로 고정한다. → 완료(`tests/test_mail015_historical_criteria.py`, 19개 통과).
-3. **사람 판단 필요** — 아래 재현으로 확인된 실제 누락을 어떤 문구 기준으로 고칠지 결정한 뒤 evaluator에 최소 보강한다.
+1. ~~현재 P0-4의 단독 입주공간 케이스를 `AI + 입주공간 + 금융지원 없음`으로 재현한다.~~ → 완료.
+2. ~~과거 18개 최소 사례와 중복/버전 사례를 하나의 MAIL-015 회귀 테스트로 고정한다.~~ → 완료(`tests/test_mail015_historical_criteria.py`, 19개 통과).
+3. ~~독립 `TENANT_ONLY` 사유코드를 evaluator에 최소 보강한다.~~ → 완료; 명시적 자금 부정(`지원금 없음`)은 자금 신호로 오인하지 않도록 처리.
 
 ### 실제 재현: `grp_prestartup_ai`에서 AI+입주공간(자금 신호 없음)이 통과됨
 
 ```
 title: "서울 AI 창업허브 입주기업 모집"
 description: "AI 스타트업 대상 사무공간과 네트워킹을 무상 제공합니다. 별도 지원금은 없습니다."
-→ evaluate_notice(...)["is_relevant"] == True, exclude_reason_codes == []
+→ 수정 전: evaluate_notice(...)["is_relevant"] == True, exclude_reason_codes == []
+→ 수정 후: evaluate_notice(...)["is_relevant"] == False, `TENANT_ONLY`
 ```
 
-원인: P0-4(`monitor.py:5790-5810`)는 `has_consulting`(컨설팅·교육·상담)과 `has_investment`(투자) 단독만 제외하고, 함수 docstring(`monitor.py:5573`)이 명시한 "부가 지원만: 교육, 멘토링, 컨설팅, 투자, **입주공간 단독**"의 다섯 번째 항목(입주공간)은 실제로 어떤 분기에서도 검사하지 않는다. 반면 기존 회귀 테스트의 "generic" 케이스(`창업보육센터 입주기업 모집`, AI 키워드 없음)는 이 경로가 아니라 `INDUSTRY_NOT_MATCHED`(그룹 키워드 불일치)로 우연히 걸러진 것이었다 — 즉 AI 키워드가 함께 오면 뚫린다.
+원인: P0-4(`monitor.py:5800-5830`)의 기존 분기에는 함수 docstring(`monitor.py:5573`)이 명시한 "부가 지원만: 교육, 멘토링, 컨설팅, 투자, **입주공간 단독**" 중 입주공간 검사가 빠져 있었다. 기존 generic 케이스는 AI 키워드가 없어 `INDUSTRY_NOT_MATCHED`로 우연히 걸러졌지만, AI 키워드가 함께 오면 통과했다.
 
-**판단이 필요한 이유(단순 버그 수정이 아님):** 같은 스위트의 `ai_hub` 케이스(`"서울 AI 허브 신규 입주기업 모집" + "AI 기업에 사무공간과 성장 지원을 제공"`)는 명시적 자금 키워드가 전혀 없는데도 `is_relevant=True`가 기대값이다. "성장 지원을 제공"과 "별도 지원금은 없습니다"를 코드가 안전하게 구분할 명확한 키워드 규칙이 아직 없다 — recall 1순위 정책상, 애매한 경우 잘못 넣으면(과다 제외) 실제 지원금 공고를 놓칠 위험이 이 문서 조사만으로는 배제되지 않는다. 따라서 이번 라운드에서 자동으로 exclude 코드를 추가하지 않았다. 다음 라운드에서 "명시적 부정 문구(예: '지원금 없음', '자금 지원 제외')가 있을 때만 TENANT_ONLY로 제외" 같은 보수적 규칙을 사람이 확정한 뒤 구현할 것을 제안한다.
+적용한 보수 규칙: `입주공간/사무공간/공용시설` 신호가 있고, 사업화·성장지원·수출·판로·전시·실증·투자 등의 별도 지원이 없을 때만 `TENANT_ONLY`로 제외한다. `지원금 없음`처럼 명시적으로 부정된 자금 표현은 지원 신호로 세지 않는다. 따라서 기존 AI 허브 정상 사례와 입주공간+사업화자금 사례는 보존한다.
 
 실제 메일 발송·라벨 변경·삭제는 이 조사에서 수행하지 않았다.
