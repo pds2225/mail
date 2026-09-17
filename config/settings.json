@@ -1,7 +1,6 @@
 {
   "date_filter_enabled": true,
   "days_back": 3,
-  "business_holidays": [],
   "include_date_unknown": false,
   "raw_all_enabled": true,
   "raw_all_recipients": [],

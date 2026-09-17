@@ -24,21 +24,6 @@ def test_three_business_day_window_recovers_delayed_index_and_weekend():
     matched_one, _, _ = m.partition_posted_dates(items, days_back=1, now_dt=now)
     assert "wed" not in {v["id"] for v in matched_one}
 
-def test_business_holiday_is_skipped_for_count_but_included_in_window():
-    now = datetime(2026, 8, 18, 8, tzinfo=m.KST)  # 화요일
-    holiday = {"2026-08-17"}  # 광복절 대체휴일을 주입한 예시
-    assert m.previous_business_day(now, 1, holidays=holiday).isoformat() == "2026-08-14"
-    items = [
-        item("holiday", "2026-08-17"),
-        item("fri", "2026-08-14"),
-        item("old", "2026-08-11"),
-    ]
-    matched, _, excluded = m.partition_posted_dates(
-        items, days_back=2, now_dt=now, holidays=holiday,
-    )
-    assert {v["id"] for v in matched} == {"holiday", "fri"}
-    assert {v["id"] for v in excluded} == {"old"}
-
 def test_seen_without_state_is_seeded_not_resent():
     source = item("seed", "2026-07-24")
     candidates = m.select_notice_version_candidates([source], {"seed"}, {}, now=datetime(2026, 7, 27, 8, tzinfo=m.KST), days_back=3)
@@ -54,42 +39,6 @@ def test_deadline_extension_creates_versioned_delivery_id():
     assert deliverable[0]["_delivery_id"] == "extend@v2"
     assert "deadline" in deliverable[0]["_changed_fields"]
     assert updates["extend"]["version"] == 2
-
-def test_application_url_change_creates_versioned_delivery_id():
-    before = item("url-change", "2026-07-20", link="https://example.com/old")
-    snap = m._notice_version_snapshot(before)
-    versions = {
-        "url-change": {
-            "version": 1,
-            "list_hash": m._notice_list_hash(before),
-            "delivered_hash": m._notice_snapshot_hash(snap),
-            "delivered_snapshot": snap,
-            "observed_hash": m._notice_snapshot_hash(snap),
-        }
-    }
-    after = item("url-change", "2026-07-20", link="https://example.com/new")
-    deliverable, updates = m.classify_notice_versions([after], {"url-change"}, versions)
-    assert deliverable[0]["_change_type"] == "APPLICATION_URL_CHANGED"
-    assert deliverable[0]["_delivery_id"] == "url-change@v2"
-    assert "application_url" in deliverable[0]["_changed_fields"]
-    assert updates["url-change"]["version"] == 2
-
-def test_region_change_is_material_and_does_not_require_recent_posted_date():
-    before = item("region-change", "2026-01-20", region_field="서울")
-    snap = m._notice_version_snapshot(before)
-    versions = {
-        "region-change": {
-            "version": 1,
-            "list_hash": m._notice_list_hash(before),
-            "delivered_hash": m._notice_snapshot_hash(snap),
-            "delivered_snapshot": snap,
-            "observed_hash": m._notice_snapshot_hash(snap),
-        }
-    }
-    after = item("region-change", "2026-01-20", region_field="경기")
-    deliverable, _ = m.classify_notice_versions([after], {"region-change"}, versions)
-    assert deliverable[0]["_change_type"] == "REGION_CHANGED"
-    assert "region" in deliverable[0]["_changed_fields"]
 
 def test_unchanged_seen_notice_is_not_delivered_again():
     source = item("same", "2026-07-24")

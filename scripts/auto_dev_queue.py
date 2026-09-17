@@ -537,7 +537,7 @@ def main() -> int:
         )
         return 0
 
-    # 6b. 사람 게이트 — 단, '설계만/훅 문서화'는 안전 실행기로 닫을 수 있으면 통과
+    # 6b. 사람 판단이 필요한 경로는 질문하지 않고 BLOCKED로 종료한다.
     human_gate = loop.get("human_gate")
     if human_gate and loop_key in ("accuracy-defect", "product-vision"):
         design_only = any(k in task_title for k in ("설계만", "훅을 설계", "문서화", "decompose"))
@@ -562,18 +562,24 @@ def main() -> int:
                     return 0
             except Exception as e:  # noqa: BLE001
                 log(f"  design-only executor skip: {e}")
-        log(f"  ⏸️ {task_id} 사람 게이트 {human_gate} 필요 — PENDING 끝으로 이동")
+        log(f"  🚫 {task_id} 사람 판단 {human_gate} 필요 — BLOCKED")
         if not DRY_RUN:
-            rotated = move_task_to_pending_end(content, task_line, from_section="PENDING")
-            TASKS_PATH.write_text(rotated, encoding="utf-8")
+            blocked_content = move_task(content, task_line, "PENDING", "BLOCKED")
+            TASKS_PATH.write_text(blocked_content, encoding="utf-8")
+            append_to_log(
+                BLOCKED_PATH,
+                task_id,
+                task_title,
+                "HUMAN_DECISION_REQUIRED — 사용자 입력 없이 안전 중단",
+            )
         write_summary(
-            f"## ⏸️ AWAITING_HUMAN ({human_gate})\n\n"
-            f"`{task_id}`: {task_title}\n\n"
-            f"이 루프는 사람 승인 전 L1 실행 금지. 큐 정체 방지를 위해 PENDING 끝으로 이동.\n\n"
+            "## 🚫 BLOCKED (HUMAN_DECISION_REQUIRED)\n\n"
+            f"{task_id}: {task_title}\n\n"
+            "사람 판단이 필요한 단계라 무인 실행을 안전하게 중단했습니다.\n\n"
             + format_loop_summary(loop_key, loop)
         )
         state["last_task"] = task_id
-        state["last_result"] = "AWAITING_HUMAN"
+        state["last_result"] = "BLOCKED"
         save_state(state)
         return 0
 
