@@ -135,6 +135,8 @@ def test_main_checkout_prepares_task_branch_without_force(monkeypatch):
         return "main" if args == ("branch", "--show-current") else ""
 
     def fake_lines(*args):
+        if args == ("status", "--porcelain"):
+            return True, ["?? var/state/auto_dev_runtime.json"]
         return True, []
 
     def fake_run(*args):
@@ -221,7 +223,10 @@ def test_agent_unavailable_is_transient_then_blocks_without_new_task(tmp_path, m
 
     monkeypatch.setattr(c, "save_checkpoint", capture)
     result = c.run_controller(
-        source_text="[~] ACTIVE-001 | kind=implementation active task",
+        source_text=(
+            "[~] ACTIVE-001 | kind=implementation active task\n"
+            "[ ] READY-002 | kind=implementation another task"
+        ),
         checkpoint_path=checkpoint,
         phase_runner=agent_runner,
     )

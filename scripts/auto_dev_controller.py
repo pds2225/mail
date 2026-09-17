@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TOP_TASK_PATH = ROOT / "TASK.md"
 TASKS_PATH = ROOT / "docs" / "project" / "TASKS.md"
 CHECKPOINT_PATH = ROOT / "var" / "state" / "auto_dev_runtime.json"
+CHECKPOINT_RELATIVE = "var/state/auto_dev_runtime.json"
 
 CHECKPOINT_FIELDS = frozenset(
     {
@@ -193,8 +194,12 @@ def validate_changed_files(task_kind: str, changed_files: list[str]) -> dict:
             for path in paths
             if (
                 any(path == prefix.rstrip("/") or path.startswith(prefix) for prefix in IMPLEMENTATION_BLOCKED_PREFIXES)
-                or path == ".env"
-                or path.startswith(".env.")
+                or path != CHECKPOINT_RELATIVE
+                and (path.rsplit("/", 1)[-1] == ".env" or path.rsplit("/", 1)[-1].startswith(".env."))
+                or path == "AGENTS.md"
+                or path.endswith("/AGENTS.md")
+                or path == "RULES.md"
+                or path.endswith("/RULES.md")
                 or re.search(r"(?:secret|credential|credentials|token|password|\.pem$|\.key$)", path, re.IGNORECASE)
             )
         ]
@@ -340,6 +345,11 @@ def ensure_task_branch(task: dict, preferred_branch: str = "") -> dict:
     ok, dirty = _git_lines("status", "--porcelain")
     if not ok:
         return {"ok": False, "code": "BRANCH_STATUS_FAILED", "reason": "git status 실패"}
+    dirty = [
+        line
+        for line in dirty
+        if _normalise_path(line[3:].strip('"')) != CHECKPOINT_RELATIVE
+    ]
     if dirty:
         return {
             "ok": False,
@@ -506,6 +516,8 @@ def run_controller(
         return save_checkpoint(state, checkpoint_path)
 
     checkpoint = load_checkpoint(checkpoint_path)
+    if checkpoint.get("task_id") == selected["task_id"] and checkpoint.get("status") in {"BLOCKED", "DONE"}:
+        return checkpoint
     if checkpoint.get("task_id") == selected["task_id"] and checkpoint.get("status") in {
         "ACTIVE", "RETRY", "AWAITING_AGENT",
     }:
