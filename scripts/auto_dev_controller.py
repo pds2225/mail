@@ -72,7 +72,10 @@ IMPLEMENTATION_BLOCKED_PREFIXES = (
 
 
 def _normalise_path(path: str) -> str:
-    return str(path or "").replace("\\", "/").lstrip("./")
+    value = str(path or "").replace("\\", "/")
+    while value.startswith("./"):
+        value = value[2:]
+    return value
 
 
 def _task_detail(content: str, task_id: str) -> str:
@@ -316,6 +319,20 @@ def ensure_task_branch(task: dict, preferred_branch: str = "") -> dict:
     if not re.fullmatch(r"feat/[A-Za-z0-9._/-]+", target):
         return {"ok": False, "code": "BRANCH_NAME_INVALID", "reason": target}
 
+    upstream = _git_value("rev-parse", "--abbrev-ref", f"{target}@{{upstream}}")
+    if upstream:
+        counts = _git_value("rev-list", "--left-right", "--count", f"{target}...{upstream}")
+        try:
+            ahead, behind = (int(value) for value in counts.split())
+        except (ValueError, TypeError):
+            return {"ok": False, "code": "BRANCH_DIVERGENCE_UNKNOWN", "reason": target}
+        if ahead and behind:
+            return {
+                "ok": False,
+                "code": "BRANCH_DIVERGED",
+                "reason": f"{target}와 {upstream}이 서로 다른 커밋을 가집니다.",
+            }
+
     current = _git_value("branch", "--show-current")
     if current == target:
         return {"ok": True, "code": "BRANCH_READY", "branch": target}
@@ -428,9 +445,7 @@ def _default_phase_runner(task: dict, phase: str, state: dict) -> dict:
         if missing:
             return {"ok": False, "code": "PRECHECK_FAILED", "reason": f"필수 파일 누락: {missing}"}
     elif phase == "BRANCH_READY":
-        branch = _git_value("branch", "--show-current")
-        if not branch or branch in {"main", "master"}:
-            return {"ok": False, "code": "BRANCH_REQUIRED", "reason": "main 직접 개발은 허용하지 않습니다."}
+        return ensure_task_branch(task)
     elif phase == "IMPLEMENT":
         if task["kind"] == "MAIL-014-decomposition":
             return run_decomposition_queue()
@@ -439,6 +454,14 @@ def _default_phase_runner(task: dict, phase: str, state: dict) -> dict:
             "code": "AGENT_UNAVAILABLE",
             "reason": "결정적 controller가 직접 구현하지 않는 TASK라 에이전트 재시도를 대기합니다.",
         }
+    elif phase == "DIFF_GATE":
+        try:
+            changed_files = actual_changed_files(state.get("base_sha", ""))
+        except RuntimeError as exc:
+            return {"ok": False, "code": "DIFF_READ_FAILED", "reason": str(exc)}
+        result = validate_changed_files(task["kind"], changed_files)
+        result["changed_files"] = changed_files
+        return result
     return {"ok": True, "code": "PASS", "reason": phase}
 
 
@@ -500,7 +523,22 @@ def run_controller(
                 },
                 checkpoint_path,
             )
-        attempts_by_phase = dict(checkpoint.get("attempts_by_phase") or {})
+        attempts_by_phase = {}
+        if checkpoint.get("status") in {"RETRY", "AWAITING_AGENT"} and checkpoint.get("phase"):
+            attempts_by_phase[checkpoint["phase"]] = int(checkpoint.get("attempt", 0) or 0)
+        if checkpoint.get("last_completed_phase") and checkpoint.get("branch"):
+            restored = ensure_task_branch(selected, checkpoint["branch"])
+            if not restored.get("ok"):
+                return save_checkpoint(
+                    {
+                        **checkpoint,
+                        "task_id": selected["task_id"],
+                        "status": "BLOCKED",
+                        "phase": checkpoint.get("phase", "BRANCH_READY"),
+                        "last_error": f"{restored.get('code')}: {restored.get('reason')}",
+                    },
+                    checkpoint_path,
+                )
     else:
         start_index = 0
         attempts_by_phase = {}
@@ -512,6 +550,7 @@ def run_controller(
         "task_title": selected["title"],
         "task_kind": selected["kind"],
         "status": "ACTIVE",
+        "branch": checkpoint.get("branch") or _git_value("branch", "--show-current"),
         "base_sha": checkpoint.get("base_sha") or _git_value("rev-parse", "origin/main"),
         "head_sha": checkpoint.get("head_sha") or _git_value("rev-parse", "HEAD"),
         "attempts_by_phase": attempts_by_phase,
@@ -535,6 +574,9 @@ def run_controller(
                         result = scope
                 if result.get("ok"):
                     attempts_by_phase[phase] = attempts
+                    if phase == "BRANCH_READY" and result.get("branch"):
+                        state["branch"] = result["branch"]
+                    state["head_sha"] = _git_value("rev-parse", "HEAD") or state.get("head_sha", "")
                     state.update(
                         {
                             "status": "ACTIVE",
@@ -543,7 +585,7 @@ def run_controller(
                             "attempts_by_phase": attempts_by_phase,
                         }
                     )
-                    save_checkpoint(state, checkpoint_path)
+                    durable_persist(state, checkpoint_path)
                     break
                 error = f"{result.get('code')}: {result.get('reason')}"
             except KeyboardInterrupt:
@@ -601,4 +643,12 @@ def run_controller(
     return save_checkpoint(state, checkpoint_path)
 
 
-def main() -> int
+def main() -> int:
+    result = run_controller()
+    status = result.get("status")
+    print(json.dumps(result, ensure_ascii=False))
+    return 0 if status in {"DONE", "BLOCKED"} else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

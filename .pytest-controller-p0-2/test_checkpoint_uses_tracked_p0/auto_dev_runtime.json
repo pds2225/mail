@@ -1,0 +1,11 @@
+{
+  "attempt": 1,
+  "status": "ACTIVE",
+  "base_sha": "",
+  "head_sha": "",
+  "last_completed_phase": "",
+  "branch": "",
+  "last_error": "",
+  "phase": "IMPLEMENT",
+  "task_id": "TASK-001"
+}

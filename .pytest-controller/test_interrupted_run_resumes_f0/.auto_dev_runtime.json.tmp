@@ -6,6 +6,6 @@
   "task_id": "ACTIVE-001",
   "status": "ACTIVE",
   "last_completed_phase": "IMPLEMENT",
-  "phase": "IMPLEMENT",
+  "phase": "FOCUSED_TEST",
   "last_error": ""
 }
