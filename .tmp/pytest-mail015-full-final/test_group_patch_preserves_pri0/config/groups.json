@@ -1,0 +1,13 @@
+[
+  {
+    "id": "g1",
+    "name": "변경",
+    "active": true,
+    "or_keywords": [
+      "AI"
+    ],
+    "recipients": [],
+    "company_id": "company-1",
+    "score_threshold": 45
+  }
+]
