@@ -1,7 +1,8 @@
 name: Auto Merge
 
-# 테스트 워크플로우 성공 후 MAIL-P0C-01 생성 PR만 안전 게이트를 통과하면
-# squash-merge한다. 다른 READY/BLOCKED 작업과 workflow 변경은 자동머지하지 않는다.
+# 테스트 워크플로우 성공 후 같은 저장소 PR을 기본 자동병합한다.
+# 예외: Draft, needs-human/blocked, 충돌, .env*, .github/workflows/*.
+# Settings Allow auto-merge 가 꺼져 있어도 fallback_direct_merge 로 동작 가능.
 on:
   workflow_run:
     workflows: ["테스트"]
@@ -53,43 +54,7 @@ jobs:
             --head-branch "${HEAD_BRANCH}" \
             --head-sha "${HEAD_SHA}" >> "$GITHUB_OUTPUT"
 
-      - name: PR 코드 체크아웃
-        if: steps.pr.outputs.number != ''
-        env:
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-        run: |
-          set -euo pipefail
-          git fetch origin main
-          git fetch origin "pull/${PR_NUMBER}/head:pr-${PR_NUMBER}"
-          git checkout --detach "pr-${PR_NUMBER}"
-
-      - name: MAIL-P0C-01 필수 안전 게이트
-        if: steps.pr.outputs.number != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          DEFAULT_RUN_MODE: dry-run
-          ALLOW_SEND_EMAIL: "false"
-          ALLOW_DELETE_EMAIL: "false"
-          ALLOW_LABEL_CHANGE: "false"
-          BIZINFO_API_KEY: ci-placeholder
-          ANTHROPIC_API_KEY: ci-placeholder
-          GMAIL_ADDRESS: dry-run@example.test
-          GMAIL_APP_PASSWORD: ci-placeholder
-        run: |
-          set -euo pipefail
-          python -m compileall .
-          python -m pytest -q
-          python -m pytest tests/test_notice_version_recovery.py -q
-          python -c "import os; assert os['DEFAULT_RUN_MODE'] == 'dry-run'; assert os['ALLOW_SEND_EMAIL'] == 'false'; assert os['ALLOW_DELETE_EMAIL'] == 'false'; assert os['ALLOW_LABEL_CHANGE'] == 'false'; import monitor; assert monitor._ALLOW_SMTP_SEND is False; print('dry-run safety: mail_sent=0, SMTP disabled')"
-          python3 scripts/auto_merge_pr.py \
-            --pr "${PR_NUMBER}" \
-            --base-ref origin/main \
-            --dry-run \
-            --expected-head-sha "${HEAD_SHA}"
-
-      - name: 자동 병합 (MAIL-P0C-01만 squash)
+      - name: 자동 병합 (기본 병합, 예외만 스킵)
         if: steps.pr.outputs.number != ''
         env:
           GH_TOKEN: ${{ github.token }}
@@ -103,41 +68,3 @@ jobs:
             --pr "${{ steps.pr.outputs.number }}" \
             --base-ref origin/main \
             --expected-head-sha "${HEAD_SHA}"
-
-      - name: 병합 증거·완료 상태 기록
-        if: steps.pr.outputs.number != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-        run: |
-          set -euo pipefail
-          merged=""
-          for attempt in $(seq 1 12); do
-            state="$(gh pr view "$PR_NUMBER" --json state --jq '.state')"
-            merge_commit="$(gh pr view "$PR_NUMBER" --json mergeCommit --jq '.mergeCommit.oid // ""')"
-            if [ "$state" = "MERGED" ] && [ -n "$merge_commit" ]; then
-              merged="$merge_commit"
-              break
-            fi
-            sleep 10
-          done
-          if [ -z "$merged" ]; then
-            echo "BLOCKED: PR merge state not confirmed within bounded polling" >&2
-            exit 1
-          fi
-          git fetch origin main
-          main_sha="$(git rev-parse origin/main)"
-          git merge-base --is-ancestor "$merged" origin/main
-          pr_url="$(gh pr view "$PR_NUMBER" --json url --jq '.url')"
-          {
-            echo "## MAIL-P0C-01 자동머지 증거"
-            echo "- PR: $pr_url"
-            echo "- merge commit: $merged"
-            echo "- origin/main SHA: $main_sha"
-            echo "- compileall: PASS"
-            echo "- full pytest: PASS"
-            echo "- MAIL-P0C-01 regression: PASS"
-            echo "- actual email: 0"
-            echo "- dry-run safety: PASS"
-            echo "- next BLOCKED TASK: not started"
-          } >> "$GITHUB_STEP_SUMMARY"

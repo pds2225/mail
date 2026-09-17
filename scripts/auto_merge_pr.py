@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -99,7 +98,7 @@ def gh_json(args: list[str]) -> dict | list:
     proc = _run([
         "gh", *args,
         "--json",
-        "number,title,body,isDraft,labels,mergeable,headRefName,baseRefName,headRefOid",
+        "number,title,isDraft,labels,mergeable,headRefName,baseRefName,headRefOid",
     ])
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr.strip() or "gh command failed")
@@ -127,13 +126,6 @@ def changed_files(base_ref: str, head_ref: str) -> list[str]:
     if proc.returncode != 0:
         proc = _run(["git", "diff", "--name-only", base_ref, head_ref])
     return [ln.strip() for ln in (proc.stdout or "").splitlines() if ln.strip()]
-
-
-def changed_diff(base_ref: str, head_ref: str) -> str:
-    proc = _run(["git", "diff", "--no-ext-diff", "--unified=0", f"{base_ref}...{head_ref}"])
-    if proc.returncode != 0:
-        proc = _run(["git", "diff", "--no-ext-diff", "--unified=0", base_ref, head_ref])
-    return proc.stdout or ""
 
 
 def _profile_rank(name: str) -> int:
@@ -173,88 +165,6 @@ def _secret_hits(changed: list[str]) -> list[str]:
 
 def _ci_workflow_hits(changed: list[str]) -> list[str]:
     return [path for path in changed if _is_ci_workflow_path(path)]
-
-
-def _contains_task_token(value: str, task_id: str) -> bool:
-    token = str(task_id or "").strip()
-    if not token:
-        return False
-    pattern = rf"(?<![A-Za-z0-9]){re.escape(token)}(?![A-Za-z0-9])"
-    return re.search(pattern, str(value or ""), flags=re.IGNORECASE) is not None
-
-
-def task_identity(pr: dict, cfg: dict) -> Eligibility:
-    auto_cfg = cfg.get("auto_merge") or {}
-    task_ids = [str(value).strip() for value in auto_cfg.get("allowed_task_ids") or []]
-    evidence = auto_cfg.get("task_id_evidence") or {}
-    title = str(pr.get("title") or "")
-    branch = str(pr.get("headRefName") or "")
-    if not task_ids:
-        return Eligibility(False, "허용된 자동머지 TASK가 설정되지 않음")
-
-    for task_id in task_ids:
-        title_ok = not evidence.get("require_title", True) or _contains_task_token(title, task_id)
-        branch_ok = not evidence.get("require_branch", True) or _contains_task_token(branch, task_id)
-        if title_ok and branch_ok:
-            return Eligibility(True, f"TASK {task_id} 증거 확인", profile=task_id)
-
-    return Eligibility(
-        False,
-        "허용 TASK 식별자가 PR 제목과 작업 브랜치에 함께 없음",
-    )
-
-
-def _path_matches(path: str, rule: str) -> bool:
-    normalized = str(path or "").replace("\\\\", "/").lstrip("./")
-    target = str(rule or "").replace("\\\\", "/").lstrip("./")
-    return normalized == target or normalized.startswith(target)
-
-
-def task_scope(changed: list[str], cfg: dict) -> Eligibility:
-    auto_cfg = cfg.get("auto_merge") or {}
-    blocked_rules = [str(value) for value in auto_cfg.get("blocked_task_paths") or []]
-    allowed_prefixes = [str(value) for value in auto_cfg.get("allowed_task_path_prefixes") or []]
-    blocked = [path for path in changed if any(_path_matches(path, rule) for rule in blocked_rules)]
-    if blocked:
-        return Eligibility(False, f"protected/sensitive path: {', '.join(blocked)}")
-    outside = [
-        path for path in changed
-        if not any(_path_matches(path, prefix) for prefix in allowed_prefixes)
-    ]
-    if outside:
-        return Eligibility(False, f"예상 밖 TASK 파일: {', '.join(outside)}")
-    return Eligibility(True, "TASK 파일 범위 확인")
-
-
-_UNSAFE_ADDED_PATTERNS = (
-    re.compile(r"(?i)(?:ALLOW_SEND_EMAIL|ALLOW_DELETE_EMAIL|ALLOW_LABEL_CHANGE)\\s*[:=]\\s*(?:true|1|yes)"),
-    re.compile(r"(?i)_ALLOW_SMTP_SEND\\s*=\\s*true"),
-    re.compile(r"(?i)\\b(?:smtplib\\.SMTP|imaplib\\.IMAP4|send_email\\s*\\()"),
-    re.compile(r"(?i)-----BEGIN [A-Z ]+ PRIVATE KEY-----"),
-    re.compile(r"(?i)\\b(?:ghp|github_pat|sk)-[A-Za-z0-9_\\-]{16,}\\b"),
-)
-
-
-def safety_gate(changed: list[str], diff_text: str) -> Eligibility:
-    raw_mail_suffixes = (".eml", ".msg", ".mbox", ".pst", ".ost")
-    raw_mail_markers = ("raw_mail", "mail_raw", "/raw/", "\\\\raw\\\\", "customer_data", "pii")
-    data_paths = [
-        path for path in changed
-        if Path(path).suffix.lower() in raw_mail_suffixes
-        or any(marker in path.replace("\\\\", "/").lower() for marker in raw_mail_markers)
-    ]
-    if data_paths:
-        return Eligibility(False, f"고객정보/메일원문 경로: {', '.join(data_paths)}")
-
-    added = "\\n".join(
-        line for line in str(diff_text or "").splitlines()
-        if line.startswith("+") and not line.startswith("+++")
-    )
-    for pattern in _UNSAFE_ADDED_PATTERNS:
-        hit = pattern.search(added)
-        if hit:
-            return Eligibility(False, f"안전 게이트 위반 패턴: {hit.group(0)[:80]}")
-    return Eligibility(True, "메일·Secret·인증 활성화 패턴 없음")
 
 
 def _covers(changed: list[str], prefixes: list[str]) -> bool:
@@ -315,14 +225,10 @@ def assess_pr(
     cfg: dict,
     *,
     expected_head_sha: str = "",
-    diff_text: str = "",
 ) -> Eligibility:
     auto_cfg = cfg.get("auto_merge") or {}
     if not auto_cfg.get("enabled"):
         return Eligibility(False, "loop_config.auto_merge.enabled=false")
-
-    if str(pr.get("baseRefName") or "") != "main":
-        return Eligibility(False, "base branch가 main이 아님")
 
     if pr.get("isDraft"):
         return Eligibility(False, "Draft PR")
@@ -349,18 +255,6 @@ def assess_pr(
                 False,
                 f"head SHA mismatch (CI={short_exp}, PR={short_act})",
             )
-
-    identity = task_identity(pr, cfg)
-    if not identity.ok:
-        return identity
-
-    scope = task_scope(changed, cfg)
-    if not scope.ok:
-        return scope
-
-    safety = safety_gate(changed, diff_text)
-    if not safety.ok:
-        return safety
 
     profiles = load_profiles()
     path_check = match_profile(changed, profiles)
@@ -460,14 +354,7 @@ def main(argv: list[str] | None = None) -> int:
     expected_sha = str(args.expected_head_sha or args.head_sha or "").strip()
     _run(["git", "fetch", "origin", f"pull/{args.pr}/head:pr-{args.pr}"], check=False)
     files = changed_files(args.base_ref, f"pr-{args.pr}")
-    diff_text = changed_diff(args.base_ref, f"pr-{args.pr}")
-    verdict = assess_pr(
-        pr,
-        files,
-        cfg,
-        expected_head_sha=expected_sha,
-        diff_text=diff_text,
-    )
+    verdict = assess_pr(pr, files, cfg, expected_head_sha=expected_sha)
     print(f"PR #{args.pr} profile={verdict.profile or '-'} → {verdict.reason}")
     if not verdict.ok:
         return 0

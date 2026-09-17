@@ -830,6 +830,7 @@ def save_json(path: Path, data) -> None:
 
 _NOTICE_VERSION_MATERIAL_FIELDS = frozenset({
     "title", "deadline", "application_period", "target", "support", "region",
+    "application_url",
 })
 
 
@@ -852,6 +853,9 @@ def _notice_version_snapshot(item: dict) -> dict[str, str]:
         "target": norm(item.get("target_field") or item.get("target_age_field")),
         "support": _mail_clean_text(item.get("support_field") or item.get("description") or "", limit=600),
         "region": norm(item.get("region_field")),
+        "application_url": norm(
+            item.get("application_url") or item.get("apply_url") or item.get("link") or item.get("url")
+        ),
         **_notice_date_fields(item),
     }
 
@@ -890,12 +894,47 @@ def _delivery_notice_id(item: dict) -> str:
     return str(item.get("_delivery_id") or item.get("id") or "")
 
 
-def _recent_recheck_dates(now: datetime, days_back: int) -> set:
-    return {previous_business_day(now, offset) for offset in range(1, max(1, int(days_back or 1)) + 1)}
+def _parse_business_holidays(value) -> set:
+    """설정/환경변수의 YYYY-MM-DD 공휴일을 날짜 집합으로 정규화한다."""
+    if value is None:
+        return set()
+    if isinstance(value, dict):
+        value = value.get("dates") or value.get("holidays") or []
+    if isinstance(value, str):
+        values = re.split(r"[,;\s]+", value.strip()) if value.strip() else []
+    elif isinstance(value, (list, tuple, set, frozenset)):
+        values = []
+        for entry in value:
+            if isinstance(entry, (list, tuple, set, frozenset)):
+                values.extend(entry)
+            else:
+                values.append(entry)
+    else:
+        values = [value]
+    parsed = set()
+    for entry in values:
+        if isinstance(entry, datetime):
+            parsed.add(entry.date())
+            continue
+        text = str(entry or "").strip()[:10].replace(".", "-").replace("/", "-")
+        try:
+            parsed.add(datetime.strptime(text, "%Y-%m-%d").date())
+        except ValueError:
+            continue
+    return parsed
 
 
-def _item_recent_for_recheck(item: dict, now: datetime, days_back: int) -> bool:
-    targets = _recent_recheck_dates(now, days_back)
+def _recent_recheck_dates(now: datetime, days_back: int, holidays=None) -> set:
+    holiday_dates = _parse_business_holidays(holidays)
+    return {
+        previous_business_day(now, offset, holidays=holiday_dates)
+        for offset in range(1, max(1, int(days_back or 1)) + 1)
+    }
+
+
+def _item_recent_for_recheck(item: dict, now: datetime, days_back: int, holidays=None) -> bool:
+    holiday_dates = _parse_business_holidays(holidays)
+    targets = _recent_recheck_dates(now, days_back, holidays=holiday_dates)
     oldest, today = min(targets), now.date()
     for value in _notice_date_fields(item).values():
         if not value:
@@ -904,12 +943,15 @@ def _item_recent_for_recheck(item: dict, now: datetime, days_back: int) -> bool:
             parsed = datetime.strptime(value, "%Y-%m-%d").date()
         except ValueError:
             continue
-        if parsed in targets or (oldest < parsed < today and parsed.weekday() >= 5):
+        if parsed in targets or (oldest < parsed < today and (parsed.weekday() >= 5 or parsed in holiday_dates)):
             return True
     return False
 
 
-def select_notice_version_candidates(items: list[dict], seen_ids: set[str], versions: dict[str, dict], *, now: datetime, days_back: int) -> list[dict]:
+def select_notice_version_candidates(
+    items: list[dict], seen_ids: set[str], versions: dict[str, dict], *,
+    now: datetime, days_back: int, holidays=None,
+) -> list[dict]:
     """신규·최근 N영업일·목록변경·미전달 변경만 상세보강 대상으로 고른다."""
     selected: list[dict] = []
     for item in items:
@@ -921,11 +963,15 @@ def select_notice_version_candidates(items: list[dict], seen_ids: set[str], vers
             continue
         previous = versions.get(iid)
         if previous is None:
-            if _item_recent_for_recheck(item, now, days_back):
+            if _item_recent_for_recheck(item, now, days_back, holidays=holidays):
                 selected.append({**item, "_version_seed_only": True})
             continue
         pending = bool(previous.get("observed_hash") and previous.get("observed_hash") != previous.get("delivered_hash"))
-        if pending or _notice_list_hash(item) != previous.get("list_hash") or _item_recent_for_recheck(item, now, days_back):
+        if (
+            pending
+            or _notice_list_hash(item) != previous.get("list_hash")
+            or _item_recent_for_recheck(item, now, days_back, holidays=holidays)
+        ):
             selected.append(item)
     return selected
 
@@ -972,9 +1018,15 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     if old_target and new_target and old_target != new_target:
         return "TARGET_CHANGED"
 
+    # 지역조건 변경
+    old_region = str(before.get("region") or before.get("region_field") or "")
+    new_region = str(after.get("region") or after.get("region_field") or "")
+    if old_region and new_region and old_region != new_region:
+        return "REGION_CHANGED"
+
     # 신청 URL 변경 감지 (snapshot/raw 모두 link 키 사용; 없으면 url 폴백)
-    old_url = str(before.get("link") or before.get("url") or "")
-    new_url = str(after.get("link") or after.get("url") or "")
+    old_url = str(before.get("application_url") or before.get("link") or before.get("url") or "")
+    new_url = str(after.get("application_url") or after.get("link") or after.get("url") or "")
     if old_url and new_url and old_url != new_url:
         return "APPLICATION_URL_CHANGED"
 
@@ -2052,13 +2104,14 @@ def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict
     return [enriched_map.get(it["id"], it) for it in items]
 
 
-def previous_business_day(from_dt: datetime | None = None, days_back: int = 1):
-    """주말을 건너뛴 직전 영업일 계산."""
+def previous_business_day(from_dt: datetime | None = None, days_back: int = 1, holidays=None):
+    """주말·설정 공휴일을 건너뛴 직전 영업일 계산."""
     day = (from_dt or datetime.now(KST)).date()
     remaining = max(1, days_back)
+    holiday_dates = _parse_business_holidays(holidays)
     while remaining:
         day -= timedelta(days=1)
-        if day.weekday() < 5:
+        if day.weekday() < 5 and day not in holiday_dates:
             remaining -= 1
     return day
 
@@ -2169,6 +2222,8 @@ def load_settings() -> dict:
     default = {
         "date_filter_enabled": True,
         "days_back": 1,
+        # YYYY-MM-DD 공휴일 목록. 환경변수 MONITOR_BUSINESS_HOLIDAYS(쉼표 구분)로도 확장 가능.
+        "business_holidays": [],
         "raw_all_enabled": True,
         "raw_all_recipients": [],
         "claude_model": "claude-haiku-4-5-20251001",
@@ -2196,6 +2251,13 @@ def load_settings() -> dict:
     else:
         settings["tenant_id"] = private_config.normalize_tenant_id(settings.get("tenant_id"))
         settings["raw_all_recipients"] = []
+    settings["business_holidays"] = sorted(
+        day.isoformat()
+        for day in _parse_business_holidays([
+            settings.get("business_holidays"),
+            os.environ.get("MONITOR_BUSINESS_HOLIDAYS", ""),
+        ])
+    )
     return settings
 
 
@@ -4592,16 +4654,19 @@ def detect_possible_duplicates(items: list[dict]) -> list[dict]:
 
 def partition_posted_dates(
     items: list[dict], days_back: int = 3, max_age_days: int | None = None,
-    now_dt: datetime | None = None,
+    now_dt: datetime | None = None, holidays=None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
-    """최근 N영업일과 그 사이 주말 게시물을 재조회한다."""
+    """최근 N영업일과 그 사이 주말·공휴일 게시물을 재조회한다."""
     now = now_dt or datetime.now(KST)
-    target_dates = _recent_recheck_dates(now, days_back)
+    holiday_dates = _parse_business_holidays(holidays)
+    target_dates = _recent_recheck_dates(now, days_back, holidays=holiday_dates)
     oldest, newest, today = min(target_dates), max(target_dates), now.date()
     matched, unknown, excluded = [], [], []
 
     def _in_window(d) -> bool:
-        return d in target_dates or (oldest < d < today and d.weekday() >= 5)
+        return d in target_dates or (
+            oldest < d < today and (d.weekday() >= 5 or d in holiday_dates)
+        )
 
     for it in items:
         pd = str(it.get("published_at") or it.get("posted_date") or "").strip()
@@ -4623,9 +4688,9 @@ def partition_posted_dates(
     return matched, unknown, excluded
 
 
-def date_filter(items: list[dict], days_back: int = 1) -> tuple[list[dict], list[dict]]:
+def date_filter(items: list[dict], days_back: int = 1, holidays=None) -> tuple[list[dict], list[dict]]:
     """하위 호환: (확정, 날짜불명)만 반환."""
-    matched, unknown, _excluded = partition_posted_dates(items, days_back)
+    matched, unknown, _excluded = partition_posted_dates(items, days_back, holidays=holidays)
     return matched, unknown
 
 
@@ -7383,6 +7448,7 @@ def execute_monitor(
             raise SystemExit(1)
         log.info("단일 그룹 모드: %s", groups[0].get("name", group_id))
     days_back = max(1, int(settings.get("days_back", 3) or 3))
+    business_holidays = _parse_business_holidays(settings.get("business_holidays"))
 
     # 실제 자동발송은 암호화된 대기열 없이는 시작하지 않는다. 이전 중단 run 의 미완료
     # 수신자부터 재시도하고, cycle 이 끝난 완료건만 seen_ids 에 반영한다.
@@ -7523,6 +7589,7 @@ def execute_monitor(
     notice_versions = load_notice_versions()
     version_candidates = select_notice_version_candidates(
         deduped, seen_ids, notice_versions, now=now, days_back=days_back,
+        holidays=business_holidays,
     )
     enriched_candidates = enrich_items(version_candidates)
 
@@ -7636,7 +7703,7 @@ def execute_monitor(
         log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
 
     # ④ 날짜 필터 (직전 영업일)
-    recheck_dates = sorted(_recent_recheck_dates(now, days_back))
+    recheck_dates = sorted(_recent_recheck_dates(now, days_back, holidays=business_holidays))
     # 발송 멱등 키는 재조회창의 끝(가장 오래된 날)이 아니라 실행 당일을 쓴다.
     # (days_back 을 늘리면 기준일이 과거로 후퇴해 발송이 조용히 멈춘다 — delivery_cycle_date 참조)
     target_date = delivery_cycle_date(now)
@@ -7656,6 +7723,7 @@ def execute_monitor(
     if settings.get("date_filter_enabled", True):
         date_matched, date_unknown, date_excluded = partition_posted_dates(
             new_items, days_back, max_age_days=settings.get("max_posted_age_days"),
+            holidays=business_holidays,
         )
         included_unknown, remaining_unknown = split_unknown_by_policy(
             date_unknown, unknown_policy,
