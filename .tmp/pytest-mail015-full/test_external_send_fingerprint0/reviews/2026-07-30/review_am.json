@@ -1,0 +1,49 @@
+{
+  "date": "2026-07-30",
+  "slot": "am",
+  "cycle_key": "2026-07-30#am",
+  "generated_at": "2026-09-17T13:40:24+0900",
+  "overall": "FAIL",
+  "checks": [
+    {
+      "id": "MDR-001",
+      "label": "무증상 스킵(skip/coverage)",
+      "status": "PASS",
+      "detail": "coverage OK (source_coverage_20260730.json)"
+    },
+    {
+      "id": "MDR-002",
+      "label": "핵심소스 0건",
+      "status": "PASS",
+      "detail": "bizinfo/kstartup/nipa item_count > 0 또는 해당 소스 미포함(수집 성공)"
+    },
+    {
+      "id": "MDR-003",
+      "label": "08:54 외부발송 징후",
+      "status": "FAIL",
+      "detail": "외부 머리글 감지: '기업마당 API + 마이페어 + K-Startup' (공식 수집일시/재조회범위 없음)"
+    },
+    {
+      "id": "MDR-004",
+      "label": "delivery_state 당일키",
+      "status": "PASS",
+      "detail": "2026-07-30#am 키 1개"
+    },
+    {
+      "id": "MDR-005",
+      "label": "제목 badge 품질",
+      "status": "PASS",
+      "detail": "스캔 텍스트에 제목 badge 잔재 없음"
+    }
+  ],
+  "inputs": {
+    "delivery_state": "D:\\mail\\.tmp\\pytest-mail015-full\\test_external_send_fingerprint0\\delivery_state.json",
+    "delivery_keys_total": 1,
+    "coverage": "D:\\mail\\.tmp\\pytest-mail015-full\\test_external_send_fingerprint0\\logs\\source_coverage_20260730.json",
+    "run_duration_sec": null,
+    "scan_files": [
+      "D:\\mail\\.tmp\\pytest-mail015-full\\test_external_send_fingerprint0\\logs\\source_coverage_20260730.json",
+      "D:\\mail\\.tmp\\pytest-mail015-full\\test_external_send_fingerprint0\\reviews\\2026-07-30\\inbox_sample.txt"
+    ]
+  }
+}

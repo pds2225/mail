@@ -1,0 +1,20 @@
+{
+  "bizinfo": {
+    "status": "FAILING",
+    "last_check": "2026-09-17T13:32:32.847550",
+    "item_count": 0,
+    "parse_rate": 0.0,
+    "error": "boom",
+    "failing_since": "2026-09-17T13:32:32.847550",
+    "consecutive_failures": 1
+  },
+  "kstartup": {
+    "status": "FAILING",
+    "last_check": "2026-09-17T13:32:32.851191",
+    "item_count": 0,
+    "parse_rate": 0.0,
+    "error": "boom",
+    "failing_since": "2026-09-17T13:32:32.851191",
+    "consecutive_failures": 1
+  }
+}

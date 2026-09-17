@@ -1,0 +1,9 @@
+[
+  {
+    "id": "g1",
+    "name": "t",
+    "active": true,
+    "tenant_id": "default",
+    "recipients": []
+  }
+]

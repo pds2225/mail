@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "runs": [
+    {
+      "generated_at": "2026-09-17T04:40:35.909002+00:00",
+      "status": "SUCCESS",
+      "sources": {
+        "nipa": {
+          "site_id": "nipa",
+          "sample_size": 1,
+          "fields": {
+            "title": {
+              "read_count": 1,
+              "read_rate": 1.0,
+              "value_count": 1,
+              "value_rate": 1.0,
+              "failure_count": 0
+            },
+            "body": {
+              "read_count": 1,
+              "read_rate": 1.0,
+              "value_count": 1,
+              "value_rate": 1.0,
+              "failure_count": 0
+            },
+            "date": {
+              "read_count": 1,
+              "read_rate": 1.0,
+              "value_count": 1,
+              "value_rate": 1.0,
+              "failure_count": 0
+            },
+            "application_period": {
+              "read_count": 1,
+              "read_rate": 1.0,
+              "value_count": 1,
+              "value_rate": 1.0,
+              "failure_count": 0
+            },
+            "target": {
+              "read_count": 1,
+              "read_rate": 1.0,
+              "value_count": 1,
+              "value_rate": 1.0,
+              "failure_count": 0
+            }
+          }
+        }
+      },
+      "fingerprints": []
+    }
+  ]
+}
