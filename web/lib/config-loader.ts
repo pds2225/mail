@@ -1,5 +1,6 @@
-import fs from "fs";
-import { configPath } from "./paths";
+import sitesData from "../data/sites.json";
+import groupsData from "../data/groups.json";
+import settingsData from "../data/settings.json";
 import type { SiteRecord } from "./site-types";
 
 export type GroupRecord = {
@@ -10,17 +11,21 @@ export type GroupRecord = {
   [key: string]: unknown;
 };
 
+/**
+ * Build-time bundled config.
+ *
+ * `prebuild`/`pretest` copies repo `config/*.json` into `web/data/`.
+ * Static imports make Next/Vercel include those files in the serverless bundle,
+ * restoring the old PR #37 copy-config behaviour after the repository refactor.
+ */
 export function loadSites(): SiteRecord[] {
-  const raw = fs.readFileSync(configPath("sites.json"), "utf-8");
-  return JSON.parse(raw) as SiteRecord[];
+  return sitesData as SiteRecord[];
 }
 
 export function loadGroups(): GroupRecord[] {
-  const raw = fs.readFileSync(configPath("groups.json"), "utf-8");
-  return JSON.parse(raw) as GroupRecord[];
+  return groupsData as GroupRecord[];
 }
 
 export function loadSettings(): Record<string, unknown> {
-  const raw = fs.readFileSync(configPath("settings.json"), "utf-8");
-  return JSON.parse(raw) as Record<string, unknown>;
+  return settingsData as Record<string, unknown>;
 }

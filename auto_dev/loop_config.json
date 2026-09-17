@@ -50,10 +50,45 @@
   },
   "auto_merge": {
     "enabled": true,
+    "allowed_task_ids": ["MAIL-P0C-01"],
+    "task_id_evidence": {
+      "require_title": true,
+      "require_branch": true
+    },
     "allowed_profiles": [],
     "required_labels_absent": ["needs-human", "blocked"],
     "merge_method": "squash",
     "use_github_auto_merge": true,
-    "fallback_direct_merge": true
+    "fallback_direct_merge": true,
+    "allowed_task_path_prefixes": [
+      "mail_core/",
+      "scripts/",
+      "tests/",
+      "config/"
+    ],
+    "blocked_task_paths": [
+      ".github/workflows/",
+      ".env",
+      "AGENTS.md",
+      "TASK.md",
+      "docs/project/RULES.md",
+      "docs/project/TASKS.md",
+      "docs/project/blocked_tasks.md",
+      "monitor.py",
+      "streamlit_app.py",
+      "var/",
+      "data/"
+    ],
+    "required_test_commands": [
+      "python -m compileall .",
+      "python -m pytest -q",
+      "python -m pytest tests/test_notice_version_recovery.py -q"
+    ],
+    "dry_run_env": {
+      "DEFAULT_RUN_MODE": "dry-run",
+      "ALLOW_SEND_EMAIL": "false",
+      "ALLOW_DELETE_EMAIL": "false",
+      "ALLOW_LABEL_CHANGE": "false"
+    }
   }
 }

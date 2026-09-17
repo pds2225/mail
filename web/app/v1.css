@@ -1,0 +1,240 @@
+/* V1 workflow additions layered on top of the PR #44 design system. */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-label,
+.metric-sub {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.metric-value {
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.quick-action:hover {
+  border-color: var(--brand-200);
+  background: var(--brand-50);
+  text-decoration: none;
+}
+
+.quick-action span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.disclosure {
+  padding: 0;
+  overflow: hidden;
+}
+
+.disclosure[open] {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.disclosure-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+  padding: 1rem 1.25rem;
+}
+
+.disclosure-summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure-summary::before {
+  content: "▸";
+  color: var(--muted);
+}
+
+.disclosure[open] > .disclosure-summary::before {
+  content: "▾";
+}
+
+.disclosure-summary > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+}
+
+.hint-inline {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.align-end {
+  align-self: end;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip-check {
+  min-height: 34px;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+}
+
+.keyword-area {
+  min-height: 180px;
+}
+
+.privacy-note {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--brand-100);
+  border-radius: var(--r-md);
+  background: var(--brand-50);
+  color: #334155;
+  font-size: 0.82rem;
+}
+
+.review-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.review-card {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.review-index {
+  flex: 0 0 1.8rem;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.review-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-title {
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.review-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+}
+
+.review-o:hover:not(:disabled) {
+  border-color: #86efac;
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.review-x:hover:not(:disabled) {
+  border-color: #fecaca;
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav {
+    display: block;
+    overflow: hidden;
+  }
+
+  .brand {
+    margin-bottom: 0.4rem;
+  }
+
+  .nav-links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-link,
+  .apply-secret {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .review-main {
+    flex-basis: calc(100% - 2.7rem);
+  }
+
+  .review-actions {
+    width: 100%;
+    padding-left: 2.5rem;
+  }
+
+  .review-actions .btn {
+    width: auto;
+    flex: 1;
+  }
+}

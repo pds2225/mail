@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import ApplySecretField from "./ApplySecretField";
 
 const LINKS = [
-  { href: "/", label: "개요" },
-  { href: "/sites", label: "사이트" },
-  { href: "/sites/add", label: "사이트 추가" },
-  { href: "/recipients", label: "수신자" },
+  { href: "/", label: "홈" },
+  { href: "/sites", label: "소스 관리" },
+  { href: "/groups", label: "그룹 관리" },
+  { href: "/settings", label: "설정" },
+  { href: "/run", label: "실행" },
+  { href: "/review", label: "공고 검수" },
 ];
 
 export default function NavBar() {
@@ -19,19 +21,19 @@ export default function NavBar() {
       <nav className="nav" aria-label="주요 메뉴">
         <Link href="/" className="brand">
           <span className="brand-dot" aria-hidden="true" />
-          수출·지원사업 모니터
+          정부지원사업 메일링
         </Link>
         <div className="nav-links">
-          {LINKS.map((l) => {
-            const active = pathname === l.href;
+          {LINKS.map((link) => {
+            const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <Link
-                key={l.href}
-                href={l.href}
+                key={link.href}
+                href={link.href}
                 className={active ? "nav-link active" : "nav-link"}
                 aria-current={active ? "page" : undefined}
               >
-                {l.label}
+                {link.label}
               </Link>
             );
           })}

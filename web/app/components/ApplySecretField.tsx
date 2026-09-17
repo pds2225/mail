@@ -23,14 +23,14 @@ export default function ApplySecretField() {
   if (status?.mode !== "server") {
     return (
       <span className="apply-secret">
-        <span className="badge badge-green">반영 가능</span>
+        <span className="badge badge-green">저장 가능</span>
       </span>
     );
   }
 
   return (
     <label className="apply-secret">
-      <span className="apply-secret-label">반영 암호</span>
+      <span className="apply-secret-label">관리 암호</span>
       <input
         type="password"
         className="input apply-secret-input"
@@ -39,12 +39,12 @@ export default function ApplySecretField() {
           setSecret(event.target.value);
           writeApplySecret(event.target.value);
         }}
-        placeholder="CONFIG_APPLY_SECRET"
+        placeholder="관리 암호"
         autoComplete="off"
-        aria-label="반영 암호"
+        aria-label="관리 암호"
       />
       <span className={secret.trim() ? "badge badge-green" : "badge badge-gray"}>
-        {secret.trim() ? "반영 가능" : "암호 필요"}
+        {secret.trim() ? "저장 가능" : "암호 필요"}
       </span>
     </label>
   );

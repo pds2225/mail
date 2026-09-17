@@ -43,7 +43,7 @@ export default function SiteAddPage() {
     }
   }
 
-  async function applyToGithub() {
+  async function save() {
     setLoading(true);
     try {
       const res = await fetch("/api/sites/apply", {
@@ -71,19 +71,14 @@ export default function SiteAddPage() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">사이트 추가</h1>
-        <p className="page-desc">
-          검증 후 <strong>GitHub에 반영</strong>하면 GitHub 커밋 화면이 열립니다. Commit 만
-          누르면 됩니다. 토큰은 필요 없습니다.
-        </p>
+        <h1 className="page-title">소스 추가</h1>
+        <p className="page-desc">공고 목록 URL과 수집 방식을 확인한 뒤 저장합니다.</p>
       </header>
 
       <div className="card">
         <div className="grid2">
           <div className="field">
-            <label className="label" htmlFor="f-name">
-              사이트명 *
-            </label>
+            <label className="label" htmlFor="f-name">사이트명 *</label>
             <input
               id="f-name"
               className="input"
@@ -93,9 +88,7 @@ export default function SiteAddPage() {
             />
           </div>
           <div className="field">
-            <label className="label" htmlFor="f-url">
-              URL *
-            </label>
+            <label className="label" htmlFor="f-url">URL *</label>
             <input
               id="f-url"
               className="input"
@@ -105,45 +98,31 @@ export default function SiteAddPage() {
             />
           </div>
           <div className="field">
-            <label className="label" htmlFor="f-cat">
-              그룹/카테고리
-            </label>
+            <label className="label" htmlFor="f-cat">그룹/카테고리</label>
             <select
               id="f-cat"
               className="select"
               value={form.category}
               onChange={(e) => update("category", e.target.value)}
             >
-              {SITE_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
+              {SITE_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div className="field">
-            <label className="label" htmlFor="f-col">
-              수집 방식 *
-            </label>
+            <label className="label" htmlFor="f-col">수집 방식 *</label>
             <select
               id="f-col"
               className="select"
               value={form.collectorType}
               onChange={(e) => update("collectorType", e.target.value)}
             >
-              {COLLECTOR_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
+              {COLLECTOR_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
         </div>
 
         <div className="field mt">
-          <label className="label" htmlFor="f-note">
-            메모
-          </label>
+          <label className="label" htmlFor="f-note">메모</label>
           <textarea
             id="f-note"
             className="textarea"
@@ -155,108 +134,62 @@ export default function SiteAddPage() {
 
         <div className="check-row mt">
           <label className="check">
-            <input
-              type="checkbox"
-              checked={form.enabled}
-              onChange={(e) => update("enabled", e.target.checked)}
-            />
+            <input type="checkbox" checked={form.enabled} onChange={(e) => update("enabled", e.target.checked)} />
             활성
           </label>
           <label className="check">
-            <input
-              type="checkbox"
-              checked={form.isAggregator}
-              onChange={(e) => update("isAggregator", e.target.checked)}
-            />
-            통합포털(aggregator)
+            <input type="checkbox" checked={form.isAggregator} onChange={(e) => update("isAggregator", e.target.checked)} />
+            통합포털
           </label>
           <label className="check">
-            <input
-              type="checkbox"
-              checked={form.testCollect}
-              onChange={(e) => update("testCollect", e.target.checked)}
-            />
+            <input type="checkbox" checked={form.testCollect} onChange={(e) => update("testCollect", e.target.checked)} />
             URL 접근 테스트
           </label>
         </div>
 
         <div className="row mt">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={runValidate}
-            disabled={loading}
-          >
+          <button type="button" className="btn btn-secondary" onClick={runValidate} disabled={loading}>
             {loading ? "처리 중…" : "검증"}
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={applyToGithub}
-            disabled={loading}
-          >
-            {loading ? "처리 중…" : "GitHub에 반영"}
+          <button type="button" className="btn btn-primary" onClick={save} disabled={loading}>
+            {loading ? "처리 중…" : "저장"}
           </button>
         </div>
       </div>
 
       {v?.errors?.length ? (
         <div className="card">
-          <h3 className="card-title">
-            오류 <span className="badge badge-red">{v.errors.length}</span>
-          </h3>
-          {v.errors.map((e, i) => (
-            <p key={i} className="error">
-              {e.message}
-            </p>
-          ))}
+          <h3 className="card-title">오류 <span className="badge badge-red">{v.errors.length}</span></h3>
+          {v.errors.map((e, i) => <p key={i} className="error">{e.message}</p>)}
         </div>
       ) : null}
 
       {v?.warnings?.length ? (
         <div className="card">
-          <h3 className="card-title">
-            경고 <span className="badge badge-gray">{v.warnings.length}</span>
-          </h3>
-          {v.warnings.map((e, i) => (
-            <p key={i} className="warn">
-              {e.message}
-            </p>
-          ))}
+          <h3 className="card-title">경고 <span className="badge badge-gray">{v.warnings.length}</span></h3>
+          {v.warnings.map((e, i) => <p key={i} className="warn">{e.message}</p>)}
         </div>
       ) : null}
 
       {v?.checks && (
         <div className="card">
-          <h3 className="card-title">수집 누락 점검</h3>
+          <h3 className="card-title">수집 점검</h3>
           <ul>
-            {Object.entries(v.checks).map(([k, val]) => (
-              <li key={k}>
-                <code>{k}</code>: {String(val)}
-              </li>
-            ))}
+            {Object.entries(v.checks).map(([k, val]) => <li key={k}><code>{k}</code>: {String(val)}</li>)}
           </ul>
         </div>
       )}
 
       {applyResult ? (
         <div className="card">
-          <h3 className="card-title">{applyResult.applied ? "반영됨" : "반영 결과"}</h3>
+          <h3 className="card-title">{applyResult.applied ? "저장됨" : "저장 결과"}</h3>
           {applyResult.error ? <p className="error">{String(applyResult.error)}</p> : null}
           {applyResult.notice ? <p>{String(applyResult.notice)}</p> : null}
           {applyResult.commitUrl ? (
-            <p>
-              <a href={String(applyResult.commitUrl)} target="_blank" rel="noreferrer">
-                커밋 보기
-              </a>
-            </p>
+            <p><a href={String(applyResult.commitUrl)} target="_blank" rel="noreferrer">변경 기록 보기</a></p>
           ) : null}
           {applyResult.githubCommitUrl ? (
-            <p>
-              <a href={String(applyResult.githubCommitUrl)} target="_blank" rel="noreferrer">
-                GitHub에서 커밋
-              </a>
-            </p>
+            <p><a href={String(applyResult.githubCommitUrl)} target="_blank" rel="noreferrer">저장 확인하기</a></p>
           ) : null}
         </div>
       ) : null}

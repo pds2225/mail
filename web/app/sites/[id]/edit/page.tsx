@@ -62,8 +62,7 @@ export default function SiteEditPage() {
           enabled: site.enabled !== false,
           isAggregator: Boolean(site.is_aggregator),
           note: typeof site.note === "string" ? site.note : "",
-          selectorsRow:
-            site.selectors && typeof site.selectors.row === "string" ? site.selectors.row : "",
+          selectorsRow: site.selectors && typeof site.selectors.row === "string" ? site.selectors.row : "",
           testCollect: false,
         });
       })
@@ -80,34 +79,19 @@ export default function SiteEditPage() {
     setSubmitting(true);
     setError("");
     try {
-      if (apply) {
-        const response = await fetch("/api/sites/apply", {
-          method: "POST",
-          headers: applyHeaders(),
-          body: JSON.stringify({
-            ...form,
-            mode: "update",
-            probeUrl: form.testCollect,
-          }),
-        });
-        const data = (await response.json()) as UpdateResponse;
-        setResult(data);
-        if (!response.ok && data.error) setError(data.error);
-        else followApplyResult(data);
-        return;
-      }
-      const response = await fetch("/api/sites/update", {
+      const response = await fetch(apply ? "/api/sites/apply" : "/api/sites/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: apply ? applyHeaders() : { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          createPacket: false,
+          ...(apply ? { mode: "update" } : { createPacket: false }),
           probeUrl: form.testCollect,
         }),
       });
       const data = (await response.json()) as UpdateResponse;
       setResult(data);
       if (!response.ok && data.error) setError(data.error);
+      else if (apply) followApplyResult(data);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "request failed");
     } finally {
@@ -121,15 +105,10 @@ export default function SiteEditPage() {
     <div>
       <header className="page-header page-header-row">
         <div>
-          <h1 className="page-title">사이트 편집</h1>
-          <p className="page-desc">
-            기존 JSON을 바꿔 GitHub <code>main</code>에 반영합니다. GitHub 커밋 화면에서 Commit
-            만 누르면 됩니다.
-          </p>
+          <h1 className="page-title">소스 편집</h1>
+          <p className="page-desc">기존 수집 설정을 수정하고 저장합니다. 소스 ID는 중복방지를 위해 유지합니다.</p>
         </div>
-        <Link className="btn btn-secondary" href="/sites">
-          목록으로
-        </Link>
+        <Link className="btn btn-secondary" href="/sites">목록으로</Link>
       </header>
 
       {loading && <div className="empty">불러오는 중…</div>}
@@ -139,122 +118,57 @@ export default function SiteEditPage() {
         <div className="card">
           <div className="grid2">
             <div className="field">
-              <label className="label" htmlFor="site-id">
-                사이트 ID
-              </label>
+              <label className="label" htmlFor="site-id">사이트 ID</label>
               <input id="site-id" className="input" value={form.id} readOnly />
-              <p className="hint">수집 상태와 중복 키를 보존하기 위해 ID는 변경하지 않습니다.</p>
+              <p className="hint">수집 상태와 중복 키를 보존하기 위해 변경하지 않습니다.</p>
             </div>
             <div className="field">
-              <label className="label" htmlFor="site-name">
-                사이트명 *
-              </label>
-              <input
-                id="site-name"
-                className="input"
-                value={form.name}
-                onChange={(event) => update("name", event.target.value)}
-              />
+              <label className="label" htmlFor="site-name">사이트명 *</label>
+              <input id="site-name" className="input" value={form.name} onChange={(event) => update("name", event.target.value)} />
             </div>
             <div className="field">
-              <label className="label" htmlFor="site-url">
-                URL *
-              </label>
-              <input
-                id="site-url"
-                className="input"
-                value={form.url}
-                onChange={(event) => update("url", event.target.value)}
-              />
+              <label className="label" htmlFor="site-url">URL *</label>
+              <input id="site-url" className="input" value={form.url} onChange={(event) => update("url", event.target.value)} />
             </div>
             <div className="field">
-              <label className="label" htmlFor="site-collector">
-                수집 방식 *
-              </label>
-              <select
-                id="site-collector"
-                className="select"
-                value={form.collectorType}
-                onChange={(event) => update("collectorType", event.target.value)}
-              >
-                {COLLECTOR_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
+              <label className="label" htmlFor="site-collector">수집 방식 *</label>
+              <select id="site-collector" className="select" value={form.collectorType} onChange={(event) => update("collectorType", event.target.value)}>
+                {COLLECTOR_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
               </select>
             </div>
           </div>
 
           <div className="field mt">
-            <label className="label" htmlFor="site-row">
-              목록 행 selector
-            </label>
-            <input
-              id="site-row"
-              className="input"
-              value={form.selectorsRow}
-              onChange={(event) => update("selectorsRow", event.target.value)}
-              placeholder="table tbody tr"
-            />
+            <label className="label" htmlFor="site-row">목록 행 selector</label>
+            <input id="site-row" className="input" value={form.selectorsRow} onChange={(event) => update("selectorsRow", event.target.value)} placeholder="table tbody tr" />
           </div>
 
           <div className="field mt">
-            <label className="label" htmlFor="site-note">
-              메모
-            </label>
-            <textarea
-              id="site-note"
-              className="textarea"
-              rows={3}
-              value={form.note}
-              onChange={(event) => update("note", event.target.value)}
-            />
+            <label className="label" htmlFor="site-note">메모</label>
+            <textarea id="site-note" className="textarea" rows={3} value={form.note} onChange={(event) => update("note", event.target.value)} />
           </div>
 
           <div className="check-row mt">
             <label className="check">
-              <input
-                type="checkbox"
-                checked={form.enabled}
-                onChange={(event) => update("enabled", event.target.checked)}
-              />
+              <input type="checkbox" checked={form.enabled} onChange={(event) => update("enabled", event.target.checked)} />
               활성
             </label>
             <label className="check">
-              <input
-                type="checkbox"
-                checked={form.isAggregator}
-                onChange={(event) => update("isAggregator", event.target.checked)}
-              />
-              통합포털(aggregator)
+              <input type="checkbox" checked={form.isAggregator} onChange={(event) => update("isAggregator", event.target.checked)} />
+              통합포털
             </label>
             <label className="check">
-              <input
-                type="checkbox"
-                checked={form.testCollect}
-                onChange={(event) => update("testCollect", event.target.checked)}
-              />
+              <input type="checkbox" checked={form.testCollect} onChange={(event) => update("testCollect", event.target.checked)} />
               URL 접근 테스트
             </label>
           </div>
 
           <div className="row mt">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => submit(false)}
-              disabled={submitting}
-            >
+            <button type="button" className="btn btn-secondary" onClick={() => submit(false)} disabled={submitting}>
               {submitting ? "처리 중…" : "변경 검증"}
             </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() => submit(true)}
-              disabled={submitting}
-            >
-              {submitting ? "처리 중…" : "GitHub에 반영"}
+            <button type="button" className="btn btn-primary" onClick={() => submit(true)} disabled={submitting}>
+              {submitting ? "처리 중…" : "저장"}
             </button>
           </div>
         </div>
@@ -264,15 +178,7 @@ export default function SiteEditPage() {
         <div className="card">
           <h3 className="card-title">변경 필드</h3>
           <div className="row">
-            {result.changedFields.length ? (
-              result.changedFields.map((field) => (
-                <span className="tag" key={field}>
-                  {field}
-                </span>
-              ))
-            ) : (
-              <span className="stat">변경 없음</span>
-            )}
+            {result.changedFields.length ? result.changedFields.map((field) => <span className="tag" key={field}>{field}</span>) : <span className="stat">변경 없음</span>}
           </div>
         </div>
       ) : null}
@@ -280,43 +186,23 @@ export default function SiteEditPage() {
       {validation?.errors?.length ? (
         <div className="card">
           <h3 className="card-title">오류</h3>
-          {validation.errors.map((issue, index) => (
-            <p className="error" key={index}>
-              {issue.message}
-            </p>
-          ))}
+          {validation.errors.map((issue, index) => <p className="error" key={index}>{issue.message}</p>)}
         </div>
       ) : null}
 
       {validation?.warnings?.length ? (
         <div className="card">
           <h3 className="card-title">경고</h3>
-          {validation.warnings.map((issue, index) => (
-            <p className="warn" key={index}>
-              {issue.message}
-            </p>
-          ))}
+          {validation.warnings.map((issue, index) => <p className="warn" key={index}>{issue.message}</p>)}
         </div>
       ) : null}
 
       {result?.notice ? (
         <div className="card">
-          <h3 className="card-title">{result.applied ? "반영됨" : "결과"}</h3>
+          <h3 className="card-title">{result.applied ? "저장됨" : "저장 결과"}</h3>
           <p className="stat">{result.notice}</p>
-          {result.commitUrl ? (
-            <p>
-              <a href={result.commitUrl} target="_blank" rel="noreferrer">
-                커밋 보기
-              </a>
-            </p>
-          ) : null}
-          {result.githubCommitUrl ? (
-            <p>
-              <a href={result.githubCommitUrl} target="_blank" rel="noreferrer">
-                GitHub에서 커밋
-              </a>
-            </p>
-          ) : null}
+          {result.commitUrl ? <p><a href={result.commitUrl} target="_blank" rel="noreferrer">변경 기록 보기</a></p> : null}
+          {result.githubCommitUrl ? <p><a href={result.githubCommitUrl} target="_blank" rel="noreferrer">저장 확인하기</a></p> : null}
         </div>
       ) : null}
     </div>

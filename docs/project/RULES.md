@@ -26,10 +26,20 @@
 | `ANTHROPIC_API_KEY` | Claude AI 요약 | 선택 |
 | `AUTO_DEV_PAT` | GitHub PR 생성용 PAT | 선택 (없으면 github.token 사용) |
 
-> **Auto Merge:** 자동 머지가 기본이다. Checks 초록·충돌 없으면 squash-merge 한다.
-> 예외는 Draft, `needs-human`/`blocked`, merge conflict, `.env*`,
-> `.github/workflows/*` (CI 게이트는 사람 머지).
-> `monitor.py` / `streamlit_app.py` 변경도 기본 병합한다. `--admin` 은 금지.
+> **Auto Merge (최신 예외 정책):** 자동 머지는 `MAIL-P0C-01` 작업으로 생성된 PR만
+> 허용한다. PR 제목과 작업 브랜치에 `MAIL-P0C-01` 식별자가 모두 있어야 하며,
+> 작업 브랜치 → PR → CI → 안전 게이트 → squash merge 순서를 지킨다.
+> 다른 READY/BLOCKED 작업, PR #300 같은 워크플로 변경, `monitor.py`·
+> `streamlit_app.py`·`.env*`·고객정보·메일원문 변경은 자동 머지하지 않는다.
+> main 직접 push는 금지한다. `fallback_direct_merge`도 main 직접 push가 아니라
+> CI 완료 후 해당 PR에 실행하는 squash merge만 허용한다.
+>
+> 필수 게이트: `python -m compileall .`, 전체 `python -m pytest -q`,
+> `tests/test_notice_version_recovery.py` 회귀테스트, 실제 발송 0건,
+> dry-run 안전환경, Secrets/`.env`/고객정보/메일원문 변경 없음, 발송·삭제·
+> 대량 라벨 변경 활성화 없음, 후속 BLOCKED TASK 변경 없음, protected/sensitive
+> file gate 통과. 실패·Secrets·인증 변경·workflow 권한 확대·예상 밖 파일·
+> 동일 오류 2회 반복이면 자동 머지하지 않고 BLOCKED 처리한다.
 >
 > `.github/workflows/auto-merge.yml` 은 checkout/`gh` 에
 > `github.token` 만 쓴다. Secret `AUTO_DEV_PAT` 이 만료돼 있어도

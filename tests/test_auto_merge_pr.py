@@ -11,6 +11,7 @@ from auto_merge_pr import (  # noqa: E402
     head_sha_matches,
     match_profile,
     resolve_pr_number,
+    safety_gate,
 )
 
 
@@ -22,10 +23,41 @@ def _cfg(enabled: bool = True) -> dict:
     return {
         "auto_merge": {
             "enabled": enabled,
+            "allowed_task_ids": ["MAIL-P0C-01"],
+            "task_id_evidence": {"require_title": True, "require_branch": True},
             "allowed_profiles": [],
             "required_labels_absent": ["needs-human", "blocked"],
+            "allowed_task_path_prefixes": ["mail_core/", "scripts/", "tests/", "config/"],
+            "blocked_task_paths": [
+                ".github/workflows/",
+                ".env",
+                "AGENTS.md",
+                "TASK.md",
+                "docs/project/RULES.md",
+                "docs/project/TASKS.md",
+                "docs/project/blocked_tasks.md",
+                "monitor.py",
+                "streamlit_app.py",
+                "var/",
+                "data/",
+            ],
         }
     }
+
+
+def _pr(**overrides):
+    pr = {
+        "title": "feat(MAIL-P0C-01): recent business-day recall",
+        "body": "Generated for MAIL-P0C-01.",
+        "headRefName": "auto-dev/MAIL-P0C-01-recent-window",
+        "baseRefName": "main",
+        "isDraft": False,
+        "labels": [],
+        "mergeable": "MERGEABLE",
+        "headRefOid": "c" * 40,
+    }
+    pr.update(overrides)
+    return pr
 
 
 def test_doc_only_paths_eligible():
@@ -35,7 +67,7 @@ def test_doc_only_paths_eligible():
 
 
 def test_monitor_py_eligible_by_default():
-    """Standing policy: auto-merge is the default, including monitor.py."""
+    """Profile classification is separate from the task and safety gates."""
     verdict = match_profile(["monitor.py", "tests/test_x.py"], _profiles())
     assert verdict.ok
     assert verdict.profile == "core_logic"
@@ -82,8 +114,7 @@ def test_ci_workflow_paths_blocked():
 def test_assess_allowlist_still_restricts_when_set():
     cfg = _cfg()
     cfg["auto_merge"]["allowed_profiles"] = ["doc_only"]
-    pr = {"isDraft": False, "labels": [], "mergeable": "MERGEABLE"}
-    verdict = assess_pr(pr, ["scripts/foo.py"], cfg)
+    verdict = assess_pr(_pr(), ["scripts/foo.py"], cfg)
     assert not verdict.ok
     assert "allowed_profiles" in verdict.reason
 
@@ -92,32 +123,30 @@ def test_loop_config_default_allowlist_is_empty():
     cfg = json.loads((ROOT / "auto_dev" / "loop_config.json").read_text(encoding="utf-8"))
     assert cfg["auto_merge"]["enabled"] is True
     assert cfg["auto_merge"]["allowed_profiles"] == []
+    assert cfg["auto_merge"]["allowed_task_ids"] == ["MAIL-P0C-01"]
+    assert cfg["auto_merge"]["merge_method"] == "squash"
 
 
-def test_assess_monitor_py_eligible():
-    pr = {"isDraft": False, "labels": [], "mergeable": "MERGEABLE"}
-    verdict = assess_pr(pr, ["monitor.py"], _cfg())
-    assert verdict.ok
-    assert verdict.profile == "core_logic"
+def test_assess_monitor_py_is_blocked_by_task_scope():
+    verdict = assess_pr(_pr(), ["monitor.py"], _cfg())
+    assert not verdict.ok
+    assert "protected/sensitive" in verdict.reason
 
 
 def test_assess_skips_draft():
-    pr = {"isDraft": True, "labels": [], "mergeable": "MERGEABLE"}
-    verdict = assess_pr(pr, ["docs/foo.md"], _cfg())
+    verdict = assess_pr(_pr(isDraft=True), ["scripts/foo.py"], _cfg())
     assert not verdict.ok
     assert "Draft" in verdict.reason
 
 
 def test_assess_skips_blocked_label():
-    pr = {"isDraft": False, "labels": [{"name": "needs-human"}], "mergeable": "MERGEABLE"}
-    verdict = assess_pr(pr, ["docs/foo.md"], _cfg())
+    verdict = assess_pr(_pr(labels=[{"name": "needs-human"}]), ["scripts/foo.py"], _cfg())
     assert not verdict.ok
     assert "차단 라벨" in verdict.reason
 
 
 def test_assess_disabled_config():
-    pr = {"isDraft": False, "labels": [], "mergeable": "MERGEABLE"}
-    verdict = assess_pr(pr, ["docs/foo.md"], _cfg(enabled=False))
+    verdict = assess_pr(_pr(), ["scripts/foo.py"], _cfg(enabled=False))
     assert not verdict.ok
     assert "enabled=false" in verdict.reason
 
@@ -136,15 +165,10 @@ def test_assess_refuses_when_pr_head_moved_after_ci():
     """CI-green SHA A must not merge PR head B (push race + fallback_direct_merge)."""
     ci_sha = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     pr_sha = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    pr = {
-        "isDraft": False,
-        "labels": [],
-        "mergeable": "MERGEABLE",
-        "headRefOid": pr_sha,
-    }
+    pr = _pr(headRefOid=pr_sha)
     verdict = assess_pr(
         pr,
-        ["monitor.py"],
+        ["scripts/date_window.py"],
         _cfg(),
         expected_head_sha=ci_sha,
     )
@@ -154,14 +178,49 @@ def test_assess_refuses_when_pr_head_moved_after_ci():
 
 def test_assess_allows_when_pr_head_matches_ci_sha():
     sha = "cccccccccccccccccccccccccccccccccccccccc"
-    pr = {
-        "isDraft": False,
-        "labels": [],
-        "mergeable": "MERGEABLE",
-        "headRefOid": sha,
-    }
-    verdict = assess_pr(pr, ["docs/foo.md"], _cfg(), expected_head_sha=sha)
+    pr = _pr(headRefOid=sha)
+    verdict = assess_pr(pr, ["mail_core/date_window.py"], _cfg(), expected_head_sha=sha)
     assert verdict.ok
+
+
+def test_non_p0c01_pr_is_blocked_even_when_files_are_safe():
+    pr = _pr(
+        title="chore: auto dev timeout options",
+        body="timeout choices only",
+        headRefName="chore/auto-dev-timeout-options",
+    )
+    verdict = assess_pr(pr, ["scripts/auto_dev_queue.py"], _cfg())
+    assert not verdict.ok
+    assert "허용 TASK 식별자" in verdict.reason
+
+
+def test_unexpected_task_path_is_blocked():
+    verdict = assess_pr(_pr(), ["README.md"], _cfg())
+    assert not verdict.ok
+    assert "예상 밖 TASK 파일" in verdict.reason
+
+
+def test_blocked_queue_task_change_is_blocked():
+    verdict = assess_pr(_pr(), ["docs/project/TASKS.md"], _cfg())
+    assert not verdict.ok
+    assert "protected/sensitive" in verdict.reason
+
+
+def test_unsafe_email_activation_is_blocked():
+    verdict = assess_pr(
+        _pr(),
+        ["scripts/date_window.py"],
+        _cfg(),
+        diff_text="+ALLOW_SEND_EMAIL = true\n",
+    )
+    assert not verdict.ok
+    assert "안전 게이트" in verdict.reason
+
+
+def test_raw_mail_path_is_blocked():
+    verdict = safety_gate(["tests/fixtures/customer.eml"], "")
+    assert not verdict.ok
+    assert "고객정보/메일원문" in verdict.reason
 
 
 def test_auto_merge_workflow_pins_expected_head_sha():

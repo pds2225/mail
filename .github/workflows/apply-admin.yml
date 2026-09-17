@@ -1,0 +1,46 @@
+name: apply-admin
+
+# V1-style admin updates groups/settings/OX using the same tokenless
+# GitHub-web confirmation pattern already used by apply-sites.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".apply/config-pending.json"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: pending 반영
+        id: apply
+        run: |
+          set -euo pipefail
+          result="$(python3 scripts/apply_admin_payload.py --repo-root .)"
+          echo "result=${result}" >> "$GITHUB_OUTPUT"
+          echo "pending result: ${result}"
+
+      - name: 커밋
+        if: steps.apply.outputs.result != 'skip'
+        env:
+          RESULT: ${{ steps.apply.outputs.result }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- \
+            .apply/config-pending.json \
+            config/groups.json \
+            config/settings.json \
+            data/golden/feedback_labels.jsonl
+          git commit -m "chore(admin): apply ${RESULT} from government-support mailing web"
+          git push

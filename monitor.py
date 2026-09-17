@@ -399,6 +399,22 @@ APPLICATION_KEYWORDS = [
 
 GENERAL_SERVICE_EXCLUDE_KEYWORDS = ["설명회", "컨설팅지원"]
 
+# P0-4 historical rule: a notice that offers only tenant/office space is not a
+# primary support opportunity. Keep broader AI-hub growth/support notices: the
+# later recall tests treat "사무공간과 성장 지원" as a legitimate opportunity.
+TENANT_SPACE_ONLY_TERMS = (
+    "입주공간", "입주 공간", "사무공간", "사무 공간", "공용시설", "공용 시설",
+)
+TENANT_NONSPACE_SUPPORT_TERMS = (
+    "성장 지원", "성장지원", "사업화", "지원금", "자금", "바우처", "보조금",
+    "수출", "판로", "마케팅", "전시회", "박람회", "실증", "r&d", "투자",
+)
+TENANT_FUNDING_TERMS = ("지원금", "자금", "바우처", "보조금")
+TENANT_NEGATED_FUNDING_RE = re.compile(
+    r"(?:지원금|자금|바우처|보조금)\s*(?:은|는|이|가)?\s*"
+    r"(?:없(?:습니다|음)?|미지원|제외|불가)",
+)
+
 # ── 지자체 고시/공고 게시판의 '비지원 행정고지' 노이즈 ────────────────────────────
 # 김포·남양주시청 등 일반 고시/공고 게시판은 주민등록·CCTV·입찰 등 지원사업과 무관한
 # 행정고지를 함께 올린다. 원본전체 메일에서 이를 걸러낸다(그룹메일은 키워드로 이미 차단).
@@ -5801,7 +5817,30 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         ]
         has_financial_signal = has_financial or any(kw in text for kw in _financial_signal_kws)
         # 주된 지원 없이 부가 지원만 있는 경우 제외
-        if not has_financial_signal and not has_investment:
+        tenant_nonspace_support = any(
+            term in text for term in TENANT_NONSPACE_SUPPORT_TERMS
+        )
+        # "지원금 없음" 같은 명시적 부정은 지원 신호로 세지 않는다. 제목/본문에
+        # 사업화·성장지원 등 다른 실질 지원이 있으면 여전히 tenant-only가 아니다.
+        if TENANT_NEGATED_FUNDING_RE.search(text):
+            tenant_nonspace_support = any(
+                term in text
+                for term in TENANT_NONSPACE_SUPPORT_TERMS
+                if term not in TENANT_FUNDING_TERMS
+            )
+        tenant_financial_absent = (
+            not has_financial_signal or bool(TENANT_NEGATED_FUNDING_RE.search(text))
+        )
+        tenant_space_only = (
+            any(term in text for term in TENANT_SPACE_ONLY_TERMS)
+            and not tenant_nonspace_support
+            and tenant_financial_absent
+            and not has_investment
+            and not has_consulting
+        )
+        if tenant_space_only:
+            reason_codes.append("TENANT_ONLY")
+        elif not has_financial_signal and not has_investment:
             if has_consulting:
                 # 교육·멘토링·컨설팅 단독 → 제외
                 reason_codes.append("CONSULTING_ONLY")
@@ -5863,7 +5902,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "SELECTED_COMPANY_ONLY", "REGION_NOT_ELIGIBLE", "DISTRICT_NOT_ELIGIBLE",
         "CLOSED_DEADLINE", "SMART_FACTORY_INFO_ONLY", "COMMITTEE_RECRUITMENT",
         "ADMIN_NOISE", "REPORT_JUNK", "GROUP_EXCLUSION", "NOT_APPLICATION_LIKE",
-        "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW",
+        "NOT_GRANT_NOTICE", "BUSINESS_YEARS_NOT_ELIGIBLE", "AMOUNT_TOO_LOW", "TENANT_ONLY",
     }
     detail_failure_review = (
         detail_failure
@@ -5931,6 +5970,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         notes.append("남동구 소재 기업 신청 가능 여부 확인 필요")
     if "ONLY_SPECIFIC_INDUSTRIAL_COMPLEX" in reason_codes:
         notes.append("특정 산업단지 입주 여부 확인 필요")
+    if "TENANT_ONLY" in reason_codes:
+        notes.append("입주공간만 제공하는 공고 — 재정·사업화 지원 없음")
     if biz_years_status == "unknown":
         notes.append("업력 조건 확인 필요 — 공고에 업력 명시 없음")
     if amount_status == "unknown":

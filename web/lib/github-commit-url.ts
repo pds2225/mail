@@ -1,6 +1,7 @@
 import type { SiteRecord } from "./site-types";
 
 export const PENDING_APPLY_PATH = ".apply/pending.json";
+export const CONFIG_PENDING_APPLY_PATH = ".apply/config-pending.json";
 
 export type PendingApply = {
   v: 1;
@@ -8,7 +9,16 @@ export type PendingApply = {
   site: SiteRecord;
 };
 
-export function serializePendingApply(pending: PendingApply): string {
+export type PendingConfigApply =
+  | { v: 1; resource: "group"; id: string; patch: Record<string, unknown> }
+  | { v: 1; resource: "settings"; patch: Record<string, unknown> }
+  | {
+      v: 1;
+      resource: "review";
+      item: { id: string; title: string; verdict: "O" | "X" };
+    };
+
+export function serializePendingApply(pending: PendingApply | PendingConfigApply): string {
   return `${JSON.stringify(pending)}\n`;
 }
 
@@ -32,6 +42,14 @@ export function pendingApplyCommitUrl(pending: PendingApply): string {
   return githubNewFileUrl({
     directory: ".apply",
     filename: "pending.json",
+    value: serializePendingApply(pending),
+  });
+}
+
+export function pendingConfigCommitUrl(pending: PendingConfigApply): string {
+  return githubNewFileUrl({
+    directory: ".apply",
+    filename: "config-pending.json",
     value: serializePendingApply(pending),
   });
 }

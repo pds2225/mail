@@ -27,6 +27,9 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
+[ ] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
+[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 
 
 ---
@@ -274,6 +277,94 @@ TASK LIST 한 줄 요약과 아래 상세 TASK는 TASK_ID로 연결한다.
 새 사용자 요청을 TASK로 만들 때 반드시 MUST / KEEP / REMOVE / FORBIDDEN / VERIFY / DONE 관점으로 변환한다.
 TRACK A(MAIL-001)가 선행이다. MAIL-002는 MAIL-001에 의존한다.
 -->
+
+## MAIL-015
+
+### 8-1. 사용자 원문 요청
+
+> 현재 코드만 보고 새 기준을 만들지 말고, 저장소의 전체 Git 이력·과거 브랜치·삭제 파일·이전 설정파일·문서·테스트를 전수 조사해서 과거 기준을 복원한 뒤 현재 시스템에 통합하라.
+
+### 8-2. 비개발자용 1줄 요약
+
+과거에 확정된 공고 필터 기준을 전수 대조해 누락된 것만 복원한다
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- 과거 코드·문서·설정·테스트에서 확인된 기준과 현재 구현을 표로 비교한다.
+- 예비창업, 지역 세부 제한, 특별키워드, 공장·스마트공장, 해외·전시회 등 과거 기준의 생존·누락·충돌을 증거와 함께 정리한다.
+- 누락이 실제로 확인된 항목만 기존 evaluator/filter 구조에 최소 변경으로 복원한다.
+- 신청자격·마감·지역 Hard Gate를 카테고리보다 먼저 적용하고, 카테고리는 마지막 표시값으로만 둔다.
+
+### 8-4. 현재상태
+
+- PINNING: TASK_START_SHA=534f680f3198dcf46ce3445717b1f469602f2500
+- WORK_BRANCH=feat/mail-015-history-restore (TASK 등록 PR #297 병합 후 구현 브랜치)
+- 현재 로컬 main에는 기존 사용자 변경 `web/auto_mail_web.html`이 있어 보존한다.
+- 실제 메일 발송·라벨 변경·삭제는 하지 않는다.
+
+### 8-5. MUST — 반드시 구현
+
+- [x] 현재 파일·전체 Git log/log-by-file/blame·브랜치·삭제/이름변경 파일·README/AGENTS/TASKS/DONE/CHANGELOG·설정·키워드 사전·company/group·메일 코드·테스트를 조사한다.
+- [x] 지정된 과거 키워드와 지역·공장·신청자격·날짜·제외 기준을 Git 증거와 함께 복원표에 기록한다.
+- [x] 특별키워드는 priority/boost/force-review 과거 동작이 확인될 때만 복원하고 Hard Gate는 우회하지 않는다.
+- [x] 누락분만 최소 변경하고 주요 판정에 reason_code와 회귀테스트를 남긴다. `TENANT_ONLY` reason_code를 P0-4에 추가해 "입주공간/사무공간 단독, 자금·성장지원·컨설팅·투자 신호 없음" 공고만 제외한다. 명시적 자금 부정 문구("지원금은 없습니다" 등)는 자금 신호로 세지 않되, 사업화·성장지원·바우처 등 다른 실질 지원 신호가 있으면 여전히 제외하지 않아 AI 허브 정상 사례를 보존한다(`docs/PAST_FILTER_CRITERIA_RESTORATION.md` "실제 재현" 절 참조).
+- [x] 실제 이메일·라벨 변경·삭제·Secret 출력은 하지 않는다.
+
+### 8-6. KEEP — 유지
+
+- 기존 수집기·중복제거·메일 발송 구조와 사용자 설정
+- 지역 unknown은 확실한 타지역과 구분하는 recall 우선 정책
+- 과거와 현재가 충돌하면 가장 최근의 명시적 사용자 요구를 우선하되 근거를 기록
+
+### 8-7. REMOVE — 제거
+
+없음. 기존 기준·기능은 근거 없이 삭제하지 않는다.
+
+### 8-8. FORBIDDEN — 금지
+
+- 현재 코드만 보고 새 기준을 임의로 설계하지 않는다.
+- 기존 필터 전체 교체·대규모 리팩터링을 하지 않는다.
+- `.env`, 토큰, 메일 원문, 개인정보를 출력·커밋하지 않는다.
+- 실제 메일 발송·실제 라벨 변경·실제 삭제를 하지 않는다.
+- 기존 사용자 변경을 되돌리거나 main에 직접 위험 변경을 하지 않는다.
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: 없음
+
+### 8-10. 구현범위
+
+과거 기준 복원조사 → 차이분석표 → 필요한 설정/보조판정 로직의 최소 복원 → 관련 회귀테스트. 기존 핵심 구조를 재사용한다.
+
+### 8-11. 입력검증
+
+예비창업자/기창업자, 전국/서울/경기/인천 전체/인천 특정 구, 공장 필수/일반, 특별키워드, 설명회·컨설팅·멘토링, 마감·수정·연장·재공고, 중복 공고를 각각 검증한다.
+
+### 8-12. 빈상태
+
+공고 없음·상세 필드 없음·지역 미상은 기존 empty/review 정책을 유지하며 적격으로 추측하지 않는다.
+
+### 8-13. 로딩상태
+
+N/A — 조사·로컬 테스트 작업. 기존 수집 중복 실행 방지 정책은 유지한다.
+
+### 8-14. 오류상태
+
+GitHub 인증·원격 이력·기존 테스트 권한 오류는 숨기지 않고 별도 보고한다. 수집기 외부 오류를 기준 복원 근거로 오인하지 않는다.
+
+### 8-15. VERIFY
+
+- [x] `python -m py_compile monitor.py`
+- [x] `python -m json.tool config/groups.json > NUL`
+- [x] MAIL-015 회귀 19개 + 관련 스위트 12개 파일(test_monitor, test_digest_fp_hardening, test_5field_casematrix, test_p1_context_exclusions, test_consultant_notices, test_filter_accuracy_r2, test_scoring, test_prestartup_ai_digest_regression, test_digest_eight_columns, test_fetch_notice_attachments, test_mail_digest_mobile, test_nonnotice_title_filter) 총 536개 직접 재실행 통과, 회귀 없음(2026-09-17 최종 검증). 전체 pytest 1,432 passed/6 skipped는 이전 세션 보고치이며 이번 세션에서 전체 재실행은 하지 않음(부분 검증으로 대체).
+- [x] 실제 발송 없음, `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
+- [x] 변경 파일·기존 사용자 변경·Secret 포함 여부 최종 확인
+
+### 8-16. DONE
+
+REQUEST_SOLVED=YES — 복원표·19개 MAIL-015 회귀테스트·TENANT_ONLY 최소 구현을 커밋했고(f878126a), 관련 스위트 536개 재실행으로 회귀 없음을 확인했다. 실제 발송·라벨 변경·삭제 없음. push·PR은 아직(로컬 커밋만).
+
+---
 
 ## MAIL-001
 
@@ -1479,6 +1570,303 @@ DEPENDS_ON: MAIL-005, MAIL-006 (main 머지됨). MAIL-011과 파일군이 달라
 - `TASK.md` / `docs/project/TASKS.md`
 
 슬라이스 2는 `config/sites.json` + replay 테스트. 이번 커밋에 소스 활성화 넣지 않는다.
+
+---
+
+## MAIL-013
+
+### 8-1. 사용자 원문 요청
+
+> 저장이안되네 활성비황성
+>
+> Task.md에 추가
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+사용자가 모바일 웹 관리화면에서 소스의 `활성` 체크를 바꾸고 `저장`했을 때:
+
+- `활성 → 비활성`, `비활성 → 활성`이 실제 운영 설정에 저장됨
+- 화면 새로고침 후에도 변경한 상태가 유지됨
+- `config/sites.json`의 해당 소스 `enabled` 값과 화면 배지가 일치함
+- 이후 GitHub Actions/메일 수집 실행도 저장된 `enabled` 값을 사용함
+- 다른 소스의 설정은 같이 바뀌지 않음
+- 저장이 아직 GitHub 반영 대기라면 `저장됨`처럼 오인시키지 않고 사용자가 해야 할 다음 동작을 모바일에서 명확히 제공함
+- 실제 이메일은 발송되지 않음
+
+이 결과가 달성되지 않으면 DONE이 아니다.
+
+### 8-4. 현재상태
+
+현재 코드 확인:
+
+- `web/app/sites/[id]/edit/page.tsx`에 `enabled` 체크박스와 `저장` 버튼이 있고 `/api/sites/apply`로 POST한다.
+- `web/app/api/sites/apply/route.ts`는 GitHub 토큰이 있으면 `config/sites.json`을 직접 커밋하고, 토큰이 없으면 `.apply/pending.json` 생성용 GitHub 웹 URL을 반환한다.
+- `.github/workflows/apply-sites.yml`은 사용자가 `.apply/pending.json`을 실제 커밋한 뒤 `scripts/apply_sites_payload.py`로 `config/sites.json`에 반영하고 pending 파일을 제거한다.
+- `web/lib/apply-client.ts`는 비토큰 경로에서 비동기 응답 뒤 `window.open()`으로 GitHub 확인 화면을 열려고 한다. 모바일 브라우저의 팝업 차단 가능성은 **원인 후보일 뿐 아직 확정하지 않는다.**
+- 편집 화면에는 `githubCommitUrl`이 있으면 `저장 확인하기` 링크도 렌더한다.
+
+사용자 실사용 보고: 활성/비활성 변경이 저장되지 않는다.
+
+따라서 체크박스 UI만 고치지 말고 다음 구간 중 실제 실패 지점을 먼저 재현한다.
+
+`checkbox state → POST body → /api/sites/apply → GitHub web/token fallback → pending commit → apply-sites Action → config/sites.json → /api/config → 새로고침 화면`
+
+REQUEST_SOLVED: NO
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] 모바일 웹 기준으로 `활성 → 비활성`, `비활성 → 활성` 저장 실패를 먼저 재현하고 실패 단계 기록
+- [ ] `enabled` boolean이 편집 form → POST → validation/normalized site → GitHub 반영 payload까지 손실되지 않는지 확인
+- [ ] 토큰이 있는 경로와 없는 기본 경로를 분리해서 검증
+- [ ] 토큰 없는 기본 경로에서는 `.apply/pending.json` → `apply-sites` → `config/sites.json` 반영이 끝나야 실제 저장 완료로 판정
+- [ ] 모바일에서 자동 새창이 차단돼도 사용자가 한 번 탭해서 GitHub 반영 화면으로 이동할 수 있는 명시적 링크/버튼을 유지하거나 보강
+- [ ] `Commit changes` 등 추가 사용자 동작이 필요한 상태를 `저장 완료`와 구분해서 표시
+- [ ] `config/sites.json` 반영 후 `/api/config` 재조회/새로고침에서 동일 상태 유지
+- [ ] 해당 소스 한 건만 변경되고 다른 소스 필드는 보존되는 회귀 테스트 추가
+- [ ] `enabled=true → false`, `false → true` 양방향 테스트 추가
+- [ ] 저장 실패/401/500/네트워크 실패 때 성공 메시지를 표시하지 않고 기존 상태를 임의로 저장 완료 처리하지 않음
+- [ ] 실제 이메일/알림 발송 금지
+
+### 8-6. KEEP — 유지
+
+- Vercel에 장기 GitHub PAT/토큰을 코드로 넣지 않는 현재 보안 원칙
+- `config/sites.json`을 운영 source of truth로 쓰는 구조
+- 기존 사이트 ID·URL·collector·selector·note 등 사용자가 바꾸지 않은 필드
+- 기존 `/api/sites/update` 검증 기능
+- 기존 `.apply/pending.json` + GitHub Actions 적용 구조가 정상이라면 그대로 유지하고 최소 수정
+- dry-run/preview 및 수신자/발송 설정
+
+### 8-7. REMOVE — 제거
+
+- 화면에서 체크 상태만 바뀌고 실제 운영 설정에는 반영되지 않는 동작
+- GitHub 반영 대기 상태를 실제 저장 완료처럼 보이게 하는 표현
+- 새로고침 시 이전 `enabled` 값으로 되돌아가는 원인이 확인되면 해당 원인만 최소 제거
+
+### 8-8. FORBIDDEN — 금지
+
+- GitHub PAT/API Key/Secret을 코드·로그·TASK에 기록
+- `main`에 직접 위험한 변경
+- 사용자 확인 없이 실제 메일 발송
+- 다른 사이트를 대량 활성/비활성 처리
+- `config/sites.json`의 unrelated source를 테스트 목적으로 임의 변경
+- 기존 수집·판정·메일 로직 대규모 리팩터링
+- 원인 확인 없이 `apply-sites.yml`을 임의 수정
+- 모바일에서 PC 로컬 사용을 요구하는 해결책
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: 논리적 기능 의존성은 없음.
+
+다만 MAIL-012가 `config/sites.json`을 변경할 수 있으므로 MAIL-013 구현 시작 시 반드시 최신 `origin/main`을 다시 받아 충돌 여부를 확인한다. MAIL-012가 아직 ACTIVE면 현재 작업에 섞지 않고 MAIL-013은 READY로 유지한다.
+
+### 8-10. 구현범위
+
+원인에 따라 최소 범위만 수정:
+
+- `web/app/sites/[id]/edit/page.tsx`
+- `web/app/api/sites/apply/route.ts`
+- `web/lib/apply-client.ts`
+- `web/lib/github-commit-url.ts`
+- `scripts/apply_sites_payload.py`
+- 관련 web/Python regression tests
+- 필요한 경우에만 `.github/workflows/apply-sites.yml` (워크플로 변경이면 사람 머지 규칙 준수)
+
+### 8-11. 입력검증
+
+- 기존 `enabled=true`를 false로 변경
+- 기존 `enabled=false`를 true로 변경
+- 변경 없음
+- 존재하지 않는 site id
+- 잘못된 boolean/누락 payload
+- GitHub token 있음/없음
+- pending 파일 존재/충돌 상태
+
+### 8-12. 빈상태
+
+- 사이트 목록 0건이면 저장 대상 없음 상태를 명확히 표시
+- 대상 site가 없으면 다른 site를 수정하지 않고 오류 처리
+
+### 8-13. 로딩상태
+
+- 저장 중 중복 클릭 방지
+- GitHub 반영 대기와 실제 적용 완료를 구분
+- 적용 완료 후 화면 상태를 서버 source of truth와 재동기화
+
+### 8-14. 오류상태
+
+반드시 검증:
+
+- `/api/sites/apply` 401/400/500
+- GitHub 새창/팝업 차단
+- GitHub commit 미완료
+- `apply-sites` Action 실패
+- `config/sites.json` commit 충돌
+- 네트워크 중단
+- 적용 후 `/api/config` stale 응답
+
+오류가 있어도 다른 사이트 상태를 훼손하지 않는다.
+
+### 8-15. VERIFY / DONE
+
+최소 검증:
+
+1. Preview 또는 안전한 테스트 데이터에서 활성 → 비활성 저장
+2. 실제 source of truth 재조회에서 `enabled=false` 확인
+3. 새로고침 후 비활성 배지 유지
+4. 비활성 → 활성 역방향 반복 후 `enabled=true` 확인
+5. 다른 source 값 변경 0건 확인
+6. 모바일 브라우저에서 자동 팝업이 막혀도 명시적 링크로 GitHub 반영 절차 진행 가능 확인
+7. 실메일 발송 0건
+
+다음이 모두 만족될 때만 `REQUEST_SOLVED: YES`:
+
+- 양방향 저장 지속성 PASS
+- 새로고침 지속성 PASS
+- 수집기가 저장된 enabled 값을 사용함을 확인
+- 실패 상태가 성공으로 표시되지 않음
+- 회귀 테스트 PASS
+
+---
+
+## MAIL-014
+
+### 8-1. 사용자 원문 요청
+
+> 뭉제점 엑셀시트 민들었던거
+> 이거task에 등록
+
+대상 시트:
+
+- 정부지원사업 자동화서비스 개발리스크 154개
+- Google Sheets: https://docs.google.com/spreadsheets/d/1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E/edit
+- 기준 탭: `사용자 우선순위`, `요약`, 기존 154개 리스크 원본
+
+원문의 의미를 축약 과정에서 변경하지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+
+이 문장이 상단 TASK LIST에 그대로 표시된다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+최신 `main` 코드와 154개 리스크 시트를 대조해서 이미 해결된 항목은 다시 만들지 않고, 실제로 남아 있는 문제만 우선순위대로 개발한다.
+
+개발 순서:
+
+1. P0-A 활성 소스 미실행·0건·부분수집 탐지
+2. P0-B 상세정보 접근·파싱·판정필수 필드 추출 누락 탐지
+3. P0-C 최근 3영업일 재조회·연장·수정·재공고 복구
+4. P0-D 공고별 단계이력·제외사유·근거 추적 및 회귀검증
+5. P1-A 키워드·지역·지원유형 오판 개선
+6. P1-B 그룹 미매칭 공고의 기업별 재승격
+7. P1-C Claude 요약 사실정보 안정화
+
+한 번에 154개를 대규모 수정하지 않는다. 각 항목은 `재현 → 최소 수정 → 테스트 → dry-run/preview 검증 → 다음 항목` 순서로 처리한다.
+
+### 8-4. 현재상태
+
+- 등록 시점에 MAIL-012가 `[~]` ACTIVE, MAIL-013이 `[ ]` READY이므로 MAIL-014는 `[ ]` READY로 등록한다.
+- 처음 실행할 때 최신 `main`과 시트 항목을 1:1 대조해 `ALREADY_DONE / REPRODUCED / NOT_REPRODUCED / BLOCKED`로 분류한다.
+- 문서에 해결 표시가 있더라도 실제 코드·테스트 근거 없이 완료 처리하지 않는다.
+
+REQUEST_SOLVED: NO — TASK 등록만 완료. 개발은 아직 시작하지 않음.
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] 시트의 `사용자 우선순위`·`요약` 탭과 최신 코드/테스트를 대조
+- [ ] 이미 해결된 리스크는 실제 코드·테스트 근거가 있을 때만 `ALREADY_DONE` 처리
+- [ ] P0-A: 활성 소스 실행대장, 0건·급감·부분수집·페이지네이션·파서 실패 탐지
+- [ ] P0-B: 상세 접근 실패와 실제 미기재를 구분하고 판정필수 필드 추출 실패 탐지
+- [ ] P0-C: 최근 3영업일 재조회와 content/version 기반 연장·수정·재공고 복구
+- [ ] P0-D: Fetch→Enrich→Normalize→Evaluate→Company Match→Summarize→Delivery 단계별 상태·제외사유·근거 추적
+- [ ] P1-A: 자격 Hard Gate와 관련성 점수를 분리하고 키워드·지역·지원유형 오판 회귀검증
+- [ ] P1-B: 기업 매칭이 Hard Gate를 우회하지 않으면서 그룹 누락 공고를 기업별로 재검토
+- [ ] P1-C: 지원금·마감일·지역·대상·원문URL 같은 사실필드는 구조화 데이터에서만 출력하고 요약 실패 fallback 유지
+- [ ] 각 슬라이스마다 최소 1개 재현 테스트와 관련 regression test 추가
+- [ ] 실제 이메일 발송 없이 `dry-run/preview`로 사용자 E2E 검증
+- [ ] 완료 항목을 시트 리스크 번호/우선순위와 코드·테스트 근거로 연결해 보고
+
+### 8-6. KEEP — 유지
+
+- 기존 MAIL-001~013에서 이미 검증된 동작
+- 기본 `DEFAULT_RUN_MODE=dry-run`
+- `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
+- 기존 수신자·스케줄·Secrets 구조
+- 공고 원문·개인정보·토큰 마스킹
+- 실패 소스가 있어도 안전하게 나머지를 계속 처리하는 장애격리 원칙
+
+### 8-7. REMOVE — 제거
+
+- 문서에 적혀 있다는 이유만으로 실제 코드 확인 없이 DONE 처리하는 방식
+- `HTTP 200 = 정상 수집`, `0건 = 정상`으로 단정하는 방식
+- 파싱 실패와 원문 미기재를 같은 `unknown`으로 숨기는 방식
+- 기업 키워드가 맞는다는 이유로 Hard Gate 탈락 공고를 무조건 승격하는 방식
+- Claude 요약 실패 때문에 공고 자체를 누락시키는 방식
+
+### 8-8. FORBIDDEN — 금지
+
+- 154개 리스크를 한 PR에서 전면 리팩터링
+- 실제 이메일 발송·삭제·대량 라벨 변경
+- `.env`, API Key, OAuth 토큰, 고객정보, 메일 원문 커밋/로그
+- 기존 MAIL-012 ACTIVE 범위에 MAIL-014 변경을 섞기
+- 근거 없는 신규 수집처 추가
+- 테스트 실패를 skip/삭제해서 통과시키기
+- `git add -A`, force push, `reset --hard`
+- 사용자 요청 없이 DB 전면 전환·스키마 대수술
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON:
+
+- 기본적으로 MAIL-012 완료 후 시작한다.
+- MAIL-014의 독립 조사·재현은 파일/API/entrypoint가 겹치지 않을 때만 병렬 가능하다.
+- `config/sites.json`, 수집기, 판정기 등 MAIL-012와 겹치는 코드는 MAIL-012 머지 후 최신 `main`에서 시작한다.
+- MAIL-013과 파일 충돌이 없으면 독립 진행 가능하다.
+
+### 8-10. 구현범위
+
+첫 실행은 진단 슬라이스로 시작한다.
+
+1. 시트 154개와 최신 main 대조
+2. 이미 해결/미해결/중복/현 단계 제외 분류
+3. 미해결 P0-A~D를 각각 독립 작업 단위로 분해
+4. 각 단위는 최소 변경·테스트·dry-run 검증
+5. P0 완료 뒤 P1-A~C 순차 진행
+
+수정 가능 파일은 각 슬라이스 시작 시 재현 결과로 확정한다. 처음부터 `monitor.py`나 DB를 수정 대상으로 고정하지 않는다.
+
+### 8-11. VERIFY — 해결 여부 검증
+
+최소 기준:
+
+- 활성 소스 실행대장 기록률 100%
+- P0 장애 시나리오 탐지율 100%
+- 핵심소스 판정필수 필드 추출률 95% 이상
+- 핵심소스 Golden Set 재현율 98% 이상
+- 실제 이메일 발송 0건
+- 모든 포함·제외·검토 결과에 추적 가능한 reason/evidence 존재
+
+실제 측정 불가능한 항목은 근거와 대체 검증 방법을 기록한다.
+
+### 8-12. DONE 기준
+
+다음 모두 충족할 때만 `REQUEST_SOLVED = YES`:
+
+- P0-A~D 실제 미해결분 해결 및 회귀검증 완료
+- P1-A~C 실제 미해결분 해결 또는 근거 있는 `ALREADY_DONE` 판정
+- dry-run/preview 사용자 E2E PASS
+- 실제 메일 발송·삭제·라벨 변경 없음
+- 변경 파일·테스트 결과·보안 영향·남은 리스크가 최종보고에 연결됨
 
 ---
 
