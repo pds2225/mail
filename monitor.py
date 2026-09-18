@@ -4410,6 +4410,44 @@ def fetch_all(
 # 중복 제거 (주관기관 우선)
 # ══════════════════════════════════════════════════════════════════
 
+# MAIL-P0C-02: 재공고/추가모집 마커 — _classify_notice_change(같은 id의 버전 변경 판정)가
+# 쓰는 것과 동일한 리터럴을 재사용해 "재공고" 판정 기준이 두 곳에서 어긋나지 않게 한다.
+_DUPLICATE_TYPE_REPOST_TERMS = ("재공고",)
+_DUPLICATE_TYPE_ADDITIONAL_TERMS = ("추가모집", "추가 모집", "2차 모집", "2차모집")
+
+
+def _has_repost_marker(title: str) -> bool:
+    return any(term in title for term in _DUPLICATE_TYPE_REPOST_TERMS + _DUPLICATE_TYPE_ADDITIONAL_TERMS)
+
+
+def classify_duplicate_type(item: dict, existing: dict | None) -> str:
+    """MAIL-P0C-02: item 과 이미 보관 중인 existing(같은 canonical 공고로 판정된 것) 의
+    관계를 5종으로 분류한다. existing 이 None 이면 이번 배치에서 처음 보는 공고다.
+
+    반환: NEW / EXACT_DUPLICATE / MODIFIED / REPOSTED / MULTI_AGENCY_DUPLICATE
+
+    - NEW: 비교 대상 없음(처음 관측).
+    - MULTI_AGENCY_DUPLICATE: 서로 다른 소스(기관/포털)가 같은 공고를 올림.
+    - REPOSTED: 같은 소스인데 제목에 재공고/추가모집 마커가 새로 붙음(같은 기회의 재게시).
+    - EXACT_DUPLICATE: 같은 소스 + 제목·마감·링크가 완전히 동일한 재수집.
+    - MODIFIED: 같은 소스 + 같은 공고인데 핵심 필드(마감/링크/제목 등)가 달라짐.
+    """
+    if existing is None:
+        return "NEW"
+    item_title = str(item.get("title") or "")
+    existing_title = str(existing.get("title") or "")
+    if str(item.get("source") or "") != str(existing.get("source") or ""):
+        return "MULTI_AGENCY_DUPLICATE"
+    if _has_repost_marker(item_title) and not _has_repost_marker(existing_title):
+        return "REPOSTED"
+    identical = (
+        item_title == existing_title
+        and str(item.get("deadline") or "") == str(existing.get("deadline") or "")
+        and str(item.get("link") or "") == str(existing.get("link") or "")
+    )
+    return "EXACT_DUPLICATE" if identical else "MODIFIED"
+
+
 def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     """
     동일 공고가 여러 소스에 있을 때 주관기관(is_aggregator=False) 버전 우선 유지.
@@ -4420,6 +4458,10 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     - 동일 canonical ID면 동일 공고로 판정
 
     P2-A: 첨부파일 해시 기반 중복 보조
+
+    MAIL-P0C-02: 살아남는 모든 item 에 item["duplicate_type"] 을 남긴다
+    (NEW/EXACT_DUPLICATE/MODIFIED/REPOSTED/MULTI_AGENCY_DUPLICATE). 판정 로직(어느 쪽을
+    유지·교체할지)은 기존 그대로이고, 이 필드는 "왜 병합/교체됐는지"를 기록만 한다.
 
     _stats: 선택적 collector — dedup 원인별 제거 건수를 기록한다.
         duplicate_removed_total, same_source_duplicate_removed,
@@ -4450,6 +4492,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
     for item in items:
         key = similarity_key(item["title"])
         if not key:
+            item["duplicate_type"] = "NEW"
             kept.append(item)
             continue
 
@@ -4467,6 +4510,7 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
             # 신규 — canonical ID도 체크
             if canonical_id in canonical_map:
                 existing = canonical_map[canonical_id]
+                dup_type = classify_duplicate_type(item, existing)
                 # 주관기관 우선
                 if not item["is_aggregator"] and existing["is_aggregator"]:
                     kept.remove(existing)
@@ -4474,27 +4518,32 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del norm_map[similarity_key(existing["title"])]
                     norm_map[key] = item
                     canonical_map[canonical_id] = item
+                    item["duplicate_type"] = dup_type
                     _s_replaced += 1
                     log.info("크로스소스중복: '%s' (%s) → '%s' (%s) 로 교체 (canonical: %s)",
                              existing["source"], existing["title"][:20],
                              item["source"], item["title"][:20], canonical_id)
                 else:
+                    existing["duplicate_type"] = dup_type
                     _s_canonical += 1
                     log.info("크로스소스중복: '%s' 유지, '%s' 제거 (canonical: %s)",
                              existing["title"][:20], item["title"][:20], canonical_id)
             # P2-A: 첨부파일 해시로도 체크
             elif att_hash and att_hash in attachment_map:
                 existing = attachment_map[att_hash]
+                dup_type = classify_duplicate_type(item, existing)
                 if not item["is_aggregator"] and existing["is_aggregator"]:
                     kept.remove(existing)
                     kept.append(item)
                     del norm_map[similarity_key(existing["title"])]
                     norm_map[key] = item
                     attachment_map[att_hash] = item
+                    item["duplicate_type"] = dup_type
                     _s_replaced += 1
                     log.info("첨부중복: '%s' → '%s' 로 교체 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
                 else:
+                    existing["duplicate_type"] = dup_type
                     _s_attach += 1
                     log.info("첨부중복: '%s' 유지, '%s' 제거 (hash: %s)",
                              existing["title"][:20], item["title"][:20], att_hash)
@@ -4503,9 +4552,11 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                 canonical_map[canonical_id] = item
                 if att_hash:
                     attachment_map[att_hash] = item
+                item["duplicate_type"] = "NEW"
                 kept.append(item)
         else:
             existing = norm_map[dup_key]
+            dup_type = classify_duplicate_type(item, existing)
             # 현재 아이템이 주관기관이고 기존이 집계처이면 교체
             if not item["is_aggregator"] and existing["is_aggregator"]:
                 kept.remove(existing)
@@ -4523,11 +4574,13 @@ def dedup_items(items: list[dict], *, _stats: dict | None = None) -> list[dict]:
                     del attachment_map[old_att]
                 if att_hash:
                     attachment_map[att_hash] = item
+                item["duplicate_type"] = dup_type
                 _s_replaced += 1
                 log.info("중복제거: '%s' (%s) → '%s' (%s) 로 교체",
                          existing["source"], existing["title"][:20],
                          item["source"], item["title"][:20])
             else:
+                existing["duplicate_type"] = dup_type
                 _s_title += 1
                 log.info("중복제거: '%s' 유지, '%s' 제거 (%s)",
                          existing["title"][:20], item["title"][:20], item["source"])
