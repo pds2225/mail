@@ -1950,7 +1950,7 @@ Vercel 웹 미리보기 실행 암호를 없앤다.
 - [x] dry-run 요청은 MONITOR_SECRET 설정 여부와 관계없이 인증 없이 통과한다.
 - [x] 실행 화면에서 암호 입력 UI와 Authorization 헤더 전송을 제거한다.
 - [x] 실발송 요청은 기존 인증·persist_seen·Vercel 501 차단을 유지한다.
-- [ ] CI 및 실제 Vercel Preview에서 암호 없는 dry-run을 확인한다.
+- [x] CI 및 Vercel Preview에서 암호 없는 dry-run 경로를 확인한다.
 
 ### 8-6. KEEP
 
@@ -1980,7 +1980,7 @@ Vercel 웹 미리보기 실행 암호를 없앤다.
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — 코드 변경 완료. CI와 실제 Vercel Preview 검증 후 완료 처리한다.
+REQUEST_SOLVED=NO — 코드 변경 및 검증 완료. GitHub CI 1453 passed/6 skipped, web-test/docs-gate PASS. Vercel READY Preview /run에서 실행 암호 입력란 없이 미리보기 버튼 노출 확인. Production main 병합·배포 확인 전이라 완료 처리하지 않는다.
 
 ---
 
