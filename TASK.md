@@ -26,7 +26,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-009 | 일부 그룹만 보낸 채 죽으면 다른 그룹이 못 받는 문제를 고친다
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
-[~] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
+[x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [ ] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
 [ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
@@ -1470,8 +1470,10 @@ PINNING:
 - TASK_ID: MAIL-012
 - TASK_START_SHA: f4ee88ad6b405b742109db5254e0edd500798fc7
 - TASK_BLOB_SHA: 331f93325304cd234257787a079c66184a5eb332
-- WORK_BRANCH: cursor/mail012-kised-iitp-collect-7dc1
+- WORK_BRANCH: 구현 `cursor/ai-grant-full-recall-b14b` (PR #277) + 수집소스 `cursor/mail012-kised-iitp-collect-7dc1` (PR #281); closeout `docs/mail-012-finalize`
 - origin: https://github.com/pds2225/mail.git (일치)
+- 현재 기준: `origin/main=cf80245b460ae166429aac0d57772960293f2c81`; PR #277/#281 모두 squash merge 완료
+- REQUEST_SOLVED: YES
 
 이전 예비창업자 AI 공고 PR (적용 여부):
 
@@ -1488,7 +1490,7 @@ PINNING:
 
 핵심: 개선 PR은 사라지지 않았고 **#271/#272/#274가 main에 들어가 있다.** 다만 그건 **적합도(2차 점수·기창업 제외)** 패치다. **AI 사업화지원금 전수 수집**은 별 문제였다.
 
-현재 구멍 (슬라이스 1에서 막음):
+구현 전 구멍 (슬라이스 1·2에서 해결):
 
 - 1차 AND `["AI","사업화"]`는 `AI 사업화지원금`을 통과시킨다
 - 2차는 `or_keywords`에 사업화지원금이 없고, MAIL-006 `참여기업` 감점이 keep을 못 만나면 점수 0으로 DROP
@@ -1531,8 +1533,8 @@ PINNING:
 
 슬라이스 3 — 운영 게이트
 
-- [x] `python3 scripts/auto_dev_overnight_ready.py --require-local` 가 MAIL-012를 pending으로 본다
-- [ ] REQUEST_SOLVED는 main 머지 뒤에만 YES. 지금은 슬라이스 2 구현 완료, PR 대기
+- [x] `python3 scripts/auto_dev_overnight_ready.py --require-local` 로 실행 가능 상태를 점검했다 (완료 전 기준에서는 MAIL-012 pending)
+- [x] REQUEST_SOLVED는 PR #277/#281의 main 반영 후 YES로 갱신했다
 
 ### 8-6. KEEP — 유지
 
@@ -1569,7 +1571,18 @@ DEPENDS_ON: MAIL-005, MAIL-006 (main 머지됨). MAIL-011과 파일군이 달라
 - `scripts/recall_zero_gate.py` RECALL_SUITES
 - `TASK.md` / `docs/project/TASKS.md`
 
-슬라이스 2는 `config/sites.json` + replay 테스트. 이번 커밋에 소스 활성화 넣지 않는다.
+슬라이스 2는 `config/sites.json` + replay 테스트이며 구현 PR #281에서 반영했다.
+
+### 8-16. DONE
+
+REQUEST_SOLVED=YES — PR #277(판정 누락 차단)과 PR #281(KISED/IITP 수집소스)이 모두 `origin/main`에 squash merge된 것을 확인했다. 현재 main 기준 focused MAIL-012 회귀검증은 `191 passed`이며, JSON 설정 파싱·Python compile·`recall_zero_gate.py`도 통과했다. 실제 이메일 발송·삭제·대량 라벨 변경·Secret 변경·GHA cron 재활성은 0건이다.
+
+- CLOSEOUT_BRANCH: `docs/mail-012-finalize`
+- MAIN_SHA: `cf80245b460ae166429aac0d57772960293f2c81`
+- IMPLEMENTATION_PRS: #277, #281 (merged)
+- FOCUSED_TEST: `python -m pytest -q tests/test_ai_commercialization_grant_recall.py tests/test_fetch_kised_replay.py tests/test_fetch_iitp_replay.py tests/test_kised_iitp_dedup_dates.py tests/test_scoring.py tests/test_prestartup_ai_digest_regression.py tests/test_monitor.py` → 191 passed
+- SAFETY: `monitor.py`·`streamlit_app.py` 미수정, 실제 발송·삭제·라벨 변경 없음, GHA cron 미활성 유지
+- NEXT_READY_TASK: MAIL-013 (이 closeout에서는 시작하지 않음)
 
 ---
 
