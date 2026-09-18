@@ -24,9 +24,10 @@ function githubWebApply(mode: "add" | "update", site: SiteRecord) {
   return {
     ok: true,
     applied: false,
+    pending: true,
     githubCommitUrl,
     site,
-    notice: "저장 확인 화면이 열립니다. Commit changes를 누르면 운영 설정에 반영됩니다.",
+    notice: "아직 운영 설정에는 저장되지 않았습니다. 아래 버튼에서 Commit changes를 눌러 저장을 확정하세요.",
   };
 }
 

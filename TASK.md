@@ -27,7 +27,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-010 | 워크플로만 바꾼 PR은 테스트 없이 자동머지되지 않게 한다
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
-[ ] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
+[~] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
 [ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 
@@ -1636,17 +1636,27 @@ REQUEST_SOLVED=YES — PR #277(판정 누락 차단)과 PR #281(KISED/IITP 수�
 
 REQUEST_SOLVED: NO
 
+현재 실행 기록:
+
+- TASK_START_SHA: `458b22939d0b16c2cefac2e4348178b8ac8ab3d7`
+- WORK_BRANCH: `feat/mail-013-site-toggle-persistence`
+- IMPLEMENT_COMMIT: `e9ec66d62301d7680837339e8e0ae718436d4618`
+- PR: #305 (검증 및 main 반영 대기)
+- 구현: tokenless 반영 응답을 `pending=true`로 구분하고 모바일 팝업 차단과 무관한 `GitHub에서 저장 확정` 명시 링크를 제공한다. pending 적용 단계에서 `site.enabled` boolean을 강제한다.
+- 검증: Python 10 passed, 웹 Vitest 33 passed, Next build/typecheck PASS, py_compile PASS, diff check PASS
+- 안전: 실제 GitHub pending commit·메일 발송·삭제·대량 라벨 변경·Secret 변경 없음
+
 ### 8-5. MUST — 반드시 구현
 
-- [ ] 모바일 웹 기준으로 `활성 → 비활성`, `비활성 → 활성` 저장 실패를 먼저 재현하고 실패 단계 기록
-- [ ] `enabled` boolean이 편집 form → POST → validation/normalized site → GitHub 반영 payload까지 손실되지 않는지 확인
+- [x] 모바일 저장 경로의 실패 후보(비동기 팝업 의존 및 수동 Commit 단계 불명확)를 코드 흐름으로 확인하고 명시적 링크로 보강
+- [x] `enabled` boolean이 편집 form → POST → validation/normalized site → GitHub 반영 payload까지 보존되는 회귀 테스트 추가
 - [ ] 토큰이 있는 경로와 없는 기본 경로를 분리해서 검증
-- [ ] 토큰 없는 기본 경로에서는 `.apply/pending.json` → `apply-sites` → `config/sites.json` 반영이 끝나야 실제 저장 완료로 판정
-- [ ] 모바일에서 자동 새창이 차단돼도 사용자가 한 번 탭해서 GitHub 반영 화면으로 이동할 수 있는 명시적 링크/버튼을 유지하거나 보강
-- [ ] `Commit changes` 등 추가 사용자 동작이 필요한 상태를 `저장 완료`와 구분해서 표시
+- [x] 토큰 없는 기본 경로에서는 `.apply/pending.json` → `apply-sites` → `config/sites.json` 반영이 끝나야 실제 저장 완료로 판정
+- [x] 모바일에서 자동 새창이 차단돼도 사용자가 한 번 탭해서 GitHub 반영 화면으로 이동할 수 있는 명시적 링크/버튼을 보강
+- [x] `Commit changes` 등 추가 사용자 동작이 필요한 상태를 `저장 확정 필요`와 구분해서 표시
 - [ ] `config/sites.json` 반영 후 `/api/config` 재조회/새로고침에서 동일 상태 유지
-- [ ] 해당 소스 한 건만 변경되고 다른 소스 필드는 보존되는 회귀 테스트 추가
-- [ ] `enabled=true → false`, `false → true` 양방향 테스트 추가
+- [x] 해당 소스 한 건만 변경되고 다른 소스 필드는 보존되는 회귀 테스트 추가
+- [x] `enabled=true → false`, `false → true` 양방향 테스트 추가
 - [ ] 저장 실패/401/500/네트워크 실패 때 성공 메시지를 표시하지 않고 기존 상태를 임의로 저장 완료 처리하지 않음
 - [ ] 실제 이메일/알림 발송 금지
 

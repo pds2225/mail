@@ -31,6 +31,8 @@ def apply_pending(sites: list[Any], pending: dict[str, Any]) -> list[Any]:
     for key in ("id", "name", "type", "url"):
         if not str(site.get(key) or "").strip():
             raise ValueError(f"site.{key} required")
+    if not isinstance(site.get("enabled"), bool):
+        raise ValueError("site.enabled boolean required")
     url = str(site["url"]).strip()
     if not url.startswith(("http://", "https://")):
         raise ValueError("site.url must be http(s)")

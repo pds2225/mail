@@ -73,6 +73,24 @@ describe("pendingApplyCommitUrl", () => {
     expect(url).toContain("filename=pending.json");
     expect(url).toContain("example.com");
   });
+
+  it.each([false, true])("preserves enabled=%s in update payload", (enabled) => {
+    const url = pendingApplyCommitUrl({
+      v: 1,
+      mode: "update",
+      site: {
+        id: "demo",
+        name: "Demo",
+        type: "html_table",
+        url: "https://example.com/demo",
+        enabled,
+        is_aggregator: false,
+      },
+    });
+    const payload = JSON.parse(new URL(url).searchParams.get("value") || "{}");
+    expect(payload.mode).toBe("update");
+    expect(payload.site.enabled).toBe(enabled);
+  });
 });
 
 describe("applyAuthError", () => {

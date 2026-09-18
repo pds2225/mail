@@ -17,6 +17,7 @@ type UpdateResponse = {
   error?: string;
   notice?: string;
   applied?: boolean;
+  pending?: boolean;
   commitUrl?: string;
   htmlUrl?: string;
   githubCommitUrl?: string;
@@ -199,10 +200,10 @@ export default function SiteEditPage() {
 
       {result?.notice ? (
         <div className="card">
-          <h3 className="card-title">{result.applied ? "저장됨" : "저장 결과"}</h3>
-          <p className="stat">{result.notice}</p>
+          <h3 className="card-title">{result.applied ? "저장됨" : result.pending ? "저장 확정 필요" : "저장 결과"}</h3>
+          <p className={result.pending ? "warn" : "stat"}>{result.notice}</p>
           {result.commitUrl ? <p><a href={result.commitUrl} target="_blank" rel="noreferrer">변경 기록 보기</a></p> : null}
-          {result.githubCommitUrl ? <p><a href={result.githubCommitUrl} target="_blank" rel="noreferrer">저장 확인하기</a></p> : null}
+          {result.githubCommitUrl ? <p><a className="btn btn-primary" href={result.githubCommitUrl} target="_blank" rel="noreferrer">GitHub에서 저장 확정</a></p> : null}
         </div>
       ) : null}
     </div>
