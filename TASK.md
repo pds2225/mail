@@ -30,6 +30,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
 [~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
+[~] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 
 
 ---
@@ -1917,6 +1918,69 @@ DEPENDS_ON:
 - dry-run/preview 사용자 E2E PASS
 - 실제 메일 발송·삭제·라벨 변경 없음
 - 변경 파일·테스트 결과·보안 영향·남은 리스크가 최종보고에 연결됨
+
+---
+
+## MAIL-017
+
+### 8-1. 사용자 원문 요청
+
+> 실행암호 없애
+
+### 8-2. 비개발자용 1줄 요약
+
+Vercel 웹 미리보기 실행 암호를 없앤다.
+
+### 8-3. 사용자 최종 결과
+
+- https://mail-cyan-sigma.vercel.app/run 에서 별도 실행 암호 입력 없이 미리보기를 실행한다.
+- 웹 실행은 계속 dry_run=true, persist_seen=false로 유지한다.
+- Vercel에서 실제 메일 발송은 기존처럼 501로 차단한다.
+- 실발송용 MONITOR_SECRET 보호 로직은 삭제하지 않는다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-017
+- TASK_START_SHA: ebcbb2927ea77e406758359b03d547cb35373202
+- TASK_BLOB_SHA: 07ddf4a75457f35fb4cb063af7e3a98bd69069b8
+- WORK_BRANCH: feat/mail-017-remove-run-password
+
+### 8-5. MUST
+
+- [x] dry-run 요청은 MONITOR_SECRET 설정 여부와 관계없이 인증 없이 통과한다.
+- [x] 실행 화면에서 암호 입력 UI와 Authorization 헤더 전송을 제거한다.
+- [x] 실발송 요청은 기존 인증·persist_seen·Vercel 501 차단을 유지한다.
+- [ ] CI 및 실제 Vercel Preview에서 암호 없는 dry-run을 확인한다.
+
+### 8-6. KEEP
+
+- 실제 메일 발송 금지
+- dry_run=true, persist_seen=false
+- GitHub Actions 실발송 경로와 Secret 정책
+- 기존 수집·판정 로직
+
+### 8-7. REMOVE
+
+- 웹 미리보기 실행 암호 입력란
+- dry-run에서의 MONITOR_SECRET 인증 요구
+
+### 8-8. FORBIDDEN
+
+- MONITOR_SECRET 평문 출력·커밋
+- Vercel 실발송 허용
+- 실제 이메일 발송
+- 관련 없는 수집·판정 규칙 변경
+
+### 8-9. VERIFY
+
+- python -m pytest tests/test_api_run_auth.py
+- 웹 빌드/CI
+- Vercel Preview /run 에서 암호 입력 없이 dry-run
+- 실발송 경로 501 차단 회귀 확인
+
+### 8-10. DONE
+
+REQUEST_SOLVED=NO — 코드 변경 완료. CI와 실제 Vercel Preview 검증 후 완료 처리한다.
 
 ---
 
