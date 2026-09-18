@@ -106,3 +106,69 @@ def test_run_writes_sites_and_deletes_pending(tmp_path: Path) -> None:
     assert [s["id"] for s in next_sites] == ["a", "b"]
     assert not (tmp_path / ".apply" / "pending.json").exists()
     assert run(tmp_path) == "skip"
+
+
+def test_update_enabled_both_directions_preserves_other_sites() -> None:
+    sites = [
+        {
+            "id": "a",
+            "name": "A",
+            "type": "html_table",
+            "url": "https://a.example",
+            "enabled": True,
+            "is_aggregator": False,
+            "selectors": {"row": "ul li"},
+        },
+        {
+            "id": "b",
+            "name": "B",
+            "type": "html_table",
+            "url": "https://b.example",
+            "enabled": False,
+            "is_aggregator": True,
+            "note": "보존",
+        },
+    ]
+    original_other = sites[1].copy()
+
+    disabled = apply_pending(
+        sites,
+        {
+            "v": 1,
+            "mode": "update",
+            "site": {**sites[0], "enabled": False},
+        },
+    )
+    assert disabled[0]["enabled"] is False
+    assert disabled[1] == original_other
+
+    enabled = apply_pending(
+        disabled,
+        {
+            "v": 1,
+            "mode": "update",
+            "site": {**disabled[0], "enabled": True},
+        },
+    )
+    assert enabled[0]["enabled"] is True
+    assert enabled[1] == original_other
+
+
+@pytest.mark.parametrize("enabled", [None, "false", 0])
+def test_rejects_non_boolean_enabled(enabled: object) -> None:
+    with pytest.raises(ValueError, match="site.enabled boolean"):
+        apply_pending(
+            [],
+            {
+                "v": 1,
+                "mode": "add",
+                "site": {
+                    "id": "a",
+                    "name": "A",
+                    "type": "html_table",
+                    "url": "https://a.example",
+                    "enabled": enabled,
+                    "is_aggregator": False,
+                },
+            },
+        )
