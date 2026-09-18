@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-023: loop:coding-fix MAIL-P0C-03 [P0] Notice version·content hash — DEPENDS=TASK-022 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — DEPENDS=TASK-023 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — DEPENDS=TASK-021~024 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — DEPENDS=TASK-025 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -42,6 +41,18 @@
 ## RUNNING
 
 ## DONE
+- TASK-023: loop:coding-fix MAIL-P0C-03 [P0] Notice version·content hash — **ALREADY_DONE**(코드
+  변경 없음). `_notice_version_snapshot()`(monitor.py:846)이 판정 핵심필드를 정규화하고
+  `_notice_snapshot_hash()`(863)로 content hash를 만들며, `classify_notice_versions()`
+  (1121)가 hash·material 필드 diff(`_snapshot_changed_fields`, 979) 기준으로만
+  `notice_version`을 증가시키고(1174-1177), `commit_notice_versions()`(1185)가 이전 확정
+  스냅샷(`delivered_snapshot`/`delivered_hash`)을 보존해 이전값·신규값 diff 조회가
+  가능하다 — MAIL-P0C-01(TASK-021)에서 이미 구현·검증된 인프라가 이 TASK의 3개
+  ACCEPTANCE_CRITERIA를 전부 충족한다. 근거 테스트(현재도 통과):
+  `test_deadline_extension_creates_versioned_delivery_id`(핵심필드 변경→버전 증가),
+  `test_unchanged_seen_notice_is_not_delivered_again`(동일내용 재수집→증가 없음),
+  `test_unreliable_observation_commit_preserves_delivered_snapshot`(이전 스냅샷 보존).
+  재구현하지 않음(2026-09-19).
 - TASK-022: loop:coding-fix MAIL-P0C-02 [P0] Canonical ID·중복 유형 분류 — 기존 `generate_canonical_notice_id`(공고번호>URL>제목+기관+연도+마감)를 그대로 재사용하고, `classify_duplicate_type()`을 신규 구현해 `dedup_items()`의 3개 충돌판정 지점(canonical_id/첨부해시/제목유사도)에 배선했다. 살아남는 item마다 `duplicate_type`(NEW/EXACT_DUPLICATE/MODIFIED/REPOSTED/MULTI_AGENCY_DUPLICATE)을 기록. REPOSTED 판정은 `_classify_notice_change()`와 동일한 재공고/추가모집 리터럴 재사용. 판정 로직 자체(어느 쪽 유지)는 변경 없음. 회귀: `tests/test_duplicate_type_classification.py` 신규 10건 + test_monitor/test_monitor_ops/test_kised_iitp_dedup_dates/test_notice_version_recovery 169건 통과, 회귀 없음(2026-09-19).
 - TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — 주말만 걸러내던 영업일 계산에 설정 가능한 공휴일 목록(`business_holidays`, `MONITOR_BUSINESS_HOLIDAYS` env)을 추가하고, `load_settings()`의 `days_back` 기본값을 1→3으로 맞춰 `execute_monitor()`의 실제 런타임 폴백과 불일치를 없앴다. 기존 dangling WIP 커밋(`163518f3`, 다른 세션이 컨트롤러 하드닝으로 중단)을 검토 후 재사용해 재구현을 피했다. `application_url`/`region` 변경도 버전 판정 대상 필드로 추가. 회귀: `test_notice_version_recovery.py` 23건(신규 4건 포함) + focused 185건 + 전체 pytest 1456 passed/1 skipped(무관 기존 실패 1건 `test_sites_json_public_priority_caps`, config/sites.json cp949 이슈, 이 작업과 무관) 통과, 신규 회귀 없음(2026-09-18). PR #307 squash-merge → `origin/main` `202c7df70a65ea864455b704f32776ba1d9f24d8`.
 - TASK-G01 [P0]: skip_gate 기준일 분리 + skip 시 SystemExit(0) 제거·coverage 유지 + am/pm 회차. PR #217 계열. pytest test_mail_review_ops_fixes 통과 (2026-07-30).
