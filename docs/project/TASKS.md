@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — DEPENDS=TASK-026~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — DEPENDS=TASK-027~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — DEPENDS=TASK-030 DONE + 모든 P0 종료 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -36,6 +35,28 @@
 ## RUNNING
 
 ## DONE
+- TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — 신규 진단 CLI
+  `scripts/diagnose_notice.py`(이 저장소의 monitor.py-import 스크립트 관례를 따름,
+  `mail_core/operations/`가 아님 — mail_core는 monitor.py를 역참조하지 않는 기존 설계
+  유지). notice_id를 입력하면 (1) `notice_pipeline_trace`(TASK-026) JSONL을 최근
+  30일 역순으로 훑어 마지막 성공단계·첫 실패단계·reason_code를 찾고, (2) `RawStore`
+  원문 메타(있으면)를 다시 `evaluate_notice()`에 태워 "지금 규칙 기준" reason_code·
+  evidence·rule_version·config_snapshot_id(TASK-027/028)를 함께 보여준다 — 과거
+  trace와 현재 재현 결과를 나란히 비교 가능. "실패단계"는 FAILED뿐 아니라 PARTIAL/
+  SKIPPED(예: COMPANY_MATCH BELOW_THRESHOLD·EVALUATE REGION_UNKNOWN 리뷰버킷)도
+  포함 — 이런 상태도 "왜 최종 후보에 없었는지"의 실제 원인이기 때문. 이메일·전화번호
+  패턴은 evidence 표시 전 마스킹(`mask_pii`)하고, 원문 전체(description/상세HTML)는
+  어떤 출력에도 포함하지 않는다(FORBIDDEN 준수). trace·원문 메타 어디에도 없는
+  notice_id는 `NoticeNotFoundError`를 던지고 CLI는 종료코드 1을 반환한다. 부수
+  발견·수정: `RawStore.load_meta()`가 raw_store 루트 폴더가 아예 없을 때(한 번도
+  활성화 안 된 경우) `FileNotFoundError`로 죽는 기존 동작을 호출부에서 OSError로
+  감싸 진단 도구가 계속 동작하게 함(raw_store.py 자체는 수정하지 않음 — MODIFY_SCOPE
+  최소화). 테스트: `tests/test_diagnose_notice.py` 신규 13건 — 누락 샘플 5종(ENRICH
+  실패·REGION_NOT_ELIGIBLE·TENANT_ONLY·COMPANY_MATCH 임계치미달·지역미상 리뷰버킷)
+  원인 식별 + 그룹별 혼재 결과 + PII 마스킹 2건 + 원문 미노출 + 존재하지 않는 ID
+  예외/CLI 종료코드 포함. 전체 pytest(cp949 무관 실패 1건 제외) 1529건 통과 0 실패,
+  회귀 없음(2026-09-19). skip 건수가 실행마다 1↔6건으로 흔들리는 기존 특성은
+  TASK-028에서 이미 무관 사항으로 기록됨(이번 실행 6건도 동일 특성).
 - TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — 신규 모듈
   `mail_core/operations/rule_version.py`(compute_version_hash/config_snapshot_id/
   diff_versions). `evaluate_notice()` 모듈 import 시 자신의 함수 소스(inspect.getsource)
