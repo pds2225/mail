@@ -186,9 +186,19 @@ def test_implementation_blocks_rules_env_and_credential_files():
 def test_current_task_md_selection_matches_active_then_ready_contract(capsys):
     content = c.TOP_TASK_PATH.read_text(encoding="utf-8")
     tasks = c.parse_top_level_tasks(content)
-    expected = next((task for task in tasks if task["status"] == "ACTIVE"), None)
-    expected = expected or next((task for task in tasks if task["status"] == "READY"), None)
+    active_tasks = [task for task in tasks if task["status"] == "ACTIVE"]
     selected = c.select_task()
+    if len(active_tasks) > 1:
+        # TASK.md 정책(§ 동시에 ACTIVE)상 독립 작업이면 [~] 복수 허용이 정상 상태다.
+        # 이때 select_task()는 임의 선택하지 않고 의도적으로 BLOCKED를 반환한다
+        # (TASK 우선순위 § "판단할 수 없는 충돌은 임의 선택하지 않는다 → BLOCKED").
+        print(f"TASK.md controller selection: BLOCKED ({selected.get('code') if selected else 'NONE'})")
+        assert selected is not None
+        assert selected.get("code") == "MULTIPLE_ACTIVE_TASKS"
+        return
+    expected = active_tasks[0] if active_tasks else next(
+        (task for task in tasks if task["status"] == "READY"), None
+    )
     print(f"TASK.md controller selection: {selected['task_id'] if selected else 'NONE'}")
     assert selected is not None
     assert expected is not None
