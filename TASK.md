@@ -1472,7 +1472,7 @@ PINNING:
 - TASK_BLOB_SHA: 331f93325304cd234257787a079c66184a5eb332
 - WORK_BRANCH: 구현 `cursor/ai-grant-full-recall-b14b` (PR #277) + 수집소스 `cursor/mail012-kised-iitp-collect-7dc1` (PR #281); closeout `docs/mail-012-finalize`
 - origin: https://github.com/pds2225/mail.git (일치)
-- 현재 기준: `origin/main=cf80245b460ae166429aac0d57772960293f2c81`; PR #277/#281 모두 squash merge 완료
+- 현재 기준: `origin/main=36a43c67d464f1e52ec4e0c7cd697326357d1207`; PR #277/#281 및 MAIL-012 closeout PR #302 모두 squash merge 완료
 - REQUEST_SOLVED: YES
 
 이전 예비창업자 AI 공고 PR (적용 여부):
@@ -1578,8 +1578,10 @@ DEPENDS_ON: MAIL-005, MAIL-006 (main 머지됨). MAIL-011과 파일군이 달라
 REQUEST_SOLVED=YES — PR #277(판정 누락 차단)과 PR #281(KISED/IITP 수집소스)이 모두 `origin/main`에 squash merge된 것을 확인했다. 현재 main 기준 focused MAIL-012 회귀검증은 `191 passed`이며, JSON 설정 파싱·Python compile·`recall_zero_gate.py`도 통과했다. 실제 이메일 발송·삭제·대량 라벨 변경·Secret 변경·GHA cron 재활성은 0건이다.
 
 - CLOSEOUT_BRANCH: `docs/mail-012-finalize`
-- MAIN_SHA: `cf80245b460ae166429aac0d57772960293f2c81`
+- MAIN_SHA: `36a43c67d464f1e52ec4e0c7cd697326357d1207`
 - IMPLEMENTATION_PRS: #277, #281 (merged)
+- CLOSEOUT_PR: #302 (merged)
+- CLOSEOUT_MERGE_SHA: `36a43c67d464f1e52ec4e0c7cd697326357d1207`
 - FOCUSED_TEST: `python -m pytest -q tests/test_ai_commercialization_grant_recall.py tests/test_fetch_kised_replay.py tests/test_fetch_iitp_replay.py tests/test_kised_iitp_dedup_dates.py tests/test_scoring.py tests/test_prestartup_ai_digest_regression.py tests/test_monitor.py` → 191 passed
 - SAFETY: `monitor.py`·`streamlit_app.py` 미수정, 실제 발송·삭제·라벨 변경 없음, GHA cron 미활성 유지
 - NEXT_READY_TASK: MAIL-013 (이 closeout에서는 시작하지 않음)
