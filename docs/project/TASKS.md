@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — DEPENDS=TASK-021~024 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — DEPENDS=TASK-025 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — DEPENDS=TASK-026 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — DEPENDS=TASK-027 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -40,6 +39,22 @@
 ## RUNNING
 
 ## DONE
+- TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — **ALREADY_DONE**(코드 변경
+  없음). TASK-021~024를 TDD로 진행하며 P0-C 6개 시나리오가 이미 각각 고정 회귀테스트로
+  구축돼 있음을 확인했다: 지연색인→`test_three_business_day_window_recovers_delayed_index_and_weekend`,
+  마감연장→`test_deadline_extension_creates_versioned_delivery_id`(+`test_real_deadline_extension_still_versions_after_reliable_enrich`),
+  지원금변경→`tests/test_monitor.py`의 SUPPORT_AMOUNT_CHANGED 테스트(1457행대),
+  재공고→`tests/test_monitor.py`의 REANNOUNCEMENT 테스트(1305·1433행대) +
+  `test_repost_marker_added_is_reposted`(교차공고 duplicate_type),
+  다기관중복→`test_same_title_different_source_is_multi_agency_duplicate` +
+  `test_kised_kstartup_same_pbancsn_cross_dedup` + `test_dedup_keeps_primary_source`,
+  단순오탈자→`tests/test_monitor.py`의 MINOR_TEXT_CHANGE 테스트(1367·1449행대) +
+  `test_plain_typo_fix_is_not_cancelled`. 6개 시나리오를 한 번에 재실행해 실패 메시지가
+  명확한지 확인: `test_notice_version_recovery.py test_monitor.py
+  test_duplicate_type_classification.py test_kised_iitp_dedup_dates.py
+  test_version_delivery_integration.py test_monitor_ops.py` 178건 통과, 회귀 없음
+  (2026-09-19). 이미 분산 구축된 테스트를 하나의 파일로 재조직하는 작업은 실질 가치가
+  없어 하지 않는다(관련 없는 리팩터링 금지).
 - TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — 기존 material-field
   diff 메커니즘(`_NOTICE_VERSION_MATERIAL_FIELDS`: title/deadline/application_period/
   target/support/region/application_url — MAIL-P0C-01/03에서 이미 구현)이 스펙 material
