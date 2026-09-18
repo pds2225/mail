@@ -1824,9 +1824,11 @@ PINNING: TASK_START_SHA=7e9ce43870da7a7457650d76b9ba387f6d50efc3 (origin/main)
 WORK_BRANCH=feat/mail-p0c01-recent-3bizdays (새 격리 worktree `mail-014-p0c01`)
 MAIL-016(PR #304, feat/mail-016-company-business-years-gate)과 `mail_core/matching/company_match.py`는 건드리지 않는다.
 
-**슬라이스 진행상황 (2026-09-18):**
-- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료, 구현 PR 생성 대기(`docs/project/TASKS.md` DONE으로 갱신).
+**슬라이스 진행상황·병합 증거 (2026-09-18):**
+- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료. 구현 PR #307이 저장소 자동머지 봇(`app/github-actions`)에 의해 squash-merge되어 `origin/main`에 반영됨. **MAIN_SHA=202c7df70a65ea864455b704f32776ba1d9f24d8**.
 - 구현 중 발견: 다른 세션이 "Auto Dev Controller 하드닝" 작업 도중 이 TASK를 이미 상당 부분 구현해 두고(커밋 `163518f3`, dangling·미푸시·미병합) 일시중단한 상태였다. 코드를 검토한 뒤 재구현 대신 그 패치를 그대로 적용해 중복 작업을 피했다(기존 미반영 작업 보존 원칙).
+- FOCUSED_TEST: `test_notice_version_recovery.py` 23건(신규 4건) + focused 관련 스위트 185건 통과. 전체 `python -m pytest -q` 1456 passed/1 skipped/1 failed(무관 기존 실패 `test_sites_json_public_priority_caps`, cp949 이슈). 신규 회귀 없음.
+- 참고: PR #307은 두 커밋(구현 86508c77 + 문서 e6ba27fd)이 있었으나, 자동머지 봇이 첫 커밋 기준 CI 통과 직후 곧바로 squash-merge해 두 번째(전체 pytest 기록) 커밋 내용은 main에 반영되지 않았다. 이 closeout 커밋이 그 기록을 main에 보완한다.
 - MAIL-014의 나머지 23개 원자 TASK(TASK-022~044)는 이번 슬라이스에서 시작하지 않는다. MAIL-014 전체는 계속 `[~]` 진행 중으로 유지한다.
 
 ### 8-5. MUST — 반드시 구현
