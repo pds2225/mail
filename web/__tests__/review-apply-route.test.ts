@@ -1,0 +1,131 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({
+  token: "",
+  getRepoTextFile: vi.fn(),
+  putRepoTextFile: vi.fn(),
+}));
+
+vi.mock("@/lib/apply-auth", () => ({
+  applyAuthError: vi.fn(() => null),
+  githubApplyToken: vi.fn(() => mocks.token),
+}));
+
+vi.mock("@/lib/github-apply", () => ({
+  getRepoTextFile: mocks.getRepoTextFile,
+  githubBranch: vi.fn(() => "main"),
+  putRepoTextFile: mocks.putRepoTextFile,
+}));
+
+import { POST } from "@/app/api/review/apply/route";
+
+function request(body: unknown): Request {
+  return new Request("https://example.test/api/review/apply", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+const existingFeedback = `${JSON.stringify({
+  id: "notice-1",
+  verdict: "X",
+  tier: "C",
+  source: "mail-feedback",
+  title: "",
+  first_seen: "2026-01-01T00:00:00Z",
+  last_seen: "2026-01-01T00:00:00Z",
+})}\n`;
+
+describe("POST /api/review/apply", () => {
+  beforeEach(() => {
+    mocks.token = "";
+    mocks.getRepoTextFile.mockReset();
+    mocks.putRepoTextFile.mockReset();
+    mocks.getRepoTextFile.mockResolvedValue({ sha: "base-sha", text: existingFeedback });
+    mocks.putRepoTextFile.mockResolvedValue({
+      sha: "commit-sha",
+      htmlUrl: "https://github.com/pds2225/mail/blob/main/data/golden/feedback_labels.jsonl",
+      commitUrl: "https://github.com/pds2225/mail/commit/commit-sha",
+    });
+  });
+
+  it("returns a pending batch result without a token (does not commit)", async () => {
+    const response = await POST(
+      request({
+        items: [
+          { id: "notice-1", title: "AI 지원사업", verdict: "O" },
+          { id: "notice-2", title: "제조 바우처", verdict: "X" },
+        ],
+      }),
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.applied).toBe(false);
+    expect(data.githubCommitUrl).toContain("filename=config-pending.json");
+    expect(data.notice).toContain("2건");
+    expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
+  });
+
+  it("writes every selected item in a single commit when a token is present", async () => {
+    mocks.token = "fixture-token";
+    const response = await POST(
+      request({
+        items: [
+          { id: "notice-1", title: "AI 지원사업", verdict: "O" },
+          { id: "notice-2", title: "제조 바우처", verdict: "X" },
+        ],
+      }),
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.applied).toBe(true);
+    expect(mocks.getRepoTextFile).toHaveBeenCalledTimes(1);
+    expect(mocks.putRepoTextFile).toHaveBeenCalledTimes(1);
+
+    const written = mocks.putRepoTextFile.mock.calls[0][0];
+    expect(written.message).toContain("2건");
+    const rows = written.text
+      .trim()
+      .split("\n")
+      .map((line: string) => JSON.parse(line));
+    const byId = Object.fromEntries(rows.map((row: { id: string }) => [row.id, row]));
+    expect(byId["notice-1"].verdict).toBe("O");
+    expect(byId["notice-1"].first_seen).toBe("2026-01-01T00:00:00Z");
+    expect(byId["notice-2"].verdict).toBe("X");
+    expect(byId["notice-2"].title).toBe("제조 바우처");
+  });
+
+  it("still accepts a single legacy {id,title,verdict} body", async () => {
+    mocks.token = "fixture-token";
+    const response = await POST(request({ id: "notice-3", title: "단일 항목", verdict: "O" }));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.applied).toBe(true);
+    const written = mocks.putRepoTextFile.mock.calls[0][0];
+    expect(written.message).toContain("O notice-3");
+  });
+
+  it("rejects a payload with no valid items", async () => {
+    const response = await POST(request({ items: [{ id: "bad id with spaces", verdict: "O" }] }));
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.ok).toBe(false);
+    expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
+  });
+
+  it("returns 500 without claiming success when GitHub read fails", async () => {
+    mocks.token = "fixture-token";
+    mocks.getRepoTextFile.mockRejectedValue(new Error("fixture network failure"));
+    const response = await POST(request({ items: [{ id: "notice-1", title: "x", verdict: "O" }] }));
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data.ok).toBe(false);
+    expect(data.applied).not.toBe(true);
+  });
+});

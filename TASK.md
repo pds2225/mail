@@ -32,6 +32,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [~] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
+[x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
 
 
 ---
@@ -2099,6 +2100,75 @@ Vercel 웹 미리보기 실행 암호를 없앤다.
 ### 8-10. DONE
 
 REQUEST_SOLVED=NO — 코드 변경 완료. CI와 실제 Vercel Preview 검증 후 완료 처리한다.
+
+---
+
+## MAIL-018
+
+### 8-1. 사용자 원문 요청
+
+> 누를때마다 커밋하지말고 사이트에 한번 선택 체크한거만에 커밋
+> 공고검수 사이트카테고리
+
+### 8-2. 비개발자용 1줄 요약
+
+공고검수 화면에서 O/X 누를 때마다 따로따로 저장하지 말고, 여러 개 고른 뒤 한 번에 저장한다.
+
+### 8-3. 사용자 최종 결과
+
+- `/review`(공고 검수) 화면에서 O/X를 누르면 일단 화면에만 표시(선택 상태)되고, 그 즉시 GitHub에
+  커밋되지 않는다.
+- 여러 건을 O/X로 선택한 뒤 "선택 저장" 버튼을 한 번 누르면, 선택한 것 전부가 한 번의 GitHub
+  커밋으로 저장된다.
+- 토큰이 없는 게스트 모드(pending 커밋 URL 안내)도 배치로 동작한다.
+- 기존에 이미 저장된 단일 항목 pending 페이로드(`resource: "review", item: {...}`)도 계속
+  처리 가능해야 한다(하위호환).
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-018
+- TASK_START_SHA: ea426e81512c77364b2827ef0e95831964fd1200 (origin/main)
+- WORK_BRANCH: feat/mail-018-review-batch-save
+
+### 8-5. MUST
+
+- [ ] `web/app/review/page.tsx`: O/X 클릭은 로컬 선택 상태만 바꾸고, "선택 저장" 버튼으로만
+      실제 저장(커밋) 요청을 보낸다.
+- [ ] `web/app/api/review/apply/route.ts`: 여러 항목(`items: []`)을 받아 GitHub 파일을
+      한 번만 읽고 한 번만 커밋한다(항목마다 별도 커밋 금지).
+- [ ] `scripts/apply_admin_payload.py`의 `_apply_review()`: 토큰 없는 게스트 모드의 pending
+      payload도 여러 항목을 한 번에 적용할 수 있게 하고, 기존 단일 `item` 형태도 계속 처리한다.
+- [ ] 실제 이메일 발송·라벨 변경·삭제는 하지 않는다.
+
+### 8-6. KEEP
+
+- 기존 단일 항목 저장 payload 형태(`item`)도 계속 읽을 수 있게 한다(하위호환, REMOVE 금지).
+- 검수 화면의 O/X 판정 의미·데이터 저장 위치(`data/golden/feedback_labels.jsonl`)는 그대로.
+- 관리 암호(`apply` 인증) 흐름은 그대로 유지.
+
+### 8-7. REMOVE
+
+없음.
+
+### 8-8. FORBIDDEN
+
+- 실제 이메일 발송·삭제·대량 라벨 변경.
+- 관련 없는 화면·API 리팩터링.
+- Secret/토큰 출력.
+
+### 8-9. VERIFY
+
+- [x] `python -m pytest tests/test_apply_admin_payload.py` — 5건 통과(신규 배치 2건 포함)
+- [x] `cd web && npx vitest run __tests__/review-apply-route.test.ts` — 신규 5건 통과
+- [x] `cd web && npx vitest run` — 전체 10개 파일 43건 통과, 회귀 없음
+- [x] `cd web && npx tsc --noEmit` — 통과
+- [x] `cd web && npx next build` — 프로덕션 빌드 통과(`/review`, `/api/review/apply` 포함)
+
+### 8-10. DONE
+
+REQUEST_SOLVED=YES — `/review` 화면 O/X 클릭은 이제 로컬 선택만 바꾸고, "선택 저장" 버튼을
+눌러야 실제 GitHub 커밋 1건으로 저장된다(여러 건을 골라도 커밋은 1번). 토큰 없는 게스트
+모드·기존 단일 항목 pending 페이로드 하위호환도 유지. 실제 이메일 발송·라벨 변경·삭제 없음.
 
 ---
 
