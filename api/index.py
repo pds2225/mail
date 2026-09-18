@@ -27,17 +27,16 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def _authorized(self, *, allow_send: bool) -> tuple[bool, str]:
-        """Fail closed for real sends; dry-run still honors MONITOR_SECRET when set."""
+        """Dry-run is passwordless; real-send paths remain fail-closed."""
+        if not allow_send:
+            return True, ""
+
         secret = os.environ.get("MONITOR_SECRET", "").strip()
         auth = self.headers.get("Authorization", "")
         expected = f"Bearer {secret}" if secret else ""
-        if allow_send:
-            if not secret:
-                return False, "MONITOR_SECRET must be configured for real sends"
-            if not hmac.compare_digest(auth, expected):
-                return False, "Unauthorized"
-            return True, ""
-        if secret and not hmac.compare_digest(auth, expected):
+        if not secret:
+            return False, "MONITOR_SECRET must be configured for real sends"
+        if not hmac.compare_digest(auth, expected):
             return False, "Unauthorized"
         return True, ""
 

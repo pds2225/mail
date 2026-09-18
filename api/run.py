@@ -1,9 +1,8 @@
 """Vercel Python Serverless Function — 공고 모니터 HTTP 트리거 (safe-by-default)
 
 POST /api/run
-  Header: Authorization: Bearer <MONITOR_SECRET>
-    - dry-run: MONITOR_SECRET 이 설정돼 있으면 필수
-    - 실발송: 항상 거부(501). /tmp state 로는 멱등이 불가능하다.
+  - dry-run: 실행 암호 없이 미리보기 가능
+  - 실발송: MONITOR_SECRET 인증 대상이지만 항상 거부(501). /tmp state 로는 멱등이 불가능하다.
   Body(JSON, 모두 선택):
     {
       "dry_run": true,           # 기본 true — 미지정/true 면 미리보기만(발송 없음)
@@ -90,17 +89,16 @@ class handler(BaseHTTPRequestHandler):
     """Vercel Python serverless handler (safe-by-default)."""
 
     def _authorized(self, *, allow_send: bool) -> tuple[bool, str]:
-        """Fail closed for real sends; dry-run still honors MONITOR_SECRET when set."""
+        """Dry-run is passwordless; real-send paths remain fail-closed."""
+        if not allow_send:
+            return True, ""
+
         secret = os.environ.get("MONITOR_SECRET", "").strip()
         auth = self.headers.get("Authorization", "")
         expected = f"Bearer {secret}" if secret else ""
-        if allow_send:
-            if not secret:
-                return False, "MONITOR_SECRET must be configured for real sends"
-            if not hmac.compare_digest(auth, expected):
-                return False, "Unauthorized"
-            return True, ""
-        if secret and not hmac.compare_digest(auth, expected):
+        if not secret:
+            return False, "MONITOR_SECRET must be configured for real sends"
+        if not hmac.compare_digest(auth, expected):
             return False, "Unauthorized"
         return True, ""
 

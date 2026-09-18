@@ -1,4 +1,4 @@
-"""HTTP /api/run send gates — auth fail-closed + persist_seen required."""
+"""HTTP /api/run gates — passwordless dry-run + real-send fail-closed."""
 from __future__ import annotations
 
 import importlib.util
@@ -164,6 +164,17 @@ def test_api_run_rejects_serverless_real_send_even_when_authorized(monkeypatch):
 
 def test_api_run_dry_run_ok_without_secret(monkeypatch):
     index_mod = _load_index_module(monkeypatch)
+    calls: list[dict] = []
+    _install_fake_monitor(monkeypatch, calls)
+    h = _FakeHandler(index_mod, {"dry_run": True})
+    h.do_POST()
+    assert h._responses[0][0] == 200
+    assert calls[0]["allow_send"] is False
+
+
+def test_api_run_dry_run_ignores_configured_monitor_secret(monkeypatch):
+    """웹 미리보기는 MONITOR_SECRET 설정 여부와 무관하게 암호 없이 실행한다."""
+    index_mod = _load_index_module(monkeypatch, MONITOR_SECRET="s3cret")
     calls: list[dict] = []
     _install_fake_monitor(monkeypatch, calls)
     h = _FakeHandler(index_mod, {"dry_run": True})

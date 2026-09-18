@@ -16,8 +16,6 @@ export default function RunPage() {
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<RunResult | null>(null);
   const [error, setError] = useState("");
-  const [secret, setSecret] = useState("");
-  const [needsSecret, setNeedsSecret] = useState(false);
 
   useEffect(() => {
     fetch("/api/config")
@@ -41,18 +39,12 @@ export default function RunPage() {
     setError("");
     setResult(null);
     try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (secret.trim()) headers.Authorization = `Bearer ${secret.trim()}`;
       const response = await fetch("/api/run", {
         method: "POST",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dry_run: true, include_raw_all: false, persist_seen: false }),
       });
       const payload = await response.json();
-      if (response.status === 401) {
-        setNeedsSecret(true);
-        throw new Error("실행 암호가 필요한 환경입니다.");
-      }
       if (!response.ok || !payload.ok) throw new Error(payload.error || "실행에 실패했습니다.");
       setResult((payload.result || {}) as RunResult);
     } catch (e) {
@@ -100,20 +92,7 @@ export default function RunPage() {
 
       <section className="card">
         <h2 className="card-title">지금 미리보기</h2>
-        <p className="page-desc">현재 설정으로 공고를 수집·판정하지만 SMTP 발송과 seen 상태 저장은 하지 않습니다.</p>
-        {needsSecret ? (
-          <div className="field mt">
-            <label className="label" htmlFor="run-secret">실행 암호</label>
-            <input
-              id="run-secret"
-              type="password"
-              className="input"
-              value={secret}
-              onChange={(event) => setSecret(event.target.value)}
-              autoComplete="off"
-            />
-          </div>
-        ) : null}
+        <p className="page-desc">실행 암호 없이 현재 설정으로 공고를 수집·판정합니다. SMTP 발송과 seen 상태 저장은 하지 않습니다.</p>
         <div className="row mt">
           <button className="btn btn-primary" type="button" onClick={runPreview} disabled={running}>
             {running ? "실행 중…" : "미리보기 실행"}
