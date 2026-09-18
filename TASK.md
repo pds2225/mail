@@ -468,14 +468,20 @@ monitor 파싱 유틸 import 실패 시에도 unknown으로 안전 폴백한다.
 - [x] `python -m pytest tests/test_company_match_business_years.py -v` — 신규 14건 전체 통과
 - [x] `python -m pytest tests/test_company_match.py tests/test_company_match_multi_region.py -q` — 기존 39건 회귀 없음
 - [x] `python -m pytest tests/test_5field_casematrix.py tests/test_core_sources_specialize.py tests/test_digest_eight_columns.py -q` — 업력 관련 기존 스위트 191건 회귀 없음
-- [ ] 전체 `python -m pytest -q` 결과 반영 대기(백그라운드 실행 중)
+- [x] 전체 `python -m pytest -q` — 1446 passed, 6 skipped, 1 failed(542.88s). 실패 1건
+      `test_kstartup_collect_policy.py::test_sites_json_public_priority_caps` 은
+      `config/sites.json`을 인코딩 미지정으로 읽어 Windows cp949 로 디코딩하다 실패하는
+      기존 환경 이슈로, 이 브랜치가 건드리지 않은 파일·테스트다
+      (`git log -1 -- tests/test_kstartup_collect_policy.py config/sites.json` = 19079b7f,
+      MAIL-016 커밋 이전). MAIL-016과 무관한 기존 실패로 기록하고 이번 범위에서 수정하지 않는다.
 - [x] 실제 발송 없음, `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
 
 ### 8-16. DONE
 
 REQUEST_SOLVED=YES — `company_business_years_status()`를 신규 구현해 그룹 정책과 완전히
-분리된 기업별 업력 Hard Gate를 추가했다. 신규 회귀 14건 + 관련 기존 스위트 230건 통과,
-회귀 없음. 실제 발송·라벨 변경·삭제 없음.
+분리된 기업별 업력 Hard Gate를 추가했다. 신규 회귀 14건 + 관련 기존 스위트 230건 +
+전체 pytest 1446건 통과(무관 기존 실패 1건 별도 기록), 회귀 없음. 실제 발송·라벨 변경·
+삭제 없음. PR #304(main 미병합, 지시대로 보류).
 
 ---
 
