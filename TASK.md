@@ -1825,8 +1825,12 @@ WORK_BRANCH=feat/mail-p0c01-recent-3bizdays (새 격리 worktree `mail-014-p0c01
 MAIL-016(PR #304, feat/mail-016-company-business-years-gate)과 `mail_core/matching/company_match.py`는 건드리지 않는다.
 
 **슬라이스 진행상황 (2026-09-18):**
-- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료, 구현 PR 생성 대기(`docs/project/TASKS.md` DONE으로 갱신).
+- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료, PR #307 생성됨(main 미병합, `docs/project/TASKS.md` DONE으로 갱신).
 - 구현 중 발견: 다른 세션이 "Auto Dev Controller 하드닝" 작업 도중 이 TASK를 이미 상당 부분 구현해 두고(커밋 `163518f3`, dangling·미푸시·미병합) 일시중단한 상태였다. 코드를 검토한 뒤 재구현 대신 그 패치를 그대로 적용해 중복 작업을 피했다(기존 미반영 작업 보존 원칙).
+- 전체 `python -m pytest -q` 결과: 1456 passed, 1 skipped, **1 failed**(799.69s). 실패한
+  `tests/test_kstartup_collect_policy.py::test_sites_json_public_priority_caps`는
+  `config/sites.json`을 cp949로 읽다 실패하는 기존 환경 이슈(마지막 수정 `19079b7f`,
+  이 브랜치가 건드리지 않음)로, MAIL-P0C-01과 무관한 기존 실패로 기록한다. 신규 실패 없음.
 - MAIL-014의 나머지 23개 원자 TASK(TASK-022~044)는 이번 슬라이스에서 시작하지 않는다. MAIL-014 전체는 계속 `[~]` 진행 중으로 유지한다.
 
 ### 8-5. MUST — 반드시 구현

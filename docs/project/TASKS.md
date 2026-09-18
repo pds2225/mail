@@ -43,7 +43,7 @@
 ## RUNNING
 
 ## DONE
-- TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — 주말만 걸러내던 영업일 계산에 설정 가능한 공휴일 목록(`business_holidays`, `MONITOR_BUSINESS_HOLIDAYS` env)을 추가하고, `load_settings()`의 `days_back` 기본값을 1→3으로 맞춰 `execute_monitor()`의 실제 런타임 폴백과 불일치를 없앴다. 기존 dangling WIP 커밋(`163518f3`, 다른 세션이 컨트롤러 하드닝으로 중단)을 검토 후 재사용해 재구현을 피했다. `application_url`/`region` 변경도 버전 판정 대상 필드로 추가. 회귀: `test_notice_version_recovery.py` 23건(신규 4건 포함) + focused 185건 통과, 회귀 없음(2026-09-18). 전체 pytest 결과는 구현 PR에서 갱신.
+- TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — 주말만 걸러내던 영업일 계산에 설정 가능한 공휴일 목록(`business_holidays`, `MONITOR_BUSINESS_HOLIDAYS` env)을 추가하고, `load_settings()`의 `days_back` 기본값을 1→3으로 맞춰 `execute_monitor()`의 실제 런타임 폴백과 불일치를 없앴다. 기존 dangling WIP 커밋(`163518f3`, 다른 세션이 컨트롤러 하드닝으로 중단)을 검토 후 재사용해 재구현을 피했다. `application_url`/`region` 변경도 버전 판정 대상 필드로 추가. 회귀: `test_notice_version_recovery.py` 23건(신규 4건 포함) + focused 185건 + 전체 pytest 1456 passed/1 skipped(무관 기존 실패 1건 `test_sites_json_public_priority_caps`, cp949 이슈, 이 브랜치 무관) 통과, 신규 회귀 없음(2026-09-18). PR #307(main 미병합).
 - TASK-G01 [P0]: skip_gate 기준일 분리 + skip 시 SystemExit(0) 제거·coverage 유지 + am/pm 회차. PR #217 계열. pytest test_mail_review_ops_fixes 통과 (2026-07-30).
 - TASK-G02 [P0]: 08:54 발송처 추적 → `docs/project/SENDER_0854_TRACE.md` (주체=monitor.yml schedule, 끄기 절차 기록, 실삭제 없음).
 - TASK-G03 [P0]: 기업마당 0건 fail-closed + DATA_GO_KR_KEY 경고 + detector `p0_always`. 테스트 추가.
