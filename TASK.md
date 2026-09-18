@@ -1951,9 +1951,11 @@ MAIL-016(PR #304, feat/mail-016-company-business-years-gate)과 `mail_core/match
 - 참고: PR #307은 두 커밋(구현 86508c77 + 문서 e6ba27fd)이 있었으나, 자동머지 봇이 첫 커밋 기준 CI 통과 직후 곧바로 squash-merge해 두 번째(전체 pytest 기록) 커밋 내용은 main에 반영되지 않았다. 이 closeout 커밋이 그 기록을 main에 보완한다.
 - MAIL-014의 나머지 23개 원자 TASK(TASK-022~044)는 이번 슬라이스에서 시작하지 않는다. MAIL-014 전체는 계속 `[~]` 진행 중으로 유지한다.
 
-**슬라이스 2 (2026-09-19):** TASK-022 = MAIL-P0C-02(Canonical ID·중복 유형 분류) 착수.
+**슬라이스 2 (2026-09-19):** TASK-022 = MAIL-P0C-02(Canonical ID·중복 유형 분류) 구현·테스트 완료.
 WORK_BRANCH=feat/mail-p0c02-canonical-dedup (새 격리 워크트리 `mail-022-canonical-dedup`).
-TASK_START_SHA=e6a4d79e772387464cf2704de8723bd5ffc41b3d (origin/main).
+TASK_START_SHA=e6a4d79e772387464cf2704de8723bd5ffc41b3d (origin/main). 회귀 179건(신규 10건 포함)
+통과. 사용자 지시(2026-09-19)로 승인 요청 없이 MAIL-014 P0 큐(TASK-023~030)를 계속 진행하며,
+P1 시작 전(TASK-030 완료 시)에는 반드시 멈추고 보고한다.
 
 ### 8-5. MUST — 반드시 구현
 

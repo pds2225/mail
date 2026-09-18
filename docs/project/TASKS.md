@@ -40,9 +40,9 @@
 - TASK-044: loop:coding-fix MAIL-P1C-03 [P1] 통합 회귀·dry-run — DEPENDS=TASK-037,TASK-041,TASK-043 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 
 ## RUNNING
-- TASK-022: loop:coding-fix MAIL-P0C-02 [P0] Canonical ID·중복 유형 분류 — DEPENDS=TASK-021 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md` — WORK_BRANCH=feat/mail-p0c02-canonical-dedup — 착수 2026-09-19
 
 ## DONE
+- TASK-022: loop:coding-fix MAIL-P0C-02 [P0] Canonical ID·중복 유형 분류 — 기존 `generate_canonical_notice_id`(공고번호>URL>제목+기관+연도+마감)를 그대로 재사용하고, `classify_duplicate_type()`을 신규 구현해 `dedup_items()`의 3개 충돌판정 지점(canonical_id/첨부해시/제목유사도)에 배선했다. 살아남는 item마다 `duplicate_type`(NEW/EXACT_DUPLICATE/MODIFIED/REPOSTED/MULTI_AGENCY_DUPLICATE)을 기록. REPOSTED 판정은 `_classify_notice_change()`와 동일한 재공고/추가모집 리터럴 재사용. 판정 로직 자체(어느 쪽 유지)는 변경 없음. 회귀: `tests/test_duplicate_type_classification.py` 신규 10건 + test_monitor/test_monitor_ops/test_kised_iitp_dedup_dates/test_notice_version_recovery 169건 통과, 회귀 없음(2026-09-19).
 - TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — 주말만 걸러내던 영업일 계산에 설정 가능한 공휴일 목록(`business_holidays`, `MONITOR_BUSINESS_HOLIDAYS` env)을 추가하고, `load_settings()`의 `days_back` 기본값을 1→3으로 맞춰 `execute_monitor()`의 실제 런타임 폴백과 불일치를 없앴다. 기존 dangling WIP 커밋(`163518f3`, 다른 세션이 컨트롤러 하드닝으로 중단)을 검토 후 재사용해 재구현을 피했다. `application_url`/`region` 변경도 버전 판정 대상 필드로 추가. 회귀: `test_notice_version_recovery.py` 23건(신규 4건 포함) + focused 185건 + 전체 pytest 1456 passed/1 skipped(무관 기존 실패 1건 `test_sites_json_public_priority_caps`, config/sites.json cp949 이슈, 이 작업과 무관) 통과, 신규 회귀 없음(2026-09-18). PR #307 squash-merge → `origin/main` `202c7df70a65ea864455b704f32776ba1d9f24d8`.
 - TASK-G01 [P0]: skip_gate 기준일 분리 + skip 시 SystemExit(0) 제거·coverage 유지 + am/pm 회차. PR #217 계열. pytest test_mail_review_ops_fixes 통과 (2026-07-30).
 - TASK-G02 [P0]: 08:54 발송처 추적 → `docs/project/SENDER_0854_TRACE.md` (주체=monitor.yml schedule, 끄기 절차 기록, 실삭제 없음).
