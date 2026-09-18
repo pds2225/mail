@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — DEPENDS=TASK-025 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — DEPENDS=TASK-026 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — DEPENDS=TASK-027 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — DEPENDS=TASK-026~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -39,6 +38,23 @@
 ## RUNNING
 
 ## DONE
+- TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — 신규 구현. 새 모듈
+  `mail_core/operations/notice_pipeline_trace.py`(record_stage/flatten_records/
+  append_notice_traces/iter_notice_traces, source_run_ledger.py·filter_trace.py와
+  동일한 best-effort JSONL append 패턴)를 `execute_monitor()` 6곳에 배선했다: 중복제거
+  직후(FETCH+NORMALIZE, NORMALIZE는 별도 단계 함수가 없어 FETCH와 함께 기록), 상세추출
+  재시도 직후(ENRICH, detail_extraction.status 기반), 그룹별 diagnostics 직후(EVALUATE,
+  included=SUCCESS/review·region_unknown=PARTIAL/excluded=FAILED+reason_code), 기업매칭
+  직후(COMPANY_MATCH, 미연결/비활성=SKIPPED·매칭=SUCCESS·강등=PARTIAL — 기존
+  refine_included_by_company의 하위호환 pass-through 시맨틱 그대로 반영), 다이제스트
+  조립 직후(SUMMARIZE, 미리보기=SKIPPED·실제발송조립=SUCCESS). 저장은 기존
+  commit_notice_versions 와 동일하게 `effective_send and persist_seen` 게이트를
+  공유해 dry-run/테스트에서 디스크에 아무것도 쓰지 않는다(기존 발송 안전정책과 일치).
+  기존 흐름(반환값·제어흐름)은 변경 없음, 모든 기록 지점을 try/except로 감싸 실패해도
+  발송을 막지 않는다. 민감정보 없음(notice_id/stage/status/error_code(80자 절단)/
+  timestamp만). 테스트: `tests/test_notice_pipeline_trace.py` 신규 12건(모듈 단위 8건 +
+  파이프라인 통합 2건: 전체 단계 기록 확인·EVALUATE FAILED reason_code 확인) + 관련
+  스위트 220건 통과, 회귀 없음(2026-09-19).
 - TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — **ALREADY_DONE**(코드 변경
   없음). TASK-021~024를 TDD로 진행하며 P0-C 6개 시나리오가 이미 각각 고정 회귀테스트로
   구축돼 있음을 확인했다: 지연색인→`test_three_business_day_window_recovers_delayed_index_and_weekend`,

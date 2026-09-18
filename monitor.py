@@ -7589,6 +7589,16 @@ def execute_monitor(
     if _RawStore is not None:
         _RAW_STORE = _RawStore.from_settings(settings, run_day=now.date())
 
+    # MAIL-P0D-01: 공고별 파이프라인 단계 추적(Fetch→Enrich→Normalize→Evaluate→
+    # Company Match→Summarize). best-effort — 기록 실패가 발송 흐름을 막지 않는다.
+    from mail_core.operations.notice_pipeline_trace import (
+        append_notice_traces as _trace_append,
+        flatten_records as _trace_flatten,
+        record_stage as _trace_record,
+    )
+    _notice_trace: dict[str, dict] = {}
+    _trace_run_id = now.strftime("%Y%m%dT%H%M%SZ")
+
     # ① 전체 수집
     _fetch_outcomes: dict[str, dict] = {}
     all_items = fetch_all(sites, outcomes=_fetch_outcomes)
@@ -7650,6 +7660,14 @@ def execute_monitor(
     deduped = detect_possible_duplicates(deduped)
     possible_dup_count = sum(1 for it in deduped if it.get("_possible_duplicate"))
 
+    # MAIL-P0D-01: FETCH/NORMALIZE — 중복제거까지 살아남은 후보는 수집·정규화가 끝난 것.
+    try:
+        for _it in deduped:
+            _trace_record(_notice_trace, _it.get("id", ""), "FETCH", "SUCCESS")
+            _trace_record(_notice_trace, _it.get("id", ""), "NORMALIZE", "SUCCESS")
+    except Exception:
+        pass
+
     # ③ 신규 + 최근 N영업일 재검사 + 수정/연장/재공고 버전 판정
     # 상세 enrich → 추출 재시도 → 버전 분류 순서 고정.
     # classify 를 retry 앞에 두면 FETCH 실패 스냅샷으로 허위 UPDATED(@vN) 재발송이 난다.
@@ -7695,6 +7713,19 @@ def execute_monitor(
             )
     except Exception as e:
         log.warning("extraction retry 실패(무시·분류 계속): %s", e)
+
+    # MAIL-P0D-01: ENRICH — 상세 추출 상태(detail_extraction.status) 기준으로 기록.
+    try:
+        for _it in enriched_candidates:
+            _de_status = str((_it.get("detail_extraction") or {}).get("status") or "")
+            if _de_status in _DETAIL_FAILURE_STATUSES:
+                _trace_record(_notice_trace, _it.get("id", ""), "ENRICH", "FAILED", error_code=_de_status)
+            elif _de_status:
+                _trace_record(_notice_trace, _it.get("id", ""), "ENRICH", "SUCCESS")
+            else:
+                _trace_record(_notice_trace, _it.get("id", ""), "ENRICH", "PARTIAL", error_code="NO_DETAIL_STATUS")
+    except Exception:
+        pass
 
     new_items, notice_version_updates = classify_notice_versions(
         enriched_candidates, seen_ids, notice_versions,
@@ -7899,6 +7930,10 @@ def execute_monitor(
     if not filtered_new:
         if persist_seen and _ALLOW_PERSIST_SEEN:
             commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
+            try:
+                _trace_append(_trace_flatten(_trace_run_id, _notice_trace))
+            except Exception:
+                pass
         log.info("처리 대상 없음. 종료.")
         return _with_raw_store_stats({
             "ok": True,
@@ -7937,6 +7972,20 @@ def execute_monitor(
     preview_groups: list[dict] = []
     for group in groups:
         diagnostics = filter_for_group_with_diagnostics(filtered_new, group)
+        _trace_gid = str(group.get("id") or group.get("name") or "")
+        # MAIL-P0D-01: EVALUATE — 그룹별 판정 결과를 그대로 기록(재계산하지 않는다).
+        try:
+            for _it in diagnostics["included"]:
+                _trace_record(_notice_trace, _it.get("id", ""), "EVALUATE", "SUCCESS", group_id=_trace_gid)
+            for _it in diagnostics["review"]:
+                _trace_record(_notice_trace, _it.get("id", ""), "EVALUATE", "PARTIAL", group_id=_trace_gid, error_code="REVIEW_NEEDED")
+            for _it in diagnostics["region_unknown"]:
+                _trace_record(_notice_trace, _it.get("id", ""), "EVALUATE", "PARTIAL", group_id=_trace_gid, error_code="REGION_UNKNOWN")
+            for _it in diagnostics["excluded"]:
+                _codes = ",".join(_it.get("exclude_reason_codes") or []) or "EXCLUDED"
+                _trace_record(_notice_trace, _it.get("id", ""), "EVALUATE", "FAILED", group_id=_trace_gid, error_code=_codes)
+        except Exception:
+            pass
         g_items = diagnostics["included"]
         review_items = diagnostics["review"]
         ru_items = diagnostics["region_unknown"]
@@ -7955,7 +8004,28 @@ def execute_monitor(
         if _demoted:
             review_items = review_items + _demoted
             log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
+        # MAIL-P0D-01: COMPANY_MATCH — 미연결/비활성이면 SKIPPED(하위호환 pass-through),
+        # 실제로 돌았으면 매칭=SUCCESS·강등=PARTIAL.
+        try:
+            _cid = group.get("company_id")
+            _cm_ran = bool(settings.get("company_match_enabled")) and bool(_cid) and bool(companies_by_id.get(_cid))
+            if _cm_ran:
+                for _it in g_items:
+                    _trace_record(_notice_trace, _it.get("id", ""), "COMPANY_MATCH", "SUCCESS", group_id=_trace_gid)
+                for _it in _demoted:
+                    _trace_record(_notice_trace, _it.get("id", ""), "COMPANY_MATCH", "PARTIAL", group_id=_trace_gid, error_code="BELOW_THRESHOLD")
+            else:
+                for _it in g_items:
+                    _trace_record(_notice_trace, _it.get("id", ""), "COMPANY_MATCH", "SKIPPED", group_id=_trace_gid)
+        except Exception:
+            pass
         if not deliver:
+            # MAIL-P0D-01: SUMMARIZE — 미리보기는 다이제스트를 만들지 않으므로 SKIPPED.
+            try:
+                for _it in g_items:
+                    _trace_record(_notice_trace, _it.get("id", ""), "SUMMARIZE", "SKIPPED", group_id=_trace_gid, error_code="PREVIEW_MODE")
+            except Exception:
+                pass
             preview_groups.append({
                 "name": group.get("name"),
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
@@ -7983,6 +8053,12 @@ def execute_monitor(
         })
         if deliver:
             summary    = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
+            # MAIL-P0D-01: SUMMARIZE — 다이제스트 본문 조립까지 끝난 공고를 기록.
+            try:
+                for _it in g_items:
+                    _trace_record(_notice_trace, _it.get("id", ""), "SUMMARIZE", "SUCCESS", group_id=_trace_gid)
+            except Exception:
+                pass
             g_norm     = _normalize_group(group)
             req_rgns   = g_norm.get("required_conditions", {}).get("regions", [])
             _or_kws    = g_norm.get("or_keywords", [])
@@ -8073,6 +8149,10 @@ def execute_monitor(
                 include_raw_all=include_raw_all,
             )
         commit_notice_versions(notice_versions, notice_version_updates, seen_ids, now=now)
+        try:
+            _trace_append(_trace_flatten(_trace_run_id, _notice_trace))
+        except Exception:
+            pass
     log.info("=== 완료 ===")
     # 실제 발송분(기업 정밀 컷오프 반영)과 일치하도록 sent_groups 집계 사용
     final_mail_count = sum(g.get("matched_items", 0) for g in sent_groups)
