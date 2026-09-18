@@ -74,6 +74,10 @@ export function validateSiteInput(
     errors.push({ field: "collectorType", level: "error", message: "등록되지 않은 수집 방식입니다." });
   }
 
+  if (typeof input.enabled !== "boolean") {
+    errors.push({ field: "enabled", level: "error", message: "활성 값은 boolean이어야 합니다." });
+  }
+
   const urlLower = url.toLowerCase();
   const dupUrl = existingSites.find((s) => (s.url || "").trim().toLowerCase() === urlLower);
   if (dupUrl) {
@@ -126,7 +130,7 @@ export function validateSiteInput(
     name,
     type: collectorType,
     url,
-    enabled: input.enabled !== false,
+    enabled: input.enabled === true,
     is_aggregator: Boolean(input.isAggregator),
     note: [category, input.note].filter(Boolean).join(" — ").trim() || category,
     ...(needsSelectors ? { selectors: { row: "table tbody tr" } } : {}),

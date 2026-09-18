@@ -36,6 +36,24 @@ describe("site validation", () => {
     expect(r.errors.length).toBeGreaterThan(0);
   });
 
+  it("rejects a non-boolean enabled value", () => {
+    const r = validateSiteInput(
+      {
+        name: "테스트 사이트",
+        url: "https://example.com",
+        category: "기타",
+        collectorType: "html_table",
+        enabled: "false" as unknown as boolean,
+        isAggregator: false,
+        note: "",
+        testCollect: false,
+      },
+      existing,
+    );
+    expect(r.ok).toBe(false);
+    expect(r.errors.some((error) => error.field === "enabled")).toBe(true);
+  });
+
   it("rejects duplicate url", () => {
     const r = validateSiteInput(
       {
