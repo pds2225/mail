@@ -5737,6 +5737,16 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     text = _notice_text(item)
     result = {**item}
     reason_codes: list[str] = []
+    # MAIL-P0D-02: reason_code별 최소 근거(원문 전체 아님, 160자 이내 발췌). 코드마다
+    # 근거를 붙일 수 없는 자리도 있다 — 그 경우 코드만 기록되고 evidence는 비어 있다
+    # (reason_code taxonomy·완전성 검사는 mail_core.operations.reason_code_taxonomy 참조).
+    reason_evidence: dict[str, str] = {}
+
+    def _add_reason(code: str, evidence: str = "") -> None:
+        reason_codes.append(code)
+        if evidence:
+            reason_evidence[code] = _extraction_evidence(evidence)
+
     excluded_keywords: list[str] = []
     soft_excluded_keywords: list[str] = []
     target_type = "unknown"
@@ -5757,7 +5767,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         hard_hits, soft_hits = _split_exclusion_hits(item, code, hits)
         soft_excluded_keywords.extend(soft_hits)
         if hard_hits:
-            reason_codes.append(code)
+            _add_reason(code, ", ".join(hard_hits[:3]))
             excluded_keywords.extend(hard_hits)
             if notice_type == "unknown":
                 if code == "GUIDELINE_OR_MANUAL" and any("매뉴얼" in hit for hit in hard_hits):
@@ -5772,19 +5782,20 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # 제목 앵커: 교육참여기업모집·교육생 모집 등 — EXCLUSION_RULES soft 완화와 무관하게 제외.
     edu_title = norm(item.get("title", ""))
     if _EDUCATION_RECRUIT_TITLE_RE.search(edu_title):
-        reason_codes.append("EDUCATION_ONLY")
-        excluded_keywords.append(_EDUCATION_RECRUIT_TITLE_RE.search(edu_title).group(0))
+        _edu_hit = _EDUCATION_RECRUIT_TITLE_RE.search(edu_title).group(0)
+        _add_reason("EDUCATION_ONLY", _edu_hit)
+        excluded_keywords.append(_edu_hit)
         if notice_type == "unknown":
             notice_type = "education"
 
     # 원본전체용 잡공고·행정고지 판정을 그룹 필터에도 적용(사유코드는 경로별로 분리).
     if is_report_junk(item):
-        reason_codes.append("REPORT_JUNK")
+        _add_reason("REPORT_JUNK")
         excluded_keywords.append("report_junk")
         if notice_type == "unknown":
             notice_type = "general_info"
     if is_admin_noise(item):
-        reason_codes.append("ADMIN_NOISE")
+        _add_reason("ADMIN_NOISE")
         excluded_keywords.append("admin_noise")
         if notice_type == "unknown":
             notice_type = "admin_notice"
@@ -5793,7 +5804,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # 제목 완전일치/링크 스킴만 보므로 본문 우연일치로 진짜 공고를 막지 않는다(위 상수 주석 참조).
     nonnotice_hit = non_notice_reason(item)
     if nonnotice_hit:
-        reason_codes.append("NOT_GRANT_NOTICE")
+        _add_reason("NOT_GRANT_NOTICE", nonnotice_hit)
         excluded_keywords.append(nonnotice_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
@@ -5804,7 +5815,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # review_needed=True 로 표시해 사람이 최종 판단한다.
     amb_hit = ambiguous_notice_reason(item)
     if amb_hit:
-        reason_codes.append("AMBIGUOUS_NOTICE")
+        _add_reason("AMBIGUOUS_NOTICE", amb_hit)
         excluded_keywords.append(amb_hit)
         if notice_type == "unknown":
             notice_type = "general_info"
@@ -5812,7 +5823,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     # [제목 앵커] 위원(개인 전문가) 위촉·모집 공고 — 기업 대상 지원사업이 아니므로 제외.
     committee_hit = _COMMITTEE_TITLE_RE.search(norm(item.get("title", "")))
     if committee_hit:
-        reason_codes.append("COMMITTEE_RECRUITMENT")
+        _add_reason("COMMITTEE_RECRUITMENT", committee_hit.group(0))
         excluded_keywords.append(committee_hit.group(0))
         if notice_type == "unknown":
             notice_type = "general_info"
@@ -5822,13 +5833,13 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     if hard_service_hits:
         excluded_keywords.extend(hard_service_hits)
         if "설명회" in hard_service_hits or any("설명회" in h for h in hard_service_hits):
-            reason_codes.append("INFO_SESSION")
+            _add_reason("INFO_SESSION", ", ".join(hard_service_hits[:3]))
             notice_type = "info_session"
         elif has_primary_support(item):
             # 주된 지원(사업화자금 등)이 있으면 서비스 키워드로 제외하지 않음 (P0-1)
             soft_excluded_keywords.extend(hard_service_hits)
         elif not application_like or ("단독" in text and not priority_keywords):
-            reason_codes.append("LOW_PRIORITY_SERVICE_KEYWORD")
+            _add_reason("LOW_PRIORITY_SERVICE_KEYWORD", ", ".join(hard_service_hits[:3]))
             notice_type = "general_info"
 
     # 설명회가 모집 본체(…설명회 참여기업 모집)이면 hard INFO_SESSION 대신 review 분리.
@@ -5839,14 +5850,14 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         and _INFO_SESSION_AS_RECRUIT_RE.search(title_raw)
         and not _INFO_SESSION_SECONDARY_RE.search(title_raw)
     ):
-        reason_codes.append("INFO_SESSION_REVIEW")
+        _add_reason("INFO_SESSION_REVIEW", title_raw)
         if "설명회" not in soft_excluded_keywords and "설명회" not in excluded_keywords:
             soft_excluded_keywords.append("설명회")
         if notice_type == "unknown":
             notice_type = "info_session"
 
     if smart_info and notice_type in {"education", "info_session", "general_info", "guideline", "manual"}:
-        reason_codes.append("SMART_FACTORY_INFO_ONLY")
+        _add_reason("SMART_FACTORY_INFO_ONLY")
 
     if target_type == "unknown":
         supplier_signal = any(kw in text for kw in _SUPPLIER_ROLE_TERMS)
@@ -5869,21 +5880,21 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
 
     deadline_status = classify_deadline_status(item, today)
     if deadline_status == "closed":
-        reason_codes.append("CLOSED_DEADLINE")
+        _add_reason("CLOSED_DEADLINE", str(item.get("deadline") or item.get("application_period") or ""))
     elif deadline_status == "unknown" and not application_like:
-        reason_codes.append("MISSING_APPLICATION_PERIOD")
+        _add_reason("MISSING_APPLICATION_PERIOD")
 
     applicant_district = g.get("applicant_region_district", APPLICANT_REGION_DISTRICT)
     incheon_engine = uses_incheon_region_engine(group)
     region_info = resolve_region(item, g if group is not None else None)
     if region_info["region_status"] == "not_eligible":
-        reason_codes.append("REGION_NOT_ELIGIBLE")
+        _add_reason("REGION_NOT_ELIGIBLE", str(item.get("region_field") or ""))
     if region_info["district_status"] == "not_eligible":
-        reason_codes.append("DISTRICT_NOT_ELIGIBLE")
+        _add_reason("DISTRICT_NOT_ELIGIBLE", str(item.get("region_field") or ""))
     if region_info["region_status"] == "unknown" or region_info["district_status"] == "unknown":
-        reason_codes.append("LOW_CONFIDENCE")
+        _add_reason("LOW_CONFIDENCE")
     if incheon_engine and "산업단지" in text and "입주기업" in text and applicant_district not in text:
-        reason_codes.append("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
+        _add_reason("ONLY_SPECIFIC_INDUSTRIAL_COMPLEX")
 
     always_srcs = [s.lower() for s in g.get("source_always_include", [])]
     src = (item.get("source", "") + " " + item.get("author", "")).lower()
@@ -5903,7 +5914,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         else:
             region_ok = region_info["region_status"] == "eligible"
         if not region_ok:
-            reason_codes.append("REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN")
+            _add_reason(
+                "REGION_NOT_ELIGIBLE" if region_positively_other else "REGION_UNKNOWN",
+                str(item.get("region_field") or ""),
+            )
 
     excl_kws = [k.lower() for k in g.get("exclude_keywords", []) if k.strip()]
     group_excluded = [k for k in excl_kws if _kw_in_text(text, k)]
@@ -5917,7 +5931,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     hard_group_hits, soft_group_hits = _split_exclusion_hits(item, "GROUP_EXCLUSION", group_excluded)
     soft_excluded_keywords.extend(soft_group_hits)
     if hard_group_hits:
-        reason_codes.append("GROUP_EXCLUSION")
+        _add_reason("GROUP_EXCLUSION", ", ".join(hard_group_hits[:3]))
         excluded_keywords.extend(hard_group_hits)
 
     kw_text = _keyword_match_text(item)
@@ -5930,10 +5944,10 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             or any(all(_kw_in_text(kw_text, k) for k in ag) for ag in and_groups)
         )
         if not group_keyword_pass:
-            reason_codes.append("INDUSTRY_NOT_MATCHED")
+            _add_reason("INDUSTRY_NOT_MATCHED")
 
     if group is not None and not support_match(item, g.get("support_types", ALL_SUPPORT_TYPES)):
-        reason_codes.append("INDUSTRY_NOT_MATCHED")
+        _add_reason("INDUSTRY_NOT_MATCHED")
 
     # P0-4: 주된 지원/부가 지원 분리 — 단독 교육·멘토링·컨설팅·투자·입주 제외
     # 재정 지원 신호(지원금/바우처 키워드, 수출/판로/마케팅 등)가 있으면 부가 지원으로만 제외하지 않음
@@ -5971,29 +5985,29 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
             and not has_consulting
         )
         if tenant_space_only:
-            reason_codes.append("TENANT_ONLY")
+            _add_reason("TENANT_ONLY", ", ".join(t for t in TENANT_SPACE_ONLY_TERMS if t in text)[:160])
         elif not has_financial_signal and not has_investment:
             if has_consulting:
                 # 교육·멘토링·컨설팅 단독 → 제외
-                reason_codes.append("CONSULTING_ONLY")
+                _add_reason("CONSULTING_ONLY", ", ".join(support_types))
         elif has_investment and not has_financial_signal and not has_consulting:
             # 투자 단독 → 제외
-            reason_codes.append("INVESTMENT_ONLY")
+            _add_reason("INVESTMENT_ONLY", ", ".join(support_types))
 
     # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
     # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
     # 전자는 evaluate_notice 의 application 게이트, 후자는 제목 앵커 상수 매칭.
     if not application_like and not priority_keywords:
-        reason_codes.append("NOT_APPLICATION_LIKE")
+        _add_reason("NOT_APPLICATION_LIKE")
 
     biz_years_status = business_years_status(item, g) if group is not None else "n/a"
     amount_status = support_amount_status(item, g) if group is not None else "n/a"
     if biz_years_status == "not_eligible":
-        reason_codes.append("BUSINESS_YEARS_NOT_ELIGIBLE")
+        _add_reason("BUSINESS_YEARS_NOT_ELIGIBLE", str(item.get("business_age_text") or ""))
     # 지원금 필터: 사용자 정책(2026-06-19) — 당분간 금액으로 거르지 않는다(recall 우선·'참가비' 오추출 위험 회피).
     # 금액은 표시용으로만 유지(support_amount_status). 재활성화: 그룹에 "enforce_amount_filter": true.
     if amount_status == "not_eligible" and g.get("enforce_amount_filter", False):
-        reason_codes.append("AMOUNT_TOO_LOW")
+        _add_reason("AMOUNT_TOO_LOW")
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
@@ -6141,6 +6155,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "priority_keywords": priority_keywords,
         "relevance_score": relevance_score,
         "exclude_reason_codes": reason_codes,
+        # MAIL-P0D-02: reason_code별 최소 근거(있는 코드만, 원문 전체 아님).
+        "reason_evidence": reason_evidence,
         "filter_confidence": (
             "medium" if soft_excluded_keywords or detail_failure
             else ("high" if is_relevant or reason_codes else "medium")

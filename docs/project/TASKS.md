@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — DEPENDS=TASK-026 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — DEPENDS=TASK-027 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — DEPENDS=TASK-026~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — DEPENDS=TASK-027~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -38,6 +37,22 @@
 ## RUNNING
 
 ## DONE
+- TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — 신규 모듈
+  `mail_core/operations/reason_code_taxonomy.py`(REASON_CODE_TAXONOMY 29개 코드+설명,
+  known_reason_codes/missing_from_taxonomy/describe — 정적 소스 스캔으로 "자동판정
+  reason_code 100%" 완전성 검증 가능). `evaluate_notice()`에 `_add_reason(code, evidence)`
+  헬퍼를 신설해 기존 `reason_codes.append("X")` 26개 호출부 전부를 교체(판정 로직·조건
+  분기는 전혀 바꾸지 않음, 기존 `_extraction_evidence()`(160자 절단, 원문 전체 금지)를
+  재사용해 근거를 짧게 자름). 결과 dict에 `reason_evidence: dict[code, str]` 신규 필드
+  추가(기존 필드는 그대로, 하위호환). **알려진 갭(의도적 미구현, 정직하게 기록):**
+  ① 근거가 지역/마감/입주공간/그룹제외/재공고 등 이해하기 쉬운 코드(~10개)에만 실제 텍스트를
+  채웠고, INDUSTRY_NOT_MATCHED 류처럼 "매칭 부재"를 나타내는 코드는 근거가 빈 문자열(코드는
+  여전히 기록됨) — 매칭 부재는 보여줄 근거 자체가 없어 자연스러운 상태다. ② "evidence 누락
+  시 review로 격하"는 판정 결과(is_relevant)를 바꾸는 동작이라, 26개 호출부 전체의 회귀
+  안전성을 이번 세션에서 충분히 검증하기 어려워 **구현하지 않았다** — 다음 후속 TASK에서
+  사람 검토와 함께 진행 권장. 테스트: `tests/test_reason_code_evidence.py` 신규 11건(정적
+  완전성 검사 3건 포함) + 전체 pytest(cp949 무관 실패 1건 제외) 1498건 통과, 회귀
+  없음(2026-09-19).
 - TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — 신규 구현. 새 모듈
   `mail_core/operations/notice_pipeline_trace.py`(record_stage/flatten_records/
   append_notice_traces/iter_notice_traces, source_run_ledger.py·filter_trace.py와
