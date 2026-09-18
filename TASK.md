@@ -28,8 +28,9 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
+[x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [~] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 
 
@@ -364,6 +365,123 @@ GitHub 인증·원격 이력·기존 테스트 권한 오류는 숨기지 않고
 ### 8-16. DONE
 
 REQUEST_SOLVED=YES — 복원표·19개 MAIL-015 회귀테스트·TENANT_ONLY 최소 구현을 커밋했고(f878126a), 관련 스위트 536개 재실행으로 회귀 없음을 확인했다. 실제 발송·라벨 변경·삭제 없음. push·PR은 아직(로컬 커밋만).
+
+---
+
+## MAIL-016
+
+### 8-1. 사용자 원문 요청
+
+> 기존 검증 결과를 반영하여 기업별 업력 Hard Gate 작업을 등록·구현한다. 그룹 정책
+> `business_years_status(item, group)`/`BUSINESS_YEARS_NOT_ELIGIBLE`을 기업 판정에
+> 그대로 재사용하지 말고, 기업 프로필의 실제 업력과 공고의 신청가능 업력 요건을
+> 새로 비교하는 함수를 `company_match.py`에 구현한다. unknown은 임의 탈락시키지 않는다.
+
+### 8-2. 비개발자용 1줄 요약
+
+기업이 실제로 창업한 지 얼마나 됐는지와, 공고가 요구하는 업력 조건을 비교해서
+"명백히 안 맞을 때만" 그 공고를 빼준다. 애매하면 빼지 않는다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- 기존 지역 Hard Gate·판정 순서(마감→지역→업력→기타→스코어링)는 그대로 유지한다.
+- 기업 프로필에 `business_stage`/`founded_date` 최소 필드를 추가해 실제 업력을 판단한다.
+- 공고 업력 요건은 기존 파싱 유틸(`extract_business_year_requirement`,
+  `parse_kstartup_business_buckets`)을 확인 후 재사용하되, 그룹 전용 함수
+  (`monitor.business_years_status`)는 기업 판정에 재사용하지 않는다.
+- 비교 결과는 eligible/ineligible/unknown 3상태이며, ineligible일 때만 Hard Exclude한다.
+
+### 8-4. 현재상태
+
+- PINNING: TASK_START_SHA=fe8a54bcd0fc7ce128a72baf85b99fc0e4aa31c4 (origin/main, PR #299 병합 직후)
+- WORK_BRANCH=feat/mail-016-company-business-years-gate
+- 실제 메일 발송·라벨 변경·삭제는 하지 않는다.
+
+### 8-5. MUST — 반드시 구현
+
+- [x] `mail_core/matching/company_match.py`에 `company_business_years_status(item, company)`
+      신규 구현 — 기업 실제 업력 vs 공고 신청가능 업력 비교, eligible/ineligible/unknown 반환.
+- [x] 기업 프로필에 `business_stage`(예: "예비창업자"/"established")·`founded_date`(YYYY-MM-DD)
+      최소 필드를 `_normalize_company()`에 추가(기본값 빈 문자열, 중복 필드 신설 없음).
+- [x] `_hard_excluded()`에 company 인자를 추가해 ineligible일 때만 Hard Exclude
+      (`COMPANY_BUSINESS_YEARS_NOT_ELIGIBLE`), unknown/eligible은 통과.
+- [x] K-Startup 업력 버킷 필드(`business_age_text`)·자유 텍스트(`extract_business_year_requirement`)
+      두 경로 모두 지원하고, 그룹 전용 `business_years_status`/`BUSINESS_YEARS_NOT_ELIGIBLE`은
+      기업 판정 경로에서 참조하지 않는다.
+- [x] 실제 이메일·라벨 변경·삭제·Secret 출력은 하지 않는다.
+
+### 8-6. KEEP — 유지
+
+- 기존 지역 Hard Gate·점수 산정 로직, evaluate_notice 하드 제외 코드(HARD_EXCLUDE_CODES)
+- 판정 순서: 마감 Hard Gate → 지역 Hard Gate → 업력 Hard Gate → 기타 절대 제외 → 관련성/기업 스코어링
+- unknown은 Hard Exclude하지 않는 recall 우선 정책
+
+### 8-7. REMOVE — 제거
+
+없음. 기존 판정·필드를 근거 없이 삭제하지 않는다.
+
+### 8-8. FORBIDDEN — 금지
+
+- 그룹의 `BUSINESS_YEARS_NOT_ELIGIBLE`을 `company_match.py`의 `HARD_EXCLUDE_CODES`에
+  그대로 추가해 기업 판정에 재사용하지 않는다.
+- unknown을 ineligible로 변환하지 않는다.
+- 기존 지역 판정 로직을 중복 구현하지 않는다(이미 `company_match.py`가 `monitor.py`의
+  검증된 지역 판정을 재사용 중).
+- `.env`, 토큰, 메일 원문, 개인정보를 출력·커밋하지 않는다.
+- 실제 메일 발송·실제 라벨 변경·실제 삭제를 하지 않는다.
+- main 직접 수정·push, MAIL-015 수정, 관련 없는 리팩터링을 하지 않는다.
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: MAIL-015 (병합 완료, fe8a54bc 기준)
+
+### 8-10. 구현범위
+
+`mail_core/matching/company_match.py`(신규 함수 3개 + `_normalize_company`/`_hard_excluded`/
+`match_for_company` 최소 배선) + `tests/test_company_match_business_years.py`(신규 회귀
+14건). `monitor.py`·`config/groups.json`·그룹 판정 로직은 수정하지 않는다(읽기 전용 재사용).
+
+### 8-11. 입력검증
+
+기업 업력 충족/명백한 미충족/unknown, 공고 업력조건 unknown, 지역 부적격+업력 적격,
+업력 부적격+강한 키워드 매칭, 그룹 BUSINESS_YEARS_NOT_ELIGIBLE 오전파 여부, K-Startup
+업력 버킷(숫자 버킷·"전체"·"예비창업자" 단독 표기), 예비창업자 기업 vs 예비창업자
+전용 공고를 각각 검증한다.
+
+### 8-12. 빈상태
+
+기업 프로필에 `business_stage`/`founded_date`가 모두 없으면 unknown(기존처럼 적격으로
+추측하지 않고, 동시에 임의 탈락도 시키지 않는다).
+
+### 8-13. 로딩상태
+
+N/A — 로컬 판정 로직 변경. 기존 수집·발송 파이프라인 동작에는 영향 없음.
+
+### 8-14. 오류상태
+
+`founded_date` 파싱 실패(형식 오류)는 정보 없음(unknown)으로 처리하고 예외를 던지지 않는다.
+monitor 파싱 유틸 import 실패 시에도 unknown으로 안전 폴백한다.
+
+### 8-15. VERIFY
+
+- [x] `python -m py_compile mail_core/matching/company_match.py monitor.py`
+- [x] `python -m pytest tests/test_company_match_business_years.py -v` — 신규 14건 전체 통과
+- [x] `python -m pytest tests/test_company_match.py tests/test_company_match_multi_region.py -q` — 기존 39건 회귀 없음
+- [x] `python -m pytest tests/test_5field_casematrix.py tests/test_core_sources_specialize.py tests/test_digest_eight_columns.py -q` — 업력 관련 기존 스위트 191건 회귀 없음
+- [x] 전체 `python -m pytest -q` — 1446 passed, 6 skipped, 1 failed(542.88s). 실패 1건
+      `test_kstartup_collect_policy.py::test_sites_json_public_priority_caps` 은
+      `config/sites.json`을 인코딩 미지정으로 읽어 Windows cp949 로 디코딩하다 실패하는
+      기존 환경 이슈로, 이 브랜치가 건드리지 않은 파일·테스트다
+      (`git log -1 -- tests/test_kstartup_collect_policy.py config/sites.json` = 19079b7f,
+      MAIL-016 커밋 이전). MAIL-016과 무관한 기존 실패로 기록하고 이번 범위에서 수정하지 않는다.
+- [x] 실제 발송 없음, `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
+
+### 8-16. DONE
+
+REQUEST_SOLVED=YES — `company_business_years_status()`를 신규 구현해 그룹 정책과 완전히
+분리된 기업별 업력 Hard Gate를 추가했다. 신규 회귀 14건 + 관련 기존 스위트 230건 +
+전체 pytest 1446건 통과(무관 기존 실패 1건 별도 기록), 회귀 없음. 실제 발송·라벨 변경·
+삭제 없음. PR #304(main 미병합, 지시대로 보류).
 
 ---
 

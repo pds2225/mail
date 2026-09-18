@@ -19,11 +19,15 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 from mail_core.paths import CONFIG_DIR
 from mail_core.security import private_config
+
+_KST = timezone(timedelta(hours=9))
 
 COMPANIES_PATH = CONFIG_DIR / "companies.json"
 
@@ -90,6 +94,10 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
         "exclude_keywords": list(raw.get("exclude_keywords") or []),
         "has_factory": bool(raw.get("has_factory", False)),
         "export_focus": bool(raw.get("export_focus", False)),
+        # MAIL-016: 기업 개별 업력 Hard Gate 용 최소 필드. business_stage 가 예비창업
+        # 단계면 founded_date 유무와 무관하게 아직 창업 전으로 본다.
+        "business_stage": str(raw.get("business_stage") or ""),
+        "founded_date": str(raw.get("founded_date") or ""),
         "support_type_prefs": list(raw.get("support_type_prefs") or []),
         "match_threshold": int(raw.get("match_threshold", DEFAULT_THRESHOLD)),
         "weights": dict(raw.get("weights") or {}),
@@ -386,12 +394,113 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
     }
 
 
-# ── 하드 제외 (evaluate_notice 재사용) ────────────────────────────────────────
+# ── 업력(기업 개별) Hard Gate — 그룹 정책(monitor.business_years_status/
+# group.business_years)과 완전히 분리 ────────────────────────────────────────
+# 그룹 구간은 "그룹에 속한 기업들 전체"의 신청자 업력 구간이라, 그 판정 결과
+# (BUSINESS_YEARS_NOT_ELIGIBLE)를 특정 기업 개별 판정에 그대로 재사용하면 엉뚱한
+# 그룹 정책이 기업에 적용되는 오판을 만든다(MAIL-016). 이 절은 기업 프로필의
+# 실제 업력과 공고의 신청가능 업력 요건만 비교한다.
 
-def _hard_excluded(item: dict[str, Any]) -> str | None:
+_PRE_FOUNDING_STAGES = {"pre_founding", "preparing", "prep", "예비창업", "예비창업자"}
+# "예비창업자만/전용/에 한해" 처럼 예비창업자 단독 대상임이 명시적인 표현만 잡는다
+# (recall 우선 — 애매하면 unknown 으로 남기고 이 정규식으로 확대해석하지 않는다).
+_PRE_FOUNDING_ONLY_TEXT_RE = re.compile(r"예비\s*창업자\s*(?:만|에\s*한(?:해|하여)?|전용)")
+
+
+def _company_business_profile(
+    company: dict[str, Any], today: date | None = None,
+) -> dict[str, Any] | None:
+    """기업의 실제 업력 정보. {'pre_founding': bool, 'years': float} 또는 None(정보 없음).
+
+    founded_date 미기재·파싱 실패이며 예비창업 단계도 아니면 None — 호출측이 unknown 으로
+    처리해야 한다(정보 없다고 임의로 eligible/ineligible 단정 금지)."""
+    stage = str(company.get("business_stage") or "").strip().lower()
+    if stage in _PRE_FOUNDING_STAGES:
+        return {"pre_founding": True, "years": 0.0}
+    founded_raw = str(company.get("founded_date") or "").strip()
+    if not founded_raw:
+        return None
+    try:
+        founded = date.fromisoformat(founded_raw[:10])
+    except ValueError:
+        return None
+    ref = today or datetime.now(_KST).date()
+    years = (ref - founded).days / 365.25
+    return {"pre_founding": False, "years": max(0.0, years)}
+
+
+def _company_business_bucket_status(bucket_text: str, profile: dict[str, Any]) -> str:
+    """K-Startup '창업업력' 버킷 텍스트(예: '1년미만,5년미만,10년미만'/'전체'/'예비창업자')
+    vs 기업 개별 업력. eligible/ineligible/unknown.
+
+    monitor.parse_kstartup_business_buckets() 는 그룹의 [lo, hi] 구간(이미 창업한 기업들의
+    구간)을 전제로 '예비창업자' 단독 표기를 항상 not_eligible 로 판정한다. 기업 개별 판정은
+    기업 자신이 예비창업자일 수 있어 그 전제가 깨지므로, 숫자 버킷(N년미만) 비교 방식만
+    그대로 재사용하고 '예비창업자' 단독 표기는 기업의 pre_founding 여부로 직접 판정한다.
+    """
+    t = unicodedata.normalize("NFKC", bucket_text)
+    if "전체" in t:
+        return "eligible"
+    years = profile["years"]
+    try:
+        from monitor import _KSTARTUP_BIZ_BUCKET_RE as _bucket_re
+    except Exception:
+        return "unknown"
+    ns = [int(m.group(1)) for m in _bucket_re.finditer(t)]
+    if ns:
+        return "eligible" if any(n > years for n in ns) else "ineligible"
+    if "예비창업자" in t:
+        return "eligible" if profile["pre_founding"] else "ineligible"
+    return "unknown"
+
+
+def company_business_years_status(
+    item: dict[str, Any], company: dict[str, Any], today: date | None = None,
+) -> str:
+    """기업의 실제 업력 vs 공고가 요구하는 신청가능 업력의 적합성.
+
+    반환: eligible / ineligible / unknown. unknown 은 Hard Exclude 하지 않는다
+    (호출측은 'ineligible' 일 때만 제외해야 한다). 그룹 정책·item 의 group 판정 결과
+    (exclude_reason_codes/reason_codes 등)는 절대 참조하지 않는다 — 이 함수는 기업
+    프로필과 공고 원문(및 K-Startup 구조화 필드)만 본다.
+    """
+    company = _normalize_company(company)  # 멱등
+    profile = _company_business_profile(company, today)
+    if profile is None:
+        return "unknown"
+
+    bucket_text = item.get("business_age_text")
+    if bucket_text:
+        try:
+            return _company_business_bucket_status(str(bucket_text), profile)
+        except Exception:
+            return "unknown"
+
+    try:
+        from monitor import extract_business_year_requirement as _extract_req
+    except Exception:
+        return "unknown"
+
+    text = _haystack(item)
+    req = _extract_req(text)
+    if req is None:
+        if _PRE_FOUNDING_ONLY_TEXT_RE.search(unicodedata.normalize("NFKC", text)):
+            return "eligible" if profile["pre_founding"] else "ineligible"
+        return "unknown"
+
+    plo = req["min"] if req["min"] is not None else 0.0
+    phi = req["max"] if req["max"] is not None else float("inf")
+    return "eligible" if plo <= profile["years"] <= phi else "ineligible"
+
+
+# ── 하드 제외 (evaluate_notice 재사용 + 기업별 업력) ──────────────────────────
+
+def _hard_excluded(item: dict[str, Any], company: dict[str, Any] | None = None) -> str | None:
     """item 에 monitor.evaluate_notice 결과가 있으면 그 판정으로 하드 제외 사유를 반환.
 
     evaluate_notice 미적용 item(필드 없음)은 None(점수 판정에 위임).
+    company 가 주어지면 기업 개별 업력 Hard Gate(MAIL-016)도 함께 본다 — 명백히
+    ineligible 일 때만 제외하고, unknown 은 통과시켜 다음 단계(점수 판정)로 넘긴다.
     """
     if item.get("deadline_status") == "closed":
         return "마감 경과"
@@ -402,6 +511,8 @@ def _hard_excluded(item: dict[str, Any]) -> str | None:
     # evaluate_notice 가 명시적으로 is_relevant=False 로 표시했고 review 대상도 아니면 제외
     if item.get("is_relevant") is False and item.get("review_needed") is False:
         return "evaluate_notice 부적합"
+    if company is not None and company_business_years_status(item, company) == "ineligible":
+        return "하드제외(COMPANY_BUSINESS_YEARS_NOT_ELIGIBLE)"
     return None
 
 
@@ -423,7 +534,7 @@ def match_for_company(items: list[dict[str, Any]], company: dict[str, Any]) -> d
         record: dict[str, Any] = {
             "title": str(item.get("title", ""))[:90],
         }
-        hard = _hard_excluded(item)
+        hard = _hard_excluded(item, company)
         if hard:
             record["decision"] = "rejected_hard"
             record["score"] = 0
