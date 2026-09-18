@@ -28,7 +28,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 
 
@@ -1819,7 +1819,15 @@ REQUEST_SOLVED=YES — MAIL-013 구현 PR #305가 `origin/main`에 squash merge�
 - 처음 실행할 때 최신 `main`과 시트 항목을 1:1 대조해 `ALREADY_DONE / REPRODUCED / NOT_REPRODUCED / BLOCKED`로 분류한다.
 - 문서에 해결 표시가 있더라도 실제 코드·테스트 근거 없이 완료 처리하지 않는다.
 
-REQUEST_SOLVED: NO — TASK 등록만 완료. 개발은 아직 시작하지 않음.
+REQUEST_SOLVED: NO — 이번 슬라이스는 `docs/project/TASKS.md` PENDING 1순위(DEPENDS_ON 없음) `TASK-021 = MAIL-P0C-01(최근 3영업일 재조회)` 하나만 착수한다.
+PINNING: TASK_START_SHA=7e9ce43870da7a7457650d76b9ba387f6d50efc3 (origin/main)
+WORK_BRANCH=feat/mail-p0c01-recent-3bizdays (새 격리 worktree `mail-014-p0c01`)
+MAIL-016(PR #304, feat/mail-016-company-business-years-gate)과 `mail_core/matching/company_match.py`는 건드리지 않는다.
+
+**슬라이스 진행상황 (2026-09-18):**
+- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료, 구현 PR 생성 대기(`docs/project/TASKS.md` DONE으로 갱신).
+- 구현 중 발견: 다른 세션이 "Auto Dev Controller 하드닝" 작업 도중 이 TASK를 이미 상당 부분 구현해 두고(커밋 `163518f3`, dangling·미푸시·미병합) 일시중단한 상태였다. 코드를 검토한 뒤 재구현 대신 그 패치를 그대로 적용해 중복 작업을 피했다(기존 미반영 작업 보존 원칙).
+- MAIL-014의 나머지 23개 원자 TASK(TASK-022~044)는 이번 슬라이스에서 시작하지 않는다. MAIL-014 전체는 계속 `[~]` 진행 중으로 유지한다.
 
 ### 8-5. MUST — 반드시 구현
 

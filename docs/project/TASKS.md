@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — DEPENDS=없음 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-022: loop:coding-fix MAIL-P0C-02 [P0] Canonical ID·중복 유형 분류 — DEPENDS=TASK-021 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-023: loop:coding-fix MAIL-P0C-03 [P0] Notice version·content hash — DEPENDS=TASK-022 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — DEPENDS=TASK-023 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -44,6 +43,7 @@
 ## RUNNING
 
 ## DONE
+- TASK-021: loop:coding-fix MAIL-P0C-01 [P0] 최근 3영업일 재조회 — 주말만 걸러내던 영업일 계산에 설정 가능한 공휴일 목록(`business_holidays`, `MONITOR_BUSINESS_HOLIDAYS` env)을 추가하고, `load_settings()`의 `days_back` 기본값을 1→3으로 맞춰 `execute_monitor()`의 실제 런타임 폴백과 불일치를 없앴다. 기존 dangling WIP 커밋(`163518f3`, 다른 세션이 컨트롤러 하드닝으로 중단)을 검토 후 재사용해 재구현을 피했다. `application_url`/`region` 변경도 버전 판정 대상 필드로 추가. 회귀: `test_notice_version_recovery.py` 23건(신규 4건 포함) + focused 185건 통과, 회귀 없음(2026-09-18). 전체 pytest 결과는 구현 PR에서 갱신.
 - TASK-G01 [P0]: skip_gate 기준일 분리 + skip 시 SystemExit(0) 제거·coverage 유지 + am/pm 회차. PR #217 계열. pytest test_mail_review_ops_fixes 통과 (2026-07-30).
 - TASK-G02 [P0]: 08:54 발송처 추적 → `docs/project/SENDER_0854_TRACE.md` (주체=monitor.yml schedule, 끄기 절차 기록, 실삭제 없음).
 - TASK-G03 [P0]: 기업마당 0건 fail-closed + DATA_GO_KR_KEY 경고 + detector `p0_always`. 테스트 추가.
