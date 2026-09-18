@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — DEPENDS=TASK-023 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-025: loop:coding-fix MAIL-P0C-05 [P0] P0-C 회귀 테스트 — DEPENDS=TASK-021~024 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-026: loop:coding-fix MAIL-P0D-01 [P0] 공고 단계 Trace 모델 — DEPENDS=TASK-025 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — DEPENDS=TASK-026 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -41,6 +40,18 @@
 ## RUNNING
 
 ## DONE
+- TASK-024: loop:coding-fix MAIL-P0C-04 [P0] 중요 변경 판정·재처리 — 기존 material-field
+  diff 메커니즘(`_NOTICE_VERSION_MATERIAL_FIELDS`: title/deadline/application_period/
+  target/support/region/application_url — MAIL-P0C-01/03에서 이미 구현)이 스펙 material
+  필드 7개 중 마감일·지원금·신청대상·지역·접수URL 5개를 이미 커버하고 있었다. 신규로
+  `_classify_notice_change()`에 "취소/조기종료" 제목 마커 감지(`_CANCELLATION_MARKER_RE`:
+  공고취소/사업취소/모집취소/선정취소/접수취소/조기마감/조기종료/직권취소)를 추가해
+  `CANCELLED` reason_code로 최우선 판정하게 했다(단순 오탈자와 구분). **알려진 갭(의도적
+  미구현):** "제출서류"(구비서류) 필드는 현재 어떤 수집기도 구조화된 형태로 추출하지 않아
+  (grep 0건) diff 대상 자체가 없다 — 새로 만들려면 ~40개 수집기 각각의 HTML 구조 조사가
+  필요한 별도 규모의 작업이라 이번 TASK 범위(수정공고 판정 로직) 밖으로 남겨둔다. 회귀:
+  `tests/test_notice_version_recovery.py` 신규 3건(CANCELLED 판정 2건 + 오탈자 오탐 방지
+  1건) + 관련 스위트 178건 통과, 회귀 없음(2026-09-19).
 - TASK-023: loop:coding-fix MAIL-P0C-03 [P0] Notice version·content hash — **ALREADY_DONE**(코드
   변경 없음). `_notice_version_snapshot()`(monitor.py:846)이 판정 핵심필드를 정규화하고
   `_notice_snapshot_hash()`(863)로 content hash를 만들며, `classify_notice_versions()`

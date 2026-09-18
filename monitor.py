@@ -985,15 +985,27 @@ def _latest_date_from_text(value: str):
     return max(dates) if dates else None
 
 
-def _classify_notice_change(before: dict, after: dict) -> str:
-    """P1-5: 공고 변경 유형을 세분화하여 판정한다.
+# MAIL-P0C-04: 공고취소/사업취소/모집취소/선정취소/접수취소, 조기마감/조기종료, 직권취소 등
+# "신청해봐야 소용없는" 상태로 바뀌었음을 나타내는 제목 마커. 단순 오탈자·문구수정과 구분해
+# 중요변경(CANCELLED)으로 우선 판정한다.
+_CANCELLATION_MARKER_RE = re.compile(
+    r"(?:공고|사업|모집|선정|접수)\s*(?:취소|중단)|조기\s*(?:마감|종료)|취소\s*공고|직권취소"
+)
 
-    반환: DEADLINE_EXTENDED / TARGET_CHANGED / SUPPORT_AMOUNT_CHANGED /
+
+def _classify_notice_change(before: dict, after: dict) -> str:
+    """P1-5/MAIL-P0C-04: 공고 변경 유형을 세분화하여 판정한다.
+
+    반환: CANCELLED / DEADLINE_EXTENDED / TARGET_CHANGED / SUPPORT_AMOUNT_CHANGED /
           APPLICATION_URL_CHANGED / REANNOUNCEMENT / ADDITIONAL_RECRUITMENT /
           MINOR_TEXT_CHANGE / UPDATED
     """
     after_title = str(after.get("title") or "")
     before_title = str(before.get("title") or "")
+
+    # MAIL-P0C-04: 취소/조기종료 감지 — 가장 중요한 변경이므로 재공고보다 먼저 확인한다.
+    if _CANCELLATION_MARKER_RE.search(after_title) and not _CANCELLATION_MARKER_RE.search(before_title):
+        return "CANCELLED"
 
     # 재공고 감지
     if "재공고" in after_title and "재공고" not in before_title:
