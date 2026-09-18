@@ -4,7 +4,7 @@
 """
 from __future__ import annotations
 
-import hashlib, html, imaplib, json, logging, os, re, smtplib, ssl, threading, time, unicodedata
+import hashlib, html, imaplib, inspect, json, logging, os, re, smtplib, ssl, threading, time, unicodedata
 from datetime import datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -35,6 +35,7 @@ except ImportError:
 
 from mail_core.delivery import outbox as delivery_outbox
 from mail_core.delivery import state as delivery_state
+from mail_core.operations import rule_version as _rule_version
 from mail_core.operations import run_lock
 from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
 from mail_core.security import net_guard, private_config
@@ -6177,8 +6178,25 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
         "support_amount_status": amount_status,
         # 표시용 — 구체 유형이 있으면 '그외'는 숨긴다(게이트는 classify_support_type 원본을 그대로 사용).
         "_types": ([t for t in classify_support_type(item) if t != "그외"] or ["그외"]),
+        # MAIL-P0D-03: 규칙 변경 후 과거 판정 재현 — 같은 rule_version+config_snapshot_id로
+        # 같은 fixture를 재평가하면 같은 결과가 나와야 한다(재현성). Secrets/개인정보 미포함.
+        "rule_version": _EVALUATE_NOTICE_RULE_VERSION,
+        "config_snapshot_id": _rule_version.config_snapshot_id(g),
     })
     return result
+
+
+# MAIL-P0D-03: evaluate_notice()의 판정 로직(함수 소스 + 규칙을 정의하는 테이블들)을 모듈
+# import 시 1회만 해시해 캐싱한다 — 판정마다(공고×그룹 조합마다) 매번 소스를 다시 읽으면
+# 느려지므로, "규칙이 실제로 바뀌면(코드가 바뀌면) rule_version도 자동으로 바뀐다"는 성질만
+# 유지한 채 호출 비용은 0에 가깝게 한다.
+_EVALUATE_NOTICE_RULE_VERSION = _rule_version.compute_version_hash(
+    inspect.getsource(evaluate_notice),
+    repr(EXCLUSION_RULES),
+    repr(GENERAL_INCLUDE_KEYWORD_ALIASES),
+    repr(FACTORY_KEYWORD_ALIASES),
+    repr(GENERAL_SERVICE_EXCLUDE_KEYWORDS),
+)
 
 
 def _notice_sort_key(item: dict) -> tuple[int, int, int, int]:
