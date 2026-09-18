@@ -77,9 +77,16 @@ def test_append_notice_traces_empty_rows_is_noop(tmp_path):
     assert not path.exists()
 
 
-def test_append_notice_traces_never_raises_on_bad_path():
-    """best-effort — 쓰기 불가능한 경로여도 예외를 상위로 올리지 않는다(발송 흐름 차단 금지)."""
-    bad_path = Path("Z:\\definitely\\not\\a\\real\\drive\\trace.jsonl")
+def test_append_notice_traces_never_raises_on_bad_path(tmp_path):
+    """best-effort — 쓰기 불가능한 경로여도 예외를 상위로 올리지 않는다(발송 흐름 차단 금지).
+
+    Windows 전용 드라이브 경로(예: "Z:\\...")는 POSIX(CI=Ubuntu)에서 유효한 상대경로로
+    취급돼 재현되지 않으므로, 두 OS에서 동일하게 실패하는 "파일을 디렉터리처럼 쓰기"로
+    검증한다 — mkdir(parents=True)가 NotADirectoryError/FileExistsError를 낸다.
+    """
+    blocking_file = tmp_path / "not_a_directory"
+    blocking_file.write_text("x", encoding="utf-8")
+    bad_path = blocking_file / "sub" / "trace.jsonl"
     result = npt.append_notice_traces([{"notice_id": "n1"}], path=bad_path)
     assert result is None  # 실패해도 조용히 None
 
