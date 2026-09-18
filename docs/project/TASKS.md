@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — DEPENDS=TASK-027 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — DEPENDS=TASK-026~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — DEPENDS=TASK-027~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — DEPENDS=TASK-030 DONE + 모든 P0 종료 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -37,6 +36,23 @@
 ## RUNNING
 
 ## DONE
+- TASK-028: loop:coding-fix MAIL-P0D-03 [P0] rule_version·판정 재현성 — 신규 모듈
+  `mail_core/operations/rule_version.py`(compute_version_hash/config_snapshot_id/
+  diff_versions). `evaluate_notice()` 모듈 import 시 자신의 함수 소스(inspect.getsource)
+  + 규칙 정의 테이블(EXCLUSION_RULES·키워드 alias 3종)을 합쳐 sha256 16자로 캐싱한
+  `rule_version`을 계산 — 판정 로직(코드)이 실제로 바뀌면 자동으로 값이 바뀐다(사람이
+  수동으로 버전을 올릴 필요 없음, 잊어버려서 안 올리는 실수 원천 차단). 판정에 쓰인 그룹
+  설정(or_keywords/and_keyword_groups/exclude_keywords/priority_keywords/지역조건)만
+  골라 해시한 `config_snapshot_id`도 결과에 추가 — 수신자(recipients)·이름 등 개인정보는
+  해시 입력에서 명시적으로 제외(FORBIDDEN 준수, "민감설정 저장 0건"). 두 값 모두 결과 dict에
+  100% 채워짐(제외 판정 공고도 동일). `diff_versions(before, after)` 헬퍼로 같은
+  rule_version+config_snapshot_id인데 판정 결과가 달라지면(`is_relevant`/
+  `exclude_reason_codes`/`notice_type`/`target_type` 비교) 비결정성 신호(`nondeterministic`)를
+  드러낸다. 테스트: `tests/test_rule_version_reproducibility.py` 신규 12건(재현성·
+  config_snapshot 결정성·개인정보 미포함·diff_versions 3종 포함) + 전체 pytest(cp949 무관
+  실패 1건 제외) 1521건 통과 0 실패(회귀 없음, 2026-09-19). 참고: skip 건수가 실행마다
+  1건↔6건으로 흔들리는 기존 특성 발견 — 실패는 0건으로 동일해 TASK-028과 무관한 사전
+  존재 flaky-skip으로 판단(원인 미상, 별도 조사 필요시 후속 과제).
 - TASK-027: loop:coding-fix MAIL-P0D-02 [P0] reason_code·evidence 표준화 — 신규 모듈
   `mail_core/operations/reason_code_taxonomy.py`(REASON_CODE_TAXONOMY 29개 코드+설명,
   known_reason_codes/missing_from_taxonomy/describe — 정적 소스 스캔으로 "자동판정
