@@ -85,6 +85,40 @@ def test_application_url_change_creates_versioned_delivery_id():
     assert "application_url" in deliverable[0]["_changed_fields"]
     assert updates["url-change"]["version"] == 2
 
+def test_cancellation_marker_added_is_cancelled_change_type():
+    """MAIL-P0C-04: 공고취소/조기마감 등으로 제목이 바뀌면 CANCELLED로 우선 판정돼야 한다."""
+    before = item("cancel-1", "2026-07-20")
+    snap = m._notice_version_snapshot(before)
+    versions = {
+        "cancel-1": {
+            "version": 1,
+            "list_hash": m._notice_list_hash(before),
+            "delivered_hash": m._notice_snapshot_hash(snap),
+            "delivered_snapshot": snap,
+            "observed_hash": m._notice_snapshot_hash(snap),
+        }
+    }
+    after = item("cancel-1", "2026-07-20", title="2026년 AI 사업화 지원사업 (사업취소)")
+    deliverable, updates = m.classify_notice_versions([after], {"cancel-1"}, versions)
+    assert deliverable[0]["_change_type"] == "CANCELLED"
+    assert deliverable[0]["_delivery_id"] == "cancel-1@v2"
+    assert updates["cancel-1"]["version"] == 2
+
+
+def test_early_closure_marker_is_cancelled_not_reannouncement():
+    assert m._classify_notice_change(
+        {"title": "2026년 소상공인 정책자금 지원"},
+        {"title": "2026년 소상공인 정책자금 지원(조기마감)"},
+    ) == "CANCELLED"
+
+
+def test_plain_typo_fix_is_not_cancelled():
+    assert m._classify_notice_change(
+        {"title": "2026년 소상공인 정책자금 지원"},
+        {"title": "2026년 소상공인 정책자금 지원 "},  # 공백만 추가된 오탈자 수준 변경
+    ) != "CANCELLED"
+
+
 def test_region_change_is_material_and_does_not_require_recent_posted_date():
     before = item("region-change", "2026-01-20", region_field="서울")
     snap = m._notice_version_snapshot(before)
