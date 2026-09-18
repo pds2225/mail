@@ -97,3 +97,56 @@ def test_review_patch_upserts_tier_c_without_mail(tmp_path: Path) -> None:
     assert row["source"] == "dashboard-ox"
     assert row["title"] == "AI 지원사업"
     assert row["first_seen"] == "2026-01-01T00:00:00Z"
+
+
+def test_review_batch_upserts_multiple_items_in_one_commit(tmp_path: Path) -> None:
+    """MAIL-018: 여러 건을 한 번의 저장으로 처리한다(개별 커밋 아님)."""
+    labels = tmp_path / "data/golden/feedback_labels.jsonl"
+    labels.parent.mkdir(parents=True, exist_ok=True)
+    labels.write_text(
+        json.dumps({"id": "notice-1", "verdict": "X", "tier": "C", "source": "mail-feedback",
+                    "title": "", "first_seen": "2026-01-01T00:00:00Z", "last_seen": "2026-01-01T00:00:00Z"},
+                   ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    _write(
+        tmp_path / ".apply/config-pending.json",
+        {
+            "v": 1,
+            "resource": "review",
+            "items": [
+                {"id": "notice-1", "title": "AI 지원사업", "verdict": "O"},
+                {"id": "notice-2", "title": "제조 바우처", "verdict": "X"},
+            ],
+        },
+    )
+
+    assert run(tmp_path) == "review:2items"
+    rows = [json.loads(line) for line in labels.read_text(encoding="utf-8").splitlines() if line.strip()]
+    by_id = {row["id"]: row for row in rows}
+    assert by_id["notice-1"]["verdict"] == "O"
+    assert by_id["notice-1"]["first_seen"] == "2026-01-01T00:00:00Z"
+    assert by_id["notice-2"]["verdict"] == "X"
+    assert by_id["notice-2"]["title"] == "제조 바우처"
+    assert not (tmp_path / ".apply/config-pending.json").exists()
+
+
+def test_review_batch_rejects_invalid_item_in_batch(tmp_path: Path) -> None:
+    _write(
+        tmp_path / ".apply/config-pending.json",
+        {
+            "v": 1,
+            "resource": "review",
+            "items": [
+                {"id": "notice-1", "title": "ok", "verdict": "O"},
+                {"id": "notice-2", "title": "bad", "verdict": "Y"},
+            ],
+        },
+    )
+    try:
+        run(tmp_path)
+        assert False, "expected ValueError for invalid verdict"
+    except ValueError:
+        pass
+    labels = tmp_path / "data/golden/feedback_labels.jsonl"
+    assert not labels.exists()

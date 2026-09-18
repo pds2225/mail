@@ -98,37 +98,51 @@ def _load_feedback(path: Path) -> dict[str, dict[str, Any]]:
 
 
 def _apply_review(repo_root: Path, pending: dict[str, Any]) -> str:
-    item = pending.get("item")
-    if not isinstance(item, dict):
+    # MAIL-018: 배치 저장이 기본이다("items"). 이전 단일 항목 pending 페이로드("item")도
+    # 계속 처리해야 한다 — 이미 만들어진 게스트 모드 commit-url 링크가 남아있을 수 있다.
+    raw_items = pending.get("items")
+    if not isinstance(raw_items, list) or not raw_items:
+        single = pending.get("item")
+        raw_items = [single] if isinstance(single, dict) else []
+    if not raw_items:
         raise ValueError("review item is required")
-    notice_id = str(item.get("id") or "").strip()
-    verdict = str(item.get("verdict") or "").strip().upper()
-    title = str(item.get("title") or "").strip()[:110]
-    if not NOTICE_ID_RE.fullmatch(notice_id):
-        raise ValueError("invalid notice id")
-    if verdict not in {"O", "X"}:
-        raise ValueError("verdict must be O or X")
 
     path = repo_root / FEEDBACK_REL
     rows = _load_feedback(path)
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    previous = rows.get(notice_id, {})
-    rows[notice_id] = {
-        **previous,
-        "id": notice_id,
-        "verdict": verdict,
-        "tier": "C",
-        "source": "dashboard-ox",
-        "title": title or str(previous.get("title") or ""),
-        "first_seen": previous.get("first_seen") or now,
-        "last_seen": now,
-    }
+    applied: list[str] = []
+    for item in raw_items:
+        if not isinstance(item, dict):
+            raise ValueError("review item is required")
+        notice_id = str(item.get("id") or "").strip()
+        verdict = str(item.get("verdict") or "").strip().upper()
+        title = str(item.get("title") or "").strip()[:110]
+        if not NOTICE_ID_RE.fullmatch(notice_id):
+            raise ValueError("invalid notice id")
+        if verdict not in {"O", "X"}:
+            raise ValueError("verdict must be O or X")
+
+        previous = rows.get(notice_id, {})
+        rows[notice_id] = {
+            **previous,
+            "id": notice_id,
+            "verdict": verdict,
+            "tier": "C",
+            "source": "dashboard-ox",
+            "title": title or str(previous.get("title") or ""),
+            "first_seen": previous.get("first_seen") or now,
+            "last_seen": now,
+        }
+        applied.append(f"{verdict}:{notice_id}")
+
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         "\n".join(json.dumps(rows[key], ensure_ascii=False) for key in sorted(rows)) + "\n",
         encoding="utf-8",
     )
-    return f"review:{verdict}:{notice_id}"
+    if len(applied) == 1:
+        return f"review:{applied[0]}"
+    return f"review:{len(applied)}items"
 
 
 def run(repo_root: Path) -> str:

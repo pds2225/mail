@@ -5,10 +5,20 @@ import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-app
 
 export const dynamic = "force-dynamic";
 
-function upsertFeedback(
-  text: string,
-  item: { id: string; title: string; verdict: "O" | "X" },
-): string {
+type ReviewVerdictInput = { id: string; title: string; verdict: "O" | "X" };
+
+function parseItem(raw: unknown): ReviewVerdictInput | null {
+  if (!raw || typeof raw !== "object") return null;
+  const body = raw as Record<string, unknown>;
+  const id = String(body.id || "").trim();
+  const title = String(body.title || "").trim();
+  const verdict = String(body.verdict || "").trim().toUpperCase();
+  if (!/^[A-Za-z0-9_.:\-%]{1,120}$/.test(id)) return null;
+  if (verdict !== "O" && verdict !== "X") return null;
+  return { id, title, verdict: verdict as "O" | "X" };
+}
+
+function upsertFeedback(text: string, items: ReviewVerdictInput[]): string {
   const rows = new Map<string, Record<string, unknown>>();
   for (const line of text.split("\n")) {
     if (!line.trim()) continue;
@@ -21,17 +31,19 @@ function upsertFeedback(
     }
   }
   const now = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-  const previous = rows.get(item.id) || {};
-  rows.set(item.id, {
-    ...previous,
-    id: item.id,
-    verdict: item.verdict,
-    tier: "C",
-    source: "dashboard-ox",
-    title: item.title.slice(0, 110),
-    first_seen: previous.first_seen || now,
-    last_seen: now,
-  });
+  for (const item of items) {
+    const previous = rows.get(item.id) || {};
+    rows.set(item.id, {
+      ...previous,
+      id: item.id,
+      verdict: item.verdict,
+      tier: "C",
+      source: "dashboard-ox",
+      title: item.title.slice(0, 110) || String(previous.title || ""),
+      first_seen: previous.first_seen || now,
+      last_seen: now,
+    });
+  }
   return `${[...rows.keys()]
     .sort()
     .map((id) => JSON.stringify(rows.get(id)))
@@ -44,34 +56,34 @@ export async function POST(req: Request) {
 
   try {
     const body = (await req.json()) as Record<string, unknown>;
-    const id = String(body.id || "").trim();
-    const title = String(body.title || "").trim();
-    const verdict = String(body.verdict || "").trim().toUpperCase();
-    if (!/^[A-Za-z0-9_.:\-%]{1,120}$/.test(id)) {
-      return NextResponse.json({ ok: false, error: "공고 ID 형식이 올바르지 않습니다." }, { status: 400 });
-    }
-    if (verdict !== "O" && verdict !== "X") {
-      return NextResponse.json({ ok: false, error: "O 또는 X만 선택할 수 있습니다." }, { status: 400 });
+    // 단일 {id,title,verdict}와 배치 {items:[...]} 둘 다 받는다(하위호환).
+    const rawItems = Array.isArray(body.items) ? body.items : [body];
+    const items = rawItems.map(parseItem).filter((item): item is ReviewVerdictInput => item !== null);
+    if (items.length === 0) {
+      return NextResponse.json(
+        { ok: false, error: "공고 ID 또는 O/X 값이 올바르지 않습니다." },
+        { status: 400 },
+      );
     }
 
-    const item = { id, title, verdict: verdict as "O" | "X" };
     const token = githubApplyToken(req);
-    const pending: PendingConfigApply = { v: 1, resource: "review", item };
+    const pending: PendingConfigApply = { v: 1, resource: "review", items };
     if (!token) {
       return NextResponse.json({
         ok: true,
         applied: false,
         githubCommitUrl: pendingConfigCommitUrl(pending),
-        notice: "검수 저장 확인 화면이 열립니다. Commit changes를 누르면 O/X가 기록됩니다.",
+        notice: `검수 저장 확인 화면이 열립니다. Commit changes를 누르면 ${items.length}건의 O/X가 기록됩니다.`,
       });
     }
 
     const remote = await getRepoTextFile("data/golden/feedback_labels.jsonl", token);
+    const summary = items.length === 1 ? `${items[0].verdict} ${items[0].id}` : `${items.length}건`;
     const written = await putRepoTextFile({
       filePath: "data/golden/feedback_labels.jsonl",
-      text: upsertFeedback(remote.text, item),
+      text: upsertFeedback(remote.text, items),
       sha: remote.sha,
-      message: `chore(review): ${item.verdict} ${item.id} via admin web`,
+      message: `chore(review): ${summary} via admin web`,
       token,
     });
     return NextResponse.json({
@@ -79,8 +91,8 @@ export async function POST(req: Request) {
       applied: true,
       branch: githubBranch(),
       commitUrl: written.commitUrl,
-      verdict: item.verdict,
-      notice: "O/X 검수를 저장했습니다.",
+      items,
+      notice: `O/X 검수 ${items.length}건을 저장했습니다.`,
     });
   } catch (error) {
     return NextResponse.json(

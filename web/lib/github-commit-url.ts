@@ -15,7 +15,7 @@ export type PendingConfigApply =
   | {
       v: 1;
       resource: "review";
-      item: { id: string; title: string; verdict: "O" | "X" };
+      items: { id: string; title: string; verdict: "O" | "X" }[];
     };
 
 export function serializePendingApply(pending: PendingApply | PendingConfigApply): string {
