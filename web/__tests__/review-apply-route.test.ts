@@ -1,11 +1,9 @@
-import { gunzipSync } from "node:zlib";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   token: "",
   getRepoTextFile: vi.fn(),
   putRepoTextFile: vi.fn(),
-  repoTextFileExists: vi.fn(),
 }));
 
 vi.mock("@/lib/apply-auth", () => ({
@@ -17,7 +15,6 @@ vi.mock("@/lib/github-apply", () => ({
   getRepoTextFile: mocks.getRepoTextFile,
   githubBranch: vi.fn(() => "main"),
   putRepoTextFile: mocks.putRepoTextFile,
-  repoTextFileExists: mocks.repoTextFileExists,
 }));
 
 import { POST } from "@/app/api/review/apply/route";
@@ -45,8 +42,6 @@ describe("POST /api/review/apply", () => {
     mocks.token = "";
     mocks.getRepoTextFile.mockReset();
     mocks.putRepoTextFile.mockReset();
-    mocks.repoTextFileExists.mockReset();
-    mocks.repoTextFileExists.mockResolvedValue(true);
     mocks.getRepoTextFile.mockResolvedValue({ sha: "base-sha", text: existingFeedback });
     mocks.putRepoTextFile.mockResolvedValue({
       sha: "commit-sha",
@@ -55,7 +50,7 @@ describe("POST /api/review/apply", () => {
     });
   });
 
-  it("returns a pending batch result without a token (does not commit)", async () => {
+  it("returns final feedback file content without token", async () => {
     const response = await POST(
       request({
         items: [
@@ -69,42 +64,20 @@ describe("POST /api/review/apply", () => {
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
     expect(data.manualPasteRequired).toBe(true);
+    expect(data.manualFilePath).toBe("data/golden/feedback_labels.jsonl");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+      "https://github.com/pds2225/mail/edit/main/data/golden/feedback_labels.jsonl",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
-    expect(data.githubCommitUrl.length).toBeLessThan(100);
-    expect(data.pendingFilename).toBe("config-pending.json");
-    const pending = JSON.parse(data.pendingContent);
-    expect(pending.encoding).toBe("gzip-base64");
-    const unpacked = JSON.parse(
-      gunzipSync(Buffer.from(pending.packed_items, "base64")).toString("utf-8"),
-    );
-    expect(unpacked).toEqual([
-      { id: "notice-1", title: "AI 지원사업", verdict: "O" },
-      { id: "notice-2", title: "제조 바우처", verdict: "X" },
-    ]);
-    expect(data.notice).toContain("2건");
+    expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
+    expect(data.manualContent).toContain('"id":"notice-1"');
+    expect(data.manualContent).toContain('"verdict":"O"');
+    expect(data.manualContent).toContain('"id":"notice-2"');
+    expect(data.manualContent).toContain('"verdict":"X"');
     expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
   });
 
-  it("uses a short new-file URL without body query when pending file does not exist", async () => {
-    mocks.repoTextFileExists.mockResolvedValue(false);
-    const response = await POST(
-      request({ items: [{ id: "notice-new", title: "새 검수", verdict: "O" }] }),
-    );
-    const data = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(data.pendingFileExists).toBe(false);
-    expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/new/main/.apply?filename=config-pending.json",
-    );
-    expect(data.githubCommitUrl).not.toContain("value=");
-    expect(data.pendingContent).toContain('"resource":"review"');
-  });
-
-  it("keeps the GitHub URL short even for a 40-item long-title guest batch", async () => {
+  it("keeps final edit URL fixed even for 40 long-title items", async () => {
     const items = Array.from({ length: 40 }, (_, index) => ({
       id: `notice-${index + 1}`,
       title:
@@ -118,12 +91,11 @@ describe("POST /api/review/apply", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.applied).toBe(false);
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+      "https://github.com/pds2225/mail/edit/main/data/golden/feedback_labels.jsonl",
     );
-    expect(data.githubCommitUrl).not.toContain("value=");
-    expect(data.pendingContent.length).toBeGreaterThan(0);
+    expect(data.githubCommitUrl.length).toBeLessThan(100);
+    expect(data.manualContent.length).toBeGreaterThan(existingFeedback.length);
   });
 
   it("writes every selected item in a single commit when a token is present", async () => {
