@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   token: "",
   getRepoTextFile: vi.fn(),
   putRepoTextFile: vi.fn(),
+  repoTextFileExists: vi.fn(),
 }));
 
 vi.mock("@/lib/apply-auth", () => ({
@@ -16,6 +17,7 @@ vi.mock("@/lib/github-apply", () => ({
   getRepoTextFile: mocks.getRepoTextFile,
   githubBranch: vi.fn(() => "main"),
   putRepoTextFile: mocks.putRepoTextFile,
+  repoTextFileExists: mocks.repoTextFileExists,
 }));
 
 import { POST } from "@/app/api/review/apply/route";
@@ -43,6 +45,8 @@ describe("POST /api/review/apply", () => {
     mocks.token = "";
     mocks.getRepoTextFile.mockReset();
     mocks.putRepoTextFile.mockReset();
+    mocks.repoTextFileExists.mockReset();
+    mocks.repoTextFileExists.mockResolvedValue(true);
     mocks.getRepoTextFile.mockResolvedValue({ sha: "base-sha", text: existingFeedback });
     mocks.putRepoTextFile.mockResolvedValue({
       sha: "commit-sha",
@@ -82,6 +86,22 @@ describe("POST /api/review/apply", () => {
     ]);
     expect(data.notice).toContain("2건");
     expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
+  });
+
+  it("uses a short new-file URL without body query when pending file does not exist", async () => {
+    mocks.repoTextFileExists.mockResolvedValue(false);
+    const response = await POST(
+      request({ items: [{ id: "notice-new", title: "새 검수", verdict: "O" }] }),
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.pendingFileExists).toBe(false);
+    expect(data.githubCommitUrl).toBe(
+      "https://github.com/pds2225/mail/new/main/.apply?filename=config-pending.json",
+    );
+    expect(data.githubCommitUrl).not.toContain("value=");
+    expect(data.pendingContent).toContain('"resource":"review"');
   });
 
   it("keeps the GitHub URL short even for a 40-item long-title guest batch", async () => {
