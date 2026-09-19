@@ -28,13 +28,13 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
 [x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
-[~] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
+[x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 
 
 ---
@@ -2311,7 +2311,7 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — 구현 및 Production 검증 전.
+REQUEST_SOLVED=YES — PR #323에서 긴 prefill URL을 제거했고, 후속 PR #324에서 이미 존재하는 `.apply/config-pending.json`을 GitHub 새 파일 화면이 아니라 기존 파일 편집 화면으로 열도록 수정했다. GitHub Actions web-test/docs-gate/Python test 통과 후 main에 병합했고, Production deployment `dpl_99E3bsLMW1oJr3VXKcvMzcE8rTPc`가 READY이며 stable alias `mail-cyan-sigma.vercel.app`에 반영됐다. 실제 이메일 발송·삭제·라벨 변경 및 Secret 변경 없음.
 
 ---
 
