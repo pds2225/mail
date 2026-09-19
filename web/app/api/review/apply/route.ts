@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { gzipSync } from "node:zlib";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
 import { pendingConfigCommitUrl, type PendingConfigApply } from "@/lib/github-commit-url";
 import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
@@ -6,6 +7,18 @@ import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-app
 export const dynamic = "force-dynamic";
 
 type ReviewVerdictInput = { id: string; title: string; verdict: "O" | "X" };
+
+const MAX_GITHUB_WEB_URL_LENGTH = 6500;
+
+function packedPending(items: ReviewVerdictInput[]): PendingConfigApply {
+  const raw = Buffer.from(JSON.stringify(items), "utf-8");
+  return {
+    v: 1,
+    resource: "review",
+    encoding: "gzip-base64",
+    packed_items: gzipSync(raw).toString("base64"),
+  };
+}
 
 function parseItem(raw: unknown): ReviewVerdictInput | null {
   if (!raw || typeof raw !== "object") return null;
@@ -67,12 +80,24 @@ export async function POST(req: Request) {
     }
 
     const token = githubApplyToken(req);
-    const pending: PendingConfigApply = { v: 1, resource: "review", items };
     if (!token) {
+      const pending = packedPending(items);
+      const githubCommitUrl = pendingConfigCommitUrl(pending);
+      if (githubCommitUrl.length > MAX_GITHUB_WEB_URL_LENGTH) {
+        return NextResponse.json(
+          {
+            ok: false,
+            applied: false,
+            error:
+              "선택한 검수 항목이 너무 많아 GitHub 저장 링크를 만들 수 없습니다. 선택 수를 줄여 다시 저장하세요.",
+          },
+          { status: 413 },
+        );
+      }
       return NextResponse.json({
         ok: true,
         applied: false,
-        githubCommitUrl: pendingConfigCommitUrl(pending),
+        githubCommitUrl,
         notice: `검수 저장 확인 화면이 열립니다. Commit changes를 누르면 ${items.length}건의 O/X가 기록됩니다.`,
       });
     }
