@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { describe, expect, it } from "vitest";
-import { pendingConfigCommitUrl } from "@/lib/github-commit-url";
+import { pendingConfigManualCommitUrl } from "@/lib/github-commit-url";
 
 function webSource(relative: string) {
   return fs.readFileSync(path.resolve(process.cwd(), relative), "utf-8");
@@ -24,15 +24,26 @@ describe("V1 admin reuse", () => {
     }
   });
 
-  it("uses the existing tokenless pending flow for group changes", () => {
-    const url = pendingConfigCommitUrl({
-      v: 1,
-      resource: "group",
-      id: "grp_demo",
-      patch: { or_keywords: ["AI", "지원금"] },
-    });
-    expect(url).toContain("filename=config-pending.json");
-    expect(url).toContain("grp_demo");
+  it("never embeds config pending payload in GitHub URLs", () => {
+    const existingUrl = pendingConfigManualCommitUrl({ existing: true });
+    const newUrl = pendingConfigManualCommitUrl({ existing: false });
+
+    expect(existingUrl).toBe(
+      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+    );
+    expect(newUrl).toBe(
+      "https://github.com/pds2225/mail/new/main/.apply?filename=config-pending.json",
+    );
+    expect(existingUrl).not.toContain("value=");
+    expect(newUrl).not.toContain("value=");
+  });
+
+  it("keeps group and settings pages on the shared manual pending panel", () => {
+    for (const file of ["app/groups/page.tsx", "app/settings/page.tsx"]) {
+      const source = webSource(file);
+      expect(source).toContain("ManualPendingApply");
+      expect(source).toContain("manualPasteRequired");
+    }
   });
 
   it("never exposes recipient editing in group/settings pages", () => {
