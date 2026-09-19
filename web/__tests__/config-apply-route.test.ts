@@ -2,10 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   token: "",
-  pendingExists: true,
   getRepoTextFile: vi.fn(),
   putRepoTextFile: vi.fn(),
-  repoTextFileExists: vi.fn(),
 }));
 
 vi.mock("@/lib/apply-auth", () => ({
@@ -17,7 +15,6 @@ vi.mock("@/lib/github-apply", () => ({
   getRepoTextFile: mocks.getRepoTextFile,
   githubBranch: vi.fn(() => "main"),
   putRepoTextFile: mocks.putRepoTextFile,
-  repoTextFileExists: mocks.repoTextFileExists,
 }));
 
 import { POST } from "@/app/api/config/apply/route";
@@ -30,14 +27,11 @@ function request(body: unknown): Request {
   });
 }
 
-describe("POST /api/config/apply tokenless fallback", () => {
+describe("POST /api/config/apply tokenless direct-file fallback", () => {
   beforeEach(() => {
     mocks.token = "";
-    mocks.pendingExists = true;
     mocks.getRepoTextFile.mockReset();
     mocks.putRepoTextFile.mockReset();
-    mocks.repoTextFileExists.mockReset();
-    mocks.repoTextFileExists.mockImplementation(async () => mocks.pendingExists);
     mocks.getRepoTextFile.mockImplementation(async (path: string) => {
       if (path === "config/groups.json") {
         return {
@@ -52,8 +46,7 @@ describe("POST /api/config/apply tokenless fallback", () => {
     });
   });
 
-  it("uses edit URL and separate payload when config-pending already exists", async () => {
-    mocks.pendingExists = true;
+  it("returns full updated groups.json and direct edit URL", async () => {
     const response = await POST(
       request({
         resource: "group",
@@ -66,21 +59,18 @@ describe("POST /api/config/apply tokenless fallback", () => {
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
     expect(data.manualPasteRequired).toBe(true);
-    expect(data.pendingFileExists).toBe(true);
+    expect(data.manualFilePath).toBe("config/groups.json");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+      "https://github.com/pds2225/mail/edit/main/config/groups.json",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
-    expect(JSON.parse(data.pendingContent)).toMatchObject({
-      v: 1,
-      resource: "group",
-      id: "grp_demo",
-      patch: { name: "Updated" },
-    });
+    expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
+    expect(JSON.parse(data.manualContent)).toEqual([
+      { id: "grp_demo", name: "Updated", active: true },
+    ]);
   });
 
-  it("uses new URL with filename only when config-pending does not exist", async () => {
-    mocks.pendingExists = false;
+  it("returns full updated settings.json and direct edit URL", async () => {
     const response = await POST(
       request({
         resource: "settings",
@@ -90,15 +80,12 @@ describe("POST /api/config/apply tokenless fallback", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.pendingFileExists).toBe(false);
+    expect(data.manualFilePath).toBe("config/settings.json");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/new/main/.apply?filename=config-pending.json",
+      "https://github.com/pds2225/mail/edit/main/config/settings.json",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
-    expect(JSON.parse(data.pendingContent)).toMatchObject({
-      v: 1,
-      resource: "settings",
-      patch: { days_back: 5 },
-    });
+    expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
+    expect(JSON.parse(data.manualContent)).toMatchObject({ days_back: 5 });
   });
 });

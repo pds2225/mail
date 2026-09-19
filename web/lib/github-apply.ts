@@ -31,19 +31,6 @@ export type RepoFile = {
   text: string;
 };
 
-export async function repoTextFileExists(filePath: string, token = ""): Promise<boolean> {
-  const { owner, repo } = githubRepo();
-  const branch = githubBranch();
-  const url = `${API}/repos/${owner}/${repo}/contents/${filePath}?ref=${encodeURIComponent(branch)}`;
-  const response = await fetch(url, { headers: authHeaders(token), cache: "no-store" });
-  if (response.status === 404) return false;
-  if (!response.ok) {
-    const body = (await response.json().catch(() => ({}))) as { message?: string };
-    throw new Error(body.message || `GitHub에서 ${filePath} 존재 여부를 확인하지 못했습니다.`);
-  }
-  return true;
-}
-
 export async function getRepoTextFile(filePath: string, token = ""): Promise<RepoFile> {
   const { owner, repo } = githubRepo();
   const branch = githubBranch();

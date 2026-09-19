@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { describe, expect, it } from "vitest";
-import { pendingConfigManualCommitUrl } from "@/lib/github-commit-url";
+import { githubEditFileUrl } from "@/lib/github-commit-url";
 
 function webSource(relative: string) {
   return fs.readFileSync(path.resolve(process.cwd(), relative), "utf-8");
@@ -24,18 +24,17 @@ describe("V1 admin reuse", () => {
     }
   });
 
-  it("never embeds config pending payload in GitHub URLs", () => {
-    const existingUrl = pendingConfigManualCommitUrl({ existing: true });
-    const newUrl = pendingConfigManualCommitUrl({ existing: false });
-
-    expect(existingUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
-    );
-    expect(newUrl).toBe(
-      "https://github.com/pds2225/mail/new/main/.apply?filename=config-pending.json",
-    );
-    expect(existingUrl).not.toContain("value=");
-    expect(newUrl).not.toContain("value=");
+  it("uses direct final-file edit URLs without payload query", () => {
+    for (const filePath of [
+      "data/golden/feedback_labels.jsonl",
+      "config/groups.json",
+      "config/settings.json",
+    ]) {
+      const url = githubEditFileUrl(filePath);
+      expect(url).toContain("/edit/main/");
+      expect(url).not.toContain("value=");
+      expect(url).not.toContain(".apply/config-pending.json");
+    }
   });
 
   it("keeps group and settings pages on the shared manual pending panel", () => {

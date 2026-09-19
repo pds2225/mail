@@ -1,32 +1,12 @@
 import { NextResponse } from "next/server";
-import { gzipSync } from "node:zlib";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
-import {
-  pendingConfigManualCommitUrl,
-  serializePendingApply,
-  type PendingConfigApply,
-} from "@/lib/github-commit-url";
-import {
-  getRepoTextFile,
-  githubBranch,
-  putRepoTextFile,
-  repoTextFileExists,
-} from "@/lib/github-apply";
+import { githubEditFileUrl } from "@/lib/github-commit-url";
+import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
 type ReviewVerdictInput = { id: string; title: string; verdict: "O" | "X" };
 
-
-function packedPending(items: ReviewVerdictInput[]): PendingConfigApply {
-  const raw = Buffer.from(JSON.stringify(items), "utf-8");
-  return {
-    v: 1,
-    resource: "review",
-    encoding: "gzip-base64",
-    packed_items: gzipSync(raw).toString("base64"),
-  };
-}
 
 function parseItem(raw: unknown): ReviewVerdictInput | null {
   if (!raw || typeof raw !== "object") return null;
@@ -88,26 +68,25 @@ export async function POST(req: Request) {
     }
 
     const token = githubApplyToken(req);
+    const feedbackPath = "data/golden/feedback_labels.jsonl";
     if (!token) {
-      const pending = packedPending(items);
-      const pendingFileExists = await repoTextFileExists(".apply/config-pending.json");
+      const remote = await getRepoTextFile(feedbackPath);
       return NextResponse.json({
         ok: true,
         applied: false,
         manualPasteRequired: true,
-        pendingFileExists,
-        githubCommitUrl: pendingConfigManualCommitUrl({ existing: pendingFileExists }),
-        pendingFilename: "config-pending.json",
-        pendingContent: serializePendingApply(pending),
+        manualFilePath: feedbackPath,
+        manualContent: upsertFeedback(remote.text, items),
+        githubCommitUrl: githubEditFileUrl(feedbackPath),
         notice:
-          `검수 ${items.length}건을 저장하려면 아래 검수 데이터를 복사한 뒤 GitHub 저장 화면에 붙여넣어 Commit changes를 누르세요.`,
+          `검수 ${items.length}건을 최종 검수 파일에 저장하려면 아래 내용을 복사해 GitHub 파일 전체를 교체한 뒤 Commit changes를 누르세요.`,
       });
     }
 
-    const remote = await getRepoTextFile("data/golden/feedback_labels.jsonl", token);
+    const remote = await getRepoTextFile(feedbackPath, token);
     const summary = items.length === 1 ? `${items[0].verdict} ${items[0].id}` : `${items.length}건`;
     const written = await putRepoTextFile({
-      filePath: "data/golden/feedback_labels.jsonl",
+      filePath: feedbackPath,
       text: upsertFeedback(remote.text, items),
       sha: remote.sha,
       message: `chore(review): ${summary} via admin web`,

@@ -1,16 +1,7 @@
 import { NextResponse } from "next/server";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
-import {
-  pendingConfigManualCommitUrl,
-  serializePendingApply,
-  type PendingConfigApply,
-} from "@/lib/github-commit-url";
-import {
-  getRepoTextFile,
-  githubBranch,
-  putRepoTextFile,
-  repoTextFileExists,
-} from "@/lib/github-apply";
+import { githubEditFileUrl } from "@/lib/github-commit-url";
+import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
@@ -40,18 +31,15 @@ function pickPatch(input: unknown, allowed: Set<string>): Record<string, unknown
   );
 }
 
-async function githubWebApply(pending: PendingConfigApply) {
-  const pendingFileExists = await repoTextFileExists(".apply/config-pending.json");
+function githubWebApply(filePath: string, content: string) {
   return {
     ok: true,
     applied: false,
     manualPasteRequired: true,
-    pendingFileExists,
-    githubCommitUrl: pendingConfigManualCommitUrl({ existing: pendingFileExists }),
-    pendingFilename: "config-pending.json",
-    pendingContent: serializePendingApply(pending),
-    notice:
-      "저장 데이터를 복사한 뒤 GitHub 저장 화면에 붙여넣고 Commit changes를 누르면 설정이 반영됩니다.",
+    manualFilePath: filePath,
+    manualContent: content,
+    githubCommitUrl: githubEditFileUrl(filePath),
+    notice: "최종 설정 파일 전체를 복사해 GitHub 파일 내용을 교체한 뒤 Commit changes를 누르세요.",
   };
 }
 
@@ -86,12 +74,13 @@ export async function POST(req: Request) {
       const nextGroup = { ...current, ...patch };
       const next = [...parsed];
       next[index] = nextGroup;
-      const pending: PendingConfigApply = { v: 1, resource: "group", id, patch };
-      if (!token) return NextResponse.json(await githubWebApply(pending));
+      const filePath = "config/groups.json";
+      const nextText = `${JSON.stringify(next, null, 2)}\n`;
+      if (!token) return NextResponse.json(githubWebApply(filePath, nextText));
 
       const written = await putRepoTextFile({
-        filePath: "config/groups.json",
-        text: `${JSON.stringify(next, null, 2)}\n`,
+        filePath,
+        text: nextText,
         sha: remote.sha,
         message: `chore(groups): update ${id} via admin web`,
         token,
@@ -116,12 +105,13 @@ export async function POST(req: Request) {
         throw new Error("config/settings.json 형식이 객체가 아닙니다.");
       }
       const next = { ...(parsed as Record<string, unknown>), ...patch };
-      const pending: PendingConfigApply = { v: 1, resource: "settings", patch };
-      if (!token) return NextResponse.json(await githubWebApply(pending));
+      const filePath = "config/settings.json";
+      const nextText = `${JSON.stringify(next, null, 2)}\n`;
+      if (!token) return NextResponse.json(githubWebApply(filePath, nextText));
 
       const written = await putRepoTextFile({
-        filePath: "config/settings.json",
-        text: `${JSON.stringify(next, null, 2)}\n`,
+        filePath,
+        text: nextText,
         sha: remote.sha,
         message: "chore(settings): update via admin web",
         token,
