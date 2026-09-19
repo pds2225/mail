@@ -2324,67 +2324,72 @@ REQUEST_SOLVED=YES — PR #323에서 긴 prefill URL을 제거했고, 후속 PR 
 
 ### 8-2. 비개발자용 1줄 요약
 
-config-pending 임시파일의 존재 여부를 자동 확인해 공고검수·그룹·설정 저장이 New/Edit 상태 모두에서 깨지지 않게 한다.
+config-pending 임시파일과 apply-admin direct push 의존을 웹 저장 경로에서 제거해 검수·그룹·설정 저장 오류가 재발하지 않게 한다.
 
 ### 8-3. 사용자 최종 결과
 
-- `.apply/config-pending.json`이 존재하면 GitHub Edit 화면을 연다.
-- 파일이 없으면 GitHub New 화면을 열되 파일명만 URL에 넣고 본문 payload는 URL에 넣지 않는다.
-- 공고검수·그룹·설정 3개 화면 모두 동일한 안전 저장 흐름을 쓴다.
-- `value=` query, 무조건 New, 무조건 Edit 중 하나로 회귀하면 테스트가 실패한다.
-- 기존 서버 GitHub token 직접 저장 경로와 apply-admin 처리기는 유지한다.
+- 공고검수는 최종 `data/golden/feedback_labels.jsonl`을 직접 편집한다.
+- 그룹은 최종 `config/groups.json`, 설정은 최종 `config/settings.json`을 직접 편집한다.
+- GitHub URL에는 본문 payload를 넣지 않는다.
+- 보호브랜치 때문에 PR이 생성돼도 기존 CI/자동머지 흐름으로 처리된다.
+- 웹 저장은 `.apply/config-pending.json` 및 `apply-admin` 성공 여부에 의존하지 않는다.
+- stale `.apply/config-pending.json`은 제거한다.
 
 ### 8-4. 현재상태
 
 - TASK_ID: MAIL-021
 - TASK_START_SHA: 116ed21fe5cea451e1453deb412ee6f6a4cbd408
-- TASK_BLOB_SHA: 37471fe1791b4fc42f6c0f5319f9b189be0f408c
-- WORK_BRANCH: fix/mail-021-config-pending-recurrence
+- TASK_BLOB_SHA: 65a24e8bc16cd26e08af3933b0dd27f5c99c18ec
+- WORK_BRANCH: fix/mail-021-direct-final-save
+- ROOT_CAUSE: 2026-09-15 apply-admin job 104330855197에서 결과 commit 생성 후 `git push`가 `GH006: Protected branch update failed`로 실패. 임시파일 삭제 commit이 main에 반영되지 않아 stale pending이 지속됨.
 
 ### 8-5. MUST
 
-- [ ] config-pending 존재 여부 확인 helper 추가
-- [ ] 존재=true → edit URL, 존재=false → new URL 자동 선택
-- [ ] new URL은 filename만 허용하고 `value=` payload query 금지
-- [ ] review/config API가 pending payload를 URL과 분리해 반환
-- [ ] review/groups/settings가 공통 manual pending UI 사용
-- [ ] 존재/미존재 두 상태 및 3개 화면 회귀테스트 추가
-- [ ] 실제 메일 발송·삭제·라벨 변경 없음
+- [ ] review tokenless 저장은 최종 feedback_labels.jsonl 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
+- [ ] group/settings tokenless 저장은 최종 config 파일 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
+- [ ] URL에 `value=` payload query 및 `.apply/config-pending.json` 사용 금지.
+- [ ] 공고검수·그룹·설정은 공통 manual GitHub 저장 UI 사용.
+- [ ] stale `.apply/config-pending.json` 제거.
+- [ ] 기존 서버 token 직접 저장 및 legacy apply-admin 처리기는 하위호환으로 유지하되 웹 저장이 의존하지 않게 한다.
+- [ ] 실제 메일 발송·삭제·라벨 변경 없음.
 
 ### 8-6. KEEP
 
 - MAIL-018 배치 O/X 선택 UX
-- MAIL-019 gzip review payload 포맷
-- MAIL-020 수동 복사 + GitHub 확인 흐름
-- `.github/workflows/apply-admin.yml` 및 `scripts/apply_admin_payload.py`
-- 서버 token이 있는 경우 직접 1커밋 저장 경로
+- 기존 O/X 저장 형식과 feedback_labels.jsonl
+- config/groups.json / config/settings.json 형식
+- 서버 token이 있는 직접 1커밋 저장 경로
+- apply-admin workflow/script는 legacy 호환용으로 유지
 
 ### 8-7. REMOVE
 
-- config-pending 존재 여부와 무관하게 항상 New로 여는 동작
-- config-pending 존재 여부와 무관하게 항상 Edit로 여는 동작
-- config pending payload를 GitHub URL `value=` query에 넣는 동작
+- 웹 저장의 config-pending 임시파일 생성/편집 의존
+- config-pending 존재/미존재 분기
+- config pending payload를 GitHub URL query에 넣는 경로
+- stale `.apply/config-pending.json`
 
 ### 8-8. FORBIDDEN
 
 - Secret/토큰 출력·커밋
+- branch protection 우회
+- 실패한 필수 체크 무시
 - 실제 이메일 발송·삭제·라벨 변경
-- apply-admin workflow 삭제/우회
 - 관련 없는 수집·판정 로직 변경
 
 ### 8-9. VERIFY
 
-- `cd web && npx vitest run __tests__/review-apply-route.test.ts __tests__/config-apply-route.test.ts __tests__/v1-admin-reuse.test.ts`
+- review/config route tests에서 GitHub URL이 최종 파일 경로인지 확인
+- URL에 `value=` 및 `.apply/config-pending.json` 없음
+- 최종 파일 content에 선택 O/X/설정 변경이 반영되는지 확인
 - `cd web && npx vitest run`
-- `cd web && npx tsc --noEmit`
 - `cd web && npx next build`
 - Python 전체 회귀 GitHub Actions
-- Vercel Preview에서 /review 200 및 새 번들 배포 확인
-- URL에 `value=` 없음, 존재/미존재별 Edit/New 테스트
+- Vercel Preview/Production /review 200
+- stale pending 파일 main 제거 확인
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — 구현 및 Production 검증 전.
+REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 
 ---
 
