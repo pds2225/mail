@@ -64,10 +64,12 @@ describe("POST /api/review/apply", () => {
 
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
-    expect(data.githubCommitUrl).toContain("filename=config-pending.json");
-    expect(data.githubCommitUrl.length).toBeLessThan(6500);
-    const pendingUrl = new URL(data.githubCommitUrl);
-    const pending = JSON.parse(pendingUrl.searchParams.get("value") || "{}");
+    expect(data.manualPasteRequired).toBe(true);
+    expect(data.githubCommitUrl).toBe("https://github.com/pds2225/mail/new/main/.apply");
+    expect(data.githubCommitUrl).not.toContain("value=");
+    expect(data.githubCommitUrl.length).toBeLessThan(100);
+    expect(data.pendingFilename).toBe("config-pending.json");
+    const pending = JSON.parse(data.pendingContent);
     expect(pending.encoding).toBe("gzip-base64");
     const unpacked = JSON.parse(
       gunzipSync(Buffer.from(pending.packed_items, "base64")).toString("utf-8"),
@@ -80,7 +82,7 @@ describe("POST /api/review/apply", () => {
     expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
   });
 
-  it("keeps a 40-item long-title guest batch below the safe GitHub URL limit", async () => {
+  it("keeps the GitHub URL short even for a 40-item long-title guest batch", async () => {
     const items = Array.from({ length: 40 }, (_, index) => ({
       id: `notice-${index + 1}`,
       title:
@@ -95,7 +97,9 @@ describe("POST /api/review/apply", () => {
 
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
-    expect(data.githubCommitUrl.length).toBeLessThan(6500);
+    expect(data.githubCommitUrl).toBe("https://github.com/pds2225/mail/new/main/.apply");
+    expect(data.githubCommitUrl).not.toContain("value=");
+    expect(data.pendingContent.length).toBeGreaterThan(0);
   });
 
   it("writes every selected item in a single commit when a token is present", async () => {
