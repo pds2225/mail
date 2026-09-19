@@ -52,16 +52,10 @@ export function pendingApplyCommitUrl(pending: PendingApply): string {
   });
 }
 
-export function pendingConfigManualCommitUrl(opts?: {
-  repo?: string;
-  branch?: string;
-  existing?: boolean;
-}): string {
+
+export function githubEditFileUrl(filePath: string, opts?: { repo?: string; branch?: string }): string {
   const repo = opts?.repo || "pds2225/mail";
   const branch = opts?.branch || "main";
-  if (opts?.existing) {
-    return `https://github.com/${repo}/edit/${branch}/.apply/config-pending.json`;
-  }
-  const params = new URLSearchParams({ filename: "config-pending.json" });
-  return `https://github.com/${repo}/new/${branch}/.apply?${params.toString()}`;
+  const safePath = filePath.split("/").map(encodeURIComponent).join("/");
+  return `https://github.com/${repo}/edit/${branch}/${safePath}`;
 }
