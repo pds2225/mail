@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { applyHeaders, followApplyResult } from "@/lib/apply-client";
+import ManualPendingApply from "@/app/components/ManualPendingApply";
 
 const REGIONS = [
   "서울",
@@ -135,7 +136,7 @@ export default function GroupsPage() {
       const data = await response.json();
       setResult(data);
       if (!response.ok || !data.ok) throw new Error(data.error || "저장하지 못했습니다.");
-      followApplyResult(data);
+      if (!data.manualPasteRequired) followApplyResult(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -297,6 +298,7 @@ export default function GroupsPage() {
           {result.error ? <p className="error">{String(result.error)}</p> : null}
           {result.notice ? <p>{String(result.notice)}</p> : null}
           {result.commitUrl ? <p className="hint">저장 커밋이 생성됐습니다.</p> : null}
+          <ManualPendingApply result={result} />
         </div>
       ) : null}
     </div>
