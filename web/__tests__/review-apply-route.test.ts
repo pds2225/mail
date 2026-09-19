@@ -65,7 +65,9 @@ describe("POST /api/review/apply", () => {
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
     expect(data.manualPasteRequired).toBe(true);
-    expect(data.githubCommitUrl).toBe("https://github.com/pds2225/mail/new/main/.apply");
+    expect(data.githubCommitUrl).toBe(
+      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+    );
     expect(data.githubCommitUrl).not.toContain("value=");
     expect(data.githubCommitUrl.length).toBeLessThan(100);
     expect(data.pendingFilename).toBe("config-pending.json");
@@ -97,7 +99,9 @@ describe("POST /api/review/apply", () => {
 
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
-    expect(data.githubCommitUrl).toBe("https://github.com/pds2225/mail/new/main/.apply");
+    expect(data.githubCommitUrl).toBe(
+      "https://github.com/pds2225/mail/edit/main/.apply/config-pending.json",
+    );
     expect(data.githubCommitUrl).not.toContain("value=");
     expect(data.pendingContent.length).toBeGreaterThan(0);
   });
