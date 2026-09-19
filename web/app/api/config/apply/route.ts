@@ -1,7 +1,16 @@
 import { NextResponse } from "next/server";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
-import { pendingConfigCommitUrl, type PendingConfigApply } from "@/lib/github-commit-url";
-import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
+import {
+  pendingConfigManualCommitUrl,
+  serializePendingApply,
+  type PendingConfigApply,
+} from "@/lib/github-commit-url";
+import {
+  getRepoTextFile,
+  githubBranch,
+  putRepoTextFile,
+  repoTextFileExists,
+} from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
@@ -31,12 +40,18 @@ function pickPatch(input: unknown, allowed: Set<string>): Record<string, unknown
   );
 }
 
-function githubWebApply(pending: PendingConfigApply) {
+async function githubWebApply(pending: PendingConfigApply) {
+  const pendingFileExists = await repoTextFileExists(".apply/config-pending.json");
   return {
     ok: true,
     applied: false,
-    githubCommitUrl: pendingConfigCommitUrl(pending),
-    notice: "저장 확인 화면이 열립니다. Commit changes를 누르면 설정이 반영됩니다.",
+    manualPasteRequired: true,
+    pendingFileExists,
+    githubCommitUrl: pendingConfigManualCommitUrl({ existing: pendingFileExists }),
+    pendingFilename: "config-pending.json",
+    pendingContent: serializePendingApply(pending),
+    notice:
+      "저장 데이터를 복사한 뒤 GitHub 저장 화면에 붙여넣고 Commit changes를 누르면 설정이 반영됩니다.",
   };
 }
 
@@ -72,7 +87,7 @@ export async function POST(req: Request) {
       const next = [...parsed];
       next[index] = nextGroup;
       const pending: PendingConfigApply = { v: 1, resource: "group", id, patch };
-      if (!token) return NextResponse.json(githubWebApply(pending));
+      if (!token) return NextResponse.json(await githubWebApply(pending));
 
       const written = await putRepoTextFile({
         filePath: "config/groups.json",
@@ -102,7 +117,7 @@ export async function POST(req: Request) {
       }
       const next = { ...(parsed as Record<string, unknown>), ...patch };
       const pending: PendingConfigApply = { v: 1, resource: "settings", patch };
-      if (!token) return NextResponse.json(githubWebApply(pending));
+      if (!token) return NextResponse.json(await githubWebApply(pending));
 
       const written = await putRepoTextFile({
         filePath: "config/settings.json",

@@ -28,13 +28,14 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
 [x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
+[~] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 
 
 ---
@@ -2312,6 +2313,78 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 ### 8-10. DONE
 
 REQUEST_SOLVED=YES — PR #323에서 긴 prefill URL을 제거했고, 후속 PR #324에서 이미 존재하는 `.apply/config-pending.json`을 GitHub 새 파일 화면이 아니라 기존 파일 편집 화면으로 열도록 수정했다. GitHub Actions web-test/docs-gate/Python test 통과 후 main에 병합했고, Production deployment `dpl_99E3bsLMW1oJr3VXKcvMzcE8rTPc`가 READY이며 stable alias `mail-cyan-sigma.vercel.app`에 반영됐다. 실제 이메일 발송·삭제·라벨 변경 및 Secret 변경 없음.
+
+---
+
+## MAIL-021
+
+### 8-1. 사용자 원문 요청
+
+> 재발방지
+
+### 8-2. 비개발자용 1줄 요약
+
+config-pending 임시파일의 존재 여부를 자동 확인해 공고검수·그룹·설정 저장이 New/Edit 상태 모두에서 깨지지 않게 한다.
+
+### 8-3. 사용자 최종 결과
+
+- `.apply/config-pending.json`이 존재하면 GitHub Edit 화면을 연다.
+- 파일이 없으면 GitHub New 화면을 열되 파일명만 URL에 넣고 본문 payload는 URL에 넣지 않는다.
+- 공고검수·그룹·설정 3개 화면 모두 동일한 안전 저장 흐름을 쓴다.
+- `value=` query, 무조건 New, 무조건 Edit 중 하나로 회귀하면 테스트가 실패한다.
+- 기존 서버 GitHub token 직접 저장 경로와 apply-admin 처리기는 유지한다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-021
+- TASK_START_SHA: 116ed21fe5cea451e1453deb412ee6f6a4cbd408
+- TASK_BLOB_SHA: 37471fe1791b4fc42f6c0f5319f9b189be0f408c
+- WORK_BRANCH: fix/mail-021-config-pending-recurrence
+
+### 8-5. MUST
+
+- [ ] config-pending 존재 여부 확인 helper 추가
+- [ ] 존재=true → edit URL, 존재=false → new URL 자동 선택
+- [ ] new URL은 filename만 허용하고 `value=` payload query 금지
+- [ ] review/config API가 pending payload를 URL과 분리해 반환
+- [ ] review/groups/settings가 공통 manual pending UI 사용
+- [ ] 존재/미존재 두 상태 및 3개 화면 회귀테스트 추가
+- [ ] 실제 메일 발송·삭제·라벨 변경 없음
+
+### 8-6. KEEP
+
+- MAIL-018 배치 O/X 선택 UX
+- MAIL-019 gzip review payload 포맷
+- MAIL-020 수동 복사 + GitHub 확인 흐름
+- `.github/workflows/apply-admin.yml` 및 `scripts/apply_admin_payload.py`
+- 서버 token이 있는 경우 직접 1커밋 저장 경로
+
+### 8-7. REMOVE
+
+- config-pending 존재 여부와 무관하게 항상 New로 여는 동작
+- config-pending 존재 여부와 무관하게 항상 Edit로 여는 동작
+- config pending payload를 GitHub URL `value=` query에 넣는 동작
+
+### 8-8. FORBIDDEN
+
+- Secret/토큰 출력·커밋
+- 실제 이메일 발송·삭제·라벨 변경
+- apply-admin workflow 삭제/우회
+- 관련 없는 수집·판정 로직 변경
+
+### 8-9. VERIFY
+
+- `cd web && npx vitest run __tests__/review-apply-route.test.ts __tests__/config-apply-route.test.ts __tests__/v1-admin-reuse.test.ts`
+- `cd web && npx vitest run`
+- `cd web && npx tsc --noEmit`
+- `cd web && npx next build`
+- Python 전체 회귀 GitHub Actions
+- Vercel Preview에서 /review 200 및 새 번들 배포 확인
+- URL에 `value=` 없음, 존재/미존재별 Edit/New 테스트
+
+### 8-10. DONE
+
+REQUEST_SOLVED=NO — 구현 및 Production 검증 전.
 
 ---
 

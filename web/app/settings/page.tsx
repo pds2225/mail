@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { applyHeaders, followApplyResult } from "@/lib/apply-client";
+import ManualPendingApply from "@/app/components/ManualPendingApply";
 
 type Settings = {
   date_filter_enabled?: boolean;
@@ -58,7 +59,7 @@ export default function SettingsPage() {
       const data = await response.json();
       setResult(data);
       if (!response.ok || !data.ok) throw new Error(data.error || "저장하지 못했습니다.");
-      followApplyResult(data);
+      if (!data.manualPasteRequired) followApplyResult(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -175,6 +176,7 @@ export default function SettingsPage() {
           <h2 className="card-title">저장 결과</h2>
           {result.error ? <p className="error">{String(result.error)}</p> : null}
           {result.notice ? <p>{String(result.notice)}</p> : null}
+          <ManualPendingApply result={result} />
         </section>
       ) : null}
     </div>

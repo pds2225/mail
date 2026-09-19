@@ -6,7 +6,12 @@ import {
   serializePendingApply,
   type PendingConfigApply,
 } from "@/lib/github-commit-url";
-import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
+import {
+  getRepoTextFile,
+  githubBranch,
+  putRepoTextFile,
+  repoTextFileExists,
+} from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
@@ -85,11 +90,13 @@ export async function POST(req: Request) {
     const token = githubApplyToken(req);
     if (!token) {
       const pending = packedPending(items);
+      const pendingFileExists = await repoTextFileExists(".apply/config-pending.json");
       return NextResponse.json({
         ok: true,
         applied: false,
         manualPasteRequired: true,
-        githubCommitUrl: pendingConfigManualCommitUrl(),
+        pendingFileExists,
+        githubCommitUrl: pendingConfigManualCommitUrl({ existing: pendingFileExists }),
         pendingFilename: "config-pending.json",
         pendingContent: serializePendingApply(pending),
         notice:
