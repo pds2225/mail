@@ -229,8 +229,8 @@ export default function ReviewPage() {
                 </a>
               </div>
               <p className="hint">
-                GitHub 화면에서 파일명을 <code>config-pending.json</code>으로 입력하고, 아래 데이터를
-                파일 본문에 붙여넣은 뒤 Commit changes를 누르세요.
+                GitHub에서 기존 <code>config-pending.json</code> 파일이 열립니다. 기존 내용을 전체 선택해
+                지운 뒤 아래 데이터를 붙여넣고 Commit changes를 누르세요.
               </p>
               <textarea
                 readOnly
