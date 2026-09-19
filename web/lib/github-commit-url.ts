@@ -16,6 +16,12 @@ export type PendingConfigApply =
       v: 1;
       resource: "review";
       items: { id: string; title: string; verdict: "O" | "X" }[];
+    }
+  | {
+      v: 1;
+      resource: "review";
+      encoding: "gzip-base64";
+      packed_items: string;
     };
 
 export function serializePendingApply(pending: PendingApply | PendingConfigApply): string {
