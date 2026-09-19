@@ -59,3 +59,9 @@ export function pendingConfigCommitUrl(pending: PendingConfigApply): string {
     value: serializePendingApply(pending),
   });
 }
+
+export function pendingConfigManualCommitUrl(opts?: { repo?: string; branch?: string }): string {
+  const repo = opts?.repo || "pds2225/mail";
+  const branch = opts?.branch || "main";
+  return `https://github.com/${repo}/new/${branch}/.apply`;
+}

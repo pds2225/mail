@@ -28,12 +28,13 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
 [x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
+[~] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 
 
 ---
@@ -2244,6 +2245,73 @@ REQUEST_SOLVED=YES — `/review` 화면 O/X 클릭은 이제 로컬 선택만 �
 ### 8-10. DONE
 
 REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a050bc5b). GitHub CI 1532 passed/6 skipped, web-test 44 passed, Next.js production build PASS. Vercel Production dpl_5gGiJ2RfVCAzQY7qTYQiAVdracds READY 및 mail-cyan-sigma.vercel.app alias 반영 확인. Preview `/api/apply/status`는 github-web 모드(hasApplySecret=false, hasGithubToken=false)로 확인되어 이번 오류가 발생한 fallback 경로와 일치한다. 실제 이메일 발송·삭제·라벨 변경 없음.
+
+---
+
+## MAIL-020
+
+### 8-1. 사용자 원문 요청
+
+> Looks like something went wrong!
+>
+> We track these errors automatically, but if the problem persists feel free to contact us. In the meantime, try refreshing.
+
+### 8-2. 비개발자용 1줄 요약
+
+공고검수 저장 시 GitHub의 불안정한 본문 prefill URL을 쓰지 않고, 복사 후 정상 새 파일 화면에서 저장하게 한다.
+
+### 8-3. 사용자 최종 결과
+
+- 선택 저장 후 GitHub 일반 오류 화면이 자동으로 열리지 않는다.
+- Vercel에 GitHub 저장 토큰이 없을 때는 검수 payload를 사이트에서 복사할 수 있다.
+- GitHub는 짧은 일반 새 파일 화면만 열고, 사용자가 파일명/본문을 붙여넣어 Commit changes 한다.
+- GitHub 저장 토큰이 있는 경우 기존 서버 직접 저장 1커밋 경로는 그대로 유지한다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-020
+- TASK_START_SHA: c37f388585975534affe2feb39f96c93f35cb0c0
+- TASK_BLOB_SHA: 37cd24edb2170813a1587cc6795d8bffced5b534
+- WORK_BRANCH: fix/mail-020-review-github-manual-fallback
+
+### 8-5. MUST
+
+- [ ] review guest fallback에서 GitHub URL의 `value` query를 제거한다.
+- [ ] API가 복사 가능한 pending payload와 파일명을 반환한다.
+- [ ] /review 화면에서 "검수 데이터 복사"와 "GitHub 저장 화면 열기"를 분리한다.
+- [ ] 저장 링크는 짧은 일반 GitHub new-file URL이어야 한다.
+- [ ] 서버 토큰이 있는 직접 저장 경로와 기존 pending payload 처리 하위호환 유지.
+- [ ] 실제 이메일 발송·삭제·라벨 변경 없음.
+
+### 8-6. KEEP
+
+- MAIL-018 배치 선택 UX
+- MAIL-019 gzip payload 포맷 및 Python 복원 지원
+- data/golden/feedback_labels.jsonl 저장 위치
+- O/X 의미와 기존 인증 흐름
+
+### 8-7. REMOVE
+
+- review fallback에서 GitHub 새 파일 본문을 URL query `value`로 prefill하는 동작
+- fallback 결과를 즉시 window.open 하는 동작
+
+### 8-8. FORBIDDEN
+
+- Secret/토큰 출력 또는 코드 커밋
+- 실제 이메일 발송·삭제·라벨 변경
+- 관련 없는 필터/수집 로직 변경
+
+### 8-9. VERIFY
+
+- `cd web && npx vitest run __tests__/review-apply-route.test.ts`
+- `cd web && npx vitest run`
+- `cd web && npx tsc --noEmit`
+- `cd web && npx next build`
+- GitHub URL에 `value=` 없음 및 짧은 URL 회귀검증
+
+### 8-10. DONE
+
+REQUEST_SOLVED=NO — 구현 및 Production 검증 전.
 
 ---
 

@@ -17,6 +17,7 @@ export default function ReviewPage() {
   const [error, setError] = useState("");
   const [showReviewed, setShowReviewed] = useState(false);
   const [result, setResult] = useState<Record<string, unknown> | null>(null);
+  const [copiedPending, setCopiedPending] = useState(false);
 
   useEffect(() => {
     fetch("/api/review")
@@ -48,6 +49,19 @@ export default function ReviewPage() {
       return { ...current, [item.id]: verdict };
     });
     setResult(null);
+    setCopiedPending(false);
+  }
+
+  async function copyPendingContent() {
+    const content = typeof result?.pendingContent === "string" ? result.pendingContent : "";
+    if (!content) return;
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedPending(true);
+      setError("");
+    } catch {
+      setError("자동 복사가 막혔습니다. 아래 데이터 상자를 길게 눌러 직접 복사하세요.");
+    }
   }
 
   async function saveSelected() {
@@ -55,6 +69,7 @@ export default function ReviewPage() {
     setSaving(true);
     setError("");
     setResult(null);
+    setCopiedPending(false);
     try {
       const byId = new Map(items.map((item) => [item.id, item]));
       const payloadItems = pendingIds.map((id) => ({
@@ -75,8 +90,10 @@ export default function ReviewPage() {
           current.map((row) => (pending[row.id] ? { ...row, verdict: pending[row.id] } : row)),
         );
         setPending({});
+        followApplyResult(data);
+      } else if (!data.manualPasteRequired) {
+        followApplyResult(data);
       }
-      followApplyResult(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -193,6 +210,37 @@ export default function ReviewPage() {
         <section className="card mt">
           <h2 className="card-title">검수 저장</h2>
           <p>{String(result.notice)}</p>
+          {result.manualPasteRequired ? (
+            <>
+              <p className="hint">
+                파일명: <code>{String(result.pendingFilename || "config-pending.json")}</code>
+              </p>
+              <div className="row mt" style={{ gap: "0.75rem", flexWrap: "wrap" }}>
+                <button type="button" className="btn btn-primary" onClick={copyPendingContent}>
+                  {copiedPending ? "복사 완료" : "1. 검수 데이터 복사"}
+                </button>
+                <a
+                  className="btn btn-secondary"
+                  href={String(result.githubCommitUrl || "#")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  2. GitHub 저장 화면 열기
+                </a>
+              </div>
+              <p className="hint">
+                GitHub 화면에서 파일명을 <code>config-pending.json</code>으로 입력하고, 아래 데이터를
+                파일 본문에 붙여넣은 뒤 Commit changes를 누르세요.
+              </p>
+              <textarea
+                readOnly
+                value={String(result.pendingContent || "")}
+                aria-label="검수 저장 데이터"
+                rows={5}
+                style={{ width: "100%", fontFamily: "monospace" }}
+              />
+            </>
+          ) : null}
         </section>
       ) : null}
     </div>
