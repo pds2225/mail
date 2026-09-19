@@ -4,8 +4,10 @@ import { useState } from "react";
 
 export type ManualPendingResult = {
   manualPasteRequired?: boolean;
-  pendingFileExists?: boolean;
   githubCommitUrl?: string;
+  manualFilePath?: string;
+  manualContent?: string;
+  pendingFileExists?: boolean;
   pendingFilename?: string;
   pendingContent?: string;
 };
@@ -16,9 +18,10 @@ export default function ManualPendingApply({ result }: { result: ManualPendingRe
 
   if (!result?.manualPasteRequired) return null;
 
-  const content = String(result.pendingContent || "");
-  const filename = String(result.pendingFilename || "config-pending.json");
+  const content = String(result.manualContent || result.pendingContent || "");
+  const filename = String(result.manualFilePath || result.pendingFilename || "저장 파일");
   const url = String(result.githubCommitUrl || "#");
+  const finalFileMode = Boolean(result.manualFilePath);
 
   async function copyPendingContent() {
     if (!content) return;
@@ -35,9 +38,11 @@ export default function ManualPendingApply({ result }: { result: ManualPendingRe
   return (
     <div className="mt">
       <p className="hint">
-        {result.pendingFileExists
-          ? `GitHub에서 기존 ${filename} 파일이 열립니다. 기존 내용을 전체 선택해 지운 뒤 아래 데이터를 붙여넣으세요.`
-          : `GitHub에서 새 ${filename} 파일이 열립니다. 아래 데이터를 파일 본문에 붙여넣으세요.`}
+        {finalFileMode
+          ? `GitHub에서 최종 파일 ${filename}이 열립니다. 기존 내용을 전체 선택해 지운 뒤 아래 전체 내용을 붙여넣으세요.`
+          : result.pendingFileExists
+            ? `GitHub에서 기존 ${filename} 파일이 열립니다. 기존 내용을 전체 선택해 지운 뒤 아래 데이터를 붙여넣으세요.`
+            : `GitHub에서 새 ${filename} 파일이 열립니다. 아래 데이터를 파일 본문에 붙여넣으세요.`}
       </p>
       <div className="row mt" style={{ gap: "0.75rem", flexWrap: "wrap" }}>
         <button type="button" className="btn btn-primary" onClick={copyPendingContent}>
