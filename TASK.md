@@ -28,12 +28,12 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
-[~] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
+[x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
 
 
 ---
@@ -2209,11 +2209,11 @@ REQUEST_SOLVED=YES — `/review` 화면 O/X 클릭은 이제 로컬 선택만 �
 
 ### 8-5. MUST
 
-- [ ] guest fallback에서 검수 배치 payload를 압축해 GitHub URL 길이를 줄인다.
-- [ ] apply_admin_payload.py가 압축된 review payload를 안전하게 복원·적용한다.
-- [ ] 기존 비압축 `items` 및 단일 `item` pending payload 하위호환을 유지한다.
-- [ ] URL 안전 길이 초과 시 GitHub 페이지를 열지 않고 명시적 오류를 반환한다.
-- [ ] 실제 이메일 발송·삭제·라벨 변경 없음.
+- [x] guest fallback에서 검수 배치 payload를 압축해 GitHub URL 길이를 줄인다.
+- [x] apply_admin_payload.py가 압축된 review payload를 안전하게 복원·적용한다.
+- [x] 기존 비압축 `items` 및 단일 `item` pending payload 하위호환을 유지한다.
+- [x] URL 안전 길이 초과 시 GitHub 페이지를 열지 않고 명시적 오류를 반환한다.
+- [x] 실제 이메일 발송·삭제·라벨 변경 없음.
 
 ### 8-6. KEEP
 
@@ -2243,7 +2243,7 @@ REQUEST_SOLVED=YES — `/review` 화면 O/X 클릭은 이제 로컬 선택만 �
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — 구현 및 실사용 검증 전.
+REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a050bc5b). GitHub CI 1532 passed/6 skipped, web-test 44 passed, Next.js production build PASS. Vercel Production dpl_5gGiJ2RfVCAzQY7qTYQiAVdracds READY 및 mail-cyan-sigma.vercel.app alias 반영 확인. Preview `/api/apply/status`는 github-web 모드(hasApplySecret=false, hasGithubToken=false)로 확인되어 이번 오류가 발생한 fallback 경로와 일치한다. 실제 이메일 발송·삭제·라벨 변경 없음.
 
 ---
 
