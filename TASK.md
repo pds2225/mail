@@ -2258,13 +2258,14 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 
 ### 8-2. 비개발자용 1줄 요약
 
-공고검수 저장 시 GitHub의 불안정한 본문 prefill URL을 쓰지 않고, 복사 후 정상 새 파일 화면에서 저장하게 한다.
+공고검수 저장 시 GitHub 본문 prefill URL을 쓰지 않고, 임시파일 존재 여부에 따라 New/Edit를 자동 선택해 안전하게 저장한다.
 
 ### 8-3. 사용자 최종 결과
 
 - 선택 저장 후 GitHub 일반 오류 화면이 자동으로 열리지 않는다.
 - Vercel에 GitHub 저장 토큰이 없을 때는 검수 payload를 사이트에서 복사할 수 있다.
-- GitHub는 짧은 일반 새 파일 화면만 열고, 사용자가 파일명/본문을 붙여넣어 Commit changes 한다.
+- GitHub 임시파일이 있으면 Edit, 없으면 New 화면을 열며 본문은 URL이 아닌 복사/붙여넣기로 전달한다.
+- 동일한 config-pending 경로를 쓰는 그룹/설정 저장에도 같은 안전규칙을 적용한다.
 - GitHub 저장 토큰이 있는 경우 기존 서버 직접 저장 1커밋 경로는 그대로 유지한다.
 
 ### 8-4. 현재상태
@@ -2279,7 +2280,9 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 - [ ] review guest fallback에서 GitHub URL의 `value` query를 제거한다.
 - [ ] API가 복사 가능한 pending payload와 파일명을 반환한다.
 - [ ] /review 화면에서 "검수 데이터 복사"와 "GitHub 저장 화면 열기"를 분리한다.
-- [ ] 저장 링크는 짧은 일반 GitHub new-file URL이어야 한다.
+- [ ] config-pending 존재 시 edit URL, 미존재 시 new URL을 자동 선택한다.
+- [ ] new URL에는 filename만 허용하고 payload `value=` query는 금지한다.
+- [ ] 공고검수·그룹·설정 tokenless fallback 모두 동일한 안전규칙을 쓴다.
 - [ ] 서버 토큰이 있는 직접 저장 경로와 기존 pending payload 처리 하위호환 유지.
 - [ ] 실제 이메일 발송·삭제·라벨 변경 없음.
 
@@ -2294,6 +2297,7 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 
 - review fallback에서 GitHub 새 파일 본문을 URL query `value`로 prefill하는 동작
 - fallback 결과를 즉시 window.open 하는 동작
+- config-pending 존재 여부와 무관하게 항상 new 또는 항상 edit로 고정하는 동작
 
 ### 8-8. FORBIDDEN
 
@@ -2308,6 +2312,8 @@ REQUEST_SOLVED=YES — PR #321로 main 병합(345a2c82cc4b01db6d7edcfb5eb6ce67a0
 - `cd web && npx tsc --noEmit`
 - `cd web && npx next build`
 - GitHub URL에 `value=` 없음 및 짧은 URL 회귀검증
+- config-pending 존재/미존재 두 상태 모두 회귀검증
+- 공고검수·그룹·설정 세 경로 모두 shared manual pending UI/URL 정책 검증
 
 ### 8-10. DONE
 
