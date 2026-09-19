@@ -1,3 +1,5 @@
+import base64
+import gzip
 import json
 from pathlib import Path
 
@@ -129,6 +131,52 @@ def test_review_batch_upserts_multiple_items_in_one_commit(tmp_path: Path) -> No
     assert by_id["notice-2"]["verdict"] == "X"
     assert by_id["notice-2"]["title"] == "제조 바우처"
     assert not (tmp_path / ".apply/config-pending.json").exists()
+
+
+def test_review_packed_batch_preserves_titles_and_verdicts(tmp_path: Path) -> None:
+    items = [
+        {"id": "notice-1", "title": "AI 지원사업", "verdict": "O"},
+        {"id": "notice-2", "title": "제조 바우처", "verdict": "X"},
+    ]
+    packed = base64.b64encode(
+        gzip.compress(json.dumps(items, ensure_ascii=False).encode("utf-8"))
+    ).decode("ascii")
+    _write(
+        tmp_path / ".apply/config-pending.json",
+        {
+            "v": 1,
+            "resource": "review",
+            "encoding": "gzip-base64",
+            "packed_items": packed,
+        },
+    )
+
+    assert run(tmp_path) == "review:2items"
+    labels = tmp_path / "data/golden/feedback_labels.jsonl"
+    rows = [json.loads(line) for line in labels.read_text(encoding="utf-8").splitlines() if line.strip()]
+    by_id = {row["id"]: row for row in rows}
+    assert by_id["notice-1"]["title"] == "AI 지원사업"
+    assert by_id["notice-1"]["verdict"] == "O"
+    assert by_id["notice-2"]["title"] == "제조 바우처"
+    assert by_id["notice-2"]["verdict"] == "X"
+
+
+def test_review_packed_batch_rejects_invalid_encoded_data(tmp_path: Path) -> None:
+    _write(
+        tmp_path / ".apply/config-pending.json",
+        {
+            "v": 1,
+            "resource": "review",
+            "encoding": "gzip-base64",
+            "packed_items": "not-valid-base64***",
+        },
+    )
+
+    try:
+        run(tmp_path)
+        assert False, "expected ValueError for invalid packed payload"
+    except ValueError as exc:
+        assert "invalid packed review payload" in str(exc)
 
 
 def test_review_batch_rejects_invalid_item_in_batch(tmp_path: Path) -> None:

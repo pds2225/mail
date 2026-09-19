@@ -1,3 +1,4 @@
+import { gunzipSync } from "node:zlib";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -64,8 +65,37 @@ describe("POST /api/review/apply", () => {
     expect(response.status).toBe(200);
     expect(data.applied).toBe(false);
     expect(data.githubCommitUrl).toContain("filename=config-pending.json");
+    expect(data.githubCommitUrl.length).toBeLessThan(6500);
+    const pendingUrl = new URL(data.githubCommitUrl);
+    const pending = JSON.parse(pendingUrl.searchParams.get("value") || "{}");
+    expect(pending.encoding).toBe("gzip-base64");
+    const unpacked = JSON.parse(
+      gunzipSync(Buffer.from(pending.packed_items, "base64")).toString("utf-8"),
+    );
+    expect(unpacked).toEqual([
+      { id: "notice-1", title: "AI 지원사업", verdict: "O" },
+      { id: "notice-2", title: "제조 바우처", verdict: "X" },
+    ]);
     expect(data.notice).toContain("2건");
     expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
+  });
+
+  it("keeps a 40-item long-title guest batch below the safe GitHub URL limit", async () => {
+    const items = Array.from({ length: 40 }, (_, index) => ({
+      id: `notice-${index + 1}`,
+      title:
+        `2026년 인공지능·데이터 기반 제조혁신 및 글로벌 사업화 지원사업 참여기업 모집공고 ${index + 1}차 `.repeat(
+          3,
+        ),
+      verdict: index % 2 === 0 ? "O" : "X",
+    }));
+
+    const response = await POST(request({ items }));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.applied).toBe(false);
+    expect(data.githubCommitUrl.length).toBeLessThan(6500);
   });
 
   it("writes every selected item in a single commit when a token is present", async () => {

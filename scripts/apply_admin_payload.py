@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import gzip
 import json
 import re
 import sys
@@ -102,8 +104,16 @@ def _apply_review(repo_root: Path, pending: dict[str, Any]) -> str:
     # 계속 처리해야 한다 — 이미 만들어진 게스트 모드 commit-url 링크가 남아있을 수 있다.
     raw_items = pending.get("items")
     if not isinstance(raw_items, list) or not raw_items:
-        single = pending.get("item")
-        raw_items = [single] if isinstance(single, dict) else []
+        if pending.get("encoding") == "gzip-base64" and pending.get("packed_items"):
+            try:
+                packed = base64.b64decode(str(pending["packed_items"]), validate=True)
+                decoded = json.loads(gzip.decompress(packed).decode("utf-8"))
+            except (ValueError, OSError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+                raise ValueError("invalid packed review payload") from exc
+            raw_items = decoded if isinstance(decoded, list) else []
+        else:
+            single = pending.get("item")
+            raw_items = [single] if isinstance(single, dict) else []
     if not raw_items:
         raise ValueError("review item is required")
 

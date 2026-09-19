@@ -28,11 +28,12 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[~] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
-[~] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
+[x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
+[~] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
 
 
 ---
@@ -2175,6 +2176,74 @@ REQUEST_SOLVED=NO — 코드 변경 완료. CI와 실제 Vercel Preview 검증 �
 REQUEST_SOLVED=YES — `/review` 화면 O/X 클릭은 이제 로컬 선택만 바꾸고, "선택 저장" 버튼을
 눌러야 실제 GitHub 커밋 1건으로 저장된다(여러 건을 골라도 커밋은 1번). 토큰 없는 게스트
 모드·기존 단일 항목 pending 페이로드 하위호환도 유지. 실제 이메일 발송·라벨 변경·삭제 없음.
+
+---
+
+## MAIL-019
+
+### 8-1. 사용자 원문 요청
+
+> # Whoa there!
+>
+> Your request URL is too long.
+>
+> 공고검수후 저장시
+
+### 8-2. 비개발자용 1줄 요약
+
+공고검수에서 여러 건을 선택 저장해도 GitHub URL 길이 제한 오류가 나지 않게 한다.
+
+### 8-3. 사용자 최종 결과
+
+- `/review`에서 여러 건을 선택하고 `선택 저장`을 눌러도 GitHub `request URL is too long` 페이지가 열리지 않는다.
+- 서버 GitHub 토큰이 있는 경우 기존처럼 선택한 항목 전체를 한 번의 커밋으로 저장한다.
+- 토큰이 없는 GitHub-web fallback은 검수 배치 데이터를 압축해 짧은 URL로 전달한다.
+- 압축 후에도 안전 길이를 넘는 예외 상황은 긴 GitHub URL을 열지 않고 화면에서 오류를 안내한다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-019
+- TASK_START_SHA: 61d4089cc3e19cd062e020f736a5959e1d302e2e
+- TASK_BLOB_SHA: 6c61a8f47b9a71fdcece88d4cceeec2302be8ad8
+- WORK_BRANCH: fix/mail-019-review-save-url-too-long
+
+### 8-5. MUST
+
+- [ ] guest fallback에서 검수 배치 payload를 압축해 GitHub URL 길이를 줄인다.
+- [ ] apply_admin_payload.py가 압축된 review payload를 안전하게 복원·적용한다.
+- [ ] 기존 비압축 `items` 및 단일 `item` pending payload 하위호환을 유지한다.
+- [ ] URL 안전 길이 초과 시 GitHub 페이지를 열지 않고 명시적 오류를 반환한다.
+- [ ] 실제 이메일 발송·삭제·라벨 변경 없음.
+
+### 8-6. KEEP
+
+- MAIL-018의 여러 건 선택 후 한 번에 저장 UX
+- `data/golden/feedback_labels.jsonl` 저장 위치
+- O/X 의미와 기존 인증 흐름
+- 서버 토큰이 있는 경우 한 번의 GitHub commit
+
+### 8-7. REMOVE
+
+- 긴 JSON 배치 payload를 그대로 GitHub URL query에 넣는 review fallback
+
+### 8-8. FORBIDDEN
+
+- Secret/토큰 출력 또는 코드 커밋
+- 실제 이메일 발송·삭제·라벨 변경
+- 관련 없는 필터/수집 로직 변경
+
+### 8-9. VERIFY
+
+- `python -m pytest tests/test_apply_admin_payload.py`
+- `cd web && npx vitest run __tests__/review-apply-route.test.ts`
+- `cd web && npx vitest run`
+- `cd web && npx tsc --noEmit`
+- `cd web && npx next build`
+- 40건 긴 제목 guest fallback URL이 안전 길이 이하인지 회귀검증
+
+### 8-10. DONE
+
+REQUEST_SOLVED=NO — 구현 및 실사용 검증 전.
 
 ---
 
