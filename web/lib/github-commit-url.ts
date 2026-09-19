@@ -63,5 +63,5 @@ export function pendingConfigCommitUrl(pending: PendingConfigApply): string {
 export function pendingConfigManualCommitUrl(opts?: { repo?: string; branch?: string }): string {
   const repo = opts?.repo || "pds2225/mail";
   const branch = opts?.branch || "main";
-  return `https://github.com/${repo}/new/${branch}/.apply`;
+  return `https://github.com/${repo}/edit/${branch}/.apply/config-pending.json`;
 }
