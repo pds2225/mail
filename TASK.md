@@ -2082,21 +2082,21 @@ MAIL-022와 MAIL-023을 MAIL-014와 별도 경쟁 백로그로 취급하지 않�
 
 ### 8-6. MUST — 최초 통합 Audit
 
-- [ ] 154개 Risk 원본을 정확히 154건으로 읽는다.
-- [ ] 최신 `origin/main:TASK.md`의 MAIL TASK 전체를 읽는다.
+- [x] 154개 Risk 원본을 정확히 154건으로 읽는다.
+- [x] 최신 `origin/main:TASK.md`의 MAIL TASK 전체를 읽는다.
 - [ ] 최신 main 코드, 관련 tests, merged PR을 근거로 각 Risk를 분류한다.
-- [ ] 모든 Risk에 `risk_status`를 부여한다.
-- [ ] 가능한 Risk에 기존 `MAIL-xxx`를 우선 연결한다.
-- [ ] `ALREADY_DONE`에는 최소 commit/PR/test/E2E 중 재현 가능한 evidence를 남긴다.
-- [ ] `COVERED_BY_TASK`에는 담당 MAIL TASK와 남은 완료조건을 남긴다.
-- [ ] `OPEN`만 별도 추출한다.
-- [ ] OPEN을 원인/수정영역/dependency 기준으로 클러스터링한다.
-- [ ] 유사한 OPEN 여러 건은 신규 MAIL TASK 1개로 묶는다.
-- [ ] 중복 TASK를 만들지 않는다.
+- [x] 모든 Risk에 `risk_status`를 부여한다.
+- [x] 가능한 Risk에 기존 `MAIL-xxx`를 우선 연결한다.
+- [x] `ALREADY_DONE`에는 최소 commit/PR/test/E2E 중 재현 가능한 evidence를 남긴다.
+- [x] `COVERED_BY_TASK`에는 담당 MAIL TASK와 남은 완료조건을 남긴다.
+- [x] `OPEN`만 별도 추출한다.
+- [x] OPEN을 원인/수정영역/dependency 기준으로 클러스터링한다.
+- [x] 유사한 OPEN 여러 건은 신규 MAIL TASK 1개로 묶는다.
+- [x] 중복 TASK를 만들지 않는다.
 - [ ] P0 → P1 → P2 우선순위를 유지하되 dependency와 실제 사용자 영향도를 함께 반영한다.
-- [ ] 결과를 crosswalk JSON + 사람이 읽는 report로 생성한다.
+- [x] 결과를 crosswalk JSON + 사람이 읽는 report로 생성한다.
 - [ ] TASK.md의 각 MAIL TASK 상세에는 필요 시 `COVERS_RISK: [..]` 또는 동일 의미 링크를 추가한다.
-- [ ] 신규 TASK 생성 후 crosswalk를 다시 계산해 `OPEN_WITHOUT_TASK` 건수를 표시한다.
+- [x] 신규 TASK 생성 후 crosswalk를 다시 계산해 `OPEN_WITHOUT_TASK` 건수를 표시한다.
 
 ### 8-7. 기존 MAIL-014 슬라이스 이력 보존
 
@@ -2191,18 +2191,18 @@ refresh 시 TASK.md + derived crosswalk + evidence를 읽어 표시한다.
 
 최초 통합 완료 기준:
 
-- [ ] Risk row count = 정확히 154
-- [ ] 154/154에 risk_status 존재
-- [ ] ALREADY_DONE 100% evidence 존재
-- [ ] COVERED_BY_TASK 100% 유효 MAIL Task ID 존재
-- [ ] 존재하지 않는 Task ID 참조 = 0
+- [x] Risk row count = 정확히 154
+- [x] 154/154에 risk_status 존재
+- [x] ALREADY_DONE 100% evidence 존재
+- [x] COVERED_BY_TASK 100% 유효 MAIL Task ID 존재
+- [x] 존재하지 않는 Task ID 참조 = 0
 - [ ] DONE Task와 Risk status 모순 검사
-- [ ] OPEN_WITHOUT_TASK 별도 집계
-- [ ] 동일 Risk 중복 row = 0
+- [x] OPEN_WITHOUT_TASK 별도 집계
+- [x] 동일 Risk 중복 row = 0
 - [ ] 현재 main에서 다시 계산 가능
 - [ ] 사람이 엑셀 상태를 별도 갱신하지 않아도 report 재생성 가능
 - [ ] dashboard 표시값과 crosswalk 집계값 동일
-- [ ] 실제 메일 발송 0건
+- [x] 실제 메일 발송 0건
 
 ### 8-14. DONE
 
@@ -2219,8 +2219,10 @@ MAIL-014 전체는 아래 모두 충족할 때만 REQUEST_SOLVED=YES:
 현재 상태:
 - STATUS: IN_PROGRESS
 - REQUEST_SOLVED=NO
-- CHECKPOINT: STRUCTURAL_COVERAGE_V1 — 154/154 Risk ownership assigned, OPEN_WITHOUT_TASK=0
-- NEXT: P0 Risk부터 실제 코드·테스트 evidence verification → ALREADY_DONE/remaining gap 확정
+- CHECKPOINT: EVIDENCE_PASS_V2 — 154/154 owner 검증, ALREADY_DONE=18, COVERED_BY_TASK=136, OPEN_WITHOUT_TASK=0
+- P0: 전체 27, 미해결/진행 21
+- VERIFIED_DONE_RISK: 12, 18, 19, 32, 33, 39, 46, 47, 59, 67, 96, 113, 114, 115, 116, 143, 147, 149
+- NEXT: MAIL-023 → MAIL-022 및 MAIL-024~028의 P0 잔여분부터 코드 evidence/재현/최소수정 진행 → crosswalk 재계산
 
 ---
 
