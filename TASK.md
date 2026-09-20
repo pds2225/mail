@@ -2404,6 +2404,8 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 > Mail 정확도를 올리기 위해 과거 전체 판정 데이터 추출 → O/X 정답셋 통합 → 키워드별 Precision/Recall 계산 → 오탐 유발 키워드 제거 → 유효 복합키워드 추출 → Golden Set 회귀테스트 → 필터 반영 순서로 진행한다.
 >
 > 사용자가 직접 해야 하는 일은 접근 불가능한 운영 데이터가 있을 때 1회 export와, 자동으로 확정할 수 없는 애매한 공고의 최종 O/X 판정으로 최소화한다.
+>
+> 정답 데이터는 Gold / Silver / Review 3계층으로 운영하고, AI는 Gold를 임의 수정하지 않은 채 Silver·Review를 이용해 규칙을 반복 개선한다. 애매한 공고는 건별로 사용자를 중단시키지 말고 한 사이클이 끝난 뒤 배치로 모아 한 번에 검수받는다.
 
 ### 8-2. 비개발자용 1줄 요약
 
@@ -2416,7 +2418,13 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 - FP를 많이 만드는 단어·문맥과 FN에서 반복되는 누락 신호를 자동 추출한다.
 - 단일 키워드 나열보다 "키워드 + 신청자격 + 사업유형 + 문맥"의 복합 규칙을 우선한다.
 - 개선 전/후 성능을 같은 고정 평가셋에서 비교하고, Golden Set 회귀테스트로 고정한다.
-- 사용자는 자동 판정이 불가능한 애매한 사례만 O/X로 확인한다.
+- 정답 데이터는 Gold / Silver / Review 3계층으로 분리한다.
+  - Gold: 사용자 확정 O/X 또는 명백한 Hard Eligibility 근거가 있는 고정 정답. AI 자동 수정·삭제 금지.
+  - Silver: 높은 확신도의 자동 판정 후보. 반복개선·분석에는 사용 가능하지만 Gold로 자동 승격 금지.
+  - Review: 충돌·불확실·신규 유형. 사용자 검수 대상.
+- AI는 Gold를 기준으로 후보 규칙을 반복 생성·검증하고, 동일 holdout에서 성능이 개선되는 규칙만 채택한다.
+- 성능이 악화되거나 기존 Gold 회귀가 생기면 후보 규칙을 폐기/롤백한다.
+- 사용자는 자동 판정이 불가능한 Review 사례만 O/X로 확인하되, 건별 요청이 아니라 한 분석 사이클 종료 후 한 번에 묶어서 검수한다.
 - 실제 메일 발송 없이 dry-run/fixture/검수 데이터로 정확도를 검증한다.
 
 ### 8-4. 현재상태
@@ -2431,13 +2439,18 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 
 - [ ] 데이터 위치 전수조사: `data/golden/feedback_labels.jsonl`, 관련 fixture/test data, 과거 Git 이력, 기존 accuracy/feedback 산출물, 저장 가능한 검수 로그를 조사한다.
 - [ ] 같은 공고의 중복 O/X, 수정공고, 재공고, 제목변형을 정규화하고 충돌 라벨은 자동 덮어쓰지 않고 REVIEW_REQUIRED로 분리한다.
-- [ ] 과거 라벨을 최소 `notice_id/source/title/url/label/reason/date` 단위로 정규화한다. 없는 필드는 null/unknown으로 남기고 추측하지 않는다.
+- [ ] 과거 라벨을 최소 `notice_id/source/title/url/label/reason/date` 단위로 정규화한다. 신규 라벨은 `group_id`와 판정 당시의 그룹/기업 프로필·설정 snapshot 식별정보를 함께 보존한다. 없는 필드는 null/unknown으로 남기고 추측하지 않는다.
+- [ ] legacy O/X에 group context가 없으면 전체 공통 분석에는 사용할 수 있어도 그룹별 ground truth로 임의 재사용하지 않는다. 그룹별 Precision/Recall 계산에는 group_id/profile snapshot이 확인되는 라벨만 사용한다.
 - [ ] 현재 판정기를 정답셋에 재실행하여 TP/FP/FN/TN 및 Precision/Recall/F1/support를 전체·그룹·주요 카테고리별로 산출한다.
 - [ ] 키워드/복합문맥별 TP/FP/FN 기여도를 집계한다. 표본 수가 너무 적은 신호는 자동 규칙 변경 근거로 사용하지 않는다.
 - [ ] FP 원인코드를 최소 신청자격 불일치/지역 불일치/업력 불일치/단순교육·행사/입주공간 단독/관심분야 불일치/중복·재공고/기타로 분류한다.
 - [ ] FN에서 반복되는 유효 신호와 동의어·복합표현을 추출하고, Hard Eligibility보다 앞서 키워드가 통과시키는 구조를 만들지 않는다.
 - [ ] 분석용 데이터와 최종 평가용 고정 holdout을 분리해 같은 데이터로 튜닝하고 성능을 주장하는 leakage를 방지한다.
+- [ ] Gold / Silver / Review 3계층 데이터셋을 구현한다. Gold는 사용자 확정값 또는 명백한 Hard Eligibility 근거에 의한 고정 정답으로 취급하고 AI가 자동으로 수정·삭제·재라벨링하지 않는다.
+- [ ] Silver는 높은 확신도의 자동판정 후보로 관리하되 Gold로 자동 승격하지 않는다. Review는 충돌·경계·신규 유형을 모으는 사용자 검수 큐다.
+- [ ] 반복개선 루프를 구현한다: baseline → FP/FN 분석 → 후보 복합규칙 생성 → Gold/holdout 검증 → 성능 개선 후보만 채택 → 재측정. 성능 저하 또는 Gold 회귀 발생 시 후보를 폐기/롤백한다.
 - [ ] Golden Set 회귀테스트를 추가해 대표 TP/FP/FN 경계사례가 향후 변경에서 다시 깨지지 않게 한다.
+- [ ] Review는 공고 1건마다 사용자에게 질문하지 않는다. 분석 사이클이 끝날 때까지 누적한 뒤 한 번의 배치 검수 화면/목록으로 제공하고, 사용자가 O/X를 연속 처리한 결과를 한 번에 저장·반영한다.
 - [ ] 필터 반영은 기존 evaluator/filter 구조를 재사용하고 최소 변경으로 수행한다. 기존 정상 TP를 떨어뜨리는 규칙은 근거 없이 반영하지 않는다.
 - [ ] 변경 전/후 동일 holdout 기준 성능표를 생성한다.
 - [ ] 운영 데이터가 GitHub 밖에 있어 접근할 수 없는 경우 그 부분만 명확히 BLOCKED_INPUT으로 기록하고, 사용자가 해야 할 export 작업을 파일명·형식·1회 절차로 최소화한다.
@@ -2451,7 +2464,9 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 - MAIL-015에서 복원한 과거 필터 기준과 reason_code
 - MAIL-018~021의 O/X 검수 데이터 의미와 저장 형식
 - 기존 수집기·중복제거·메일 발송 구조
-- 사용자 판정이 이미 존재하는 O/X는 가장 중요한 정답 근거로 사용하되, 충돌·오입력 가능성은 REVIEW_REQUIRED로 분리
+- 사용자 판정이 이미 존재하는 O/X는 가장 중요한 Gold 정답 근거로 사용하되, 충돌·오입력 가능성은 REVIEW_REQUIRED로 분리
+- Gold 정답의 불변성: AI 반복개선 과정에서 자동 변경·자동 삭제·자동 승격으로 덮어쓰지 않음
+- 신규 라벨의 group_id 및 판정 당시 profile/config context 보존
 
 ### 8-7. REMOVE — 제거/완화 후보
 
@@ -2463,7 +2478,9 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 
 ### 8-8. FORBIDDEN — 금지
 
-- O/X 정답 없이 AI 추측만으로 과거 공고 라벨을 확정하지 않는다.
+- O/X 정답 없이 AI 추측만으로 과거 공고 라벨을 Gold로 확정하지 않는다.
+- Silver를 AI가 스스로 Gold로 자동 승격하지 않는다.
+- Review 공고를 건별로 사용자에게 계속 질문해 작업을 중단시키지 않는다. 배치 검수가 원칙이다.
 - 분석에 사용한 전체 데이터를 그대로 최종 성능 검증셋으로 사용하지 않는다.
 - 1~2건의 사례만 보고 키워드/Hard Gate를 추가·삭제하지 않는다.
 - Precision만 높이기 위해 Recall을 크게 희생하거나, 반대로 Recall만 높이기 위해 FP를 무제한 허용하지 않는다.
@@ -2490,10 +2507,12 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 ### 8-10. 구현범위
 
 - 분석 스크립트/리포트: O/X history → normalized labels → confusion matrix → keyword/context stats
+- Gold / Silver / Review 데이터 계층 및 반복개선 루프
 - Golden Set 및 회귀테스트
 - 필요 최소 범위의 evaluator/filter/config 수정
-- 애매한 사례 REVIEW_REQUIRED 산출
-- 성능 전후 비교 리포트
+- 애매한 사례 REVIEW_REQUIRED 배치 큐 및 일괄 O/X 반영
+- 신규 라벨 group_id + profile/config snapshot 보존
+- 성능 전후 비교 리포트 및 성능 악화 시 후보 규칙 롤백/폐기
 
 구체 파일 경로는 실행 시 현재 main 구조를 조사한 뒤 기존 구조를 우선 재사용한다. 불필요한 새 프레임워크는 만들지 않는다.
 
@@ -2524,7 +2543,16 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 1. GitHub/현재 실행환경에서 접근할 수 없는 운영 O/X 데이터가 있을 경우 1회 export
 2. 자동 확정할 수 없는 REVIEW_REQUIRED 공고의 최종 O/X 판정
 
-키워드 후보 추출, 통계 계산, 규칙 후보 선정, 회귀테스트 작성, 전후 비교는 자동화한다.
+사용자 개입 방식:
+- 공고 1건마다 질문하지 않는다.
+- 한 분석/개선 사이클 동안 REVIEW_REQUIRED를 계속 누적한다.
+- 사이클 종료 시 가능한 한 전체 Review를 한 화면/목록으로 한 번에 제공한다.
+- 사용자는 각 행에서 O/X만 연속 선택하고 마지막에 1회 저장한다.
+- 저장 결과를 Gold에 반영한 뒤 다음 자동 개선 사이클을 진행한다.
+- 새 Review가 소수 발생하더라도 즉시 호출하지 않고 다음 배치까지 누적하는 것을 기본으로 한다.
+- 단, 명백한 데이터 손실·보안·정책 결정이 필요한 경우만 즉시 중단 요청할 수 있다.
+
+키워드 후보 추출, 통계 계산, 후보 규칙 생성, Golden Set/holdout 검증, 성능 전후 비교, 성능 악화 후보 폐기는 자동화한다.
 
 ### 8-13. VERIFY
 
@@ -2533,6 +2561,10 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 - [ ] keyword/context 통계에 support 포함
 - [ ] train/analysis와 fixed holdout 분리 확인
 - [ ] 대표 TP/FP/FN Golden Set 회귀테스트 PASS
+- [ ] Gold 자동변경/삭제/승격이 불가능한지 검증
+- [ ] Silver/Review 분리와 Review 일괄 저장 동작 검증
+- [ ] 신규 라벨에 group_id + profile/config context가 보존되고 legacy context 없는 라벨이 그룹별 지표에서 제외되는지 검증
+- [ ] 후보 규칙 적용 후 holdout 성능 악화 또는 Gold 회귀 시 자동 채택되지 않는지 검증
 - [ ] 기존 관련 테스트 PASS
 - [ ] 개선 전/후 동일 holdout 성능 비교
 - [ ] 실제 메일 발송 없음
