@@ -66,7 +66,7 @@ def normalize_verdict(value: str) -> str:
 def feedback_mailto(to_addr: str, verdict: str, notice_id: str) -> str:
     """클릭하면 '제목이 채워진 메일 작성창'이 열리는 mailto 링크(발송은 사용자가 직접).
 
-    MAIL_FEEDBACK_SECRET 이 설정되면 제목 끝에 HMAC 서명 토큰을 붙여 위조를 막는다(#132).
+    MAIL_FEEDBACK_SECRET 이 설정되면 제목 끝에 발급시각+HMAC 토큰을 붙여 위조와 무기한 재사용을 막는다(#132).
     """
     v = normalize_verdict(verdict) or "O"
     nid = str(notice_id).strip()
