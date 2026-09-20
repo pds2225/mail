@@ -1,16 +1,16 @@
 {
   "summary": {
     "schema_version": 1,
-    "generated_at": "2026-09-20T19:20:00+09:00",
-    "audit_phase": "STRUCTURAL_COVERAGE_V1",
+    "generated_at": "2026-09-20T19:42:00+09:00",
+    "audit_phase": "P0_EVIDENCE_PASS_1",
     "repo": "pds2225/mail",
-    "repo_main_sha": "2b705b1074433dae55dd9398d3611362a11ad344",
+    "repo_main_sha": "f023d23d235e4c74b12833fb14ce3c25996f820f",
     "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 0,
-      "COVERED_BY_TASK": 154,
+      "ALREADY_DONE": 13,
+      "COVERED_BY_TASK": 141,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -33,7 +33,12 @@
       "P2": 20,
       "P0": 27
     },
-    "warning": "COVERED_BY_TASK means an owner task is assigned, not that the risk is solved. Evidence verification is the next pass."
+    "warning": "ALREADY_DONE requires concrete code plus regression/E2E evidence. COVERED_BY_TASK still has a verified gap or pending proof.",
+    "p0_evidence": {
+      "total": 27,
+      "ALREADY_DONE": 13,
+      "remaining": 14
+    }
   },
   "risks": [
     {
@@ -425,7 +430,7 @@
       "impact": "일부 기관 오류로 메일 미발송",
       "risk_level": "P0",
       "recommended_response": "소스별 예외 격리, 실패 소스만 Dead Letter Queue 처리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -440,7 +445,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "monitor.py::fetch_all — per-future exception isolation; a failed source is recorded in outcomes without aborting other futures",
+          "tests/test_coverage_p0.py::test_one_failure_does_not_stop_other_classifications",
+          "tests/test_mail014_p0_risk_regressions.py::test_fetch_all_isolates_one_source_failure"
+        ]
+      }
     },
     {
       "risk_no": 17,
@@ -450,7 +465,7 @@
       "impact": "같은 스케줄이 겹쳐 두 번 수집",
       "risk_level": "P0",
       "recommended_response": "분산락 또는 run_lock, 동일 날짜 실행 제한",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -465,7 +480,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          ".github/workflows/monitor.yml — concurrency group monitor-daily-send, cancel-in-progress=false",
+          "mail_core/operations/run_lock.py::MonitorRunLock",
+          "tests/test_p0_hardening.py::test_local_run_lock_allows_only_one_active_sender"
+        ]
+      }
     },
     {
       "risk_no": 18,
@@ -525,7 +550,7 @@
       "impact": "SSRF 또는 악성사이트 접근",
       "risk_level": "P0",
       "recommended_response": "http/https만 허용, 사설 IP·localhost 차단",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -540,7 +565,16 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/security/net_guard.py::check_url",
+          "tests/test_net_guard.py — scheme/localhost/metadata/private-IP/DNS-private regression coverage"
+        ]
+      }
     },
     {
       "risk_no": 21,
@@ -721,7 +755,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "실행/스크립트 확장자 차단·파일 크기/개수 상한은 있으나 바이러스 스캔/샌드박스 실행 근거는 아직 없음."
+      }
     },
     {
       "risk_no": 28,
@@ -746,7 +786,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "다운로드 크기 상한은 있으나 ZIP 실제 해제 시 총 팽창크기/압축비 기반 ZIP bomb 방어 E2E 근거는 아직 없음."
+      }
     },
     {
       "risk_no": 29,
@@ -3307,7 +3353,7 @@
       "impact": "Git 저장소 유출 위험",
       "risk_level": "P0",
       "recommended_response": "기업·수신자 정보는 DB 및 암호화 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-022"
@@ -3342,7 +3388,16 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/security/private_config.py::split_public_private — removes recipients and company email from public config",
+          "tests/test_p0_hardening.py::test_private_payload_removes_plaintext_pii_and_enforces_tenant"
+        ]
+      }
     },
     {
       "risk_no": 97,
@@ -3387,7 +3442,13 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "tenant별 private recipient 경계는 구현됐으나 matching/storage 전체의 cross-tenant 데이터 격리 E2E를 아직 확정하지 않음."
+      }
     },
     {
       "risk_no": 98,
@@ -3465,7 +3526,13 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "메일 사실필드는 수집값 기반이지만 LLM 자유텍스트 메모와 facts를 더 엄격히 분리하는 TASK-042가 아직 대기."
+      }
     },
     {
       "risk_no": 100,
@@ -3531,7 +3598,13 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "공고별 LLM 호출은 분리돼 있으나 구조화 출력/공고 간 혼합 회귀 TASK-043가 아직 대기."
+      }
     },
     {
       "risk_no": 102,
@@ -3564,7 +3637,13 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "llm_relevance_check가 공고 title/summary를 user prompt에 직접 붙이며 untrusted-data 경계/system instruction 회귀가 아직 없음."
+      }
     },
     {
       "risk_no": 103,
@@ -3574,7 +3653,7 @@
       "impact": "이메일 내용 변조",
       "risk_level": "P0",
       "recommended_response": "HTML escape, 허용 태그만 사용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014"
       ],
@@ -3597,7 +3676,16 @@
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "monitor.py::_linkify_html — html.escape on body, URL and label",
+          "tests/test_feedback_loop.py::test_linkify_keeps_notice_links_and_escapes_text"
+        ]
+      }
     },
     {
       "risk_no": 104,
@@ -3904,7 +3992,7 @@
       "impact": "동일 메일 2회 이상 수신",
       "risk_level": "P0",
       "recommended_response": "Idempotency Key와 Outbox 패턴 적용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3921,7 +4009,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/delivery/outbox.py::entry_id/upsert",
+          "monitor.py::deliver_with_outbox",
+          "tests/test_delivery_checkpoint.py::test_idempotent_skip_on_rerun"
+        ]
+      }
     },
     {
       "risk_no": 114,
@@ -3931,7 +4029,7 @@
       "impact": "재실행 시 성공자에게도 재발송",
       "risk_level": "P0",
       "recommended_response": "수신자별 delivery 상태 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3948,7 +4046,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/delivery/state.py — recipient-level completion checkpoint",
+          "mail_core/delivery/outbox.py::settle",
+          "tests/test_delivery_checkpoint.py::test_partial_failure_retries_only_failed"
+        ]
+      }
     },
     {
       "risk_no": 115,
@@ -3958,7 +4066,7 @@
       "impact": "실제 미발송인데 다음날 제외",
       "risk_level": "P0",
       "recommended_response": "메일 성공응답 후 개별 발송상태 확정",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3975,7 +4083,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "monitor.py::deliver_with_outbox — outbox persisted before SMTP",
+          "mail_core/delivery/outbox.py::settle/acknowledge_completed — completed row retained until seen_ids acknowledgement",
+          "tests/test_p0_hardening.py::test_encrypted_outbox_retries_partial_then_waits_for_seen_ack"
+        ]
+      }
     },
     {
       "risk_no": 116,
@@ -4052,7 +4170,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "이메일 형식 검증·중복 제거는 구현됐으나 bounce 관리/반송 상태 수집까지는 검증되지 않음."
+      }
     },
     {
       "risk_no": 119,
@@ -4062,7 +4186,7 @@
       "impact": "고객 이메일이 서로 노출",
       "risk_level": "P0",
       "recommended_response": "개별 발송 또는 Bcc, 원칙적으로 개별발송",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026"
@@ -4077,7 +4201,17 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "monitor.py::send_to_list — loops recipients individually",
+          "monitor.py::_build_mime_message — exactly one To header per message, no Cc",
+          "tests/test_mail014_p0_risk_regressions.py::test_send_to_list_builds_one_recipient_per_message"
+        ]
+      }
     },
     {
       "risk_no": 120,
@@ -4087,7 +4221,7 @@
       "impact": "다른 그룹 다이제스트 수신",
       "risk_level": "P0",
       "recommended_response": "tenant/group/recipient 권한 검증",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026"
@@ -4102,7 +4236,18 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "monitor.py::guard_group_recipients — tenant-scoped private boundary + allowlist",
+          "mail_core/security/private_config.py::allowed_recipients — tenant mismatch fails closed",
+          "tests/test_p0_hardening.py::test_private_payload_removes_plaintext_pii_and_enforces_tenant",
+          "tests/test_llm_safety.py::test_recipient_allowlist_drops_foreign"
+        ]
+      }
     },
     {
       "risk_no": 121,
@@ -4237,7 +4382,7 @@
       "impact": "개발 중 고객에게 발송",
       "risk_level": "P0",
       "recommended_response": "환경별 수신자 allowlist, 운영 승인키",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026"
@@ -4252,7 +4397,18 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          ".env.example — ALLOW_SEND_EMAIL=false, DEFAULT_RUN_MODE=dry-run",
+          "monitor.py::send_email — _ALLOW_SMTP_SEND fail-closed",
+          "api/run.py — dry-run default; Vercel real-send returns 501",
+          "tests/test_monitor_ops.py::test_send_to_list_skips_smtp_when_allow_send_false"
+        ]
+      }
     },
     {
       "risk_no": 127,
@@ -4312,7 +4468,7 @@
       "impact": "사용자가 누르지 않았는데 O/X 기록",
       "risk_level": "P0",
       "recommended_response": "GET으로 확정하지 않고 확인화면 후 POST",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-027"
@@ -4327,7 +4483,16 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/delivery/feedback.py — feedback UI is mailto; label is recorded only after signed inbound mail is collected",
+          "tests/test_feedback_loop.py — feedback roundtrip/readonly collection tests"
+        ]
+      }
     },
     {
       "risk_no": 130,
@@ -4402,7 +4567,13 @@
         "TASK.md"
       ],
       "audit_note": "Existing HMAC feedback-token code/tests found; verify before ALREADY_DONE.",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "HMAC 위조 방지는 구현됐지만 토큰 payload에 issued_at/expiry가 없어 '만료시간' 요구가 미충족."
+      }
     },
     {
       "risk_no": 133,
@@ -4562,7 +4733,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "최소 표본수 + 검증셋 통과 후 규칙반영 계약은 MAIL-022에서 구현/검증 예정."
+      }
     },
     {
       "risk_no": 139,
@@ -4670,7 +4847,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "fixed holdout/Golden regression 기반 승인 배포가 MAIL-022에서 구현/검증 예정."
+      }
     },
     {
       "risk_no": 143,
@@ -4697,7 +4880,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "로컬 state는 lock+atomic replace지만 GitHub 수동 저장 동시수정 안전성은 MAIL-023 미완료."
+      }
     },
     {
       "risk_no": 144,
@@ -4722,7 +4911,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "recipient delivery checkpoint/outbox는 있으나 전체 monitor pipeline의 단계별 재시작 E2E는 아직 미확정."
+      }
     },
     {
       "risk_no": 145,
@@ -4842,7 +5037,7 @@
       "impact": "저장소 유출",
       "risk_level": "P0",
       "recommended_response": "config와 개인정보 분리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-028"
@@ -4857,7 +5052,16 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "ALREADY_DONE",
+        "evidence": [
+          "mail_core/security/private_config.py — tracked JSON is PII-free; private payload stored in encrypted env/SQLite under secrets",
+          "tests/test_p0_hardening.py::test_private_payload_removes_plaintext_pii_and_enforces_tenant"
+        ]
+      }
     },
     {
       "risk_no": 150,
@@ -4940,7 +5144,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "이메일 masking은 다수 경로에 있으나 전체 로그/예외/토큰에 대한 repository-wide 회귀검증이 아직 없음."
+      }
     },
     {
       "risk_no": 153,
@@ -4965,7 +5175,13 @@
         "TASK.md"
       ],
       "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "last_verified_at": "2026-09-20",
+      "verification": {
+        "phase": "P0_EVIDENCE_PASS_1",
+        "verified_at": "2026-09-20",
+        "conclusion": "COVERED_BY_TASK",
+        "remaining_gap": "state/outbox의 backup recovery 테스트는 있으나 전체 영속상태의 정기 backup+restore drill은 아직 미검증."
+      }
     },
     {
       "risk_no": 154,
