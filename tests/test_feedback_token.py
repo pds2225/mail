@@ -1,10 +1,10 @@
-"""O/X 피드백 토큰 HMAC 서명·검증 회귀 테스트 (진단서 #132).
+"""O/X 피드백 토큰 HMAC + expiry 회귀 테스트 (Risk #132).
 
 핵심 성질:
-  · 키 미설정 → 서명 없음·검증 통과(하위호환)
-  · 키 설정 → 제목에 서명 부착, 위조/미서명 피드백은 parse 단계에서 버려짐
+- 키 미설정/잘못된 TTL → fail-closed
+- 토큰은 issued_at.HMAC 형식
+- 위조/미서명/legacy timestamp-less/만료/과도한 미래 토큰 거부
 """
-import importlib
 import sys
 from pathlib import Path
 
@@ -13,62 +13,104 @@ from mail_core.delivery import feedback_token as ft  # noqa: E402
 from mail_core.delivery import feedback as fb  # noqa: E402
 
 SECRET = "test-secret-abc123"
+ISSUED_AT = 1_800_000_000
+
+
+def _enable(monkeypatch, ttl: int = 3600):
+    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
+    monkeypatch.setenv("MAIL_FEEDBACK_TOKEN_TTL_SECONDS", str(ttl))
 
 
 def test_no_secret_fails_closed(monkeypatch):
     monkeypatch.delenv("MAIL_FEEDBACK_SECRET", raising=False)
+    monkeypatch.delenv("MAIL_FEEDBACK_TOKEN_TTL_SECONDS", raising=False)
     assert ft.enabled() is False
-    assert ft.sign("O", "PBLN_1") == ""          # 서명 미부착
-    assert ft.verify("O", "PBLN_1", None) is False
-    assert ft.verify("X", "PBLN_1", "deadbeefdeadbeef") is False
+    assert ft.sign("O", "PBLN_1", issued_at=ISSUED_AT) == ""
+    assert ft.verify("O", "PBLN_1", None, now=ISSUED_AT) is False
+    assert ft.verify("X", "PBLN_1", "deadbeefdeadbeef", now=ISSUED_AT) is False
+
+
+def test_invalid_ttl_fails_closed(monkeypatch):
+    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
+    monkeypatch.setenv("MAIL_FEEDBACK_TOKEN_TTL_SECONDS", "not-a-number")
+    assert ft.enabled() is False
+    assert ft.sign("O", "PBLN_1", issued_at=ISSUED_AT) == ""
 
 
 def test_sign_and_verify_roundtrip(monkeypatch):
-    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
-    sig = ft.sign("O", "PBLN_000123")
+    _enable(monkeypatch)
+    token = ft.sign("O", "PBLN_000123", issued_at=ISSUED_AT)
+    ts, sig = token.split(".", 1)
+    assert ts == str(ISSUED_AT)
     assert len(sig) == 16 and all(c in "0123456789abcdef" for c in sig)
-    assert ft.verify("O", "PBLN_000123", sig) is True
+    assert ft.verify("O", "PBLN_000123", token, now=ISSUED_AT + 30) is True
 
 
 def test_verify_rejects_forgery(monkeypatch):
-    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
-    sig = ft.sign("O", "PBLN_000123")
-    assert ft.verify("X", "PBLN_000123", sig) is False   # verdict 바꿔치기
-    assert ft.verify("O", "PBLN_999999", sig) is False   # id 바꿔치기
-    assert ft.verify("O", "PBLN_000123", None) is False  # 미서명
-    assert ft.verify("O", "PBLN_000123", "0" * 16) is False  # 임의 서명
+    _enable(monkeypatch)
+    token = ft.sign("O", "PBLN_000123", issued_at=ISSUED_AT)
+    assert ft.verify("X", "PBLN_000123", token, now=ISSUED_AT) is False
+    assert ft.verify("O", "PBLN_999999", token, now=ISSUED_AT) is False
+    assert ft.verify("O", "PBLN_000123", None, now=ISSUED_AT) is False
+    assert ft.verify("O", "PBLN_000123", f"{ISSUED_AT}." + "0" * 16, now=ISSUED_AT) is False
+
+
+def test_expired_token_is_rejected(monkeypatch):
+    _enable(monkeypatch, ttl=60)
+    token = ft.sign("O", "PBLN_1", issued_at=ISSUED_AT)
+    assert ft.verify("O", "PBLN_1", token, now=ISSUED_AT + 60) is True
+    assert ft.verify("O", "PBLN_1", token, now=ISSUED_AT + 61) is False
+
+
+def test_excessively_future_token_is_rejected(monkeypatch):
+    _enable(monkeypatch)
+    token = ft.sign("O", "PBLN_1", issued_at=ISSUED_AT + 301)
+    assert ft.verify("O", "PBLN_1", token, now=ISSUED_AT) is False
+
+
+def test_legacy_timestamp_less_token_is_rejected(monkeypatch):
+    _enable(monkeypatch)
+    assert ft.verify("O", "PBLN_1", "deadbeefdeadbeef", now=ISSUED_AT) is False
 
 
 def test_secret_change_invalidates(monkeypatch):
-    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
-    sig = ft.sign("O", "PBLN_1")
+    _enable(monkeypatch)
+    token = ft.sign("O", "PBLN_1", issued_at=ISSUED_AT)
     monkeypatch.setenv("MAIL_FEEDBACK_SECRET", "different-secret")
-    assert ft.verify("O", "PBLN_1", sig) is False
+    assert ft.verify("O", "PBLN_1", token, now=ISSUED_AT) is False
 
 
 # ── feedback.py 통합 ──
-def test_mailto_includes_signature_when_enabled(monkeypatch):
-    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
+def test_mailto_includes_timestamped_signature_when_enabled(monkeypatch):
+    _enable(monkeypatch)
+    monkeypatch.setattr(ft.time, "time", lambda: ISSUED_AT)
     url = fb.feedback_mailto("me@x.com", "X", "PBLN_42")
     from urllib.parse import unquote
     subj = unquote(url)
-    assert "[MAIL-FB] X PBLN_42 " in subj
-    sig = subj.split("PBLN_42 ", 1)[1].strip()
-    assert ft.verify("X", "PBLN_42", sig)
+    assert f"[MAIL-FB] X PBLN_42 {ISSUED_AT}." in subj
+    token = subj.split("PBLN_42 ", 1)[1].strip()
+    assert ft.verify("X", "PBLN_42", token, now=ISSUED_AT)
 
 
 def test_parse_accepts_valid_and_rejects_forged(monkeypatch):
-    monkeypatch.setenv("MAIL_FEEDBACK_SECRET", SECRET)
-    sig = ft.sign("O", "PBLN_7")
-    assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_7 {sig}") == {"verdict": "O", "id": "PBLN_7"}
-    # 위조: 서명 없음 → 거부
+    _enable(monkeypatch)
+    monkeypatch.setattr(ft.time, "time", lambda: ISSUED_AT)
+    token = ft.sign("O", "PBLN_7", issued_at=ISSUED_AT)
+    assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_7 {token}") == {"verdict": "O", "id": "PBLN_7"}
     assert fb.parse_feedback_subject("[MAIL-FB] O PBLN_7") is None
-    # 위조: 틀린 서명 → 거부
-    assert fb.parse_feedback_subject("[MAIL-FB] O PBLN_7 " + "0" * 16) is None
-    # 위조: 다른 id 를 유효 서명에 갖다붙임 → 거부
-    assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_OTHER {sig}") is None
+    assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_7 {ISSUED_AT}." + "0" * 16) is None
+    assert fb.parse_feedback_subject(f"[MAIL-FB] O PBLN_OTHER {token}") is None
+    assert fb.parse_feedback_subject("[MAIL-FB] O PBLN_7 deadbeefdeadbeef") is None
+
+
+def test_parse_rejects_expired_token(monkeypatch):
+    _enable(monkeypatch, ttl=60)
+    token = ft.sign("X", "PBLN_9", issued_at=ISSUED_AT)
+    monkeypatch.setattr(ft.time, "time", lambda: ISSUED_AT + 61)
+    assert fb.parse_feedback_subject(f"[MAIL-FB] X PBLN_9 {token}") is None
 
 
 def test_parse_unsigned_rejected_without_secret(monkeypatch):
     monkeypatch.delenv("MAIL_FEEDBACK_SECRET", raising=False)
+    monkeypatch.delenv("MAIL_FEEDBACK_TOKEN_TTL_SECONDS", raising=False)
     assert fb.parse_feedback_subject("[MAIL-FB] X PBLN_9") is None
