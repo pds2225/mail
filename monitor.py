@@ -7811,6 +7811,24 @@ def execute_monitor(
             log.warning("P0 소스 필터 실패(무시): %s", e)
             p0_dropped = []
 
+    # MAIL-P1A-01(TASK-031): 로그인/오류/CAPTCHA 화면·필수필드 결손 공고를
+    # quarantine/parse_error 로 분리해 발송 후보에서 제외한다. exclude_reason_codes
+    # (비즈니스 규칙 제외)와는 완전히 별개 필드/버킷이다(FORBIDDEN: 수집실패를 정상
+    # 제외로 기록 금지). 상세보강 실패(detail_extraction 실패)는 여기서 다루지
+    # 않는다 — recall 우선 정책상 목록 데이터로 계속 진행하는 기존 동작을 유지한다.
+    quarantined_items: list = []
+    try:
+        from mail_core.operations.notice_validity import quarantine_invalid_notices
+        new_items, quarantined_items = quarantine_invalid_notices(new_items)
+        if quarantined_items:
+            log.warning(
+                "공고 유효성 검증: %d건 quarantine/parse_error 로 발송 후보에서 제외",
+                len(quarantined_items),
+            )
+    except Exception as e:
+        log.warning("공고 유효성 검증 실패(무시): %s", e)
+        quarantined_items = []
+
     # 집중 모니터링: 사용자 워치리스트(키워드/제목·URL) 매칭분 — 필터 우회 강제포함·강조 대상
     # 게시판 URL 전량 매칭 폭발 방지: 날짜창·max_items 선별(2026-07-26 74건 사고)
     watchlist = load_watchlist()
@@ -8202,6 +8220,9 @@ def execute_monitor(
         "date_window": window_label,
         "filtered_items": len(filtered_new),
         "p0_source_items_dropped": len(p0_dropped),
+        # MAIL-P1A-01(TASK-031): quarantine/parse_error 로 발송 후보에서 제외된 건수
+        # (exclude_reason_codes 와 별개 — 정상 제외 통계에 섞지 않는다).
+        "quarantine_items_dropped": len(quarantined_items),
         # P2-5: 운영 KPI
         "admin_excluded_count": raw_dropped,
         "input_count": len(all_items),

@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — DEPENDS=TASK-030 DONE + 모든 P0 종료 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-033: loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-034: loop:coding-fix MAIL-P1A-04 [P1] 지역 자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -34,6 +33,29 @@
 ## RUNNING
 
 ## DONE
+- TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — 신규 모듈
+  `mail_core/operations/notice_validity.py`(classify_notice_validity/
+  quarantine_invalid_notices). SOURCE_RISK_NO(1, 21, 29–33) 중 실제 미해결 조사
+  결과: risk 32·33은 TASK-023/field_status.py가 이미 ALREADY_DONE 감사 완료라
+  재개방하지 않음, risk 31(표 구조 손실)은 `_extract_detail_tables()` +
+  `tests/test_detail_table_preservation.py`로 이미 커버돼 재구현하지 않음. 실제
+  구현한 것: 제목·본문에 로그인/오류/CAPTCHA 신호(`ERROR_PAGE_SIGNAL`, monitor.py의
+  기존 `_COVERAGE_ERROR_CONTENT_HINTS`—coverage_alert 집계용—와 동일 신호를 공고
+  1건 단위로 재사용, 두 상수는 통합 리팩터하지 않고 문자열만 동기화)와 제목·링크가
+  둘 다 없는 경우(`MISSING_REQUIRED_FIELD`)를 quarantine/parse_error로 분리해
+  발송 후보(`new_items`)에서 제거. `execute_monitor()`에 `drop_items_from_p0_sources`
+  와 동일한 패턴·위치(P0 소스 드롭 직후, 워치리스트/날짜필터 이전 — 워치리스트
+  강제포함도 우회 못 함)로 배선했고 `exclude_reason_codes`(비즈니스 규칙 제외)와는
+  완전히 분리된 필드(`validity_status`/`validity_reason_code`)로 기록해
+  FORBIDDEN(수집실패를 정상 제외로 기록 금지)을 준수한다. **의도적으로 보수적** —
+  상세보강 실패(`detail_extraction.status` FAILED)는 quarantine 대상에서 제외했다
+  (recall 최우선 정책상 목록 데이터만으로 계속 진행하는 기존 동작을 유지해야
+  정상 공고 누락을 막을 수 있음, risk 21은 이 기존 동작으로 충분히 안전하다고
+  판단). 테스트: `tests/test_notice_validity.py` 신규 13건(오류페이지 4종 분류·
+  parse_error·정상공고 오격리 없음 확인 2건·quarantine_invalid_notices 분리·
+  evidence 짧은 근거만 포함·execute_monitor() 통합테스트로 워치리스트 우회 불가
+  확인 포함) 전체 통과. 전체 pytest(cp949 무관 실패 1건 제외) 1559건 통과 0 실패,
+  회귀 없음(TASK-030 Golden Set 회귀 Harness 포함, 2026-09-20).
 - TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — 신규
   `tests/fixtures/golden_regression_set.json`(비식별·가상 공고 15건 — 실제 고객정보
   아님. FORBIDDEN 준수) + `scripts/golden_regression_check.py`(load_golden_set/
