@@ -220,3 +220,29 @@ COVERED_BY_TASK는 해결 완료를 의미하지 않는다. 각 담당 TASK에�
 | 152 | P0 | 상태관리 | 로그에 토큰·메일주소 기록 | COVERED_BY_TASK | MAIL-014, MAIL-028 |  |
 | 153 | P0 | 상태관리 | 백업·복구 검증 없음 | COVERED_BY_TASK | MAIL-014, MAIL-028 |  |
 | 154 | P2 | 상태관리 | 오래된 피드백 누적 | COVERED_BY_TASK | MAIL-014, MAIL-028 |  |
+
+
+---
+
+# P0 Evidence Pass V3 — 추가 검증
+
+이번 pass에서 다음 P0를 추가로 ALREADY_DONE 처리했다.
+
+| Risk | 근거 요약 |
+|---:|---|
+| 16 | fetch_all source별 exception isolation + 직접 회귀테스트 |
+| 17 | GHA concurrency + local MonitorRunLock |
+| 20 | SSRF net_guard + private/localhost/scheme 회귀테스트 |
+| 103 | HTML escape + script 회귀테스트 |
+| 119 | recipient별 개별 MIME + To/Cc 격리 회귀테스트 |
+| 120 | tenant/private recipient boundary + allowlist 회귀 |
+| 126 | dry-run 기본 + SMTP fail-closed + Vercel real-send 차단 |
+| 129 | GET 기록 경로 없음; mailto→signed inbound IMAP read-only 피드백 |
+
+## 누적 상태
+
+- ALREADY_DONE: **26 / 154**
+- COVERED_BY_TASK: **128 / 154**
+- P0 ALREADY_DONE: **14 / 27**
+- P0 remaining: **13**
+- OPEN_WITHOUT_TASK: **0**
