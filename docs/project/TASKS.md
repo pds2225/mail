@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — DEPENDS=TASK-027~028 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — DEPENDS=TASK-030 DONE + 모든 P0 종료 — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-033: loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -35,6 +34,22 @@
 ## RUNNING
 
 ## DONE
+- TASK-030: loop:coding-fix MAIL-P0D-05 [P0] Golden Set 회귀 Harness — 신규
+  `tests/fixtures/golden_regression_set.json`(비식별·가상 공고 15건 — 실제 고객정보
+  아님. FORBIDDEN 준수) + `scripts/golden_regression_check.py`(load_golden_set/
+  evaluate_golden_set/compute_recall_summary/run_check, CLI 단독 실행도 가능) +
+  `tests/test_golden_regression.py`(pytest 회귀 게이트, 8건). 매 pytest 실행마다
+  골든셋 전체를 `evaluate_notice()`로 재평가해 ①핵심소스(`mail_core.matching.
+  core_sources.CORE_SOURCE_IDS`=기업마당·K-Startup, 기존 상수 재사용) 재현율
+  98% 이상 ②"명백 적합공고"(obvious=true 태그) 재현율 95% 이상을 `assert`로
+  강제한다 — 미달 시 pytest가 실패한다(하네스 자기검증 테스트로 실제 FAIL
+  발생을 확인함: 핵심소스 항목 1개를 인위로 깨면 10/10→9/10=90%<98%로 정확히
+  FAIL). 골든셋 문구는 evaluate_notice()가 현재 규칙으로 실제 100% 통과하는
+  것을 확인한 뒤 그대로 담았을 뿐, 임계치를 맞추기 위해 사후 조작하지 않았다
+  (FORBIDDEN "목표수치 맞추기 위한 fixture 조작" 준수). 테스트: 신규 8건(fixture
+  건전성 2건 + 핵심 게이트 1건 + 하네스 자기검증 2건 + 헬퍼 1건 + CLI 1건 +
+  개인정보 미포함 1건) 전체 통과. 전체 pytest(cp949 무관 실패 1건 제외) 1539건
+  통과 0 실패, 회귀 없음(2026-09-20).
 - TASK-029: loop:coding-fix MAIL-P0D-04 [P0] 누락 원인 리포트 — 신규 진단 CLI
   `scripts/diagnose_notice.py`(이 저장소의 monitor.py-import 스크립트 관례를 따름,
   `mail_core/operations/`가 아님 — mail_core는 monitor.py를 역참조하지 않는 기존 설계
