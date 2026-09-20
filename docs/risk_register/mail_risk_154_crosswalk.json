@@ -1,16 +1,16 @@
 {
   "summary": {
-    "schema_version": 1,
-    "generated_at": "2026-09-20T19:20:00+09:00",
-    "audit_phase": "STRUCTURAL_COVERAGE_V1",
+    "schema_version": 2,
+    "generated_at": "2026-09-20T19:33:00+09:00",
+    "audit_phase": "EVIDENCE_PASS_V2",
     "repo": "pds2225/mail",
-    "repo_main_sha": "2b705b1074433dae55dd9398d3611362a11ad344",
+    "repo_main_sha": "f023d23d235e4c74b12833fb14ce3c25996f820f",
     "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 0,
-      "COVERED_BY_TASK": 154,
+      "ALREADY_DONE": 18,
+      "COVERED_BY_TASK": 136,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -29,11 +29,38 @@
       "상태관리": 12
     },
     "by_risk_level": {
+      "P0": 27,
       "P1": 107,
-      "P2": 20,
-      "P0": 27
+      "P2": 20
     },
-    "warning": "COVERED_BY_TASK means an owner task is assigned, not that the risk is solved. Evidence verification is the next pass."
+    "warning": "ALREADY_DONE은 코드/테스트 evidence를 직접 확인한 18건만 부여. COVERED_BY_TASK는 아직 해결 완료가 아니라 담당 TASK가 있다는 뜻이다.",
+    "unresolved_by_risk_level": {
+      "P0": 21,
+      "P1": 95,
+      "P2": 20
+    },
+    "verified_done_risk_nos": [
+      12,
+      18,
+      19,
+      32,
+      33,
+      39,
+      46,
+      47,
+      59,
+      67,
+      96,
+      113,
+      114,
+      115,
+      116,
+      143,
+      147,
+      149
+    ],
+    "invalid_task_refs": 0,
+    "duplicate_risk_rows": 0
   },
   "risks": [
     {
@@ -325,7 +352,7 @@
       "impact": "동일 공고가 여러 기관에서 수집",
       "risk_level": "P1",
       "recommended_response": "기관·제목·기간·URL 기반 교차소스 중복 제거",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -337,9 +364,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "docs/project/TASKS.md#TASK-022",
+        "tests/test_duplicate_type_classification.py",
+        "tests/test_kised_iitp_dedup_dates.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -475,7 +504,7 @@
       "impact": "장애지만 결과가 일부 존재하여 탐지 실패",
       "risk_level": "P1",
       "recommended_response": "최근 7일 중앙값 대비 급감률 모니터링",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -487,9 +516,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/operations/coverage_alert.py",
+        "mail_core/operations/detector_config.py",
+        "tests/test_coverage_p0.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -500,7 +531,7 @@
       "impact": "과거 전체공고가 신규로 유입",
       "risk_level": "P1",
       "recommended_response": "소스별 일일 최대치 및 이상치 탐지",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -512,9 +543,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/operations/coverage_alert.py",
+        "mail_core/operations/detector_config.py",
+        "tests/test_coverage_p0.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -849,7 +882,7 @@
       "impact": "연장공고가 반영되지 않음",
       "risk_level": "P1",
       "recommended_response": "ETag·Last-Modified·content hash 기반 갱신",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -867,11 +900,10 @@
         "TASK-023": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-023",
+        "tests/test_notice_version_recovery.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -882,7 +914,7 @@
       "impact": "이후 지역 미상·기간 미상 증가",
       "risk_level": "P1",
       "recommended_response": "null과 parse_failed 상태를 구분",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -898,11 +930,10 @@
         "TASK-031": "READY"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "mail_core/operations/field_status.py",
+        "tests/test_field_blank_surface.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -1062,7 +1093,7 @@
       "impact": "어제 게시됐지만 오늘 수집되어 누락",
       "risk_level": "P1",
       "recommended_response": "최근 3영업일 재조회 후 미발송 공고 발송",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014"
       ],
@@ -1078,11 +1109,11 @@
         "TASK-025": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-021",
+        "PR #307",
+        "tests/test_notice_version_recovery.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -1279,7 +1310,7 @@
       "impact": "마감연장 안내가 발송되지 않음",
       "risk_level": "P1",
       "recommended_response": "공고 ID + 콘텐츠 버전 관리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014"
       ],
@@ -1301,11 +1332,11 @@
         "TASK-024": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-023",
+        "docs/project/TASKS.md#TASK-024",
+        "tests/test_notice_version_recovery.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -1316,7 +1347,7 @@
       "impact": "중복으로 제거되어 누락",
       "risk_level": "P1",
       "recommended_response": "차수·접수기간·공고번호를 ID에 반영",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014"
       ],
@@ -1338,11 +1369,12 @@
         "TASK-024": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-022",
+        "docs/project/TASKS.md#TASK-024",
+        "tests/test_duplicate_type_classification.py",
+        "tests/test_notice_version_recovery.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -1800,7 +1832,7 @@
       "impact": "과거 발송 이유 재현 불가",
       "risk_level": "P1",
       "recommended_response": "rule_version과 규칙 스냅샷 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-022"
@@ -1828,11 +1860,11 @@
         "TASK-028": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-028",
+        "mail_core/operations/rule_version.py",
+        "tests/test_rule_version_reproducibility.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -2118,7 +2150,7 @@
       "impact": "본문 추출 실패가 지역 미상으로 위장",
       "risk_level": "P1",
       "recommended_response": "unknown, not_parsed, not_specified 구분",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-022"
@@ -2142,11 +2174,10 @@
         "TASK-044": "READY"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "mail_core/operations/field_status.py",
+        "tests/test_field_blank_surface.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -3307,7 +3338,7 @@
       "impact": "Git 저장소 유출 위험",
       "risk_level": "P0",
       "recommended_response": "기업·수신자 정보는 DB 및 암호화 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-022"
@@ -3337,11 +3368,11 @@
         "TASK-044": "READY"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "mail_core/security/private_config.py",
+        "tests/test_streamlit_settings_save.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -3904,7 +3935,7 @@
       "impact": "동일 메일 2회 이상 수신",
       "risk_level": "P0",
       "recommended_response": "Idempotency Key와 Outbox 패턴 적용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3918,9 +3949,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/state.py",
+        "mail_core/delivery/outbox.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -3931,7 +3964,7 @@
       "impact": "재실행 시 성공자에게도 재발송",
       "risk_level": "P0",
       "recommended_response": "수신자별 delivery 상태 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3945,9 +3978,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/state.py",
+        "mail_core/delivery/outbox.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -3958,7 +3993,7 @@
       "impact": "실제 미발송인데 다음날 제외",
       "risk_level": "P0",
       "recommended_response": "메일 성공응답 후 개별 발송상태 확정",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3972,9 +4007,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/outbox.py",
+        "mail_core/delivery/state.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -3985,7 +4022,7 @@
       "impact": "한 그룹 실패 시 다른 그룹 발송여부 구분 불가",
       "risk_level": "P1",
       "recommended_response": "notice, group, recipient 단위 상태관리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026",
@@ -3999,9 +4036,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/state.py",
+        "mail_core/delivery/outbox.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -4680,7 +4719,7 @@
       "impact": "파일 일부 손상·데이터 유실",
       "risk_level": "P0",
       "recommended_response": "DB Transaction 또는 원자적 파일 교체",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-028",
@@ -4694,9 +4733,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/storage/state_store.py",
+        "mail_core/delivery/state.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -4782,7 +4823,7 @@
       "impact": "중요변경이 발송되지 않음",
       "risk_level": "P1",
       "recommended_response": "notice version과 content hash 저장",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-028"
@@ -4800,11 +4841,11 @@
         "TASK-024": "DONE"
       },
       "evidence_sources": [
-        "TASK.md",
-        "docs/project/TASKS.md",
-        "docs/project/MAIL014_AI_TASK_SPEC.md"
+        "docs/project/TASKS.md#TASK-023",
+        "docs/project/TASKS.md#TASK-024",
+        "tests/test_notice_version_recovery.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
@@ -4842,7 +4883,7 @@
       "impact": "저장소 유출",
       "risk_level": "P0",
       "recommended_response": "config와 개인정보 분리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-028"
@@ -4854,9 +4895,11 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/security/private_config.py",
+        "tests/test_streamlit_settings_save.py",
+        "tests/test_p0_hardening.py"
       ],
-      "audit_note": "",
+      "audit_note": "EVIDENCE_PASS_V2: latest main 코드/테스트 근거를 직접 확인해 완료 판정. 관련 TASK가 더 넓은 범위를 다루더라도 이 Risk 자체는 재개발하지 않는다.",
       "last_verified_at": "2026-09-20"
     },
     {
