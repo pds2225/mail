@@ -2455,6 +2455,12 @@ REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 - [ ] 변경 전/후 동일 holdout 기준 성능표를 생성한다.
 - [ ] 운영 데이터가 GitHub 밖에 있어 접근할 수 없는 경우 그 부분만 명확히 BLOCKED_INPUT으로 기록하고, 사용자가 해야 할 export 작업을 파일명·형식·1회 절차로 최소화한다.
 - [ ] 애매한 공고는 `REVIEW_REQUIRED` 목록으로 따로 만들고 사용자에게 최종 O/X만 요청할 수 있게 한다.
+- [ ] 세션 중단·컨텍스트 만료·PC 종료 후에도 이어서 할 수 있도록 단계별 CHECKPOINT를 남긴다. 최소 단계는 DATA_AUDIT / BASELINE / DATASET_SPLIT / CANDIDATE_RULES / GOLDEN_TEST / REVIEW_BATCH / FINAL_COMPARE 이며, 각 단계 완료 시 작업 브랜치에 필요한 파일만 커밋·push한다.
+- [ ] 재실행은 idempotent해야 한다. 같은 입력 snapshot/run_id로 다시 실행해도 Gold 중복 추가, Review 중복 누적, 지표 이중계산, 규칙 중복적용이 발생하지 않아야 한다.
+- [ ] 입력 데이터 fingerprint와 evaluator/config commit SHA를 기록해 어떤 데이터·코드 기준으로 나온 지표인지 재현 가능하게 한다.
+- [ ] 반복개선은 무한 루프 금지. 한 실행에서 최대 5 cycle, 또는 2회 연속 holdout F1 개선이 0.5%p 미만이면 자동 종료하고 남은 항목을 다음 실행으로 넘긴다.
+- [ ] 후보 규칙은 가능하면 각각 독립적으로 평가·기록한다. 후보 하나가 테스트/성능 기준을 깨면 그 후보만 폐기하고 이미 검증된 checkpoint까지 되돌리지 않는다.
+- [ ] 원격 main 변경, CI 실패, 외부 사이트 오류, 일부 데이터 누락 등 부분 장애가 발생해도 안전하게 가능한 분석은 계속하고, 정말 필요한 입력/결정만 HUMAN_BATCH에 누적한다.
 - [ ] 실제 이메일 발송·실제 라벨 변경·실제 삭제·Secret 출력은 하지 않는다.
 
 ### 8-6. KEEP — 유지
@@ -2513,6 +2519,8 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 - 애매한 사례 REVIEW_REQUIRED 배치 큐 및 일괄 O/X 반영
 - 신규 라벨 group_id + profile/config snapshot 보존
 - 성능 전후 비교 리포트 및 성능 악화 시 후보 규칙 롤백/폐기
+- 단계별 checkpoint + 재개 상태(run_id, input fingerprint, code/config SHA, 완료 phase, 다음 phase)
+- 동일 입력 재실행 안전성(idempotency)과 중복 방지
 
 구체 파일 경로는 실행 시 현재 main 구조를 조사한 뒤 기존 구조를 우선 재사용한다. 불필요한 새 프레임워크는 만들지 않는다.
 
@@ -2538,10 +2546,12 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 
 ### 8-12. 사용자 개입 최소화
 
-사용자에게 요청 가능한 것은 아래 두 종류로 제한한다.
+정상적인 정확도 개선 흐름에서 사용자에게 요청 가능한 것은 아래 두 종류로 제한한다.
 
 1. GitHub/현재 실행환경에서 접근할 수 없는 운영 O/X 데이터가 있을 경우 1회 export
 2. 자동 확정할 수 없는 REVIEW_REQUIRED 공고의 최종 O/X 판정
+
+예외: 데이터 손실 위험, 보안/Secret, 실제 비용 발생, 되돌리기 어려운 운영 변경, 제품정책 변경은 안전을 위해 즉시 사용자 승인을 요청할 수 있으며 위 2종 제한의 예외로 본다.
 
 사용자 개입 방식:
 - 공고 1건마다 질문하지 않는다.
@@ -2550,6 +2560,8 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 - 사용자는 각 행에서 O/X만 연속 선택하고 마지막에 1회 저장한다.
 - 저장 결과를 Gold에 반영한 뒤 다음 자동 개선 사이클을 진행한다.
 - 새 Review가 소수 발생하더라도 즉시 호출하지 않고 다음 배치까지 누적하는 것을 기본으로 한다.
+- Review가 많아도 사용자 호출 횟수를 늘리지 않는다. 중복/동일공고/동일 canonical notice를 먼저 제거하고, UI 내부 pagination·필터·일괄 O/X를 사용하되 마지막 저장은 1회로 유지한다.
+- 사용자에게 보여줄 HUMAN_BATCH에는 개발자가 알아서 해결할 수 있는 오류·테스트 실패·Git 상태를 넣지 않는다. 사용자의 판단 또는 외부 입력이 실제로 필요한 항목만 넣는다.
 - 개발 중 선택지가 여러 개여도 기존 구조·테스트·데이터 근거로 안전하게 결정할 수 있으면 AI가 스스로 결정하고 계속 진행한다.
 - 조사·분석·코드수정·테스트·회귀검증·문서화·PR 생성·Checks 확인·허용된 자동병합까지 가능한 범위는 AI가 연속 수행한다.
 - 중간 진행상황 확인을 위해 사용자를 반복 호출하지 않는다. 사용자에게 필요한 결정·검수·입력은 가능한 한 하나의 배치로 합친다.
@@ -2569,6 +2581,10 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 - [ ] Silver/Review 분리와 Review 일괄 저장 동작 검증
 - [ ] 신규 라벨에 group_id + profile/config context가 보존되고 legacy context 없는 라벨이 그룹별 지표에서 제외되는지 검증
 - [ ] 후보 규칙 적용 후 holdout 성능 악화 또는 Gold 회귀 시 자동 채택되지 않는지 검증
+- [ ] 중간 강제종료 후 최신 remote checkpoint에서 중복 없이 재개되는지 검증
+- [ ] 동일 run/input을 2회 실행해 Gold/Review/지표/규칙이 중복 생성되지 않는지 검증
+- [ ] 최대 5 cycle 및 2회 연속 개선 <0.5%p 자동 종료 조건 검증
+- [ ] main 변경/CI 실패/외부 데이터 일부 누락 시 안전한 부분 작업은 보존되고 HUMAN_BATCH에는 실제 사용자 필요 항목만 남는지 검증
 - [ ] 기존 관련 테스트 PASS
 - [ ] 개선 전/후 동일 holdout 성능 비교
 - [ ] 실제 메일 발송 없음
@@ -2577,7 +2593,7 @@ DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
 
 ### 8-14. DONE
 
-REQUEST_SOLVED=NO — 계획 등록 상태. 데이터 전수조사·baseline 측정·FP/FN 분석·Golden Set 구축·필터 반영·동일 holdout 재검증이 완료되고 실제 사용자 dry-run이 PASS일 때만 YES로 변경한다.
+REQUEST_SOLVED=NO — 계획 등록 상태. 데이터 전수조사·baseline 측정·FP/FN 분석·Golden Set 구축·필터 반영·동일 holdout 재검증, 중단/재개·idempotency 검증이 완료되고 실제 사용자 dry-run이 PASS일 때만 YES로 변경한다.
 
 # 9. 실제사용 시나리오
 
