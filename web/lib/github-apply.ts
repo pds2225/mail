@@ -2,6 +2,13 @@ import type { SiteRecord } from "./site-types";
 
 const API = "https://api.github.com";
 
+export class GithubFileConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "GithubFileConflictError";
+  }
+}
+
 export function githubRepo(): { owner: string; repo: string } {
   const raw = process.env.GITHUB_APPLY_REPO || "pds2225/mail";
   const [owner, repo] = raw.split("/");
@@ -31,10 +38,29 @@ export type RepoFile = {
   text: string;
 };
 
-export async function getRepoTextFile(filePath: string, token = ""): Promise<RepoFile> {
+export async function getRepoBranchHead(token = ""): Promise<string> {
   const { owner, repo } = githubRepo();
   const branch = githubBranch();
-  const url = `${API}/repos/${owner}/${repo}/contents/${filePath}?ref=${encodeURIComponent(branch)}`;
+  const url = `${API}/repos/${owner}/${repo}/branches/${encodeURIComponent(branch)}`;
+  const response = await fetch(url, { headers: authHeaders(token), cache: "no-store" });
+  const body = (await response.json()) as {
+    message?: string;
+    commit?: { sha?: string };
+  };
+  const sha = String(body.commit?.sha || "").trim();
+  if (!response.ok || !sha) {
+    throw new Error(body.message || `GitHub에서 ${branch} 기준 커밋을 읽지 못했습니다.`);
+  }
+  return sha;
+}
+
+export async function getRepoTextFile(
+  filePath: string,
+  token = "",
+  ref = githubBranch(),
+): Promise<RepoFile> {
+  const { owner, repo } = githubRepo();
+  const url = `${API}/repos/${owner}/${repo}/contents/${filePath}?ref=${encodeURIComponent(ref)}`;
   const response = await fetch(url, { headers: authHeaders(token), cache: "no-store" });
   const body = (await response.json()) as {
     message?: string;
@@ -75,6 +101,11 @@ export async function putRepoTextFile(opts: {
     commit?: { html_url?: string; sha?: string };
   };
   if (!response.ok) {
+    if (response.status === 409 || response.status === 422) {
+      throw new GithubFileConflictError(
+        "저장 준비 후 원격 파일이 변경되었습니다. 최신 내용을 다시 불러온 뒤 저장을 다시 눌러주세요.",
+      );
+    }
     if (response.status === 401 || response.status === 403) {
       throw new Error(
         "GitHub가 토큰을 거부했습니다. public_repo 또는 Contents 쓰기 권한을 확인하세요.",
