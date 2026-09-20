@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
 import { githubEditFileUrl } from "@/lib/github-commit-url";
-import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
+import {
+  getRepoBranchHead,
+  getRepoTextFile,
+  githubBranch,
+  putRepoTextFile,
+} from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
 type ReviewVerdictInput = { id: string; title: string; verdict: "O" | "X" };
-
 
 function parseItem(raw: unknown): ReviewVerdictInput | null {
   if (!raw || typeof raw !== "object") return null;
@@ -51,13 +55,16 @@ function upsertFeedback(text: string, items: ReviewVerdictInput[]): string {
     .join("\n")}\n`;
 }
 
+function isConflict(error: unknown): boolean {
+  return error instanceof Error && error.name === "GithubFileConflictError";
+}
+
 export async function POST(req: Request) {
   const authError = applyAuthError(req);
   if (authError) return NextResponse.json({ ok: false, error: authError }, { status: 401 });
 
   try {
     const body = (await req.json()) as Record<string, unknown>;
-    // 단일 {id,title,verdict}와 배치 {items:[...]} 둘 다 받는다(하위호환).
     const rawItems = Array.isArray(body.items) ? body.items : [body];
     const items = rawItems.map(parseItem).filter((item): item is ReviewVerdictInput => item !== null);
     if (items.length === 0) {
@@ -69,40 +76,66 @@ export async function POST(req: Request) {
 
     const token = githubApplyToken(req);
     const feedbackPath = "data/golden/feedback_labels.jsonl";
+
     if (!token) {
-      const remote = await getRepoTextFile(feedbackPath);
+      const sourceCommitSha = await getRepoBranchHead();
+      const remote = await getRepoTextFile(feedbackPath, "", sourceCommitSha);
       return NextResponse.json({
         ok: true,
         applied: false,
+        saveState: "PR_PENDING",
         manualPasteRequired: true,
         manualFilePath: feedbackPath,
         manualContent: upsertFeedback(remote.text, items),
-        githubCommitUrl: githubEditFileUrl(feedbackPath),
+        sourceBlobSha: remote.sha,
+        sourceCommitSha,
+        githubCommitUrl: githubEditFileUrl(feedbackPath, { branch: sourceCommitSha }),
         notice:
-          `검수 ${items.length}건을 최종 검수 파일에 저장하려면 아래 내용을 복사해 GitHub 파일 전체를 교체한 뒤 Commit changes를 누르세요.`,
+          `검수 ${items.length}건은 아직 저장 완료가 아닙니다. 기준 커밋에서 편집한 뒤 Propose changes → Create pull request → Checks → merge까지 완료하세요.`,
       });
     }
 
     const remote = await getRepoTextFile(feedbackPath, token);
     const summary = items.length === 1 ? `${items[0].verdict} ${items[0].id}` : `${items.length}건`;
-    const written = await putRepoTextFile({
-      filePath: feedbackPath,
-      text: upsertFeedback(remote.text, items),
-      sha: remote.sha,
-      message: `chore(review): ${summary} via admin web`,
-      token,
-    });
-    return NextResponse.json({
-      ok: true,
-      applied: true,
-      branch: githubBranch(),
-      commitUrl: written.commitUrl,
-      items,
-      notice: `O/X 검수 ${items.length}건을 저장했습니다.`,
-    });
+    try {
+      const written = await putRepoTextFile({
+        filePath: feedbackPath,
+        text: upsertFeedback(remote.text, items),
+        sha: remote.sha,
+        message: `chore(review): ${summary} via admin web`,
+        token,
+      });
+      return NextResponse.json({
+        ok: true,
+        applied: true,
+        saveState: "SAVED",
+        branch: githubBranch(),
+        commitUrl: written.commitUrl,
+        items,
+        notice: `O/X 검수 ${items.length}건을 저장했습니다.`,
+      });
+    } catch (error) {
+      if (isConflict(error)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            applied: false,
+            saveState: "CONFLICT",
+            error: error instanceof Error ? error.message : "원격 파일 충돌",
+          },
+          { status: 409 },
+        );
+      }
+      throw error;
+    }
   } catch (error) {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "review apply failed" },
+      {
+        ok: false,
+        applied: false,
+        saveState: "FAILED",
+        error: error instanceof Error ? error.message : "review apply failed",
+      },
       { status: 500 },
     );
   }
