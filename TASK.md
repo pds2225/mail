@@ -41,7 +41,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [ ] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [ ] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
-[ ] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
+[~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 
 
@@ -2895,6 +2895,14 @@ REQUEST_SOLVED=NO — Risk 113~128 전체 근거 상태 확정 + P0 잔여 0 또
 - [ ] 기존 feedback_token.py / feedback.py / tests 먼저 재사용
 - [ ] MAIL-022 Gold/Silver/Review와 역할 중복 금지
 - [ ] MAIL-023 이후 write E2E 검증
+
+### Risk 132 slice — token expiry
+
+- [x] HMAC 토큰에 issued_at을 포함하고 TTL 만료를 강제한다.
+- [x] timestamp 없는 legacy 16-hex 토큰은 기본 거부한다.
+- [x] 과도한 미래 토큰도 clock-skew 범위 밖이면 거부한다.
+- [x] 기존 mailto/IMAP read-only 흐름은 유지한다.
+- [ ] CI 회귀 통과 및 main 병합 후 Risk 132 crosswalk를 ALREADY_DONE으로 갱신한다.
 
 ### DONE
 REQUEST_SOLVED=NO — Risk 129~142 전체 근거 상태 확정 + Gold 오염 경로가 없음을 검증한 뒤 YES.

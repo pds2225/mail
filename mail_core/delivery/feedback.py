@@ -37,9 +37,10 @@ LABELS_PATH = DATA_DIR / "golden" / "feedback_labels.jsonl"
 
 SUBJECT_TAG = "[MAIL-FB]"
 # 메일 클라이언트가 제목 앞에 Re:/전달: 등을 붙여도 잡히게 search 사용.
-# nid(공백 없음) 뒤에 선택적 16-hex 서명 토큰이 올 수 있다(#132).
+# nid(공백 없음) 뒤에는 issued_at.HMAC 토큰만 허용한다(#132).
+# 과거 timestamp 없는 16-hex 토큰은 만료를 검증할 수 없어 fail-closed 한다.
 _SUBJECT_RE = re.compile(
-    r"\[\s*MAIL-FB\s*\]\s*([OX])\s+([A-Za-z0-9_.:\-%]{1,120})(?:\s+([0-9a-fA-F]{16}))?",
+    r"\[\s*MAIL-FB\s*\]\s*([OX])\s+([A-Za-z0-9_.:\-%]{1,120})(?:\s+([0-9]{9,12}\.[0-9a-fA-F]{16}))?",
     re.IGNORECASE,
 )
 
@@ -66,7 +67,7 @@ def normalize_verdict(value: str) -> str:
 def feedback_mailto(to_addr: str, verdict: str, notice_id: str) -> str:
     """클릭하면 '제목이 채워진 메일 작성창'이 열리는 mailto 링크(발송은 사용자가 직접).
 
-    MAIL_FEEDBACK_SECRET 이 설정되면 제목 끝에 HMAC 서명 토큰을 붙여 위조를 막는다(#132).
+    MAIL_FEEDBACK_SECRET 이 설정되면 제목 끝에 발급시각+HMAC 토큰을 붙여 위조와 무기한 재사용을 막는다(#132).
     """
     v = normalize_verdict(verdict) or "O"
     nid = str(notice_id).strip()
@@ -130,8 +131,7 @@ def parse_feedback_subject(subject: str) -> dict | None:
     if not nid:
         return None
     verdict = m.group(1).upper()
-    # HMAC 검증(#132): MAIL_FEEDBACK_SECRET 설정 시 서명 없거나 틀리면 위조로 간주해 버린다.
-    # 키 미설정이면 verify 는 항상 True(하위호환 — 서명 없던 기존 피드백도 그대로 수집).
+    # HMAC + expiry 검증(#132): 미서명·위조·만료·legacy timestamp-less 토큰은 거부한다.
     if not feedback_token.verify(verdict, nid, m.group(3)):
         return None
     return {"verdict": verdict, "id": nid}
