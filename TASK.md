@@ -35,8 +35,9 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-018 | 공고검수 화면에서 O/X 누를 때마다 커밋하지 말고 선택한 것만 한 번에 저장한다
 [x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
-[~] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
+[x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
+[ ] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 
 
 ---
@@ -2416,27 +2417,28 @@ config-pending 임시파일과 apply-admin direct push 의존을 웹 저장 경�
 - 공고검수는 최종 `data/golden/feedback_labels.jsonl`을 직접 편집한다.
 - 그룹은 최종 `config/groups.json`, 설정은 최종 `config/settings.json`을 직접 편집한다.
 - GitHub URL에는 본문 payload를 넣지 않는다.
-- 보호브랜치 때문에 PR이 생성돼도 기존 CI/자동머지 흐름으로 처리된다.
 - 웹 저장은 `.apply/config-pending.json` 및 `apply-admin` 성공 여부에 의존하지 않는다.
 - stale `.apply/config-pending.json`은 제거한다.
 
-### 8-4. 현재상태
+### 8-4. 최종상태
 
 - TASK_ID: MAIL-021
-- TASK_START_SHA: 116ed21fe5cea451e1453deb412ee6f6a4cbd408
-- TASK_BLOB_SHA: 65a24e8bc16cd26e08af3933b0dd27f5c99c18ec
-- WORK_BRANCH: fix/mail-021-direct-final-save
-- ROOT_CAUSE: 2026-09-15 apply-admin job 104330855197에서 결과 commit 생성 후 `git push`가 `GH006: Protected branch update failed`로 실패. 임시파일 삭제 commit이 main에 반영되지 않아 stale pending이 지속됨.
+- IMPLEMENTATION_PR: #327
+- MERGE_SHA: 15fb2513dd260dc8e514c94d0dc5db7dd9e9d834
+- RESULT: config-pending 기반 저장 경로 제거 완료
+- VERCEL_PREVIEW: Ready 확인
+- POST_MERGE_REVIEW: 동시수정 시 stale full-file snapshot 유실 위험과 protected-main에서 Create pull request 안내 누락이 별도 발견됨
+- FOLLOW_UP: MAIL-023으로 분리. MAIL-021의 원래 config-pending 재발방지 요청과 혼합하지 않는다.
 
 ### 8-5. MUST
 
-- [ ] review tokenless 저장은 최종 feedback_labels.jsonl 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
-- [ ] group/settings tokenless 저장은 최종 config 파일 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
-- [ ] URL에 `value=` payload query 및 `.apply/config-pending.json` 사용 금지.
-- [ ] 공고검수·그룹·설정은 공통 manual GitHub 저장 UI 사용.
-- [ ] stale `.apply/config-pending.json` 제거.
-- [ ] 기존 서버 token 직접 저장 및 legacy apply-admin 처리기는 하위호환으로 유지하되 웹 저장이 의존하지 않게 한다.
-- [ ] 실제 메일 발송·삭제·라벨 변경 없음.
+- [x] review tokenless 저장은 최종 feedback_labels.jsonl 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
+- [x] group/settings tokenless 저장은 최종 config 파일 전체 결과를 생성해 직접 편집 링크/본문을 반환한다.
+- [x] URL에 `value=` payload query 및 `.apply/config-pending.json` 사용 금지.
+- [x] 공고검수·그룹·설정은 공통 manual GitHub 저장 UI 사용.
+- [x] stale `.apply/config-pending.json` 제거.
+- [x] 기존 서버 token 직접 저장 및 legacy apply-admin 처리기는 하위호환으로 유지하되 웹 저장이 의존하지 않게 한다.
+- [x] 실제 메일 발송·삭제·라벨 변경 없음.
 
 ### 8-6. KEEP
 
@@ -2463,21 +2465,84 @@ config-pending 임시파일과 apply-admin direct push 의존을 웹 저장 경�
 
 ### 8-9. VERIFY
 
-- review/config route tests에서 GitHub URL이 최종 파일 경로인지 확인
-- URL에 `value=` 및 `.apply/config-pending.json` 없음
-- 최종 파일 content에 선택 O/X/설정 변경이 반영되는지 확인
-- `cd web && npx vitest run`
-- `cd web && npx next build`
-- Python 전체 회귀 GitHub Actions
-- Vercel Preview/Production /review 200
-- stale pending 파일 main 제거 확인
+- [x] PR #327에서 review/config route가 최종 파일 경로를 사용
+- [x] URL에 `value=` 및 `.apply/config-pending.json` 미사용
+- [x] stale pending 파일 삭제
+- [x] Vercel Preview Ready
+- [x] main 병합 완료
+- [ ] 동시수정 안전성 및 protected-main PR 생성 UX는 MAIL-023에서 검증
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
+REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저장이 깨지던 원래 문제는 PR #327로 제거됐다. 병합 후 발견된 수동 full-file 저장의 동시수정 안전성과 Create pull request 안내 문제는 별도 MAIL-023으로 이관한다.
 
 ---
 
+
+---
+
+## MAIL-023
+
+### 8-1. 사용자 원문 요청
+
+> MAIL-021 Conclusion. 남은 저장 안전 문제는 별도 후속으로 분리해 재발하지 않게 한다.
+
+### 8-2. 비개발자용 1줄 요약
+
+수동 저장 중 다른 변경을 지우지 않고, protected main에서도 PR 생성·병합까지 완료되게 한다.
+
+### 8-3. 최종 결과
+
+- 사용자가 O/X·그룹·설정을 저장하려는 사이에 원격 파일이 바뀌어도 새 데이터를 덮어쓰거나 삭제하지 않는다.
+- full-file snapshot을 그대로 붙여넣는 방식이면 source SHA를 확인하고 충돌 시 최신본에 재적용하거나 REVIEW_REQUIRED로 fail-closed 한다.
+- 가능하면 patch/rebase 또는 서버측 compare-and-swap(CAS) 방식으로 안전하게 적용한다.
+- protected main에서 GitHub 편집 후 `Propose changes → Create pull request → Checks → auto-merge`까지 사용자가 저장 완료를 명확히 이해한다.
+- 저장 완료/미완료/충돌 상태가 UI에 분명히 표시된다.
+
+### 8-4. 현재상태
+
+- STATUS: READY
+- SOURCE: PR #327 post-merge Codex review P1/P2
+- DEPENDS_ON: MAIL-021
+- 실제 메일 발송·삭제·라벨 변경 없음
+
+### 8-5. MUST
+
+- [ ] manualContent 생성 시 source file SHA/version을 함께 반환한다.
+- [ ] 저장 직전 또는 적용 시 source SHA가 최신 원격과 동일한지 확인한다.
+- [ ] 원격 변경이 있으면 기존 최신 변경을 보존한 채 O/X/config patch만 재적용하거나 충돌로 중단한다.
+- [ ] concurrent writer가 추가한 feedback row가 사라지지 않는 회귀테스트를 추가한다.
+- [ ] protected-main 수동저장 안내에 Create pull request 단계를 포함한다.
+- [ ] PR 생성 후 merge 전 상태를 저장완료로 표시하지 않는다.
+- [ ] 기존 token direct-save 경로도 stale SHA 충돌을 안전하게 처리하는지 확인한다.
+
+### 8-6. KEEP
+
+- MAIL-021의 direct-final-file 경로
+- MAIL-018 배치 O/X UX
+- 기존 branch protection / CI / auto-merge
+- 기존 파일 형식
+
+### 8-7. FORBIDDEN
+
+- 최신 원격 파일을 확인하지 않고 stale 전체 snapshot으로 덮어쓰기
+- concurrent row/config 삭제
+- branch protection 우회
+- 실제 이메일 발송·삭제·라벨 변경
+- Secret 출력
+
+### 8-8. VERIFY
+
+- [ ] A가 snapshot 생성 후 B가 원격 파일 수정 → A 저장 시 B 변경 보존
+- [ ] feedback_labels.jsonl 동시 append 보존
+- [ ] groups/settings 동시 수정 충돌 처리
+- [ ] protected-main에서 Propose → PR 생성 → Checks → merge 흐름 확인
+- [ ] 사용자 UI가 SAVED / PR_PENDING / CONFLICT / FAILED를 구분
+- [ ] 관련 web tests + build + 실제 preview E2E
+
+### 8-9. DONE
+
+REQUEST_SOLVED=NO — 동시수정 데이터 보존과 PR 완료 UX를 실제 preview에서 검증한 뒤 YES.
 
 ---
 
