@@ -2220,7 +2220,8 @@ MAIL-014 전체는 아래 모두 충족할 때만 REQUEST_SOLVED=YES:
 - STATUS: IN_PROGRESS
 - REQUEST_SOLVED=NO
 - CHECKPOINT: STRUCTURAL_COVERAGE_V1 — 154/154 Risk ownership assigned, OPEN_WITHOUT_TASK=0
-- NEXT: P0 Risk부터 실제 코드·테스트 evidence verification → ALREADY_DONE/remaining gap 확정
+- CHECKPOINT: P0_EVIDENCE_PASS_1 — P0 27건 중 13건 ALREADY_DONE, 14건은 실제 gap/추가검증 필요
+- NEXT: P0 gap 최소수정 — dependency를 지키며 Risk 102/132/27/28/143/144/153 우선
 
 ---
 
