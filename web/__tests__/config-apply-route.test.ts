@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   token: "",
   getRepoTextFile: vi.fn(),
   putRepoTextFile: vi.fn(),
+  getRepoBranchHead: vi.fn(),
 }));
 
 vi.mock("@/lib/apply-auth", () => ({
@@ -13,6 +14,7 @@ vi.mock("@/lib/apply-auth", () => ({
 
 vi.mock("@/lib/github-apply", () => ({
   getRepoTextFile: mocks.getRepoTextFile,
+  getRepoBranchHead: mocks.getRepoBranchHead,
   githubBranch: vi.fn(() => "main"),
   putRepoTextFile: mocks.putRepoTextFile,
 }));
@@ -32,6 +34,8 @@ describe("POST /api/config/apply tokenless direct-file fallback", () => {
     mocks.token = "";
     mocks.getRepoTextFile.mockReset();
     mocks.putRepoTextFile.mockReset();
+    mocks.getRepoBranchHead.mockReset();
+    mocks.getRepoBranchHead.mockResolvedValue("base-commit");
     mocks.getRepoTextFile.mockImplementation(async (path: string) => {
       if (path === "config/groups.json") {
         return {
@@ -60,8 +64,11 @@ describe("POST /api/config/apply tokenless direct-file fallback", () => {
     expect(data.applied).toBe(false);
     expect(data.manualPasteRequired).toBe(true);
     expect(data.manualFilePath).toBe("config/groups.json");
+    expect(data.saveState).toBe("PR_PENDING");
+    expect(data.sourceBlobSha).toBe("group-sha");
+    expect(data.sourceCommitSha).toBe("base-commit");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/config/groups.json",
+      "https://github.com/pds2225/mail/edit/base-commit/config/groups.json",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
     expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
@@ -81,11 +88,28 @@ describe("POST /api/config/apply tokenless direct-file fallback", () => {
 
     expect(response.status).toBe(200);
     expect(data.manualFilePath).toBe("config/settings.json");
+    expect(data.saveState).toBe("PR_PENDING");
+    expect(data.sourceBlobSha).toBe("settings-sha");
+    expect(data.sourceCommitSha).toBe("base-commit");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/config/settings.json",
+      "https://github.com/pds2225/mail/edit/base-commit/config/settings.json",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
     expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
     expect(JSON.parse(data.manualContent)).toMatchObject({ days_back: 5 });
+  });
+  it("returns 409 conflict instead of overwriting a newer groups.json", async () => {
+    mocks.token = "fixture-token";
+    const conflict = Object.assign(new Error("fixture conflict"), { name: "GithubFileConflictError" });
+    mocks.putRepoTextFile.mockRejectedValue(conflict);
+
+    const response = await POST(
+      request({ resource: "group", id: "grp_demo", patch: { name: "Updated" } }),
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(data.ok).toBe(false);
+    expect(data.saveState).toBe("CONFLICT");
   });
 });
