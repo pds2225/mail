@@ -36,6 +36,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-019 | 공고검수 선택 저장 시 GitHub URL 길이 초과 오류를 없앤다
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 [~] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
+[ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
 
 
 ---
@@ -2392,6 +2393,155 @@ config-pending 임시파일과 apply-admin direct push 의존을 웹 저장 경�
 REQUEST_SOLVED=NO — direct-final-file 저장 구현 및 Production 검증 전.
 
 ---
+
+
+---
+
+## MAIL-022
+
+### 8-1. 사용자 원문 요청
+
+> Mail 정확도를 올리기 위해 과거 전체 판정 데이터 추출 → O/X 정답셋 통합 → 키워드별 Precision/Recall 계산 → 오탐 유발 키워드 제거 → 유효 복합키워드 추출 → Golden Set 회귀테스트 → 필터 반영 순서로 진행한다.
+>
+> 사용자가 직접 해야 하는 일은 접근 불가능한 운영 데이터가 있을 때 1회 export와, 자동으로 확정할 수 없는 애매한 공고의 최종 O/X 판정으로 최소화한다.
+
+### 8-2. 비개발자용 1줄 요약
+
+과거에 사용자가 실제로 O/X한 공고를 정답지로 삼아, 현재 Mail이 무엇을 잘 맞히고 무엇을 놓치는지 수치로 측정한 뒤 필터를 개선한다.
+
+### 8-3. 사용자가 원하는 최종 결과
+
+- 과거 O/X·검수·판정 이력을 가능한 범위에서 전수 수집해 하나의 정규화된 정답셋으로 통합한다.
+- 현재 Mail 판정기를 동일 데이터에 재실행해 TP/FP/FN/TN, Precision, Recall, F1, support를 산출한다.
+- FP를 많이 만드는 단어·문맥과 FN에서 반복되는 누락 신호를 자동 추출한다.
+- 단일 키워드 나열보다 "키워드 + 신청자격 + 사업유형 + 문맥"의 복합 규칙을 우선한다.
+- 개선 전/후 성능을 같은 고정 평가셋에서 비교하고, Golden Set 회귀테스트로 고정한다.
+- 사용자는 자동 판정이 불가능한 애매한 사례만 O/X로 확인한다.
+- 실제 메일 발송 없이 dry-run/fixture/검수 데이터로 정확도를 검증한다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-022
+- STATUS: READY
+- WORK_BRANCH: 실행 시 새 task 브랜치 생성
+- BASELINE: 실행 시작 시 origin/main과 현재 O/X 데이터 기준으로 새로 측정
+- 실제 이메일 발송·삭제·라벨 변경은 하지 않는다.
+
+### 8-5. MUST — 반드시 구현
+
+- [ ] 데이터 위치 전수조사: `data/golden/feedback_labels.jsonl`, 관련 fixture/test data, 과거 Git 이력, 기존 accuracy/feedback 산출물, 저장 가능한 검수 로그를 조사한다.
+- [ ] 같은 공고의 중복 O/X, 수정공고, 재공고, 제목변형을 정규화하고 충돌 라벨은 자동 덮어쓰지 않고 REVIEW_REQUIRED로 분리한다.
+- [ ] 과거 라벨을 최소 `notice_id/source/title/url/label/reason/date` 단위로 정규화한다. 없는 필드는 null/unknown으로 남기고 추측하지 않는다.
+- [ ] 현재 판정기를 정답셋에 재실행하여 TP/FP/FN/TN 및 Precision/Recall/F1/support를 전체·그룹·주요 카테고리별로 산출한다.
+- [ ] 키워드/복합문맥별 TP/FP/FN 기여도를 집계한다. 표본 수가 너무 적은 신호는 자동 규칙 변경 근거로 사용하지 않는다.
+- [ ] FP 원인코드를 최소 신청자격 불일치/지역 불일치/업력 불일치/단순교육·행사/입주공간 단독/관심분야 불일치/중복·재공고/기타로 분류한다.
+- [ ] FN에서 반복되는 유효 신호와 동의어·복합표현을 추출하고, Hard Eligibility보다 앞서 키워드가 통과시키는 구조를 만들지 않는다.
+- [ ] 분석용 데이터와 최종 평가용 고정 holdout을 분리해 같은 데이터로 튜닝하고 성능을 주장하는 leakage를 방지한다.
+- [ ] Golden Set 회귀테스트를 추가해 대표 TP/FP/FN 경계사례가 향후 변경에서 다시 깨지지 않게 한다.
+- [ ] 필터 반영은 기존 evaluator/filter 구조를 재사용하고 최소 변경으로 수행한다. 기존 정상 TP를 떨어뜨리는 규칙은 근거 없이 반영하지 않는다.
+- [ ] 변경 전/후 동일 holdout 기준 성능표를 생성한다.
+- [ ] 운영 데이터가 GitHub 밖에 있어 접근할 수 없는 경우 그 부분만 명확히 BLOCKED_INPUT으로 기록하고, 사용자가 해야 할 export 작업을 파일명·형식·1회 절차로 최소화한다.
+- [ ] 애매한 공고는 `REVIEW_REQUIRED` 목록으로 따로 만들고 사용자에게 최종 O/X만 요청할 수 있게 한다.
+- [ ] 실제 이메일 발송·실제 라벨 변경·실제 삭제·Secret 출력은 하지 않는다.
+
+### 8-6. KEEP — 유지
+
+- 마감·지역·업력·사업자 상태 등 기존 Hard Gate 우선 원칙
+- unknown을 임의로 부적격 처리하지 않는 recall 우선 정책
+- MAIL-015에서 복원한 과거 필터 기준과 reason_code
+- MAIL-018~021의 O/X 검수 데이터 의미와 저장 형식
+- 기존 수집기·중복제거·메일 발송 구조
+- 사용자 판정이 이미 존재하는 O/X는 가장 중요한 정답 근거로 사용하되, 충돌·오입력 가능성은 REVIEW_REQUIRED로 분리
+
+### 8-7. REMOVE — 제거/완화 후보
+
+- 과거 데이터에서 반복적으로 FP를 만드는 것이 충분한 표본으로 확인된 단독 키워드·과도한 boost 규칙
+- 동일 의미의 중복 키워드/규칙
+- Hard Eligibility를 우회해 관련성 키워드만으로 적합 처리되는 경로
+
+단, REMOVE는 분석 결과와 회귀검증 근거가 있을 때만 수행한다. 단순 빈도만으로 기존 규칙을 삭제하지 않는다.
+
+### 8-8. FORBIDDEN — 금지
+
+- O/X 정답 없이 AI 추측만으로 과거 공고 라벨을 확정하지 않는다.
+- 분석에 사용한 전체 데이터를 그대로 최종 성능 검증셋으로 사용하지 않는다.
+- 1~2건의 사례만 보고 키워드/Hard Gate를 추가·삭제하지 않는다.
+- Precision만 높이기 위해 Recall을 크게 희생하거나, 반대로 Recall만 높이기 위해 FP를 무제한 허용하지 않는다.
+- 사용자 프로필을 코드에 하드코딩하지 않는다. 그룹/회사 설정 구조를 사용한다.
+- 기존 정상 판정 경로를 대규모 리팩터링하지 않는다.
+- 실제 메일 발송·삭제·라벨 변경을 하지 않는다.
+- `.env`, 토큰, 메일 원문 개인정보를 출력·커밋하지 않는다.
+
+### 8-9. 선행조건·의존성
+
+DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
+
+실행 우선순위:
+1. 데이터 위치/완전성 조사
+2. O/X 정답셋 정규화
+3. 현재 baseline 측정
+4. FP/FN 원인분석
+5. 유효 키워드·복합문맥 후보 도출
+6. Golden Set/holdout 고정
+7. 필터 최소 변경
+8. 동일 holdout 재측정
+9. 실제 사용자 관점 dry-run 검증
+
+### 8-10. 구현범위
+
+- 분석 스크립트/리포트: O/X history → normalized labels → confusion matrix → keyword/context stats
+- Golden Set 및 회귀테스트
+- 필요 최소 범위의 evaluator/filter/config 수정
+- 애매한 사례 REVIEW_REQUIRED 산출
+- 성능 전후 비교 리포트
+
+구체 파일 경로는 실행 시 현재 main 구조를 조사한 뒤 기존 구조를 우선 재사용한다. 불필요한 새 프레임워크는 만들지 않는다.
+
+### 8-11. 정확도 지표
+
+필수 보고:
+- 전체 labeled sample 수
+- O/X 비율
+- TP / FP / FN / TN
+- Precision
+- Recall
+- F1
+- 중복률
+- REVIEW_REQUIRED 건수
+- 주요 FP/FN reason_code별 건수
+- 키워드/복합문맥별 support와 Precision
+
+목표:
+- 먼저 현재 baseline을 실제 데이터로 확정한다.
+- 충분한 표본이 있는 범위에서 Precision/Recall 각각 95% 이상을 지향한다.
+- 목표 미달이어도 수치를 숨기지 않고 원인과 남은 FN/FP를 보고한다.
+- 명백한 신청자격 Hard Gate 오판은 0건을 목표로 한다.
+
+### 8-12. 사용자 개입 최소화
+
+사용자에게 요청 가능한 것은 아래 두 종류로 제한한다.
+
+1. GitHub/현재 실행환경에서 접근할 수 없는 운영 O/X 데이터가 있을 경우 1회 export
+2. 자동 확정할 수 없는 REVIEW_REQUIRED 공고의 최종 O/X 판정
+
+키워드 후보 추출, 통계 계산, 규칙 후보 선정, 회귀테스트 작성, 전후 비교는 자동화한다.
+
+### 8-13. VERIFY
+
+- [ ] 전체 정답셋 건수와 중복/충돌 처리 결과 확인
+- [ ] baseline confusion matrix 재현 가능
+- [ ] keyword/context 통계에 support 포함
+- [ ] train/analysis와 fixed holdout 분리 확인
+- [ ] 대표 TP/FP/FN Golden Set 회귀테스트 PASS
+- [ ] 기존 관련 테스트 PASS
+- [ ] 개선 전/후 동일 holdout 성능 비교
+- [ ] 실제 메일 발송 없음
+- [ ] Secret/개인정보 노출 없음
+- [ ] 실제 사용자 dry-run에서 적합/부적합/검토필요 결과와 근거 확인
+
+### 8-14. DONE
+
+REQUEST_SOLVED=NO — 계획 등록 상태. 데이터 전수조사·baseline 측정·FP/FN 분석·Golden Set 구축·필터 반영·동일 holdout 재검증이 완료되고 실제 사용자 dry-run이 PASS일 때만 YES로 변경한다.
 
 # 9. 실제사용 시나리오
 
