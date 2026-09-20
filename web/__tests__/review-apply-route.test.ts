@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   token: "",
   getRepoTextFile: vi.fn(),
   putRepoTextFile: vi.fn(),
+  getRepoBranchHead: vi.fn(),
 }));
 
 vi.mock("@/lib/apply-auth", () => ({
@@ -13,6 +14,7 @@ vi.mock("@/lib/apply-auth", () => ({
 
 vi.mock("@/lib/github-apply", () => ({
   getRepoTextFile: mocks.getRepoTextFile,
+  getRepoBranchHead: mocks.getRepoBranchHead,
   githubBranch: vi.fn(() => "main"),
   putRepoTextFile: mocks.putRepoTextFile,
 }));
@@ -42,6 +44,8 @@ describe("POST /api/review/apply", () => {
     mocks.token = "";
     mocks.getRepoTextFile.mockReset();
     mocks.putRepoTextFile.mockReset();
+    mocks.getRepoBranchHead.mockReset();
+    mocks.getRepoBranchHead.mockResolvedValue("base-commit");
     mocks.getRepoTextFile.mockResolvedValue({ sha: "base-sha", text: existingFeedback });
     mocks.putRepoTextFile.mockResolvedValue({
       sha: "commit-sha",
@@ -65,8 +69,11 @@ describe("POST /api/review/apply", () => {
     expect(data.applied).toBe(false);
     expect(data.manualPasteRequired).toBe(true);
     expect(data.manualFilePath).toBe("data/golden/feedback_labels.jsonl");
+    expect(data.saveState).toBe("PR_PENDING");
+    expect(data.sourceBlobSha).toBe("base-sha");
+    expect(data.sourceCommitSha).toBe("base-commit");
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/data/golden/feedback_labels.jsonl",
+      "https://github.com/pds2225/mail/edit/base-commit/data/golden/feedback_labels.jsonl",
     );
     expect(data.githubCommitUrl).not.toContain("value=");
     expect(data.githubCommitUrl).not.toContain(".apply/config-pending.json");
@@ -92,7 +99,7 @@ describe("POST /api/review/apply", () => {
 
     expect(response.status).toBe(200);
     expect(data.githubCommitUrl).toBe(
-      "https://github.com/pds2225/mail/edit/main/data/golden/feedback_labels.jsonl",
+      "https://github.com/pds2225/mail/edit/base-commit/data/golden/feedback_labels.jsonl",
     );
     expect(data.githubCommitUrl.length).toBeLessThan(100);
     expect(data.manualContent.length).toBeGreaterThan(existingFeedback.length);
@@ -112,6 +119,8 @@ describe("POST /api/review/apply", () => {
 
     expect(response.status).toBe(200);
     expect(data.applied).toBe(true);
+    expect(data.saveState).toBe("SAVED");
+    expect(mocks.getRepoBranchHead).not.toHaveBeenCalled();
     expect(mocks.getRepoTextFile).toHaveBeenCalledTimes(1);
     expect(mocks.putRepoTextFile).toHaveBeenCalledTimes(1);
 
@@ -148,6 +157,20 @@ describe("POST /api/review/apply", () => {
     expect(mocks.putRepoTextFile).not.toHaveBeenCalled();
   });
 
+  it("returns 409 conflict without claiming success when the remote file changes", async () => {
+    mocks.token = "fixture-token";
+    const conflict = Object.assign(new Error("fixture conflict"), { name: "GithubFileConflictError" });
+    mocks.putRepoTextFile.mockRejectedValue(conflict);
+
+    const response = await POST(request({ items: [{ id: "notice-1", title: "x", verdict: "O" }] }));
+    const data = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(data.ok).toBe(false);
+    expect(data.applied).toBe(false);
+    expect(data.saveState).toBe("CONFLICT");
+  });
+
   it("returns 500 without claiming success when GitHub read fails", async () => {
     mocks.token = "fixture-token";
     mocks.getRepoTextFile.mockRejectedValue(new Error("fixture network failure"));
@@ -157,5 +180,6 @@ describe("POST /api/review/apply", () => {
     expect(response.status).toBe(500);
     expect(data.ok).toBe(false);
     expect(data.applied).not.toBe(true);
+    expect(data.saveState).toBe("FAILED");
   });
 });

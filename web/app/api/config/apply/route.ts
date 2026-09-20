@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { applyAuthError, githubApplyToken } from "@/lib/apply-auth";
 import { githubEditFileUrl } from "@/lib/github-commit-url";
-import { getRepoTextFile, githubBranch, putRepoTextFile } from "@/lib/github-apply";
+import {
+  getRepoBranchHead,
+  getRepoTextFile,
+  githubBranch,
+  putRepoTextFile,
+  type RepoFile,
+} from "@/lib/github-apply";
 
 export const dynamic = "force-dynamic";
 
@@ -31,15 +37,42 @@ function pickPatch(input: unknown, allowed: Set<string>): Record<string, unknown
   );
 }
 
-function githubWebApply(filePath: string, content: string) {
+function githubWebApply(
+  filePath: string,
+  content: string,
+  remote: RepoFile,
+  sourceCommitSha: string,
+) {
   return {
     ok: true,
     applied: false,
+    saveState: "PR_PENDING",
     manualPasteRequired: true,
     manualFilePath: filePath,
     manualContent: content,
-    githubCommitUrl: githubEditFileUrl(filePath),
-    notice: "최종 설정 파일 전체를 복사해 GitHub 파일 내용을 교체한 뒤 Commit changes를 누르세요.",
+    sourceBlobSha: remote.sha,
+    sourceCommitSha,
+    githubCommitUrl: githubEditFileUrl(filePath, { branch: sourceCommitSha }),
+    notice:
+      "아직 저장 완료가 아닙니다. 기준 커밋에서 편집한 뒤 Propose changes → Create pull request → Checks → merge까지 완료하세요.",
+  };
+}
+
+function isConflict(error: unknown): boolean {
+  return error instanceof Error && error.name === "GithubFileConflictError";
+}
+
+async function loadForApply(filePath: string, token: string): Promise<{
+  remote: RepoFile;
+  sourceCommitSha?: string;
+}> {
+  if (token) {
+    return { remote: await getRepoTextFile(filePath, token) };
+  }
+  const sourceCommitSha = await getRepoBranchHead();
+  return {
+    sourceCommitSha,
+    remote: await getRepoTextFile(filePath, "", sourceCommitSha),
   };
 }
 
@@ -62,7 +95,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error: "변경할 그룹 값이 없습니다." }, { status: 400 });
       }
 
-      const remote = await getRepoTextFile("config/groups.json");
+      const filePath = "config/groups.json";
+      const { remote, sourceCommitSha } = await loadForApply(filePath, token);
       const parsed = JSON.parse(remote.text) as unknown;
       if (!Array.isArray(parsed)) throw new Error("config/groups.json 형식이 배열이 아닙니다.");
       const index = parsed.findIndex(
@@ -74,24 +108,37 @@ export async function POST(req: Request) {
       const nextGroup = { ...current, ...patch };
       const next = [...parsed];
       next[index] = nextGroup;
-      const filePath = "config/groups.json";
       const nextText = `${JSON.stringify(next, null, 2)}\n`;
-      if (!token) return NextResponse.json(githubWebApply(filePath, nextText));
 
-      const written = await putRepoTextFile({
-        filePath,
-        text: nextText,
-        sha: remote.sha,
-        message: `chore(groups): update ${id} via admin web`,
-        token,
-      });
-      return NextResponse.json({
-        ok: true,
-        applied: true,
-        branch: githubBranch(),
-        commitUrl: written.commitUrl,
-        notice: "그룹 설정을 저장했습니다.",
-      });
+      if (!token && sourceCommitSha) {
+        return NextResponse.json(githubWebApply(filePath, nextText, remote, sourceCommitSha));
+      }
+
+      try {
+        const written = await putRepoTextFile({
+          filePath,
+          text: nextText,
+          sha: remote.sha,
+          message: `chore(groups): update ${id} via admin web`,
+          token,
+        });
+        return NextResponse.json({
+          ok: true,
+          applied: true,
+          saveState: "SAVED",
+          branch: githubBranch(),
+          commitUrl: written.commitUrl,
+          notice: "그룹 설정을 저장했습니다.",
+        });
+      } catch (error) {
+        if (isConflict(error)) {
+          return NextResponse.json(
+            { ok: false, applied: false, saveState: "CONFLICT", error: (error as Error).message },
+            { status: 409 },
+          );
+        }
+        throw error;
+      }
     }
 
     if (resource === "settings") {
@@ -99,36 +146,55 @@ export async function POST(req: Request) {
       if (!Object.keys(patch).length) {
         return NextResponse.json({ ok: false, error: "변경할 설정 값이 없습니다." }, { status: 400 });
       }
-      const remote = await getRepoTextFile("config/settings.json");
+      const filePath = "config/settings.json";
+      const { remote, sourceCommitSha } = await loadForApply(filePath, token);
       const parsed = JSON.parse(remote.text) as unknown;
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
         throw new Error("config/settings.json 형식이 객체가 아닙니다.");
       }
       const next = { ...(parsed as Record<string, unknown>), ...patch };
-      const filePath = "config/settings.json";
       const nextText = `${JSON.stringify(next, null, 2)}\n`;
-      if (!token) return NextResponse.json(githubWebApply(filePath, nextText));
 
-      const written = await putRepoTextFile({
-        filePath,
-        text: nextText,
-        sha: remote.sha,
-        message: "chore(settings): update via admin web",
-        token,
-      });
-      return NextResponse.json({
-        ok: true,
-        applied: true,
-        branch: githubBranch(),
-        commitUrl: written.commitUrl,
-        notice: "메일링 설정을 저장했습니다.",
-      });
+      if (!token && sourceCommitSha) {
+        return NextResponse.json(githubWebApply(filePath, nextText, remote, sourceCommitSha));
+      }
+
+      try {
+        const written = await putRepoTextFile({
+          filePath,
+          text: nextText,
+          sha: remote.sha,
+          message: "chore(settings): update via admin web",
+          token,
+        });
+        return NextResponse.json({
+          ok: true,
+          applied: true,
+          saveState: "SAVED",
+          branch: githubBranch(),
+          commitUrl: written.commitUrl,
+          notice: "메일링 설정을 저장했습니다.",
+        });
+      } catch (error) {
+        if (isConflict(error)) {
+          return NextResponse.json(
+            { ok: false, applied: false, saveState: "CONFLICT", error: (error as Error).message },
+            { status: 409 },
+          );
+        }
+        throw error;
+      }
     }
 
     return NextResponse.json({ ok: false, error: "지원하지 않는 저장 대상입니다." }, { status: 400 });
   } catch (error) {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "apply failed" },
+      {
+        ok: false,
+        applied: false,
+        saveState: "FAILED",
+        error: error instanceof Error ? error.message : "apply failed",
+      },
       { status: 500 },
     );
   }

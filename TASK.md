@@ -37,7 +37,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 [x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
-[ ] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
+[~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 [ ] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [ ] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
@@ -2599,12 +2599,12 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 
 ### 8-5. MUST
 
-- [ ] manualContent 생성 시 source file SHA/version을 함께 반환한다.
-- [ ] 저장 직전 또는 적용 시 source SHA가 최신 원격과 동일한지 확인한다.
-- [ ] 원격 변경이 있으면 기존 최신 변경을 보존한 채 O/X/config patch만 재적용하거나 충돌로 중단한다.
+- [x] manualContent 생성 시 source file SHA/version을 함께 반환한다.
+- [x] 저장 직전 또는 적용 시 source SHA가 최신 원격과 동일한지 확인한다.
+- [x] 원격 변경이 있으면 기존 최신 변경을 보존한 채 O/X/config patch만 재적용하거나 충돌로 중단한다.
 - [ ] concurrent writer가 추가한 feedback row가 사라지지 않는 회귀테스트를 추가한다.
-- [ ] protected-main 수동저장 안내에 Create pull request 단계를 포함한다.
-- [ ] PR 생성 후 merge 전 상태를 저장완료로 표시하지 않는다.
+- [x] protected-main 수동저장 안내에 Create pull request 단계를 포함한다.
+- [x] PR 생성 후 merge 전 상태를 저장완료로 표시하지 않는다.
 - [ ] 기존 token direct-save 경로도 stale SHA 충돌을 안전하게 처리하는지 확인한다.
 
 ### 8-6. KEEP
