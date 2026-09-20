@@ -38,6 +38,11 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
 [ ] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
+[ ] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
+[ ] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
+[ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
+[ ] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
+[ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 
 
 ---
@@ -2214,7 +2219,8 @@ MAIL-014 전체는 아래 모두 충족할 때만 REQUEST_SOLVED=YES:
 현재 상태:
 - STATUS: IN_PROGRESS
 - REQUEST_SOLVED=NO
-- NEXT: 최초 154 Risk × 최신 main × MAIL-001~023 crosswalk audit
+- CHECKPOINT: STRUCTURAL_COVERAGE_V1 — 154/154 Risk ownership assigned, OPEN_WITHOUT_TASK=0
+- NEXT: P0 Risk부터 실제 코드·테스트 evidence verification → ALREADY_DONE/remaining gap 확정
 
 ---
 
@@ -2826,6 +2832,88 @@ DEPENDS_ON: MAIL-015, MAIL-021, MAIL-023 (MAIL-023 저장 안전성 완료 후 �
 ### 8-14. DONE
 
 REQUEST_SOLVED=NO — 계획 등록 상태. 데이터 전수조사·baseline 측정·FP/FN 분석·Golden Set 구축·필터 반영·동일 holdout 재검증, 중단/재개·idempotency 검증이 완료되고 실제 사용자 dry-run이 PASS일 때만 YES로 변경한다.
+
+
+## MAIL-024
+
+### 비개발자용 1줄 요약
+수집 Risk 1~20을 최신 코드와 대조해 실제 남은 수집 안정성·보안 문제만 해결한다.
+
+### MUST
+- [ ] 1~20 각각 코드/테스트/재현 근거 확인
+- [ ] 이미 구현된 항목 재개발 금지
+- [ ] HTTP 200 오판, 구조/API 변경, pagination, rate limit, 차단, 인증, timeout, 장애격리, run lock, 급감/급증, SSRF 점검
+- [ ] 원인별 최소 변경 + 회귀테스트
+- [ ] 실제 메일 발송 0
+
+### DONE
+REQUEST_SOLVED=NO — Risk 1~20 전체 근거 상태가 확정되고 실제 미해결분 검증이 끝난 뒤 YES.
+
+---
+
+## MAIL-025
+
+### 비개발자용 1줄 요약
+상세보강 Risk 21~34를 대조해 남은 첨부·파싱·보안 문제만 해결한다.
+
+### MUST
+- [ ] 상세 URL/N+1/목록-상세 불일치/첨부추출/OCR/ZIP/악성첨부/ZIP bomb/세션/숨김영역/표구조/cache/parse_failed/backoff 1:1 점검
+- [ ] 기존 TASK-031/TASK-023 범위 재사용
+- [ ] OCR 저신뢰·악성첨부 fail-closed 유지
+- [ ] 재현되는 잔여분만 최소 수정
+
+### DONE
+REQUEST_SOLVED=NO — Risk 21~34 전체 근거 상태 확정 + 잔여분 회귀검증 후 YES.
+
+---
+
+## MAIL-026
+
+### 비개발자용 1줄 요약
+발송 Risk 113~128을 대조해 남은 중복·부분실패·수신자·반송·발송안전 문제만 해결한다.
+
+### MUST
+- [ ] delivery/outbox/seen 상태를 먼저 대조
+- [ ] MAIL-009 해결범위 재개발 금지
+- [ ] rate limit/주소검증/To·Cc 노출/tenant-group-recipient 권한/HTML/메일크기/링크/bounce/draft/test-send/제목/수신중단 점검
+- [ ] dry-run/fixture 우선, 실제 고객 발송 금지
+
+### DONE
+REQUEST_SOLVED=NO — Risk 113~128 전체 근거 상태 확정 + P0 잔여 0 또는 근거 있는 BLOCKED 후 YES.
+
+---
+
+## MAIL-027
+
+### 비개발자용 1줄 요약
+피드백 Risk 129~142를 기존 O/X·HMAC·MAIL-022와 대조해 남은 보안·정답품질 문제만 해결한다.
+
+### MUST
+- [ ] 보안봇/링크공유/토큰재사용·위조/OX 의미/오클릭/자동회신/편향/FN/최소표본/라벨목표/시간감쇠/사용자격리/holdout을 1:1 검증
+- [ ] 기존 feedback_token.py / feedback.py / tests 먼저 재사용
+- [ ] MAIL-022 Gold/Silver/Review와 역할 중복 금지
+- [ ] MAIL-023 이후 write E2E 검증
+
+### DONE
+REQUEST_SOLVED=NO — Risk 129~142 전체 근거 상태 확정 + Gold 오염 경로가 없음을 검증한 뒤 YES.
+
+---
+
+## MAIL-028
+
+### 비개발자용 1줄 요약
+상태관리 Risk 143~154를 대조해 남은 동시쓰기·복구·백업·상태무결성 문제만 해결한다.
+
+### MUST
+- [ ] 동시쓰기/중단복구/seen 증가/ID migration/수정공고/Git충돌/개인정보 Git/commit 실패/rollback/log masking/backup-restore/feedback aging 1:1 점검
+- [ ] MAIL-023, TASK-023/024/028 해결범위 재사용
+- [ ] 근거 없는 전면 DB 전환 금지
+- [ ] backup은 restore test 포함
+
+### DONE
+REQUEST_SOLVED=NO — Risk 143~154 전체 근거 상태 확정 + 복구/백업 E2E 후 YES.
+
+---
 
 # 9. 실제사용 시나리오
 
