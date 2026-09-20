@@ -2646,7 +2646,7 @@ REQUEST_SOLVED=NO — 동시수정 데이터 보존과 PR 완료 UX를 실제 pr
 
 ### 8-9. 선행조건·의존성
 
-DEPENDS_ON: MAIL-015, MAIL-021 (main 반영 완료 기준)
+DEPENDS_ON: MAIL-015, MAIL-021, MAIL-023 (MAIL-023 저장 안전성 완료 후 정확도 반복개선 실행)
 
 실행 우선순위:
 1. 데이터 위치/완전성 조사
