@@ -28,7 +28,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-011 | 비개발자용 공고첨부 원클릭 설치를 마친다
 [x] MAIL-012 | AI 사업화지원금 공고를 빠짐없이 수집한다
 [x] MAIL-013 | 사이트 활성/비활성 변경이 실제 저장되고 다음 실행에도 유지되게 한다
-[ ] MAIL-014 | 154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+[~] MAIL-014 | 154개 리스크와 MAIL TASK를 단일 Coverage 체계로 통합하고 미해결분만 개발한다
 [x] MAIL-015 | 과거 Git 이력에서 공고 필터 기준을 복원하고 누락분만 통합한다
 [x] MAIL-016 | 기업별 업력을 공고 요건과 비교해 명백히 부적격일 때만 제외한다
 [x] MAIL-017 | Vercel 웹 미리보기 실행 암호를 없앤다
@@ -1989,149 +1989,232 @@ REQUEST_SOLVED=YES — MAIL-013 구현 PR #305가 `origin/main`에 squash merge�
 
 ### 8-1. 사용자 원문 요청
 
-> 뭉제점 엑셀시트 민들었던거
-> 이거task에 등록
+> 정부지원사업 자동화서비스 개발리스크 154개 엑셀과 현재 Mail TASK를 통일한다.
+> 엑셀은 별도 백로그로 두지 말고, TASK.md를 실행 정본으로 유지하면서 154개 리스크가 어느 MAIL TASK에서 해결되는지 한 체계로 관리한다.
 
-대상 시트:
-
-- 정부지원사업 자동화서비스 개발리스크 154개
-- Google Sheets: https://docs.google.com/spreadsheets/d/1e95jsQ0UfILu6GvUrR3G1E0HNBv3aXOGCsc32YCbh1E/edit
-- 기준 탭: `사용자 우선순위`, `요약`, 기존 154개 리스크 원본
-
-원문의 의미를 축약 과정에서 변경하지 않는다.
+참조 리스크 원본:
+- `정부지원사업_자동화서비스_개발리스크_154개.xlsx`
+- 전체 154건
+- 위험도: P0 / P1 / P2
+- 대분류: 수집 / 상세보강 / 날짜필터 / 그룹판정 / 기업매칭 / 요약 / 발송 / 피드백 / 상태관리
 
 ### 8-2. 비개발자용 1줄 요약
 
-154개 리스크 시트 기준으로 미해결 문제를 우선순위대로 점검·개발한다
+154개 리스크를 기존 MAIL TASK와 1:1 또는 N:M으로 연결해, 중복개발 없이 실제 미해결 리스크만 개발한다.
 
-이 문장이 상단 TASK LIST에 그대로 표시된다.
+### 8-3. 정본 계약 — 이중관리 금지
 
-### 8-3. 사용자가 원하는 최종 결과
+실행 정본은 계속 root `TASK.md` 하나다.
 
-최신 `main` 코드와 154개 리스크 시트를 대조해서 이미 해결된 항목은 다시 만들지 않고, 실제로 남아 있는 문제만 우선순위대로 개발한다.
+- `TASK.md` = 실행할 일, 상태, dependency, DONE 기준의 유일한 SSOT
+- 154개 엑셀 = Risk Catalog / 원문 문제 정의 참고자료
+- 엑셀의 `조치상태`를 사람이 별도로 유지하지 않는다.
+- 실제 상태는 TASK.md + 코드/테스트/PR/E2E 근거에서 계산한다.
+- dashboard도 TASK.md를 실행 정본으로 사용한다.
 
-개발 순서:
+리스크 원문을 repo 안에서 기계적으로 사용할 필요가 있으면 아래 파생파일만 생성할 수 있다.
 
-1. P0-A 활성 소스 미실행·0건·부분수집 탐지
-2. P0-B 상세정보 접근·파싱·판정필수 필드 추출 누락 탐지
-3. P0-C 최근 3영업일 재조회·연장·수정·재공고 복구
-4. P0-D 공고별 단계이력·제외사유·근거 추적 및 회귀검증
-5. P1-A 키워드·지역·지원유형 오판 개선
-6. P1-B 그룹 미매칭 공고의 기업별 재승격
-7. P1-C Claude 요약 사실정보 안정화
+- `docs/risk_register/mail_risk_154_crosswalk.json`
+- `docs/risk_register/mail_risk_154_report.md`
 
-한 번에 154개를 대규모 수정하지 않는다. 각 항목은 `재현 → 최소 수정 → 테스트 → dry-run/preview 검증 → 다음 항목` 순서로 처리한다.
+위 파일은 **파생 인덱스/보고서**이며 새 SSOT가 아니다.
+사람이 별도로 상태를 수동 관리하는 파일로 사용하지 않는다.
 
-### 8-4. 현재상태
+### 8-4. Risk ↔ TASK 연결 모델
 
-- 등록 시점에 MAIL-012가 `[~]` ACTIVE, MAIL-013이 `[ ]` READY이므로 MAIL-014는 `[ ]` READY로 등록한다.
-- 처음 실행할 때 최신 `main`과 시트 항목을 1:1 대조해 `ALREADY_DONE / REPRODUCED / NOT_REPRODUCED / BLOCKED`로 분류한다.
-- 문서에 해결 표시가 있더라도 실제 코드·테스트 근거 없이 완료 처리하지 않는다.
+154개 각 Risk는 최소 다음 필드를 가진다.
 
-REQUEST_SOLVED: NO — 이번 슬라이스는 `docs/project/TASKS.md` PENDING 1순위(DEPENDS_ON 없음) `TASK-021 = MAIL-P0C-01(최근 3영업일 재조회)` 하나만 착수한다.
-PINNING: TASK_START_SHA=7e9ce43870da7a7457650d76b9ba387f6d50efc3 (origin/main)
-WORK_BRANCH=feat/mail-p0c01-recent-3bizdays (새 격리 worktree `mail-014-p0c01`)
-MAIL-016(PR #304, feat/mail-016-company-business-years-gate)과 `mail_core/matching/company_match.py`는 건드리지 않는다.
+- `risk_no`
+- `category`
+- `substage`
+- `risk_level`
+- `title/problem`
+- `risk_status`
+- `task_ids[]`
+- `task_status[]`
+- `evidence[]`
+- `last_verified_at`
 
-**슬라이스 진행상황·병합 증거 (2026-09-18):**
-- TASK-021 = MAIL-P0C-01(최근 3영업일 재조회) — 구현·테스트 완료. 구현 PR #307이 저장소 자동머지 봇(`app/github-actions`)에 의해 squash-merge되어 `origin/main`에 반영됨. **MAIN_SHA=202c7df70a65ea864455b704f32776ba1d9f24d8**.
-- 구현 중 발견: 다른 세션이 "Auto Dev Controller 하드닝" 작업 도중 이 TASK를 이미 상당 부분 구현해 두고(커밋 `163518f3`, dangling·미푸시·미병합) 일시중단한 상태였다. 코드를 검토한 뒤 재구현 대신 그 패치를 그대로 적용해 중복 작업을 피했다(기존 미반영 작업 보존 원칙).
-- FOCUSED_TEST: `test_notice_version_recovery.py` 23건(신규 4건) + focused 관련 스위트 185건 통과. 전체 `python -m pytest -q` 1456 passed/1 skipped/1 failed(무관 기존 실패 `test_sites_json_public_priority_caps`, cp949 이슈). 신규 회귀 없음.
-- 참고: PR #307은 두 커밋(구현 86508c77 + 문서 e6ba27fd)이 있었으나, 자동머지 봇이 첫 커밋 기준 CI 통과 직후 곧바로 squash-merge해 두 번째(전체 pytest 기록) 커밋 내용은 main에 반영되지 않았다. 이 closeout 커밋이 그 기록을 main에 보완한다.
-- MAIL-014의 나머지 23개 원자 TASK(TASK-022~044)는 이번 슬라이스에서 시작하지 않는다. MAIL-014 전체는 계속 `[~]` 진행 중으로 유지한다.
+허용 `risk_status`:
 
-**슬라이스 2 (2026-09-19):** TASK-022 = MAIL-P0C-02(Canonical ID·중복 유형 분류) 구현·테스트 완료.
-WORK_BRANCH=feat/mail-p0c02-canonical-dedup (새 격리 워크트리 `mail-022-canonical-dedup`).
-TASK_START_SHA=e6a4d79e772387464cf2704de8723bd5ffc41b3d (origin/main). 회귀 179건(신규 10건 포함)
-통과. 사용자 지시(2026-09-19)로 승인 요청 없이 MAIL-014 P0 큐(TASK-023~030)를 계속 진행하며,
-P1 시작 전(TASK-030 완료 시)에는 반드시 멈추고 보고한다.
+1. `ALREADY_DONE`
+   - 최신 main 코드 + 테스트/E2E 근거로 이미 해결
+2. `COVERED_BY_TASK`
+   - 하나 이상의 현재 MAIL TASK가 책임지고 있음
+3. `OPEN`
+   - 실제 미해결이며 아직 대응 TASK가 없음
+4. `BLOCKED`
+   - 외부 입력/환경/권한 때문에 현재 검증 또는 구현 불가
+5. `DEFERRED`
+   - 현재 우선순위상 후순위로 명시적 보류
+6. `N_A`
+   - 현재 아키텍처/제품범위에 적용되지 않음을 근거로 확인
 
-### 8-5. MUST — 반드시 구현
+규칙:
 
-- [ ] 시트의 `사용자 우선순위`·`요약` 탭과 최신 코드/테스트를 대조
-- [ ] 이미 해결된 리스크는 실제 코드·테스트 근거가 있을 때만 `ALREADY_DONE` 처리
-- [ ] P0-A: 활성 소스 실행대장, 0건·급감·부분수집·페이지네이션·파서 실패 탐지
-- [ ] P0-B: 상세 접근 실패와 실제 미기재를 구분하고 판정필수 필드 추출 실패 탐지
-- [ ] P0-C: 최근 3영업일 재조회와 content/version 기반 연장·수정·재공고 복구
-- [ ] P0-D: Fetch→Enrich→Normalize→Evaluate→Company Match→Summarize→Delivery 단계별 상태·제외사유·근거 추적
-- [ ] P1-A: 자격 Hard Gate와 관련성 점수를 분리하고 키워드·지역·지원유형 오판 회귀검증
-- [ ] P1-B: 기업 매칭이 Hard Gate를 우회하지 않으면서 그룹 누락 공고를 기업별로 재검토
-- [ ] P1-C: 지원금·마감일·지역·대상·원문URL 같은 사실필드는 구조화 데이터에서만 출력하고 요약 실패 fallback 유지
-- [ ] 각 슬라이스마다 최소 1개 재현 테스트와 관련 regression test 추가
-- [ ] 실제 이메일 발송 없이 `dry-run/preview`로 사용자 E2E 검증
-- [ ] 완료 항목을 시트 리스크 번호/우선순위와 코드·테스트 근거로 연결해 보고
+- Risk 1개 ↔ MAIL TASK 여러 개 허용
+- MAIL TASK 1개 ↔ Risk 여러 개 허용
+- TASK가 DONE이어도 Risk 전체가 해결됐다는 근거가 없으면 `ALREADY_DONE` 금지
+- 일부만 해결됐으면 해당 Risk를 `COVERED_BY_TASK`로 유지하고 evidence에 남은 범위를 기록
+- 비슷한 Risk 여러 개를 해결하는 경우 신규 MAIL TASK 하나로 묶을 수 있다.
+- Risk마다 TASK를 154개 새로 만들지 않는다.
 
-### 8-6. KEEP — 유지
+### 8-5. 현재 MAIL TASK와 통합 원칙
 
-- 기존 MAIL-001~013에서 이미 검증된 동작
-- 기본 `DEFAULT_RUN_MODE=dry-run`
-- `ALLOW_SEND_EMAIL=false`, `ALLOW_DELETE_EMAIL=false`, `ALLOW_LABEL_CHANGE=false`
-- 기존 수신자·스케줄·Secrets 구조
-- 공고 원문·개인정보·토큰 마스킹
-- 실패 소스가 있어도 안전하게 나머지를 계속 처리하는 장애격리 원칙
+기존 TASK를 우선 재사용한다.
 
-### 8-7. REMOVE — 제거
+- MAIL-001~013: 과거 해결분의 Risk 근거로 재사용
+- MAIL-014: 154개 전체 Coverage를 관리하는 **상위 Risk Master**
+- MAIL-015: 과거 필터 기준 복원 관련 Risk
+- MAIL-016: 업력 eligibility 관련 Risk
+- MAIL-018~021: O/X 검수 및 저장 UX 관련 Risk
+- MAIL-022: 정확도/피드백/FP·FN/Golden Set/holdout/복합키워드 관련 Risk
+- MAIL-023: 동시수정·저장·PR 완료 UX 관련 Risk
+- 이후 신규 MAIL TASK: 기존 TASK 어디에도 연결되지 않는 실제 OPEN Risk를 유사원인별로 묶어서만 생성
 
-- 문서에 적혀 있다는 이유만으로 실제 코드 확인 없이 DONE 처리하는 방식
-- `HTTP 200 = 정상 수집`, `0건 = 정상`으로 단정하는 방식
-- 파싱 실패와 원문 미기재를 같은 `unknown`으로 숨기는 방식
-- 기업 키워드가 맞는다는 이유로 Hard Gate 탈락 공고를 무조건 승격하는 방식
-- Claude 요약 실패 때문에 공고 자체를 누락시키는 방식
+MAIL-022와 MAIL-023을 MAIL-014와 별도 경쟁 백로그로 취급하지 않는다.
+둘 다 MAIL-014 Coverage 아래에서 자신에게 연결된 Risk를 해결한다.
 
-### 8-8. FORBIDDEN — 금지
+### 8-6. MUST — 최초 통합 Audit
 
-- 154개 리스크를 한 PR에서 전면 리팩터링
-- 실제 이메일 발송·삭제·대량 라벨 변경
-- `.env`, API Key, OAuth 토큰, 고객정보, 메일 원문 커밋/로그
-- 기존 MAIL-012 ACTIVE 범위에 MAIL-014 변경을 섞기
-- 근거 없는 신규 수집처 추가
-- 테스트 실패를 skip/삭제해서 통과시키기
-- `git add -A`, force push, `reset --hard`
-- 사용자 요청 없이 DB 전면 전환·스키마 대수술
+- [ ] 154개 Risk 원본을 정확히 154건으로 읽는다.
+- [ ] 최신 `origin/main:TASK.md`의 MAIL TASK 전체를 읽는다.
+- [ ] 최신 main 코드, 관련 tests, merged PR을 근거로 각 Risk를 분류한다.
+- [ ] 모든 Risk에 `risk_status`를 부여한다.
+- [ ] 가능한 Risk에 기존 `MAIL-xxx`를 우선 연결한다.
+- [ ] `ALREADY_DONE`에는 최소 commit/PR/test/E2E 중 재현 가능한 evidence를 남긴다.
+- [ ] `COVERED_BY_TASK`에는 담당 MAIL TASK와 남은 완료조건을 남긴다.
+- [ ] `OPEN`만 별도 추출한다.
+- [ ] OPEN을 원인/수정영역/dependency 기준으로 클러스터링한다.
+- [ ] 유사한 OPEN 여러 건은 신규 MAIL TASK 1개로 묶는다.
+- [ ] 중복 TASK를 만들지 않는다.
+- [ ] P0 → P1 → P2 우선순위를 유지하되 dependency와 실제 사용자 영향도를 함께 반영한다.
+- [ ] 결과를 crosswalk JSON + 사람이 읽는 report로 생성한다.
+- [ ] TASK.md의 각 MAIL TASK 상세에는 필요 시 `COVERS_RISK: [..]` 또는 동일 의미 링크를 추가한다.
+- [ ] 신규 TASK 생성 후 crosswalk를 다시 계산해 `OPEN_WITHOUT_TASK` 건수를 표시한다.
 
-### 8-9. 선행조건·의존성
+### 8-7. 기존 MAIL-014 슬라이스 이력 보존
 
-DEPENDS_ON:
+기존 MAIL-014에서 이미 진행한 작업은 버리지 않는다.
 
-- 기본적으로 MAIL-012 완료 후 시작한다.
-- MAIL-014의 독립 조사·재현은 파일/API/entrypoint가 겹치지 않을 때만 병렬 가능하다.
-- `config/sites.json`, 수집기, 판정기 등 MAIL-012와 겹치는 코드는 MAIL-012 머지 후 최신 `main`에서 시작한다.
-- MAIL-013과 파일 충돌이 없으면 독립 진행 가능하다.
+- TASK-021 = MAIL-P0C-01 최근 3영업일 재조회
+  - 구현 PR #307 main 반영 기록 보존
+- TASK-022 = MAIL-P0C-02 Canonical ID·중복 유형 분류
+  - 기존 구현·회귀검증 기록 보존
 
-### 8-10. 구현범위
+위 슬라이스는 154개 Risk crosswalk에서 실제 관련 Risk evidence로 역연결한다.
+이미 구현된 내용을 다시 개발하지 않는다.
 
-첫 실행은 진단 슬라이스로 시작한다.
+### 8-8. MAIL-022 / MAIL-023 연결
 
-1. 시트 154개와 최신 main 대조
-2. 이미 해결/미해결/중복/현 단계 제외 분류
-3. 미해결 P0-A~D를 각각 독립 작업 단위로 분해
-4. 각 단위는 최소 변경·테스트·dry-run 검증
-5. P0 완료 뒤 P1-A~C 순차 진행
+MAIL-023을 먼저 완료한다.
 
-수정 가능 파일은 각 슬라이스 시작 시 재현 결과로 확정한다. 처음부터 `monitor.py`나 DB를 수정 대상으로 고정하지 않는다.
+이유:
+- MAIL-022는 Review 결과를 Gold에 반영해야 함
+- 동시수정 시 O/X가 유실될 수 있으면 정확도 학습 데이터 자체가 오염될 수 있음
 
-### 8-11. VERIFY — 해결 여부 검증
+실행 순서:
+1. MAIL-023 저장 안전성
+2. MAIL-022 O/X 정확도 반복개선
+3. MAIL-014 전체 Risk crosswalk 재계산
+4. 남은 OPEN Risk만 다음 MAIL TASK로 생성
 
-최소 기준:
+MAIL-022 완료 시 다음 종류의 Risk를 자동 재평가한다.
+- 키워드/지원유형 오탐·누락
+- 지역/자격 판정
+- 제외규칙
+- 기업매칭 관련성
+- O/X 피드백
+- False Negative
+- 최소 표본수/holdout 검증
+- 피드백 범위/시간감쇠/그룹 격리
 
-- 활성 소스 실행대장 기록률 100%
-- P0 장애 시나리오 탐지율 100%
-- 핵심소스 판정필수 필드 추출률 95% 이상
-- 핵심소스 Golden Set 재현율 98% 이상
-- 실제 이메일 발송 0건
-- 모든 포함·제외·검토 결과에 추적 가능한 reason/evidence 존재
+MAIL-023 완료 시 다음 종류의 Risk를 자동 재평가한다.
+- 동시쓰기/데이터 유실
+- Git 저장 충돌
+- 저장 실패를 성공처럼 표시
+- 재시도/PR pending/merge 상태 추적
 
-실제 측정 불가능한 항목은 근거와 대체 검증 방법을 기록한다.
+정확한 Risk No. 매핑은 최초 통합 Audit에서 코드 근거로 확정하며 추측으로 번호를 붙이지 않는다.
 
-### 8-12. DONE 기준
+### 8-9. Dashboard 연동 계약
 
-다음 모두 충족할 때만 `REQUEST_SOLVED = YES`:
+V_UP Multi-Repo TASK Control Center는 Mail에 대해 다음 Risk Coverage를 표시할 수 있어야 한다.
 
-- P0-A~D 실제 미해결분 해결 및 회귀검증 완료
-- P1-A~C 실제 미해결분 해결 또는 근거 있는 `ALREADY_DONE` 판정
-- dry-run/preview 사용자 E2E PASS
-- 실제 메일 발송·삭제·라벨 변경 없음
-- 변경 파일·테스트 결과·보안 영향·남은 리스크가 최종보고에 연결됨
+- 전체 Risk = 154
+- ALREADY_DONE
+- COVERED_BY_TASK
+- OPEN
+- BLOCKED
+- DEFERRED
+- N_A
+- P0/P1/P2별 미해결 건수
+- MAIL TASK별 연결 Risk 수
+- OPEN_WITHOUT_TASK 수
+- last_verified_at
+
+Dashboard는 Risk 상태를 직접 수정하지 않는다.
+refresh 시 TASK.md + derived crosswalk + evidence를 읽어 표시한다.
+
+### 8-10. KEEP
+
+- 기존 MAIL-001~023의 ID와 완료 근거
+- 기존 안전장치 / dry-run / no-send 정책
+- 이미 검증된 코드와 tests
+- 기존 risk 원문 의미
+- P0/P1/P2 위험도
+- MAIL-014 기존 P0C 슬라이스 구현 이력
+
+### 8-11. REMOVE
+
+- 154개 엑셀과 TASK.md를 각각 별도 백로그로 수동 관리
+- 엑셀 `조치상태`와 TASK 상태가 서로 다른 이중정본
+- 이미 해결된 Risk를 신규 TASK로 재개발
+- Risk 1개마다 MAIL TASK 1개를 기계적으로 생성
+- 코드·테스트 근거 없는 `ALREADY_DONE`
+
+### 8-12. FORBIDDEN
+
+- 154개를 한 PR에서 전면 리팩터링
+- 사용자 확인 없이 대규모 architecture rewrite
+- actual send/delete/label change를 Risk 검증용으로 실행
+- 테스트 skip/delete로 해결 처리
+- Excel 상태를 정본으로 삼아 TASK.md를 덮어쓰기
+- 근거 없는 Risk 번호 매핑
+
+### 8-13. VERIFY
+
+최초 통합 완료 기준:
+
+- [ ] Risk row count = 정확히 154
+- [ ] 154/154에 risk_status 존재
+- [ ] ALREADY_DONE 100% evidence 존재
+- [ ] COVERED_BY_TASK 100% 유효 MAIL Task ID 존재
+- [ ] 존재하지 않는 Task ID 참조 = 0
+- [ ] DONE Task와 Risk status 모순 검사
+- [ ] OPEN_WITHOUT_TASK 별도 집계
+- [ ] 동일 Risk 중복 row = 0
+- [ ] 현재 main에서 다시 계산 가능
+- [ ] 사람이 엑셀 상태를 별도 갱신하지 않아도 report 재생성 가능
+- [ ] dashboard 표시값과 crosswalk 집계값 동일
+- [ ] 실제 메일 발송 0건
+
+### 8-14. DONE
+
+MAIL-014 전체는 아래 모두 충족할 때만 REQUEST_SOLVED=YES:
+
+- 154/154 Risk 분류 완료
+- 기존 MAIL TASK와 crosswalk 완료
+- 미해결 OPEN Risk가 기존/신규 MAIL TASK에 모두 연결되거나 명시적 DEFERRED/BLOCKED
+- P0 미해결 Risk 0 또는 근거 있는 BLOCKED
+- 연결된 각 TASK 완료 후 Risk 상태가 자동/재계산 방식으로 갱신 가능
+- V_UP dashboard에서 Mail Risk Coverage 확인 가능
+- 실제 사용자 dry-run/preview E2E PASS
+
+현재 상태:
+- STATUS: IN_PROGRESS
+- REQUEST_SOLVED=NO
+- NEXT: 최초 154 Risk × 최신 main × MAIL-001~023 crosswalk audit
 
 ---
 
