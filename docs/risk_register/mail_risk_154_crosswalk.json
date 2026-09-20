@@ -1,0 +1,4996 @@
+{
+  "summary": {
+    "schema_version": 1,
+    "generated_at": "2026-09-20T19:20:00+09:00",
+    "audit_phase": "STRUCTURAL_COVERAGE_V1",
+    "repo": "pds2225/mail",
+    "repo_main_sha": "2b705b1074433dae55dd9398d3611362a11ad344",
+    "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
+    "source_row_count": 154,
+    "counts": {
+      "total": 154,
+      "ALREADY_DONE": 0,
+      "COVERED_BY_TASK": 154,
+      "OPEN": 0,
+      "BLOCKED": 0,
+      "DEFERRED": 0,
+      "N_A": 0,
+      "OPEN_WITHOUT_TASK": 0
+    },
+    "by_category": {
+      "수집": 20,
+      "상세보강": 14,
+      "날짜필터": 14,
+      "그룹판정": 38,
+      "기업매칭": 12,
+      "요약": 14,
+      "발송": 16,
+      "피드백": 14,
+      "상태관리": 12
+    },
+    "by_risk_level": {
+      "P1": 107,
+      "P2": 20,
+      "P0": 27
+    },
+    "warning": "COVERED_BY_TASK means an owner task is assigned, not that the risk is solved. Evidence verification is the next pass."
+  },
+  "risks": [
+    {
+      "risk_no": 1,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "HTTP 200 응답을 성공으로 판정",
+      "impact": "실제 내용은 로그인·점검·캡차 화면",
+      "risk_level": "P1",
+      "recommended_response": "응답코드뿐 아니라 제목, 목록 노드, 레코드 수 검증",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 2,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "사이트 HTML 구조 변경",
+      "impact": "특정 소스 공고가 갑자기 0건",
+      "risk_level": "P1",
+      "recommended_response": "소스별 Contract Test 및 셀렉터 버전 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 3,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "API 스키마 변경",
+      "impact": "필드가 null 또는 잘못 매핑",
+      "risk_level": "P1",
+      "recommended_response": "JSON Schema 검증, 필수 필드 누락 알림",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 4,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "페이지네이션 누락",
+      "impact": "첫 페이지 공고만 수집",
+      "risk_level": "P1",
+      "recommended_response": "마지막 페이지까지 수집 여부와 총건수 검증",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 5,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "무한 페이지네이션",
+      "impact": "동일 페이지 반복 호출",
+      "risk_level": "P1",
+      "recommended_response": "페이지별 콘텐츠 해시, 최대 페이지 제한",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 6,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "API 호출 한도 초과",
+      "impact": "일부 시간대부터 수집 실패",
+      "risk_level": "P1",
+      "recommended_response": "소스별 Rate Limit, 재시도 간격, 호출량 모니터링",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 7,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "사이트별 차단정책",
+      "impact": "403·429·CAPTCHA 발생",
+      "risk_level": "P1",
+      "recommended_response": "User-Agent 관리, 도메인별 동시성 제한, API 우선",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 8,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "JavaScript 렌더링 의존",
+      "impact": "HTML에는 목록이 없음",
+      "risk_level": "P1",
+      "recommended_response": "정적 요청 실패 시에만 브라우저 수집 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 9,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "인증키·쿠키 만료",
+      "impact": "특정 기관 API만 지속 실패",
+      "risk_level": "P1",
+      "recommended_response": "자격증명 만료 알림, Secret Manager 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 10,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "인증서·리다이렉트 오류",
+      "impact": "브라우저는 열리지만 크롤러 실패",
+      "risk_level": "P2",
+      "recommended_response": "리다이렉트 횟수, 최종 도메인, TLS 오류 기록",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 11,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "한글 인코딩 오류",
+      "impact": "제목·기관명이 깨짐",
+      "risk_level": "P2",
+      "recommended_response": "UTF-8, EUC-KR 자동 감지 및 원문 보관",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 12,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "중복 소스 수집",
+      "impact": "동일 공고가 여러 기관에서 수집",
+      "risk_level": "P1",
+      "recommended_response": "기관·제목·기간·URL 기반 교차소스 중복 제거",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 13,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "소스가 오래된 캐시 제공",
+      "impact": "종료 공고가 신규 공고처럼 수집",
+      "risk_level": "P1",
+      "recommended_response": "응답 캐시 헤더와 게시일 검증",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 14,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "활성 사이트 설정 오류",
+      "impact": "폐쇄사이트를 계속 호출",
+      "risk_level": "P2",
+      "recommended_response": "최근 성공일·최근 신규건수 기준 자동 비활성 후보 지정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 15,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "사이트 응답 지연",
+      "impact": "전체 실행시간 증가",
+      "risk_level": "P1",
+      "recommended_response": "소스별 독립 타임아웃, 비동기 실행, 장애격리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 16,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "한 소스 장애가 전체 실행 중단",
+      "impact": "일부 기관 오류로 메일 미발송",
+      "risk_level": "P0",
+      "recommended_response": "소스별 예외 격리, 실패 소스만 Dead Letter Queue 처리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 17,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "동시 실행 중복",
+      "impact": "같은 스케줄이 겹쳐 두 번 수집",
+      "risk_level": "P0",
+      "recommended_response": "분산락 또는 run_lock, 동일 날짜 실행 제한",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 18,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "비정상적으로 적은 수집건수",
+      "impact": "장애지만 결과가 일부 존재하여 탐지 실패",
+      "risk_level": "P1",
+      "recommended_response": "최근 7일 중앙값 대비 급감률 모니터링",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 19,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "비정상적으로 많은 수집건수",
+      "impact": "과거 전체공고가 신규로 유입",
+      "risk_level": "P1",
+      "recommended_response": "소스별 일일 최대치 및 이상치 탐지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 20,
+      "category": "수집",
+      "substage": "Fetch",
+      "problem": "링크가 내부망·비정상 URL",
+      "impact": "SSRF 또는 악성사이트 접근",
+      "risk_level": "P0",
+      "recommended_response": "http/https만 허용, 사설 IP·localhost 차단",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-024"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-024": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 21,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "목록 URL과 상세 URL 연결 실패",
+      "impact": "제목만 있고 내용 없음",
+      "risk_level": "P1",
+      "recommended_response": "소스별 상세 URL 생성 규칙 테스트",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 22,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "상세페이지 N+1 호출",
+      "impact": "1,000건 수집 시 1,000회 추가 호출",
+      "risk_level": "P1",
+      "recommended_response": "캐시·동시성 제한·신규공고 우선 보강",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 23,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "상세페이지와 목록 정보 불일치",
+      "impact": "목록 마감일과 상세 마감일이 다름",
+      "risk_level": "P1",
+      "recommended_response": "상세값 우선, 필드별 출처와 수집시각 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 24,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "첨부파일에만 핵심정보 존재",
+      "impact": "본문에는 지원금·자격요건이 없음",
+      "risk_level": "P1",
+      "recommended_response": "PDF/HWP/DOCX 첨부 추출 파이프라인 필요",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 25,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "이미지형 공고문",
+      "impact": "날짜·지역을 읽지 못함",
+      "risk_level": "P1",
+      "recommended_response": "OCR은 별도 저신뢰 경로로 처리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 26,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "압축파일·암호파일",
+      "impact": "신청서 확인 불가",
+      "risk_level": "P2",
+      "recommended_response": "ZIP 안전해제, 파일 개수·용량 제한",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 27,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "악성 첨부파일",
+      "impact": "서버 보안사고",
+      "risk_level": "P0",
+      "recommended_response": "바이러스 검사, 실행파일 차단, 샌드박스 처리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 28,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "ZIP Bomb",
+      "impact": "디스크·메모리 고갈",
+      "risk_level": "P0",
+      "recommended_response": "압축해제 후 예상크기 제한",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 29,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "상세페이지 접근 시 세션 필요",
+      "impact": "목록은 수집되나 보강 실패",
+      "risk_level": "P1",
+      "recommended_response": "세션 유지 또는 별도 API 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 30,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "공고내용 일부만 접혀 있음",
+      "impact": "자격요건 누락",
+      "risk_level": "P1",
+      "recommended_response": "숨김영역·탭 콘텐츠·API 응답 확인",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 31,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "HTML 태그 제거 과정에서 의미 손실",
+      "impact": "표의 열 관계가 깨짐",
+      "risk_level": "P1",
+      "recommended_response": "표 구조를 JSON으로 보존",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 32,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "원문 수정 후 캐시가 유지됨",
+      "impact": "연장공고가 반영되지 않음",
+      "risk_level": "P1",
+      "recommended_response": "ETag·Last-Modified·content hash 기반 갱신",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031",
+        "TASK-023"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY",
+        "TASK-023": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 33,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "상세보강 실패를 빈 값으로 저장",
+      "impact": "이후 지역 미상·기간 미상 증가",
+      "risk_level": "P1",
+      "recommended_response": "null과 parse_failed 상태를 구분",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [
+        "TASK-031"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-031": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 34,
+      "category": "상세보강",
+      "substage": "Enrich",
+      "problem": "재시도 폭주",
+      "impact": "장애 사이트에 반복접속",
+      "risk_level": "P2",
+      "recommended_response": "지수 백오프, Circuit Breaker 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-025"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-025": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 35,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "서버 타임존이 UTC",
+      "impact": "한국시간 자정 전후 공고 누락",
+      "risk_level": "P1",
+      "recommended_response": "전체 시스템 기준 Asia/Seoul 고정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 36,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "공휴일 데이터 누락",
+      "impact": "대체공휴일 전일 계산 오류",
+      "risk_level": "P1",
+      "recommended_response": "연도별 영업일 캘린더 사전 적재",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 37,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "게시일과 등록일 혼동",
+      "impact": "실제 신규공고를 제외",
+      "risk_level": "P1",
+      "recommended_response": "published_at, registered_at, updated_at 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 38,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "게시일과 수정일 혼동",
+      "impact": "과거 공고가 신규로 재발송",
+      "risk_level": "P1",
+      "recommended_response": "최초 게시와 최근 수정 별도 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 39,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "공고가 늦게 색인됨",
+      "impact": "어제 게시됐지만 오늘 수집되어 누락",
+      "risk_level": "P1",
+      "recommended_response": "최근 3영업일 재조회 후 미발송 공고 발송",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 40,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "게시일이 날짜만 있고 시간 없음",
+      "impact": "경계시간 판단 불가",
+      "risk_level": "P2",
+      "recommended_response": "날짜 단위 비교, 시간 미상 상태 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 41,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "불완전 날짜 표기",
+      "impact": "2026. 7. 형태를 일자로 파싱하지 못함",
+      "risk_level": "P2",
+      "recommended_response": "불완전 날짜는 별도 검토",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 42,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "접수개시일을 게시일로 오인",
+      "impact": "잘못된 날짜 필터링",
+      "risk_level": "P1",
+      "recommended_response": "날짜 라벨 주변 문맥 기반 파싱",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 43,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "첨부파일 생성일을 게시일로 사용",
+      "impact": "오래된 양식 때문에 제외",
+      "risk_level": "P1",
+      "recommended_response": "첨부 메타데이터는 게시일로 사용 금지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 44,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "stub 살리기 조건이 과도함",
+      "impact": "오래된 교육·행사 공고 다수 포함",
+      "risk_level": "P1",
+      "recommended_response": "모집신호 외 최신성 보조근거 요구",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 45,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "stub 살리기 조건이 약함",
+      "impact": "신규공고 누락",
+      "risk_level": "P1",
+      "recommended_response": "URL 패턴·목록 위치·NEW 표시·수집시각 활용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 46,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "연장공고를 기존 ID로 차단",
+      "impact": "마감연장 안내가 발송되지 않음",
+      "risk_level": "P1",
+      "recommended_response": "공고 ID + 콘텐츠 버전 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025",
+        "TASK-022",
+        "TASK-023",
+        "TASK-024"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE",
+        "TASK-022": "DONE",
+        "TASK-023": "DONE",
+        "TASK-024": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 47,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "재공고가 같은 제목으로 등록",
+      "impact": "중복으로 제거되어 누락",
+      "risk_level": "P1",
+      "recommended_response": "차수·접수기간·공고번호를 ID에 반영",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025",
+        "TASK-022",
+        "TASK-023",
+        "TASK-024"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE",
+        "TASK-022": "DONE",
+        "TASK-023": "DONE",
+        "TASK-024": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 48,
+      "category": "날짜필터",
+      "substage": "Date Filter",
+      "problem": "날짜 기준이 소스별 상이",
+      "impact": "공고일·등록일 기준이 소스마다 다름",
+      "risk_level": "P1",
+      "recommended_response": "소스별 date_semantics 설정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-021",
+        "TASK-025",
+        "TASK-022",
+        "TASK-023",
+        "TASK-024"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-021": "DONE",
+        "TASK-025": "DONE",
+        "TASK-022": "DONE",
+        "TASK-023": "DONE",
+        "TASK-024": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 49,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "OR/AND 우선순위 불명확",
+      "impact": "같은 규칙이 실행마다 다르게 해석",
+      "risk_level": "P1",
+      "recommended_response": "규칙을 AST 또는 명시적 그룹 구조로 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 50,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "부분문자열 오탐",
+      "impact": "AI가 다른 문자열 내부에서 매칭",
+      "risk_level": "P1",
+      "recommended_response": "토큰 단위·단어 경계·정규식 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 51,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "한글 형태변화",
+      "impact": "수출·수출화·해외진출 중 일부 누락",
+      "risk_level": "P1",
+      "recommended_response": "형태소·동의어 사전·표준분류 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 52,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "약어·영문명 누락",
+      "impact": "인공지능만 있고 AI가 없는 공고 누락",
+      "risk_level": "P1",
+      "recommended_response": "동의어 클러스터 운영",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 53,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "부정문맥 미처리",
+      "impact": "AI 기업 제외를 AI 적합으로 판정",
+      "risk_level": "P1",
+      "recommended_response": "키워드 주변 부정표현 판정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 54,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "제목만 판정",
+      "impact": "본문에만 있는 지원분야 누락",
+      "risk_level": "P1",
+      "recommended_response": "제목·요약·본문·첨부를 가중치별 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 55,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "본문 전체 단순매칭",
+      "impact": "예시·과거사업 언급으로 오탐",
+      "risk_level": "P1",
+      "recommended_response": "자격·지원내용·모집분야 섹션 중심 판정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 56,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "지원유형 분류체계 불명확",
+      "impact": "사업화·R&D·융자 구분 오류",
+      "risk_level": "P1",
+      "recommended_response": "표준 지원유형 Taxonomy 정의",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 57,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "복수 지원유형 처리 불가",
+      "impact": "R&D+사업화 공고 일부 그룹 누락",
+      "risk_level": "P1",
+      "recommended_response": "다중라벨 허용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 58,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "우선키워드가 너무 강함",
+      "impact": "지역·자격 미달 공고가 review에 과다 포함",
+      "risk_level": "P2",
+      "recommended_response": "우선키워드도 최소 통과조건 설정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 59,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "규칙 수정 이력 없음",
+      "impact": "과거 발송 이유 재현 불가",
+      "risk_level": "P1",
+      "recommended_response": "rule_version과 규칙 스냅샷 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044",
+        "TASK-028"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY",
+        "TASK-028": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 60,
+      "category": "그룹판정",
+      "substage": "키워드·지원유형",
+      "problem": "그룹별 규칙 충돌",
+      "impact": "동일 공고가 포함·제외 동시 발생",
+      "risk_level": "P1",
+      "recommended_response": "판정 우선순위와 최종 결정표 정의",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-036",
+        "TASK-038",
+        "TASK-039",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-039": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 61,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "전국과 지역제한이 동시에 기재",
+      "impact": "전국공고로 오판",
+      "risk_level": "P1",
+      "recommended_response": "신청자격의 실제 소재지 조건을 우선",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 62,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "본사·사업장·공장 기준 혼동",
+      "impact": "적격기업 탈락 또는 부적격기업 포함",
+      "risk_level": "P1",
+      "recommended_response": "지역기준 유형을 별도 필드화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 63,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "이전 조건 미처리",
+      "impact": "선정 후 이전 가능 공고 탈락",
+      "risk_level": "P2",
+      "recommended_response": "현재 소재지와 협약 후 이전 조건 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 64,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "수도권·비수도권 표현",
+      "impact": "시·도 단순매칭 실패",
+      "risk_level": "P1",
+      "recommended_response": "광역권역 매핑 테이블 운영",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 65,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "인천 제외·도서지역 제외",
+      "impact": "인천 키워드만 보고 포함",
+      "risk_level": "P1",
+      "recommended_response": "예외지역 규칙 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 66,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "복수지역 공동사업",
+      "impact": "첫 번째 지역만 인식",
+      "risk_level": "P1",
+      "recommended_response": "지원 가능 지역을 배열로 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 67,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "지역 미상 과다",
+      "impact": "본문 추출 실패가 지역 미상으로 위장",
+      "risk_level": "P1",
+      "recommended_response": "unknown, not_parsed, not_specified 구분",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 68,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "공고기관 주소를 지원지역으로 오인",
+      "impact": "서울기관 공고를 서울전용으로 판정",
+      "risk_level": "P1",
+      "recommended_response": "기관소재지와 지원대상지역 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 69,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "기업 지역정보 노후화",
+      "impact": "이전 전 주소로 매칭",
+      "risk_level": "P1",
+      "recommended_response": "기업정보 갱신일 저장 및 만료 처리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 70,
+      "category": "그룹판정",
+      "substage": "지역판정",
+      "problem": "사업장 다수 기업",
+      "impact": "본점 기준으로만 판정",
+      "risk_level": "P1",
+      "recommended_response": "본점·지점·공장 소재지 다중 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-034",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-034": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 71,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "종료일만 있고 종료시간 없음",
+      "impact": "당일 오전부터 마감으로 오판",
+      "risk_level": "P1",
+      "recommended_response": "시간 미상은 당일 23:59 가정하되 표시",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 72,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "18시·24시 표현",
+      "impact": "날짜가 하루 어긋남",
+      "risk_level": "P1",
+      "recommended_response": "한국식 시간표현 정규화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 73,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "우편접수·도착기준",
+      "impact": "온라인 마감과 다르게 판단",
+      "risk_level": "P1",
+      "recommended_response": "접수방식별 마감조건 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 74,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "예산 소진 시 조기마감",
+      "impact": "기간은 남았지만 사실상 종료",
+      "risk_level": "P1",
+      "recommended_response": "조기종료 가능 플래그 및 상태 재확인",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 75,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "선착순 접수",
+      "impact": "발송 시점에는 마감 가능",
+      "risk_level": "P2",
+      "recommended_response": "긴급도 상향 및 실시간 상태 확인",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 76,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "접수기간 연장",
+      "impact": "기존 기간 캐시로 제외",
+      "risk_level": "P1",
+      "recommended_response": "수정공고 content hash 감지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 77,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "상시접수",
+      "impact": "날짜가 없어 제외",
+      "risk_level": "P1",
+      "recommended_response": "rolling 접수유형 별도 처리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 78,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "차수별 모집",
+      "impact": "전체사업 종료일만 읽음",
+      "risk_level": "P1",
+      "recommended_response": "회차별 기간 구조화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 79,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "마감일이 첨부파일에만 존재",
+      "impact": "날짜 미상으로 분류",
+      "risk_level": "P1",
+      "recommended_response": "첨부정보 보강 우선",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 80,
+      "category": "그룹판정",
+      "substage": "접수기간·마감",
+      "problem": "서버 실행 중 날짜 변경",
+      "impact": "판정 중 일부만 다음날 기준",
+      "risk_level": "P2",
+      "recommended_response": "실행 시작 시 reference_time 고정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-032",
+        "TASK-036",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-032": "READY",
+        "TASK-036": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 81,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "공급기업 키워드만으로 제외",
+      "impact": "수요기업과 공급기업 모두 모집하는 공고 누락",
+      "risk_level": "P1",
+      "recommended_response": "모집대상 섹션을 기준으로 역할 분류",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 82,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "교육·설명회 포함 복합공고",
+      "impact": "지원사업 본체까지 제외",
+      "risk_level": "P1",
+      "recommended_response": "교육 단독인지 부대행사인지 구분",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 83,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "선정기업 전용 문구",
+      "impact": "신규모집 안내의 참고문구 때문에 제외",
+      "risk_level": "P1",
+      "recommended_response": "대상자격 문맥 기반 판정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 84,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "제외규칙의 우선순위 불명확",
+      "impact": "키워드 통과 후 제외되지 않음",
+      "risk_level": "P1",
+      "recommended_response": "Hard Exclusion과 Soft Exclusion 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 85,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "제외규칙 과도 적용",
+      "impact": "실제 적합공고 누락",
+      "risk_level": "P1",
+      "recommended_response": "제외 사유별 검증셋과 오탐률 측정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 86,
+      "category": "그룹판정",
+      "substage": "제외규칙",
+      "problem": "제외 근거 저장 안 함",
+      "impact": "규칙 개선 불가",
+      "risk_level": "P1",
+      "recommended_response": "reason_code, evidence_text 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-033",
+        "TASK-037",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-033": "READY",
+        "TASK-037": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 87,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "회사명 자체가 키워드에 매칭",
+      "impact": "기업과 무관한 공고 승격",
+      "risk_level": "P1",
+      "recommended_response": "회사명은 업종키워드로 사용 금지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 88,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "일반적인 키워드 사용",
+      "impact": "제조·AI 등으로 과다매칭",
+      "risk_level": "P1",
+      "recommended_response": "키워드별 가중치·희소도 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 89,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "기업정보가 오래됨",
+      "impact": "폐업·업종변경 기업에 발송",
+      "risk_level": "P1",
+      "recommended_response": "데이터 갱신일·활성상태 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 90,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "기업별 제외조건 없음",
+      "impact": "매출·업력·지역 미달 공고 발송",
+      "risk_level": "P1",
+      "recommended_response": "기업 프로필에 정량조건 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022",
+        "MAIL-016"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY",
+        "MAIL-016": "DONE"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 91,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "매출·업력 단위 오류",
+      "impact": "3억과 30억을 혼동",
+      "risk_level": "P1",
+      "recommended_response": "숫자·단위 표준화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022",
+        "MAIL-016"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY",
+        "MAIL-016": "DONE"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 92,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "기업 하나가 여러 그룹 소속",
+      "impact": "동일 메일 중복수신",
+      "risk_level": "P1",
+      "recommended_response": "수신자 기준 최종 다이제스트 통합",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 93,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "공고 하나가 수십 개 기업에 매칭",
+      "impact": "발송량 폭증",
+      "risk_level": "P2",
+      "recommended_response": "기업당 일일 추천 상한 설정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 94,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "기업 키워드와 그룹 규칙 충돌",
+      "impact": "그룹 탈락공고가 무조건 승격",
+      "risk_level": "P1",
+      "recommended_response": "Hard exclusion·지역 부적격은 승격 금지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 95,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "키워드 매칭 사유 불명확",
+      "impact": "고객 설명 불가",
+      "risk_level": "P1",
+      "recommended_response": "매칭키워드·기업필드·근거 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 96,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "개인정보 포함 companies.json",
+      "impact": "Git 저장소 유출 위험",
+      "risk_level": "P0",
+      "recommended_response": "기업·수신자 정보는 DB 및 암호화 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 97,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "여러 고객사 데이터 혼합",
+      "impact": "타 고객 정보 노출",
+      "risk_level": "P0",
+      "recommended_response": "tenant_id 기반 데이터 격리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 98,
+      "category": "기업매칭",
+      "substage": "Company Match",
+      "problem": "대표자 선호를 기업 적합도로 오인",
+      "impact": "평가 정확도 왜곡",
+      "risk_level": "P1",
+      "recommended_response": "기업 적격성과 사용자 선호를 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [
+        "TASK-027",
+        "TASK-030",
+        "TASK-035",
+        "TASK-036",
+        "TASK-038",
+        "TASK-040",
+        "TASK-041",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-027": "DONE",
+        "TASK-030": "READY",
+        "TASK-035": "READY",
+        "TASK-036": "READY",
+        "TASK-038": "READY",
+        "TASK-040": "READY",
+        "TASK-041": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 99,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "지원금·기간 환각",
+      "impact": "실제 공고와 다른 금액 안내",
+      "risk_level": "P0",
+      "recommended_response": "중요필드는 DB 값만 사용, LLM 생성 금지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 100,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "조건 일부 생략",
+      "impact": "기업이 부적격 공고에 신청",
+      "risk_level": "P1",
+      "recommended_response": "필수 출력필드 누락검사",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 101,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "여러 공고 정보 혼합",
+      "impact": "A공고 금액이 B공고에 표시",
+      "risk_level": "P0",
+      "recommended_response": "공고별 독립 호출 또는 명확한 구조화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 102,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "원문 프롬프트 인젝션",
+      "impact": "공고문 지시를 시스템지시로 실행",
+      "risk_level": "P0",
+      "recommended_response": "원문을 불신 데이터로 격리, 도구·비밀 접근 차단",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 103,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "악성 HTML·스크립트",
+      "impact": "이메일 내용 변조",
+      "risk_level": "P0",
+      "recommended_response": "HTML escape, 허용 태그만 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 104,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "잘못된 URL 생성",
+      "impact": "피싱·오류 링크 발송",
+      "risk_level": "P1",
+      "recommended_response": "원본 URL만 사용, LLM에 URL 생성 금지",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 105,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "출력형식 불안정",
+      "impact": "이메일 템플릿 깨짐",
+      "risk_level": "P1",
+      "recommended_response": "JSON Schema 기반 구조화 출력",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 106,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "모델 장애",
+      "impact": "전체 메일이 발송되지 않음",
+      "risk_level": "P1",
+      "recommended_response": "추출형 기본요약 fallback 제공",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 107,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "API 비용 폭증",
+      "impact": "공고량 급증 시 비용 증가",
+      "risk_level": "P2",
+      "recommended_response": "included/review 공고만 요약, 캐시 사용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 108,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "컨텍스트 길이 초과",
+      "impact": "첨부내용 뒷부분 누락",
+      "risk_level": "P1",
+      "recommended_response": "관련 섹션 우선 추출 후 요약",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 109,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "동일 공고 요약 불일치",
+      "impact": "그룹마다 다른 조건 표시",
+      "risk_level": "P1",
+      "recommended_response": "공통 사실요약 + 그룹별 적합이유 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 110,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "최신 수정내용 미반영",
+      "impact": "연장 전 기간으로 발송",
+      "risk_level": "P1",
+      "recommended_response": "content hash별 요약 캐시 무효화",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 111,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "모델 버전 변경",
+      "impact": "정확도 급변",
+      "risk_level": "P1",
+      "recommended_response": "모델명·프롬프트 버전 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 112,
+      "category": "요약",
+      "substage": "Claude Summarize",
+      "problem": "공고문 내 개인정보 요약",
+      "impact": "불필요한 담당자 정보 노출",
+      "risk_level": "P1",
+      "recommended_response": "개인정보 마스킹 정책 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014"
+      ],
+      "atomic_task_ids": [
+        "TASK-042",
+        "TASK-043",
+        "TASK-044"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE"
+      },
+      "atomic_task_status": {
+        "TASK-042": "READY",
+        "TASK-043": "READY",
+        "TASK-044": "READY"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 113,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "실행 재시도로 중복발송",
+      "impact": "동일 메일 2회 이상 수신",
+      "risk_level": "P0",
+      "recommended_response": "Idempotency Key와 Outbox 패턴 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026",
+        "MAIL-009"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY",
+        "MAIL-009": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 114,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "일부 수신자 성공 후 오류",
+      "impact": "재실행 시 성공자에게도 재발송",
+      "risk_level": "P0",
+      "recommended_response": "수신자별 delivery 상태 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026",
+        "MAIL-009"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY",
+        "MAIL-009": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 115,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "seen_ids를 발송 전에 기록",
+      "impact": "실제 미발송인데 다음날 제외",
+      "risk_level": "P0",
+      "recommended_response": "메일 성공응답 후 개별 발송상태 확정",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026",
+        "MAIL-009"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY",
+        "MAIL-009": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 116,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "공고 ID만 전역 기록",
+      "impact": "한 그룹 실패 시 다른 그룹 발송여부 구분 불가",
+      "risk_level": "P1",
+      "recommended_response": "notice, group, recipient 단위 상태관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026",
+        "MAIL-009"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY",
+        "MAIL-009": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 117,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "Gmail Rate Limit",
+      "impact": "중간부터 발송 실패",
+      "risk_level": "P1",
+      "recommended_response": "큐·속도제한·재시도 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 118,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "수신자 이메일 오타",
+      "impact": "반송·개인정보 오발송",
+      "risk_level": "P0",
+      "recommended_response": "주소검증·반송관리·테스트 수신",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 119,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "To/Cc 사용 오류",
+      "impact": "고객 이메일이 서로 노출",
+      "risk_level": "P0",
+      "recommended_response": "개별 발송 또는 Bcc, 원칙적으로 개별발송",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 120,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "그룹 설정 오류",
+      "impact": "다른 그룹 다이제스트 수신",
+      "risk_level": "P0",
+      "recommended_response": "tenant/group/recipient 권한 검증",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 121,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "HTML 템플릿 오류",
+      "impact": "모바일에서 버튼·표 깨짐",
+      "risk_level": "P2",
+      "recommended_response": "주요 Gmail·모바일 화면 테스트",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 122,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "메일 크기 과다",
+      "impact": "본문 잘림·스팸판정",
+      "risk_level": "P2",
+      "recommended_response": "본문 공고 수 제한, 나머지는 링크 제공",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 123,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "링크 만료·세션 필요",
+      "impact": "사용자가 공고를 열지 못함",
+      "risk_level": "P1",
+      "recommended_response": "원문 링크와 기관 검색경로 병기",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 124,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "발송 성공응답만 신뢰",
+      "impact": "실제 반송·스팸 처리",
+      "risk_level": "P2",
+      "recommended_response": "bounce·delivery 상태 수집",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 125,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "초안 중복생성",
+      "impact": "Gmail 초안이 매일 누적",
+      "risk_level": "P1",
+      "recommended_response": "동일 run·group 초안 업데이트 또는 교체",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 126,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "테스트 환경 실발송",
+      "impact": "개발 중 고객에게 발송",
+      "risk_level": "P0",
+      "recommended_response": "환경별 수신자 allowlist, 운영 승인키",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 127,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "이메일 제목 중복",
+      "impact": "사용자가 날짜를 구분하지 못함",
+      "risk_level": "P2",
+      "recommended_response": "기준일·그룹명·공고 수 포함",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 128,
+      "category": "발송",
+      "substage": "이메일 발송·초안",
+      "problem": "수신거부·휴면관리 없음",
+      "impact": "민원·운영리스크",
+      "risk_level": "P1",
+      "recommended_response": "수신상태·중단일·사유 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-026"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-026": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 129,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "이메일 보안봇이 링크 선조회",
+      "impact": "사용자가 누르지 않았는데 O/X 기록",
+      "risk_level": "P0",
+      "recommended_response": "GET으로 확정하지 않고 확인화면 후 POST",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 130,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "링크 공유",
+      "impact": "다른 사람이 피드백 가능",
+      "risk_level": "P1",
+      "recommended_response": "수신자별 서명토큰",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 131,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "토큰 재사용",
+      "impact": "같은 공고에 반복 피드백",
+      "risk_level": "P1",
+      "recommended_response": "1회성 또는 최신 응답만 유효",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 132,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "토큰 위조",
+      "impact": "임의 공고·기업의 라벨 조작",
+      "risk_level": "P0",
+      "recommended_response": "HMAC 서명·만료시간 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "Existing HMAC feedback-token code/tests found; verify before ALREADY_DONE.",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 133,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "O/X 의미가 불명확",
+      "impact": "사업 적합·메일 유용·지역 적격이 혼재",
+      "risk_level": "P1",
+      "recommended_response": "피드백 질문을 명확히 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-018"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-018": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 134,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "오클릭 수정 불가",
+      "impact": "잘못된 학습데이터 생성",
+      "risk_level": "P1",
+      "recommended_response": "피드백 변경기능·최종값 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-018"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-018": "DONE"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "Existing latest-verdict update behavior found; verify correction E2E before ALREADY_DONE.",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 135,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "자동회신·부재중메일 오인",
+      "impact": "회신분석 오류",
+      "risk_level": "P1",
+      "recommended_response": "버튼형 구조화 피드백 우선",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 136,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "긍정·부정 편향",
+      "impact": "적극적으로 클릭하는 사용자만 반영",
+      "risk_level": "P1",
+      "recommended_response": "미응답을 부정으로 취급하지 않음",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 137,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "탈락공고 피드백 부재",
+      "impact": "False Negative를 학습하지 못함",
+      "risk_level": "P1",
+      "recommended_response": "주기적으로 제외 샘플 검토",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 138,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "소수 피드백 즉시 규칙 반영",
+      "impact": "한 번의 오판으로 전체 추천 왜곡",
+      "risk_level": "P0",
+      "recommended_response": "최소 표본수·검증셋 통과 후 반영",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 139,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "그룹 선호와 기업 적격성 혼합",
+      "impact": "잘못된 모델 목표",
+      "risk_level": "P1",
+      "recommended_response": "eligibility, relevance, preference 라벨 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 140,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "시간경과에 따른 선호 변화",
+      "impact": "과거 피드백이 계속 강하게 반영",
+      "risk_level": "P2",
+      "recommended_response": "최신 피드백 가중치 상향",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 141,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "사용자별 피드백 혼합",
+      "impact": "특정 기업 취향이 전체 규칙에 반영",
+      "risk_level": "P1",
+      "recommended_response": "전역·그룹·기업·수신자 레벨 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 142,
+      "category": "피드백",
+      "substage": "O/X 피드백",
+      "problem": "학습 전 검증 없음",
+      "impact": "모델 정확도 하락을 탐지 못함",
+      "risk_level": "P0",
+      "recommended_response": "Hold-out 검증셋·승인 배포 적용",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-027",
+        "MAIL-022"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-027": "READY",
+        "MAIL-022": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 143,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "JSON 동시쓰기",
+      "impact": "파일 일부 손상·데이터 유실",
+      "risk_level": "P0",
+      "recommended_response": "DB Transaction 또는 원자적 파일 교체",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028",
+        "MAIL-023"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY",
+        "MAIL-023": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 144,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "실행 중 서버 종료",
+      "impact": "일부만 기록",
+      "risk_level": "P0",
+      "recommended_response": "단계별 체크포인트·재시작 가능 구조",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 145,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "seen ID 무한 증가",
+      "impact": "파일 로딩 지연",
+      "risk_level": "P2",
+      "recommended_response": "DB 인덱스·보관기간 정책",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 146,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "ID 체계 변경",
+      "impact": "기존 공고 전부 신규로 인식",
+      "risk_level": "P1",
+      "recommended_response": "ID 마이그레이션·canonical ID",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 147,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "동일 ID의 수정공고",
+      "impact": "중요변경이 발송되지 않음",
+      "risk_level": "P1",
+      "recommended_response": "notice version과 content hash 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [
+        "TASK-023",
+        "TASK-024"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-023": "DONE",
+        "TASK-024": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 148,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "Git 커밋 충돌",
+      "impact": "피드백·상태 반영 실패",
+      "risk_level": "P1",
+      "recommended_response": "실행 상태는 Git이 아닌 DB에 저장",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028",
+        "MAIL-023"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY",
+        "MAIL-023": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 149,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "개인정보가 Git에 포함",
+      "impact": "저장소 유출",
+      "risk_level": "P0",
+      "recommended_response": "config와 개인정보 분리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 150,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "커밋 실패를 알리지 않음",
+      "impact": "학습이 누락되지만 정상처럼 보임",
+      "risk_level": "P1",
+      "recommended_response": "Commitback 성공 여부 별도 모니터링",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028",
+        "MAIL-023"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY",
+        "MAIL-023": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 151,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "롤백 불가",
+      "impact": "잘못된 규칙 반영 후 복원 곤란",
+      "risk_level": "P1",
+      "recommended_response": "규칙·모델·프롬프트 버전 관리",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [
+        "TASK-028"
+      ],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {
+        "TASK-028": "DONE"
+      },
+      "evidence_sources": [
+        "TASK.md",
+        "docs/project/TASKS.md",
+        "docs/project/MAIL014_AI_TASK_SPEC.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 152,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "로그에 토큰·메일주소 기록",
+      "impact": "정보유출",
+      "risk_level": "P0",
+      "recommended_response": "로그 마스킹",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 153,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "백업·복구 검증 없음",
+      "impact": "DB 손상 시 전체 이력 유실",
+      "risk_level": "P0",
+      "recommended_response": "정기 백업과 복구 테스트",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    },
+    {
+      "risk_no": 154,
+      "category": "상태관리",
+      "substage": "뒷정리·커밋백",
+      "problem": "오래된 피드백 누적",
+      "impact": "현재 기준과 맞지 않는 학습",
+      "risk_level": "P2",
+      "recommended_response": "피드백 유효기간·가중치 감쇠",
+      "risk_status": "COVERED_BY_TASK",
+      "task_ids": [
+        "MAIL-014",
+        "MAIL-028"
+      ],
+      "atomic_task_ids": [],
+      "task_status": {
+        "MAIL-014": "ACTIVE",
+        "MAIL-028": "READY"
+      },
+      "atomic_task_status": {},
+      "evidence_sources": [
+        "TASK.md"
+      ],
+      "audit_note": "",
+      "last_verified_at": "2026-09-20"
+    }
+  ]
+}
