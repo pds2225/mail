@@ -181,3 +181,68 @@ def test_api_run_dry_run_ignores_configured_monitor_secret(monkeypatch):
     h.do_POST()
     assert h._responses[0][0] == 200
     assert calls[0]["allow_send"] is False
+
+
+def test_api_run_include_previews_forwards_build_previews_true(monkeypatch):
+    """MAIL-029: dry-run + include_previews=true → monitor에 build_previews=True 전달."""
+    index_mod = _load_index_module(monkeypatch)
+    calls: list[dict] = []
+    _install_fake_monitor(monkeypatch, calls)
+    h = _FakeHandler(index_mod, {"dry_run": True, "include_previews": True})
+    h.do_POST()
+    assert h._responses[0][0] == 200
+    assert calls[0]["build_previews"] is True
+
+
+def test_api_run_default_does_not_request_build_previews(monkeypatch):
+    """MAIL-029: include_previews 미지정 시 기존 dry-run 호출자는 그대로(비용 불변)."""
+    index_mod = _load_index_module(monkeypatch)
+    calls: list[dict] = []
+    _install_fake_monitor(monkeypatch, calls)
+    h = _FakeHandler(index_mod, {"dry_run": True})
+    h.do_POST()
+    assert h._responses[0][0] == 200
+    assert calls[0]["build_previews"] is False
+
+
+def test_api_run_response_includes_mail_previews_and_timing(monkeypatch):
+    """MAIL-029: preview_groups(subject/text/html 포함)를 mail_previews 계약으로 옮긴다."""
+    index_mod = _load_index_module(monkeypatch)
+
+    def _fake_execute(**kwargs):
+        return {
+            "ok": True,
+            "mail_sent": False,
+            "preview_groups": [
+                {
+                    "group_id": "g1",
+                    "name": "예비창업 AI",
+                    "matched_items": 3,
+                    "subject": "[예비창업 AI] 3건 (09/21 오전)",
+                    "text": "본문",
+                    "html": "<html><body>본문</body></html>",
+                    "recipients_masked": ["ow***@example.test"],
+                    "generated_at": "2026-09-21 09:00:00 KST",
+                },
+                {"group_id": "g2", "name": "미요청그룹", "matched_items": 0},
+            ],
+        }
+
+    monkeypatch.setitem(
+        sys.modules, "monitor", SimpleNamespace(execute_monitor=_fake_execute),
+    )
+    h = _FakeHandler(index_mod, {"dry_run": True, "include_previews": True})
+    h.do_POST()
+    assert h._responses[0][0] == 200
+    result = h._responses[0][1]["result"]
+    assert isinstance(result["processing_time_ms"], int)
+    assert result["generated_at"].endswith("KST")
+    previews = result["mail_previews"]
+    assert len(previews) == 1  # subject 없는 두 번째 그룹(미요청)은 제외
+    p = previews[0]
+    assert p["group_id"] == "g1"
+    assert p["group_name"] == "예비창업 AI"
+    assert p["notice_count"] == 3
+    assert p["recipient_masked"] == ["ow***@example.test"]
+    assert "<html" in p["html"]
+    assert p["text"] == "본문"
