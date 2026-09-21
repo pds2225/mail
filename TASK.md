@@ -43,7 +43,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
-[~] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
+[x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
 
 
 ---
@@ -2963,23 +2963,23 @@ REQUEST_SOLVED=NO — Risk 143~154 전체 근거 상태 확정 + 복구/백업 E
 
 ### 8-5. MUST
 
-- [ ] `monitor.py`의 `execute_monitor()`에 opt-in 파라미터(`build_previews`, 기본 False)를 추가해,
+- [x] `monitor.py`의 `execute_monitor()`에 opt-in 파라미터(`build_previews`, 기본 False)를 추가해,
       요청 시에만 미리보기 그룹마다 실제 발송 경로와 동일한 제목/본문을 조립한다(기존 CI·헬스체크성
       dry-run 호출은 비용·동작 변화 없이 그대로 유지).
-- [ ] 제목·본문 조립은 실제 발송(`if deliver:`) 경로와 **동일 함수**를 공유해서(중복 구현 금지),
+- [x] 제목·본문 조립은 실제 발송(`if deliver:`) 경로와 **동일 함수**를 공유해서(중복 구현 금지),
       Preview와 실제 발송이 항상 같은 문자열을 만든다.
-- [ ] HTML은 `mail_core/delivery/digest_table.py`의 `html_email_inner` + 실제 발송이 쓰는 동일한
+- [x] HTML은 `mail_core/delivery/digest_table.py`의 `html_email_inner` + 실제 발송이 쓰는 동일한
       HTML 래핑(`_build_mime_message`가 쓰는 것과 같은 함수)을 그대로 재사용한다.
-- [ ] `api/index.py`(`vercel.json`이 실제로 `/api/run`에 연결하는 파일 — `api/run.py`는 라우팅되지
+- [x] `api/index.py`(`vercel.json`이 실제로 `/api/run`에 연결하는 파일 — `api/run.py`는 라우팅되지
       않는 미사용 파일이므로 건드리지 않는다)에 `include_previews` 옵션을 추가해 dry-run일 때만
       `build_previews=True`로 monitor를 호출하고, 응답에 `mail_previews`
       (`group_id, group_name, subject, recipient_masked, notice_count, html, text`)와
       `processing_time_ms`, `generated_at`을 추가한다.
-- [ ] 수신자는 `_mask_email`로 마스킹된 값만 API 응답에 포함한다(원문 이메일 절대 미노출).
-- [ ] `web/app/run/page.tsx`에 그룹 선택·HTML/텍스트 전환·8컬럼 표 가로스크롤을 모바일 390/412px
+- [x] 수신자는 `_mask_email`로 마스킹된 값만 API 응답에 포함한다(원문 이메일 절대 미노출).
+- [x] `web/app/run/page.tsx`에 그룹 선택·HTML/텍스트 전환·8컬럼 표 가로스크롤을 모바일 390/412px
       포함해서 추가한다. 기존 요약 카드(수집/날짜대상/최종추천/처리시간) 필드 매핑 버그(존재하지
-      않는 필드를 참조해 항상 "–"만 뜨던 문제)도 같이 맞춘다.
-- [ ] 실제 SMTP 발송·seen 저장·라벨 변경·이메일 삭제·Secret 출력 없음.
+      않는 필드를 참조해 항상 "–"만 뜨던 문제)도 같이 맞췄다.
+- [x] 실제 SMTP 발송·seen 저장·라벨 변경·이메일 삭제·Secret 출력 없음.
 
 ### 8-6. KEEP
 
@@ -3001,19 +3001,27 @@ REQUEST_SOLVED=NO — Risk 143~154 전체 근거 상태 확정 + 복구/백업 E
 
 ### 8-9. VERIFY
 
-- [ ] `python -m compileall .`
-- [ ] `python -m pytest`
-- [ ] `cd web && npx tsc --noEmit`
-- [ ] `cd web && npx next build`
-- [ ] Preview로 만든 subject/text/html이 실제 발송(`allow_send=True`) 경로가 만든 subject/body와
-      바이트 단위로 동일한지 회귀 테스트로 고정.
-- [ ] 공고 0/1/다건, 다중 그룹, 그룹 전환, HTML/Text 보기, 수신자 마스킹, SMTP 미호출,
+- [x] `python -m compileall .`
+- [x] `python -m pytest` — 1567 passed, 6 skipped, 1 failed(이 PR과 무관 — `tests/test_kstartup_collect_policy.py`가
+      `config/sites.json`을 인코딩 미지정 `read_text()`로 읽어 Windows cp949 로케일에서만 실패. 이 TASK는
+      해당 파일들을 건드리지 않았다.)
+- [x] `cd web && npx tsc --noEmit`
+- [x] `cd web && npx next build`
+- [x] Preview로 만든 subject/text/html이 실제 발송(`allow_send=True`) 경로가 만든 subject/body와
+      바이트 단위로 동일한지 회귀 테스트로 고정(`tests/test_mail_run_preview.py`).
+- [x] 공고 0/1/다건, 다중 그룹, 그룹 전환, HTML/Text 보기, 수신자 마스킹, SMTP 미호출,
       `persist_seen=false`, `mail_sent=false` 시나리오 커버.
+- [x] USER_E2E: 로컬 `next start` + 실제 `_build_group_mail_content`/`_render_email_html`로 만든
+      데이터를 `/api/run` 응답에 주입해 `/run` 화면을 실제 브라우저로 조작 — 그룹 탭 전환, HTML/텍스트
+      전환, 수신자 없는 0건 그룹 처리, 336px(요청된 390/412px보다 더 좁은) 뷰포트에서 페이지 레벨
+      가로 스크롤 없음(`document.documentElement.scrollWidth === clientWidth`)과 8컬럼 표가 iframe
+      내부에서만 가로 스크롤되는 것을 확인.
 
 ### 8-10. DONE
 
-REQUEST_SOLVED=NO — 코드/테스트 작성 후 USER_E2E(웹에서 실제 미리보기 실행·그룹 선택·HTML/Text
-확인)까지 통과해야 YES로 바꾼다.
+REQUEST_SOLVED=YES — PR #345 병합됨(origin/main `4688e48f`). `/run`에서 미리보기 실행 → 그룹 선택 →
+실제 발송 예정 제목 → 실제 발송과 동일 renderer의 HTML/Text 메일 확인까지 실제 브라우저로 검증했다.
+SMTP 미호출·`mail_sent=false`·`persist_seen=false` 확인됨.
 
 ---
 
