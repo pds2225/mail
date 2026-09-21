@@ -6903,20 +6903,90 @@ def _render_feedback_block(items: list[dict]) -> str:
         return ""
 
 
-def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
-    """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
+def _render_email_html(body: str) -> str:
+    """plain 본문 → 실제 발송 메일과 동일한 HTML(Gmail 8컬럼 표 포함).
+
+    MAIL-029: `/run` Preview가 실제 발송(`_build_mime_message`)과 항상 같은 HTML을
+    보게 하려는 단일 renderer. 이 함수 밖에서 따로 HTML을 조립하지 않는다.
+    """
     from mail_core.delivery.digest_table import html_email_inner
 
+    inner = html_email_inner(body, _linkify_html)
+    return f"<html><body style='font-family:Arial;line-height:1.7'>{inner}</body></html>"
+
+
+def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
+    """발송·초안 공용 MIME 구성(plain + html). send_email/save_draft_to_gmail 가 공유한다."""
     msg = MIMEMultipart("alternative")
     msg["Subject"], msg["From"], msg["To"] = subject, GMAIL_ADDRESS, to
     msg.attach(MIMEText(body, "plain", "utf-8"))
-    inner = html_email_inner(body, _linkify_html)
-    msg.attach(MIMEText(
-        f"<html><body style='font-family:Arial;line-height:1.7'>{inner}</body></html>",
-        "html",
-        "utf-8",
-    ))
+    msg.attach(MIMEText(_render_email_html(body), "html", "utf-8"))
     return msg
+
+
+def _build_group_mail_content(
+    *,
+    group: dict,
+    g_items: list[dict],
+    ru_mail_items: list[dict],
+    ru_items: list[dict],
+    ru_limit: int,
+    filtered_new: list[dict],
+    window_label: str,
+    days_back: int,
+    date_str: str,
+    now: datetime,
+) -> dict:
+    """그룹 다이제스트 제목·본문 조립(부작용 없음 — 발송·초안·알림을 호출하지 않는다).
+
+    실제 발송(``if deliver:``)과 MAIL-029 Preview(``build_previews=True``)가 이 함수 하나만
+    공유해서, 두 경로가 항상 같은 subject/body 문자열을 만들게 한다(renderer 이중구현 금지).
+    """
+    summary = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
+    g_norm = _normalize_group(group)
+    req_rgns = g_norm.get("required_conditions", {}).get("regions", [])
+    _or_kws = g_norm.get("or_keywords", [])
+    _and_grps = g_norm.get("and_keyword_groups", [])
+    _kw_parts = ([f"OR({', '.join(_or_kws[:3])})"] if _or_kws else []) + \
+                [f"AND({', '.join(ag)})" for ag in _and_grps[:2]]
+    kw_str = " | ".join(_kw_parts) or "전체"
+    # 수출·혁신 바우처 공고는 별도 강조(메일 상단 블록 + 폰 푸시 ntfy)
+    voucher_items = [it for it in g_items if _is_voucher(it)]
+    voucher_block = ""
+    if voucher_items:
+        voucher_block = (
+            f"🔔🔔 [수출·혁신 바우처 공고 {len(voucher_items)}건 — 우선 확인!] 🔔🔔\n"
+            + "".join(
+                f"  • {it['title']} (마감 {resolve_item_deadline(it) or '미기재'})\n"
+                for it in voucher_items
+            )
+            + "\n"
+        )
+    header = (
+        f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
+        f"재조회범위: {window_label} (최근 {days_back}영업일)\n"
+        f"그룹: {group.get('name')}\n"
+        f"지역: {', '.join(req_rgns) or '전국'}\n"
+        f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
+        f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
+    )
+    # 키워드는 제목/상단에서 빼고 본문 최하단에 참고용으로만(숨김처리)
+    kw_footer = (
+        "\n\n────────────────────────────────\n"
+        f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
+    )
+    # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
+    region_unknown_block = render_region_unknown(
+        ru_mail_items, limit=ru_limit, total_count=len(ru_items),
+    )
+    # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
+    feedback_block = _render_feedback_block(g_items)
+    subj_count = f"{len(g_items)}건" + (
+        f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""
+    )
+    subject = f"[{group.get('name')}] {subj_count} ({date_str})"
+    body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
+    return {"subject": subject, "body": body, "voucher_items": voucher_items}
 
 
 def send_email(subject: str, body: str, to: str) -> None:
@@ -7494,6 +7564,7 @@ def execute_monitor(
     draft_mode: bool = False,
     group_id: str = "",
     collection_gate: dict | None = None,
+    build_previews: bool = False,
 ) -> dict:
     global _ALLOW_SMTP_SEND, _ALLOW_PERSIST_SEEN, _SEND_OK, _SEND_FAIL, _LAST_SEND_ERR, _RAW_STORE
     global _DRAFT_MODE, _DRAFT_OK, _DRAFT_FAIL, _LAST_DRAFT_ERR
@@ -8078,7 +8149,8 @@ def execute_monitor(
                     _trace_record(_notice_trace, _it.get("id", ""), "SUMMARIZE", "SKIPPED", group_id=_trace_gid, error_code="PREVIEW_MODE")
             except Exception:
                 pass
-            preview_groups.append({
+            _preview_entry = {
+                "group_id": str(group.get("id") or group.get("name") or ""),
                 "name": group.get("name"),
                 "priority_items": sum(1 for it in g_items if it.get("priority_keyword")),
                 "matched_items": len(g_items),
@@ -8091,7 +8163,24 @@ def execute_monitor(
                 "review_titles": [it.get("title") for it in review_items[:5]],
                 "region_unknown_titles": [it.get("title") for it in ru_items[:5]],
                 "excluded_summary": render_excluded_summary(excluded_items),
-            })
+            }
+            # MAIL-029: 웹 /run Preview가 명시적으로 요청했을 때만 — 실제 발송 경로와
+            # 동일한 subject/body/HTML을 만든다(기존 dry-run 호출자는 비용·동작 불변).
+            if build_previews:
+                _pcontent = _build_group_mail_content(
+                    group=group, g_items=g_items, ru_mail_items=ru_mail_items,
+                    ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
+                    window_label=window_label, days_back=days_back, date_str=date_str,
+                    now=now,
+                )
+                _preview_entry["subject"] = _pcontent["subject"]
+                _preview_entry["text"] = _pcontent["body"]
+                _preview_entry["html"] = _render_email_html(_pcontent["body"])
+                _preview_entry["recipients_masked"] = [
+                    _mask_email(r) for r in (group.get("recipients") or [])
+                ]
+                _preview_entry["generated_at"] = now.strftime("%Y-%m-%d %H:%M:%S KST")
+            preview_groups.append(_preview_entry)
         if not g_items and not ru_mail_items:
             log.info("그룹 '%s': 조건 매칭 공고 없음", group.get("name"))
             continue
@@ -8104,61 +8193,26 @@ def execute_monitor(
             "excluded_items": len(excluded_items) if not deliver else 0,
         })
         if deliver:
-            summary    = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
             # MAIL-P0D-01: SUMMARIZE — 다이제스트 본문 조립까지 끝난 공고를 기록.
             try:
                 for _it in g_items:
                     _trace_record(_notice_trace, _it.get("id", ""), "SUMMARIZE", "SUCCESS", group_id=_trace_gid)
             except Exception:
                 pass
-            g_norm     = _normalize_group(group)
-            req_rgns   = g_norm.get("required_conditions", {}).get("regions", [])
-            _or_kws    = g_norm.get("or_keywords", [])
-            _and_grps  = g_norm.get("and_keyword_groups", [])
-            _kw_parts  = ([f"OR({', '.join(_or_kws[:3])})"] if _or_kws else []) + \
-                         [f"AND({', '.join(ag)})" for ag in _and_grps[:2]]
-            kw_str     = " | ".join(_kw_parts) or "전체"
-            # 수출·혁신 바우처 공고는 별도 강조(메일 상단 블록 + 폰 푸시 ntfy)
-            voucher_items = [it for it in g_items if _is_voucher(it)]
-            voucher_block = ""
-            if voucher_items:
-                voucher_block = (
-                    f"🔔🔔 [수출·혁신 바우처 공고 {len(voucher_items)}건 — 우선 확인!] 🔔🔔\n"
-                    + "".join(
-                        f"  • {it['title']} (마감 {resolve_item_deadline(it) or '미기재'})\n"
-                        for it in voucher_items
-                    )
-                    + "\n"
-                )
-            header  = (
-                f"수집일시: {now.strftime('%Y-%m-%d %H:%M KST')}\n"
-                f"재조회범위: {window_label} (최근 {days_back}영업일)\n"
-                f"그룹: {group.get('name')}\n"
-                f"지역: {', '.join(req_rgns) or '전국'}\n"
-                f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
-                f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
+            _content = _build_group_mail_content(
+                group=group, g_items=g_items, ru_mail_items=ru_mail_items,
+                ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
+                window_label=window_label, days_back=days_back, date_str=date_str,
+                now=now,
             )
-            # 키워드는 제목/상단에서 빼고 본문 최하단에 참고용으로만(숨김처리)
-            kw_footer = (
-                "\n\n────────────────────────────────\n"
-                f"ⓘ 검색조건(참고): 키워드 {kw_str}\n"
-            )
-            # 지역 미상 공고 — 보고 메일 하단에 '확인 필요' 섹션으로 함께 첨부(누락 방지, 사용자 정책 2026-06-19)
-            region_unknown_block = render_region_unknown(
-                ru_mail_items, limit=ru_limit, total_count=len(ru_items),
-            )
-            # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
-            feedback_block = _render_feedback_block(g_items)
-            subj_count = f"{len(g_items)}건" + (
-                f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""
-            )
+            voucher_items = _content["voucher_items"]
             # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
             _gid = str(group.get("id") or group.get("name") or "grp")
             _recips = guard_group_recipients(
                 group.get("recipients", []), settings, group.get("name"), group=group,
             )
-            _subject = f"[{group.get('name')}] {subj_count} ({date_str})"
-            _body = header + voucher_block + summary + region_unknown_block + feedback_block + kw_footer
+            _subject = _content["subject"]
+            _body = _content["body"]
             if effective_send and persist_seen:
                 deliver_with_outbox(
                     _subject, _body, _recips,

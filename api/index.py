@@ -1,11 +1,15 @@
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler
 import hmac
 import json
 import os
+import time
 from pathlib import Path
 
 RUNTIME_ROOT = Path("/tmp/monitor_ws")
 os.environ.setdefault("MAIL_VAR_DIR", str(RUNTIME_ROOT / "var"))
+
+KST = timezone(timedelta(hours=9))
 
 REQUIRED_ENV_KEYS = [
     "GMAIL_ADDRESS",
@@ -15,6 +19,28 @@ REQUIRED_ENV_KEYS = [
     "IMAP_HOST",
     "IMAP_PORT",
 ]
+
+
+def _build_mail_previews(result: dict) -> list[dict]:
+    """execute_monitor()의 preview_groups(build_previews=True일 때만 subject/text/html
+    포함)를 FE 계약(`group_id, group_name, subject, recipient_masked, notice_count, html,
+    text`)으로 옮긴다. 새 renderer를 만들지 않고 monitor.py가 만든 값만 그대로 옮긴다.
+    """
+    previews = []
+    for g in (result.get("preview_groups") or []):
+        if not isinstance(g, dict) or "subject" not in g:
+            continue  # include_previews 미요청 — 기존 legacy preview_groups만 있음
+        previews.append({
+            "group_id": g.get("group_id") or g.get("name"),
+            "group_name": g.get("name"),
+            "subject": g.get("subject"),
+            "recipient_masked": g.get("recipients_masked") or [],
+            "notice_count": g.get("matched_items", 0),
+            "html": g.get("html"),
+            "text": g.get("text"),
+            "generated_at": g.get("generated_at"),
+        })
+    return previews
 
 
 class handler(BaseHTTPRequestHandler):
@@ -75,6 +101,9 @@ class handler(BaseHTTPRequestHandler):
         allow_send = (dry_run is False) and confirm_send
         persist_seen = body.get("persist_seen", False) is True
         include_raw_all = body.get("include_raw_all", False) is True
+        # MAIL-029: /run 화면의 "그룹별 메일 미리보기" — dry-run에서만 명시 요청 시에만
+        # 실제 발송 경로와 동일한 subject/text/html을 만든다(기존 dry-run 호출자는 그대로).
+        include_previews = body.get("include_previews", False) is True
 
         if dry_run is False and not confirm_send:
             self._json(400, {
@@ -118,11 +147,16 @@ class handler(BaseHTTPRequestHandler):
             return
 
         try:
+            _t0 = time.monotonic()
             result = execute_monitor(
                 allow_send=allow_send,
                 include_raw_all=include_raw_all,
                 persist_seen=persist_seen,
+                build_previews=include_previews and not allow_send,
             )
+            result["processing_time_ms"] = int((time.monotonic() - _t0) * 1000)
+            result["generated_at"] = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S KST")
+            result["mail_previews"] = _build_mail_previews(result)
             self._json(200, {"ok": True, "result": result})
         except Exception as exc:
             self._json(500, {"ok": False, "error": str(exc)})

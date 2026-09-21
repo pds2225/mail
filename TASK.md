@@ -43,6 +43,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
+[~] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
 
 
 ---
@@ -2922,6 +2923,97 @@ REQUEST_SOLVED=NO — Risk 129~142 전체 근거 상태 확정 + Gold 오염 경
 
 ### DONE
 REQUEST_SOLVED=NO — Risk 143~154 전체 근거 상태 확정 + 복구/백업 E2E 후 YES.
+
+---
+
+## MAIL-029
+
+### 8-1. 사용자 원문 요청
+
+> 현재 `/run` dry-run 화면에 "실제로 발송될 이메일을 그룹별로 그대로 확인하는 메일 Preview 기능"을
+> 추가한다. 새 Preview 전용 메일 템플릿을 만들지 마라. 반드시 실제 발송 경로가 사용하는 기존 메일
+> 제목/본문/HTML renderer를 재사용해서 Preview와 실제 발송 결과가 동일한 구조가 되게 한다.
+
+### 8-2. 비개발자용 1줄 요약
+
+`/run`에서 미리보기를 실행하면, 실제로 나갈 메일과 똑같은 제목·표·HTML을 그룹별로 미리 볼 수 있다
+(실제 발송은 절대 하지 않는다).
+
+### 8-3. 사용자 최종 결과
+
+- `/run` 화면에서 "미리보기 실행"을 누르면: 실행 영역(Dry Run 명확 표시) → 실행 결과(수집/날짜대상/
+  최종추천 공고 수·처리 시간) → 그룹별 메일 미리보기 순서로 보인다.
+- 활성 그룹 목록이 표시되고 그룹을 선택하면: 그룹명, 마스킹된 수신자, 실제 발송 예정 제목, 공고 수,
+  생성 시각, HTML 보기/텍스트 보기 전환이 된다.
+- HTML 미리보기는 실제 Gmail 발송 메일이 쓰는 것과 동일한 8컬럼 표 renderer
+  (`mail_core/delivery/digest_table.py` + `monitor.py`의 실제 제목/본문 조립 경로)를 그대로 재사용한다.
+  Preview 전용 별도 렌더러는 만들지 않는다.
+- 모바일(390px/412px)에서도 그룹 선택, HTML/텍스트 전환, 8컬럼 표 가로 스크롤이 화면 밖으로 깨지지
+  않고 동작한다. 데스크톱 레이아웃도 그대로 유지된다.
+- Preview 실행은 항상 `dry_run=true`, `persist_seen=false`이며 실제 SMTP 발송·seen 저장·라벨 변경이
+  없다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-029
+- TASK_START_SHA: fbb473f9ba5a98c97628fb751580ffaf087cf2be (origin/main)
+- TASK_BLOB_SHA: 93dca891fba3750e894790c56cc8cc682ecc14d8
+- WORK_BRANCH: feat/mail-029-run-mail-preview
+- 실제 이메일 발송·삭제·라벨 변경 없음. 새 DB/새 외부 API 없음.
+
+### 8-5. MUST
+
+- [ ] `monitor.py`의 `execute_monitor()`에 opt-in 파라미터(`build_previews`, 기본 False)를 추가해,
+      요청 시에만 미리보기 그룹마다 실제 발송 경로와 동일한 제목/본문을 조립한다(기존 CI·헬스체크성
+      dry-run 호출은 비용·동작 변화 없이 그대로 유지).
+- [ ] 제목·본문 조립은 실제 발송(`if deliver:`) 경로와 **동일 함수**를 공유해서(중복 구현 금지),
+      Preview와 실제 발송이 항상 같은 문자열을 만든다.
+- [ ] HTML은 `mail_core/delivery/digest_table.py`의 `html_email_inner` + 실제 발송이 쓰는 동일한
+      HTML 래핑(`_build_mime_message`가 쓰는 것과 같은 함수)을 그대로 재사용한다.
+- [ ] `api/index.py`(`vercel.json`이 실제로 `/api/run`에 연결하는 파일 — `api/run.py`는 라우팅되지
+      않는 미사용 파일이므로 건드리지 않는다)에 `include_previews` 옵션을 추가해 dry-run일 때만
+      `build_previews=True`로 monitor를 호출하고, 응답에 `mail_previews`
+      (`group_id, group_name, subject, recipient_masked, notice_count, html, text`)와
+      `processing_time_ms`, `generated_at`을 추가한다.
+- [ ] 수신자는 `_mask_email`로 마스킹된 값만 API 응답에 포함한다(원문 이메일 절대 미노출).
+- [ ] `web/app/run/page.tsx`에 그룹 선택·HTML/텍스트 전환·8컬럼 표 가로스크롤을 모바일 390/412px
+      포함해서 추가한다. 기존 요약 카드(수집/날짜대상/최종추천/처리시간) 필드 매핑 버그(존재하지
+      않는 필드를 참조해 항상 "–"만 뜨던 문제)도 같이 맞춘다.
+- [ ] 실제 SMTP 발송·seen 저장·라벨 변경·이메일 삭제·Secret 출력 없음.
+
+### 8-6. KEEP
+
+- 기존 수집·매칭·발송 정책, `deliver`(실발송/초안) 경로의 실제 동작(subject/body 문자열 불변).
+- 기존 `/api/run` 요청 계약(`dry_run`, `confirm_send`, `persist_seen`, `include_raw_all`)과 인증 게이트.
+- `preview_groups`에 이미 있던 기존 필드(`matched_items`, `sample_titles` 등)는 그대로 유지.
+
+### 8-7. REMOVE
+
+없음.
+
+### 8-8. FORBIDDEN
+
+- 실제 SMTP 호출, 실제 이메일 발송, seen 상태 저장, 라벨 변경, 이메일 삭제.
+- Preview 전용 별도 메일 템플릿/렌더러 신규 작성.
+- Secret/API Key/Token 출력.
+- 실제 수신자 이메일 전체 노출, 개인정보 로그 출력.
+- Preview용 가짜 판정 데이터 생성.
+
+### 8-9. VERIFY
+
+- [ ] `python -m compileall .`
+- [ ] `python -m pytest`
+- [ ] `cd web && npx tsc --noEmit`
+- [ ] `cd web && npx next build`
+- [ ] Preview로 만든 subject/text/html이 실제 발송(`allow_send=True`) 경로가 만든 subject/body와
+      바이트 단위로 동일한지 회귀 테스트로 고정.
+- [ ] 공고 0/1/다건, 다중 그룹, 그룹 전환, HTML/Text 보기, 수신자 마스킹, SMTP 미호출,
+      `persist_seen=false`, `mail_sent=false` 시나리오 커버.
+
+### 8-10. DONE
+
+REQUEST_SOLVED=NO — 코드/테스트 작성 후 USER_E2E(웹에서 실제 미리보기 실행·그룹 선택·HTML/Text
+확인)까지 통과해야 YES로 바꾼다.
 
 ---
 
