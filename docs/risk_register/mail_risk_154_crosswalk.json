@@ -1,16 +1,16 @@
 {
   "summary": {
     "schema_version": 3,
-    "generated_at": "2026-09-20T19:53:00+09:00",
-    "audit_phase": "P0_EVIDENCE_PASS_V3",
+    "generated_at": "2026-09-23T00:00:00+09:00",
+    "audit_phase": "P0_EVIDENCE_PASS_V4_MAIL024",
     "repo": "pds2225/mail",
     "repo_main_sha": "4ab9791fc79a304bd6de7fccbac498db513dab71",
     "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 26,
-      "COVERED_BY_TASK": 128,
+      "ALREADY_DONE": 33,
+      "COVERED_BY_TASK": 121,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -29,18 +29,25 @@
       "상태관리": 12
     },
     "by_risk_level": {
-      "P0": 27,
       "P1": 107,
-      "P2": 20
+      "P2": 20,
+      "P0": 27
     },
     "warning": "ALREADY_DONE 26건은 코드/회귀 evidence를 직접 확인했다. COVERED_BY_TASK는 담당 TASK가 있지만 아직 gap/추가검증이 남아 있다.",
     "unresolved_by_risk_level": {
-      "P0": 13,
-      "P1": 95,
-      "P2": 20
+      "P1": 90,
+      "P2": 18,
+      "P0": 13
     },
     "verified_done_risk_nos": [
+      1,
+      4,
+      5,
+      8,
+      10,
       12,
+      14,
+      15,
       16,
       17,
       18,
@@ -79,7 +86,7 @@
       "impact": "실제 내용은 로그인·점검·캡차 화면",
       "risk_level": "P1",
       "recommended_response": "응답코드뿐 아니라 제목, 목록 노드, 레코드 수 검증",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -99,8 +106,8 @@
         "docs/project/TASKS.md",
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): mail_core/operations/notice_validity.py (TASK-031) — 로그인/오류/캡차 화면을 quarantine으로 분리",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 2,
@@ -160,7 +167,7 @@
       "impact": "첫 페이지 공고만 수집",
       "risk_level": "P1",
       "recommended_response": "마지막 페이지까지 수집 여부와 총건수 검증",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -174,8 +181,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py 각 fetcher의 max_pages 루프 (모든 사이트 pagination 구현됨)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 5,
@@ -185,7 +192,7 @@
       "impact": "동일 페이지 반복 호출",
       "risk_level": "P1",
       "recommended_response": "페이지별 콘텐츠 해시, 최대 페이지 제한",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -199,8 +206,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py 각 fetcher의 max_pages 안전 상한 (무한루프 방지 설계)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 6,
@@ -260,7 +267,7 @@
       "impact": "HTML에는 목록이 없음",
       "risk_level": "P1",
       "recommended_response": "정적 요청 실패 시에만 브라우저 수집 사용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -274,8 +281,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py FETCHERS의 pw_keit/pw_kiat/pw_thevc/pw_connectworks/pw_semas/pw_table (Playwright)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 9,
@@ -310,7 +317,7 @@
       "impact": "브라우저는 열리지만 크롤러 실패",
       "risk_level": "P2",
       "recommended_response": "리다이렉트 횟수, 최종 도메인, TLS 오류 기록",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -324,8 +331,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py _http_get/_soup 3단계 SSL 폴백(strict/no_verify/legacy) + follow_redirects=True",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 11,
@@ -412,7 +419,7 @@
       "impact": "폐쇄사이트를 계속 호출",
       "risk_level": "P2",
       "recommended_response": "최근 성공일·최근 신규건수 기준 자동 비활성 후보 지정",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -426,8 +433,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): MAIL-013(DONE) — 사이트 활성/비활성 변경이 실제 저장·유지됨",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 15,
@@ -437,7 +444,7 @@
       "impact": "전체 실행시간 증가",
       "risk_level": "P1",
       "recommended_response": "소스별 독립 타임아웃, 비동기 실행, 장애격리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-024"
@@ -451,8 +458,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py 모든 httpx 호출 timeout= 지정 + fetch_all의 per-source 격리",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 16,
@@ -477,8 +484,8 @@
         "monitor.py::fetch_all — each future exception is isolated and recorded without aborting remaining sources",
         "tests/test_mail014_p0_risk_regressions.py::test_fetch_all_isolates_one_source_failure"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): monitor.py fetch_all per-future try/except; tests/test_mail014_p0_risk_regressions.py::test_fetch_all_isolates_one_source_failure 통과",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",
@@ -513,8 +520,8 @@
         "mail_core/operations/run_lock.py::MonitorRunLock",
         "tests/test_p0_hardening.py::test_local_run_lock_allows_only_one_active_sender"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): mail_core/operations/run_lock.MonitorRunLock; tests/test_p0_hardening.py::test_local_run_lock_allows_only_one_active_sender 통과",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",
@@ -603,8 +610,8 @@
         "mail_core/security/net_guard.py::check_url",
         "tests/test_net_guard.py"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-024 evidence pass(2026-09-23): mail_core/security/net_guard.check_url/is_safe (SSRF 가드, 리다이렉트 재검사); tests/test_net_guard.py 13건 통과",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",
