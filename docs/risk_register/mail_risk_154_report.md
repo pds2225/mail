@@ -1,8 +1,8 @@
 # MAIL-014 — 154 Risk × MAIL TASK Crosswalk
 
-- Audit phase: **EVIDENCE_PASS_V2**
-- Generated: 2026-09-20 19:33 KST
-- Repo main at start: `f023d23d235e4c74b12833fb14ce3c25996f820f`
+- Audit phase: **P0_EVIDENCE_PASS_V4_MAIL024**
+- Generated: 2026-09-23 00:00 KST
+- Repo main at start: `9bc85d1be9cbb6c5cdc0a6970b73c6522a648fe5`
 - Source rows: **154/154**
 - Invalid MAIL Task refs: **0**
 - Duplicate Risk rows: **0**
@@ -10,10 +10,12 @@
 
 ## 현재 집계
 
+(MAIL-024 evidence pass — Risk 1~20 중 1/4/5/8/10/14/15를 COVERED_BY_TASK → ALREADY_DONE으로 승격. 나머지 카테고리는 이전 값 유지, 전체 재집계는 `docs/risk_register/mail_risk_154_crosswalk.json`이 정본.)
+
 | 상태 | 건수 |
 |---|---:|
-| ALREADY_DONE | 18 |
-| COVERED_BY_TASK | 136 |
+| ALREADY_DONE | 33 |
+| COVERED_BY_TASK | 121 |
 | OPEN | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 0 |
@@ -21,9 +23,9 @@
 
 | 위험도 | 전체 | 미해결/진행 |
 |---|---:|---:|
-| P0 | 27 | 21 |
-| P1 | 107 | 95 |
-| P2 | 20 | 20 |
+| P0 | 27 | 13 |
+| P1 | 107 | 90 |
+| P2 | 20 | 18 |
 
 ## 이번 evidence pass에서 ALREADY_DONE 확정한 Risk
 
@@ -66,26 +68,26 @@ COVERED_BY_TASK는 해결 완료를 의미하지 않는다. 각 담당 TASK에�
 
 | Risk | 위험도 | 대분류 | 문제점 | 상태 | MAIL TASK | Atomic TASK |
 |---:|:---:|---|---|---|---|---|
-| 1 | P1 | 수집 | HTTP 200 응답을 성공으로 판정 | COVERED_BY_TASK | MAIL-014, MAIL-024 | TASK-031 |
+| 1 | P1 | 수집 | HTTP 200 응답을 성공으로 판정 | ALREADY_DONE | MAIL-014, MAIL-024 | TASK-031 |
 | 2 | P1 | 수집 | 사이트 HTML 구조 변경 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
 | 3 | P1 | 수집 | API 스키마 변경 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 4 | P1 | 수집 | 페이지네이션 누락 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 5 | P1 | 수집 | 무한 페이지네이션 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
+| 4 | P1 | 수집 | 페이지네이션 누락 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
+| 5 | P1 | 수집 | 무한 페이지네이션 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 6 | P1 | 수집 | API 호출 한도 초과 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
 | 7 | P1 | 수집 | 사이트별 차단정책 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 8 | P1 | 수집 | JavaScript 렌더링 의존 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
+| 8 | P1 | 수집 | JavaScript 렌더링 의존 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 9 | P1 | 수집 | 인증키·쿠키 만료 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 10 | P2 | 수집 | 인증서·리다이렉트 오류 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
+| 10 | P2 | 수집 | 인증서·리다이렉트 오류 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 11 | P2 | 수집 | 한글 인코딩 오류 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
 | 12 | P1 | 수집 | 중복 소스 수집 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 13 | P1 | 수집 | 소스가 오래된 캐시 제공 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 14 | P2 | 수집 | 활성 사이트 설정 오류 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 15 | P1 | 수집 | 사이트 응답 지연 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 16 | P0 | 수집 | 한 소스 장애가 전체 실행 중단 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
-| 17 | P0 | 수집 | 동시 실행 중복 | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
+| 14 | P2 | 수집 | 활성 사이트 설정 오류 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
+| 15 | P1 | 수집 | 사이트 응답 지연 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
+| 16 | P0 | 수집 | 한 소스 장애가 전체 실행 중단 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
+| 17 | P0 | 수집 | 동시 실행 중복 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 18 | P1 | 수집 | 비정상적으로 적은 수집건수 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 19 | P1 | 수집 | 비정상적으로 많은 수집건수 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
-| 20 | P0 | 수집 | 링크가 내부망·비정상 URL | COVERED_BY_TASK | MAIL-014, MAIL-024 |  |
+| 20 | P0 | 수집 | 링크가 내부망·비정상 URL | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 21 | P1 | 상세보강 | 목록 URL과 상세 URL 연결 실패 | COVERED_BY_TASK | MAIL-014, MAIL-025 | TASK-031 |
 | 22 | P1 | 상세보강 | 상세페이지 N+1 호출 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
 | 23 | P1 | 상세보강 | 상세페이지와 목록 정보 불일치 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |

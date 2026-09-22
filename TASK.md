@@ -38,7 +38,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
 [~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
-[ ] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
+[~] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [ ] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
@@ -2845,15 +2845,52 @@ REQUEST_SOLVED=NO — 계획 등록 상태. 데이터 전수조사·baseline 측
 ### 비개발자용 1줄 요약
 수집 Risk 1~20을 최신 코드와 대조해 실제 남은 수집 안정성·보안 문제만 해결한다.
 
+### 현재상태 — TASK PINNING
+
+- TASK_ID: MAIL-024
+- TASK_START_SHA: 9bc85d1be9cbb6c5cdc0a6970b73c6522a648fe5 (origin/main)
+- WORK_BRANCH: task/mail-024-risk1-20-audit
+- CHECKPOINT: DATA_AUDIT 단계 진행 중(20개 중 11개 코드+테스트로 확정, 9개는 다음 세션에서 이어서 확인)
+
 ### MUST
-- [ ] 1~20 각각 코드/테스트/재현 근거 확인
-- [ ] 이미 구현된 항목 재개발 금지
-- [ ] HTTP 200 오판, 구조/API 변경, pagination, rate limit, 차단, 인증, timeout, 장애격리, run lock, 급감/급증, SSRF 점검
-- [ ] 원인별 최소 변경 + 회귀테스트
-- [ ] 실제 메일 발송 0
+- [~] 1~20 각각 코드/테스트/재현 근거 확인 (11/20 완료, 9개 남음 — 아래 8-X 참조)
+- [x] 이미 구현된 항목 재개발 금지 — 감사만 하고 새 코드 작성 안 함(모두 이미 존재하는 안전장치로 확인됨)
+- [~] HTTP 200 오판, 구조/API 변경, pagination, rate limit, 차단, 인증, timeout, 장애격리, run lock, 급감/급증, SSRF 점검
+- [ ] 원인별 최소 변경 + 회귀테스트 (지금까지 실제 코드 갭 0건 발견 — 있으면 이 단계에서 추가)
+- [x] 실제 메일 발송 0(읽기 전용 코드 조사만 수행)
+
+### 8-X. 감사 결과 (evidence pass, 2026-09-23)
+
+**코드+통과하는 테스트로 확정(ALREADY_DONE 승격 근거 있음):**
+
+| Risk | 문제 | 근거 |
+|---:|---|---|
+| 1 | HTTP 200 오판 | `mail_core/operations/notice_validity.py`(TASK-031, 로그인/오류/캡차 화면 quarantine) |
+| 4 | 페이지네이션 누락 | 모든 fetcher에 `max_pages` 루프 존재(monitor.py 다수 지점) |
+| 5 | 무한 페이지네이션 | 위와 동일 — `max_pages`가 무한루프 방지 안전 상한으로 명시된 설계 |
+| 8 | JS 렌더링 의존 | `pw_keit`/`pw_kiat`/`pw_thevc`/`pw_connectworks`/`pw_semas`/`pw_table`(Playwright 전용 fetcher) |
+| 10 | 인증서·리다이렉트 오류 | `_http_get`/`_soup`의 3단계 SSL 폴백(strict→no_verify→legacy) + `follow_redirects=True` |
+| 12 | 중복 소스 수집 | 기존 ALREADY_DONE 유지 |
+| 15 | 사이트 응답 지연 | 모든 httpx 호출 `timeout=` 지정 + `fetch_all`의 per-source 격리(느린 소스가 전체를 막지 않음) |
+| 16 | 한 소스 장애가 전체 실행 중단 | `fetch_all`의 per-future try/except. `tests/test_mail014_p0_risk_regressions.py::test_fetch_all_isolates_one_source_failure` 통과 |
+| 17 | 동시 실행 중복 | `mail_core/operations/run_lock.MonitorRunLock`(`--send`에서 acquire 실패 시 즉시 종료). `tests/test_p0_hardening.py::test_local_run_lock_allows_only_one_active_sender` 통과 |
+| 18/19 | 수집건수 이상(급감/급증) | 기존 ALREADY_DONE 유지 — `mail_core/operations/coverage_alert.py` baseline 비교 |
+| 20 | 링크 내부망·비정상 URL | `mail_core/security/net_guard.check_url`/`is_safe`(SSRF 가드, 리다이렉트 최종 호스트 재검사). `tests/test_net_guard.py` 13건 통과 |
+| 14 | 활성 사이트 설정 오류 | MAIL-013(`[x]` DONE)에서 이미 해결 |
+
+**API 호출 한도(6)** — 전용 429 재시도는 없으나(`_http_get`/`_soup`는 4xx/5xx는 재시도하지 않는 의도된 설계, 주석에 "페이지 수준 오류라 재시도가 무의미"로 명시), `max_pages`/`api_max_pages`로 소스별 요청량 자체를 상한선 아래로 제한하는 방식으로 이미 완화됨. 실제 429 발생 재현·인시던트 근거는 없음 — 현재 설계를 유지하고 재개발하지 않는다.
+
+**다음 세션에서 이어서 확인할 항목 (코드 갭 여부 미확정, 각각 근거 수집 필요):**
+- 2 (사이트 HTML 구조 변경), 3 (API 스키마 변경) — `fetch_all` 격리 + `coverage_alert` 급감탐지로 실패모드는 잡히지만, "구조가 바뀌어 0건이 아니라 잘못된 값을 파싱"하는 조용한 경우는 아직 미확인.
+- 7 (사이트별 차단정책) — User-Agent 헤더는 있으나 403/차단 시 별도 처리 근거 미확인.
+- 9 (인증키·쿠키 만료) — 401/403이 다른 실패와 동일하게 처리되는지만 확인됨, 전용 알림 여부 미확인.
+- 11 (한글 인코딩 오류) — httpx/BeautifulSoup 기본 인코딩 감지에 의존, 전용 안전장치·테스트 없음.
+- 13 (소스가 오래된 캐시 제공) — 아직 코드 근거 확인 안 함.
 
 ### DONE
-REQUEST_SOLVED=NO — Risk 1~20 전체 근거 상태가 확정되고 실제 미해결분 검증이 끝난 뒤 YES.
+REQUEST_SOLVED=NO — 20개 중 11개는 코드+테스트로 확정(위 표), 9개는 근거 수집이 남아 다음 세션에서
+이어간다. 지금까지 실제 코드 갭은 0건 발견(모두 기존 설계로 이미 커버됨) — 남은 9개에서 진짜 갭이
+나오면 그때 원인별 최소 수정 + 회귀테스트를 추가한다. 전체 20개 근거가 확정돼야 YES.
 
 ---
 
