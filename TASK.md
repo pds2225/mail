@@ -46,6 +46,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
 [x] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
 [ ] MAIL-031 | Vercel 웹 미리보기가 소스 230개 전체 수집으로 타임아웃 나는 것 — 해결 방향을 정한다
+[x] MAIL-032 | Windows에서 config/sites.json 읽기 테스트가 인코딩 때문에 실패하는 것을 고친다
 
 
 ---
@@ -3125,6 +3126,56 @@ REQUEST_SOLVED=YES — `Monitor import failed: No module named 'cryptography'` 5
 ### 8-4. DONE
 
 REQUEST_SOLVED=NO — 방향을 사용자와 정한 뒤 구현·검증해야 YES.
+
+---
+
+## MAIL-032
+
+### 8-1. 사용자 원문 요청
+
+> (MAIL-029 회귀 확인 중 발견) `tests/test_kstartup_collect_policy.py::test_sites_json_public_priority_caps`가
+> `config/sites.json`을 인코딩 지정 없이 `Path.read_text()`로 읽어, 이 Windows 환경 기본 로케일
+> (cp949)에서 `UnicodeDecodeError`로 실패한다. `config/sites.json`은 정상 UTF-8이며 이 테스트 코드의
+> 버그다.
+
+### 8-2. 비개발자용 1줄 요약
+
+테스트 코드 한 줄이 파일을 읽을 때 "UTF-8로 읽어라"라고 명시하지 않아서, 한국어 Windows에서만
+엉뚱하게 실패하던 것을 고친다.
+
+### 8-3. 최종 결과
+
+- `python -m pytest tests/test_kstartup_collect_policy.py`가 Windows(cp949 로케일)에서도 통과한다.
+- 다른 파일·동작은 건드리지 않는다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-032
+- TASK_START_SHA: 57facd33d5fda40e5d3356d30dd0365533e72914 (origin/main)
+- WORK_BRANCH: fix/mail-032-kstartup-test-utf8
+
+### 8-5. MUST
+
+- [x] `tests/test_kstartup_collect_policy.py`의 `read_text()` 호출에 `encoding="utf-8"`을 명시한다.
+
+### 8-6. KEEP
+
+- 테스트가 검증하는 내용(`max_pages_public`/`max_pages_private` 값)은 그대로.
+- `config/sites.json` 파일 자체는 수정하지 않는다.
+
+### 8-7. FORBIDDEN
+
+- 관련 없는 다른 테스트·파일 수정.
+
+### 8-8. VERIFY
+
+- [x] `python -m pytest tests/test_kstartup_collect_policy.py` — 7 passed
+- [x] `python -m compileall .`
+
+### 8-9. DONE
+
+REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 정확히 읽어 테스트가
+통과한다.
 
 ---
 
