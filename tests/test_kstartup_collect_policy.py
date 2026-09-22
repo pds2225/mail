@@ -79,7 +79,7 @@ def test_merge_unique_dedups_across_classes():
 
 def test_sites_json_public_priority_caps():
     import json
-    sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text())}
+    sites = {s["id"]: s for s in json.loads((ROOT / "config/sites.json").read_text(encoding="utf-8"))}
     ks = sites["kstartup"]
     assert int(ks["max_pages_public"]) >= 200
     assert int(ks["max_pages_private"]) >= 100
