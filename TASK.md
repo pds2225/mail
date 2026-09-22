@@ -44,6 +44,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
+[~] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
 
 
 ---
@@ -3022,6 +3023,66 @@ REQUEST_SOLVED=NO — Risk 143~154 전체 근거 상태 확정 + 복구/백업 E
 REQUEST_SOLVED=YES — PR #345 병합됨(origin/main `4688e48f`). `/run`에서 미리보기 실행 → 그룹 선택 →
 실제 발송 예정 제목 → 실제 발송과 동일 renderer의 HTML/Text 메일 확인까지 실제 브라우저로 검증했다.
 SMTP 미호출·`mail_sent=false`·`persist_seen=false` 확인됨.
+
+---
+
+## MAIL-030
+
+### 8-1. 사용자 원문 요청
+
+> (MAIL-029 실사용 검증 중 발견) 실제 배포된 `https://mail-cyan-sigma.vercel.app/run`에서 "미리보기
+> 실행"을 누르면 `Monitor import failed: No module named 'cryptography'` 500 에러가 뜬다.
+
+### 8-2. 비개발자용 1줄 요약
+
+Vercel에 배포된 실제 웹사이트에서 `/run` 미리보기 버튼을 누르면 필수 부품(cryptography) 하나가
+설치 목록에서 빠져 있어서 에러가 나던 것을 고친다.
+
+### 8-3. 최종 결과
+
+- `https://mail-cyan-sigma.vercel.app/run`에서 "미리보기 실행"을 누르면 500 에러 없이 정상적으로
+  수집·판정 결과와 그룹별 메일 미리보기(MAIL-029)가 뜬다.
+
+### 8-4. 현재상태
+
+- TASK_ID: MAIL-030
+- TASK_START_SHA: f8e35db331dda57bcb39a92870a624456c229038 (origin/main)
+- WORK_BRANCH: fix/mail-030-vercel-cryptography-dep
+- 원인: `monitor.py` → `mail_core.security.private_config` → `mail_core.storage.secure_store`가
+  `cryptography.fernet.Fernet`을 무조건 import한다(그룹/설정/워치리스트 private payload 암호화용).
+  루트 `requirements.txt`에는 `cryptography>=42.0.0`이 있지만, Vercel Python 서버리스 함수 전용
+  `api/requirements.txt`에는 빠져 있어 `import monitor` 자체가 실패한다.
+
+### 8-5. MUST
+
+- [ ] `api/requirements.txt`에 `cryptography>=42.0.0`(루트 `requirements.txt`와 동일 버전 제약)을
+      추가한다.
+- [ ] 다른 미싱 의존성이 없는지 `monitor.py`의 import 체인(특히 `private_config`/`secure_store`/
+      `outbox`/`net_guard`)을 확인한다.
+
+### 8-6. KEEP
+
+- `api/requirements.txt`의 기존 3개 패키지(httpx, beautifulsoup4, anthropic)는 그대로 유지.
+- 암호화 로직·private payload 동작 자체는 변경하지 않는다(설치 목록만 보정).
+
+### 8-7. FORBIDDEN
+
+- 원인 파악 없이 추측성 의존성 대량 추가.
+- 암호화 로직·키 관리 방식 변경.
+- Secret 출력.
+
+### 8-8. VERIFY
+
+- [ ] `python -m compileall .`
+- [ ] `python -c "import monitor"` (로컬에서는 이미 cryptography가 있어 항상 성공 — Vercel 배포
+      후 실제 재현으로 검증한다)
+- [ ] Vercel 배포 후 실제 `https://mail-cyan-sigma.vercel.app/run`에서 "미리보기 실행" → 500 에러
+      없이 정상 응답(USER_E2E, 실제 브라우저)
+
+### 8-9. DONE
+
+REQUEST_SOLVED=NO — PR 병합 + Vercel 재배포 후 실제 프로덕션에서 500 에러 없이 미리보기가 동작하는
+것을 확인하면 YES로 바꾼다.
 
 ---
 
