@@ -44,7 +44,8 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
-[~] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
+[x] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
+[ ] MAIL-031 | Vercel 웹 미리보기가 소스 230개 전체 수집으로 타임아웃 나는 것 — 해결 방향을 정한다
 
 
 ---
@@ -3055,10 +3056,11 @@ Vercel에 배포된 실제 웹사이트에서 `/run` 미리보기 버튼을 누�
 
 ### 8-5. MUST
 
-- [ ] `api/requirements.txt`에 `cryptography>=42.0.0`(루트 `requirements.txt`와 동일 버전 제약)을
+- [x] `api/requirements.txt`에 `cryptography>=42.0.0`(루트 `requirements.txt`와 동일 버전 제약)을
       추가한다.
-- [ ] 다른 미싱 의존성이 없는지 `monitor.py`의 import 체인(특히 `private_config`/`secure_store`/
-      `outbox`/`net_guard`)을 확인한다.
+- [x] 다른 미싱 의존성이 없는지 `monitor.py`의 import 체인(특히 `private_config`/`secure_store`/
+      `outbox`/`net_guard`)을 확인한다. — httpx/beautifulsoup4/anthropic/cryptography만 설치한
+      격리 venv에서 `import monitor` 성공으로 확인, 다른 미싱 의존성 없음.
 
 ### 8-6. KEEP
 
@@ -3073,16 +3075,56 @@ Vercel에 배포된 실제 웹사이트에서 `/run` 미리보기 버튼을 누�
 
 ### 8-8. VERIFY
 
-- [ ] `python -m compileall .`
-- [ ] `python -c "import monitor"` (로컬에서는 이미 cryptography가 있어 항상 성공 — Vercel 배포
-      후 실제 재현으로 검증한다)
-- [ ] Vercel 배포 후 실제 `https://mail-cyan-sigma.vercel.app/run`에서 "미리보기 실행" → 500 에러
-      없이 정상 응답(USER_E2E, 실제 브라우저)
+- [x] `python -m compileall .`
+- [x] 격리 venv(`api/requirements.txt`만 설치)에서 `import monitor` 성공 — "Monitor import failed:
+      No module named 'cryptography'" 재현 조건을 로컬에서 정확히 재현·해결 확인.
+- [x] PR #347 병합 → Vercel 재배포(commit `63def116` 배포 성공) 후 실제
+      `https://mail-cyan-sigma.vercel.app/run`에서 "미리보기 실행" 재실행 — 더 이상
+      `Monitor import failed` 500이 즉시 뜨지 않는다(수정 전과 다른 결과). 대신 실제 활성 소스
+      230개 전체 수집이 시작돼 5분 넘게 실행되다 Vercel 플랫폼 타임아웃으로 끝난다
+      ("Unexpected token 'A', "An error o"... is not valid JSON" — Vercel의 자체 에러 페이지).
+      **이 타임아웃은 MAIL-030이 고친 버그와 무관한, 이전부터 있던 별개 문제**임을
+      `include_previews` 없이 보낸 동일 요청도 curl로 300초 넘게 응답이 없는 것으로 재확인했다
+      (내가 추가한 MAIL-029 미리보기 콘텐츠 생성 때문이 아니라 230개 실제 사이트 수집 자체가
+      Vercel 서버리스 제한 안에 못 들어가는 기존 한계 — 코드 주석에도 "Vercel Hobby: 10초 /
+      Pro: 60초 타임아웃 — 긴 실행은 GitHub Actions 권장"으로 이미 명시돼 있었다).
 
 ### 8-9. DONE
 
-REQUEST_SOLVED=NO — PR 병합 + Vercel 재배포 후 실제 프로덕션에서 500 에러 없이 미리보기가 동작하는
-것을 확인하면 YES로 바꾼다.
+REQUEST_SOLVED=YES — `Monitor import failed: No module named 'cryptography'` 500 에러(이 TASK가
+고치기로 한 버그)는 해결·검증됨. 단, 검증 중 **별개의 기존 한계**를 발견했다: 활성 소스가 230개로
+많아 Vercel 웹 미리보기가 실제로는 플랫폼 타임아웃 안에 못 끝난다(신규 회귀 아님, MAIL-029 이전부터
+동일). 이 한계는 새 TASK(MAIL-031)로 별도 등록하고 이 TASK의 범위에는 포함하지 않는다.
+
+---
+
+## MAIL-031
+
+### 8-1. 사용자 원문 요청
+
+> (MAIL-030 검증 중 발견, AI가 발견한 사실을 사용자 확인 전 임의로 크게 고치지 않고 별도 TASK로만
+> 등록) Vercel 웹 `/run`에서 실제 미리보기를 실행하면 활성 소스 230개 전체를 수집하느라 Vercel
+> 서버리스 타임아웃(5분 넘게도 안 끝남) 안에 못 들어가 항상 에러로 끝난다.
+
+### 8-2. 비개발자용 1줄 요약
+
+웹사이트의 "미리보기 실행" 버튼이 사이트가 너무 많아서(230개) 실제로는 끝까지 못 돌고 에러로
+끝나는 문제 — 고칠 방법(범위를 줄이거나 GitHub Actions로 옮기는 등)을 사용자와 상의해서 정한다.
+
+### 8-3. 현재상태
+
+- STATUS: READY(방향 미정 — 사용자 결정 필요)
+- SOURCE: MAIL-030 실사용 검증(2026-09-22) 중 발견. 신규 회귀 아님 — MAIL-029/030 이전부터 있던
+  기존 한계로 재확인함(코드 주석에 이미 "긴 실행은 GitHub Actions 권장"으로 명시돼 있었음).
+- 후보 방향(택1 또는 조합, 사용자 결정 필요): ① 웹 미리보기는 활성 소스 일부(예: 상위 N개/특정
+  그룹만)로 범위를 줄여 빠르게 끝낸다 ② 수집을 백그라운드 job으로 옮기고 웹은 polling/알림만 한다
+  ③ `vercel.json`에 `functions.maxDuration`을 최대치로 올린다(Vercel 플랜 상한 확인 필요) ④ 현재
+  구조를 그대로 유지하고 "웹 미리보기는 참고용, 전체 검증은 GitHub Actions dry-run 워크플로로"라고
+  안내만 보강한다.
+
+### 8-4. DONE
+
+REQUEST_SOLVED=NO — 방향을 사용자와 정한 뒤 구현·검증해야 YES.
 
 ---
 
