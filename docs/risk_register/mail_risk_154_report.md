@@ -1,8 +1,8 @@
 # MAIL-014 — 154 Risk × MAIL TASK Crosswalk
 
-- Audit phase: **P0_EVIDENCE_PASS_V4_MAIL024**
-- Generated: 2026-09-23 00:00 KST
-- Repo main at start: `9bc85d1be9cbb6c5cdc0a6970b73c6522a648fe5`
+- Audit phase: **P0_EVIDENCE_PASS_V5_MAIL025**
+- Generated: 2026-09-23 01:00 KST
+- Repo main at start: `81bb9bfd36bf14fe09d4c029e3f7ae1d1de7e670`
 - Source rows: **154/154**
 - Invalid MAIL Task refs: **0**
 - Duplicate Risk rows: **0**
@@ -10,12 +10,12 @@
 
 ## 현재 집계
 
-(MAIL-024 evidence pass — Risk 1~20 중 1/4/5/8/10/14/15를 COVERED_BY_TASK → ALREADY_DONE으로 승격. 나머지 카테고리는 이전 값 유지, 전체 재집계는 `docs/risk_register/mail_risk_154_crosswalk.json`이 정본.)
+(MAIL-024: Risk 1~20 중 1/4/5/8/10/14/15 승격. MAIL-025: Risk 21~34 중 21/22/27/28/29/31/34를 COVERED_BY_TASK → ALREADY_DONE으로 승격. 전체 재집계는 `docs/risk_register/mail_risk_154_crosswalk.json`이 정본.)
 
 | 상태 | 건수 |
 |---|---:|
-| ALREADY_DONE | 33 |
-| COVERED_BY_TASK | 121 |
+| ALREADY_DONE | 40 |
+| COVERED_BY_TASK | 114 |
 | OPEN | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 0 |
@@ -23,9 +23,9 @@
 
 | 위험도 | 전체 | 미해결/진행 |
 |---|---:|---:|
-| P0 | 27 | 13 |
-| P1 | 107 | 90 |
-| P2 | 20 | 18 |
+| P0 | 27 | 11 |
+| P1 | 107 | 86 |
+| P2 | 20 | 17 |
 
 ## 이번 evidence pass에서 ALREADY_DONE 확정한 Risk
 
@@ -88,20 +88,20 @@ COVERED_BY_TASK는 해결 완료를 의미하지 않는다. 각 담당 TASK에�
 | 18 | P1 | 수집 | 비정상적으로 적은 수집건수 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 19 | P1 | 수집 | 비정상적으로 많은 수집건수 | ALREADY_DONE | MAIL-014, MAIL-024 |  |
 | 20 | P0 | 수집 | 링크가 내부망·비정상 URL | ALREADY_DONE | MAIL-014, MAIL-024 |  |
-| 21 | P1 | 상세보강 | 목록 URL과 상세 URL 연결 실패 | COVERED_BY_TASK | MAIL-014, MAIL-025 | TASK-031 |
-| 22 | P1 | 상세보강 | 상세페이지 N+1 호출 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
+| 21 | P1 | 상세보강 | 목록 URL과 상세 URL 연결 실패 | ALREADY_DONE | MAIL-014, MAIL-025 | TASK-031 |
+| 22 | P1 | 상세보강 | 상세페이지 N+1 호출 | ALREADY_DONE | MAIL-014, MAIL-025 |  |
 | 23 | P1 | 상세보강 | 상세페이지와 목록 정보 불일치 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
 | 24 | P1 | 상세보강 | 첨부파일에만 핵심정보 존재 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
 | 25 | P1 | 상세보강 | 이미지형 공고문 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
 | 26 | P2 | 상세보강 | 압축파일·암호파일 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
-| 27 | P0 | 상세보강 | 악성 첨부파일 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
-| 28 | P0 | 상세보강 | ZIP Bomb | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
-| 29 | P1 | 상세보강 | 상세페이지 접근 시 세션 필요 | COVERED_BY_TASK | MAIL-014, MAIL-025 | TASK-031 |
+| 27 | P0 | 상세보강 | 악성 첨부파일 | ALREADY_DONE | MAIL-014, MAIL-025 |  |
+| 28 | P0 | 상세보강 | ZIP Bomb | ALREADY_DONE | MAIL-014, MAIL-025 |  |
+| 29 | P1 | 상세보강 | 상세페이지 접근 시 세션 필요 | ALREADY_DONE | MAIL-014, MAIL-025 | TASK-031 |
 | 30 | P1 | 상세보강 | 공고내용 일부만 접혀 있음 | COVERED_BY_TASK | MAIL-014, MAIL-025 | TASK-031 |
-| 31 | P1 | 상세보강 | HTML 태그 제거 과정에서 의미 손실 | COVERED_BY_TASK | MAIL-014, MAIL-025 | TASK-031 |
+| 31 | P1 | 상세보강 | HTML 태그 제거 과정에서 의미 손실 | ALREADY_DONE | MAIL-014, MAIL-025 | TASK-031 |
 | 32 | P1 | 상세보강 | 원문 수정 후 캐시가 유지됨 | ALREADY_DONE | MAIL-014, MAIL-025 | TASK-031, TASK-023 |
 | 33 | P1 | 상세보강 | 상세보강 실패를 빈 값으로 저장 | ALREADY_DONE | MAIL-014, MAIL-025 | TASK-031 |
-| 34 | P2 | 상세보강 | 재시도 폭주 | COVERED_BY_TASK | MAIL-014, MAIL-025 |  |
+| 34 | P2 | 상세보강 | 재시도 폭주 | ALREADY_DONE | MAIL-014, MAIL-025 |  |
 | 35 | P1 | 날짜필터 | 서버 타임존이 UTC | COVERED_BY_TASK | MAIL-014 | TASK-021, TASK-025 |
 | 36 | P1 | 날짜필터 | 공휴일 데이터 누락 | COVERED_BY_TASK | MAIL-014 | TASK-021, TASK-025 |
 | 37 | P1 | 날짜필터 | 게시일과 등록일 혼동 | COVERED_BY_TASK | MAIL-014 | TASK-021, TASK-025 |
