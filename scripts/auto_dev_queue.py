@@ -2,7 +2,7 @@
 
 기능:
 1. Preflight Check (필수 파일, 구조, 안전규칙 확인)
-2. TASKS.md에서 다음 PENDING TASK 1개 선택
+2. 루트 TASK.md가 READY/ACTIVE인 [ROOT=MAIL-xxx] 파생 PENDING TASK 1개 선택
 3. loops.json 기준으로 루프 타입·5요소 결정
 4. loop_verify 게이트 실행 (종료 조건)
 5. 에이전트 슬롯 없으면 AWAITING_AGENT (PENDING 유지) — 허위 DONE 금지
@@ -31,6 +31,7 @@ from pathlib import Path
 KST = timezone(timedelta(hours=9))
 ROOT = Path(__file__).resolve().parent.parent
 TASKS_PATH = ROOT / "docs" / "project" / "TASKS.md"
+ROOT_TASK_PATH = ROOT / "TASK.md"
 STATE_PATH = ROOT / "var" / "state" / "auto_dev_state.json"
 DONE_PATH = ROOT / "docs" / "project" / "done_tasks.md"
 FAILED_PATH = ROOT / "docs" / "project" / "failed_tasks.md"
@@ -142,6 +143,28 @@ def extract_task_info(task_line: str) -> tuple[str, str]:
     return "", task_line
 
 
+def parse_root_task_states(text: str) -> dict[str, str]:
+    """Return MAIL task states from the root TASK.md SSOT."""
+    states: dict[str, str] = {}
+    for line in text.splitlines():
+        m = re.match(r"^\[([ ~x!\-])\]\s+(MAIL-\d+)\s+\|", line.strip())
+        if m:
+            states[m.group(2)] = m.group(1)
+    return states
+
+
+def queue_root_task_id(task_line: str) -> str:
+    """Read the mandatory [ROOT=MAIL-xxx] parent marker from a derived queue row."""
+    m = re.search(r"\[ROOT=(MAIL-\d+)\]", task_line)
+    return m.group(1) if m else ""
+
+
+def queue_task_is_executable(task_line: str, root_states: dict[str, str]) -> bool:
+    """Derived queue rows execute only while their root TASK is READY/ACTIVE."""
+    root_id = queue_root_task_id(task_line)
+    return bool(root_id and root_states.get(root_id) in {" ", "~"})
+
+
 def move_task(content: str, task_line: str, from_section: str, to_section: str) -> str:
     """TASKS.md 내용에서 task를 from → to 섹션으로 이동"""
     lines = content.splitlines()
@@ -231,8 +254,11 @@ def preflight_check() -> list[str]:
     issues: list[str] = []
 
     # 1. 필수 파일 존재 여부
+    if not ROOT_TASK_PATH.exists():
+        issues.append("루트 TASK.md SSOT 파일이 없습니다")
+        return issues
     if not TASKS_PATH.exists():
-        issues.append("TASKS.md 파일이 없습니다")
+        issues.append("파생 TASKS.md 큐 파일이 없습니다")
         return issues
 
     # 2. TASKS.md 구조 확인
@@ -447,7 +473,13 @@ def main() -> int:
     content = TASKS_PATH.read_text(encoding="utf-8")
     sections = parse_tasks(content)
 
-    pending = sections.get("PENDING", [])
+    pending_all = sections.get("PENDING", [])
+    root_task_text = ROOT_TASK_PATH.read_text(encoding="utf-8")
+    root_states = parse_root_task_states(root_task_text)
+    pending = [row for row in pending_all if queue_task_is_executable(row, root_states)]
+    ignored = [row for row in pending_all if row not in pending]
+    if ignored:
+        log(f"  ℹ️ 파생 큐 {len(ignored)}건 실행 제외 — ROOT 없음 또는 루트 TASK가 READY/ACTIVE 아님")
     if not pending:
         task_md_ready: list[str] = []
         task_md_path = ROOT / "TASK.md"
