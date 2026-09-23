@@ -441,7 +441,9 @@ def insert_pending_task(content: str, task_line: str) -> str:
 def create_fix_task(content: str, parent_id: str, parent_title: str, reason: str) -> tuple[str, str]:
     sections = parse_tasks(content)
     fix_id = next_task_id(sections)
-    title = f"loop:gate-repair FIX {parent_id} — {reason[:80]}"
+    root_id = queue_root_task_id(parent_title)
+    root_prefix = f"[ROOT={root_id}] " if root_id else ""
+    title = f"{root_prefix}loop:gate-repair FIX {parent_id} — {reason[:80]}"
     task_line = f"- {fix_id}: {title}"
     return insert_pending_task(content, task_line), fix_id
 
