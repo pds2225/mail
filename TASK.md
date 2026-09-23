@@ -1,6 +1,8 @@
 # mail
 
-> 이 파일은 이 GitHub 레포의 유일한 AI 작업지시 기준이다.
+> 이 파일은 이 GitHub 레포의 유일한 개발 작업 SSOT다. 공식 기준은 `origin/main:TASK.md`다.
+> `docs/project/TASKS.md`는 Auto Dev 실행용 파생 큐이며 독립 작업 원본이 아니다.
+> Dashboard·RESUME·HANDOFF·실행로그·외부 미러는 파생정보이며 TASK 상태·우선순위를 덮어쓸 수 없다.
 > Google Tasks와는 완전히 별개이며 Google Tasks의 항목을 조회·복사·동기화하지 않는다.
 
 ---
@@ -47,6 +49,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
 [x] MAIL-031 | Vercel 웹 미리보기가 소스 230개 전체 수집으로 타임아웃 나는 것 — 해결 방향을 정한다
 [x] MAIL-032 | Windows에서 config/sites.json 읽기 테스트가 인코딩 때문에 실패하는 것을 고친다
+[x] MAIL-033 | TASK.md를 단일 작업 SSOT로 고정하고 Auto Dev Queue를 파생 실행 큐로 제한한다
 
 
 ---
@@ -61,7 +64,9 @@ REMOTE: https://github.com/pds2225/mail
 
 실행 기준은 이 파일 하나뿐이다.
 
-- `TASK.md`만 작업지시 파일로 사용한다.
+- `origin/main:TASK.md`만 작업지시·상태·우선순위의 공식 SSOT로 사용한다. 작업 브랜치의 TASK 변경은 main 머지 후 공식화된다.
+- 세션/자동개발 시작 시 `git fetch origin --prune` 후 `origin/main:TASK.md`를 먼저 읽는다.
+- `docs/project/TASKS.md`는 루트 TASK를 실행 단위로 분해한 파생 큐만 허용한다. 모든 PENDING/RUNNING 행은 `[ROOT=MAIL-xxx]` 부모가 있어야 하며 부모가 `[ ]` 또는 `[~]`일 때만 실행 가능하다.
 - 별도의 CURRENT_TASK.md / NEW_TASK.md를 만들지 않는다.
 - NEXT_TASK.md, 다른 레포 TASK, Google Tasks, 과거 채팅 내용을 임의 실행하지 않는다.
 - 사용자의 새 요청은 이 TASK.md에 새로운 TASK 항목으로 등록한다.
@@ -90,7 +95,7 @@ Google Tasks는 이 개발 TASK 시스템과 무관하다.
 
 작업 시작 전 반드시:
 
-1. `git fetch --all --prune`
+1. `git fetch origin --prune`
 2. `git remote get-url origin` — 이 파일 `# 1. REPOSITORY`의 REPO와 일치하는지 확인
 3. `git branch --show-current`
 4. `git status --short`
@@ -372,6 +377,40 @@ TASK별로 더 강한 안전조건을 추가할 수는 있지만, 사용자의 �
 ---
 
 # 8. TASK DETAILS
+
+## MAIL-033
+
+### 8-1. 사용자 원문 요청
+v_up walk mail marketgate도 TASK.md 단일 SSOT로 통일해
+
+### 8-2. 비개발자용 1줄 요약
+루트 `origin/main:TASK.md`만 진짜 할 일 원장으로 쓰고 Auto Dev의 `docs/project/TASKS.md`는 그 일을 실행용으로 쪼갠 파생 큐로만 사용한다.
+
+### 8-3. 사용자가 원하는 최종 결과
+새 작업·우선순위·완료 상태는 루트 TASK.md에서만 결정되고, Auto Dev Queue가 독립적으로 오래된 일을 다시 실행하지 않는다.
+
+### 8-5. MUST — 반드시 구현
+- 공식 작업 SSOT = `origin/main:TASK.md`
+- 시작 순서 = `git fetch origin --prune` → TASK.md 확인
+- 파생 큐 PENDING/RUNNING = 반드시 `[ROOT=MAIL-xxx]` 부모 표기
+- 부모 루트 TASK가 READY/ACTIVE(`[ ]`/`[~]`)일 때만 파생 큐 실행
+- 야간 readiness는 루트 TASK READY/ACTIVE만 작업 유무 판단에 사용
+
+### 8-8. FORBIDDEN — 금지
+- `docs/project/TASKS.md`에서 독립 신규 개발과제 생성
+- 루트에서 DONE/BLOCKED/CANCELLED인 TASK를 파생 큐가 실행
+- Dashboard/로그/큐가 루트 TASK 상태를 덮어씀
+- 보조 remote 문제 때문에 `git fetch --all`로 전체 시작 차단
+
+### 8-15. VERIFY
+- MAIL-012가 DONE인 동안 연결된 legacy TASK-020은 실행대상에서 제외
+- MAIL-014가 ACTIVE인 동안 ROOT=MAIL-014 파생 큐만 실행 가능
+- ROOT 표기가 없는 파생 큐는 fail-closed로 실행 제외
+- 기존 Auto Dev parser/loop helper 회귀 없음
+
+### 8-16. DONE
+REQUEST_SOLVED=YES
+
 
 <!--
 TASK LIST 한 줄 요약과 아래 상세 TASK는 TASK_ID로 연결한다.
