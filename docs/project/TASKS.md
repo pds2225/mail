@@ -1,8 +1,10 @@
 ﻿# Auto Dev Queue — TASKS
 
-> 이 파일은 자동개발 큐의 작업 목록입니다.
-> `scripts/auto_dev_queue.py`가 순차적으로 처리합니다.
-> 1회 실행 시 PENDING 목록에서 1개만 처리합니다.
+> 이 파일은 루트 `origin/main:TASK.md`에서 승인된 작업을 실행 단위로 분해한 **파생 Auto Dev Queue**입니다.
+> 작업의 생성·우선순위·완료 상태 SSOT는 루트 `TASK.md` 하나이며, 이 파일은 독립 작업 원본이 아닙니다.
+> `scripts/auto_dev_queue.py`가 순차적으로 처리하되 PENDING/RUNNING 행은 반드시 `[ROOT=MAIL-xxx]` 부모를 가져야 합니다.
+> 부모 루트 TASK가 READY/ACTIVE(`[ ]`/`[~]`)가 아니거나 ROOT 표기가 없으면 실행하지 않습니다.
+> 1회 실행 시 실행 가능한 PENDING 목록에서 1개만 처리합니다.
 
 ## META (하이브리드 계약 2026-07-30 — 누락제로 가드레일)
 
@@ -15,19 +17,19 @@
 - 의존 TASK가 DONE이 아니면 구현하지 않고 BLOCKED 처리한다. P0가 DONE 또는 근거 있는 BLOCKED가 되기 전 P1을 시작하지 않는다.
 
 ## PENDING
-- TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-033: loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-034: loop:coding-fix MAIL-P1A-04 [P1] 지역 자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-035: loop:coding-fix MAIL-P1A-05 [P1] 기업 기본자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-036: loop:coding-fix MAIL-P1A-06 [P1] Hard Gate 조합·우선순위 — DEPENDS=TASK-032~035 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-037: loop:coding-fix MAIL-P1A-07 [P1] Hard/Soft Exclusion 분리 — DEPENDS=TASK-036 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-038: loop:coding-fix MAIL-P1B-01 [P1] 관련성 점수 엔진 — DEPENDS=TASK-037 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-039: loop:coding-fix MAIL-P1B-02 [P1] 문서구역·동의어 기반 매칭 — DEPENDS=TASK-038 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-040: loop:coding-fix MAIL-P1B-03 [P1] 기업별 추가 적합성 판정 — DEPENDS=TASK-038~039 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-041: loop:coding-fix MAIL-P1B-04 [P1] 버킷·신뢰도 결합 — DEPENDS=TASK-040 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-042: loop:coding-fix MAIL-P1C-01 [P1] 사실필드 직접출력 — DEPENDS=TASK-041 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-043: loop:coding-fix MAIL-P1C-02 [P1] 구조화 출력·fallback — DEPENDS=TASK-042 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
-- TASK-044: loop:coding-fix MAIL-P1C-03 [P1] 통합 회귀·dry-run — DEPENDS=TASK-037,TASK-041,TASK-043 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-020: [ROOT=MAIL-012] user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
+- TASK-033: [ROOT=MAIL-014] loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-034: [ROOT=MAIL-014] loop:coding-fix MAIL-P1A-04 [P1] 지역 자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-035: [ROOT=MAIL-014] loop:coding-fix MAIL-P1A-05 [P1] 기업 기본자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-036: [ROOT=MAIL-014] loop:coding-fix MAIL-P1A-06 [P1] Hard Gate 조합·우선순위 — DEPENDS=TASK-032~035 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-037: [ROOT=MAIL-014] loop:coding-fix MAIL-P1A-07 [P1] Hard/Soft Exclusion 분리 — DEPENDS=TASK-036 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-038: [ROOT=MAIL-014] loop:coding-fix MAIL-P1B-01 [P1] 관련성 점수 엔진 — DEPENDS=TASK-037 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-039: [ROOT=MAIL-014] loop:coding-fix MAIL-P1B-02 [P1] 문서구역·동의어 기반 매칭 — DEPENDS=TASK-038 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-040: [ROOT=MAIL-014] loop:coding-fix MAIL-P1B-03 [P1] 기업별 추가 적합성 판정 — DEPENDS=TASK-038~039 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-041: [ROOT=MAIL-014] loop:coding-fix MAIL-P1B-04 [P1] 버킷·신뢰도 결합 — DEPENDS=TASK-040 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-042: [ROOT=MAIL-014] loop:coding-fix MAIL-P1C-01 [P1] 사실필드 직접출력 — DEPENDS=TASK-041 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-043: [ROOT=MAIL-014] loop:coding-fix MAIL-P1C-02 [P1] 구조화 출력·fallback — DEPENDS=TASK-042 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
+- TASK-044: [ROOT=MAIL-014] loop:coding-fix MAIL-P1C-03 [P1] 통합 회귀·dry-run — DEPENDS=TASK-037,TASK-041,TASK-043 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 
 ## RUNNING
 
