@@ -71,7 +71,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 | `auto_dev/human_gates.md` | G1~G4 사람 잔여 판단 |
 | `scripts/auto_dev_queue.py` | 큐 오케스트레이터 |
 | `scripts/auto_dev_executor.py` | 결정적 안전 실행기 (문서 NOOP·허용 패치) |
-| `scripts/decompose_defects.py` | L2 빈틈 → TASK 분해 (G1 `--approve`) |
+| `scripts/decompose_defects.py` | L2 빈틈 → 파생 TASK 분해 (G1 `--approve --root-task MAIL-xxx`) |
 | `scripts/loop_verify.py` | L1 검증 단일 진입점 |
 | `scripts/outstanding_dev_audit.py` | 원격/worktree/stash 미반영 개발 감사 |
 | `scripts/auto_dev_overnight_ready.py` | 야간 자동개발 준비 판정 (user-priority 큐 우선) |
