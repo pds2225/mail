@@ -1,5 +1,13 @@
 ﻿# AGENTS.md
 
+## TASK SSOT — 모든 에이전트 공통
+
+- 공식 개발 작업 SSOT는 `origin/main:TASK.md` 하나다.
+- 세션/자동개발 시작 시 `git fetch origin --prune` 후 루트 TASK.md를 먼저 읽는다.
+- `docs/project/TASKS.md`는 루트 TASK를 실행 단위로 분해한 파생 큐이며 독립 작업 원본이 아니다.
+- 파생 큐 PENDING/RUNNING은 `[ROOT=MAIL-xxx]` 부모가 있어야 하고, 부모 루트 TASK가 READY/ACTIVE일 때만 실행한다.
+- Dashboard·RESUME·HANDOFF·실행로그·외부 미러는 파생정보이며 TASK 상태·우선순위를 덮어쓰지 않는다.
+
 ## Cursor Cloud specific instructions
 
 ### Overview
@@ -55,7 +63,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 
 | 파일 | 역할 |
 |------|------|
-| `docs/project/TASKS.md` | L1 입력 큐 (PENDING/RUNNING/DONE/FAILED/BLOCKED) |
+| `docs/project/TASKS.md` | 루트 TASK의 파생 실행 큐 (PENDING/RUNNING/DONE/FAILED/BLOCKED). 독립 SSOT 아님 |
 | `docs/project/RULES.md` | 안전규칙 + 루프 규칙 |
 | `auto_dev/loops.json` | 루프 5요소 정의 (트리거·실행·검증·상태·종료) |
 | `auto_dev/eval_rubric.md` | 성공의 증거 |
@@ -75,7 +83,7 @@ Vercel 배포 기반 Mail 프로젝트. 정부지원사업·해외전시회 공�
 로컬: `python3 scripts/auto_dev_queue.py` (`DRY_RUN=true` 권장)  
 검증: `python3 scripts/loop_verify.py` / `--drift`  
 미반영 감사: `python3 scripts/outstanding_dev_audit.py --strict`  
-야간 준비: `python3 scripts/auto_dev_overnight_ready.py` (`--require-local` / `--require-live`) — `TASK.md` `[ ]`/`[~]` 와 `docs/project/TASKS.md` PENDING 을 함께 본다.
+야간 준비: `python3 scripts/auto_dev_overnight_ready.py` (`--require-local` / `--require-live`) — 작업 유무는 루트 `TASK.md` `[ ]`/`[~]`만 본다. `docs/project/TASKS.md`는 해당 루트 TASK의 실행 projection으로만 사용한다.
 
 **핵심 안전규칙:**
 - 기존 앱 파일(`monitor.py`, `streamlit_app.py`) 수정 금지

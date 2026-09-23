@@ -128,6 +128,19 @@ def test_decompose_parse_and_preview(tmp_path):
     assert defects[0]["id"] == "DEFECT-009"
 
 
+def test_derived_queue_requires_active_root_task():
+    root = """[x] MAIL-012 | done
+[~] MAIL-014 | active
+[ ] MAIL-022 | ready
+[!] MAIL-027 | blocked
+"""
+    states = q.parse_root_task_states(root)
+    assert q.queue_task_is_executable("- TASK-033: [ROOT=MAIL-014] child", states) is True
+    assert q.queue_task_is_executable("- TASK-020: [ROOT=MAIL-012] stale", states) is False
+    assert q.queue_task_is_executable("- TASK-999: no-root", states) is False
+    assert q.queue_task_is_executable("- TASK-998: [ROOT=MAIL-027] blocked", states) is False
+
+
 def test_move_task_to_pending_end():
     content = """# T\n\n## PENDING\n\n- TASK-001: a\n- TASK-002: b\n\n## RUNNING\n\n- TASK-003: c\n\n## DONE\n\n## FAILED\n\n## BLOCKED\n"""
     out = q.move_task_to_pending_end(content, "- TASK-003: c", from_section="RUNNING")
