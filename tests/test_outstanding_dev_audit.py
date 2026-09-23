@@ -150,7 +150,7 @@ def test_task_md_ready_parser_ignores_done_and_blocked():
     ]
 
 
-def test_collect_pending_merges_task_md_and_tasks_md():
+def test_collect_pending_uses_root_task_md_only():
     tasks = """## PENDING
 - TASK-020: housekeeping
 ## DONE
@@ -162,10 +162,8 @@ def test_collect_pending_merges_task_md_and_tasks_md():
 # 1. REPOSITORY
 """
     pending = overnight.collect_pending(tasks, task_md)
-    assert "TASK-020: housekeeping" in pending
-    assert "MAIL-007: overnight task.md drain" in pending
-    ordered = overnight._user_priority_first(pending)
-    assert ordered[0].startswith("MAIL-007")
+    assert "TASK-020: housekeeping" not in pending
+    assert pending == ["MAIL-007: overnight task.md drain"]
 
 
 def test_overnight_empty_both_queues():
