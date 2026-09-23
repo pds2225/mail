@@ -16,7 +16,6 @@
 
 ## PENDING
 - TASK-020: user-priority overnight: MAIL-012 AI 사업화지원금 전수 수집. 예비창업 AI 그룹에서 사업화지원금이 2차 점수·참여기업 제외로 빠지지 않게 하고 워치리스트로 강제포함. KISED/IITP 소스 공백은 후속 슬라이스. monitor.py 수정 금지. 실발송 금지.
-- TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-033: loop:coding-fix MAIL-P1A-03 [P1] 신청대상·공고목적 역할 판정 — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-034: loop:coding-fix MAIL-P1A-04 [P1] 지역 자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
 - TASK-035: loop:coding-fix MAIL-P1A-05 [P1] 기업 기본자격 Hard Gate — DEPENDS=TASK-031 DONE — spec `docs/project/MAIL014_AI_TASK_SPEC.md`
@@ -33,6 +32,28 @@
 ## RUNNING
 
 ## DONE
+- TASK-032: loop:coding-fix MAIL-P1A-02 [P1] 기간 Hard Gate — 신규 모듈
+  `mail_core/operations/period_gate.py`(classify_period_status/period_needs_review).
+  PINNING: TASK_ID=TASK-032 TASK_START_SHA=89e20a2a8c6f65df096addc4096bed90155583b5
+  WORK_BRANCH=feat/mail-p1a02-period-hard-gate. 조사 결과 monitor.py에 이미
+  `classify_deadline_status()`(open/upcoming/closed/always_open/
+  until_budget_exhausted/extended/unknown, 40여개 기존 테스트로 검증됨)와
+  `is_imminent()`(마감임박 0~7일 윈도)가 있어 재구현하지 않고 그대로 재사용했다.
+  실제 신규 구현: ① 그 원시 상태를 스펙이 요구한 표준 7종 어휘(open/upcoming/
+  closing_soon/closed/always_open/budget_based/date_unknown)로 매핑(until_budget_
+  exhausted→budget_based, unknown→date_unknown, extended→open으로 합침) ②
+  "open" 중 마감이 0~7일 이내인 것만 closing_soon으로 세분화(is_imminent와 동일한
+  7일 윈도 사용, `_parse_date_candidates` 재사용 — 날짜 파싱 재구현 없음) ③
+  `period_needs_review()` — date_unknown 신호만 주고 실제 배제/포함은 호출자
+  책임으로 남김(FORBIDDEN: 날짜불명 자동제외 금지 준수 — 기존 `company_match.
+  _hard_excluded`도 "closed"만 하드제외하므로 date_unknown은 이미 자동 통과됨,
+  이 동작을 바꾸지 않음). monitor.py는 한 줄도 수정하지 않아 기존 회귀 위험 0.
+  마감시각은 날짜 단위로 보존(마감일 당일=아직 open/closing_soon, 다음날=closed
+  — 기존 classify_deadline_status 동작 그대로 승계, 시각 단위 비교는 신설하지
+  않음). 테스트: `tests/test_period_gate.py` 신규 16건(7종 상태 각 1건 이상,
+  closing_soon 0/7/8일 경계, 마감일 당일/다음날 경계, date_unknown이 review만
+  신호하고 자동제외/자동포함 안 함, 기본 today 회귀) 전체 통과. 기존 마감판정
+  관련 회귀(test_deadline_fix.py 등 5개 파일 36건) 전체 통과 확인.
 - TASK-031: loop:coding-fix MAIL-P1A-01 [P1] 공고 유효성·quarantine — 신규 모듈
   `mail_core/operations/notice_validity.py`(classify_notice_validity/
   quarantine_invalid_notices). SOURCE_RISK_NO(1, 21, 29–33) 중 실제 미해결 조사
