@@ -1,16 +1,16 @@
 {
   "summary": {
     "schema_version": 3,
-    "generated_at": "2026-09-23T01:00:00+09:00",
-    "audit_phase": "P0_EVIDENCE_PASS_V5_MAIL025",
+    "generated_at": "2026-09-23T02:00:00+09:00",
+    "audit_phase": "P0_EVIDENCE_PASS_V6_MAIL026",
     "repo": "pds2225/mail",
     "repo_main_sha": "4ab9791fc79a304bd6de7fccbac498db513dab71",
     "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 40,
-      "COVERED_BY_TASK": 114,
+      "ALREADY_DONE": 41,
+      "COVERED_BY_TASK": 113,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -37,7 +37,7 @@
     "unresolved_by_risk_level": {
       "P1": 86,
       "P2": 17,
-      "P0": 11
+      "P0": 10
     },
     "verified_done_risk_nos": [
       1,
@@ -73,6 +73,7 @@
       114,
       115,
       116,
+      118,
       119,
       120,
       126,
@@ -4138,7 +4139,7 @@
       "impact": "반송·개인정보 오발송",
       "risk_level": "P0",
       "recommended_response": "주소검증·반송관리·테스트 수신",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-026"
@@ -4152,8 +4153,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-026 evidence pass(2026-09-23): monitor.py validate_recipients (EMAIL_RE 검증 + dedup) + tests/test_monitor_ops.py::test_validate_recipients_dedupes_and_rejects 통과",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 119,
@@ -4179,8 +4180,8 @@
         "monitor.py::_build_mime_message — one To header, no Cc",
         "tests/test_mail014_p0_risk_regressions.py::test_send_to_list_builds_one_recipient_per_message"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-026 evidence pass(2026-09-23): monitor.py send_to_list — 수신자별 개별 MIME 발송(To/Cc 미공유). tests/test_mail014_p0_risk_regressions.py::test_send_to_list_builds_one_recipient_per_message 통과 (이전 P0 Evidence Pass V3에 근거 기록돼 있었으나 crosswalk 상태 미승격 상태였음)",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",
@@ -4217,8 +4218,8 @@
         "tests/test_p0_hardening.py::test_private_payload_removes_plaintext_pii_and_enforces_tenant",
         "tests/test_llm_safety.py::test_recipient_allowlist_drops_foreign"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-026 evidence pass(2026-09-23): mail_core/security/private_config.py tenant 강제 + recipient_allowlist. tests/test_p0_hardening.py::test_private_payload_removes_plaintext_pii_and_enforces_tenant, tests/test_llm_safety.py::test_recipient_allowlist_drops_foreign 등 통과 (이전 P0 Evidence Pass V3 근거 기록, crosswalk 미승격 상태였음)",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",
@@ -4381,8 +4382,8 @@
         "api/run.py — dry-run default and Vercel real-send hard block",
         "tests/test_monitor_ops.py::test_send_to_list_skips_smtp_when_allow_send_false"
       ],
-      "audit_note": "P0_EVIDENCE_PASS_V3: latest main code + direct regression evidence verified. Do not redevelop this risk unless regression evidence changes.",
-      "last_verified_at": "2026-09-20",
+      "audit_note": "MAIL-026 evidence pass(2026-09-23): dry-run 기본값 + api/index.py의 Vercel 실발송 501 차단 + monitor.py _ALLOW_SMTP_SEND fail-closed. tests/test_api_run_auth.py(12건)·tests/test_monitor_ops.py::test_send_to_list_skips_smtp_when_allow_send_false 통과 (이전 P0 Evidence Pass V3 근거 기록, crosswalk 미승격 상태였음)",
+      "last_verified_at": "2026-09-23",
       "verification": {
         "phase": "P0_EVIDENCE_PASS_V3",
         "verified_at": "2026-09-20",

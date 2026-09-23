@@ -1,8 +1,8 @@
 # MAIL-014 — 154 Risk × MAIL TASK Crosswalk
 
-- Audit phase: **P0_EVIDENCE_PASS_V5_MAIL025**
-- Generated: 2026-09-23 01:00 KST
-- Repo main at start: `81bb9bfd36bf14fe09d4c029e3f7ae1d1de7e670`
+- Audit phase: **P0_EVIDENCE_PASS_V6_MAIL026**
+- Generated: 2026-09-23 02:00 KST
+- Repo main at start: `a7c7da873eaab69d74ad987bb4ef7d96260abf45`
 - Source rows: **154/154**
 - Invalid MAIL Task refs: **0**
 - Duplicate Risk rows: **0**
@@ -10,12 +10,15 @@
 
 ## 현재 집계
 
-(MAIL-024: Risk 1~20 중 1/4/5/8/10/14/15 승격. MAIL-025: Risk 21~34 중 21/22/27/28/29/31/34를 COVERED_BY_TASK → ALREADY_DONE으로 승격. 전체 재집계는 `docs/risk_register/mail_risk_154_crosswalk.json`이 정본.)
+(MAIL-024/025/026 누적 승격. MAIL-026: Risk 113~128 중 118/119/120/126을 COVERED_BY_TASK →
+ALREADY_DONE으로 승격 — 이 4건은 과거 "P0 Evidence Pass V3" 섹션에 근거가 이미 기록돼 있었으나
+crosswalk 상태값이 그때 갱신되지 않았던 것을 이번에 맞췄다. 전체 재집계는
+`docs/risk_register/mail_risk_154_crosswalk.json`이 정본.)
 
 | 상태 | 건수 |
 |---|---:|
-| ALREADY_DONE | 40 |
-| COVERED_BY_TASK | 114 |
+| ALREADY_DONE | 41 |
+| COVERED_BY_TASK | 113 |
 | OPEN | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 0 |
@@ -23,7 +26,7 @@
 
 | 위험도 | 전체 | 미해결/진행 |
 |---|---:|---:|
-| P0 | 27 | 11 |
+| P0 | 27 | 10 |
 | P1 | 107 | 86 |
 | P2 | 20 | 17 |
 
@@ -185,15 +188,15 @@ COVERED_BY_TASK는 해결 완료를 의미하지 않는다. 각 담당 TASK에�
 | 115 | P0 | 발송 | seen_ids를 발송 전에 기록 | ALREADY_DONE | MAIL-014, MAIL-026, MAIL-009 |  |
 | 116 | P1 | 발송 | 공고 ID만 전역 기록 | ALREADY_DONE | MAIL-014, MAIL-026, MAIL-009 |  |
 | 117 | P1 | 발송 | Gmail Rate Limit | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
-| 118 | P0 | 발송 | 수신자 이메일 오타 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
-| 119 | P0 | 발송 | To/Cc 사용 오류 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
-| 120 | P0 | 발송 | 그룹 설정 오류 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
+| 118 | P0 | 발송 | 수신자 이메일 오타 | ALREADY_DONE | MAIL-014, MAIL-026 |  |
+| 119 | P0 | 발송 | To/Cc 사용 오류 | ALREADY_DONE | MAIL-014, MAIL-026 |  |
+| 120 | P0 | 발송 | 그룹 설정 오류 | ALREADY_DONE | MAIL-014, MAIL-026 |  |
 | 121 | P2 | 발송 | HTML 템플릿 오류 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 122 | P2 | 발송 | 메일 크기 과다 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 123 | P1 | 발송 | 링크 만료·세션 필요 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 124 | P2 | 발송 | 발송 성공응답만 신뢰 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 125 | P1 | 발송 | 초안 중복생성 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
-| 126 | P0 | 발송 | 테스트 환경 실발송 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
+| 126 | P0 | 발송 | 테스트 환경 실발송 | ALREADY_DONE | MAIL-014, MAIL-026 |  |
 | 127 | P2 | 발송 | 이메일 제목 중복 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 128 | P1 | 발송 | 수신거부·휴면관리 없음 | COVERED_BY_TASK | MAIL-014, MAIL-026 |  |
 | 129 | P0 | 피드백 | 이메일 보안봇이 링크 선조회 | COVERED_BY_TASK | MAIL-014, MAIL-027 |  |
