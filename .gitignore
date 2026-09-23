@@ -78,6 +78,7 @@ var/reports/diag_classified.json
 .bkit/
 var/reports/company_match/
 RESUME.md
+SESSION_RECAP.md
 var/raw/*
 !var/raw/.gitkeep
 
