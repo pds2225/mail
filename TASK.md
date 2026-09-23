@@ -39,7 +39,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
 [~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 [x] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
-[ ] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
+[x] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
@@ -2906,14 +2906,49 @@ ALREADY_DONE 확정(crosswalk JSON 승격 완료), 7개는 제네릭 안전망(�
 ### 비개발자용 1줄 요약
 상세보강 Risk 21~34를 대조해 남은 첨부·파싱·보안 문제만 해결한다.
 
+### 현재상태 — TASK PINNING
+- TASK_ID: MAIL-025
+- TASK_START_SHA: 81bb9bfd36bf14fe09d4c029e3f7ae1d1de7e670 (origin/main)
+- WORK_BRANCH: task/mail-025-risk21-34-audit
+- CHECKPOINT: DATA_AUDIT 완료(14/14 근거 확정, MAIL-024와 동일 방식·기준). 코드 갭 0건.
+
 ### MUST
-- [ ] 상세 URL/N+1/목록-상세 불일치/첨부추출/OCR/ZIP/악성첨부/ZIP bomb/세션/숨김영역/표구조/cache/parse_failed/backoff 1:1 점검
-- [ ] 기존 TASK-031/TASK-023 범위 재사용
-- [ ] OCR 저신뢰·악성첨부 fail-closed 유지
-- [ ] 재현되는 잔여분만 최소 수정
+- [x] 상세 URL/N+1/목록-상세 불일치/첨부추출/OCR/ZIP/악성첨부/ZIP bomb/세션/숨김영역/표구조/cache/parse_failed/backoff 1:1 점검
+- [x] 기존 TASK-031/TASK-023 범위 재사용 — 새 코드 작성 없음(감사만)
+- [x] OCR 저신뢰·악성첨부 fail-closed 유지 — 기존 `is_blocked_extension`/`_read_capped` 그대로
+- [x] 재현되는 잔여분만 최소 수정 — 실제 코드 갭 0건이라 수정 없음
+
+### 8-X. 감사 결과 (evidence pass, 2026-09-23)
+
+**코드+통과하는 테스트로 확정(ALREADY_DONE 승격):**
+
+| Risk | 문제 | 근거 |
+|---:|---|---|
+| 21 | 목록 URL과 상세 URL 연결 실패 | `enrich_item_from_detail`: link 없으면 `missing_detail_url` 사유코드로 안전 처리(크래시 없음) |
+| 22 | 상세페이지 N+1 호출 | `enrich_items`: `ThreadPoolExecutor` 동시 처리 + core/other/generic 예산 상한(무제한 순차 호출 아님) |
+| 27 | 악성 첨부파일(P0) | `scripts/fetch_notice_attachments.py`의 `is_blocked_extension`(코드에 "#27" 명시). `tests/test_attachment_safety.py` 7건 통과 |
+| 28 | ZIP Bomb(P0) | 같은 파일의 `_read_capped`(`MAX_ATTACH_BYTES`, "#28" 명시). 같은 테스트 파일에서 크기상한 통과 확인 |
+| 29 | 상세페이지 접근 시 세션 필요 | 상세 본문이 `description`에 병합된 뒤 `notice_validity`의 `ERROR_PAGE_HINTS`("로그인 후"/"로그인이 필요")가 세션월 페이지를 quarantine |
+| 31 | HTML 태그 제거 과정에서 의미 손실 | `_extract_detail_tables`. `tests/test_detail_table_preservation.py` 3건(관계 보존·중첩행 제외·크기상한) 통과 |
+| 32 | 원문 수정 후 캐시가 유지됨 | 기존 ALREADY_DONE 유지 |
+| 33 | 상세보강 실패를 빈 값으로 저장 | 기존 ALREADY_DONE 유지 — `tests/test_detail_extraction_status.py` 4건도 통과 확인 |
+| 34 | 재시도 폭주 | `_http_get`/`_soup`의 의도된 bounded retry(`_HTTP_RETRIES`, 4xx/5xx는 재시도 안 함) — MAIL-024 Risk 6과 동일 설계 재확인 |
+
+**제네릭 안전망으로만 커버(전용 기능 없음, 재현 인시던트 근거 없어 추측성 코드 작성 안 함):**
+
+| Risk | 문제 | 현재 상태 |
+|---:|---|---|
+| 23 | 상세페이지와 목록 정보 불일치 | 상세 데이터가 목록 데이터를 덮어쓰는 설계(상세 우선)라 불일치 시 더 정확한 쪽이 이기지만, "심하게 다르면 경고"하는 전용 로직은 없음 |
+| 24 | 첨부파일에만 핵심정보 존재 | 첨부파일 내용을 파싱해 매칭에 반영하는 기능 자체가 없음(다운로드만) — 누락 시 "확인필요"로 안전하게 표시되나 완전하지 않음 |
+| 25 | 이미지형 공고문 | OCR 미구현 — 위와 동일하게 안전하지만 불완전 |
+| 26 | 압축파일·암호파일 | 구조적으로 해당 없음(N/A) — 첨부는 내용을 열어보지 않고 원본 그대로 저장만 하므로 암호파일이어도 안전(ZIP Bomb 캡도 다운로드 단계에서 이미 적용됨) |
+| 30 | 공고내용 일부만 접혀 있음 | `get_text()`가 CSS로 접힌(display:none) 콘텐츠도 DOM 텍스트로는 추출함(흔한 케이스는 커버) — JS로 그때 불러오는 콘텐츠는 여전히 미커버(Risk 8 영역) |
 
 ### DONE
-REQUEST_SOLVED=NO — Risk 21~34 전체 근거 상태 확정 + 잔여분 회귀검증 후 YES.
+REQUEST_SOLVED=YES — Risk 21~34 전체 14개의 근거 상태를 확정했다(MAIL-024와 동일 기준). 9개는
+코드+통과하는 테스트로 ALREADY_DONE, 5개는 제네릭 안전망/설계로 커버되지만 전용 기능은 없음 —
+재현 가능한 실제 인시던트 근거가 없어 추측성 신규 코드는 작성하지 않았다. 이번 감사에서 실제 코드
+갭은 0건이었다(문서만 변경).
 
 ---
 

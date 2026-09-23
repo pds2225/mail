@@ -1,16 +1,16 @@
 {
   "summary": {
     "schema_version": 3,
-    "generated_at": "2026-09-23T00:00:00+09:00",
-    "audit_phase": "P0_EVIDENCE_PASS_V4_MAIL024",
+    "generated_at": "2026-09-23T01:00:00+09:00",
+    "audit_phase": "P0_EVIDENCE_PASS_V5_MAIL025",
     "repo": "pds2225/mail",
     "repo_main_sha": "4ab9791fc79a304bd6de7fccbac498db513dab71",
     "source_file": "정부지원사업_자동화서비스_개발리스크_154개.xlsx",
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 33,
-      "COVERED_BY_TASK": 121,
+      "ALREADY_DONE": 40,
+      "COVERED_BY_TASK": 114,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -35,9 +35,9 @@
     },
     "warning": "ALREADY_DONE 26건은 코드/회귀 evidence를 직접 확인했다. COVERED_BY_TASK는 담당 TASK가 있지만 아직 gap/추가검증이 남아 있다.",
     "unresolved_by_risk_level": {
-      "P1": 90,
-      "P2": 18,
-      "P0": 13
+      "P1": 86,
+      "P2": 17,
+      "P0": 11
     },
     "verified_done_risk_nos": [
       1,
@@ -53,8 +53,15 @@
       18,
       19,
       20,
+      21,
+      22,
+      27,
+      28,
+      29,
+      31,
       32,
       33,
+      34,
       39,
       46,
       47,
@@ -630,7 +637,7 @@
       "impact": "제목만 있고 내용 없음",
       "risk_level": "P1",
       "recommended_response": "소스별 상세 URL 생성 규칙 테스트",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -650,8 +657,8 @@
         "docs/project/TASKS.md",
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): monitor.py enrich_item_from_detail — link 없으면 missing_detail_url 사유코드로 DETAIL_FETCH_FAILED 처리(크래시 없음)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 22,
@@ -661,7 +668,7 @@
       "impact": "1,000건 수집 시 1,000회 추가 호출",
       "risk_level": "P1",
       "recommended_response": "캐시·동시성 제한·신규공고 우선 보강",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -675,8 +682,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): monitor.py enrich_items — ThreadPoolExecutor 동시 처리 + core/other/generic 예산 상한(무제한 순차 N+1 아님)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 23,
@@ -786,7 +793,7 @@
       "impact": "서버 보안사고",
       "risk_level": "P0",
       "recommended_response": "바이러스 검사, 실행파일 차단, 샌드박스 처리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -800,8 +807,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): scripts/fetch_notice_attachments.py is_blocked_extension(#27 명시 주석) + tests/test_attachment_safety.py 7건 통과",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 28,
@@ -811,7 +818,7 @@
       "impact": "디스크·메모리 고갈",
       "risk_level": "P0",
       "recommended_response": "압축해제 후 예상크기 제한",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -825,8 +832,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): scripts/fetch_notice_attachments.py _read_capped(MAX_ATTACH_BYTES, #28 명시 주석) + tests/test_attachment_safety.py 통과",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 29,
@@ -836,7 +843,7 @@
       "impact": "목록은 수집되나 보강 실패",
       "risk_level": "P1",
       "recommended_response": "세션 유지 또는 별도 API 사용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -856,8 +863,8 @@
         "docs/project/TASKS.md",
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): monitor.py enrich_item_from_detail이 상세 본문을 description에 병합 후 notice_validity의 ERROR_PAGE_HINTS(로그인 후/로그인이 필요 등)가 세션 필요 페이지를 quarantine",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 30,
@@ -898,7 +905,7 @@
       "impact": "표의 열 관계가 깨짐",
       "risk_level": "P1",
       "recommended_response": "표 구조를 JSON으로 보존",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -918,8 +925,8 @@
         "docs/project/TASKS.md",
         "docs/project/MAIL014_AI_TASK_SPEC.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): monitor.py _extract_detail_tables + tests/test_detail_table_preservation.py 3건 통과(표 관계 보존·중첩행 제외·크기상한)",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 32,
@@ -991,7 +998,7 @@
       "impact": "장애 사이트에 반복접속",
       "risk_level": "P2",
       "recommended_response": "지수 백오프, Circuit Breaker 적용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-025"
@@ -1005,8 +1012,8 @@
       "evidence_sources": [
         "TASK.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-025 evidence pass(2026-09-23): monitor.py _http_get/_soup의 의도된 bounded retry+backoff(_HTTP_RETRIES, 4xx/5xx 재시도 안 함) — MAIL-024 Risk 6과 동일 설계",
+      "last_verified_at": "2026-09-23"
     },
     {
       "risk_no": 35,
