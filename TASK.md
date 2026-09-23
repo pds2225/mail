@@ -45,7 +45,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
 [x] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
-[ ] MAIL-031 | Vercel 웹 미리보기가 소스 230개 전체 수집으로 타임아웃 나는 것 — 해결 방향을 정한다
+[x] MAIL-031 | Vercel 웹 미리보기가 소스 230개 전체 수집으로 타임아웃 나는 것 — 해결 방향을 정한다
 [x] MAIL-032 | Windows에서 config/sites.json 읽기 테스트가 인코딩 때문에 실패하는 것을 고친다
 
 
@@ -3156,20 +3156,54 @@ REQUEST_SOLVED=YES — `Monitor import failed: No module named 'cryptography'` 5
 웹사이트의 "미리보기 실행" 버튼이 사이트가 너무 많아서(230개) 실제로는 끝까지 못 돌고 에러로
 끝나는 문제 — 고칠 방법(범위를 줄이거나 GitHub Actions로 옮기는 등)을 사용자와 상의해서 정한다.
 
-### 8-3. 현재상태
+### 8-3. 현재상태 — TASK PINNING
 
-- STATUS: READY(방향 미정 — 사용자 결정 필요)
-- SOURCE: MAIL-030 실사용 검증(2026-09-22) 중 발견. 신규 회귀 아님 — MAIL-029/030 이전부터 있던
-  기존 한계로 재확인함(코드 주석에 이미 "긴 실행은 GitHub Actions 권장"으로 명시돼 있었음).
-- 후보 방향(택1 또는 조합, 사용자 결정 필요): ① 웹 미리보기는 활성 소스 일부(예: 상위 N개/특정
-  그룹만)로 범위를 줄여 빠르게 끝낸다 ② 수집을 백그라운드 job으로 옮기고 웹은 polling/알림만 한다
-  ③ `vercel.json`에 `functions.maxDuration`을 최대치로 올린다(Vercel 플랜 상한 확인 필요) ④ 현재
-  구조를 그대로 유지하고 "웹 미리보기는 참고용, 전체 검증은 GitHub Actions dry-run 워크플로로"라고
-  안내만 보강한다.
+- TASK_ID: MAIL-031
+- STATUS: 방향 확정(사용자, 2026-09-23) — ②+④ 조합, "가볍게" 버전
+- TASK_START_SHA: 82710818640d8a0b144079568172da1f47581e39 (origin/main, MAIL-024 병합 직후)
+- WORK_BRANCH: feat/mail-031-github-actions-link
+- SOURCE: MAIL-030 실사용 검증(2026-09-22) 중 발견. 재확인(2026-09-23, curl 직접 300초 대기)해도
+  여전히 미해결 — 신규 회귀 아님, MAIL-029/030 이전부터 있던 기존 한계.
+- 사용자가 고른 방향: "버튼 누르면 GitHub Actions로 연결만(가볍게)". **단, 구현 중 안전상 중요한
+  사실을 발견했다** — 기존 `.github/workflows/monitor.yml`은 `workflow_dispatch`로 수동 실행해도
+  `--send --persist-seen`(실제 발송)만 하는 워크플로다(dry-run 모드 없음). 그래서 "누르면 API로
+  자동 트리거"가 아니라 **GitHub Actions 페이지로 안내하는 링크만** 추가한다(사람이 그 페이지에서
+  실행 여부를 직접 판단). 워크플로 YAML은 건드리지 않고, 새 Secret·새 API 라우트도 만들지 않는다.
 
-### 8-4. DONE
+### MUST
+- [x] `/run` 화면에 "전체 230개 소스 전체 검증은 GitHub Actions에서"라는 안내와, 실제
+      `https://github.com/pds2225/mail/actions/workflows/monitor.yml` 링크(새 탭)를 추가한다.
+- [x] 그 워크플로가 **실제 이메일을 발송하는 워크플로**임을 안내 문구에 명확히 적어, 사용자가
+      실수로 "확인만 하려고" 눌렀다가 실발송이 나가는 일을 방지한다.
+- [x] 미리보기 실행이 실패(타임아웃 등)했을 때도 이 안내가 눈에 띄게 보이게 한다(에러 카드에
+      동일 안내 중복 배치).
+- [x] 새 Secret·새 API 라우트·워크플로 YAML 수정 없음(가장 가벼운 범위 유지) — `web/app/run/page.tsx`
+      1개 파일만 수정.
 
-REQUEST_SOLVED=NO — 방향을 사용자와 정한 뒤 구현·검증해야 YES.
+### KEEP
+- 기존 `/run` 미리보기 버튼·API 동작은 그대로(230개 전체가 빠르게 끝나도록 바꾸지 않음 — 그건
+  범위 밖).
+- `.github/workflows/monitor.yml`은 수정하지 않는다(실발송 경로 보존).
+
+### FORBIDDEN
+- `workflow_dispatch` API를 호출해 실제로 워크플로를 자동 트리거하는 코드(=실제 발송 자동화).
+- 새 GitHub PAT/Secret을 Vercel에 추가.
+
+### VERIFY
+- [x] `cd web && npx tsc --noEmit`
+- [x] `cd web && npx next build`
+- [x] `cd web && npx vitest run` — 49 passed
+- [x] 실제 렌더링 확인: `next start` 로컬 서버에서 `/run` 접속 → 안내문 노출 확인 →
+      `document.querySelectorAll('a')`로 링크 `href="https://github.com/pds2225/mail/actions/workflows/monitor.yml"`,
+      `target="_blank"` 정확함을 확인. 그 URL이 실제로 200 응답함을 curl로 확인.
+      (에러 카드 쪽 스크린샷은 브라우저 확장 프로그램이 일시 응답 없음 상태가 돼 캡처하지
+      못했으나, 동일한 링크·기존에 이미 쓰이던 조건부 렌더링 패턴이라 위 검증으로 충분하다고
+      판단)
+
+### DONE
+
+REQUEST_SOLVED=YES — 안내 링크 추가 완료, 실제 링크 URL·새 탭 동작 확인함. 실발송 워크플로를
+자동 트리거하지 않고(사람이 직접 판단), 새 Secret·API 없이 가장 가벼운 범위로 구현했다.
 
 ---
 

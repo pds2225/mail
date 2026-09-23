@@ -137,6 +137,19 @@ export default function RunPage() {
           실행 암호 없이 현재 설정으로 공고를 수집·판정합니다. 실제로 발송될 그룹별 메일도 그대로
           미리 볼 수 있습니다. SMTP 발송과 seen 상태 저장은 하지 않습니다.
         </p>
+        <p className="hint mt">
+          활성 소스가 많으면(현재 {config ? summary.sites : "여러"}개) 전체 수집에 시간이 오래 걸려
+          웹에서 타임아웃될 수 있습니다. 전체 소스 전체 검증은{" "}
+          <a
+            href="https://github.com/pds2225/mail/actions/workflows/monitor.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub Actions
+          </a>
+          에서 확인하세요(주의: 그 워크플로는 수동 실행하면 실제로 이메일을 발송합니다 — 확인만
+          하려면 실행하지 마세요).
+        </p>
         <div className="row mt">
           <button className="btn btn-primary" type="button" onClick={runPreview} disabled={running}>
             {running ? "실행 중…" : "미리보기 실행"}
@@ -144,7 +157,22 @@ export default function RunPage() {
         </div>
       </section>
 
-      {error ? <p className="error">{error}</p> : null}
+      {error ? (
+        <section className="card">
+          <p className="error">{error}</p>
+          <p className="hint mt">
+            웹 미리보기가 시간 초과됐다면, 활성 소스가 많아서일 수 있습니다. 전체 검증은{" "}
+            <a
+              href="https://github.com/pds2225/mail/actions/workflows/monitor.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub Actions
+            </a>
+            에서 진행하세요(수동 실행 시 실제 발송됨에 주의).
+          </p>
+        </section>
+      ) : null}
 
       {result ? (
         <>
