@@ -40,7 +40,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 [x] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [x] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
-[ ] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
+[x] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
 [~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
@@ -2957,14 +2957,60 @@ REQUEST_SOLVED=YES — Risk 21~34 전체 14개의 근거 상태를 확정했다(
 ### 비개발자용 1줄 요약
 발송 Risk 113~128을 대조해 남은 중복·부분실패·수신자·반송·발송안전 문제만 해결한다.
 
+### 현재상태 — TASK PINNING
+- TASK_ID: MAIL-026
+- TASK_START_SHA: a7c7da873eaab69d74ad987bb4ef7d96260abf45 (origin/main)
+- WORK_BRANCH: task/mail-026-risk113-128-audit
+- CHECKPOINT: DATA_AUDIT 완료(16/16 근거 확정, MAIL-024/025와 동일 방식). 코드 갭 0건.
+- 참고: PR #355(다른 세션, "본인에게만 테스트 발송" workflow_dispatch 옵션)가 이 TASK의
+  test-send 항목과 겹치지만 진행 중이라 이 감사에서는 그 부분을 재구현하지 않았다.
+
 ### MUST
-- [ ] delivery/outbox/seen 상태를 먼저 대조
-- [ ] MAIL-009 해결범위 재개발 금지
-- [ ] rate limit/주소검증/To·Cc 노출/tenant-group-recipient 권한/HTML/메일크기/링크/bounce/draft/test-send/제목/수신중단 점검
-- [ ] dry-run/fixture 우선, 실제 고객 발송 금지
+- [x] delivery/outbox/seen 상태를 먼저 대조 — 113~116은 기존 ALREADY_DONE 그대로(MAIL-009/mail_core/delivery)
+- [x] MAIL-009 해결범위 재개발 금지 — 감사만, 새 코드 없음
+- [x] rate limit/주소검증/To·Cc 노출/tenant-group-recipient 권한/HTML/메일크기/링크/bounce/draft/test-send/제목/수신중단 점검
+- [x] dry-run/fixture 우선, 실제 고객 발송 금지 — 읽기 전용 코드 조사만
+
+### 8-X. 감사 결과 (evidence pass, 2026-09-23)
+
+**코드+통과하는 테스트로 확정(ALREADY_DONE):**
+
+| Risk | 문제 | 근거 |
+|---:|---|---|
+| 113~116 | 재시도 중복발송/부분실패/seen 기록순서/ID 전역기록 | 기존 ALREADY_DONE(`mail_core/delivery/state.py`·`outbox.py`, `test_p0_hardening.py`) |
+| 118 | 수신자 이메일 오타(P0) | `validate_recipients`(EMAIL_RE 검증+dedup). `test_monitor_ops.py::test_validate_recipients_dedupes_and_rejects` 통과 |
+| 119 | To/Cc 사용 오류(P0) | `send_to_list`가 수신자별 **개별** MIME 발송(To/Cc 미공유). `test_mail014_p0_risk_regressions.py::test_send_to_list_builds_one_recipient_per_message` 통과 |
+| 120 | 그룹 설정 오류(P0) | `private_config`의 tenant 강제 + `recipient_allowlist`. `test_p0_hardening.py`·`test_llm_safety.py` 통과 |
+| 126 | 테스트 환경 실발송(P0) | dry-run 기본값 + `api/index.py`의 Vercel 실발송 501 차단 + `_ALLOW_SMTP_SEND` fail-closed. `test_api_run_auth.py`(12건)·`test_monitor_ops.py` 통과 |
+
+118·119·120·126은 이미 과거 세션의 "P0 Evidence Pass V3" 섹션에 근거가 기록돼 있었지만 crosswalk의
+`risk_status` 필드가 그때 ALREADY_DONE으로 안 바뀐 채 남아 있었다(문서 드리프트) — 이번에 실제
+테스트를 재실행해 재확인하고 상태만 맞췄다.
+
+**제네릭 안전망/구조적 한계로만 커버(전용 기능 없음, 재현 인시던트 근거 없어 신규 코드 작성 안 함):**
+
+| Risk | 문제 | 현재 상태 |
+|---:|---|---|
+| 117 | Gmail Rate Limit | 그룹·수신자 수가 적어 Gmail 일일 한도에 근접할 실사용 규모가 아님. 전용 스로틀링 없음 |
+| 121 | HTML 템플릿 오류 | `html.escape()`를 표 셀마다 예외 없이 적용(설계상 보장). 악의적 입력 전용 테스트는 없음 |
+| 122 | 메일 크기 과다 | 본문이 텍스트 표라 실제로 비대해지기 어려움. 전용 크기 캡 없음 |
+| 123 | 링크 만료·세션 필요 | 외부(정부) 사이트 링크의 만료는 발송자가 통제 불가 — 구조적 한계 |
+| 124 | 발송 성공응답만 신뢰 | SMTP 250 응답만 확인, bounce(반송) 감지 없음 — 실제 기능 공백이지만 IMAP bounce 파싱은 새 기능 규모라 이번엔 미구현 |
+| 125 | 초안 중복생성 | draft 모드는 outbox 멱등 경로를 안 타 재실행 시 중복 생성 가능 — 실제 공백이나 draft 모드는 수동/드문 경로라 인시던트 근거 없음 |
+| 127 | 이메일 제목 중복 | 제목이 `[그룹명] N건 (날짜)`로 이미 충분히 구체적 — 실제 충돌 가능성 낮음 |
+| 128 | 수신거부·휴면관리 없음 | unsubscribe 메커니즘 없음 — 실제 기능 공백이나 수신자가 소수·수동관리라 인시던트 근거 없음 |
+
+124/125/128은 "안전장치 부재"가 아니라 "기능 자체가 없음"에 더 가까운 진짜 공백이다. 다만 지금 이
+소규모·수동관리 수신자 구조에서는 재현되는 사고 근거가 없어, 추측만으로 IMAP bounce 파싱·초안
+멱등화·unsubscribe 링크 같은 새 기능을 만들지 않았다. 필요해지면 별도 TASK로 등록해 사용자와
+범위를 정한 뒤 진행하는 것을 권한다.
 
 ### DONE
-REQUEST_SOLVED=NO — Risk 113~128 전체 근거 상태 확정 + P0 잔여 0 또는 근거 있는 BLOCKED 후 YES.
+REQUEST_SOLVED=YES — Risk 113~128 전체 16개의 근거 상태를 확정했다. 8개는 코드+통과하는 테스트로
+ALREADY_DONE(그중 4개는 과거 문서 드리프트를 이번에 맞춤), 8개는 제네릭 안전망/구조적 한계로
+커버되지만 3개(124/125/128)는 실제 기능 공백으로 정직하게 표시했다. **P0 잔여 0**을 완료 기준
+그대로 충족한다 — 113~128 구간의 P0 등급 위험 8개(113,114,115,116,118,119,120,126) 전부
+ALREADY_DONE이고, 남은 8개(117/121/122/123/124/125/127/128)는 전부 P1·P2 등급이다.
 
 ---
 
