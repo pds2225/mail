@@ -128,6 +128,28 @@ def test_decompose_parse_and_preview(tmp_path):
     assert defects[0]["id"] == "DEFECT-009"
 
 
+def test_fix_task_inherits_root_parent():
+    content = """# T
+
+## PENDING
+
+## RUNNING
+
+## DONE
+
+## FAILED
+
+## BLOCKED
+"""
+    out, fix_id = q.create_fix_task(
+        content,
+        "TASK-033",
+        "[ROOT=MAIL-014] loop:coding-fix child",
+        "loop_verify failed",
+    )
+    assert f"- {fix_id}: [ROOT=MAIL-014] loop:gate-repair" in out
+
+
 def test_derived_queue_requires_active_root_task():
     root = """[x] MAIL-012 | done
 [~] MAIL-014 | active
