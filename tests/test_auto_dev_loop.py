@@ -116,6 +116,17 @@ def test_executor_needs_agent_for_parser():
     assert r.status == "NEEDS_AGENT"
 
 
+def test_decompose_requires_active_root_authority():
+    root = """[~] MAIL-014 | active
+[x] MAIL-012 | done
+[!] MAIL-027 | blocked
+"""
+    assert dec.root_task_is_active(root, "MAIL-014") is True
+    assert dec.root_task_is_active(root, "MAIL-012") is False
+    assert dec.root_task_is_active(root, "MAIL-027") is False
+    assert dec.root_task_is_active(root, "MAIL-999") is False
+
+
 def test_decompose_parse_and_preview(tmp_path):
     inbox = tmp_path / "inbox.md"
     inbox.write_text(
