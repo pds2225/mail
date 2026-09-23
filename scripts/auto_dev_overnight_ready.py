@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Overnight auto-dev readiness check (user-priority queue first).
+"""Overnight auto-dev readiness check (root TASK.md SSOT first).
 
 Does NOT enable GHA cron by itself. Reports blockers honestly:
 - PENDING tasks present (user-priority first)
@@ -47,8 +47,8 @@ def _pending_tasks(text: str) -> list[str]:
 def _task_md_ready(text: str) -> list[str]:
     """Parse root TASK.md list. [ ] READY and [~] ACTIVE are overnight work.
 
-    TASK.md is the sole AI work-instruction file. docs/project/TASKS.md remains
-    the GHA deterministic queue. Local overnight agents drain TASK.md first.
+    TASK.md is the sole AI work-instruction file. docs/project/TASKS.md is only
+    a derived execution projection and cannot create work independently.
     """
     out: list[str] = []
     in_list = False
@@ -66,10 +66,8 @@ def _task_md_ready(text: str) -> list[str]:
 
 
 def collect_pending(tasks_text: str = "", task_md_text: str = "") -> list[str]:
-    """Merge GHA TASKS.md PENDING with root TASK.md READY/ACTIVE rows."""
-    pending = _pending_tasks(tasks_text)
-    pending.extend(_task_md_ready(task_md_text))
-    return pending
+    """Use only root TASK.md READY/ACTIVE rows as the work source of truth."""
+    return _task_md_ready(task_md_text)
 
 
 def _user_priority_first(pending: list[str]) -> list[str]:
