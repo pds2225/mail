@@ -85,6 +85,11 @@ def _one_group(recipients=("owner@example.test",)):
 
 def test_preview_matches_real_send_subject_and_body(monkeypatch):
     """MUST: Preview subject/text/html == 실제 발송 subject/body (같은 renderer)."""
+    # 피드백 [MAIL-FB] 토큰은 발급 시각(초)을 서명에 넣는다. preview/실발송이 초 경계를 넘으면
+    # 토큰만 달라져 flaky — 토큰 모듈의 시간원만 고정한다(운영 동작 변경 없음).
+    import types
+    from mail_core.delivery import feedback_token
+    monkeypatch.setattr(feedback_token, "time", types.SimpleNamespace(time=lambda: 1_791_803_331))
     groups = _one_group()
     _install_fixture(monkeypatch, items=_items(), groups=groups)
     _forbid_delivery(monkeypatch)
