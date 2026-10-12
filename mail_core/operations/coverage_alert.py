@@ -19,6 +19,9 @@ from typing import Any
 
 from mail_core.paths import STATE_DIR
 
+#: 실행 시간 예산 초과로 이번 커버리지 감사에서 건너뛴 사이트(장애 아님 — SKIPPED 취급).
+COVERAGE_BUDGET_SKIPPED = "coverage_budget_skipped"
+
 COVERAGE_BASELINE_PATH = STATE_DIR / "coverage_baseline.json"
 
 
@@ -106,6 +109,8 @@ def detect_coverage_anomalies(
     anomalies: list[dict] = []
     for row in rows or []:
         if not row.get("enabled", True):
+            continue
+        if row.get("fetch_error") == COVERAGE_BUDGET_SKIPPED:
             continue
         site_id = row.get("site_id", "")
         history = baseline.get(site_id)
@@ -453,7 +458,8 @@ def classify_source_status(
     }
 
     # ① 비활성/설정상 미수행 → SKIPPED (위험 아님)
-    if not row.get("enabled", True) or fetch_error == "disabled_in_config":
+    if (not row.get("enabled", True) or fetch_error == "disabled_in_config"
+            or fetch_error == COVERAGE_BUDGET_SKIPPED):
         return _source_report(row, COLLECT_STATUS_SKIPPED, [], stats, detail)
 
     # ② 수집기 자체가 배정되지 않음 = 실행되지 않은 것과 같다 → P0
