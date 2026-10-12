@@ -5109,8 +5109,21 @@ def _group_priority_hits(item: dict, group: dict | None) -> list[str]:
     return _unique(hits)
 
 
+# 제목에 '마감'·'결과발표' 표시가 붙은 게시글 — 날짜를 못 읽어도 closed 로 본다(2026-10).
+TITLE_CLOSED_RE = re.compile(
+    r"\[(?:모집)?마감\]|접수\s*마감|마감되었|합격자\s*발표|결과\s*발표|발표\s*$"
+)
+
+
+def is_title_closed(item: dict) -> bool:
+    title = str((item or {}).get("title") or "").strip()
+    return bool(title and TITLE_CLOSED_RE.search(title))
+
+
 def classify_deadline_status(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
+    if is_title_closed(item):
+        return "closed"
     text = _notice_text(item)
     # P0-15: ALWAYS_OPEN / UNTIL_BUDGET_EXHAUSTED 세분화
     if any(term in text for term in ("상시접수", "수시접수", "상시모집", "수시모집", "수시 모집", "연중수시", "연중상시", "선착순")):
@@ -6615,17 +6628,56 @@ def _mail_deadline_cell(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     try:
         raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
-        if not raw.strip():
-            return "확인필요"
-        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)] if raw.strip() else []
         if not dates:
+            try:
+                if classify_deadline_status(item, today) == "always_open":
+                    return "상시"
+            except Exception:
+                pass
             return "확인필요"
         end = max(dates)
-        if end.year == today.year:
-            return f"{end.month}/{end.day}"
-        return f"{end.year}/{end.month}/{end.day}"
+        label = f"{end.month}/{end.day}" if end.year == today.year else f"{end.year}/{end.month}/{end.day}"
+        # 2026-10: KST 기준 D-day (당일 D-0)
+        return f"{label} (D-{(end - today).days})" if end >= today else label
     except Exception:
         return "추출실패"
+
+
+def _format_won(amount: int) -> str:
+    man = amount // 10_000
+    if man >= 10_000:
+        eok, rest = divmod(man, 10_000)
+        return f"{eok}억 {rest:,}만원" if rest else f"{eok}억원"
+    if man >= 1_000 and man % 1_000 == 0:
+        return f"{man // 1_000}천만원"
+    if man > 0:
+        return f"{man:,}만원"
+    return f"{amount:,}원"
+
+
+MAIL_SUPPORT_LINE_LIMIT = 60  # HTML 은 CSS ellipsis 로 한 줄 클립, plain 은 digest_table 에서 40자
+
+
+def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> str:
+    """카드 2줄(짧게): '최대 N만원 + 짧은 문구'. 기존 필드만 사용(새 AI 호출 없음)."""
+    try:
+        amt = extract_support_amount(" ".join((
+            _notice_text(item), str(item.get("support_field") or ""))))
+        money = f"최대 {_format_won(amt)}" if amt and amt >= 100_000 else ""
+        blurb = _mail_support_blurb(item, limit=160)
+        if not blurb or blurb == "상세 공고문 확인":
+            blurb = ""
+        # 짧은 문구: 첫 구절만, 금액 표기는 제거
+        phrase = re.split(r"[,(（/;]|\s[-·]\s", blurb)[0]
+        phrase = re.sub(r"(?:최대|기업당|업체당)?\s*[\d.,]+\s*(?:조|천억|억|천만|백만|만)?\s*원", "", phrase)
+        phrase = " ".join(phrase.split())
+        text = " ".join(x for x in (money, phrase) if x)
+        if len(text) > limit:
+            text = text[: limit - 1].rstrip() + "…"
+        return text
+    except Exception:
+        return ""
 
 
 def _digest_row(item: dict, today=None) -> dict:
@@ -6637,12 +6689,12 @@ def _digest_row(item: dict, today=None) -> dict:
     badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(
         item.get("_change_type"), ""
     )
+    # 2026-10: 상태·적합 열 삭제(모바일 가독성). '지원'은 섹션 분류용으로만 쓴다.
     return {
-        "상태": _mail_status_cell(item, today=today),
-        "적합": _mail_fit_cell(item),
         "공고": badge + title,
         "url": notice_url(item),
         "지원": _mail_support_cell(item),
+        "지원내용": _mail_support_summary(item),
         "대상": _mail_target_cell(item),
         "기관": _mail_org_cell(item),
         "지역": _mail_region_cell(item),
@@ -6651,20 +6703,28 @@ def _digest_row(item: dict, today=None) -> dict:
 
 
 def fallback_body(items: list[dict], today=None) -> str:
-    """공고 안내 8컬럼 표(plain). 추천이유·바로가기·사이트명 컬럼 없음."""
+    """공고 안내 본문(plain) — 지원유형별 섹션 + 공고별 2줄 블록.
+
+    2026-10: 상단 '⚠️ 7일 이내 마감' 문단 삭제, 마감일이 오늘(KST) 이전인 공고 제외
+    (상시·마감불명 공고는 유지 — 마감불명 판정은 classify_deadline_status 가 'closed' 가 아닐 때).
+    """
     from mail_core.delivery.digest_table import render_plain
 
+    today = today or datetime.now(KST).date()
+    items = [it for it in (items or []) if not _digest_is_closed(it, today)]
     if not items:
         return render_plain([])
     items = sorted(items, key=_notice_sort_key)
-    imminent = [it for it in items if is_imminent(it.get("deadline", ""))]
-    preamble = ""
-    if imminent:
-        preamble = "⚠️ 7일 이내 마감: " + ", ".join(
-            _mail_clean_text(it.get("title"), limit=45) for it in imminent[:5]
-        )
     rows = [_digest_row(it, today=today) for it in items]
-    return render_plain(rows, preamble=preamble)
+    return render_plain(rows)
+
+
+def _digest_is_closed(item: dict, today) -> bool:
+    """다이제스트 제외 판정: 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall)."""
+    try:
+        return classify_deadline_status(item, today) == "closed"
+    except Exception:
+        return False
 
 def _region_label(item: dict) -> str:
     district = item.get("applicant_region_district") or APPLICANT_REGION_DISTRICT
@@ -7920,6 +7980,20 @@ def execute_monitor(
         except Exception as e:
             log.warning("워치리스트 선별 실패 — 전체 매칭으로 폴백: %s", e)
             watch_hits = [it for it in new_items if is_watchlisted(it, watchlist)]
+    # 2026-10: 마감·결과발표·잡공고·오래된 마감불명 공고는 집중 모니터링/강제포함에서 제외
+    if watch_hits:
+        try:
+            from mail_core.matching.watchlist_select import filter_watchlist_hits
+            watch_hits, _wl_dropped = filter_watchlist_hits(
+                watch_hits,
+                classify=lambda it: classify_deadline_status(it, now.date()),
+                is_junk=is_report_junk,
+                today=now.date(),
+            )
+            if _wl_dropped:
+                log.info("🎯 집중 모니터링 제외(마감/발표/오래됨): %d건", len(_wl_dropped))
+        except Exception as e:
+            log.warning("워치리스트 마감 필터 실패(무시): %s", e)
     if watch_hits:
         log.info("🎯 집중 모니터링 매칭: %d건", len(watch_hits))
 
