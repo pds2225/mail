@@ -45,7 +45,7 @@ jobs:
   monitor:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # seen_ids.json·notice_versions.json 커밋백
+      contents: write   # seen_ids 등 상태파일을 state 브랜치에 push
 
     steps:
       - name: 코드 체크아웃
@@ -58,6 +58,34 @@ jobs:
 
       - name: 패키지 설치
         run: pip install -r requirements.txt
+
+      # 상태파일(seen_ids 등)은 보호된 main 대신 별도 state 브랜치에 저장한다(main push 는
+      # 브랜치 보호로 거부됨). 실행 전에 state 브랜치의 최신본을 작업트리에 덮어쓴다.
+      # state 브랜치가 아직 없으면(첫 실행) main 에 있는 사본을 그대로 쓰고, 실행 후 저장 단계가
+      # 그 결과로 state 브랜치를 새로 만든다. 비었거나 JSON 파싱이 안 되는 파일은 덮어쓰지 않는다.
+      - name: 상태파일 복원(state 브랜치 우선)
+        run: |
+          STATE_FILES="var/state/seen_ids.json var/state/notice_versions.json var/state/delivery_state.json var/outbox/delivery_outbox.enc data/golden/feedback_labels.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl"
+          if git ls-remote --exit-code --heads origin state >/dev/null; then :; else
+            rc=$?
+            if [ "$rc" -eq 2 ]; then
+              echo "state 브랜치 없음 — main 사본으로 시작(저장 단계가 state 브랜치를 생성)"; exit 0
+            fi
+            echo "::error::state 브랜치 조회 실패(exit $rc) — 오래된 main 사본으로 중복 발송될 수 있어 중단"; exit 1
+          fi
+          git fetch --no-tags --depth=1 origin +refs/heads/state:refs/remotes/origin/state
+          for f in $STATE_FILES; do
+            if ! git cat-file -e "origin/state:$f" 2>/dev/null; then
+              echo "state 브랜치에 $f 없음 — main 사본 유지"; continue
+            fi
+            git show "origin/state:$f" > /tmp/state_restore.tmp
+            if ! python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" /tmp/state_restore.tmp; then
+              echo "::warning::state 브랜치 $f 가 비었거나 파싱 실패 — main 사본 유지"; continue
+            fi
+            mkdir -p "$(dirname "$f")"
+            cp -f /tmp/state_restore.tmp "$f"
+            echo "복원: $f (state 브랜치)"
+          done
 
       # 커버리지 baseline(사이트별 평소 수집건수 이력)을 실행 간에 유지한다.
       # GitHub Actions 는 매번 새 환경이라 캐시로 넘겨주지 않으면 이력이 사라져
@@ -178,7 +206,11 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: seen_ids·공고버전·O/X 피드백 커밋
+      # 상태파일 저장: 보호된 main 이 아니라 보호 없는 state 브랜치에 push 한다(main push 는
+      # 'protected branch hook declined' 로 매번 거부돼 seen_ids 가 저장되지 않았다).
+      # if: always() — 발송 단계가 240분 timeout/실패로 끝나도(이미 보낸 뒤일 수 있음) 저장한다.
+      # 비었거나 JSON 파싱이 안 되는 파일은 push 하지 않는다. state 는 어떤 워크플로도 트리거하지 않는다.
+      - name: seen_ids·공고버전·O/X 피드백 state 브랜치 저장
         if: always()
         env:
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
@@ -191,70 +223,67 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # 사용자가 digest 하단 '⭕ 맞아요/❌ 아니에요' 를 누르면 [MAIL-FB] 메일이 자기 함으로
           # 온다. 읽기전용 IMAP 으로 그 O/X 를 수집해 골든 라벨(data/golden/feedback_labels.jsonl,
-          # tier C=사람확인)에 누적한다 → 정확도 하네스가 '사람 정답 vs 우리 판정'을 대조.
-          # 수집 실패는 발송·중복방지와 무관하므로 경고만 내고 계속한다(발송은 이미 끝났다).
+          # tier C=사람확인)에 누적한다. 수집 실패는 발송·중복방지와 무관하므로 경고만 낸다.
           python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
-          git add -f var/state/seen_ids.json var/state/notice_versions.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
-          # 일일 검수 컨텍스트(append-only jsonl) — PII/Secret 없음. 실패해도 커밋백 계속.
-          git add docs/project/mail_daily_reviews/context/ledger.jsonl || true
-          if git diff --staged --quiet; then
-            echo "seen_ids·공고버전·피드백 변경 없음 — 커밋 생략"; exit 0
-          fi
-          git commit -m "chore: seen_ids·공고버전·O/X 피드백·일일검수 업데이트 $(date +'%Y-%m-%d')"
-          # 실행 중 원격 main 이 앞서가면 원격 트리에 정렬한 뒤 상태파일을 안전하게 합친다.
-          for i in 1 2 3 4 5; do
-            if git push origin HEAD:main; then
-              echo "커밋백 push 성공 (시도 $i)"; exit 0
+          WS="$GITHUB_WORKSPACE"
+          WT="$RUNNER_TEMP/state-wt"
+          STATE_FILES="var/state/seen_ids.json var/state/notice_versions.json var/state/delivery_state.json var/outbox/delivery_outbox.enc data/golden/feedback_labels.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl"
+          # 1) 이번 실행의 상태파일 검증 — 깨진 파일은 저장 대상에서 뺀다(빈/손상 파일 push 방지).
+          VALID=""
+          for f in $STATE_FILES; do
+            [ -f "$f" ] || continue
+            if python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" "$f"; then VALID="$VALID $f"; else
+              echo "::warning::$f 가 비었거나 파싱 실패 — state 브랜치에 저장하지 않음"
             fi
-            echo "push 거부 — 원격 트리 기준으로 상태파일 재적용 후 재시도 ($i)"
-            git fetch origin main || true
-            if ! cp -f var/state/seen_ids.json /tmp/local_seen_ids.json; then
-              echo "::warning::seen_ids 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
-              sleep 2; continue
-            fi
-            if [ -f var/state/notice_versions.json ] && ! cp -f var/state/notice_versions.json /tmp/local_notice_versions.json; then
-              echo "::warning::notice_versions 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
-              sleep 2; continue
-            fi
-            if [ -f var/state/delivery_state.json ] && ! cp -f var/state/delivery_state.json /tmp/local_delivery_state.json; then
-              echo "::warning::delivery_state 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
-              sleep 2; continue
-            fi
-            if [ -f var/outbox/delivery_outbox.enc ] && ! cp -f var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc; then
-              echo "::warning::delivery_outbox 백업 실패 — reset --hard 생략, 이번 재시도 건너뜀"
-              sleep 2; continue
-            fi
-            if [ -f docs/project/mail_daily_reviews/context/ledger.jsonl ]; then
-              cp -f docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || true
-            fi
-            git reset --hard origin/main
-            # Do NOT `|| true` these merges: a failed merge after reset would commit
-            # remote-only state and drop this run's seen_ids / versions (duplicate mail).
-            # Writers are atomic (tmp→replace); ENOSPC mid-write keeps the prior file.
-            python scripts/merge_seen_ids.py var/state/seen_ids.json /tmp/local_seen_ids.json
-            if [ -f /tmp/local_notice_versions.json ]; then
-              python scripts/merge_notice_versions.py var/state/notice_versions.json /tmp/local_notice_versions.json
-            fi
-            if [ -f /tmp/local_delivery_state.json ]; then
-              python scripts/merge_delivery_state.py var/state/delivery_state.json /tmp/local_delivery_state.json
-            fi
-            if [ -f /tmp/local_delivery_outbox.enc ]; then
-              python scripts/merge_delivery_outbox.py var/outbox/delivery_outbox.enc /tmp/local_delivery_outbox.enc
-            fi
-            if [ -f /tmp/local_mail_daily_ledger.jsonl ]; then
-              python scripts/merge_jsonl_append.py docs/project/mail_daily_reviews/context/ledger.jsonl /tmp/local_mail_daily_ledger.jsonl || \
-                cp -f /tmp/local_mail_daily_ledger.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl || true
-            fi
-            python scripts/collect_feedback.py --days 60 || true
-            git add -f var/state/seen_ids.json var/state/notice_versions.json data/golden/feedback_labels.jsonl var/state/delivery_state.json var/outbox/delivery_outbox.enc || true
-            git add docs/project/mail_daily_reviews/context/ledger.jsonl || true
-            if git diff --staged --quiet; then
-              echo "원격에 이미 반영됨 — 추가 커밋 불필요"; exit 0
-            fi
-            git commit -m "chore: seen_ids·공고버전·O/X 피드백·일일검수 업데이트(원격 병합) $(date +'%Y-%m-%d')"
-            sleep 2
           done
-          echo "::warning::커밋백 push 5회 실패 — 다음 실행에서 재수렴(발송 자체는 정상)"
+          if [ -z "$VALID" ]; then echo "::warning::저장할 유효한 상태파일 없음"; exit 0; fi
+          # 2) state 브랜치 worktree 에 반영·push. 원격이 앞서가면 다시 받아 병합 후 재시도(최대 3회).
+          for i in 1 2 3; do
+            git worktree remove --force "$WT" 2>/dev/null || rm -rf "$WT"
+            git worktree prune
+            if git ls-remote --exit-code --heads origin state >/dev/null; then
+              git fetch --no-tags origin +refs/heads/state:refs/remotes/origin/state
+              git worktree add -f -B state "$WT" origin/state
+              NEW_BRANCH=0
+            else
+              rc=$?
+              if [ "$rc" -ne 2 ]; then echo "::warning::state 브랜치 조회 실패(exit $rc) — 재시도 ($i)"; sleep 3; continue; fi
+              # 첫 실행: 상태파일만 담는 orphan state 브랜치를 만든다.
+              git worktree add --detach "$WT" HEAD
+              (cd "$WT" && git checkout -q --orphan state && git rm -rfq --cached . && git clean -fdxq)
+              NEW_BRANCH=1
+            fi
+            for f in $VALID; do
+              mkdir -p "$WT/$(dirname "$f")"
+              if [ "$NEW_BRANCH" -eq 1 ] || [ ! -f "$WT/$f" ]; then
+                cp -f "$f" "$WT/$f"; continue
+              fi
+              cmp -s "$WT/$f" "$WS/$f" && continue
+              # 원격 state 사본(target)에 이번 실행 사본(incoming)을 병합 — 병합 실패 시 커밋 금지.
+              case "$f" in
+                var/state/seen_ids.json)        python scripts/merge_seen_ids.py "$WT/$f" "$WS/$f" ;;
+                var/state/notice_versions.json) python scripts/merge_notice_versions.py "$WT/$f" "$WS/$f" ;;
+                var/state/delivery_state.json)  python scripts/merge_delivery_state.py "$WT/$f" "$WS/$f" ;;
+                var/outbox/delivery_outbox.enc) python scripts/merge_delivery_outbox.py "$WT/$f" "$WS/$f" ;;
+                *.jsonl) python scripts/merge_jsonl_append.py "$WT/$f" "$WS/$f" || cp -f "$WS/$f" "$WT/$f" ;;
+              esac || { echo "::error::$f 병합 실패 — 이번 시도 커밋 생략"; continue 2; }
+              python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" "$WT/$f" || { echo "::error::병합 결과 $f 파싱 실패 — 이번 시도 커밋 생략"; continue 2; }
+            done
+            cd "$WT"
+            git add -f $VALID
+            if git diff --cached --quiet; then
+              echo "state 브랜치에 이미 반영됨 — 커밋 생략"; exit 0
+            fi
+            git commit -q -m "chore(state): update seen_ids·공고버전·피드백·일일검수 $(date +'%Y-%m-%d') [skip ci]"
+            if git push origin HEAD:refs/heads/state; then
+              echo "state 브랜치 push 성공 (시도 $i)"; exit 0
+            fi
+            echo "push 거부 — state 브랜치 다시 받아 병합 후 재시도 ($i)"
+            cd "$WS"
+            sleep 3
+          done
+          echo "::error::state 브랜치 push 3회 실패 — seen_ids 미저장(다음 실행에서 중복 발송 가능)"
+          exit 1
 
       # failure·cancelled 모두 알림. 자동 재실행 금지 — 사람만 re-dispatch.
       - name: 실패·취소 시 폰 알림(MDR 상태 포함)
