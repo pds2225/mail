@@ -100,7 +100,7 @@ def test_fallback_body_uses_eight_column_table():
     body = m.fallback_body([_item()])
     assert HEADER_LINE in body
     _, rows, _ = parse_plain_table(body)
-    assert rows and list(COLUMNS) == ["상태", "적합", "공고", "지원", "대상", "기관", "지역", "마감"]
+    assert rows and list(COLUMNS) == ["공고", "지원", "대상", "기관", "지역", "마감"]
     assert "2026년 AI 사업화 지원 & 참여기업 모집" in rows[0]["공고"]
     assert "서울 소재 AI 중소기업" in rows[0]["대상"]
     assert "• 원문:" not in body
@@ -130,8 +130,8 @@ def test_mime_plain_and_html_render_same_clean_content():
     plain = parts["text/plain"]
     html_part = parts["text/html"]
     assert "2026년 AI 사업화 지원" in plain and "2026년 AI 사업화 지원" in html_part
-    assert "&amp;amp;" not in html_part and '<a href="https://example.com/1">' in html_part
-    assert "<table" in html_part
+    assert "&amp;amp;" not in html_part and '<a href="https://example.com/1"' in html_part
+    assert "<table" not in html_part and "max-width:640px" in html_part
     assert "test@example.com" not in plain and "개인정보처리방침" not in html_part
 
 

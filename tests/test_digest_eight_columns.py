@@ -54,7 +54,7 @@ def _item(**extra):
 
 
 def test_columns_order_exact():
-    assert COLUMNS == ("상태", "적합", "공고", "지원", "대상", "기관", "지역", "마감")
+    assert COLUMNS == ("공고", "지원", "대상", "기관", "지역", "마감")  # 2026-10: 상태·적합 삭제
     body = m.fallback_body([_item()], today=TODAY)
     assert HEADER_LINE in body
     assert "추천이유" not in body
@@ -78,7 +78,8 @@ def test_single_and_multiple_notices():
 
 def test_new_badge_and_dday():
     new_row = m._digest_row(_item(_change_type="NEW", deadline="2026-08-16"), today=TODAY)
-    assert new_row["상태"] == "🆕 D-2 🔴"
+    assert "상태" not in new_row and "적합" not in new_row  # 2026-10: 열 삭제
+    assert m._mail_status_cell(_item(_change_type="NEW", deadline="2026-08-16"), today=TODAY) == "🆕 D-2 🔴"
 
     d6 = m._mail_status_cell(_item(_change_type="UPDATED", deadline="2026-08-20"), today=TODAY)
     assert d6 == "D-6 🟠"
@@ -107,14 +108,14 @@ def test_title_link_when_url_present_and_plain_when_missing():
     _, rows, _ = parse_plain_table(with_url)
     assert rows[0]["url"] == "https://bizinfo.go.kr/notice/1"
     html_part = html_email_inner(with_url, m._linkify_html)
-    assert '<a href="https://bizinfo.go.kr/notice/1">' in html_part
+    assert '<a href="https://bizinfo.go.kr/notice/1"' in html_part
     assert "바로가기" not in html_part
 
     no_url = m.fallback_body([_item(link="", source_url="")], today=TODAY)
     _, rows2, _ = parse_plain_table(no_url)
     assert rows2[0]["url"] == ""
     html2 = html_email_inner(no_url, m._linkify_html)
-    assert "<a href=" not in html2.split("<tbody>", 1)[-1].split("</tbody>", 1)[0]
+    assert "<a href=" not in html2
 
 
 def test_missing_support_target_region_are_확인필요():
@@ -156,10 +157,10 @@ def test_mime_html_is_gmail_table():
         for part in parsed.walk() if part.get_content_maintype() != "multipart"
     }
     html_part = parts["text/html"]
-    assert "<table" in html_part
-    assert all(col in html_part for col in COLUMNS)
+    assert "<table" not in html_part and "max-width:640px" in html_part
+    assert "word-break:keep-all" in html_part
     assert "추천이유" not in html_part
-    assert '<a href="https://bizinfo.go.kr/notice/1">' in html_part
+    assert '<a href="https://bizinfo.go.kr/notice/1"' in html_part
 
 
 def test_source_url_preferred_over_link():
@@ -171,8 +172,8 @@ def test_source_url_preferred_over_link():
 def test_deadline_this_year_vs_other_year():
     this = m._mail_deadline_cell(_item(deadline="2026-08-20"), today=TODAY)
     other = m._mail_deadline_cell(_item(deadline="2027-01-05"), today=TODAY)
-    assert this == "8/20"
-    assert other == "2027/1/5"
+    assert this == "8/20 (D-6)"
+    assert other == "2027/1/5 (D-144)"
 
 
 def test_org_not_abbreviated_and_not_source_name():
@@ -275,8 +276,8 @@ def test_execute_monitor_preview_and_digest_table_no_real_send(monkeypatch):
     assert HEADER_LINE in body
     _, rows, _ = parse_plain_table(body)
     assert rows and len(rows) >= 1
-    assert all(col in body for col in COLUMNS)
+    assert "상태" not in body.split(HEADER_LINE, 1)[1].split("\n", 2)[1]
     assert "추천이유" not in body and "바로가기" not in body
     html_part = html_email_inner(body, m._linkify_html)
-    assert "<table" in html_part
-    assert '<a href="https://bizinfo.go.kr/canonical-a1">' in html_part or '<a href="https://bizinfo.go.kr/a1">' in html_part or '<a href="https://bizinfo.go.kr/b1">' in html_part
+    assert "<table" not in html_part and "■" not in html_part
+    assert '<a href="https://bizinfo.go.kr/canonical-a1"' in html_part or '<a href="https://bizinfo.go.kr/a1"' in html_part or '<a href="https://bizinfo.go.kr/b1"' in html_part
