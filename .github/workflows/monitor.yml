@@ -32,6 +32,11 @@ on:
         description: '테스트 전용: 지정하면 이번 수동 실행의 모든 수신자를 이 주소 하나로 강제한다(실제 그룹·전체 수신자는 발송되지 않음). schedule 자동실행에는 절대 적용되지 않는다.'
         required: false
         default: ''
+      smoke_test:
+        description: '빠른 점검: 수집·AI 없이 테스트 digest 1통만 only_to 로 보낸다(only_to 필수, 수 분 내 종료).'
+        required: false
+        default: false
+        type: boolean
 
 # 동시 실행 방지(#17): 수동 실행이 예약 실행과 겹치면 두 개의 발송 run 이 동시에 돌아
 # 중복 발송·seen_ids 커밋백 경쟁이 날 수 있다. 같은 그룹으로 묶어 한 번에 하나만 진행한다.
@@ -129,6 +134,11 @@ jobs:
           # 발송 회차 고정: schedule 은 cron 식→am/pm, workflow_dispatch 는 inputs.
           # auto/빈 값은 monitor.delivery_slot 이 벽시계로 폴백.
           MONITOR_DELIVERY_SLOT: ${{ github.event_name == 'schedule' && (github.event.schedule == '30 22 * * *' && 'am' || github.event.schedule == '30 9 * * *' && 'pm' || 'auto') || inputs.delivery_slot || 'auto' }}
+          # 2026-10 실행 시간 예산(분, 시작 기준): 240분 timeout 전에 수집을 끊고 발송·상태저장까지 끝낸다.
+          #   실측(10/4~10/12): 커버리지 감사 55~158분, 상세보강 35~155분+, 발송 ~3분, 발송 후 계측 0~10분.
+          MONITOR_COVERAGE_BUDGET_MIN: '75'
+          MONITOR_COLLECT_BUDGET_MIN: '150'
+          MONITOR_POST_SEND_SKIP_MIN: '180'
         # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 암호화된 그룹 수신자에게
         # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
@@ -145,6 +155,13 @@ jobs:
           ONLY_TO_FLAG=""
           if [ -n "${{ github.event.inputs.only_to }}" ]; then
             ONLY_TO_FLAG="--only-to ${{ github.event.inputs.only_to }}"
+          fi
+          if [ "${{ github.event.inputs.smoke_test }}" = "true" ]; then
+            if [ -z "${{ github.event.inputs.only_to }}" ]; then
+              echo "::error::smoke_test 는 only_to 와 함께만 실행할 수 있습니다"; exit 2
+            fi
+            python scripts/monitor_runtime.py --smoke-test $ONLY_TO_FLAG
+            exit $?
           fi
           python scripts/monitor_runtime.py --send --persist-seen --coverage-alert $GROUP_FLAG $ONLY_TO_FLAG
 
