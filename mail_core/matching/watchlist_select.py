@@ -112,3 +112,46 @@ def watchlist_limits_from_config(watchlist: dict | None) -> dict[str, int]:
         "url_max_age_days": _int("url_max_age_days", DEFAULT_URL_MAX_AGE_DAYS),
         "url_unknown_cap": _int("url_unknown_cap", DEFAULT_URL_UNKNOWN_CAP),
     }
+
+
+DEFAULT_UNKNOWN_MAX_AGE_DAYS = 30
+
+
+def filter_watchlist_hits(
+    items: list[dict],
+    *,
+    classify: Callable[[dict], str],
+    is_junk: Callable[[dict], bool] | None = None,
+    today: date | None = None,
+    unknown_max_age_days: int = DEFAULT_UNKNOWN_MAX_AGE_DAYS,
+) -> tuple[list[dict], list[dict]]:
+    """집중 모니터링 후보에서 지난 공고를 거른다(2026-10). 반환 (keep, dropped).
+
+    - classify(it) == 'closed' (마감일 경과·제목 [마감]/결과발표) → 제외
+    - is_junk(it) (결과·채용 등 잡공고) → 제외
+    - 마감 불명(classify == 'unknown')이고 posted_date 가 unknown_max_age_days 보다 오래됨 → 제외
+      (posted_date 불명이면 유지 — 놓치지 않기 우선)
+    판정 함수 예외는 유지 쪽으로 처리한다.
+    """
+    today = today or date.today()
+    keep: list[dict] = []
+    dropped: list[dict] = []
+    for item in items or []:
+        try:
+            status = classify(item)
+        except Exception:
+            status = "unknown"
+        try:
+            junk = bool(is_junk(item)) if is_junk else False
+        except Exception:
+            junk = False
+        if status == "closed" or junk:
+            dropped.append(item)
+            continue
+        if status == "unknown":
+            posted = _parse_posted(item.get("posted_date"))
+            if posted is not None and (today - posted).days > int(unknown_max_age_days):
+                dropped.append(item)
+                continue
+        keep.append(item)
+    return keep, dropped
