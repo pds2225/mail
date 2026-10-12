@@ -198,7 +198,7 @@ def test_digest_never_uses_model_and_always_uses_collected_facts(monkeypatch):
     monkeypatch.setenv("MAIL_ALLOW_LLM_DIGEST", "1")
     items = [{
         "title": "지원금 500만원 공고", "author": "기관", "description": "원문 지원 내용",
-        "deadline": "2026-08-01", "posted_date": "2026-07-23", "source": "테스트",
+        "deadline": "2099-08-01", "posted_date": "2026-07-23", "source": "테스트",
         "link": "https://example.test/notice", "_types": ["지원금/바우처"],
     }]
     body = m.claude_summarize(items, {"id": "g"})
