@@ -77,6 +77,23 @@ def _notify_quality_p0_nonfatal(report: dict) -> None:
 def _record_quality_nonfatal() -> None:
     if os.environ.get("MONITOR_SKIP_FIELD_QUALITY") == "1":
         return
+    if "--smoke-test" in sys.argv:
+        return
+    # 2026-10: 10/11 은 발송 완료(230분) 뒤 이 계측이 기업마당 재시도로 240분 timeout 을 넘겼다.
+    # 늦은 실행에선 생략한다(계측은 발송 결과에 영향 없음).
+    try:
+        from mail_core.operations import run_budget
+
+        limit = run_budget.budget_min("MONITOR_POST_SEND_SKIP_MIN")
+        if limit > 0 and run_budget.elapsed_min() >= limit:
+            print(
+                f"::warning::field quality audit skipped — elapsed "
+                f"{run_budget.elapsed_min():.0f}m >= {limit:.0f}m",
+                file=sys.stderr,
+            )
+            return
+    except Exception:
+        pass
     try:
         from source_field_quality_gate import run_live_and_record
 
@@ -123,6 +140,7 @@ def _run_protected_monitor() -> None:
 
 
 def main() -> int:
+    from mail_core.operations import run_budget  # noqa: F401 - 예산 기준 시각 = 시작 시각
     from mail_core.operations.detail_runtime_adapter import (
         install_kstartup_body_selector_adapter,
     )
@@ -146,5 +164,25 @@ def main() -> int:
     return exit_code
 
 
+def _exit_without_waiting_for_stuck_workers(code: int) -> None:
+    """예산 초과로 버린 수집 스레드(접속 대기 중)가 남아 있으면 종료가 그 스레드를 기다려
+    240분을 다시 넘길 수 있다. 상태 파일은 이미 동기 저장됐으므로 남은 스레드가 있을 때만
+    출력 flush 후 즉시 종료한다."""
+    import logging
+    import threading
+
+    lingering = [
+        t for t in threading.enumerate()
+        if t is not threading.main_thread() and t.is_alive() and not t.daemon
+    ]
+    if not lingering:
+        raise SystemExit(code)
+    print(f"::notice::{len(lingering)} lingering worker thread(s) — fast exit", file=sys.stderr)
+    logging.shutdown()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    _exit_without_waiting_for_stuck_workers(main())

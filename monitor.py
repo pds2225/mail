@@ -2110,10 +2110,28 @@ def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict
             _persist_detail_extraction_meta(failed)
             return it["id"], failed
 
+    from concurrent.futures import TimeoutError as _FutTimeout, as_completed
+    from mail_core.operations import run_budget as _rb
+
     enriched_map: dict[str, dict] = {}
-    with ThreadPoolExecutor(max_workers=DETAIL_ENRICH_WORKERS) as pool:
-        for iid, updated in pool.map(_one, targets):
+    if _rb.exceeded("MONITOR_COLLECT_BUDGET_MIN"):
+        log.warning("⏱ 수집 예산 초과(경과 %.1f분) — 상세 보강 %d건 생략, 목록 정보로 진행",
+                    _rb.elapsed_min(), len(targets))
+        return items
+    pool = ThreadPoolExecutor(max_workers=DETAIL_ENRICH_WORKERS)
+    futs = [pool.submit(_one, it) for it in targets]
+    try:
+        for f in as_completed(futs, timeout=_rb.remaining_s("MONITOR_COLLECT_BUDGET_MIN")):
+            iid, updated = f.result()
             enriched_map[iid] = updated
+    except _FutTimeout:
+        # 2026-10: 상세 timeout(기업마당 상세 건당 90~150초)이 쌓여 240분을 넘던 문제.
+        # 끝난 것만 반영하고 나머지는 목록 정보 그대로 발송 단계로 넘긴다.
+        log.warning("⏱ 수집 예산 %.0f분 초과(경과 %.1f분) — 상세 보강 %d/%d건만 반영",
+                    _rb.budget_min("MONITOR_COLLECT_BUDGET_MIN"), _rb.elapsed_min(),
+                    len(enriched_map), len(targets))
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     return [enriched_map.get(it["id"], it) for it in items]
 
 
@@ -4276,6 +4294,9 @@ def fetch_site_coverage(
     sites = sites if sites is not None else load_json(SITES_PATH, [])
     target = previous_business_day(days_back=days_back)
     rows: list[dict] = []
+    from mail_core.operations import run_budget as _rb
+    from mail_core.operations.coverage_alert import COVERAGE_BUDGET_SKIPPED
+    _budget_logged = False
     for site in sites:
         stype = site.get("type", "")
         fn = FETCHERS.get(stype)
@@ -4311,6 +4332,17 @@ def fetch_site_coverage(
             continue
         if not fn:
             row["fetch_error"] = f"unknown_type:{stype}"
+            rows.append(row)
+            continue
+        # 2026-10: 순차 감사가 접속불가 사이트(건당 ~3분)로 240분 timeout 을 넘기지 않게 예산 적용.
+        # 감사만 건너뛴다 — 실제 발송용 수집(fetch_all)은 별도로 모든 사이트를 돈다.
+        if _rb.exceeded("MONITOR_COVERAGE_BUDGET_MIN"):
+            if not _budget_logged:
+                log.warning("⏱ 커버리지 감사 예산 %.0f분 초과(경과 %.1f분) — 남은 사이트 감사 생략",
+                            _rb.budget_min("MONITOR_COVERAGE_BUDGET_MIN"), _rb.elapsed_min())
+                _budget_logged = True
+            row["fetch_error"] = COVERAGE_BUDGET_SKIPPED
+            row["missing_risk"] = "중간"
             rows.append(row)
             continue
         try:
@@ -4402,9 +4434,15 @@ def fetch_all(
         log.warning("알 수 없는 타입: %s (%s)", s.get("type"), s.get("name"))
         return []
 
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        futures = {pool.submit(_fetch, s): s for s in sites}
-        for f in as_completed(futures):
+    from concurrent.futures import TimeoutError as _FutTimeout
+    from mail_core.operations import run_budget as _rb
+
+    pool = ThreadPoolExecutor(max_workers=max_workers)
+    futures = {pool.submit(_fetch, s): s for s in sites}
+    done: set = set()
+    try:
+        for f in as_completed(futures, timeout=_rb.remaining_s("MONITOR_COLLECT_BUDGET_MIN")):
+            done.add(f)
             site = futures[f]
             sid = str(site.get("id") or site.get("name") or "unknown")
             try:
@@ -4416,6 +4454,18 @@ def fetch_all(
                 log.error("수집 실패 (%s): %s", site.get("name"), e)
                 if outcomes is not None:
                     outcomes[sid] = {"success": False, "item_count": 0, "error": str(e)}
+    except _FutTimeout:
+        # 2026-10: 수집 예산 초과 — 모은 것만으로 진행(발송 누락보다 일부 소스 지연이 낫다).
+        pending = [futures[f] for f in futures if f not in done]
+        log.warning("⏱ 수집 예산 %.0f분 초과(경과 %.1f분) — 미완료 %d개 소스 건너뜀: %s",
+                    _rb.budget_min("MONITOR_COLLECT_BUDGET_MIN"), _rb.elapsed_min(), len(pending),
+                    ", ".join(str(p.get("name") or p.get("id")) for p in pending[:10]))
+        if outcomes is not None:
+            for p in pending:
+                sid = str(p.get("id") or p.get("name") or "unknown")
+                outcomes[sid] = {"success": False, "item_count": 0, "error": "collect_budget_exceeded"}
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
     return result
 
 
@@ -8964,6 +9014,39 @@ def run_dry_run(
     return result
 
 
+def run_smoke_test(only_to: str, today=None) -> int:
+    """--smoke-test: 수집·AI·seen_ids 없이 작은 테스트 digest 1통을 only_to 한 곳에만 보낸다.
+
+    발송 경로(SMTP·HTML 렌더·카드 형식)만 수 분 안에 확인하는 용도. only_to 없으면 거부한다.
+    반환: 0 성공 / 2 인자 오류 / 3 발송 실패.
+    """
+    global _ALLOW_SMTP_SEND, _ONLY_TO
+    target = (only_to or "").strip()
+    if not target or "@" not in target:
+        log.error("smoke-test 는 --only-to <주소> 와 함께만 실행할 수 있습니다")
+        return 2
+    today = today or datetime.now(KST).date()
+    sample = [{
+        "id": "smoke-1", "title": "[테스트] 공고 메일 발송 점검", "author": "MAIL 스모크 테스트",
+        "support_field": "바우처 최대 1천만원", "description": "발송 경로 점검용 예시 공고 (실제 공고 아님)",
+        "target_field": "중소기업", "deadline": (today + timedelta(days=7)).isoformat(),
+        "posted_date": today.isoformat(), "link": "https://example.com/smoke-test",
+        "region_status": "eligible", "eligible_regions": ["전국"], "is_relevant": True,
+        "_change_type": "NEW",
+    }]
+    subject = f"[스모크 테스트] 공고 메일 발송 점검 {today.isoformat()}"
+    body = fallback_body(sample, today=today)
+    _ONLY_TO = target
+    _ALLOW_SMTP_SEND = True
+    try:
+        send_email(subject, body, target)
+    except Exception as e:
+        log.error("smoke-test 발송 실패 (%s): %s", _mask_email(target), e)
+        return 3
+    log.info("smoke-test 발송 성공 → %s", _mask_email(target))
+    return 0
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -9019,7 +9102,16 @@ if __name__ == "__main__":
         metavar="GROUP_ID",
         help="지정한 그룹만 실행한다(예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.",
     )
+    parser.add_argument(
+        "--smoke-test",
+        action="store_true",
+        help="수집·AI 없이 작은 테스트 digest 1통만 --only-to 주소로 보낸다(반드시 --only-to 필요).",
+    )
     args = parser.parse_args()
+    if args.smoke_test:
+        if not args.only_to:
+            parser.error("--smoke-test 는 --only-to 와 함께만 사용할 수 있습니다(실수신자 발송 방지)")
+        raise SystemExit(run_smoke_test(args.only_to))
     if args.only_to:
         _ONLY_TO = args.only_to
         log.info("only-to 모드: 모든 발송 수신자를 %s 로 강제합니다(테스트)", _mask_email(args.only_to))
@@ -9196,6 +9288,10 @@ if __name__ == "__main__":
                     collection_gate=_gate,
                     group_id=args.group,
                 )
+                # 2026-10: 발송 실패를 초록불로 숨기지 않는다(상태 저장 step 은 if: always() 로 계속 돈다).
+                if args.send and _SEND_FAIL > 0:
+                    log.error("발송 실패 %d건(성공 %d건) — exit 3", _SEND_FAIL, _SEND_OK)
+                    raise SystemExit(3)
     except Exception as e:
         log.exception("치명적 오류: %s", e)
         raise
