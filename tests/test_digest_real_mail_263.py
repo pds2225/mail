@@ -159,3 +159,31 @@ def test_org_drops_parenthetical_before_truncation():
     assert dt.short_org("인천테크노파크(ITP)") == "인천테크노파크"
     assert dt.short_org("한국바이오투자파트너스") == "한국바이오투자파트…"
     assert dt.short_org("카카오") == "카카오"
+
+
+# ── 분류·지역·마감 우선순위(실수집 미리보기 2026-10-13) ─────────────────────
+
+def test_voucher_section_not_from_description_word():
+    it = _item("출연연, 대학 연구소기업 Business Development 프로그램 참여 예비창업자 모집 (10월)", "2026-10-31",
+               "선정 기업에는 사업화 바우처 연계 안내")
+    assert monitor._mail_support_cell(it) != "바우처"
+    assert monitor._mail_support_cell(_item("2026년 수출바우처 참여기업 모집", "2026-10-31")) == "바우처"
+    assert monitor._mail_support_cell(_item("IR 참가자 모집", "2026-11-02", support_field="혁신바우처")) == "바우처"
+
+
+def test_region_prefers_title_or_org_over_default():
+    it = _item("「인천 피지컬 AI 실증센터」모사·가상환경 실증 수요조사", "", author="인천테크노파크(ITP)",
+               region_status="eligible", applicant_region_city="서울")
+    assert monitor._mail_region_cell(it) == "인천"
+    it2 = _item("AI 실증 수요조사", "", author="인천테크노파크", region_status="eligible",
+                applicant_region_city="서울")
+    assert monitor._mail_region_cell(it2) == "인천"
+
+
+def test_deadline_prefers_application_period_over_business_period():
+    it = _item("TIPS 추천 투자유치 지원 프로그램", "접수기간: 2026-10-01 ~ 2026-10-20 / 사업기간: 2026-11-01 ~ 2027-07-24")
+    assert monitor._digest_deadline_end(it, TODAY) == date(2026, 10, 20)
+    it2 = _item("t", "사업기간: 2026-11-01 ~ 2027-07-24")
+    assert monitor._digest_deadline_end(it2, TODAY) is None
+    it3 = _item("t", "2027-07-24", application_period_text="2026-10-01 ~ 2026-10-25")
+    assert monitor._digest_deadline_end(it3, TODAY) == date(2026, 10, 25)

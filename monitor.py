@@ -6617,11 +6617,12 @@ def _mail_support_cell(item: dict) -> str:
     """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
     try:
         types = " ".join(str(v) for v in (item.get("_types") or []) if str(v).strip())
+        # 2026-10: 섹션은 제목·지원유형(_types/support_field)으로만 정한다. 본문(description)에
+        # '바우처'가 한 번 나온다고 BD 프로그램·IR 모집이 '바우처' 섹션에 들어가던 오분류 차단.
         blob = " ".join((
             types,
             str(item.get("support_field") or ""),
             str(item.get("title") or ""),
-            str(item.get("description") or "")[:400],
         ))
         if "바우처" in blob:
             return "바우처"
@@ -6661,11 +6662,39 @@ def _mail_org_cell(item: dict) -> str:
         return "추출실패"
 
 
+_REGION_SCAN_ORDER = sorted(
+    (r for r in KNOWN_REGIONS if r not in ("충청", "전라", "경상", "수도권", "호남", "영남")),
+    key=len, reverse=True,
+)
+_REGION_FULLNAME = {"충청북도": "충북", "충청남도": "충남", "전라북도": "전북", "전북특별자치도": "전북",
+                    "전라남도": "전남", "경상북도": "경북", "경상남도": "경남"}
+
+
+def _region_in_text(text: str) -> str:
+    t = str(text or "")
+    for full, short in _REGION_FULLNAME.items():
+        if full in t:
+            return short
+    hits = [(t.find(r), r) for r in _REGION_SCAN_ORDER if r in t]
+    return min(hits)[1] if hits else ""
+
+
+def _title_or_org_region(item: dict) -> str:
+    return _region_in_text(item.get("title")) or _region_in_text(item.get("author"))
+
+
 def _mail_region_cell(item: dict) -> str:
     try:
         scope = _resolve_applicant_region_scope(item)
         if scope.get("nationwide"):
             return "전국"
+        if scope.get("regions"):
+            return " ".join(scope["regions"][:2])
+        # 지원대상에 지역 단서가 없으면 제목 → 주관기관명의 지역(인천테크노파크 → 인천)을
+        # 그룹 기본 도시(예: '서울 전체')보다 우선한다.
+        own = _title_or_org_region(item)
+        if own:
+            return own
         label = _region_label(item)
         if not label or label == "확인 필요":
             return "확인필요"
@@ -6871,9 +6900,31 @@ def _yearless_date(month: int, day: int, item: dict, today):
     return d
 
 
+def _strip_non_application_periods(text: str) -> str:
+    """'접수기간: A ~ B / 사업기간: C ~ D' 같은 문자열에서 비신청 기간 구간을 지운다.
+    신청기간 라벨이 있으면 그 구간만 남긴다."""
+    t = str(text or "")
+    for lbl in APPLICATION_PERIOD_LABELS:
+        mm = re.search(rf"{re.escape(lbl)}\s*[:：]?\s*([^/\n|ㅇ]+)", t)
+        if mm:
+            return mm.group(1).strip()
+    for lbl in NON_APPLICATION_PERIOD_LABELS:
+        t = re.sub(rf"{re.escape(lbl)}\s*[:：]?\s*[^/\n|ㅇ]*", " ", t)
+    return " ".join(t.split())
+
+
 def _digest_deadline_end(item: dict, today):
     """카드에 표시하는 마감일(resolve_item_deadline)의 종료일. 읽을 수 없으면 None."""
-    raw = (resolve_item_deadline(item) or str(item.get("deadline") or "")).strip()
+    # 접수·신청기간 종료일 우선: 구조화 신청기간 → 본문 신청기간 라벨 → deadline 필드
+    # (deadline 필드에 섞인 사업·협약·운영기간 구간은 지운다).
+    raw = ""
+    apt = str(item.get("application_period_text") or "").strip()
+    if apt and _parse_date_candidates(apt, today.year):
+        raw = apt
+    if not raw:
+        raw = (resolve_item_deadline(item) or "").strip()
+        if raw == str(item.get("deadline") or "").strip():
+            raw = _strip_non_application_periods(raw)
     if not raw:
         return None
     dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
