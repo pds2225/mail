@@ -144,3 +144,18 @@ def test_meta_hides_unknown_fields_plain_and_html():
     assert "<span style='white-space:nowrap'>확인필요</span>" in html2 and "d93025" not in html2
     _b, rows, _a = dt.parse_plain_table(plain + "\n────────\n🙋 x")
     assert len(rows) == 1 and rows[0]["마감"] == "10/13 (D-0)"
+
+
+# ── 실수집 미리보기(2026-10-13 11시, K-Startup·ITP 등)에서 발견 ────────────────
+
+def test_repeated_breadcrumb_phrase_is_junk_real_itp():
+    raw = "ITP 뉴스 지원사업 ITP 뉴스 지원사업 [AI혁신센터]「인천 피지컬 AI 실증센터」모사·가상환경 실증 수요조사"
+    assert monitor.is_support_junk(raw)
+    it = _item("「인천 피지컬 AI 실증센터」모사·가상환경 실증 수요조사", "", raw)
+    assert monitor._mail_support_summary(it) == ""
+
+
+def test_org_drops_parenthetical_before_truncation():
+    assert dt.short_org("인천테크노파크(ITP)") == "인천테크노파크"
+    assert dt.short_org("한국바이오투자파트너스") == "한국바이오투자파트…"
+    assert dt.short_org("카카오") == "카카오"

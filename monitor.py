@@ -6711,7 +6711,7 @@ def _format_won(amount: int) -> str:
 
 # 💰 줄에 섞이던 게시판 스크랩 잡텍스트(2026-10-13 실발송 #263 원문 기준)
 _SUPPORT_JUNK_RES = (
-    re.compile(r"(\S{2,})\s+\1(?:\s|$)"),                        # '공지사항 공지사항'
+    re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)"),          # '공지사항 공지사항', 'ITP 뉴스 지원사업 ITP 뉴스 지원사업'
     re.compile(r"\bHOME\b|\bhit\s*\d+|조회수?\s*[:：]?\s*\d+", re.I),  # 네비·조회수
     re.compile(r"\d{1,2}:\d{2}:\d{2}"),                            # '12:58:00' 게시시각
     re.compile(r"(?:^|\s)(?:관리자|작성자|등록일|첨부파일)(?:\s|$|[:：])"),
@@ -6730,7 +6730,7 @@ _SUPPORT_STRIP_RES = (
 )
 
 
-_PAGE_NAV_RE = re.compile(r"(\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
+_PAGE_NAV_RE = re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
 
 
 def strip_support_junk(text: str) -> str:

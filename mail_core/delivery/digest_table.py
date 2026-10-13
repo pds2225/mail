@@ -121,6 +121,9 @@ def short_region(value: str) -> str:
 
 
 def short_org(value: str, limit: int = ORG_MAX) -> str:
+    if len(value) > limit:
+        # '인천테크노파크(ITP)' → '인천테크노파크': 괄호 약칭을 먼저 떼고 자른다(잘린 괄호 '(I…' 방지)
+        value = re.sub(r"\s*[(（][^)）]*[)）]?\s*$", "", value).strip() or value
     return value if len(value) <= limit else value[: limit - 1] + "…"
 
 
