@@ -6674,6 +6674,13 @@ def _mail_region_cell(item: dict) -> str:
         return "추출실패"
 
 
+def format_deadline_label(end, today) -> str:
+    """메일 마감 표기 단일 형식 'M/D (D-N)'. 연도 없음, 항상 D-day(지난 날짜는 D+N)."""
+    days = (end - today).days
+    dday = f"D-{days}" if days >= 0 else f"D+{-days}"
+    return f"{end.month}/{end.day} ({dday})"
+
+
 def _mail_deadline_cell(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     try:
@@ -6684,10 +6691,8 @@ def _mail_deadline_cell(item: dict, today=None) -> str:
                     return "상시"
             except Exception:
                 pass
-            return "확인필요"
-        label = f"{end.month}/{end.day}" if end.year == today.year else f"{end.year}/{end.month}/{end.day}"
-        # 2026-10: KST 기준 D-day (당일 D-0)
-        return f"{label} (D-{(end - today).days})" if end >= today else label
+            return "확인필요"  # 마감 불명: 회색 '확인필요'(D-day 없음). 상시 공고만 '상시'.
+        return format_deadline_label(end, today)
     except Exception:
         return "추출실패"
 
@@ -6716,6 +6721,27 @@ _SUPPORT_JUNK_RES = (
 _SUPPORT_LABEL_TOKENS = ("지원분야", "대상연령", "기관구분", "담당부서", "사업관리실", "접수기간", "신청기간")
 
 
+_SUPPORT_STRIP_RES = (
+    re.compile(r"\b(?:hit|조회수?)\s*[:：]?\s*\d+", re.I),
+    re.compile(r"\d{4}[-./]\d{1,2}[-./]\d{1,2}"),
+    re.compile(r"\d{1,2}:\d{2}(?::\d{2})?"),
+    re.compile(r"제\s*목\s*[:：]?"),
+    re.compile(r"(?:^|(?<=\s))(?:관리자|작성자|등록일|첨부파일|완료|HOME|공고ㆍ안내|이전글|다음글|목록으로)(?=\s|$|[:：])\s*[:：]?"),
+)
+
+
+_PAGE_NAV_RE = re.compile(r"(\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
+
+
+def strip_support_junk(text: str) -> str:
+    """💰 후보에서 게시판 부스러기(관리자·hit N·시각·'제 목 :'·완료 등)를 제거한 뒤 남는 글."""
+    t = " ".join(str(text or "").split())
+    for rx in _SUPPORT_STRIP_RES:
+        t = rx.sub(" ", t)
+    t = re.sub(r"(\S{2,})(?:\s+\1)+(?=\s|$)", r"\1", " ".join(t.split()))
+    return " ".join(t.split()).strip(" :·-")
+
+
 def is_support_junk(text: str) -> bool:
     """💰 줄 후보가 실제 지원내용이 아니라 페이지 스크랩 잡텍스트인지."""
     t = " ".join(str(text or "").split())
@@ -6739,6 +6765,10 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
             _notice_text(item), str(item.get("support_field") or ""))))
         money = f"최대 {_format_won(amt)}" if amt and amt >= 100_000 else ""
         blurb = _mail_support_blurb(item, limit=160)
+        if blurb and _PAGE_NAV_RE.search(blurb):
+            blurb = ""  # 게시판 페이지 내비게이션째 긁힌 본문 — 남는 글도 신뢰할 수 없음
+        if blurb and blurb != "상세 공고문 확인":
+            blurb = strip_support_junk(blurb)
         if not blurb or blurb == "상세 공고문 확인" or is_support_junk(blurb):
             blurb = ""
         if not blurb and not money:
@@ -6751,7 +6781,7 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
         # 짧은 문구: 첫 구절만, 금액 표기는 제거
         phrase = re.split(r"[,(（/;]|\s[-·]\s", blurb)[0]
         phrase = re.sub(r"(?:최대|기업당|업체당)?\s*[\d.,]+\s*(?:조|천억|억|천만|백만|만)?\s*원", "", phrase)
-        phrase = " ".join(phrase.split())
+        phrase = strip_support_junk(phrase)
         if is_support_junk(phrase):
             phrase = ""
         text = " ".join(x for x in (money, phrase) if x)
@@ -6762,10 +6792,34 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
         return ""
 
 
+_MAIL_TITLE_PREFIX_RES = (
+    re.compile(r"^모집\s*중\s*(?:\([^)]{0,20}\))?\s*"),                 # '모집중(2026-207호)'
+    re.compile(r"^\[[^\]]{1,12}\]\s*"),                               # '[교육안내]' '[공고]'
+    re.compile(r"^[가-힣A-Za-z]{1,10}\]\s*"),                           # '인천서구]'
+    re.compile(r"^\((?:공고|안내|모집|재공고)\)\s*"),
+    re.compile(r"^(?:제\s*)?\d{4}\s*-\s*\d+\s*호\s*"),                     # '2026-207호'
+    re.compile(r"^(?:No\.?|NO\.?)\s*\d+\s*[.)\-:]?\s*"),
+    re.compile(r"^\d{1,3}\s*[.)]\s+"),                                  # '3. ' '1) '
+    re.compile(r"^[-·•]\s*"),
+)
+
+
+def clean_mail_title(title: str) -> str:
+    """메일 표시용 제목: 상태·지역·게시판 머리말·순번/코드 접두를 걷어내고 사업명만 남긴다."""
+    t = " ".join(str(title or "").split())
+    for _ in range(6):
+        before = t
+        for rx in _MAIL_TITLE_PREFIX_RES:
+            t = rx.sub("", t, count=1).strip()
+        if t == before:
+            break
+    return t or " ".join(str(title or "").split())
+
+
 def _digest_row(item: dict, today=None) -> dict:
     from mail_core.delivery.digest_table import notice_url
 
-    title = strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160))
+    title = clean_mail_title(strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160)))
     if not title:
         title = "(제목없음)"
     badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(

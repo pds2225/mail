@@ -129,7 +129,7 @@ def test_plain_roundtrip_and_html_blocks():
     assert before == "머리말" and after.startswith("────")
     assert [p["공고"] for p in parsed] == ["제목1", "제목2"]
     assert parsed[0]["url"] == "https://e.test/1" and parsed[0]["마감"] == "10/20"
-    assert parsed[1]["지원"] == "기타" and parsed[1]["기관"] == "기관,B"
+    assert parsed[1]["지원"] == "기타" and parsed[1]["_meta"] == ["기관,B", "서울", "확인필요"]  # 확인필요 칸 숨김
     html_part = html_email_inner(body, m._linkify_html)
     assert "<table" not in html_part and "<style" not in html_part
     assert "word-break:keep-all" in html_part and "max-width:640px" in html_part

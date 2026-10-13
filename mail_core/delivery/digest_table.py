@@ -129,9 +129,29 @@ def _meta_values(row: dict) -> list[str]:
     return [short_org(org), target, short_region(region), deadline]
 
 
-def _meta_text(row: dict) -> str:
+_HIDDEN_META = {_MISSING, _PARSE_FAIL, "전체"}
+
+
+def _known_meta(row: dict) -> list[str]:
+    """메타 줄: 확인필요·추출실패 칸은 숨기고 아는 값만. 마감은 항상 마지막에 표시."""
+    if row.get("_meta") is not None:      # parse_plain_table 로 읽은 행: 이미 걸러진 값
+        return list(row["_meta"])
     org, target, region, deadline = _meta_values(row)
-    return _META_SEP.join([org, target, region, deadline])
+    known = [v for v in (org, target, region) if v and v not in _HIDDEN_META]
+    if deadline in (_MISSING, _PARSE_FAIL, "", "마감일 확인"):
+        deadline = _MISSING                # 마감 불명: 회색 '확인필요'(D-day 없음)
+    return known + [deadline]
+
+
+_DEADLINE_PART_RE = re.compile(r"^(?:\d{1,2}/\d{1,2}(?: \(D[-+]\d+\))?|상시|확인필요)$")
+
+
+def _is_deadline_part(text: str) -> bool:
+    return bool(_DEADLINE_PART_RE.match((text or "").strip()))
+
+
+def _meta_text(row: dict) -> str:
+    return _META_SEP.join(_known_meta(row))
 
 
 def render_plain(rows: list[dict], *, preamble: str = "") -> str:
@@ -152,7 +172,9 @@ def render_plain(rows: list[dict], *, preamble: str = "") -> str:
             support = " ".join(str(row.get("지원내용") or "").split())
             if support:
                 lines.append(_INDENT + _SUPPORT_PREFIX + _plain_support(support))
-            lines.append(_INDENT + _meta_text(row))
+            meta_line = _meta_text(row)
+            if meta_line:
+                lines.append(_INDENT + meta_line)
             url = str(row.get("url") or "").strip()
             if url:
                 lines.append(_INDENT + url)
@@ -215,13 +237,14 @@ def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
             elif content.startswith(_SUPPORT_PREFIX):
                 cur["지원내용"] = content[len(_SUPPORT_PREFIX):].strip()
             else:
-                parts = content.split(_META_SEP)
+                parts = [p for p in content.split(_META_SEP) if p.strip()]
+                if not parts or cur.get("_meta") is not None:
+                    break
+                # 확인필요 칸은 숨겨 출력하므로 칸 수가 1~4로 가변. 마지막 = 마감.
+                cur["마감"] = parts[-1] if _is_deadline_part(parts[-1]) else ""
                 if len(parts) == 4:
                     cur["기관"], cur["대상"], cur["지역"] = parts[0], parts[1], parts[2]
-                    dl = parts[3]
-                    cur["마감"] = dl[3:].strip() if dl.startswith("마감 ") else dl
-                else:
-                    break
+                cur["_meta"] = parts
         else:
             break
         consumed = i + 1
@@ -251,21 +274,25 @@ def render_html_blocks(rows: list[dict]) -> str:
                 title = (f'<a href="{html.escape(url, quote=True)}" '
                          "style='color:#1a5fd6;text-decoration:none'>"
                          f"<span style='color:#1a5fd6'>{title}</span></a>")
-            org, target, region, deadline = _meta_values(row)
-            meta = html.escape(_META_SEP.join([org, target, region]))
+            known = _known_meta(row)
+            deadline = known[-1] if known and _is_deadline_part(known[-1]) else ""
+            others = known[:-1] if deadline else known
+            meta = html.escape(_META_SEP.join(others) + (_META_SEP if others and deadline else ""))
             dl = (f"<span style='color:#d93025;font-weight:700;white-space:nowrap'>{html.escape(deadline)}</span>"
-                  if _DATE_RE.match(deadline) else f"<span style='white-space:nowrap'>{html.escape(deadline)}</span>")
+                  if _DATE_RE.match(deadline) else (f"<span style='white-space:nowrap'>{html.escape(deadline)}</span>" if deadline else ""))
             support = " ".join(str(row.get("지원내용") or "").split())
             support_html = (
                 "<div style='font-size:14px;font-weight:700;margin-top:4px;display:block;"
                 "white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>"
                 f"{html.escape(_SUPPORT_PREFIX + support)}</div>" if support else ""
             )
+            meta_html = (f"<div style='font-size:13px;color:#777;margin-top:3px'>{meta}{dl}</div>"
+                         if (meta or dl) else "")
             out.append(
                 "<div style='padding:12px 0;border-bottom:1px solid #eee'>"
                 f"<div style='font-size:16px'>{title}</div>"
                 f"{support_html}"
-                f"<div style='font-size:13px;color:#777;margin-top:3px'>{meta}{_META_SEP}{dl}</div>"
+                f"{meta_html}"
                 "</div>"
             )
     out.append("</div>")

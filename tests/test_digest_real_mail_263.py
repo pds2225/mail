@@ -92,3 +92,55 @@ def test_footer_not_parsed_as_card_and_sections_match():
     assert "기타 (6건)" not in html
     assert "확인필요 · 확인필요 · 확인필요" not in html
     assert "🙋 이 추천" in html  # 꼬리말은 일반 텍스트로 유지
+
+
+# ── 2차 피드백(형식 통일) ──────────────────────────────────────────────
+
+def test_deadline_single_format_always_dday():
+    f = monitor.format_deadline_label
+    assert f(date(2026, 10, 13), TODAY) == "10/13 (D-0)"
+    assert f(date(2026, 10, 20), TODAY) == "10/20 (D-7)"
+    assert f(date(2025, 9, 3), TODAY) == "9/3 (D+405)"   # 연도 없음
+    assert f(date(2026, 9, 28), TODAY) == "9/28 (D+15)"
+    assert monitor._mail_deadline_cell(_item("t", "9/28"), TODAY) == "9/28 (D+15)"
+    assert monitor._mail_deadline_cell(_item("t", "2025-12-19"), TODAY) == "12/19 (D+298)"
+
+
+def test_unknown_deadline_is_gray_check_needed_always_open_is_sangsi():
+    assert monitor._mail_deadline_cell(_item("t", "", "공고 안내"), TODAY) == "확인필요"
+    assert monitor._mail_deadline_cell(_item("t", "", "상시모집 중인 사업"), TODAY) == "상시"
+
+
+def test_title_prefix_cleanup_real_titles():
+    c = monitor.clean_mail_title
+    assert c("모집중(2026-207호) 2026년 강원 미래모빌리티 기업지원 프로그램 모집 통합공고") == \
+        "2026년 강원 미래모빌리티 기업지원 프로그램 모집 통합공고"
+    assert c("인천서구]2025년 해외지사화 지원사업 2차 참가신청 모집") == "2025년 해외지사화 지원사업 2차 참가신청 모집"
+    assert c("[교육안내] 2026년 파주시 청년창업 온라인 마케팅 실무교육 2차 교육") == \
+        "2026년 파주시 청년창업 온라인 마케팅 실무교육 2차 교육"
+    assert c("[공고] 3. 2026년 수출바우처") == "2026년 수출바우처"
+    assert c("2026-207호 스마트공장 지원") == "스마트공장 지원"
+    assert c("2026년 중앙부처 및 지자체 창업지원사업 통합공고") == "2026년 중앙부처 및 지자체 창업지원사업 통합공고"
+
+
+def test_support_strip_keeps_lone_amount():
+    assert monitor.strip_support_junk("최대 100만원 관리자 2025-09-04 12:58:00 hit 62") == "최대 100만원"
+    assert monitor.strip_support_junk("완료 제 목 :") == ""
+    assert monitor._mail_support_summary(REAL[0]) == "최대 100만원"
+    assert monitor._mail_support_summary(REAL[1]) == ""
+
+
+def test_meta_hides_unknown_fields_plain_and_html():
+    row = {"공고": "제목", "url": "", "지원": "기타", "지원내용": "", "기관": "확인필요",
+           "대상": "확인필요", "지역": "서울특별시 전체", "마감": "10/13 (D-0)"}
+    plain = dt.render_plain([row])
+    assert "   서울 · 10/13 (D-0)" in plain and "확인필요" not in plain
+    html = dt.html_email_inner(plain, lambda s: s)
+    assert "확인필요" not in html and "서울 · " in html and "10/13 (D-0)" in html
+    row2 = dict(row, 지역="확인필요", 마감="")
+    plain2 = dt.render_plain([row2])
+    assert plain2.splitlines()[-1] == "   확인필요" and "마감일 확인" not in plain2
+    html2 = dt.html_email_inner(plain2, lambda s: s)
+    assert "<span style='white-space:nowrap'>확인필요</span>" in html2 and "d93025" not in html2
+    _b, rows, _a = dt.parse_plain_table(plain + "\n────────\n🙋 x")
+    assert len(rows) == 1 and rows[0]["마감"] == "10/13 (D-0)"

@@ -144,7 +144,7 @@ def test_row_field_error_does_not_break_table(monkeypatch):
     body = m.fallback_body([_item(), _item(id="n2", title="정상 두 번째")], today=TODAY)
     _, rows, _ = parse_plain_table(body)
     assert len(rows) == 2
-    assert rows[0]["마감"] == "추출실패"
+    assert rows[0]["마감"] == "확인필요"  # 2026-10: 마감 불명/추출실패는 회색 확인필요
     assert rows[1]["공고"] == "정상 두 번째"
 
 
@@ -173,7 +173,7 @@ def test_deadline_this_year_vs_other_year():
     this = m._mail_deadline_cell(_item(deadline="2026-08-20"), today=TODAY)
     other = m._mail_deadline_cell(_item(deadline="2027-01-05"), today=TODAY)
     assert this == "8/20 (D-6)"
-    assert other == "2027/1/5 (D-144)"
+    assert other == "1/5 (D-144)"  # 2026-10: 연도 없이 M/D (D-N) 단일 형식
 
 
 def test_org_not_abbreviated_and_not_source_name():
