@@ -23,3 +23,4 @@
 {"id": "kstartup_178670", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:36:30 +0900", "last_seen": "Fri, 31 Jul 2026 16:36:30 +0900"}
 {"id": "kstartup_178693", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:37:07 +0900", "last_seen": "Fri, 31 Jul 2026 16:37:07 +0900"}
 {"id": "kstartup_178710", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Fri, 31 Jul 2026 16:36:26 +0900", "last_seen": "Fri, 31 Jul 2026 16:36:26 +0900"}
+{"id": "kised_64223b0bf8bd03c894b0", "verdict": "X", "tier": "C", "source": "mail-feedback", "title": "", "first_seen": "Tue, 13 Oct 2026 10:26:54 +0900", "last_seen": "Tue, 13 Oct 2026 10:26:54 +0900"}
