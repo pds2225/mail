@@ -64,8 +64,8 @@ def test_strip_junk_support_lines_keeps_amount():
 
 
 def test_redact_removes_tokens_and_emails():
-    t = ("mailto:ekth3691%40gmail.com?subject=%5BMAIL-FB%5D%20O%20ema_56db4de359808ba02cca%201791838601.04943702e2838d44"
-         " 문의 khban99@gmail.com [MAIL-FB] X abc.123")
+    t = ("mailto:owner%40example.test?subject=%5BMAIL-FB%5D%20O%20ema_56db4de359808ba02cca%201791838601.04943702e2838d44"
+         " 문의 member1@example.test [MAIL-FB] X abc.123")
     out = dl.redact(t)
     assert "@" not in out and "MAIL-FB" not in out and "04943702e2838d44" not in out
 
@@ -83,7 +83,7 @@ def test_lint_group_mail_autofix_and_dump(tmp_path, monkeypatch):
     dead = _item("2026년 서울테크노파크-KISTI 기술협력 파트너링 데이 참여기업 모집(~9.30)", "", id="dead",
                  posted_date="2026-10-08")
     group = {"id": "grp_prestartup_ai", "name": "예비창업 AI (전국·서울강조)",
-             "recipients": ["khban99@gmail.com"]}
+             "recipients": ["member1@example.test"]}
 
     def build(gi, ri):
         return monitor._build_group_mail_content(
@@ -100,8 +100,8 @@ def test_lint_group_mail_autofix_and_dump(tmp_path, monkeypatch):
     assert alerts  # 경고 발송(ntfy)
     dump = json.loads((tmp_path / "RUN1" / "grp_prestartup_ai.json").read_text(encoding="utf-8"))
     raw = json.dumps(dump, ensure_ascii=False)
-    assert "@" not in raw and "khban99" not in raw and "MAIL-FB" not in raw
-    assert dump["recipients_masked"] == ["kh*****(gmail.com)"]
+    assert "@" not in raw and "member1" not in raw and "MAIL-FB" not in raw
+    assert dump["recipients_masked"] == ["me*****(example.test)"]
     assert dump["lint"]["ok"] and dump["auto_fixes"]
     assert [i["id"] for i in dump["items_shown"]] == ["live"]
     assert dump["items_shown"][0]["card_deadline"] == "10/13 (D-0)"
