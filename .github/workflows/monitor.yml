@@ -223,6 +223,41 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
+      # MAIL-035: 실행 기록(공고별 단계/필터 추적, raw store, 그룹별 digest dump+lint) 30일 보관.
+      # digest dump 는 monitor 가 수신자 마스킹·피드백 토큰/이메일 제거 후 기록한다. raw 는 200MB 초과 시 생략.
+      - name: 실행 기록 묶기(raw 압축·크기 제한)
+        if: always()
+        run: |
+          mkdir -p var/logs/run_records
+          if [ -d var/raw ]; then
+            size_mb=$(du -sm var/raw | cut -f1)
+            if [ "$size_mb" -le 200 ]; then
+              tar czf var/logs/run_records/raw_store.tgz -C var raw && echo "raw_store ${size_mb}MB 압축"
+            else
+              echo "::warning::var/raw ${size_mb}MB > 200MB — raw 아티팩트 생략"
+            fi
+          fi
+          # 안전망: 기록 묶음에 이메일 주소·피드백 토큰이 있으면 업로드 대상에서 뺀다
+          for f in var/logs/digest_dump/*/*.json; do
+            [ -f "$f" ] || continue
+            if grep -qE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|MAIL-FB' "$f"; then
+              echo "::warning::$f 에 이메일/토큰 흔적 — 업로드 제외"; rm -f "$f"
+            fi
+          done
+
+      - name: 실행 기록 아티팩트 업로드(공고 추적·digest dump·raw)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-records-${{ github.run_id }}
+          path: |
+            var/logs/notice_stage_trace_*.jsonl
+            var/logs/filter_trace_*.jsonl
+            var/logs/digest_dump/
+            var/logs/run_records/raw_store.tgz
+          retention-days: 30
+          if-no-files-found: ignore
+
       # 상태파일 저장: 보호된 main 이 아니라 보호 없는 state 브랜치에 push 한다(main push 는
       # 'protected branch hook declined' 로 매번 거부돼 seen_ids 가 저장되지 않았다).
       # if: always() — 발송 단계가 240분 timeout/실패로 끝나도(이미 보낸 뒤일 수 있음) 저장한다.
