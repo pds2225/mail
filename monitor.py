@@ -1451,12 +1451,17 @@ def _posted_date(item: dict):
         return None
 
 
+_YEARLESS_ROLL_DAYS = 200  # 연도 없는 M/D 가 기준일보다 이만큼 넘게 과거면 다음 해로 본다
+
+
 def _infer_deadline_year(month: int, day: int, posted):
     """축약 마감(월/일)의 연도 추론. ★마감 ≥ 게시일 규칙으로 false-past(오'마감'=누락) 차단.
     게시일 있으면 그 해로 두되 마감이 게시일보다 앞서면 +1년. 게시일 없으면 오늘 기준 반년 초과 과거면 +1년."""
     if posted:
+        # run #264: '(~9.30)'(게시 10/8) 를 '마감<게시일 → +1년' 으로 내년 9/30 으로 만들어 지난 공고가
+        # D-352 로 발송됐다. 게시일보다 200일 넘게 앞설 때만 다음 해로 본다(_yearless_date 와 동일).
         d = _valid_date(posted.year, month, day)
-        if d and d < posted:
+        if d and (posted - d).days > _YEARLESS_ROLL_DAYS:
             d = _valid_date(posted.year + 1, month, day)
         return d
     today = datetime.now(KST).date()
@@ -5161,7 +5166,7 @@ def _group_priority_hits(item: dict, group: dict | None) -> list[str]:
 
 # 제목에 '마감'·'결과발표' 표시가 붙은 게시글 — 날짜를 못 읽어도 closed 로 본다(2026-10).
 TITLE_CLOSED_RE = re.compile(
-    r"\[(?:모집)?마감\]|접수\s*마감|마감되었|합격자\s*발표|결과\s*발표|발표\s*$"
+    r"^\s*(?:모집\s*)?완료\s*[(\[]|\[(?:모집)?마감\]|접수\s*마감|마감되었|합격자\s*발표|결과\s*발표|발표\s*$"
 )
 
 
@@ -6613,6 +6618,13 @@ def _mail_fit_cell(item: dict) -> str:
     return "지원가능"
 
 
+# 행사·교육·공모 성격 제목 — 지원유형 태그에 '바우처'가 있어도 바우처 섹션에 넣지 않는다(run #264).
+_EVENT_TITLE_RE = re.compile(
+    r"파트너링\s*데이|데모\s*데이|포럼|세미나|설명회|박람회|전시회|상담회|투자대전|교육|아카데미|"
+    r"캠프|챌린지|공모전|경진대회|컨퍼런스|콘퍼런스|워크숍|네트워킹|참관객|강연|특강|행사"
+)
+
+
 def _mail_support_cell(item: dict) -> str:
     """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
     try:
@@ -6624,7 +6636,9 @@ def _mail_support_cell(item: dict) -> str:
             str(item.get("support_field") or ""),
             str(item.get("title") or ""),
         ))
-        if "바우처" in blob:
+        title_s = str(item.get("title") or "")
+        is_event = bool(_EVENT_TITLE_RE.search(title_s)) and "바우처" not in title_s
+        if "바우처" in blob and not is_event:
             return "바우처"
         if any(tok in blob for tok in ("지원금", "사업비", "자금")):
             return "지원금/사업비"
@@ -6671,7 +6685,8 @@ _REGION_FULLNAME = {"충청북도": "충북", "충청남도": "충남", "전라�
 
 
 def _region_in_text(text: str) -> str:
-    t = str(text or "")
+    # '투자대전'·'창업대전' 같은 '…대전(大展)' 은 지역이 아니다.
+    t = re.sub(r"(?<=[가-힣])대전", " ", str(text or ""))
     for full, short in _REGION_FULLNAME.items():
         if full in t:
             return short
@@ -6679,17 +6694,44 @@ def _region_in_text(text: str) -> str:
     return min(hits)[1] if hits else ""
 
 
+_ORG_REGION_ALIAS = {"강원TP": "강원", "서울TP": "서울", "경기TP": "경기", "인천TP": "인천", "부산TP": "부산",
+                      "대전TP": "대전", "GWTP": "강원", "ITP": "인천", "GTP": "경기", "SBA": "서울", "GBSA": "경기"}
+_REGIONAL_ORG_RE = re.compile(r"테크노파크|TP\b|진흥원|센터|재단|시청|도청|구청|군청|광역시|특별시|특별자치")
+
+
+def _org_region(item: dict) -> str:
+    """지역 기관(○○테크노파크·○○TP·○○시청 등) 주관이면 그 지역."""
+    for key in ("author", "source", "site_name", "organizer_field"):
+        org = str(item.get(key) or "").strip()
+        if not org:
+            continue
+        for alias, reg in _ORG_REGION_ALIAS.items():
+            if re.search(rf"(?<![A-Za-z]){re.escape(alias)}(?![A-Za-z])", org, flags=re.I):
+                return reg
+        reg = _region_in_text(org)
+        if reg and _REGIONAL_ORG_RE.search(org):
+            return reg
+    return ""
+
+
 def _title_or_org_region(item: dict) -> str:
-    return _region_in_text(item.get("title")) or _region_in_text(item.get("author"))
+    return _org_region(item) or _region_in_text(item.get("title")) or _region_in_text(item.get("author"))
 
 
 def _mail_region_cell(item: dict) -> str:
     try:
+        # 지역 기관 주관(강원TP 등)은 그 지역이 가장 확실한 신청 지역 단서다.
+        org_reg = _org_region(item)
+        if org_reg:
+            return org_reg
         scope = _resolve_applicant_region_scope(item)
+        regions = list(scope.get("regions") or [])
+        if "대전" in regions and not re.search(r"(?<![가-힣])대전", _applicant_target_text(item)):
+            regions.remove("대전")  # '투자대전' 오인
         if scope.get("nationwide"):
             return "전국"
-        if scope.get("regions"):
-            return " ".join(scope["regions"][:2])
+        if regions:
+            return " ".join(regions[:2])
         # 지원대상에 지역 단서가 없으면 제목 → 주관기관명의 지역(인천테크노파크 → 인천)을
         # 그룹 기본 도시(예: '서울 전체')보다 우선한다.
         own = _title_or_org_region(item)
@@ -6716,7 +6758,7 @@ def _mail_deadline_cell(item: dict, today=None) -> str:
         end = _digest_deadline_end(item, today)
         if end is None:
             try:
-                if classify_deadline_status(item, today) == "always_open":
+                if classify_deadline_status(item, today) in ("always_open", "until_budget_exhausted"):
                     return "상시"
             except Exception:
                 pass
@@ -6746,6 +6788,7 @@ _SUPPORT_JUNK_RES = (
     re.compile(r"(?:^|\s)(?:관리자|작성자|등록일|첨부파일)(?:\s|$|[:：])"),
     re.compile(r"제\s+목\s*[:：]?"),                                # '완료 제 목 :'
     re.compile(r"공고ㆍ안내|이전글|다음글|목록으로"),
+    re.compile(r"^\S{0,10}(?:공고|공지|사업|게시판|소식|알림)\s*전체$|기업지원공고\s*전체"),  # 게시판 메뉴 '기업지원공고 전체'
 )
 _SUPPORT_LABEL_TOKENS = ("지원분야", "대상연령", "기관구분", "담당부서", "사업관리실", "접수기간", "신청기간")
 
@@ -6759,7 +6802,7 @@ _SUPPORT_STRIP_RES = (
 )
 
 
-_PAGE_NAV_RE = re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
+_PAGE_NAV_RE = re.compile(r"기업지원공고\s*전체|((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
 
 
 def strip_support_junk(text: str) -> str:
@@ -6885,9 +6928,6 @@ def fallback_body(items: list[dict], today=None) -> str:
 
 
 _YEARLESS_MD_RE = re.compile(r"(?<![\d./\-])(\d{1,2})\s*[/.]\s*(\d{1,2})(?![\d])(?!\s*[./\-]\s*\d)")
-_YEARLESS_ROLL_DAYS = 200  # 연도 없는 M/D 가 기준일보다 이만큼 넘게 과거면 다음 해로 본다
-
-
 def _yearless_date(month: int, day: int, item: dict, today):
     """연도 없는 M/D: 게시일 연도(없으면 오늘 연도) 기준. 기준일보다 200일 넘게 과거면 +1년.
 
@@ -6938,6 +6978,15 @@ def _digest_deadline_end(item: dict, today):
     return max(dates) if dates else None
 
 
+_TITLE_YEAR_RE = re.compile(r"(?<!\d)(20\d{2})(?:\s*년|\s|\b)")
+
+
+def _title_past_year(item: dict, today) -> bool:
+    """제목의 사업연도가 모두 올해보다 이전인지('2025 … 아카데미'). 연도 없으면 False."""
+    years = [int(y) for y in _TITLE_YEAR_RE.findall(str(item.get("title") or ""))]
+    return bool(years) and max(years) < today.year
+
+
 def _digest_is_closed(item: dict, today) -> bool:
     """다이제스트 제외 판정: 표시 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall).
 
@@ -6953,6 +7002,8 @@ def _digest_is_closed(item: dict, today) -> bool:
         end = _digest_deadline_end(item, today)
         if end is not None:
             return end < today
+        if _title_past_year(item, today):
+            return True  # '2025 글로벌 여성IP 리더십 아카데미' 처럼 지난 연도 행사 + 마감 불명
         return classify_deadline_status(item, today) == "closed"
     except Exception:
         return False
@@ -7052,6 +7103,8 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
     """메일에는 최대 10건만 표시하고 나머지는 관리자 리포트로 분리한다."""
     if not items:
         return ""
+    _today = datetime.now(KST).date()
+    items = [it for it in items if not _digest_is_closed(it, _today)]  # 만료 공고 제외(run #264)
     shown = select_region_unknown_for_mail(items, limit=limit)
     total = len(items) if total_count is None else int(total_count)
     if not shown:
@@ -7069,13 +7122,13 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
             surf = surface_label_for_field(region_field_status(it), field="region")
         except Exception:
             surf = ""
-        title_line = f"\n▸ {_mail_clean_text(it.get('title') or '(제목없음)', limit=120)}"
+        title_line = f"\n▸ {clean_mail_title(strip_title_badges(_mail_clean_text(it.get('title') or '(제목없음)', limit=120)))}"
         if surf:
             title_line += f" [{surf}]"
         lines.append(title_line)
         lines.append(
             f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
-            f" | 마감: {resolve_item_deadline(it) or '미기재'}"
+            f" | 마감: {_mail_deadline_cell(it)}"
         )
         if it.get("link"):
             lines.append(f"  원문: {it['link']}")
@@ -7233,7 +7286,12 @@ def _build_group_mail_content(
     실제 발송(``if deliver:``)과 MAIL-029 Preview(``build_previews=True``)가 이 함수 하나만
     공유해서, 두 경로가 항상 같은 subject/body 문자열을 만들게 한다(renderer 이중구현 금지).
     """
-    summary = claude_summarize(g_items, group) if g_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
+    # run #264: 카드는 만료 공고를 빼고 그리는데 제목 건수·🙋 목록은 전체 매칭으로 세서 어긋났다.
+    # 표시 기준(만료 제외)을 여기서 한 번 정해 제목·헤더·🙋·📍 모두 같은 목록을 쓴다.
+    _today = now.date()
+    shown_items = [it for it in g_items if not _digest_is_closed(it, _today)]
+    ru_mail_items = [it for it in ru_mail_items if not _digest_is_closed(it, _today)]
+    summary = claude_summarize(shown_items, group) if shown_items else "오늘 기준 조건 매칭 공고는 없습니다.\n"
     g_norm = _normalize_group(group)
     req_rgns = g_norm.get("required_conditions", {}).get("regions", [])
     _or_kws = g_norm.get("or_keywords", [])
@@ -7242,7 +7300,7 @@ def _build_group_mail_content(
                 [f"AND({', '.join(ag)})" for ag in _and_grps[:2]]
     kw_str = " | ".join(_kw_parts) or "전체"
     # 수출·혁신 바우처 공고는 별도 강조(메일 상단 블록 + 폰 푸시 ntfy)
-    voucher_items = [it for it in g_items if _is_voucher(it)]
+    voucher_items = [it for it in shown_items if _is_voucher(it)]
     voucher_block = ""
     if voucher_items:
         voucher_block = (
@@ -7259,7 +7317,7 @@ def _build_group_mail_content(
         f"그룹: {group.get('name')}\n"
         f"지역: {', '.join(req_rgns) or '전국'}\n"
         f"지원유형: {', '.join(g_norm.get('support_types', ALL_SUPPORT_TYPES))}\n"
-        f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(g_items)}건\n\n"
+        f"전체 {len(filtered_new)}건 → 그룹 매칭 {len(shown_items)}건\n\n"
     )
     # 키워드는 제목/상단에서 빼고 본문 최하단에 참고용으로만(숨김처리)
     kw_footer = (
@@ -7271,8 +7329,11 @@ def _build_group_mail_content(
         ru_mail_items, limit=ru_limit, total_count=len(ru_items),
     )
     # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
-    feedback_block = _render_feedback_block(g_items)
-    subj_count = f"{len(g_items)}건" + (
+    feedback_block = _render_feedback_block([
+        {**it, "title": clean_mail_title(strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)))}
+        for it in sorted(shown_items, key=_notice_sort_key)
+    ])
+    subj_count = f"{len(shown_items)}건" + (
         f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""
     )
     subject = f"[{group.get('name')}] {subj_count} ({date_str})"
