@@ -7341,6 +7341,105 @@ def _build_group_mail_content(
     return {"subject": subject, "body": body, "voucher_items": voucher_items}
 
 
+# ── MAIL-035: 발송 직전 digest lint + 그룹별 기록(dump) ─────────────────────────
+DIGEST_DUMP_DIR = LOGS_DIR / "digest_dump"
+_DUMP_ITEM_KEYS = ("id", "title", "author", "source", "posted_date", "deadline", "link", "source_url",
+                   "_types", "support_field", "region_status")
+
+
+def _dump_item(it: dict, today) -> dict:
+    from mail_core.delivery.digest_lint import redact
+
+    row = {k: it.get(k) for k in _DUMP_ITEM_KEYS if it.get(k) not in (None, "", [])}
+    for k, fn in (("card_title", lambda: clean_mail_title(strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)))),
+                  ("card_deadline", lambda: _mail_deadline_cell(it, today=today)),
+                  ("card_region", lambda: _mail_region_cell(it)),
+                  ("card_section", lambda: _mail_support_cell(it)),
+                  ("card_support", lambda: _mail_support_summary(it))):
+        try:
+            row[k] = fn()
+        except Exception as e:  # noqa: BLE001
+            row[k] = f"error:{type(e).__name__}"
+    return {k: (redact(v) if isinstance(v, str) else v) for k, v in row.items()}
+
+
+def _write_digest_dump(group: dict, content: dict, shown: list[dict], lint: dict, *,
+                       run_id: str, today, fixes: list[str], blocked: bool) -> None:
+    """그룹별 실제 발송 본문·표시 공고·lint 결과를 기록(아티팩트용). 수신자·토큰·이메일은 남기지 않는다."""
+    from mail_core.delivery.digest_lint import redact
+
+    try:
+        gid = re.sub(r"[^A-Za-z0-9_\-]", "_", str(group.get("id") or group.get("name") or "grp"))[:60]
+        out_dir = DIGEST_DUMP_DIR / str(run_id)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "run_id": run_id, "group_id": gid, "group_name": group.get("name"),
+            "recipients_count": len(group.get("recipients") or []),
+            # 마스킹 + '@' 제거('ek****(gmail.com)') — 아티팩트 안전망(이메일 패턴 grep)에 걸리지 않게
+            "recipients_masked": [_mask_email(r).replace("@", "(") + ")" for r in (group.get("recipients") or [])],
+            "subject": redact(content.get("subject", "")),
+            "text": redact(content.get("body", "")),
+            "html": redact(_render_email_html(content.get("body", ""))),
+            "items_shown": [_dump_item(it, today) for it in shown],
+            "lint": lint, "auto_fixes": fixes, "blocked": blocked,
+        }
+        (out_dir / f"{gid}.json").write_text(json.dumps(payload, ensure_ascii=False, indent=1, default=str),
+                                             encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        log.warning("digest dump 기록 실패(무시): %s", e)
+
+
+def _lint_group_mail(*, group: dict, content: dict, g_items: list[dict], ru_mail_items: list[dict],
+                     rebuild, now: datetime, run_id: str) -> tuple[dict, bool]:
+    """발송 직전 lint → 안전한 자동수정(만료 카드 제거·잡텍스트 💰 숨김·재집계) → 기록·경고.
+
+    반환 (content, blocked). blocked 는 MAIL_DIGEST_LINT_BLOCKING=1 이고 수정 후에도 오류가 남을 때만 True.
+    lint 자체 오류는 발송을 막지 않는다(fail-open).
+    """
+    from mail_core.delivery import digest_lint as dl
+
+    if not dl.lint_enabled():
+        return content, False
+    today = now.date()
+    fixes: list[str] = []
+    try:
+        first = dl.lint_digest(content["subject"], content["body"], is_junk=is_support_junk)
+        if "EXPIRED" in first["codes"] or {"SUBJECT_COUNT", "HEADER_COUNT", "SECTION_COUNT"} & set(first["codes"]):
+            def _alive(it):
+                return "D+" not in _mail_deadline_cell(it, today=today) and not _digest_is_closed(it, today)
+            gi = [it for it in g_items if _alive(it)]
+            ri = [it for it in ru_mail_items if _alive(it)]
+            content = rebuild(gi, ri)
+            g_items = gi
+            fixes.append(f"rebuild(만료 제외·재집계) {len(gi)}건")
+        mid = dl.lint_digest(content["subject"], content["body"], is_junk=is_support_junk)
+        if "JUNK_SUPPORT" in mid["codes"]:
+            content = {**content, "body": dl.strip_junk_support_lines(content["body"], is_support_junk)}
+            fixes.append("💰 잡텍스트 줄 숨김")
+        final = dl.lint_digest(content["subject"], content["body"], is_junk=is_support_junk)
+        final["initial_codes"] = first["codes"]
+        blocked = dl.lint_blocking() and not final["ok"]
+        shown = [it for it in g_items if not _digest_is_closed(it, today)]
+        _write_digest_dump(group, content, shown, final, run_id=run_id, today=today, fixes=fixes, blocked=blocked)
+        if first["issues"]:
+            log.warning("digest lint [%s]: 최초 %s → 수정 %s → 남음 %s", group.get("name"),
+                        first["codes"], fixes, final["codes"])
+            try:
+                alert_ntfy(
+                    "digest lint",
+                    f"[{group.get('name')}] 발송 전 형식 검사: {', '.join(first['codes'])}\n"
+                    f"자동수정: {', '.join(fixes) or '없음'} / 남음: {', '.join(final['codes']) or '없음'}"
+                    + (" / 발송 보류" if blocked else ""),
+                    priority="default", tags="mag",
+                )
+            except Exception:  # noqa: BLE001
+                pass
+        return content, blocked
+    except Exception as e:  # noqa: BLE001
+        log.warning("digest lint 실패(무시·발송 계속): %s", e)
+        return content, False
+
+
 def send_email(subject: str, body: str, to: str) -> None:
     # 초안 모드: 실제 발송(SMTP) 대신 Gmail Drafts 에 초안만 생성한다(safe-by-default).
     # (send_to_list 를 거치지 않는 직접 호출 경로도 초안 모드에선 발송이 아닌 초안으로 우회)
@@ -8571,6 +8670,20 @@ def execute_monitor(
                 window_label=window_label, days_back=days_back, date_str=date_str,
                 now=now,
             )
+            # MAIL-035: 발송 직전 lint(+안전한 자동수정) → 기록. 기본은 경고만, 차단은 env 로.
+            _content, _lint_blocked = _lint_group_mail(
+                group=group, content=_content, g_items=g_items, ru_mail_items=ru_mail_items,
+                rebuild=lambda gi, ri: _build_group_mail_content(
+                    group=group, g_items=gi, ru_mail_items=ri,
+                    ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
+                    window_label=window_label, days_back=days_back, date_str=date_str,
+                    now=now,
+                ),
+                now=now, run_id=_trace_run_id,
+            )
+            if _lint_blocked:
+                log.warning("digest lint 차단(MAIL_DIGEST_LINT_BLOCKING=1): 그룹 '%s' 발송 보류", group.get("name"))
+                continue
             voucher_items = _content["voucher_items"]
             # (기준일·그룹·수신자) 단위 멱등 발송 — 재실행/부분실패 시 성공 수신자 중복 방지(#113·#114·#144).
             _gid = str(group.get("id") or group.get("name") or "grp")
