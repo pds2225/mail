@@ -47,7 +47,12 @@ _SECTION_ALIAS = {
 
 
 def section_of(support: object) -> str:
-    return _SECTION_ALIAS.get(str(support or "").strip(), "기타")
+    # 섹션명 자체(parse_plain_table 이 '지원'에 넣는 값: '판로·실증'·'시설·입주')도 그대로 인정.
+    # 없으면 HTML 재렌더 때 전부 '기타'로 합쳐져 plain(판로·실증 1 + 기타 3)과 HTML(기타 6)이 어긋났다.
+    key = str(support or "").strip()
+    if key in SECTION_ORDER:
+        return key
+    return _SECTION_ALIAS.get(key, "기타")
 
 
 def group_rows(rows: list[dict]) -> list[tuple[str, list[dict]]]:
@@ -116,6 +121,9 @@ def short_region(value: str) -> str:
 
 
 def short_org(value: str, limit: int = ORG_MAX) -> str:
+    if len(value) > limit:
+        # '인천테크노파크(ITP)' → '인천테크노파크': 괄호 약칭을 먼저 떼고 자른다(잘린 괄호 '(I…' 방지)
+        value = re.sub(r"\s*[(（][^)）]*[)）]?\s*$", "", value).strip() or value
     return value if len(value) <= limit else value[: limit - 1] + "…"
 
 
@@ -124,9 +132,29 @@ def _meta_values(row: dict) -> list[str]:
     return [short_org(org), target, short_region(region), deadline]
 
 
-def _meta_text(row: dict) -> str:
+_HIDDEN_META = {_MISSING, _PARSE_FAIL, "전체"}
+
+
+def _known_meta(row: dict) -> list[str]:
+    """메타 줄: 확인필요·추출실패 칸은 숨기고 아는 값만. 마감은 항상 마지막에 표시."""
+    if row.get("_meta") is not None:      # parse_plain_table 로 읽은 행: 이미 걸러진 값
+        return list(row["_meta"])
     org, target, region, deadline = _meta_values(row)
-    return _META_SEP.join([org, target, region, deadline])
+    known = [v for v in (org, target, region) if v and v not in _HIDDEN_META]
+    if deadline in (_MISSING, _PARSE_FAIL, "", "마감일 확인"):
+        deadline = _MISSING                # 마감 불명: 회색 '확인필요'(D-day 없음)
+    return known + [deadline]
+
+
+_DEADLINE_PART_RE = re.compile(r"^(?:\d{1,2}/\d{1,2}(?: \(D[-+]\d+\))?|상시|확인필요)$")
+
+
+def _is_deadline_part(text: str) -> bool:
+    return bool(_DEADLINE_PART_RE.match((text or "").strip()))
+
+
+def _meta_text(row: dict) -> str:
+    return _META_SEP.join(_known_meta(row))
 
 
 def render_plain(rows: list[dict], *, preamble: str = "") -> str:
@@ -147,11 +175,20 @@ def render_plain(rows: list[dict], *, preamble: str = "") -> str:
             support = " ".join(str(row.get("지원내용") or "").split())
             if support:
                 lines.append(_INDENT + _SUPPORT_PREFIX + _plain_support(support))
-            lines.append(_INDENT + _meta_text(row))
+            meta_line = _meta_text(row)
+            if meta_line:
+                lines.append(_INDENT + meta_line)
             url = str(row.get("url") or "").strip()
             if url:
                 lines.append(_INDENT + url)
     return "\n".join(lines)
+
+
+_FOOTER_RE = re.compile(r"^\s*(?:[─━—=_\-]{5,}|🙋|ⓘ|AI 한줄 메모)")
+
+
+def _is_footer_line(line: str) -> bool:
+    return bool(_FOOTER_RE.match(line or ""))
 
 
 def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
@@ -176,6 +213,9 @@ def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
         if not line.strip():
             pending_blank += 1
             continue
+        if _is_footer_line(line):
+            # 꼬리말(구분선·피드백 안내)에서 카드 파싱 중단 — 카드로 오인하면 '확인필요 ×4' 카드가 생긴다.
+            break
         sm = _SECTION_RE.match(line)
         # 2026-10: 번호 없이 제목으로 시작. 섹션 안의 들여쓰기 없는 줄 = 새 공고
         # (빈 줄 뒤에 오는 줄은 섹션 헤더 직후가 아니면 꼬리말로 보고 중단)
@@ -200,13 +240,14 @@ def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
             elif content.startswith(_SUPPORT_PREFIX):
                 cur["지원내용"] = content[len(_SUPPORT_PREFIX):].strip()
             else:
-                parts = content.split(_META_SEP)
+                parts = [p for p in content.split(_META_SEP) if p.strip()]
+                if not parts or cur.get("_meta") is not None:
+                    break
+                # 확인필요 칸은 숨겨 출력하므로 칸 수가 1~4로 가변. 마지막 = 마감.
+                cur["마감"] = parts[-1] if _is_deadline_part(parts[-1]) else ""
                 if len(parts) == 4:
                     cur["기관"], cur["대상"], cur["지역"] = parts[0], parts[1], parts[2]
-                    dl = parts[3]
-                    cur["마감"] = dl[3:].strip() if dl.startswith("마감 ") else dl
-                else:
-                    break
+                cur["_meta"] = parts
         else:
             break
         consumed = i + 1
@@ -236,21 +277,25 @@ def render_html_blocks(rows: list[dict]) -> str:
                 title = (f'<a href="{html.escape(url, quote=True)}" '
                          "style='color:#1a5fd6;text-decoration:none'>"
                          f"<span style='color:#1a5fd6'>{title}</span></a>")
-            org, target, region, deadline = _meta_values(row)
-            meta = html.escape(_META_SEP.join([org, target, region]))
+            known = _known_meta(row)
+            deadline = known[-1] if known and _is_deadline_part(known[-1]) else ""
+            others = known[:-1] if deadline else known
+            meta = html.escape(_META_SEP.join(others) + (_META_SEP if others and deadline else ""))
             dl = (f"<span style='color:#d93025;font-weight:700;white-space:nowrap'>{html.escape(deadline)}</span>"
-                  if _DATE_RE.match(deadline) else f"<span style='white-space:nowrap'>{html.escape(deadline)}</span>")
+                  if _DATE_RE.match(deadline) else (f"<span style='white-space:nowrap'>{html.escape(deadline)}</span>" if deadline else ""))
             support = " ".join(str(row.get("지원내용") or "").split())
             support_html = (
                 "<div style='font-size:14px;font-weight:700;margin-top:4px;display:block;"
                 "white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>"
                 f"{html.escape(_SUPPORT_PREFIX + support)}</div>" if support else ""
             )
+            meta_html = (f"<div style='font-size:13px;color:#777;margin-top:3px'>{meta}{dl}</div>"
+                         if (meta or dl) else "")
             out.append(
                 "<div style='padding:12px 0;border-bottom:1px solid #eee'>"
                 f"<div style='font-size:16px'>{title}</div>"
                 f"{support_html}"
-                f"<div style='font-size:13px;color:#777;margin-top:3px'>{meta}{_META_SEP}{dl}</div>"
+                f"{meta_html}"
                 "</div>"
             )
     out.append("</div>")

@@ -6617,11 +6617,12 @@ def _mail_support_cell(item: dict) -> str:
     """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
     try:
         types = " ".join(str(v) for v in (item.get("_types") or []) if str(v).strip())
+        # 2026-10: 섹션은 제목·지원유형(_types/support_field)으로만 정한다. 본문(description)에
+        # '바우처'가 한 번 나온다고 BD 프로그램·IR 모집이 '바우처' 섹션에 들어가던 오분류 차단.
         blob = " ".join((
             types,
             str(item.get("support_field") or ""),
             str(item.get("title") or ""),
-            str(item.get("description") or "")[:400],
         ))
         if "바우처" in blob:
             return "바우처"
@@ -6661,11 +6662,39 @@ def _mail_org_cell(item: dict) -> str:
         return "추출실패"
 
 
+_REGION_SCAN_ORDER = sorted(
+    (r for r in KNOWN_REGIONS if r not in ("충청", "전라", "경상", "수도권", "호남", "영남")),
+    key=len, reverse=True,
+)
+_REGION_FULLNAME = {"충청북도": "충북", "충청남도": "충남", "전라북도": "전북", "전북특별자치도": "전북",
+                    "전라남도": "전남", "경상북도": "경북", "경상남도": "경남"}
+
+
+def _region_in_text(text: str) -> str:
+    t = str(text or "")
+    for full, short in _REGION_FULLNAME.items():
+        if full in t:
+            return short
+    hits = [(t.find(r), r) for r in _REGION_SCAN_ORDER if r in t]
+    return min(hits)[1] if hits else ""
+
+
+def _title_or_org_region(item: dict) -> str:
+    return _region_in_text(item.get("title")) or _region_in_text(item.get("author"))
+
+
 def _mail_region_cell(item: dict) -> str:
     try:
         scope = _resolve_applicant_region_scope(item)
         if scope.get("nationwide"):
             return "전국"
+        if scope.get("regions"):
+            return " ".join(scope["regions"][:2])
+        # 지원대상에 지역 단서가 없으면 제목 → 주관기관명의 지역(인천테크노파크 → 인천)을
+        # 그룹 기본 도시(예: '서울 전체')보다 우선한다.
+        own = _title_or_org_region(item)
+        if own:
+            return own
         label = _region_label(item)
         if not label or label == "확인 필요":
             return "확인필요"
@@ -6674,22 +6703,25 @@ def _mail_region_cell(item: dict) -> str:
         return "추출실패"
 
 
+def format_deadline_label(end, today) -> str:
+    """메일 마감 표기 단일 형식 'M/D (D-N)'. 연도 없음, 항상 D-day(지난 날짜는 D+N)."""
+    days = (end - today).days
+    dday = f"D-{days}" if days >= 0 else f"D+{-days}"
+    return f"{end.month}/{end.day} ({dday})"
+
+
 def _mail_deadline_cell(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     try:
-        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
-        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)] if raw.strip() else []
-        if not dates:
+        end = _digest_deadline_end(item, today)
+        if end is None:
             try:
                 if classify_deadline_status(item, today) == "always_open":
                     return "상시"
             except Exception:
                 pass
-            return "확인필요"
-        end = max(dates)
-        label = f"{end.month}/{end.day}" if end.year == today.year else f"{end.year}/{end.month}/{end.day}"
-        # 2026-10: KST 기준 D-day (당일 D-0)
-        return f"{label} (D-{(end - today).days})" if end >= today else label
+            return "확인필요"  # 마감 불명: 회색 '확인필요'(D-day 없음). 상시 공고만 '상시'.
+        return format_deadline_label(end, today)
     except Exception:
         return "추출실패"
 
@@ -6706,6 +6738,52 @@ def _format_won(amount: int) -> str:
     return f"{amount:,}원"
 
 
+# 💰 줄에 섞이던 게시판 스크랩 잡텍스트(2026-10-13 실발송 #263 원문 기준)
+_SUPPORT_JUNK_RES = (
+    re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)"),          # '공지사항 공지사항', 'ITP 뉴스 지원사업 ITP 뉴스 지원사업'
+    re.compile(r"\bHOME\b|\bhit\s*\d+|조회수?\s*[:：]?\s*\d+", re.I),  # 네비·조회수
+    re.compile(r"\d{1,2}:\d{2}:\d{2}"),                            # '12:58:00' 게시시각
+    re.compile(r"(?:^|\s)(?:관리자|작성자|등록일|첨부파일)(?:\s|$|[:：])"),
+    re.compile(r"제\s+목\s*[:：]?"),                                # '완료 제 목 :'
+    re.compile(r"공고ㆍ안내|이전글|다음글|목록으로"),
+)
+_SUPPORT_LABEL_TOKENS = ("지원분야", "대상연령", "기관구분", "담당부서", "사업관리실", "접수기간", "신청기간")
+
+
+_SUPPORT_STRIP_RES = (
+    re.compile(r"\b(?:hit|조회수?)\s*[:：]?\s*\d+", re.I),
+    re.compile(r"\d{4}[-./]\d{1,2}[-./]\d{1,2}"),
+    re.compile(r"\d{1,2}:\d{2}(?::\d{2})?"),
+    re.compile(r"제\s*목\s*[:：]?"),
+    re.compile(r"(?:^|(?<=\s))(?:관리자|작성자|등록일|첨부파일|완료|HOME|공고ㆍ안내|이전글|다음글|목록으로)(?=\s|$|[:：])\s*[:：]?"),
+)
+
+
+_PAGE_NAV_RE = re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
+
+
+def strip_support_junk(text: str) -> str:
+    """💰 후보에서 게시판 부스러기(관리자·hit N·시각·'제 목 :'·완료 등)를 제거한 뒤 남는 글."""
+    t = " ".join(str(text or "").split())
+    for rx in _SUPPORT_STRIP_RES:
+        t = rx.sub(" ", t)
+    t = re.sub(r"(\S{2,})(?:\s+\1)+(?=\s|$)", r"\1", " ".join(t.split()))
+    return " ".join(t.split()).strip(" :·-")
+
+
+def is_support_junk(text: str) -> bool:
+    """💰 줄 후보가 실제 지원내용이 아니라 페이지 스크랩 잡텍스트인지."""
+    t = " ".join(str(text or "").split())
+    if not t:
+        return True
+    if any(rx.search(t) for rx in _SUPPORT_JUNK_RES):
+        return True
+    if sum(1 for tok in _SUPPORT_LABEL_TOKENS if tok in t) >= 2:   # 메타 라벨 나열
+        return True
+    meaningful = re.sub(r"[^가-힣A-Za-z0-9]", "", t)
+    return len(meaningful) < 4
+
+
 MAIL_SUPPORT_LINE_LIMIT = 60  # HTML 은 CSS ellipsis 로 한 줄 클립, plain 은 digest_table 에서 40자
 
 
@@ -6716,12 +6794,25 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
             _notice_text(item), str(item.get("support_field") or ""))))
         money = f"최대 {_format_won(amt)}" if amt and amt >= 100_000 else ""
         blurb = _mail_support_blurb(item, limit=160)
-        if not blurb or blurb == "상세 공고문 확인":
+        if blurb and _PAGE_NAV_RE.search(blurb):
+            blurb = ""  # 게시판 페이지 내비게이션째 긁힌 본문 — 남는 글도 신뢰할 수 없음
+        if blurb and blurb != "상세 공고문 확인":
+            blurb = strip_support_junk(blurb)
+        if not blurb or blurb == "상세 공고문 확인" or is_support_junk(blurb):
             blurb = ""
+        if not blurb and not money:
+            # 실제 금액·지원내용이 없으면 AI 요약(있을 때만), 그것도 없으면 줄 자체를 숨긴다.
+            for key in ("ai_summary", "summary"):
+                alt = _mail_clean_text(item.get(key), limit=160)
+                if alt and not is_support_junk(alt):
+                    blurb = alt
+                    break
         # 짧은 문구: 첫 구절만, 금액 표기는 제거
         phrase = re.split(r"[,(（/;]|\s[-·]\s", blurb)[0]
         phrase = re.sub(r"(?:최대|기업당|업체당)?\s*[\d.,]+\s*(?:조|천억|억|천만|백만|만)?\s*원", "", phrase)
-        phrase = " ".join(phrase.split())
+        phrase = strip_support_junk(phrase)
+        if is_support_junk(phrase):
+            phrase = ""
         text = " ".join(x for x in (money, phrase) if x)
         if len(text) > limit:
             text = text[: limit - 1].rstrip() + "…"
@@ -6730,10 +6821,34 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
         return ""
 
 
+_MAIL_TITLE_PREFIX_RES = (
+    re.compile(r"^모집\s*중\s*(?:\([^)]{0,20}\))?\s*"),                 # '모집중(2026-207호)'
+    re.compile(r"^\[[^\]]{1,12}\]\s*"),                               # '[교육안내]' '[공고]'
+    re.compile(r"^[가-힣A-Za-z]{1,10}\]\s*"),                           # '인천서구]'
+    re.compile(r"^\((?:공고|안내|모집|재공고)\)\s*"),
+    re.compile(r"^(?:제\s*)?\d{4}\s*-\s*\d+\s*호\s*"),                     # '2026-207호'
+    re.compile(r"^(?:No\.?|NO\.?)\s*\d+\s*[.)\-:]?\s*"),
+    re.compile(r"^\d{1,3}\s*[.)]\s+"),                                  # '3. ' '1) '
+    re.compile(r"^[-·•]\s*"),
+)
+
+
+def clean_mail_title(title: str) -> str:
+    """메일 표시용 제목: 상태·지역·게시판 머리말·순번/코드 접두를 걷어내고 사업명만 남긴다."""
+    t = " ".join(str(title or "").split())
+    for _ in range(6):
+        before = t
+        for rx in _MAIL_TITLE_PREFIX_RES:
+            t = rx.sub("", t, count=1).strip()
+        if t == before:
+            break
+    return t or " ".join(str(title or "").split())
+
+
 def _digest_row(item: dict, today=None) -> dict:
     from mail_core.delivery.digest_table import notice_url
 
-    title = strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160))
+    title = clean_mail_title(strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160)))
     if not title:
         title = "(제목없음)"
     badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(
@@ -6769,9 +6884,75 @@ def fallback_body(items: list[dict], today=None) -> str:
     return render_plain(rows)
 
 
+_YEARLESS_MD_RE = re.compile(r"(?<![\d./\-])(\d{1,2})\s*[/.]\s*(\d{1,2})(?![\d])(?!\s*[./\-]\s*\d)")
+_YEARLESS_ROLL_DAYS = 200  # 연도 없는 M/D 가 기준일보다 이만큼 넘게 과거면 다음 해로 본다
+
+
+def _yearless_date(month: int, day: int, item: dict, today):
+    """연도 없는 M/D: 게시일 연도(없으면 오늘 연도) 기준. 기준일보다 200일 넘게 과거면 +1년.
+
+    '9/28'(오늘 10/13) → 올해 9/28(지남), '1/15'(오늘 10/13) → 내년 1/15(미래).
+    """
+    ref = _posted_date(item) or today
+    d = _valid_date(ref.year, month, day)
+    if d and (ref - d).days > _YEARLESS_ROLL_DAYS:
+        d = _valid_date(ref.year + 1, month, day)
+    return d
+
+
+def _strip_non_application_periods(text: str) -> str:
+    """'접수기간: A ~ B / 사업기간: C ~ D' 같은 문자열에서 비신청 기간 구간을 지운다.
+    신청기간 라벨이 있으면 그 구간만 남긴다."""
+    t = str(text or "")
+    for lbl in APPLICATION_PERIOD_LABELS:
+        mm = re.search(rf"{re.escape(lbl)}\s*[:：]?\s*([^/\n|ㅇ]+)", t)
+        if mm:
+            return mm.group(1).strip()
+    for lbl in NON_APPLICATION_PERIOD_LABELS:
+        t = re.sub(rf"{re.escape(lbl)}\s*[:：]?\s*[^/\n|ㅇ]*", " ", t)
+    return " ".join(t.split())
+
+
+def _digest_deadline_end(item: dict, today):
+    """카드에 표시하는 마감일(resolve_item_deadline)의 종료일. 읽을 수 없으면 None."""
+    # 접수·신청기간 종료일 우선: 구조화 신청기간 → 본문 신청기간 라벨 → deadline 필드
+    # (deadline 필드에 섞인 사업·협약·운영기간 구간은 지운다).
+    raw = ""
+    apt = str(item.get("application_period_text") or "").strip()
+    if apt and _parse_date_candidates(apt, today.year):
+        raw = apt
+    if not raw:
+        raw = (resolve_item_deadline(item) or "").strip()
+        if raw == str(item.get("deadline") or "").strip():
+            raw = _strip_non_application_periods(raw)
+    if not raw:
+        return None
+    dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+    # 연도 포함 날짜가 없을 때만 연도 없는 M/D('9/28', '7.8') 를 추론
+    if not dates or not re.search(r"\d{4}|'?\d{2}\s*[./\-]\s*\d{1,2}\s*[./\-]", raw):
+        yl = [_yearless_date(int(m.group(1)), int(m.group(2)), item, today)
+              for m in _YEARLESS_MD_RE.finditer(raw)]
+        yl = [d for d in yl if d]
+        if yl:
+            dates = yl
+    return max(dates) if dates else None
+
+
 def _digest_is_closed(item: dict, today) -> bool:
-    """다이제스트 제외 판정: 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall)."""
+    """다이제스트 제외 판정: 표시 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall).
+
+    2026-10-13 실발송(#263) 사고: 카드에 2025/9/3·9/28 등 지난 마감이 표시됐는데 제외되지 않았다.
+    classify_deadline_status 는 본문(스크랩 잡텍스트 포함)에 '선착순'·'소진시'·'마감연장' 같은 단어가
+    한 번만 있어도 마감일을 보기 전에 always_open/extended 를 반환하고, 신청기간 라벨이 없으면 본문 전체
+    날짜의 max 를 쓰므로 사이드바·게시판 목록의 미래 날짜에 끌려 'open' 이 된다. 그래서 카드에
+    실제로 찍히는 마감일(resolve_item_deadline)이 지났으면 그것을 우선해 제외한다.
+    """
     try:
+        if is_title_closed(item):
+            return True
+        end = _digest_deadline_end(item, today)
+        if end is not None:
+            return end < today
         return classify_deadline_status(item, today) == "closed"
     except Exception:
         return False
