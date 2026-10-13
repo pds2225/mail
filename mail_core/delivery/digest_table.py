@@ -47,7 +47,12 @@ _SECTION_ALIAS = {
 
 
 def section_of(support: object) -> str:
-    return _SECTION_ALIAS.get(str(support or "").strip(), "기타")
+    # 섹션명 자체(parse_plain_table 이 '지원'에 넣는 값: '판로·실증'·'시설·입주')도 그대로 인정.
+    # 없으면 HTML 재렌더 때 전부 '기타'로 합쳐져 plain(판로·실증 1 + 기타 3)과 HTML(기타 6)이 어긋났다.
+    key = str(support or "").strip()
+    if key in SECTION_ORDER:
+        return key
+    return _SECTION_ALIAS.get(key, "기타")
 
 
 def group_rows(rows: list[dict]) -> list[tuple[str, list[dict]]]:
@@ -154,6 +159,13 @@ def render_plain(rows: list[dict], *, preamble: str = "") -> str:
     return "\n".join(lines)
 
 
+_FOOTER_RE = re.compile(r"^\s*(?:[─━—=_\-]{5,}|🙋|ⓘ|AI 한줄 메모)")
+
+
+def _is_footer_line(line: str) -> bool:
+    return bool(_FOOTER_RE.match(line or ""))
+
+
 def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
     """본문에서 공고 목록을 분리한다. 목록이 없으면 rows=None.
 
@@ -176,6 +188,9 @@ def parse_plain_table(body: str) -> tuple[str, list[dict] | None, str]:
         if not line.strip():
             pending_blank += 1
             continue
+        if _is_footer_line(line):
+            # 꼬리말(구분선·피드백 안내)에서 카드 파싱 중단 — 카드로 오인하면 '확인필요 ×4' 카드가 생긴다.
+            break
         sm = _SECTION_RE.match(line)
         # 2026-10: 번호 없이 제목으로 시작. 섹션 안의 들여쓰기 없는 줄 = 새 공고
         # (빈 줄 뒤에 오는 줄은 섹션 헤더 직후가 아니면 꼬리말로 보고 중단)

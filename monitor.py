@@ -6677,16 +6677,14 @@ def _mail_region_cell(item: dict) -> str:
 def _mail_deadline_cell(item: dict, today=None) -> str:
     today = today or datetime.now(KST).date()
     try:
-        raw = resolve_item_deadline(item) or str(item.get("deadline") or "")
-        dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)] if raw.strip() else []
-        if not dates:
+        end = _digest_deadline_end(item, today)
+        if end is None:
             try:
                 if classify_deadline_status(item, today) == "always_open":
                     return "상시"
             except Exception:
                 pass
             return "확인필요"
-        end = max(dates)
         label = f"{end.month}/{end.day}" if end.year == today.year else f"{end.year}/{end.month}/{end.day}"
         # 2026-10: KST 기준 D-day (당일 D-0)
         return f"{label} (D-{(end - today).days})" if end >= today else label
@@ -6706,6 +6704,31 @@ def _format_won(amount: int) -> str:
     return f"{amount:,}원"
 
 
+# 💰 줄에 섞이던 게시판 스크랩 잡텍스트(2026-10-13 실발송 #263 원문 기준)
+_SUPPORT_JUNK_RES = (
+    re.compile(r"(\S{2,})\s+\1(?:\s|$)"),                        # '공지사항 공지사항'
+    re.compile(r"\bHOME\b|\bhit\s*\d+|조회수?\s*[:：]?\s*\d+", re.I),  # 네비·조회수
+    re.compile(r"\d{1,2}:\d{2}:\d{2}"),                            # '12:58:00' 게시시각
+    re.compile(r"(?:^|\s)(?:관리자|작성자|등록일|첨부파일)(?:\s|$|[:：])"),
+    re.compile(r"제\s+목\s*[:：]?"),                                # '완료 제 목 :'
+    re.compile(r"공고ㆍ안내|이전글|다음글|목록으로"),
+)
+_SUPPORT_LABEL_TOKENS = ("지원분야", "대상연령", "기관구분", "담당부서", "사업관리실", "접수기간", "신청기간")
+
+
+def is_support_junk(text: str) -> bool:
+    """💰 줄 후보가 실제 지원내용이 아니라 페이지 스크랩 잡텍스트인지."""
+    t = " ".join(str(text or "").split())
+    if not t:
+        return True
+    if any(rx.search(t) for rx in _SUPPORT_JUNK_RES):
+        return True
+    if sum(1 for tok in _SUPPORT_LABEL_TOKENS if tok in t) >= 2:   # 메타 라벨 나열
+        return True
+    meaningful = re.sub(r"[^가-힣A-Za-z0-9]", "", t)
+    return len(meaningful) < 4
+
+
 MAIL_SUPPORT_LINE_LIMIT = 60  # HTML 은 CSS ellipsis 로 한 줄 클립, plain 은 digest_table 에서 40자
 
 
@@ -6716,12 +6739,21 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
             _notice_text(item), str(item.get("support_field") or ""))))
         money = f"최대 {_format_won(amt)}" if amt and amt >= 100_000 else ""
         blurb = _mail_support_blurb(item, limit=160)
-        if not blurb or blurb == "상세 공고문 확인":
+        if not blurb or blurb == "상세 공고문 확인" or is_support_junk(blurb):
             blurb = ""
+        if not blurb and not money:
+            # 실제 금액·지원내용이 없으면 AI 요약(있을 때만), 그것도 없으면 줄 자체를 숨긴다.
+            for key in ("ai_summary", "summary"):
+                alt = _mail_clean_text(item.get(key), limit=160)
+                if alt and not is_support_junk(alt):
+                    blurb = alt
+                    break
         # 짧은 문구: 첫 구절만, 금액 표기는 제거
         phrase = re.split(r"[,(（/;]|\s[-·]\s", blurb)[0]
         phrase = re.sub(r"(?:최대|기업당|업체당)?\s*[\d.,]+\s*(?:조|천억|억|천만|백만|만)?\s*원", "", phrase)
         phrase = " ".join(phrase.split())
+        if is_support_junk(phrase):
+            phrase = ""
         text = " ".join(x for x in (money, phrase) if x)
         if len(text) > limit:
             text = text[: limit - 1].rstrip() + "…"
@@ -6769,9 +6801,53 @@ def fallback_body(items: list[dict], today=None) -> str:
     return render_plain(rows)
 
 
+_YEARLESS_MD_RE = re.compile(r"(?<![\d./\-])(\d{1,2})\s*[/.]\s*(\d{1,2})(?![\d])(?!\s*[./\-]\s*\d)")
+_YEARLESS_ROLL_DAYS = 200  # 연도 없는 M/D 가 기준일보다 이만큼 넘게 과거면 다음 해로 본다
+
+
+def _yearless_date(month: int, day: int, item: dict, today):
+    """연도 없는 M/D: 게시일 연도(없으면 오늘 연도) 기준. 기준일보다 200일 넘게 과거면 +1년.
+
+    '9/28'(오늘 10/13) → 올해 9/28(지남), '1/15'(오늘 10/13) → 내년 1/15(미래).
+    """
+    ref = _posted_date(item) or today
+    d = _valid_date(ref.year, month, day)
+    if d and (ref - d).days > _YEARLESS_ROLL_DAYS:
+        d = _valid_date(ref.year + 1, month, day)
+    return d
+
+
+def _digest_deadline_end(item: dict, today):
+    """카드에 표시하는 마감일(resolve_item_deadline)의 종료일. 읽을 수 없으면 None."""
+    raw = (resolve_item_deadline(item) or str(item.get("deadline") or "")).strip()
+    if not raw:
+        return None
+    dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
+    # 연도 포함 날짜가 없을 때만 연도 없는 M/D('9/28', '7.8') 를 추론
+    if not dates or not re.search(r"\d{4}|'?\d{2}\s*[./\-]\s*\d{1,2}\s*[./\-]", raw):
+        yl = [_yearless_date(int(m.group(1)), int(m.group(2)), item, today)
+              for m in _YEARLESS_MD_RE.finditer(raw)]
+        yl = [d for d in yl if d]
+        if yl:
+            dates = yl
+    return max(dates) if dates else None
+
+
 def _digest_is_closed(item: dict, today) -> bool:
-    """다이제스트 제외 판정: 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall)."""
+    """다이제스트 제외 판정: 표시 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall).
+
+    2026-10-13 실발송(#263) 사고: 카드에 2025/9/3·9/28 등 지난 마감이 표시됐는데 제외되지 않았다.
+    classify_deadline_status 는 본문(스크랩 잡텍스트 포함)에 '선착순'·'소진시'·'마감연장' 같은 단어가
+    한 번만 있어도 마감일을 보기 전에 always_open/extended 를 반환하고, 신청기간 라벨이 없으면 본문 전체
+    날짜의 max 를 쓰므로 사이드바·게시판 목록의 미래 날짜에 끌려 'open' 이 된다. 그래서 카드에
+    실제로 찍히는 마감일(resolve_item_deadline)이 지났으면 그것을 우선해 제외한다.
+    """
     try:
+        if is_title_closed(item):
+            return True
+        end = _digest_deadline_end(item, today)
+        if end is not None:
+            return end < today
         return classify_deadline_status(item, today) == "closed"
     except Exception:
         return False
