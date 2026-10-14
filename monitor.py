@@ -6621,7 +6621,13 @@ def _mail_fit_cell(item: dict) -> str:
 # 행사·교육·공모 성격 제목 — 지원유형 태그에 '바우처'가 있어도 바우처 섹션에 넣지 않는다(run #264).
 _EVENT_TITLE_RE = re.compile(
     r"파트너링\s*데이|데모\s*데이|포럼|세미나|설명회|박람회|전시회|상담회|투자대전|교육|아카데미|"
-    r"캠프|챌린지|공모전|경진대회|컨퍼런스|콘퍼런스|워크숍|네트워킹|참관객|강연|특강|행사"
+    r"캠프|챌린지|공모전|경진대회|컨퍼런스|콘퍼런스|워크숍|네트워킹|참관객|강연|특강|행사|"
+    r"(?<![A-Za-z])IR(?![A-Za-z])|참가자\s*모집|경연"
+)
+# 본문에서 '바우처'를 실제 지원수단으로 말하는 표현만(단순 언급·연계 안내는 제외)
+_VOUCHER_BODY_RE = re.compile(
+    r"바우처\s*(?:를|을)?\s*(?:지원|지급|제공|발급|발행|사업|형태로|방식)|"
+    r"(?:수출|혁신|데이터|AI|클라우드|물류|관광|컨설팅|R&D|기술|마케팅)\s*바우처"
 )
 
 
@@ -6643,9 +6649,14 @@ def _mail_support_cell(item: dict) -> str:
         title_s = str(item.get("title") or "")
         if _EXHIBITION_RE.search(title_s):
             return "기타"  # 전시회·박람회·MWC/CES 기업관·부스 참가기업 모집 → 기타(run #265)
-        is_event = bool(_EVENT_TITLE_RE.search(title_s)) and "바우처" not in title_s
-        if "바우처" in blob and not is_event:
+        # IR·참가자 모집·경연·데모데이 등 행사·교육 → 기타(바우처 금지, MAIL-037)
+        if _EVENT_TITLE_RE.search(title_s) and "바우처" not in title_s:
+            return "기타"
+        # 바우처는 제목 또는 본문의 명확한 바우처 지원 표현으로만(출처 _types 태그만으론 안 넣음)
+        body_s = " ".join((str(item.get("support_field") or ""), str(item.get("description") or "")[:600]))
+        if "바우처" in title_s or _VOUCHER_BODY_RE.search(body_s):
             return "바우처"
+        blob = blob.replace("바우처", " ")
         if any(tok in blob for tok in ("지원금", "사업비", "자금")):
             return "지원금/사업비"
         if any(tok in blob for tok in ("입주", "시설", "공간")):
@@ -6902,6 +6913,7 @@ def clean_mail_title(title: str) -> str:
     """메일 표시용 제목: 상태·지역·게시판 머리말·순번/코드 접두를 걷어내고 사업명만 남긴다."""
     t = " ".join(str(title or "").split())
     t = _TITLE_BOARD_JUNK_RE.sub("", t).strip()
+    t = re.sub(r"([가-힣]{2,4})\1$", r"\1", t)  # '…참여기업 모집모집' → '모집'(원문 오타, MAIL-037)
     for _ in range(6):
         before = t
         t = _TITLE_DECOR_LEAD_RE.sub("", t).strip()
@@ -7012,6 +7024,18 @@ def _title_past_year(item: dict, today) -> bool:
     return bool(years) and max(years) < today.year
 
 
+_INFO_GUIDE_RE = re.compile(r"요약본|챗봇\s*제공|하는\s*(?:방법|법)|방법$|가이드북|이용\s*가이드|꿀팁|활용법|알아보기|소개합니다")
+_APPLICANT_CALL_RE = re.compile(r"모집|신청|접수|참가|참여|선정|공모|지원사업\s*공고|사업\s*공고|입주")
+
+
+def is_info_guide_post(item: dict) -> bool:
+    """신청자 모집이 아닌 안내·홍보·가이드 글(보수적: 모집·신청 표현이 하나라도 있으면 False)."""
+    title = str((item or {}).get("title") or "")
+    if not _INFO_GUIDE_RE.search(title):
+        return False
+    return not _APPLICANT_CALL_RE.search(title)
+
+
 def _digest_is_closed(item: dict, today) -> bool:
     """다이제스트 제외 판정: 표시 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall).
 
@@ -7024,6 +7048,8 @@ def _digest_is_closed(item: dict, today) -> bool:
     try:
         if is_title_closed(item):
             return True
+        if is_info_guide_post(item):
+            return True  # MAIL-037: 요약본·챗봇 제공·'…방법' 안내글은 공고가 아님
         end = _digest_deadline_end(item, today)
         if end is not None:
             return end < today

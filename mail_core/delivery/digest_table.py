@@ -120,11 +120,21 @@ def short_region(value: str) -> str:
     return " ".join(out) or value
 
 
-def short_org(value: str, limit: int = ORG_MAX) -> str:
-    if len(value) > limit:
-        # '인천테크노파크(ITP)' → '인천테크노파크': 괄호 약칭을 먼저 떼고 자른다(잘린 괄호 '(I…' 방지)
+ORG_FULL_MAX = 20
+
+
+def short_org(value: str, limit: int = ORG_FULL_MAX) -> str:
+    """기관명은 중간에서 자르지 않는다(MAIL-037: '중소기업AI훈련확…' 금지).
+
+    괄호 약칭을 떼고도 limit 를 넘으면 단어 경계(공백)에서 자르고 '…', 공백이 없으면 전체를 보여준다.
+    """
+    if len(value) > ORG_MAX:
+        # '인천테크노파크(ITP)' → '인천테크노파크': 괄호 약칭을 먼저 뗀다(잘린 괄호 '(I…' 방지)
         value = re.sub(r"\s*[(（][^)）]*[)）]?\s*$", "", value).strip() or value
-    return value if len(value) <= limit else value[: limit - 1] + "…"
+    if len(value) <= limit:
+        return value
+    cut = value[:limit].rsplit(" ", 1)[0].rstrip(" ,·")
+    return (cut + "…") if cut and cut != value[:limit] else value
 
 
 def _meta_values(row: dict) -> list[str]:
