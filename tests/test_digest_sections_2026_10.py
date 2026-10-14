@@ -212,7 +212,7 @@ def test_short_region(raw, exp):
 def test_short_org():
     from mail_core.delivery.digest_table import short_org
     assert short_org("KOTRA") == "KOTRA"
-    assert short_org("소상공인시장진흥공단본부") == "소상공인시장진흥공…"
+    assert short_org("소상공인시장진흥공단본부") == "소상공인시장진흥공단본부"  # MAIL-037: 중간 절단 금지
 
 
 def test_no_item_numbering():

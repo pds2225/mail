@@ -157,7 +157,7 @@ def test_repeated_breadcrumb_phrase_is_junk_real_itp():
 
 def test_org_drops_parenthetical_before_truncation():
     assert dt.short_org("인천테크노파크(ITP)") == "인천테크노파크"
-    assert dt.short_org("한국바이오투자파트너스") == "한국바이오투자파트…"
+    assert dt.short_org("한국바이오투자파트너스") == "한국바이오투자파트너스"  # MAIL-037: 전체 표시
     assert dt.short_org("카카오") == "카카오"
 
 
@@ -168,7 +168,9 @@ def test_voucher_section_not_from_description_word():
                "선정 기업에는 사업화 바우처 연계 안내")
     assert monitor._mail_support_cell(it) != "바우처"
     assert monitor._mail_support_cell(_item("2026년 수출바우처 참여기업 모집", "2026-10-31")) == "바우처"
-    assert monitor._mail_support_cell(_item("IR 참가자 모집", "2026-11-02", support_field="혁신바우처")) == "바우처"
+    # MAIL-037: IR·참가자 모집은 행사 → 바우처 금지. 지원분야가 혁신바우처인 일반 공고는 바우처.
+    assert monitor._mail_support_cell(_item("IR 참가자 모집", "2026-11-02", support_field="혁신바우처")) == "기타"
+    assert monitor._mail_support_cell(_item("스마트공장 참여기업 공고", "2026-11-02", support_field="혁신바우처")) == "바우처"
 
 
 def test_region_prefers_title_or_org_over_default():

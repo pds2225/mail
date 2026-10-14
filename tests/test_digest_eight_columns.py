@@ -184,7 +184,9 @@ def test_org_not_abbreviated_and_not_source_name():
 
 
 def test_support_kinds_from_existing_data_never_invent_amount():
-    voucher = m._mail_support_cell(_item(_types=["바우처"], support_field="", description=""))
+    # MAIL-037: 출처 _types 태그만으론 바우처 아님 — 제목/본문에 바우처 표현이 있어야 한다
+    assert m._mail_support_cell(_item(_types=["바우처"], support_field="", description="")) != "바우처"
+    voucher = m._mail_support_cell(_item(_types=["바우처"], support_field="수출바우처", description=""))
     grant = m._mail_support_cell(_item(
         _types=[], support_field="중소기업 해외진출 지원금 최대 5천만원", description="",
     ))
