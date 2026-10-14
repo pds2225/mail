@@ -6625,6 +6625,10 @@ _EVENT_TITLE_RE = re.compile(
 )
 
 
+_EXHIBITION_RE = re.compile(
+    r"전시회|박람회|엑스포|EXPO|\bMWC|\bCES\b|기업관|공동관|한국관|부스|(?:전시|박람).*참가기업\s*모집", re.I)
+
+
 def _mail_support_cell(item: dict) -> str:
     """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
     try:
@@ -6637,6 +6641,8 @@ def _mail_support_cell(item: dict) -> str:
             str(item.get("title") or ""),
         ))
         title_s = str(item.get("title") or "")
+        if _EXHIBITION_RE.search(title_s):
+            return "기타"  # 전시회·박람회·MWC/CES 기업관·부스 참가기업 모집 → 기타(run #265)
         is_event = bool(_EVENT_TITLE_RE.search(title_s)) and "바우처" not in title_s
         if "바우처" in blob and not is_event:
             return "바우처"
@@ -6876,11 +6882,30 @@ _MAIL_TITLE_PREFIX_RES = (
 )
 
 
+_TITLE_DECOR_LEAD_RE = re.compile(r"^[\s★☆▶▷►■□※◆◇●○◎•·▣▲△]+")
+_TITLE_DECOR_TAIL_RE = re.compile(r"\s+[–—-]\s+[^–—-]{1,40}\s+[–—-]\s*$")   # ' – 첨단 AI 팩토리 견학 –'
+_TITLE_BOARD_JUNK_RE = re.compile(r"\s*(?:N\s*)?새로운\s*게시글\s*$|\s+N$|\s*(?:\.\.|…)\s*$")
+_CATEGORY_PREFIX_RE = re.compile(r"^(?:사업화|기술개발|기술|창업|수출|마케팅|교육|자금|인력|판로|일반|기타|R&D)\s+")
+_CATEGORY_PREFIX_HOSTS = ("jbci.or.kr",)
+
+
+def clean_item_title(item: dict) -> str:
+    """카드·🙋·📍·🎯 공용 제목 정리(배지·머리말·장식·게시판 꼬리·출처별 분류 접두)."""
+    t = clean_mail_title(strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160)))
+    link = str(item.get("link") or item.get("source_url") or "")
+    if any(h in link for h in _CATEGORY_PREFIX_HOSTS):
+        t = _CATEGORY_PREFIX_RE.sub("", t, count=1).strip() or t
+    return t or "(제목없음)"
+
+
 def clean_mail_title(title: str) -> str:
     """메일 표시용 제목: 상태·지역·게시판 머리말·순번/코드 접두를 걷어내고 사업명만 남긴다."""
     t = " ".join(str(title or "").split())
+    t = _TITLE_BOARD_JUNK_RE.sub("", t).strip()
     for _ in range(6):
         before = t
+        t = _TITLE_DECOR_LEAD_RE.sub("", t).strip()
+        t = _TITLE_DECOR_TAIL_RE.sub("", t).strip()
         for rx in _MAIL_TITLE_PREFIX_RES:
             t = rx.sub("", t, count=1).strip()
         if t == before:
@@ -6891,7 +6916,7 @@ def clean_mail_title(title: str) -> str:
 def _digest_row(item: dict, today=None) -> dict:
     from mail_core.delivery.digest_table import notice_url
 
-    title = clean_mail_title(strip_title_badges(_mail_clean_text(item.get("title") or "", limit=160)))
+    title = clean_item_title(item)
     if not title:
         title = "(제목없음)"
     badge = {"EXTENDED": "[마감연장] ", "REANNOUNCED": "[재공고] ", "UPDATED": "[수정] "}.get(
@@ -7122,14 +7147,12 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
             surf = surface_label_for_field(region_field_status(it), field="region")
         except Exception:
             surf = ""
-        title_line = f"\n▸ {clean_mail_title(strip_title_badges(_mail_clean_text(it.get('title') or '(제목없음)', limit=120)))}"
+        title_line = f"\n▸ {clean_item_title(it)}"
         if surf:
             title_line += f" [{surf}]"
         lines.append(title_line)
-        lines.append(
-            f"  기관: {_mail_clean_text(it.get('author') or '미기재', limit=70)}"
-            f" | 마감: {_mail_deadline_cell(it)}"
-        )
+        _org = _mail_clean_text(it.get('author') or '', limit=70)
+        lines.append((f"  기관: {_org} | " if _org else "  ") + f"마감: {_mail_deadline_cell(it)}")
         if it.get("link"):
             lines.append(f"  원문: {it['link']}")
     if total > len(shown):
@@ -7268,6 +7291,27 @@ def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     return msg
 
 
+def _send_date_label(at: datetime | None = None) -> str:
+    """제목 회차 표기 — 예약 회차가 아니라 실제 발송 시각(KST) 기준(03:46 발송이 '저녁'으로 찍히던 문제)."""
+    t = (at or datetime.now(KST)).astimezone(KST)
+    label = "오전" if t.hour < 12 else ("오후" if t.hour < 18 else "저녁")
+    return f"{t.strftime('%m/%d')} {label}"
+
+
+def render_watchlist_body(items: list[dict], today=None) -> str:
+    """🎯 집중 모니터링 본문 — 카드와 같은 제목 정리·마감 형식(M/D (D-N)·확인필요·상시), 만료 제외."""
+    today = today or datetime.now(KST).date()
+    shown = [it for it in items if not _digest_is_closed(it, today)]
+    parts = ["🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n"]
+    for i, it in enumerate(shown, 1):
+        parts.append(
+            f"[{i}] {clean_item_title(it)}\n"
+            f"  마감: {_mail_deadline_cell(it, today=today)}\n"
+            f"  링크: {it.get('link') or it.get('url') or '미기재'}\n\n"
+        )
+    return "".join(parts)
+
+
 def _build_group_mail_content(
     *,
     group: dict,
@@ -7330,7 +7374,7 @@ def _build_group_mail_content(
     )
     # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
     feedback_block = _render_feedback_block([
-        {**it, "title": clean_mail_title(strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)))}
+        {**it, "title": clean_item_title(it)}
         for it in sorted(shown_items, key=_notice_sort_key)
     ])
     subj_count = f"{len(shown_items)}건" + (
@@ -7351,7 +7395,7 @@ def _dump_item(it: dict, today) -> dict:
     from mail_core.delivery.digest_lint import redact
 
     row = {k: it.get(k) for k in _DUMP_ITEM_KEYS if it.get(k) not in (None, "", [])}
-    for k, fn in (("card_title", lambda: clean_mail_title(strip_title_badges(_mail_clean_text(it.get("title") or "", limit=160)))),
+    for k, fn in (("card_title", lambda: clean_item_title(it)),
                   ("card_deadline", lambda: _mail_deadline_cell(it, today=today)),
                   ("card_region", lambda: _mail_region_cell(it)),
                   ("card_section", lambda: _mail_support_cell(it)),
@@ -8007,6 +8051,36 @@ def _post_run_alert(result: dict) -> None:
 # 메인
 # ══════════════════════════════════════════════════════════════════
 
+def _write_filter_traces(diagnostics: dict, *, group_id: str, run_id: str) -> None:
+    """그룹 판정 결과를 var/logs/filter_trace_<day>.jsonl 로 남긴다(MAIL-036).
+
+    filter_trace 모듈은 있었지만 실행 경로에서 아무도 append_jsonl 을 부르지 않아 파일이 생기지 않았다.
+    재계산 없이 diagnostics 의 판정 필드만 옮긴다. 실패해도 발송엔 영향 없음.
+    """
+    try:
+        from mail_core.operations.filter_trace import append_jsonl, build_trace
+
+        traces = []
+        for bucket, rows in diagnostics.items():
+            for it in rows or []:
+                reasons = list(it.get("exclude_reason_codes") or [])
+                stages = [
+                    {"step": "region", "status": str(it.get("region_status") or ""),
+                     "ok": it.get("region_status") != "not_eligible"},
+                    {"step": "keyword", "status": "hit" if it.get("is_relevant") else "miss",
+                     "ok": bool(it.get("is_relevant")), "reasons": reasons},
+                ]
+                traces.append(build_trace(
+                    notice_id=str(it.get("id") or ""), group_id=group_id,
+                    site_id=str(it.get("source") or it.get("site_id") or ""),
+                    stages=stages, bucket=bucket, run_id=run_id, title=str(it.get("title") or ""),
+                ))
+        if traces:
+            append_jsonl(traces)
+    except Exception as e:  # noqa: BLE001
+        log.warning("filter_trace 기록 실패(무시): %s", e)
+
+
 def execute_monitor(
     *,
     allow_send: bool = False,
@@ -8397,7 +8471,7 @@ def execute_monitor(
     # 하루 2회 발송(07:30·18:30 KST)이라 제목에 회차를 붙여 오전분·저녁분을 구분한다.
     # 회차는 발송 멱등 키와 같은 delivery_slot() 을 쓴다(표기·멱등 불일치 방지).
     _slot_label = "오전" if delivery_slot(now) == "am" else "저녁"
-    date_str    = f"{now.strftime('%m/%d')} {_slot_label}"
+    date_str    = f"{now.strftime('%m/%d')} {_slot_label}"  # 미리보기용(실발송 제목은 _send_date_label)
 
     include_unknown = settings.get("include_date_unknown", False)
     # 날짜불명 처리정책: 명시값 우선, 없으면 legacy include_date_unknown 로 결정
@@ -8460,21 +8534,17 @@ def execute_monitor(
         # 집중 모니터링 전용 메일 + 폰 푸시 (raw_all 설정과 무관하게 보장)
         if deliver:
             wl_recipients = watchlist["recipients"] or settings.get("raw_all_recipients") or []
-            if wl_recipients:
-                wl_body = "🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n" + "".join(
-                    f"[{i}] {it.get('title', '(제목없음)')}\n"
-                    f"  마감: {resolve_item_deadline(it) or '미기재'}\n"
-                    f"  링크: {it.get('link') or it.get('url') or '미기재'}\n\n"
-                    for i, it in enumerate(watch_hits, 1)
-                )
-                wl_subject = f"🎯 [집중 모니터링] {len(watch_hits)}건 ({date_str})"
+            wl_shown = [it for it in watch_hits if not _digest_is_closed(it, datetime.now(KST).date())]
+            if wl_recipients and wl_shown:
+                wl_body = render_watchlist_body(wl_shown)
+                wl_subject = f"🎯 [집중 모니터링] {len(wl_shown)}건 ({_send_date_label()})"
                 if effective_send and persist_seen:
                     deliver_with_outbox(
                         wl_subject, wl_body, wl_recipients,
                         date=str(target_date),
                         tenant=str(watchlist.get("tenant_id") or settings.get("tenant_id") or "default"),
                         group="watchlist",
-                        notice_ids=[_delivery_notice_id(it) for it in watch_hits],
+                        notice_ids=[_delivery_notice_id(it) for it in wl_shown],
                     )
                 else:
                     send_to_list(wl_subject, wl_body, wl_recipients)
@@ -8561,6 +8631,7 @@ def execute_monitor(
     for group in groups:
         diagnostics = filter_for_group_with_diagnostics(filtered_new, group)
         _trace_gid = str(group.get("id") or group.get("name") or "")
+        _write_filter_traces(diagnostics, group_id=_trace_gid, run_id=_trace_run_id)
         # MAIL-P0D-01: EVALUATE — 그룹별 판정 결과를 그대로 기록(재계산하지 않는다).
         try:
             for _it in diagnostics["included"]:
@@ -8635,7 +8706,7 @@ def execute_monitor(
                 _pcontent = _build_group_mail_content(
                     group=group, g_items=g_items, ru_mail_items=ru_mail_items,
                     ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
-                    window_label=window_label, days_back=days_back, date_str=date_str,
+                    window_label=window_label, days_back=days_back, date_str=_send_date_label(),
                     now=now,
                 )
                 _preview_entry["subject"] = _pcontent["subject"]
@@ -8667,7 +8738,7 @@ def execute_monitor(
             _content = _build_group_mail_content(
                 group=group, g_items=g_items, ru_mail_items=ru_mail_items,
                 ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
-                window_label=window_label, days_back=days_back, date_str=date_str,
+                window_label=window_label, days_back=days_back, date_str=_send_date_label(),
                 now=now,
             )
             # MAIL-035: 발송 직전 lint(+안전한 자동수정) → 기록. 기본은 경고만, 차단은 env 로.
@@ -8676,7 +8747,7 @@ def execute_monitor(
                 rebuild=lambda gi, ri: _build_group_mail_content(
                     group=group, g_items=gi, ru_mail_items=ri,
                     ru_items=ru_items, ru_limit=ru_limit, filtered_new=filtered_new,
-                    window_label=window_label, days_back=days_back, date_str=date_str,
+                    window_label=window_label, days_back=days_back, date_str=_send_date_label(),
                     now=now,
                 ),
                 now=now, run_id=_trace_run_id,

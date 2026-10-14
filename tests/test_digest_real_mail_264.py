@@ -71,7 +71,8 @@ def test_region_unknown_section_format_and_expired_dropped():
     ]
     txt = monitor.render_region_unknown(items, limit=10, total_count=93)
     assert "여성IP" not in txt
-    assert "마감: 12/11 (D-59)" in txt
+    import re
+    assert re.search(r"마감: 12/11 \(D-\d+\)", txt)  # 오늘 날짜 무관
     assert "마감: 상시" in txt
     assert "마감: 확인필요" in txt
     assert "미기재 | 마감: 미기재" not in txt and "2026-05-19 ~" not in txt

@@ -225,36 +225,43 @@ jobs:
 
       # MAIL-035: 실행 기록(공고별 단계/필터 추적, raw store, 그룹별 digest dump+lint) 30일 보관.
       # digest dump 는 monitor 가 수신자 마스킹·피드백 토큰/이메일 제거 후 기록한다. raw 는 200MB 초과 시 생략.
-      - name: 실행 기록 묶기(raw 압축·크기 제한)
+      - name: 실행 기록 묶기(raw 이메일 마스킹·압축·크기 제한)
         if: always()
         run: |
-          mkdir -p var/logs/run_records
+          # 모든 기록을 var/logs/run_records/ 한 곳에 상대경로로 모은다(아티팩트 루트 = run_records,
+          # ../·절대경로 없음). raw 는 이메일 마스킹 사본만 tgz 로 묶는다(200MB 초과 시 생략).
+          R=var/logs/run_records
+          rm -rf "$R" && mkdir -p "$R"
+          cp var/logs/notice_stage_trace_*.jsonl "$R"/ 2>/dev/null || true
+          cp var/logs/filter_trace_*.jsonl "$R"/ 2>/dev/null || true
+          if [ -d var/logs/digest_dump ]; then cp -r var/logs/digest_dump "$R"/digest_dump; fi
           if [ -d var/raw ]; then
             size_mb=$(du -sm var/raw | cut -f1)
             if [ "$size_mb" -le 200 ]; then
-              tar czf var/logs/run_records/raw_store.tgz -C var raw && echo "raw_store ${size_mb}MB 압축"
+              python scripts/mask_raw_emails.py var/raw "$R/_raw_tmp/raw"
+              tar czf "$R/raw_store.tgz" -C "$R/_raw_tmp" raw && echo "raw_store ${size_mb}MB 마스킹·압축"
+              rm -rf "$R/_raw_tmp"
             else
               echo "::warning::var/raw ${size_mb}MB > 200MB — raw 아티팩트 생략"
             fi
           fi
-          # 안전망: 기록 묶음에 이메일 주소·피드백 토큰이 있으면 업로드 대상에서 뺀다
-          for f in var/logs/digest_dump/*/*.json; do
-            [ -f "$f" ] || continue
+          # 안전망: dump·trace 에 이메일 주소·피드백 토큰이 남아 있으면 그 파일은 업로드에서 뺀다
+          find "$R" -type f \( -name '*.json' -o -name '*.jsonl' \) -print0 | while IFS= read -r -d '' f; do
             if grep -qE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|MAIL-FB' "$f"; then
               echo "::warning::$f 에 이메일/토큰 흔적 — 업로드 제외"; rm -f "$f"
             fi
           done
+          ls -la "$R"
 
+      # 내려받기: gh run download <run_id> -n run-records-<run_id> -D <폴더>
+      #   (gh 2.63.1 은 -D 없이 단일 아티팩트를 받으면 'would result in path traversal' 오탐 — cli/cli#10007,
+      #    2.63.2+ 에서 수정. -D 를 주거나 gh 를 올리면 된다.)
       - name: 실행 기록 아티팩트 업로드(공고 추적·digest dump·raw)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: run-records-${{ github.run_id }}
-          path: |
-            var/logs/notice_stage_trace_*.jsonl
-            var/logs/filter_trace_*.jsonl
-            var/logs/digest_dump/
-            var/logs/run_records/raw_store.tgz
+          path: var/logs/run_records/
           retention-days: 30
           if-no-files-found: ignore
 
