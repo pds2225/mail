@@ -6797,6 +6797,13 @@ def _format_won(amount: int) -> str:
     return f"{amount:,}원"
 
 
+# 사이트 상단 언어 전환·검색 메뉴(MAIL-038, run #266 고양 글로벌 투자 서밋)
+LANG_SEARCH_MENU_RE = re.compile(
+    r"(?<![A-Za-z])(?:KOR|ENG|JPN|CHN|ARB|JP|CN|EN|KR)(?:\s+(?:KOR|ENG|JPN|CHN|ARB|JP|CN|EN|KR)){1,}(?![A-Za-z])"
+    r"|검색\s*폼|(?<![A-Za-z])SEARCH(?![A-Za-z])|통합\s*검색|검색어\s*입력|사이트맵|SITEMAP|로그인\s+회원가입"
+)
+
+
 # 💰 줄에 섞이던 게시판 스크랩 잡텍스트(2026-10-13 실발송 #263 원문 기준)
 _SUPPORT_JUNK_RES = (
     re.compile(r"((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)"),          # '공지사항 공지사항', 'ITP 뉴스 지원사업 ITP 뉴스 지원사업'
@@ -6806,6 +6813,7 @@ _SUPPORT_JUNK_RES = (
     re.compile(r"제\s+목\s*[:：]?"),                                # '완료 제 목 :'
     re.compile(r"공고ㆍ안내|이전글|다음글|목록으로"),
     re.compile(r"^\S{0,10}(?:공고|공지|사업|게시판|소식|알림)\s*전체$|기업지원공고\s*전체"),  # 게시판 메뉴 '기업지원공고 전체'
+    LANG_SEARCH_MENU_RE,                                           # 'KOR ENG JPN CHN ARB 검색 폼 SEARCH'(run #266)
 )
 _SUPPORT_LABEL_TOKENS = ("지원분야", "대상연령", "기관구분", "담당부서", "사업관리실", "접수기간", "신청기간")
 
@@ -6819,7 +6827,7 @@ _SUPPORT_STRIP_RES = (
 )
 
 
-_PAGE_NAV_RE = re.compile(r"기업지원공고\s*전체|((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
+_PAGE_NAV_RE = re.compile(r"(?<![A-Za-z])(?:KOR|ENG|JPN|CHN|ARB)\s+(?:KOR|ENG|JPN|CHN|ARB)(?![A-Za-z])|검색\s*폼|(?<![A-Za-z])SEARCH(?![A-Za-z])|기업지원공고\s*전체|((?:\S+\s+){0,3}\S{2,})\s+\1(?:\s|$)|\bHOME\b|공고ㆍ안내|이전글|다음글|목록으로")
 
 
 def strip_support_junk(text: str) -> str:
@@ -6852,8 +6860,14 @@ def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> s
     try:
         amt = extract_support_amount(" ".join((
             _notice_text(item), str(item.get("support_field") or ""))))
+        # MAIL-038: 제목에 금액이 있으면 제목 금액 우선. 본문(페이지) 금액이 제목과 다르면
+        # 페이지 금액·문구는 버린다('바른동행 … 최대 5억원 투자' 에 '최대 100억원' 이 붙던 문제).
+        title_amt = extract_support_amount(str(item.get("title") or ""))
+        amount_conflict = bool(title_amt and amt and amt != title_amt)
+        if title_amt:
+            amt = title_amt
         money = f"최대 {_format_won(amt)}" if amt and amt >= 100_000 else ""
-        blurb = _mail_support_blurb(item, limit=160)
+        blurb = "" if amount_conflict else _mail_support_blurb(item, limit=160)
         if blurb and _PAGE_NAV_RE.search(blurb):
             blurb = ""  # 게시판 페이지 내비게이션째 긁힌 본문 — 남는 글도 신뢰할 수 없음
         if blurb and blurb != "상세 공고문 확인":
@@ -6896,7 +6910,9 @@ _MAIL_TITLE_PREFIX_RES = (
 _TITLE_DECOR_LEAD_RE = re.compile(r"^[\s★☆▶▷►■□※◆◇●○◎•·▣▲△]+")
 _TITLE_DECOR_TAIL_RE = re.compile(r"\s+[–—-]\s+[^–—-]{1,40}\s+[–—-]\s*$")   # ' – 첨단 AI 팩토리 견학 –'
 _TITLE_BOARD_JUNK_RE = re.compile(r"\s*(?:N\s*)?새로운\s*게시글\s*$|\s+N$|\s*(?:\.\.|…)\s*$")
-_CATEGORY_PREFIX_RE = re.compile(r"^(?:사업화|기술개발|기술|창업|수출|마케팅|교육|자금|인력|판로|일반|기타|R&D)\s+")
+_CATEGORY_WORDS = r"(?:사업화|기술개발|기술|창업|수출|마케팅|교육|자금|인력|판로|일반|기타|R&D|입주|보육|컨설팅|행사|멘토링|네트워킹|글로벌|시설|공간|투자|금융)"
+# jbci 분류 접두: '사업화 ', '입주&보육 ', '교육·행사 ' 처럼 분류어를 &·/로 이은 것까지(MAIL-038)
+_CATEGORY_PREFIX_RE = re.compile(rf"^{_CATEGORY_WORDS}(?:\s*[&·/,ㆍ]\s*{_CATEGORY_WORDS})*\s+")
 _CATEGORY_PREFIX_HOSTS = ("jbci.or.kr",)
 
 
@@ -7317,6 +7333,21 @@ def _build_mime_message(subject: str, body: str, to: str) -> MIMEMultipart:
     return msg
 
 
+def _card_order(items: list[dict]) -> list[dict]:
+    """카드와 같은 순서(섹션 순서 → 섹션 안은 _notice_sort_key). 🙋 목록이 카드 순서를 따르게(MAIL-038)."""
+    from mail_core.delivery.digest_table import SECTION_ORDER, section_of
+
+    def _sec(it):
+        try:
+            name = section_of(_mail_support_cell(it))
+        except Exception:  # noqa: BLE001
+            name = "기타"
+        return SECTION_ORDER.index(name) if name in SECTION_ORDER else len(SECTION_ORDER)
+
+    base = sorted(items, key=_notice_sort_key)
+    return sorted(base, key=_sec)  # stable: 섹션 안 순서 유지
+
+
 def _send_date_label(at: datetime | None = None) -> str:
     """제목 회차 표기 — 예약 회차가 아니라 실제 발송 시각(KST) 기준(03:46 발송이 '저녁'으로 찍히던 문제)."""
     t = (at or datetime.now(KST)).astimezone(KST)
@@ -7401,7 +7432,7 @@ def _build_group_mail_content(
     # 사용자 ⭕/❌ 피드백 링크 — 실제 나간 메일이 맞았는지 사람 정답(Tier C)을 모은다.
     feedback_block = _render_feedback_block([
         {**it, "title": clean_item_title(it)}
-        for it in sorted(shown_items, key=_notice_sort_key)
+        for it in _card_order(shown_items)
     ])
     subj_count = f"{len(shown_items)}건" + (
         f"+지역확인 {len(ru_mail_items)}건" if ru_mail_items else ""

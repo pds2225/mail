@@ -25,6 +25,11 @@ _HEADER_COUNT_RE = re.compile(r"그룹 매칭\s*(\d+)건")
 _PAST_RE = re.compile(r"\(D\+\d+\)")
 _FOOTER_TITLE_RE = re.compile(r"^\s*(?:[─━—=_\-]{5,}|🙋|ⓘ)")
 UNKNOWN_SHARE_LIMIT = 0.5
+# 호출측 판정기와 별개로 lint 자체가 잡는 사이트 메뉴 잡텍스트(MAIL-038: 'KOR ENG JPN CHN ARB 검색 폼 SEARCH')
+_BUILTIN_JUNK_RE = re.compile(
+    r"(?<![A-Za-z])(?:KOR|ENG|JPN|CHN|ARB)(?:\s+(?:KOR|ENG|JPN|CHN|ARB)){1,}(?![A-Za-z])"
+    r"|검색\s*폼|(?<![A-Za-z])SEARCH(?![A-Za-z])|통합\s*검색|사이트맵"
+)
 FIXABLE = {"EXPIRED", "JUNK_SUPPORT", "SUBJECT_COUNT", "HEADER_COUNT", "SECTION_COUNT", "FOOTER_AS_CARD"}
 
 
@@ -55,7 +60,7 @@ def lint_digest(subject: str, body: str, *, is_junk: Callable[[str], bool] | Non
         if _PAST_RE.search(dl):
             add("EXPIRED", f"지난 마감 {dl}", title)
         sup = str(r.get("지원내용") or "").rstrip("…")
-        if sup and is_junk and is_junk(sup):
+        if sup and (_BUILTIN_JUNK_RE.search(sup) or (is_junk and is_junk(sup))):
             add("JUNK_SUPPORT", f"💰 잡텍스트: {sup[:40]}", title)
 
     m = _SUBJECT_COUNT_RE.search(subject or "")
@@ -97,7 +102,8 @@ def strip_junk_support_lines(body: str, is_junk: Callable[[str], bool]) -> str:
     out = []
     for line in (body or "").split("\n"):
         s = line.strip()
-        if s.startswith("💰 ") and is_junk(s[2:].strip().rstrip("…")):
+        txt = s[2:].strip().rstrip("…")
+        if s.startswith("💰 ") and (_BUILTIN_JUNK_RE.search(txt) or is_junk(txt)):
             continue
         out.append(line)
     return "\n".join(out)
