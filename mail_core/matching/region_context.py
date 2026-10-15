@@ -15,14 +15,22 @@ _ALIASES = {
 _SHORT = "서울 부산 대구 인천 광주 대전 울산 세종 경기 강원 충북 충남 전북 전남 경북 경남 제주".split()
 _REGION = "|".join(sorted([*_ALIASES, *_SHORT], key=len, reverse=True))
 _REGION_MATCHER = re.compile(_REGION)
-_EXCLUSION = re.compile(
-    rf"(?<![가-힣])(?P<regions>(?:{_REGION})(?:\s*[·ㆍ,/및]+\s*(?:{_REGION}))*)"
-    r"\s*(?:지역\s*)?(?:소재\s*)?(?:(?:중소)?기업\s*)?(?:은|는|을|를)?\s*제외(?:한)?"
+_REGION_LIST = rf"(?:{_REGION})(?:\s*[·ㆍ,/및]+\s*(?:{_REGION}))*"
+_NOT_NEGATED = r"(?!\s*(?:하지|되지|안\s|아니|아님|대상(?:이)?\s*아))"
+_EXCLUSION_SUBJECT = (
+    rf"(?<![가-힣])(?P<regions>{_REGION_LIST})"
+    r"\s*(?:지역\s*)?(?:소재\s*)?(?:(?:중소)?기업\s*)?(?:은|는|을|를)?\s*"
+    r"(?:지원\s*대상에서\s*)?"
 )
-_ISLAND_EXCLUSION = re.compile(r"도서\s*(?:지역\s*)?(?:을|를|은|는)?\s*제외(?:한)?")
+_EXCLUSION = re.compile(_EXCLUSION_SUBJECT + rf"제외{_NOT_NEGATED}(?:한)?")
+_NEGATED_EXCLUSION = re.compile(
+    _EXCLUSION_SUBJECT + r"제외\s*(?:(?:하지|되지)\s*않(?:음|는|습니다|는다)?|안\s*함|대상(?:이)?\s*아님)"
+)
+_EXCLUDED_LABEL = re.compile(rf"제외\s*지역\s*[:：]\s*(?P<regions>{_REGION_LIST})")
+_ISLAND_EXCLUSION = re.compile(rf"도서\s*(?:지역\s*)?(?:을|를|은|는)?\s*제외{_NOT_NEGATED}(?:한)?")
 _TARGET_LABEL = r"(?:지원\s*대상|신청\s*(?:대상|자격)|참여\s*대상|지원\s*지역)\s*[:：]"
 _CONTACT = re.compile(
-    r"(?:기관\s*(?:주소|소재지)|주소|소재지\s*[:：]|문의(?:처)?|연락처|담당(?:부서|자)|"
+    r"(?:기관\s*(?:주소|소재지)|주소\s*[:：]|(?:^|[\n;/])\s*주소(?=\s)|소재지\s*[:：]|문의(?:처)?|연락처|담당(?:부서|자)|"
     r"주관\s*기관|공고\s*기관|운영\s*기관|접수처|사무국|전화|이메일|☎|tel|fax)"
     rf"\s*[:：]?[^\n;]*?(?=(?:{_TARGET_LABEL})|[\n;]|$)", re.IGNORECASE,
 )
@@ -49,7 +57,8 @@ def region_exclusions(text: str) -> dict:
     text = strip_agency_context(text)
     excluded = {
         _ALIASES.get(token, token)
-        for match in _EXCLUSION.finditer(text)
+        for pattern in (_EXCLUSION, _EXCLUDED_LABEL)
+        for match in pattern.finditer(text)
         for token in _REGION_MATCHER.findall(match.group("regions"))
     }
     return {"excluded_regions": sorted(excluded),
@@ -58,4 +67,5 @@ def region_exclusions(text: str) -> dict:
 
 def applicant_region_text(text: str) -> str:
     """제외된 지역명도 긍정적인 지역 근거에서 제거한다."""
-    return _ISLAND_EXCLUSION.sub(" ", _EXCLUSION.sub(" ", strip_agency_context(text)))
+    text = _NEGATED_EXCLUSION.sub(" ", strip_agency_context(text))
+    return _ISLAND_EXCLUSION.sub(" ", _EXCLUSION.sub(" ", _EXCLUDED_LABEL.sub(" ", text)))

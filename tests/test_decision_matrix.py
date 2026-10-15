@@ -101,13 +101,14 @@ def test_region_other_kwon_excluded(gid):
 
 
 @pytest.mark.parametrize("gid", ACTIVE)
-def test_region_other_localgov_excluded(gid):
-    """타지역 기초단체 주관(동대문구청) → Tier-2 excluded + REGION_NOT_ELIGIBLE."""
+def test_region_localgov_alone_does_not_exclude(gid):
+    """MAIL-041: 기관 소재지 단독은 부적격 근거가 아니며 전국 메타를 유지한다."""
     b, ev = bucket_of(mk(gid, author="동대문구청",
                          title=base(gid)["title"].split(" ", 1)[1],
                          description="신청접수", region_field="전국"), gid)
     record("region", "other_localgov", gid)
-    assert b == "excluded" and "REGION_NOT_ELIGIBLE" in ev["exclude_reason_codes"]
+    assert "REGION_NOT_ELIGIBLE" not in ev["exclude_reason_codes"]
+    assert ev["region_status"] == "eligible"
 
 
 @pytest.mark.parametrize("gid", ACTIVE)

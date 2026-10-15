@@ -213,6 +213,8 @@ def split_public_private(
         company.pop("email", None)
         if company_id:
             payload["companies"][company_id] = {"tenant_id": tenant, "email": email}
+            if "region_updated_at" in company:
+                payload["companies"][company_id]["region_updated_at"] = str(company.pop("region_updated_at") or "")
         public_company_list.append(company)
     public_companies: Any = {"companies": public_company_list} if isinstance(companies, dict) else public_company_list
 

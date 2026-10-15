@@ -41,9 +41,10 @@ def test_incheon_blocks_gangwon_kwon():
                  "author": "강원창조경제혁신센터", "region_field": "전국"}) == "not_eligible"
 
 
-def test_incheon_blocks_dongdaemun_gu_office():
+def test_incheon_does_not_block_agency_location_alone():
+    """MAIL-041: 기관명 단독은 지원지역 제한 근거가 아니다."""
     assert _inc({"title": "청년창업 발레용품 지원",
-                 "author": "동대문구청", "region_field": "전국"}) == "not_eligible"
+                 "author": "동대문구청", "region_field": "전국"}) == "eligible"
 
 
 def test_seoul_group_blocks_busan_kwon():
@@ -82,15 +83,16 @@ def test_seoul_group_spares_metro_family_kwon():
                 "grp_ai_saas") != "not_eligible"
 
 
-def test_prestartup_ai_seongbuk_localgov_still_blocked():
-    """헬퍼 일반화 후에도 서울자치구(성북) 기초자치 단독 주관은 차단 유지(타 자치구 누락 방지)."""
+def test_prestartup_ai_seongbuk_agency_is_only_a_weak_signal():
+    """MAIL-041: 지원대상 제한 없이 문화재단 소재지만으로 차단하지 않는다."""
     assert _gen({"title": "길음 청년창업", "author": "재단법인 성북문화재단",
-                 "region_field": "전국"}, "grp_prestartup_ai") == "not_eligible"
+                 "region_field": "전국"}, "grp_prestartup_ai") == "eligible"
 
 
 def test_incheon_short_district_no_swallow():
     """인천 own '중구'→short '중'이 서울 '중랑'을 삼키지 않음(풀네임 정확매칭)."""
-    assert _inc({"title": "중랑 청년 지원", "author": "중랑구청", "region_field": "전국"}) == "not_eligible"
+    assert _inc({"title": "중랑 청년 지원", "author": "중랑구청", "region_field": "전국",
+                 "description": "지원대상: 서울특별시 소재 기업"}) == "not_eligible"
 
 
 # ── 2026-06-25: 충북형 누출(타지역 신청자한정 + own 보일러플레이트) — 인천 그룹(classify_region) ──

@@ -5476,7 +5476,9 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
     text = _applicant_target_text(item)
-    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    from mail_core.matching.region_context import applicant_region_text
+    raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
+                                             ("title", "description", "region_field")))
     city = group.get("applicant_region_city", "")
     label = (group.get("applicant_region_label") or _short_region(city) or city).lower()
     district = group.get("applicant_region_district", "")
@@ -5596,7 +5598,9 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
 
 def classify_region(item: dict) -> dict:
     text = _applicant_target_text(item)
-    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    from mail_core.matching.region_context import applicant_region_text
+    raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
+                                             ("title", "description", "region_field")))
     eligible_regions: list[str] = []
     excluded_regions: list[str] = []
     region_status = "unknown"

@@ -101,6 +101,59 @@ def test_contact_exclusions_are_not_applicant_exclusions():
     assert region_exclusions("문의처: 인천 제외\n지원대상: 전국 중소기업")["excluded_regions"] == []
 
 
+def test_applicant_address_requirement_is_preserved():
+    notice = item("지원대상: 본사 주소가 부산광역시인 기업")
+    assert mon.classify_region_for_group(notice, group("부산"))["region_status"] == "eligible"
+    assert mon.classify_region_for_group(notice, group("서울"))["region_status"] == "not_eligible"
+
+
+@pytest.mark.parametrize("phrase", ["인천 지역은 제외하지 않음", "인천 제외하지 않음",
+                                   "인천 소재 기업은 제외하지 않음", "인천 제외 안 함"])
+def test_negated_exclusion_does_not_reject_any_city(phrase):
+    notice = item(f"지원대상: 전국 중소기업. {phrase}")
+    assert not mon._applicant_region_exclusions(notice)["excluded_regions"]
+    assert mon.classify_region(notice)["region_status"] == "eligible"
+    for city in ["인천", "부산"]:
+        assert mon.classify_region_for_group(notice, group(city))["region_status"] == "eligible"
+        assert cm.match_for_company([notice], company(city))["matched"]
+
+
+@pytest.mark.parametrize("phrase", ["제외지역: 인천", "인천 지역은 지원 대상에서 제외"])
+def test_alternate_explicit_exclusions(phrase):
+    notice = item(f"지원대상: 전국 중소기업. {phrase}")
+    assert mon.classify_region(notice)["region_status"] == "not_eligible"
+    assert mon.classify_region_for_group(notice, group("인천"))["region_status"] == "not_eligible"
+    assert not cm.match_for_company([notice], company("인천"))["matched"]
+    assert cm.match_for_company([notice], company("부산"))["matched"]
+
+
+def test_private_region_date_roundtrip():
+    original = [company("서울", region_updated_at="2025-01-01")]
+    _, _, _, public, payload = private_config.split_public_private([], {}, {}, original)
+    assert "region_updated_at" not in public[0]
+    assert payload["companies"]["fixture"]["region_updated_at"] == "2025-01-01"
+    assert private_config.merge_companies(public, payload)[0]["region_updated_at"] == "2025-01-01"
+
+
+def test_scheduled_review_can_load_private_dates(tmp_path, monkeypatch):
+    import yaml
+    from pathlib import Path
+
+    workflow = yaml.safe_load((Path(__file__).resolve().parents[1] / ".github/workflows/monitor.yml").read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["monitor"]["steps"]
+    review_step = next(step for step in steps if step.get("id") == "daily_review")
+    assert "MAIL_PRIVATE_CONFIG_JSON" in review_step["env"]
+    # workflow와 같은 env 경로로 실제 loader를 사용한다(패치한 loader로 성공시키지 않는다).
+    path = tmp_path / "companies.json"
+    path.write_text(json.dumps([company("서울")]), encoding="utf-8")
+    monkeypatch.setattr(cm, "COMPANIES_PATH", path)
+    monkeypatch.setenv("MAIL_PRIVATE_CONFIG_JSON", json.dumps({"companies": {
+        "fixture": {"tenant_id": "default", "region_updated_at": "2025-01-01"}}}))
+    report = dr.build_review(when=datetime(2026, 10, 16, tzinfo=dr.KST),
+                             require_coverage=False, logs_dir=tmp_path)
+    assert len([c for c in report.checks if c.id == "MDR-006" and c.status == "WARN"]) == 1
+
+
 def test_exclusions_work_without_monitor_and_with_long_company_city(monkeypatch):
     notice = item("지원대상: 전국 중소기업(인천 제외)")
     monkeypatch.setattr(cm, "_region_signals", lambda _: None)
