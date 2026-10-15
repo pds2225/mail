@@ -26,6 +26,7 @@ from typing import Any
 
 from mail_core.paths import CONFIG_DIR
 from mail_core.security import private_config
+from .region_context import applicant_region_text, region_exclusions, short_region
 
 _KST = timezone(timedelta(hours=9))
 
@@ -89,6 +90,7 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
             "city": str(region.get("city") or ""),
             "district": str(region.get("district") or ""),
         },
+        "region_updated_at": str(raw.get("region_updated_at") or ""),
         "industry_keywords": list(raw.get("industry_keywords") or []),
         "interest_keywords": list(raw.get("interest_keywords") or []),
         "exclude_keywords": list(raw.get("exclude_keywords") or []),
@@ -247,12 +249,14 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
     # 신청자격 강신호·수도권 family·region_field). own 은 정확히 우리 시(市)로만 본다.
     # monitor 불가 시 자족 단어경계 fallback.
     region = company.get("region") or {}
-    city = (region.get("city") or "").strip()
+    city = short_region((region.get("city") or "").strip())
     district = (region.get("district") or "").strip()
     region_score = 0
     region_status = "unknown"
     own = {city} if city else set()
 
+    excluded = region_exclusions("\n".join(str(item.get(k) or "") for k in
+                                           ("title", "description", "target_field", "region_field")))
     sig = _region_signals(item)
     if sig is not None:
         restricted, regions, nationwide, atext = sig
@@ -265,7 +269,11 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
         # 권역(수도권·충청권·호남권·경상권·강원권·제주권) 한정 신호 — own 이 그 권역 멤버면 적격, 아니면 차단
         kwon_elig, kwon_blk = _region_cluster_verdict(atext, city)
 
-        if restricted and not own_restricted:
+        if city in excluded["excluded_regions"]:
+            region_score = weights["region_mismatch_penalty"]
+            region_status = "other_only"
+            mismatches.append("지원대상에서 명시적으로 제외된 지역")
+        elif restricted and not own_restricted:
             # 신청 자격이 타지역으로만 한정됨(강신호) — 운영사/개최지의 우리 시 언급은 무시
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
@@ -304,10 +312,15 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
             reasons.append("전국 대상")
     else:
         # ── fallback: monitor 사용 불가 시 자족 단어경계 판정 ──
+        text = applicant_region_text(text)
         company_region_mentioned = bool((city and city in text) or (district and district in text))
         other_regions = [r for r in KNOWN_REGIONS if r and r in text and r != city]
         has_nationwide = "전국" in text
-        if district and district in text:
+        if city in excluded["excluded_regions"]:
+            region_score = weights["region_mismatch_penalty"]
+            region_status = "other_only"
+            mismatches.append("지원대상에서 명시적으로 제외된 지역")
+        elif district and district in text:
             region_score = weights["region_district"]
             region_status = "district"
             reasons.append(f"소재 구 일치({district})")
@@ -502,6 +515,13 @@ def _hard_excluded(item: dict[str, Any], company: dict[str, Any] | None = None) 
     company 가 주어지면 기업 개별 업력 Hard Gate(MAIL-016)도 함께 본다 — 명백히
     ineligible 일 때만 제외하고, unknown 은 통과시켜 다음 단계(점수 판정)로 넘긴다.
     """
+    if company is not None:
+        excluded = region_exclusions("\n".join(str(item.get(k) or "") for k in
+                                               ("title", "description", "target_field", "region_field")))
+        city = str((company.get("region") or {}).get("city") or "")
+        # 풀네임 프로필도 약칭으로 맞춘다.
+        if short_region(city) in excluded["excluded_regions"]:
+            return "하드제외(REGION_NOT_ELIGIBLE)"
     if item.get("deadline_status") == "closed":
         return "마감 경과"
     codes = item.get("exclude_reason_codes")
