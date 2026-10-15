@@ -9,6 +9,8 @@
 
 # 0. TASK LIST
 
+[~] MAIL-041 | 기관 주소와 지원지역을 분리하고 제외지역을 차단하며 오래된 기업 지역정보를 경고한다
+
 <!--
 비개발자가 이 부분만 보고도 현재 작업을 이해·수정·삭제할 수 있어야 한다.
 상태: 대기 / 진행 중 / 완료 / 막힘 / 취소 는 아래 기호만 사용한다.
@@ -3536,6 +3538,29 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 통과한다.
 
 ---
+
+## MAIL-041
+
+### 사용자 원문
+"codex/TASK_2_region_exclusion_agency.md 읽고 그대로 진행해"
+실제 지시서: 로컬 codex_tasks/codex/TASK_2_region_exclusion_agency.md.
+
+### 최종 결과 / MUST
+- 기관 주소·문의처·기관명 단독 신호로 타지역 지원 부적격을 만들지 않는다.
+- 명시된 제외지역은 지원대상에서 빼고 해당 그룹·기업을 차단한다. 도서지역 제외는 별도 플래그로 보존한다.
+- 선택 region_updated_at을 읽고 365일 초과 기업 정보는 daily_review에 경고만 남긴다.
+
+### KEEP / REMOVE / FORBIDDEN
+- 기존 지역판정·private config 경로 재사용, 발송 정책·실데이터 보존.
+- 제거: 기관 주소·제외지역을 지원대상으로 오인하는 신호.
+- 실제 메일·workflow 실행·Secret/수신자/보호정책 변경·전체 pytest 금지.
+
+### VERIFY / DONE
+- tests/test_region_exclusion_mail041.py 및 관련 지역·기업매칭·daily_review 테스트만 실행.
+- 전국+인천기관, 서울·경기(인천 제외), 도서 제외, 부산대상+서울기관, 365일 초과 경고를 실제 판정·리뷰 경로로 검증.
+- 커밋 전 변경 파일 Secret/실이메일 스캔, branch push와 PR에 요구사항 대조 기록.
+- WORK_BRANCH: codex/mail-041-region-exclusion-agency
+- REQUEST_SOLVED=NO — 착수, 구현·검증 전.
 
 # 9. 실제사용 시나리오
 
