@@ -34,6 +34,7 @@ def company(city, **extra):
 @pytest.mark.parametrize("description", [
     "주관기관: 인천테크노파크 / 지원대상: 전국 중소기업",
     "주소: 인천광역시 남동구 / 지원대상: 전국 중소기업",
+    "주소 인천광역시 남동구 / 지원대상: 전국 중소기업",
     "지원대상: 전국 중소기업\n담당부서: 인천광역시청",
 ])
 def test_nationwide_agency_is_not_a_restriction(city, description):

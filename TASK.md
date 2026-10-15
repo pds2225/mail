@@ -3561,7 +3561,7 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 커밋 전 변경 파일 Secret/실이메일 스캔, branch push와 PR에 요구사항 대조 기록.
 - WORK_BRANCH: codex/mail-041-region-exclusion-agency
 - 구현: region_context 공통 파서로 기관 주소·기관명·명시적 제외 문맥 분리. 기관명 단독은 agency_regions 약한 단서만 남기며 하드 제외에 쓰지 않는다. 명시적 제외는 전국·제목 태그·점수보다 우선한다.
-- 검증: 관련 14개 파일 261 passed (2026-10-16). 신규 테스트는 실제 evaluate_notice·match_for_company·run_daily_review 경로를 실행하며 외부 발송은 없다.
+- 검증: 관련 14개 파일 265 passed (2026-10-16). 신규 테스트는 실제 evaluate_notice·match_for_company·run_daily_review 경로를 실행하며 외부 발송은 없다.
 - 테스트 명령: `python -m pytest tests/test_region_exclusion_mail041.py tests/test_region_parity.py tests/test_region_multi_group.py tests/test_region_unknown_policy.py tests/test_region_title_keywords.py tests/test_titletag_multiregion_recall.py tests/test_company_match.py tests/test_company_match_multi_region.py tests/test_company_match_business_years.py tests/test_run_company_match_region.py tests/test_mail_daily_review.py tests/test_monitor.py tests/test_p0_hardening.py tests/test_streamlit_settings_save.py -q`
 - 요구사항 대조: 전국+인천기관 PASS / 서울·경기 및 인천 제외 PASS / 도서 제외 플래그 PASS / 부산대상+서울기관 PASS / private config 365일 초과 경고·판정 불변 PASS.
 - REQUEST_SOLVED=NO — 로컬 판정·리뷰 경로 검증 완료, PR/원격 반영 확인 대기. 실제 수집·실메일 검증은 지시상 실행하지 않는다.
