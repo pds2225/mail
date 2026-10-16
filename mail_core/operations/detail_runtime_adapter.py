@@ -8,12 +8,58 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from typing import Any
+import re
 
 KSTARTUP_LEGACY_SELECTOR = ".view_cont, .content_view, #contents"
 KSTARTUP_CURRENT_SELECTOR = (
     "#contentViewHtml, .app_notice_details-wrap, .content_wrap"
 )
 MIN_BODY_TEXT_CHARS = 80
+
+
+def extract_body_candidate(node: Any) -> dict[str, Any]:
+    """숨김은 CSS 표시 상태일 뿐이다. 원문 DOM의 본문을 읽고 이미지 전용을 구분한다."""
+    if node is None:
+        return {}
+    from bs4 import BeautifulSoup
+    from mail_core.operations.field_status import IMAGE_ONLY
+
+    clone = BeautifulSoup(str(node), "html.parser")
+    root = node
+    while getattr(root, "parent", None) is not None:
+        root = root.parent
+    unresolved = False
+    appended: set[str] = set()
+    # 본문 밖의 접힘 영역도 명시적으로 연결된 경우에만 읽는다(메뉴 .more는 배제).
+    for control in node.select("[aria-controls], [data-target]"):
+        target_ids = str(control.get("aria-controls") or control.get("data-target") or "").split()
+        for target_id in target_ids:
+            target_id = target_id.lstrip("#")
+            if not target_id or not re.fullmatch(r"[\w-]+", target_id):
+                continue
+            target = root.find(id=target_id)
+            if target is None:
+                unresolved = True
+            elif target is not node and node not in target.parents and target not in node.parents and target_id not in appended:
+                if target.find_parent(("nav", "header", "footer", "aside")) is None:
+                    clone.append(BeautifulSoup(str(target), "html.parser"))
+                    appended.add(target_id)
+    for tag in clone.select("script, style, noscript, nav, header, footer, aside"):
+        tag.decompose()
+    folded = bool(clone.select("[hidden], [aria-expanded=false], .more")) or any(
+        re.search(r"display\s*:\s*none", str(tag.get("style") or ""), re.I)
+        for tag in clone.select("[style]")
+    )
+    for tag in clone.select("button, a[role=button]"):
+        if tag.get_text(" ", strip=True) in {"더보기", "내용 더보기", "접기"}:
+            tag.decompose()
+    text = clone.get_text("\n", strip=True)[:12000]
+    image_only = len(" ".join(text.split())) < MIN_BODY_TEXT_CHARS and bool(clone.find("img"))
+    if not text and not image_only:
+        return {}
+    return {"body": "" if image_only else text,
+            "body_status": IMAGE_ONLY if image_only else ("FOLDED_INCOMPLETE" if unresolved else "TEXT"),
+            "has_folded_content": folded}
 
 
 def _text_len(node: Any) -> int:

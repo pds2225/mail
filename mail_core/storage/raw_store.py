@@ -137,6 +137,7 @@ class RawStore:
         for k in (
             "business_age_text", "target_field", "target_age_field",
             "organizer_field", "exclude_target_field", "support_field",
+            "body_status",
         ):
             if item.get(k):
                 meta[k] = item[k]
