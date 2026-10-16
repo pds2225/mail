@@ -5,7 +5,7 @@ import re
 from datetime import datetime, time, timezone, timedelta
 
 KST = timezone(timedelta(hours=9))
-_CLOCK = re.compile(r"(?<!\d)(?:(오전|오후)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|시(?:\s*(\d{1,2})\s*분)?)(?!\d)")
+_CLOCK = re.compile(r"(?<!\d)(?:(오전|오후)\s*)?(\d{1,2})\s*(?::\s*(\d{2})|시(?!간)(?:\s*(\d{1,2})\s*분)?)(?!\d)")
 _DATE = re.compile(r"(?<!\d)(?:20\d{2}\s*[./-]\s*)?\d{1,2}\s*[./-]\s*\d{1,2}(?!\d)|(?:20\d{2}\s*년\s*)?\d{1,2}\s*월\s*\d{1,2}\s*일")
 
 
