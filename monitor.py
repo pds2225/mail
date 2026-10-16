@@ -35,6 +35,10 @@ except ImportError:
 
 from mail_core.delivery import outbox as delivery_outbox
 from mail_core.delivery import state as delivery_state
+from mail_core.matching.keyword_match import keyword_hit as _shared_keyword_hit
+from mail_core.matching.keyword_match import load_keyword_aliases as _load_keyword_aliases
+from mail_core.matching.keyword_match import load_keyword_variants as _load_keyword_variants
+from mail_core.matching.keyword_match import negated_keyword_hits as _negated_keyword_hits
 from mail_core.operations import rule_version as _rule_version
 from mail_core.operations import run_lock
 from mail_core.paths import CONFIG_DIR, LOGS_DIR, REPO_ROOT, STATE_DIR
@@ -5181,24 +5185,8 @@ def _unique(values: list[str]) -> list[str]:
 
 
 def _kw_in_text(text_lower: str, kw_lower: str) -> bool:
-    """키워드가 본문(이미 소문자)에 있는지 판정.
-    ASCII 전용 키워드(AI/SaaS/MES/ERP/IP/VC 등)는 단어경계 매칭으로 'email'의 'ai',
-    'enterprise'의 'erp', 'equipment'의 'ip' 같은 부분문자열 오매칭을 막는다(precision).
-    한글 등 비ASCII 키워드는 띄어쓰기 없는 합성어가 흔하므로 부분문자열 매칭을 유지한다(recall).
-    공고 원문은 '디지털 전환'처럼 합성어 중간에 공백을 넣는 경우가 많다 — 비ASCII 는
-    공백 제거본도 함께 본다(scoring._kw_hit 과 동일; 1차 게이트만 어긋나면 영구 누락).
-    """
-    if not kw_lower:
-        return False
-    if kw_lower.isascii():
-        return re.search(r"(?<![a-z0-9])" + re.escape(kw_lower) + r"(?![a-z0-9])", text_lower) is not None
-    if kw_lower in text_lower:
-        return True
-    kw_compact = re.sub(r"\s+", "", kw_lower)
-    if not kw_compact:
-        return False
-    text_compact = re.sub(r"\s+", "", text_lower)
-    return kw_compact in text_compact
+    """공통 키워드 matcher를 사용해 1차 게이트와 2차 점수를 일치시킨다."""
+    return _shared_keyword_hit(text_lower, kw_lower)
 
 
 def _find_keyword_aliases(text: str, aliases: list[tuple[str, list[str]]]) -> list[str]:
@@ -5888,6 +5876,18 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
     g = _normalize_group(group or {})
     text = _notice_text(item)
     result = {**item, **_deadline_details(item)}
+    kw_text = _keyword_match_text(item)
+    negated_hits: list[str] = []
+    if group is not None:
+        configured_keywords = [
+            *(g.get("or_keywords") or []),
+            *(keyword for group_keywords in (g.get("and_keyword_groups") or [])
+              for keyword in (group_keywords or [])),
+            *(g.get("exclude_keywords") or []),
+            *(g.get("priority_keywords") or []),
+            *(((g.get("keywords") or {}).get("keywords")) or []),
+        ]
+        negated_hits = _negated_keyword_hits(kw_text, configured_keywords)
     reason_codes: list[str] = []
     # MAIL-P0D-02: reason_code별 최소 근거(원문 전체 아님, 160자 이내 발췌). 코드마다
     # 근거를 붙일 수 없는 자리도 있다 — 그 경우 코드만 기록되고 evidence는 비어 있다
@@ -6086,7 +6086,6 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
         _add_reason("GROUP_EXCLUSION", ", ".join(hard_group_hits[:3]))
         excluded_keywords.extend(hard_group_hits)
 
-    kw_text = _keyword_match_text(item)
     or_kws = [k.lower() for k in g.get("or_keywords", []) if k.strip()]
     and_groups = [[k.lower() for k in ag if k.strip()] for ag in g.get("and_keyword_groups", []) if ag]
     group_keyword_pass = True
@@ -6261,6 +6260,8 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
 
     required_conditions = []
     notes = []
+    if negated_hits:
+        notes.append("키워드 부정 문맥 근거 제외: " + ", ".join(negated_hits[:8]))
     if factory_required:
         required_conditions.append("공장보유 또는 제조시설 조건")
         notes.append("공장 보유 여부 확인 필요")
@@ -6300,6 +6301,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
         # 지원유형 불일치(3685행) 둘 다에서 붙어 코드만으론 구분 불가 → 소비측(feedback_suggest)이
         # '진짜 키워드 미스 vs 지원유형 불일치'를 가르도록 게이트 결과 자체를 노출한다.
         "group_keyword_pass": group_keyword_pass,
+        "negated_hits": negated_hits,
         "matched_keywords": matched_keywords,
         "excluded_keywords": excluded_keywords,
         "soft_excluded_keywords": soft_excluded_keywords,
@@ -6343,6 +6345,9 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
 # 유지한 채 호출 비용은 0에 가깝게 한다.
 _EVALUATE_NOTICE_RULE_VERSION = _rule_version.compute_version_hash(
     inspect.getsource(evaluate_notice),
+    inspect.getsource(inspect.getmodule(_shared_keyword_hit)),
+    repr(_load_keyword_aliases()),
+    repr(_load_keyword_variants()),
     repr(EXCLUSION_RULES),
     repr(GENERAL_INCLUDE_KEYWORD_ALIASES),
     repr(FACTORY_KEYWORD_ALIASES),

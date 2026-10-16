@@ -25,6 +25,8 @@ import re
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+from mail_core.matching.keyword_match import keyword_hit, negated_keyword_hits
+
 DEFAULT_WEIGHTS: dict[str, int] = {
     "priority_match": 30,
     "or_keyword_match": 5,
@@ -65,26 +67,8 @@ def _haystack(item: dict[str, Any]) -> str:
 
 
 def _kw_hit(text_lower: str, kw: str) -> bool:
-    """키워드가 text_lower(이미 소문자) 에 존재하는지 판정.
-
-    - ASCII 전용 키워드(AI, MES, ERP, SaaS 등)는 단어경계 매칭 →
-      'email' 안의 'ai' 같은 부분문자열 오매칭 방지 (precision).
-    - 한글 등 비ASCII 키워드는 부분문자열 매칭 유지 →
-      한국어는 띄어쓰기 없는 합성어가 흔하므로 substring 이 맞다 (recall).
-    - 공고 원문은 '예비 창업'처럼 합성어 중간에 공백을 넣는 경우가 많다.
-      precision_keep/exclude 가 공백 유무만으로 어긋나면 1차 통과 공고가
-      2차에서 잘못 탈락한다 → 비ASCII 는 공백 제거본도 함께 본다.
-    """
-    kw_l = kw.lower()
-    if kw.isascii():
-        return re.search(r"(?<![a-z0-9])" + re.escape(kw_l) + r"(?![a-z0-9])", text_lower) is not None
-    if kw_l in text_lower:
-        return True
-    kw_compact = re.sub(r"\s+", "", kw_l)
-    if not kw_compact:
-        return False
-    text_compact = re.sub(r"\s+", "", text_lower)
-    return kw_compact in text_compact
+    """monitor 1차 게이트와 동일한 경계·별칭·부정 문맥 규칙을 쓴다."""
+    return keyword_hit(text_lower, kw)
 
 
 def _count_hits(text: str, keywords: list[str]) -> int:
@@ -96,6 +80,17 @@ def _count_hits(text: str, keywords: list[str]) -> int:
 def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
     weights = {**DEFAULT_WEIGHTS, **(group.get("weights") or {})}
     text = _haystack(item)
+    configured_keywords = [
+        *(group.get("priority_keywords") or []),
+        *(group.get("or_keywords") or []),
+        *(keyword for keyword_group in (group.get("and_keyword_groups") or [])
+          for keyword in (keyword_group or [])),
+        *(group.get("exclude_keywords") or []),
+        *(group.get("precision_exclude_keywords") or []),
+        *(group.get("precision_keep_keywords") or []),
+        *((group.get("required_conditions") or {}).get("regions") or []),
+    ]
+    negated_hits = negated_keyword_hits(text, configured_keywords)
 
     priority_hits = _count_hits(text, group.get("priority_keywords") or [])
     or_hits = _count_hits(text, group.get("or_keywords") or [])
@@ -159,6 +154,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         reasons.append("region match")
     if region_mismatch:
         reasons.append("region mismatch (penalty)")
+    if negated_hits:
+        reasons.append("negated keywords: " + ", ".join(negated_hits[:8]))
 
     return {
         "score": int(score),
@@ -173,6 +170,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
             "precision_penalty": precision_penalty,
             "region_match": region_match,
             "region_mismatch": region_mismatch,
+            "negated_hits": negated_hits,
         },
         "reasons": reasons,
     }
