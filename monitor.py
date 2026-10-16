@@ -833,7 +833,7 @@ def save_json(path: Path, data) -> None:
 
 _NOTICE_VERSION_MATERIAL_FIELDS = frozenset({
     "title", "deadline", "application_period", "target", "support", "region",
-    "application_url",
+    "application_url", "deadline_time", "deadline_basis",
 })
 
 
@@ -853,6 +853,7 @@ def _notice_version_snapshot(item: dict) -> dict[str, str]:
         "author": norm(item.get("author")),
         "deadline": resolve_item_deadline(item),
         "application_period": str(period.get("display") or "").strip(),
+        **{key: value for key, value in _deadline_details(item).items() if value},
         "target": norm(item.get("target_field") or item.get("target_age_field")),
         "support": _mail_clean_text(item.get("support_field") or item.get("description") or "", limit=600),
         "region": norm(item.get("region_field")),
@@ -1024,6 +1025,8 @@ def _classify_notice_change(before: dict, after: dict) -> str:
     new_deadline = _latest_date_from_text(str(after.get("application_period") or after.get("deadline") or ""))
     if new_deadline and (old_deadline is None or new_deadline > old_deadline):
         return "DEADLINE_EXTENDED"
+    if any(before.get(key, "") != after.get(key, "") for key in ("deadline_time", "deadline_basis")):
+        return "UPDATED"
 
     # 지원대상 변경 감지
     # Live classify passes snapshots from `_notice_version_snapshot` (key: target),

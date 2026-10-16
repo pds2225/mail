@@ -83,3 +83,19 @@ def test_runtime_card_excludes_after_cutoff(monkeypatch):
             return datetime(2026, 10, 20, 19, tzinfo=mon.KST)
     monkeypatch.setattr(dc, "datetime", Clock)
     assert "성장지원" not in mon.fallback_body([notice()], today=date(2026, 10, 20))
+
+
+def test_duration_does_not_replace_explicit_deadline():
+    assert extract_deadline_details("오후 6시까지 (온라인 시스템은 24시간 이용 가능)")["deadline_time"] == "18:00"
+
+
+@pytest.mark.parametrize("field,value", [("deadline_time", "16:00"), ("deadline_basis", "도착")])
+def test_time_and_basis_changes_are_material(field, value):
+    old = notice(deadline_time="18:00")
+    snapshot = mon._notice_version_snapshot(old)
+    versions = {old["id"]: {"version": 1, "delivered_snapshot": snapshot,
+                             "delivered_hash": mon._notice_snapshot_hash(snapshot)}}
+    changed = {**old, field: value}
+    deliverable, _ = mon.classify_notice_versions([changed], {old["id"]}, versions)
+    assert deliverable and field in deliverable[0]["_changed_fields"]
+    assert deliverable[0]["_change_type"] == "UPDATED"
