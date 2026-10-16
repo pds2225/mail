@@ -36,6 +36,11 @@ def test_date_basis_uses_configured_source_and_preserves_default():
     assert modified["date_source"] == "updated_at"
 
 
+def test_unconfigured_source_with_no_date_fields_keeps_legacy_item_shape():
+    item = {"id": "n1", "title": "공고", "posted_date": "2026-10-10"}
+    assert m._apply_site_date_basis([item], {"id": "s"})[0] == item
+
+
 def test_core_source_date_basis_metadata_is_populated():
     bizinfo = m._bizinfo_parse_item({
         "pblancId": "b1", "pblancNm": "공고", "pblancDt": "2026-10-09",

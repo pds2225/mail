@@ -873,12 +873,16 @@ def _apply_site_date_basis(items: list[dict], site: dict) -> list[dict]:
         updated = str(item.get("updated_at") or item.get("updated_date") or item.get("modified_at") or "").strip()[:10]
         selected = {"posted": published if configured_basis else legacy_posted,
                     "registered": registered, "modified": updated}[basis]
-        item.update({"site_id": site_id, "date_basis": basis,
-                     "source_published_at": source_published,
-                     "published_at": selected, "registered_at": registered,
-                     "updated_at": updated,
-                     "date_source": ((fields[basis] if selected else "unknown") if configured_basis else
-                                     str(item.get("date_source") or ("posted_date" if selected else "unknown")))})
+        has_date_metadata = bool(
+            configured_basis or raw_published or registered or updated or item.get("date_source")
+        )
+        if has_date_metadata:
+            item.update({"site_id": site_id, "date_basis": basis,
+                         "source_published_at": source_published,
+                         "published_at": selected, "registered_at": registered,
+                         "updated_at": updated,
+                         "date_source": ((fields[basis] if selected else "unknown") if configured_basis else
+                                          str(item.get("date_source") or ("posted_date" if selected else "unknown")))})
         if basis == "posted":
             # Unconfigured sources preserve their historical value through selected;
             # explicit posted basis requires an actual published date.
@@ -1193,7 +1197,7 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
         previous = versions.get(iid)
         base = {"snapshot": snapshot, "content_hash": current_hash, "list_hash": _notice_list_hash(item),
                 "last_seen_at": now_iso,
-                "date_source": str(item.get("date_source") or "unknown"),
+                "date_source": str(item.get("date_source") or ("posted_date" if item.get("posted_date") else "unknown")),
                 "date_basis": str(item.get("date_basis") or "posted")}
         if iid not in seen_ids:
             version = max(1, int((previous or {}).get("version", 0) or 0))
@@ -3190,9 +3194,13 @@ def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[
         desc = select_text(row, selectors.get("description", ""))
         item = _item(f"{site['id']}_{stable_id(title+link)}",
                      title, link, author, desc, deadline, site["name"], posted, agg)
-        item.update({"published_at": published_at, "registered_at": registered_at,
-                     "updated_at": updated_at,
-                     "date_source": "published_at" if published_at else ("registered_at" if registered_at else "unknown")})
+        date_metadata = {key: value for key, value in {
+            "published_at": published_at, "registered_at": registered_at,
+            "updated_at": updated_at,
+        }.items() if value}
+        if date_metadata:
+            item.update(date_metadata)
+            item["date_source"] = "published_at" if published_at else ("registered_at" if registered_at else "updated_at")
         items.append(item)
     return items
 
