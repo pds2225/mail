@@ -156,7 +156,7 @@ def _known_meta(row: dict) -> list[str]:
     return known + [deadline]
 
 
-_DEADLINE_PART_RE = re.compile(r"^(?:\d{1,2}/\d{1,2}(?: \(D[-+]\d+\))?|상시|확인필요)$")
+_DEADLINE_PART_RE = re.compile(r"^(?:\d{1,2}/\d{1,2}(?: \(D[-+]\d+(?: (?:\d{1,2}시|\d{1,2}:\d{2}))?\))?(?: \(도착기준\))?|상시|확인필요)$")
 
 
 def _is_deadline_part(text: str) -> bool:

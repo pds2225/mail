@@ -1520,6 +1520,8 @@ def extract_application_period(text: str, posted=None) -> dict[str, str]:
         if not m:
             continue
         segment = m.group(1).strip()
+        from mail_core.operations.deadline_context import extract_deadline_details
+        details = extract_deadline_details(segment)
         if "까지" in segment:
             segment = segment[: segment.index("까지") + 2]
         dates = _parse_period_dates(segment, base_year)
@@ -1527,13 +1529,27 @@ def extract_application_period(text: str, posted=None) -> dict[str, str]:
             # 라벨은 있으나 M월D일/연도형이 아닌 축약(6/24~7/7) — 축약 파서로 재시도
             sf = _deadline_shortform(segment, posted)
             if sf:
-                return sf
+                return {**sf, **details}
             continue
         start, end = dates[0].isoformat(), dates[-1].isoformat()
         display = f"{start} ~ {end}" if start != end else end
-        return {"start": start, "end": end, "display": display, "label": label}
+        return {"start": start, "end": end, "display": display, "label": label, **details}
     # 라벨 없이 제목/본문에 흔한 축약 마감표기 폴백
-    return _deadline_shortform(normalized, posted)
+    period = _deadline_shortform(normalized, posted)
+    if period:
+        from mail_core.operations.deadline_context import extract_deadline_details
+        period.update(extract_deadline_details(normalized))
+    return period
+
+
+def _deadline_details(item: dict) -> dict[str, str]:
+    from mail_core.operations.deadline_context import extract_deadline_details
+    body_period = extract_application_period(_notice_body_text(item), _posted_date(item))
+    period = item.get("application_period") or {}
+    raw = item.get("application_period_text") or item.get("deadline") or ""
+    details = extract_deadline_details(raw)
+    return {key: str(item.get(key) or period.get(key) or body_period.get(key) or details[key])
+            for key in ("deadline_time", "deadline_basis")}
 
 
 def resolve_item_deadline(item: dict) -> str:
@@ -2078,6 +2094,7 @@ def enrich_item_from_detail(item: dict) -> dict:
         updated["posted_date"] = posted
     if period.get("display"):
         detail_keys.update({"deadline", "application_period"})
+    updated.update(_deadline_details(updated))
     updated = _with_detail_extraction(
         updated, EXTRACTION_SUCCESS, "detail_parsed", detail_keys=detail_keys)
     _persist_detail_extraction_meta(updated)
@@ -2414,9 +2431,13 @@ def _item(id_, title, link, author, desc, deadline, source,
     author_n = norm(author)
     if author_n and title_n and author_n == title_n:
         author_n = ""
-    return {"id": id_, "title": title_n, "link": link, "author": author_n,
+    result = {"id": id_, "title": title_n, "link": link, "author": author_n,
             "description": desc, "deadline": deadline, "source": source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
+    details = _deadline_details({"deadline": deadline})
+    if any(details.values()):
+        result.update(details)
+    return result
 
 
 def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
@@ -5196,10 +5217,21 @@ def is_title_closed(item: dict) -> bool:
     return bool(title and TITLE_CLOSED_RE.search(title))
 
 
-def classify_deadline_status(item: dict, today=None) -> str:
-    today = today or datetime.now(KST).date()
+def classify_deadline_status(item: dict, today=None, *, now=None) -> str:
+    moment = now or (today if isinstance(today, datetime) else None)
+    today = today or (moment or datetime.now(KST)).astimezone(KST).date()
+    if isinstance(today, datetime):
+        today = today.replace(tzinfo=KST).date() if today.tzinfo is None else today.astimezone(KST).date()
+    from mail_core.operations.deadline_context import deadline_has_passed
+    def time_closed(end):
+        return end == today and deadline_has_passed(end, _deadline_details(item)["deadline_time"], today=today, now=moment)
     if is_title_closed(item):
         return "closed"
+    # 명시된 접수 마감은 본문 속 '선착순/연장' 보일러플레이트보다 우선한다.
+    if _deadline_details(item)["deadline_time"]:
+        explicit_end = _digest_deadline_end(item, today)
+        if explicit_end and (explicit_end < today or time_closed(explicit_end)):
+            return "closed"
     text = _notice_text(item)
     # P0-15: ALWAYS_OPEN / UNTIL_BUDGET_EXHAUSTED 세분화
     if any(term in text for term in ("상시접수", "수시접수", "상시모집", "수시모집", "수시 모집", "연중수시", "연중상시", "선착순")):
@@ -5218,7 +5250,7 @@ def classify_deadline_status(item: dict, today=None) -> str:
         except ValueError:
             end_date = start_date = None
         if end_date:
-            if end_date < today:
+            if end_date < today or time_closed(end_date):
                 return "closed"
             if start_date and start_date > today:
                 return "upcoming"
@@ -5243,7 +5275,7 @@ def classify_deadline_status(item: dict, today=None) -> str:
     # 본문 뒤쪽에 과거 참조일(문의일·작년 실적 등)이 있으면 살아있는 공고도 '마감됨'으로 오판했다.
     # max 로 바꿔 '모든 날짜가 과거일 때만' closed → 현재 모집중 공고의 과잉 마감거름 해소(recall).
     start_date, end_date = min(dates), max(dates)
-    if end_date < today:
+    if end_date < today or time_closed(end_date):
         return "closed"
     if len(dates) >= 2 and start_date > today:
         return "upcoming"
@@ -5829,11 +5861,11 @@ def support_match(item: dict, enabled_types: list[str]) -> bool:
     return any(t in enabled_types for t in types)
 
 
-def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
+def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=None) -> dict:
     """공고 1건에 필터링 판정 필드를 부여한다."""
     g = _normalize_group(group or {})
     text = _notice_text(item)
-    result = {**item}
+    result = {**item, **_deadline_details(item)}
     reason_codes: list[str] = []
     # MAIL-P0D-02: reason_code별 최소 근거(원문 전체 아님, 160자 이내 발췌). 코드마다
     # 근거를 붙일 수 없는 자리도 있다 — 그 경우 코드만 기록되고 evidence는 비어 있다
@@ -5976,7 +6008,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None) -> dict:
     elif notice_type == "unknown" and any(kw in text for kw in ["일반 안내", "안내"]):
         notice_type = "general_info"
 
-    deadline_status = classify_deadline_status(item, today)
+    deadline_status = classify_deadline_status(item, today, now=now)
     if deadline_status == "closed":
         _add_reason("CLOSED_DEADLINE", str(item.get("deadline") or item.get("application_period") or ""))
     elif deadline_status == "unknown" and not application_like:
@@ -6809,7 +6841,14 @@ def _mail_deadline_cell(item: dict, today=None) -> str:
             except Exception:
                 pass
             return "확인필요"  # 마감 불명: 회색 '확인필요'(D-day 없음). 상시 공고만 '상시'.
-        return format_deadline_label(end, today)
+        label = format_deadline_label(end, today)
+        details = _deadline_details(item)
+        if end == today and details["deadline_time"]:
+            from mail_core.operations.deadline_context import deadline_time_label
+            label = label[:-1] + f" {deadline_time_label(details['deadline_time'])})"
+        if details["deadline_basis"] == "도착":
+            label += " (도착기준)"
+        return label
     except Exception:
         return "추출실패"
 
@@ -7081,7 +7120,7 @@ def is_info_guide_post(item: dict) -> bool:
     return not _APPLICANT_CALL_RE.search(title)
 
 
-def _digest_is_closed(item: dict, today) -> bool:
+def _digest_is_closed(item: dict, today, *, now=None) -> bool:
     """다이제스트 제외 판정: 표시 마감일 경과 또는 제목상 마감/결과발표. 판정 오류는 유지(recall).
 
     2026-10-13 실발송(#263) 사고: 카드에 2025/9/3·9/28 등 지난 마감이 표시됐는데 제외되지 않았다.
@@ -7097,7 +7136,9 @@ def _digest_is_closed(item: dict, today) -> bool:
             return True  # MAIL-037: 요약본·챗봇 제공·'…방법' 안내글은 공고가 아님
         end = _digest_deadline_end(item, today)
         if end is not None:
-            return end < today
+            from mail_core.operations.deadline_context import deadline_has_passed
+            return end < today or (end == today and deadline_has_passed(
+                end, _deadline_details(item)["deadline_time"], today=today, now=now))
         if _title_past_year(item, today):
             return True  # '2025 글로벌 여성IP 리더십 아카데미' 처럼 지난 연도 행사 + 마감 불명
         return classify_deadline_status(item, today) == "closed"

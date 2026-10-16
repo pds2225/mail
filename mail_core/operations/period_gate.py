@@ -93,18 +93,18 @@ def _is_closing_soon(end_date, today: date) -> bool:
     return 0 <= (end_date - today).days <= CLOSING_SOON_WINDOW_DAYS
 
 
-def classify_period_status(item: dict, today: date | None = None) -> str:
+def classify_period_status(item: dict, today: date | None = None, *, now: datetime | None = None) -> str:
     """공고 1건의 접수상태를 표준 7종 상태 중 하나로 반환한다.
 
     Asia/Seoul(KST) 기준. today를 넘기지 않으면 monitor.classify_deadline_status와
     동일한 "오늘"을 쓰도록 이 함수에서 한 번만 계산해 두 곳에 동일하게 넘긴다
-    (마감시간은 날짜 단위로 보존 — 마감일 당일은 아직 open/closing_soon이고,
-    다음 날부터 closed. 즉 마감은 그 날짜의 23:59:59 KST까지 유효한 것으로 다룬다.
-    이는 기존 classify_deadline_status의 동작을 그대로 물려받은 것으로, 새 시각
-    단위 비교를 도입하지 않는다 — AI가 추정 시각을 확정하지 않는다는 FORBIDDEN과도
-    맞다)."""
-    resolved_today = today if today is not None else datetime.now(KST).date()
-    raw = classify_deadline_status(item, resolved_today)
+    명시된 마감 시각은 원본 엔진에서 비교하며, 시각이 없는 공고는 기존 날짜 단위
+    동작을 유지한다(MAIL-042)."""
+    moment = now or (today if isinstance(today, datetime) else None)
+    if moment is not None:
+        moment = moment.replace(tzinfo=KST) if moment.tzinfo is None else moment.astimezone(KST)
+    resolved_today = (moment.date() if moment else today) or datetime.now(KST).date()
+    raw = classify_deadline_status(item, resolved_today, now=moment)
     canonical = _RAW_TO_CANONICAL.get(raw, DATE_UNKNOWN)
     if canonical == OPEN:
         end_date = _resolve_end_date(item, resolved_today)
