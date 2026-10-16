@@ -3612,7 +3612,8 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 브랜치 codex/mail-043-keyword-company-match, tests/test_company_selfname_mail043.py 및 기업매칭·daily_review 관련 회귀, 보안 스캔→push→별도 PR.
 - 실제 기업매칭→검수 경로 검증 및 허용된 PR 반영 후 완료.
 - 구현: 회사명 동일 키워드 제거·정규화 멱등·회사명 단독 매칭 하드 제외. CompanyMatchFanout을 그룹 2차 필터와 dry-run CLI에 연결, 기본값 null(off), 동일 기업 중복 그룹은 중복 계산하지 않음. 상한은 tenant별 공고에 설정된 그룹/프로필 순서대로 적용.
-- daily_review MATCH_FANOUT_HIGH는 비식별 집계 파일만 읽고 WARN 1건 표시. 상한을 끄면 같은 회차의 이전 경고를 초기화.
+- daily_review MATCH_FANOUT_HIGH는 비식별 일별 최신 실행 집계 파일만 읽고 WARN 1건 표시. 강제 am/pm과 검수 회차가 달라도 같은 파일을 읽으며, 상한 off/수집 0건 조기 종료에서도 이전 경고를 초기화한다.
+- 리뷰 보완 검증: `python -m pytest tests/test_company_selfname_mail043.py tests/test_mail_run_preview.py tests/test_mail_daily_review.py tests/test_company_match.py tests/test_run_company_match_region.py -q` → 62 passed.
 - preference/owner_interest 필드는 현재 repo 기업 프로필·매처에 없음. 기존처럼 적격 점수에 포함하지 않으며 별도 선호 기능을 신설하지 않음.
 - 검증: `python -m pytest tests/test_company_selfname_mail043.py tests/test_company_match.py tests/test_company_match_business_years.py tests/test_company_match_multi_region.py tests/test_run_company_match_region.py tests/test_mail_daily_review.py tests/test_mail_run_preview.py tests/test_monitor.py tests/test_p0_hardening.py tests/test_streamlit_settings_save.py -q` → 208 passed. 실제 CLI→매칭→파일리포트·검수 및 monitor 2차 매칭 경로 검증, 실제 발송 없음.
 - REQUEST_SOLVED=NO — 구현·관련 검증 완료, 별도 PR 반영 대기. 실제 상한값은 설정하지 않음.

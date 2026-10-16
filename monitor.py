@@ -8290,6 +8290,11 @@ def execute_monitor(
     sites    = load_sites()
     groups   = load_groups()
     settings = load_settings()
+    from mail_core.matching.company_fanout import CompanyMatchFanout
+    _company_fanout = CompanyMatchFanout(
+        settings.get("max_companies_per_notice") if settings.get("company_match_enabled") else None,
+        report_path=REPO_ROOT / "var" / "reports" / "company_match" / f"fanout_{now.date()}.json",
+    )
     seen_ids = load_seen_ids()
     # Cycle-complete gates must always see the full active group set. `--group` filters
     # the send loop only — never the seen_ids promotion quorum (reopens #232 otherwise).
@@ -8783,11 +8788,6 @@ def execute_monitor(
         except Exception as e:
             log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
 
-    from mail_core.matching.company_fanout import CompanyMatchFanout
-    _company_fanout = CompanyMatchFanout(
-        settings.get("max_companies_per_notice") if settings.get("company_match_enabled") else None,
-        report_path=REPO_ROOT / "var" / "reports" / "company_match" / f"fanout_{now.date()}_{delivery_slot(now)}.json",
-    )
     sent_groups: list[dict] = []
     preview_groups: list[dict] = []
     for group in groups:
