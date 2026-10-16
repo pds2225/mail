@@ -13,6 +13,10 @@
 [~] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
 [ ] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
 [ ] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
+[ ] MAIL-046 | 그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
+[ ] MAIL-047 | 소스별 게시일 기준을 정해 새 공고를 날짜 착오로 빠뜨리지 않고, 페이지·목록/상세 누락을 감지한다.
+[ ] MAIL-048 | 전국/지역 동시 기재, 본사·사업장 기준, 공동사업·다중사업장을 정확히 판정하고 지역미상 과다를 경고한다.
+[ ] MAIL-049 | 지원유형 체계·복수유형·우선키워드 가중치를 정리하고 그룹 규칙 충돌을 검사하며, 시각 없는 마감·차수별 마감·run 기준시각을 고정한다.
 
 <!--
 비개발자가 이 부분만 보고도 현재 작업을 이해·수정·삭제할 수 있어야 한다.
@@ -3624,6 +3628,215 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 브랜치 codex/mail-045-detail-fold-image, tests/test_detail_fold_image_mail045.py 및 상세·표시 관련 회귀, 보안 스캔→push→별도 PR.
 - 상세 HTML→지원내용 표시→lint 경로 검증 및 허용된 PR 반영 후 완료.
 - REQUEST_SOLVED=NO — MAIL-043 다음 순차 실행.
+
+### 우선순위 메모 (2026-10-16 추가분)
+- 순서: MAIL-046(그룹판정 키워드) → MAIL-047(날짜·수집 누락) → MAIL-048(지역) → MAIL-049(분류·규칙·마감 보완).
+- #25/#30(MAIL-045), #72/#73(MAIL-042)은 이미 이 TASK.md에 있음. #71/#78/#80은 MAIL-042가 진행 중이라 MAIL-049에 넣음.
+
+## MAIL-046
+
+### 사용자 원문
+그룹판정·날짜·지역·분류 심각 리스크를 TASK.md에 순서대로 넣어 ("ㄱ", 2026-10-16)
+
+
+브랜치: `codex/mail-046-keyword-boundary-negation`
+
+### 목표
+그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
+
+### 대상 리스크 (개발리스크 154개 시트)
+- #50: [그룹판정] 부분문자열 오매칭(단어경계 없음)
+- #51: [그룹판정] 형태변화(활용형) 미인식
+- #52: [그룹판정] 약어 미인식(AI=인공지능 등)
+- #53: [그룹판정] 부정 문맥('AI 기업 제외')을 적합으로 판정
+
+### 현재 코드 위치 (main 4e6eba8 grep 기준, 줄번호는 바뀌었을 수 있음)
+- monitor.py `_kw_in_text`(5164), `_find_keyword_aliases`(5185), `keyword_match`(5812), `_keyword_match_text`(5001)
+- mail_core/matching/scoring.py `_kw_hit`(67), `_count_hits`(90)
+- config/groups.json 그룹 키워드
+
+### 변경 명세
+1. `_kw_in_text`/`_kw_hit` 공통 함수로 통합: 영문·숫자 키워드는 단어경계(`(?<![A-Za-z0-9])kw(?![A-Za-z0-9])`), 2자 이하 한글 키워드는 앞뒤 한글 조사 허용 목록만 통과.
+2. config/keyword_aliases.json(신규) 형태변화·약어 사전: 예) 인공지능↔AI, 소프트웨어↔SW, 창업기업↔창업 기업, 지원하는/지원함→지원. 사전 미존재 시 기존 동작.
+3. 키워드 앞뒤 20자 안에 '제외','불가','해당없음','제한','아닌' 등 부정 표현이 붙으면 그 히트는 근거에서 빼고 `negated_hits`에 기록(MAIL-041 region_context 부정 파서 재사용 우선).
+
+### 완료 기준
+- 'MAIL'·'TRAIN' 안의 AI가 매칭되지 않음.
+- '인공지능' 공고가 AI 그룹 키워드로 매칭.
+- 'AI 기업 제외' 공고는 AI 근거 0건, 사유에 negated 기록.
+- 사전 파일 없으면 기존 결과 불변.
+
+### 추가할 테스트
+tests/test_keyword_boundary_mail046.py: 단어경계·조사·약어·부정 문맥 픽스처, 기존 keyword_match 회귀.
+- 실행: `pytest -q tests/<새 테스트 파일> <변경 모듈 관련 기존 테스트>` (전체 pytest 금지)
+
+### 공통 규칙 (필수)
+- 최신 main에서 새 브랜치로 시작한다 (`git fetch origin && git switch -c <브랜치> origin/main`).
+- 바꾼 파일과 관련된 테스트만 돌린다. 전체 pytest는 돌리지 않는다.
+- 커밋 전에 비밀값과 실제 이메일 스캔을 한다 (`rg -n -i "(api[_-]?key|secret|token|password)\s*[:=]" ` + `rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → example.test 외 주소 0건).
+- 테스트에는 `*@example.test` 주소만 쓴다.
+- secrets, 수신자, branch protection, workflow 트리거(on:)는 바꾸지 않는다.
+- 메일을 보내거나 workflow를 실행하지 않는다.
+- 브랜치를 push하고 PR을 연 뒤 요구사항 체크(요청 vs 완료)를 PR 본문과 보고에 쓴다.
+- 작업 시작 전에 TASK.md 작업지시서를 갱신한다(레포 규칙).
+- REQUEST_SOLVED=NO — 대기.
+
+## MAIL-047
+
+### 사용자 원문
+그룹판정·날짜·지역·분류 심각 리스크를 TASK.md에 순서대로 넣어 ("ㄱ", 2026-10-16)
+
+
+브랜치: `codex/mail-047-date-basis-pagination`
+
+### 목표
+소스별 게시일 기준을 정해 새 공고를 날짜 착오로 빠뜨리지 않고, 페이지·목록/상세 누락을 감지한다.
+
+### 대상 리스크 (개발리스크 154개 시트)
+- #37: 게시일과 등록일 혼동 — 새 공고 제외
+- #42: 접수 시작일을 게시일로 착각
+- #43: 첨부파일 생성일을 게시일로 사용
+- #45: 날짜 조건이 너무 빡빡함(목록 구제 조건 누락)
+- #48: 소스별 date_basis 설정 없음
+- #4: 다음 페이지 누락 — 첫 페이지만 수집
+- #23: 목록과 상세 마감일 불일치
+
+### 현재 코드 위치 (main 4e6eba8 grep 기준, 줄번호는 바뀌었을 수 있음)
+- monitor.py `_notice_date_fields`(840), `_latest_date_from_text`(987), `extract_date_from_text`(1378), `_item_recent_for_recheck`(939)
+- monitor.py `_page_stat`(736), `page_stats_snapshot`(748); mail_core/matching/kstartup_collect.py `stop_reason_after_page`(86)
+- monitor.py `resolve_item_deadline`(1558), `_deadline_details`(1548); config/sites.json
+
+### 변경 명세
+1. config/sites.json 각 소스에 선택 `date_basis`(posted|registered|modified) 추가, 기본 posted. `_notice_date_fields`가 이 값으로 게시일을 고르고 `date_source`를 기록.
+2. 접수 시작일(신청기간 시작)·첨부파일 생성일은 게시일 후보에서 제외. 게시일을 못 찾으면 '날짜미상'으로 두고 버리지 않음(목록 구제: 목록에 처음 보인 공고는 날짜 미상이어도 후보 유지).
+3. 페이지네이션: 소스별 `pages_read`, `items_read`, 사이트가 알려주는 총건수/마지막 페이지를 `_page_stat`에 기록. 총건수 대비 읽은 건수 미달이거나 마지막 페이지 미도달이면 daily_review `PAGINATION_INCOMPLETE` 경고.
+4. 목록/상세 마감일이 다르면 상세 우선 적용, `deadline_conflict={list,detail}` 기록 + daily_review 경고.
+
+### 완료 기준
+- 등록일·접수시작일·첨부생성일만 있는 픽스처에서 새 공고가 빠지지 않음.
+- date_basis 미설정 소스는 기존 결과 불변.
+- 2페이지 이상 소스에서 미달 시 PAGINATION_INCOMPLETE 경고.
+- 목록/상세 마감 충돌 시 상세값 사용 + 기록.
+
+### 추가할 테스트
+tests/test_date_basis_pagination_mail047.py: date_basis별 픽스처, 페이지 미달 경고, 마감 충돌 정책.
+- 실행: `pytest -q tests/<새 테스트 파일> <변경 모듈 관련 기존 테스트>` (전체 pytest 금지)
+
+### 공통 규칙 (필수)
+- 최신 main에서 새 브랜치로 시작한다 (`git fetch origin && git switch -c <브랜치> origin/main`).
+- 바꾼 파일과 관련된 테스트만 돌린다. 전체 pytest는 돌리지 않는다.
+- 커밋 전에 비밀값과 실제 이메일 스캔을 한다 (`rg -n -i "(api[_-]?key|secret|token|password)\s*[:=]" ` + `rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → example.test 외 주소 0건).
+- 테스트에는 `*@example.test` 주소만 쓴다.
+- secrets, 수신자, branch protection, workflow 트리거(on:)는 바꾸지 않는다.
+- 메일을 보내거나 workflow를 실행하지 않는다.
+- 브랜치를 push하고 PR을 연 뒤 요구사항 체크(요청 vs 완료)를 PR 본문과 보고에 쓴다.
+- 작업 시작 전에 TASK.md 작업지시서를 갱신한다(레포 규칙).
+- REQUEST_SOLVED=NO — 대기.
+
+## MAIL-048
+
+### 사용자 원문
+그룹판정·날짜·지역·분류 심각 리스크를 TASK.md에 순서대로 넣어 ("ㄱ", 2026-10-16)
+
+
+브랜치: `codex/mail-048-region-scope`
+
+### 목표
+전국/지역 동시 기재, 본사·사업장 기준, 공동사업·다중사업장을 정확히 판정하고 지역미상 과다를 경고한다.
+
+### 대상 리스크 (개발리스크 154개 시트)
+- #61: '전국'과 지역 제한 동시 기재
+- #62: 본사/사업장/공장 소재지 기준 혼동
+- #63: 이전(移轉) 조건 공고
+- #66: 공동사업(컨소시엄) 지역 판정
+- #67: 지역미상 과다
+- #70: 다중 사업장 기업
+
+### 현재 코드 위치 (main 4e6eba8 grep 기준, 줄번호는 바뀌었을 수 있음)
+- monitor.py `_detect_target_regions`(1657), `_resolve_applicant_region_scope`(1592), `classify_region_for_group`(5510), `classify_region`(5634)
+- mail_core/matching/region_context.py(MAIL-041), mail_core/matching/company_match.py `_region_signals`(192)
+- config/companies.json 기업 지역 필드
+
+### 변경 명세
+1. '전국'과 구체 지역 제한이 함께 있으면 제한이 우선(지원대상 문맥일 때만).
+2. 공고의 소재지 기준(본사|사업장|공장|미지정)을 추출해 `region_basis`로 기록. 기업은 선택 `sites`(다중 사업장) 필드를 읽어 하나라도 맞으면 적합, 기준이 본사면 본사만 비교.
+3. '○○로 이전 예정/이전 조건' 문구는 `relocation_required=True`, 타지역 기업도 '조건부'로 유지.
+4. 공동사업은 주관기관 지역 조건만 적용하고 참여기관 지역은 참고 기록.
+5. run 내 지역미상 비율이 30% 초과면 daily_review `REGION_UNKNOWN_HIGH` 경고.
+
+### 완료 기준
+- 동시 기재 픽스처에서 제한 지역만 적합.
+- 다중 사업장 기업이 사업장 기준 공고에 매칭.
+- 이전 조건·공동사업 픽스처 판정 정확.
+- 지역미상 과다 경고 발생, 기존 판정 회귀 없음.
+
+### 추가할 테스트
+tests/test_region_scope_mail048.py + 기존 tests/test_region_exclusion_mail041.py, tests/test_company_match_multi_region.py.
+- 실행: `pytest -q tests/<새 테스트 파일> <변경 모듈 관련 기존 테스트>` (전체 pytest 금지)
+
+### 공통 규칙 (필수)
+- 최신 main에서 새 브랜치로 시작한다 (`git fetch origin && git switch -c <브랜치> origin/main`).
+- 바꾼 파일과 관련된 테스트만 돌린다. 전체 pytest는 돌리지 않는다.
+- 커밋 전에 비밀값과 실제 이메일 스캔을 한다 (`rg -n -i "(api[_-]?key|secret|token|password)\s*[:=]" ` + `rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → example.test 외 주소 0건).
+- 테스트에는 `*@example.test` 주소만 쓴다.
+- secrets, 수신자, branch protection, workflow 트리거(on:)는 바꾸지 않는다.
+- 메일을 보내거나 workflow를 실행하지 않는다.
+- 브랜치를 push하고 PR을 연 뒤 요구사항 체크(요청 vs 완료)를 PR 본문과 보고에 쓴다.
+- 작업 시작 전에 TASK.md 작업지시서를 갱신한다(레포 규칙).
+- REQUEST_SOLVED=NO — 대기.
+
+## MAIL-049
+
+### 사용자 원문
+그룹판정·날짜·지역·분류 심각 리스크를 TASK.md에 순서대로 넣어 ("ㄱ", 2026-10-16)
+
+
+브랜치: `codex/mail-049-support-type-rules-deadline`
+
+### 목표
+지원유형 체계·복수유형·우선키워드 가중치를 정리하고 그룹 규칙 충돌을 검사하며, 시각 없는 마감·차수별 마감·run 기준시각을 고정한다.
+
+### 대상 리스크 (개발리스크 154개 시트)
+- #56: 지원유형 체계 불명확
+- #57: 복수 지원유형 공고
+- #58: 우선키워드 가중치 과다
+- #60: 그룹 규칙 간 충돌
+- #71: 마감 시각 없음
+- #78: 차수별 마감
+- #80: run 시작시각 고정 안 됨(판정 중 날짜 변경)
+
+### 현재 코드 위치 (main 4e6eba8 grep 기준, 줄번호는 바뀌었을 수 있음)
+- monitor.py `classify_support_type`(4970), `_group_priority_hits`(5193), `classify_deadline_status`(5223); mail_core/matching/core_sources.py `map_category_to_support_types`(152)
+- mail_core/operations/deadline_context.py `extract_deadline_details`(12), `deadline_has_passed`(37)
+- monitor.py `datetime.now` 호출 다수(35곳), config/groups.json
+
+### 변경 명세
+1. 지원유형을 config 한 곳(목록+동의어)으로 고정하고 `classify_support_type`·core_sources가 같은 표를 쓰게 통합. 복수 유형은 리스트로 모두 유지, 카드엔 대표 1개+'외 N'.
+2. 우선키워드는 가산점 상한(예: 총점의 30%) 적용, 우선키워드만으로 적합 판정 금지.
+3. scripts/check_group_rules.py(신규): groups.json에서 같은 키워드가 한 그룹엔 포함·다른 그룹엔 제외인 경우, 상충 지역/유형 규칙을 찾아 출력(읽기 전용, CI 미연결).
+4. 마감 시각 없음: 당일 23:59로 간주하되 `deadline_time_assumed=True` 기록(MAIL-042 결과 재사용). 차수별 마감은 가장 가까운 미래 차수를 마감으로, 나머지는 `rounds`로 보존.
+5. run 시작 시 `RUN_NOW_KST` 1회 계산해 판정 함수에 전달, 판정 중 `datetime.now()` 직접 호출 제거.
+
+### 완료 기준
+- 복수 유형 공고가 모든 유형 그룹에서 보임.
+- 우선키워드만 있는 공고는 적합 아님.
+- check_group_rules.py가 충돌 픽스처를 찾아냄.
+- 차수별·시각없음 마감 판정 정확, 자정 넘는 run에서도 날짜 일관.
+
+### 추가할 테스트
+tests/test_support_type_rules_mail049.py, tests/test_deadline_rounds_mail049.py + 기존 tests/test_deadline_time_mail042.py.
+- 실행: `pytest -q tests/<새 테스트 파일> <변경 모듈 관련 기존 테스트>` (전체 pytest 금지)
+
+### 공통 규칙 (필수)
+- 최신 main에서 새 브랜치로 시작한다 (`git fetch origin && git switch -c <브랜치> origin/main`).
+- 바꾼 파일과 관련된 테스트만 돌린다. 전체 pytest는 돌리지 않는다.
+- 커밋 전에 비밀값과 실제 이메일 스캔을 한다 (`rg -n -i "(api[_-]?key|secret|token|password)\s*[:=]" ` + `rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}"` → example.test 외 주소 0건).
+- 테스트에는 `*@example.test` 주소만 쓴다.
+- secrets, 수신자, branch protection, workflow 트리거(on:)는 바꾸지 않는다.
+- 메일을 보내거나 workflow를 실행하지 않는다.
+- 브랜치를 push하고 PR을 연 뒤 요구사항 체크(요청 vs 완료)를 PR 본문과 보고에 쓴다.
+- 작업 시작 전에 TASK.md 작업지시서를 갱신한다(레포 규칙).
+- REQUEST_SOLVED=NO — 대기.
 
 # 9. 실제사용 시나리오
 
