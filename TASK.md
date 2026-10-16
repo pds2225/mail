@@ -3588,7 +3588,9 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 기존 날짜 없는/시각 없는 동작 유지. 실제 발송·workflow 실행·실데이터/Secret 변경·전체 pytest 금지.
 - 최신 main 작업 브랜치 codex/mail-042-deadline-time-postal, 변경분 보안 스캔 후 push·별도 PR·요구사항 대조.
 - 최종 판정→카드→lint 경로 및 관련 테스트 통과, 허용된 PR 반영 후 완료.
-- REQUEST_SOLVED=NO — 착수 전.
+- 구현·검증: deadline_context 명시 시각/도착기준 추출, KST 당일 마감 후 판정·카드 제외, D-0만 시각 표시. 시작 시각 오인 방지·UTC 변환·도착기준 카드→lint 검증.
+- 관련 검증: `python -m pytest tests/test_deadline_time_mail042.py tests/test_deadline_shortform.py tests/test_deadline_fix.py tests/test_period_gate.py tests/test_digest_lint.py tests/test_digest_eight_columns.py tests/test_monitor.py tests/test_5field_casematrix.py tests/test_decision_matrix.py -q` → 415 passed.
+- REQUEST_SOLVED=NO — 구현·관련 검증 완료, PR 반영 대기. 외부 수집·실발송 없음.
 
 ## MAIL-043
 

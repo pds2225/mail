@@ -22,7 +22,7 @@ from mail_core.delivery.digest_table import HEADER_LINE, _SECTION_RE, parse_plai
 
 _SUBJECT_COUNT_RE = re.compile(r"\]\s*(\d+)건")
 _HEADER_COUNT_RE = re.compile(r"그룹 매칭\s*(\d+)건")
-_PAST_RE = re.compile(r"\(D\+\d+\)")
+_PAST_RE = re.compile(r"\(D\+\d+(?: \d{1,2}(?:시|:\d{2}))?\)")
 _FOOTER_TITLE_RE = re.compile(r"^\s*(?:[─━—=_\-]{5,}|🙋|ⓘ)")
 UNKNOWN_SHARE_LIMIT = 0.5
 # 호출측 판정기와 별개로 lint 자체가 잡는 사이트 메뉴 잡텍스트(MAIL-038: 'KOR ENG JPN CHN ARB 검색 폼 SEARCH')
