@@ -13,7 +13,7 @@
 [x] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
 [x] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
 [x] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
-[~] MAIL-046 | 그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
+[x] MAIL-046 | 그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
 [ ] MAIL-047 | 소스별 게시일 기준을 정해 새 공고를 날짜 착오로 빠뜨리지 않고, 페이지·목록/상세 누락을 감지한다.
 [ ] MAIL-048 | 전국/지역 동시 기재, 본사·사업장 기준, 공동사업·다중사업장을 정확히 판정하고 지역미상 과다를 경고한다.
 [ ] MAIL-049 | 지원유형 체계·복수유형·우선키워드 가중치를 정리하고 그룹 규칙 충돌을 검사하며, 시각 없는 마감·차수별 마감·run 기준시각을 고정한다.
@@ -3679,6 +3679,14 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 tests/test_keyword_boundary_mail046.py: 단어경계·조사·약어·부정 문맥 픽스처, 기존 keyword_match 회귀.
 - 실행: `pytest -q tests/<새 테스트 파일> <변경 모듈 관련 기존 테스트>` (전체 pytest 금지)
 
+### 구현·검증 결과
+- `mail_core/matching/keyword_match.py`로 monitor 1차 게이트와 scoring 2차 점수의 matcher를 통합했다. 영문·숫자 토큰 경계, 짧은 한글어 조사 경계, 사전 동의어·방향형 활용, 20자 부정 문맥 판정을 함께 적용한다.
+- `config/keyword_aliases.json`에 AI↔인공지능, SW↔소프트웨어, 창업기업 띄어쓰기, 지원·수출 등 짧은 키워드의 검수된 활용형을 등록했다. 파일이 없으면 빈 사전으로 동작하고 기존 별칭을 추정하지 않는다.
+- 부정 히트는 그룹 통과·점수 근거에서 제외하고 `negated_hits` 및 검수 notes에 기록한다. 다른 긍정 OR 키워드가 있으면 해당 공고의 그룹 통과는 유지한다.
+- 기존 `keywords` 배열·객체 설정을 정규화해 구형 설정 호환을 유지한다. 규칙 버전에 matcher 코드와 사전 내용을 반영한다.
+- 최신 main 검증: MAIL-046 포함 관련 13개 테스트 파일 `456 passed`. GitHub `test`, `docs-gate`, Cursor review, Vercel checks PASS.
+- PR #383 병합: `1ab35f2d5a8050e1d19ba67c97458732ceb9d689`.
+
 ### 공통 규칙 (필수)
 - 최신 main에서 새 브랜치로 시작한다 (`git fetch origin && git switch -c <브랜치> origin/main`).
 - 바꾼 파일과 관련된 테스트만 돌린다. 전체 pytest는 돌리지 않는다.
@@ -3688,7 +3696,7 @@ tests/test_keyword_boundary_mail046.py: 단어경계·조사·약어·부정 문
 - 메일을 보내거나 workflow를 실행하지 않는다.
 - 브랜치를 push하고 PR을 연 뒤 요구사항 체크(요청 vs 완료)를 PR 본문과 보고에 쓴다.
 - 작업 시작 전에 TASK.md 작업지시서를 갱신한다(레포 규칙).
-- REQUEST_SOLVED=NO (TASK registration in progress) — 대기.
+- REQUEST_SOLVED=YES — PR #383 병합(1ab35f2), 관련 테스트 456 passed 및 GitHub checks PASS. 메일 발송·workflow 실행 없음.
 
 ## MAIL-047
 
