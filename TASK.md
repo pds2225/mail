@@ -11,8 +11,8 @@
 
 [x] MAIL-041 | 기관 주소와 지원지역을 분리하고 제외지역을 차단하며 오래된 기업 지역정보를 경고한다
 [x] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
-[~] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
-[~] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
+[x] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
+[x] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
 [ ] MAIL-046 | 그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
 [ ] MAIL-047 | 소스별 게시일 기준을 정해 새 공고를 날짜 착오로 빠뜨리지 않고, 페이지·목록/상세 누락을 감지한다.
 [ ] MAIL-048 | 전국/지역 동시 기재, 본사·사업장 기준, 공동사업·다중사업장을 정확히 판정하고 지역미상 과다를 경고한다.
@@ -3616,7 +3616,7 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 리뷰 보완 검증: `python -m pytest tests/test_company_selfname_mail043.py tests/test_mail_run_preview.py tests/test_mail_daily_review.py tests/test_company_match.py tests/test_run_company_match_region.py -q` → 62 passed.
 - preference/owner_interest 필드는 현재 repo 기업 프로필·매처에 없음. 기존처럼 적격 점수에 포함하지 않으며 별도 선호 기능을 신설하지 않음.
 - 검증: `python -m pytest tests/test_company_selfname_mail043.py tests/test_company_match.py tests/test_company_match_business_years.py tests/test_company_match_multi_region.py tests/test_run_company_match_region.py tests/test_mail_daily_review.py tests/test_mail_run_preview.py tests/test_monitor.py tests/test_p0_hardening.py tests/test_streamlit_settings_save.py -q` → 208 passed. 실제 CLI→매칭→파일리포트·검수 및 monitor 2차 매칭 경로 검증, 실제 발송 없음.
-- REQUEST_SOLVED=NO — 구현·관련 검증 완료, 별도 PR 반영 대기. 실제 상한값은 설정하지 않음.
+- REQUEST_SOLVED=YES — 구현·관련 검증 완료. #377 및 리뷰 보완 #379 병합(9d05e6b7), checks PASS, 병합 후 관련 사용자 경로 테스트 62 passed. 실제 상한값은 설정하지 않음.
 
 ## MAIL-045
 
@@ -3634,9 +3634,9 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 상세 HTML→지원내용 표시→lint 경로 검증 및 허용된 PR 반영 후 완료.
 - 구현: 기존 detail_runtime_adapter를 확장해 숨김·접힘 본문 및 aria-controls/data-target으로 명시 연결된 외부 접힘 영역을 후보에 포함. script/style/더보기 버튼 제외, 원본 DOM 보존.
 - IMAGE_ONLY는 본문 80자 미만+본문 이미지일 때 부여하고 raw meta에 보존. 모르는 지원내용은 숨기며 마감 불명은 확인필요, 상세 PARSE_FAILED로 검수 경로 유지. 동적 더보기 대상이 HTML에 없으면 FOLDED_INCOMPLETE로 검수, OCR 없음.
-- 검증: `python -m pytest tests/test_detail_fold_image_mail045.py tests/test_detail_extraction_status.py tests/test_detail_table_preservation.py tests/test_bizinfo_detail_enrich.py tests/test_runtime_detail_adapter.py tests/test_digest_eight_columns.py tests/test_digest_lint.py tests/test_monitor.py tests/test_notice_version_recovery.py tests/test_mail_run_preview.py tests/test_precheck_mail037.py tests/test_raw_store.py -q` → 207 passed.
+- 검증: `python -m pytest tests/test_detail_fold_image_mail045.py tests/test_detail_extraction_status.py tests/test_detail_table_preservation.py tests/test_bizinfo_detail_enrich.py tests/test_runtime_detail_adapter.py tests/test_digest_eight_columns.py tests/test_digest_lint.py tests/test_monitor.py tests/test_notice_version_recovery.py tests/test_mail_run_preview.py tests/test_precheck_mail037.py tests/test_raw_store.py -q` → 작업 브랜치 207 passed, 최신 main에서 통합 재검증 208 passed.
 - 상세 HTML→enrich→지원내용/확인필요 카드→plain parser→HTML→lint 및 raw meta 저장 경로 검증. 이미지 내용은 OCR 없이 미확보로 정직하게 표시.
-- REQUEST_SOLVED=NO — 구현·관련 검증 완료, 별도 PR 반영 대기.
+- REQUEST_SOLVED=YES — PR #380 병합(9730dfdb), GitHub checks PASS, 최신 main 병합 후 관련 회귀 208 passed.
 
 ### 우선순위 메모 (2026-10-16 추가분)
 - 순서: MAIL-046(그룹판정 키워드) → MAIL-047(날짜·수집 누락) → MAIL-048(지역) → MAIL-049(분류·규칙·마감 보완).
