@@ -83,6 +83,18 @@ def _one_group(recipients=("owner@example.test",)):
     }]
 
 
+def test_empty_run_clears_stale_company_fanout(monkeypatch, tmp_path):
+    import json
+    _install_fixture(monkeypatch, items=[], groups=_one_group())
+    _forbid_delivery(monkeypatch)
+    monkeypatch.setattr(m, "REPO_ROOT", tmp_path)
+    path = tmp_path / "var" / "reports" / "company_match" / f"fanout_{m.datetime.now(m.KST).date()}.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({"exceeded_notices": 2}), encoding="utf-8")
+    m.execute_monitor(allow_send=False, include_raw_all=False, persist_seen=False)
+    assert json.loads(path.read_text(encoding="utf-8"))["exceeded_notices"] == 0
+
+
 def test_preview_matches_real_send_subject_and_body(monkeypatch):
     """MUST: Preview subject/text/html == 실제 발송 subject/body (같은 renderer)."""
     # 피드백 [MAIL-FB] 토큰은 발급 시각(초)을 서명에 넣는다. preview/실발송이 초 경계를 넘으면

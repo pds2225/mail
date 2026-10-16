@@ -239,9 +239,8 @@ def main(argv: list[str] | None = None) -> int:
     from mail_core.matching.company_fanout import CompanyMatchFanout
     settings = json.loads((BASE_DIR / "config" / "settings.json").read_text(encoding="utf-8"))
     moment = datetime.now(KST)
-    slot = "am" if moment.hour < 14 else "pm"
     fanout = CompanyMatchFanout(settings.get("max_companies_per_notice"),
-                               report_path=output_dir / f"fanout_{moment.date()}_{slot}.json")
+                               report_path=output_dir / f"fanout_{moment.date()}.json")
     summary: dict[str, Any] = {"ok": True, "input_items": len(items), "companies": {}}
     print("\n[기업별 매칭 결과]")
     for company in companies:

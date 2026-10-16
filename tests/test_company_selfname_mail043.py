@@ -91,3 +91,16 @@ def test_dry_run_cli_applies_settings_cap(tmp_path, monkeypatch):
                      "--output-dir", str(tmp_path / "reports")]) == 0
     report = next((tmp_path / "reports").glob("fanout_*.json"))
     assert json.loads(report.read_text(encoding="utf-8"))["exceeded_notices"] == 1
+
+
+def test_forced_monitor_slot_and_review_clock_share_report(tmp_path, monkeypatch):
+    monkeypatch.setenv("MONITOR_DELIVERY_SLOT", "am")
+    monkeypatch.setattr(dr, "VAR_DIR", tmp_path)
+    path = tmp_path / "reports" / "company_match" / "fanout_2026-10-16.json"
+    fanout = CompanyMatchFanout(1, report_path=path)
+    fanout.apply([notice()], company("a"))
+    fanout.apply([notice()], company("b"))
+    report = dr.build_review(when=datetime(2026, 10, 16, 18, tzinfo=dr.KST),
+        companies=[], require_coverage=False, logs_dir=tmp_path)
+    assert report.slot == "pm"
+    assert len([c for c in report.checks if c.id == "MATCH_FANOUT_HIGH"]) == 1

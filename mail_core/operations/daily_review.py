@@ -545,7 +545,8 @@ def build_review(
             # 식별자·기업명·이메일 등 private 값을 리포트로 내보내지 않는다.
             checks.append(CheckResult("MDR-006", "기업 지역정보 갱신 필요", "WARN",
                                       f"지역정보 갱신 후 {age}일 경과(365일 초과)"))
-    fanout_path = fanout_report_path or (VAR_DIR / "reports" / "company_match" / f"fanout_{date_s}_{slot}.json")
+    # 최신 실행의 일별 집계. 강제 am/pm과 검수 시각이 달라도 같은 집계를 읽는다.
+    fanout_path = fanout_report_path or (VAR_DIR / "reports" / "company_match" / f"fanout_{date_s}.json")
     fanout = _read_json(fanout_path) or {}
     if isinstance(fanout, dict) and fanout.get("exceeded_notices", 0):
         checks.append(CheckResult("MATCH_FANOUT_HIGH", "공고별 기업 매칭 상한 초과", "WARN",
