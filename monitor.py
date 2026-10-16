@@ -2431,10 +2431,13 @@ def _item(id_, title, link, author, desc, deadline, source,
     author_n = norm(author)
     if author_n and title_n and author_n == title_n:
         author_n = ""
-    return {"id": id_, "title": title_n, "link": link, "author": author_n,
+    result = {"id": id_, "title": title_n, "link": link, "author": author_n,
             "description": desc, "deadline": deadline, "source": source,
-            "posted_date": posted_date, "is_aggregator": is_aggregator,
-            **_deadline_details({"deadline": deadline})}
+            "posted_date": posted_date, "is_aggregator": is_aggregator}
+    details = _deadline_details({"deadline": deadline})
+    if any(details.values()):
+        result.update(details)
+    return result
 
 
 def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
