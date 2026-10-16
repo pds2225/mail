@@ -236,11 +236,21 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     output_dir = Path(args.output_dir)
+    from mail_core.matching.company_fanout import CompanyMatchFanout
+    settings = json.loads((BASE_DIR / "config" / "settings.json").read_text(encoding="utf-8"))
+    moment = datetime.now(KST)
+    slot = "am" if moment.hour < 14 else "pm"
+    fanout = CompanyMatchFanout(settings.get("max_companies_per_notice"),
+                               report_path=output_dir / f"fanout_{moment.date()}_{slot}.json")
     summary: dict[str, Any] = {"ok": True, "input_items": len(items), "companies": {}}
     print("\n[기업별 매칭 결과]")
     for company in companies:
         company_items = _enrich_for_company(items, company)  # 기업별 지역판정(인천고정 버그 차단)
         result = company_match.match_for_company(company_items, company)
+        kept, capped = fanout.apply(result["matched"], company)
+        result["matched"] = kept
+        result["rejected"].extend(capped)
+        result["audit"].extend({"decision": "rejected_fanout", "reason": "MATCH_FANOUT_HIGH"} for _ in capped)
         paths = _write_company_report(company, result, output_dir)
         n_match = len(result["matched"])
         print(f"  - {company.get('name'):20s}: 맞춤 {n_match}건 / 제외 {len(result['rejected'])}건"
