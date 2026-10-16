@@ -537,9 +537,23 @@ def classify_source_status(
 
     if page_stat:
         stop_reason = str(page_stat.get("stop_reason") or "")
+        pages_read = page_stat.get("pages_read", page_stat.get("pages_fetched"))
+        known_last_page = page_stat.get("last_page")
+        items_read = page_stat.get("items_read", page_stat.get("items"))
+        known_total_items = page_stat.get("total_items")
+        try:
+            known_shortfall = (
+                (pages_read is not None and known_last_page is not None
+                 and int(pages_read) < int(known_last_page))
+                or (items_read is not None and known_total_items is not None
+                    and int(items_read) < int(known_total_items))
+            )
+        except (TypeError, ValueError):
+            known_shortfall = False
         if page_stat.get("duplicate_page"):
             reason_codes.append(REASON_DUPLICATE_PAGE_LOOP)
-        elif stop_reason == "MAX_PAGES_HIT":
+        elif (stop_reason == "MAX_PAGES_HIT" or stop_reason.endswith(":MAX_PAGES_HIT")
+              or stop_reason == "PAGE_FETCH_FAILED" or known_shortfall):
             reason_codes.append(REASON_PAGINATION_INCOMPLETE)
         if page_stat.get("fallback_degraded"):
             reason_codes.append(REASON_FALLBACK_PATH_DEGRADED)

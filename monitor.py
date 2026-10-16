@@ -850,6 +850,49 @@ def _notice_date_fields(item: dict) -> dict[str, str]:
     }
 
 
+def _apply_site_date_basis(items: list[dict], site: dict) -> list[dict]:
+    """소스의 명시적 date_basis만 게시일로 적용하고, 기본 posted 동작은 유지한다."""
+    configured_basis = str(site.get("date_basis") or "").strip().lower()
+    basis = configured_basis or "posted"
+    if basis not in {"posted", "registered", "modified"}:
+        configured_basis = ""
+        basis = "posted"
+    site_id = str(site.get("id") or "")
+    fields = {"posted": "published_at", "registered": "registered_at", "modified": "updated_at"}
+    out = []
+    for source in items or []:
+        if not isinstance(source, dict):
+            out.append(source)
+            continue
+        item = dict(source)
+        legacy_posted = str(item.get("posted_date") or "").strip()[:10]
+        raw_published = str(item.get("published_at") or "").strip()[:10]
+        published = raw_published or (legacy_posted if not configured_basis else "")
+        source_published = raw_published
+        registered = str(item.get("registered_at") or item.get("registered_date") or item.get("reg_date") or "").strip()[:10]
+        updated = str(item.get("updated_at") or item.get("updated_date") or item.get("modified_at") or "").strip()[:10]
+        selected = {"posted": published if configured_basis else legacy_posted,
+                    "registered": registered, "modified": updated}[basis]
+        has_date_metadata = bool(
+            configured_basis or raw_published or registered or updated or item.get("date_source")
+        )
+        if has_date_metadata:
+            item.update({"site_id": site_id, "date_basis": basis,
+                         "source_published_at": source_published,
+                         "published_at": selected, "registered_at": registered,
+                         "updated_at": updated,
+                         "date_source": ((fields[basis] if selected else "unknown") if configured_basis else
+                                          str(item.get("date_source") or ("posted_date" if selected else "unknown")))})
+        if basis == "posted":
+            # Unconfigured sources preserve their historical value through selected;
+            # explicit posted basis requires an actual published date.
+            item["posted_date"] = selected
+        else:
+            item["posted_date"] = selected
+        out.append(item)
+    return out
+
+
 def _notice_version_snapshot(item: dict) -> dict[str, str]:
     period = item.get("application_period") or {}
     return {
@@ -1152,7 +1195,10 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
         snapshot = _notice_version_snapshot(item)
         current_hash = _notice_snapshot_hash(snapshot)
         previous = versions.get(iid)
-        base = {"snapshot": snapshot, "content_hash": current_hash, "list_hash": _notice_list_hash(item), "last_seen_at": now_iso}
+        base = {"snapshot": snapshot, "content_hash": current_hash, "list_hash": _notice_list_hash(item),
+                "last_seen_at": now_iso,
+                "date_source": str(item.get("date_source") or ("posted_date" if item.get("posted_date") else "unknown")),
+                "date_basis": str(item.get("date_basis") or "posted")}
         if iid not in seen_ids:
             version = max(1, int((previous or {}).get("version", 0) or 0))
             deliverable.append({**item, "_change_type": "NEW", "_notice_version": version, "_delivery_id": iid, "_changed_fields": list(snapshot)})
@@ -1216,6 +1262,8 @@ def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], 
             "observed_snapshot": update.get("snapshot", {}),
             "last_seen_at": update.get("last_seen_at") or now.isoformat(),
             "pending_delivery_id": update.get("delivery_id", ""),
+            "date_source": update.get("date_source", record.get("date_source", "unknown")),
+            "date_basis": update.get("date_basis", record.get("date_basis", "posted")),
         })
         if update.get("unreliable_observe"):
             # FETCH/PARSE 실패 스냅샷은 재조회 대상으로 관찰만 기록한다.
@@ -1383,6 +1431,18 @@ def extract_date_from_text(text: str) -> str:
     """텍스트에서 첫 날짜를 YYYY-MM-DD로 추출."""
     dates = _parse_date_candidates(text)
     return dates[0][1].isoformat() if dates else ""
+
+
+def _labeled_date_from_text(text: str, labels: tuple[str, ...]) -> str:
+    """허용된 날짜 라벨 바로 뒤에서만 날짜를 읽어 접수/첨부 날짜 오인을 막는다."""
+    raw = str(text or "")
+    for label in labels:
+        match = re.search(rf"{re.escape(label)}\s*[:：]?\s*([^\n|;,]{{1,40}})", raw)
+        if match:
+            value = extract_date_from_text(match.group(1))
+            if value:
+                return value
+    return ""
 
 
 def _valid_date(year: int, month: int, day: int):
@@ -2094,6 +2154,14 @@ def enrich_item_from_detail(item: dict) -> dict:
             if cand.get("label") in APPLICATION_PERIOD_LABELS:
                 period = cand
     if period.get("display"):
+        list_deadline = str(item.get("deadline") or "").strip()
+        list_dates = _parse_date_candidates(list_deadline)
+        detail_dates = _parse_date_candidates(str(period.get("display") or ""))
+        if list_dates and detail_dates and list_dates[-1][1] != detail_dates[-1][1]:
+            updated["deadline_conflict"] = {
+                "list": list_deadline,
+                "detail": str(period.get("display") or "").strip(),
+            }
         updated["deadline"] = period["display"]
         updated["application_period"] = period
     elif specialized and not (updated.get("deadline") or "").strip():
@@ -2111,9 +2179,11 @@ def enrich_item_from_detail(item: dict) -> dict:
         if period.get("display"):
             updated["deadline"] = period["display"]
             updated["application_period"] = period
-    posted = extract_date_from_text(body)
-    if posted and not (updated.get("posted_date") or "").strip():
-        updated["posted_date"] = posted
+    labeled_posted = _labeled_date_from_text(
+        body, ("게시일", "게시일자", "공고일", "공고일자", "작성일", "등록일", "등록일자"),
+    )
+    if labeled_posted and not (updated.get("posted_date") or "").strip():
+        updated["posted_date"] = labeled_posted
     if period.get("display"):
         detail_keys.update({"deadline", "application_period"})
     updated.update(_deadline_details(updated))
@@ -2477,7 +2547,10 @@ def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
     if posted and len(posted) >= 10:
         posted = posted[:10]
     if not posted:
-        posted = extract_date_from_text(norm(it.get("bsnsSumryCn", "")))
+        posted = _labeled_date_from_text(
+            norm(it.get("bsnsSumryCn", "")),
+            ("게시일", "게시일자", "공고일", "공고일자", "작성일", "등록일", "등록일자"),
+        )
     item = _item(
         iid, ttl, lnk,
         norm(it.get("jrsdInsttNm", it.get("author", ""))),
@@ -2485,6 +2558,10 @@ def _bizinfo_parse_item(it: dict, site_name: str, agg: bool) -> dict:
         norm(it.get("reqstBeginEndDe", it.get("reqstDt", ""))),
         site_name, posted, agg,
     )
+    item["published_at"] = norm(it.get("pblancDt", ""))[:10]
+    item["registered_at"] = norm(it.get("regDt", ""))[:10]
+    item["updated_at"] = norm(it.get("updtPnttm", ""))[:10]
+    item["date_source"] = "registered_at" if item["registered_at"] else ("published_at" if item["published_at"] else "unknown")
     try:
         from mail_core.matching.core_sources import attach_bizinfo_structured
         return attach_bizinfo_structured(item, it)
@@ -2520,6 +2597,7 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
             log.debug("기업마당 워밍업 생략(%s)", e)
 
     _pages_done, _stop_reason, _dup_pages = 0, "MAX_PAGES_HIT", 0
+    _total_items = None
     for page in range(1, max_pages + 1):
         r = None
         for attempt in range(retries + 1):
@@ -2561,6 +2639,9 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
                 log.error("기업마당 API JSON 파싱 실패(page %d): %s — 부분 수집 %d건 반환", page, e, len(items))
                 break
             raise RuntimeError(f"기업마당 API JSON 파싱 실패 (page {page}): {e}") from e
+        reported = _reported_total_items(data)
+        if reported is not None:
+            _total_items = reported
         if err := data.get("reqErr"):
             if items:
                 log.error("기업마당 API 오류(page %d): %s — 부분 수집 %d건 반환", page, err, len(items))
@@ -2586,7 +2667,9 @@ def _fetch_bizinfo_direct(site: dict) -> list[dict]:
             _stop_reason = "LAST_PAGE"
             break
     _page_stat(site.get("id", ""), stop_reason=_stop_reason, pages_fetched=_pages_done,
-               duplicate_page=_dup_pages >= 2, items=len(items))
+               pages_read=_pages_done, items_read=len(items),
+               duplicate_page=_dup_pages >= 2, items=len(items),
+               **({"total_items": _total_items} if _total_items is not None else {}))
     return items
 
 
@@ -2607,6 +2690,24 @@ def _datagokr_rows(data: dict) -> list[dict]:
     if isinstance(rows, dict):
         rows = [rows]
     return rows or []
+
+
+def _reported_total_items(data: dict) -> int | None:
+    """API 봉투에 명시된 전체건수만 반환한다."""
+    if not isinstance(data, dict):
+        return None
+    body = ((data.get("response") or {}).get("body") or {}) if isinstance(data.get("response"), dict) else {}
+    channel = data.get("channel") if isinstance(data.get("channel"), dict) else {}
+    for value in (data.get("totalCount"), data.get("total_count"), data.get("totalCnt"),
+                  body.get("totalCount"), body.get("total_count"), body.get("totalCnt"),
+                  channel.get("totalCount"), channel.get("total")):
+        try:
+            count = int(str(value).replace(",", "").strip())
+        except (TypeError, ValueError):
+            continue
+        if count >= 0:
+            return count
+    return None
 
 
 def _datagokr_error(data: dict) -> str:
@@ -2651,6 +2752,9 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
     extra_params = site.get("datagokr_params", {})
     items: list[dict] = []
     seen_ids: set[str] = set()
+    pages_read = 0
+    stop_reason = "MAX_PAGES_HIT"
+    total_items = None
     for page in range(1, max_pages + 1):
         # 직결과 동일하게 일시적 네트워크/5xx 블립은 api_retries 만큼 흡수(백오프).
         r = None
@@ -2663,6 +2767,7 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
             if attempt < retries:
                 time.sleep(_HTTP_RETRY_BACKOFF * (attempt + 1))
         if r is None:
+            stop_reason = "PAGE_FETCH_FAILED"
             if items:
                 log.error("기업마당 data.go.kr 접속 실패(page %d) — 부분 %d건", page, len(items))
                 break
@@ -2670,17 +2775,24 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
         try:
             data = r.json()
         except Exception as e:
+            stop_reason = "PARSER_FAILED"
             if items:
                 break
             raise RuntimeError(f"기업마당 data.go.kr JSON 파싱 실패: {e}") from e
         # 직결 reqErr 과 동형: 200-OK 에러 봉투(인증키오류·트래픽초과)는 '진짜 0건'과 구분해 올린다.
         if err := _datagokr_error(data):
+            stop_reason = "PAGE_FETCH_FAILED"
             if items:
                 log.error("기업마당 data.go.kr 오류(page %d): %s — 부분 %d건", page, err, len(items))
                 break
             raise RuntimeError(f"기업마당 data.go.kr 오류: {err}")
+        pages_read = page
+        reported = _reported_total_items(data)
+        if reported is not None:
+            total_items = reported
         rows = _datagokr_rows(data)
         if not rows:
+            stop_reason = "EMPTY_PAGE"
             break
         for it in rows:
             parsed = _bizinfo_parse_item(it, site["name"], agg)
@@ -2689,7 +2801,11 @@ def _fetch_bizinfo_datagokr(site: dict) -> list[dict]:
             seen_ids.add(parsed["id"])
             items.append(parsed)
         if len(rows) < rows_key:
+            stop_reason = "LAST_PAGE"
             break
+    _page_stat(site.get("id", ""), stop_reason=stop_reason, pages_fetched=pages_read,
+               pages_read=pages_read, items_read=len(items), items=len(items),
+               **({"total_items": total_items} if total_items is not None else {}))
     return items
 
 
@@ -2811,6 +2927,8 @@ def _kstartup_cards_from_soup(soup: BeautifulSoup, clss: str, site: dict, seen_s
         item = _item(iid, title, link, org,
                      flag_text, dl,
                      site["name"], posted, agg)
+        item.update({"registered_at": posted,
+                     "date_source": "registered_at" if posted else "unknown"})
         try:
             from mail_core.matching.core_sources import attach_kstartup_list_structured
             item = attach_kstartup_list_structured(
@@ -2897,8 +3015,10 @@ def fetch_kstartup(site: dict) -> list[dict]:
         _page_stat(
             site.get("id") or site.get("name") or "kstartup",
             pages_fetched=_pages_done,
+            pages_read=_pages_done,
             stop_reason=_stop_reason,
             duplicate_page=_dup_pages >= 2,
+            items_read=len(items),
             items=len(items),
             public_items=per_class.get("공공", 0),
             private_items=per_class.get("민간", 0),
@@ -2944,6 +3064,39 @@ def _next_page_url(soup: BeautifulSoup, base_url: str, next_no: int) -> str:
     except Exception:
         pass
     return ""
+
+
+def _known_pagination_metadata(soup: BeautifulSoup, site: dict) -> dict[str, int]:
+    """사이트 설정이 명시한 총건수/마지막 페이지를 읽는다. 추측값은 기록하지 않는다."""
+    selectors = site.get("selectors", {}) if isinstance(site.get("selectors"), dict) else {}
+    result: dict[str, int] = {}
+    for key, selector_key in (("total_items", "total_count"), ("last_page", "last_page")):
+        selector = site.get(f"{selector_key}_selector") or selectors.get(f"{selector_key}_selector")
+        if selector:
+            try:
+                node = soup.select_one(str(selector))
+            except Exception:
+                node = None
+        elif key == "last_page":
+            node = soup.select_one('a[rel~="last"], a[title*="마지막"], a[aria-label*="마지막"]')
+        else:
+            node = None
+        if node is None and key == "total_items":
+            match = re.search(r"(?:총|전체)\s*([\d,]+)\s*(?:건|개)", soup.get_text(" ", strip=True))
+            if match:
+                parsed = int(match.group(1).replace(",", ""))
+                if parsed > 0:
+                    result[key] = parsed
+            continue
+        if node is None:
+            continue
+        value = " ".join((node.get_text(" ", strip=True), str(node.get("href") or "")))
+        numbers = re.findall(r"\d+", value.replace(",", ""))
+        if numbers:
+            parsed = int(numbers[-1] if key == "last_page" else numbers[0])
+            if parsed > 0:
+                result[key] = parsed
+    return result
 
 
 def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[dict]:
@@ -3001,27 +3154,54 @@ def _generic_page_items(soup: BeautifulSoup, site: dict, page_url: str) -> list[
             deadline = dates[-1].replace(".", "-").replace("/", "-") if len(dates) >= 2 else ""
         posted = select_date(row, date_selector) or posted
         deadline = select_date(row, deadline_selector) or deadline
+        published_at = _labeled_date_from_text(
+            row_text, ("게시일", "게시일자", "공고일", "공고일자", "작성일"),
+        )
+        registered_at = _labeled_date_from_text(row_text, ("등록일", "등록일자"))
+        updated_at = _labeled_date_from_text(row_text, ("수정일", "변경일", "최종수정일"))
+        selected_date = select_date(row, date_selector) if date_selector else ""
+        basis = str(site.get("date_basis") or "").strip().lower()
+        if selected_date and basis == "posted" and not published_at:
+            published_at = selected_date
+        elif selected_date and basis == "registered" and not registered_at:
+            registered_at = selected_date
+        elif selected_date and basis == "modified" and not updated_at:
+            updated_at = selected_date
         # 목록에 등록일 라벨이 없고 마감/공고·접수기간만 있으면 그 날짜를 posted_date 로 쓰지 않는다.
         # KISED(마감일자만) → 미래 마감이 posted 로 들어가 days_back 에서 영구 제외(#281).
         # IITP(공고기간·접수기간만) → 기간 시작일이 posted 가 되어 접수중 공고가 N일 후 탈락.
         # posted 를 비우면 date_unknown_policy=recall 이 살린다. enrich 가 등록일을 채울 수도 있다.
-        _POSTED_LABELS = ("등록일", "등록일자", "게시일", "작성일", "공고일")
+        _POSTED_LABELS = ("등록일", "등록일자", "게시일", "게시일자", "작성일", "공고일", "공고일자")
         _DEADLINE_LABELS = ("마감일자", "마감일", "접수마감")
         _PERIOD_LABELS = ("공고기간", "접수기간", "모집기간", "신청기간", "지원신청기간")
         has_posted_label = any(lbl in row_text for lbl in _POSTED_LABELS)
+        has_non_posted_date = bool(re.search(r"(?:접수|신청)\s*시작일|첨부\s*(?:파일)?\s*(?:등록|생성|수정)일", row_text))
         has_deadline_label = any(lbl in row_text for lbl in _DEADLINE_LABELS)
         has_period_label = bool(period.get("display")) or any(lbl in row_text for lbl in _PERIOD_LABELS)
-        if not date_selector and not has_posted_label:
+        if (has_non_posted_date and not published_at
+                and (basis in {"posted", "registered", "modified"} or not registered_at)):
+            posted = ""
+        elif not date_selector and not has_posted_label:
             if has_deadline_label and dates:
                 if not deadline:
                     deadline = dates[-1].replace(".", "-").replace("/", "-")
                 posted = ""
             elif has_period_label:
                 posted = ""
+            elif re.search(r"첨부\s*(?:파일)?\s*(?:등록|생성|수정)일", row_text):
+                posted = ""
         author = select_text(row, selectors.get("author", ""))
         desc = select_text(row, selectors.get("description", ""))
-        items.append(_item(f"{site['id']}_{stable_id(title+link)}",
-                           title, link, author, desc, deadline, site["name"], posted, agg))
+        item = _item(f"{site['id']}_{stable_id(title+link)}",
+                     title, link, author, desc, deadline, site["name"], posted, agg)
+        date_metadata = {key: value for key, value in {
+            "published_at": published_at, "registered_at": registered_at,
+            "updated_at": updated_at,
+        }.items() if value}
+        if date_metadata:
+            item.update(date_metadata)
+            item["date_source"] = "published_at" if published_at else ("registered_at" if registered_at else "updated_at")
+        items.append(item)
     return items
 
 
@@ -3077,9 +3257,15 @@ def fetch_html_generic(site: dict) -> list[dict]:
         if page_no == max_pages:
             stop_reason = "MAX_PAGES_HIT"
 
+    page_meta = _known_pagination_metadata(soup, site) if soup else {}
+    if stop_reason == "MAX_PAGES_HIT" and (
+        (page_meta.get("last_page") is not None and pages_fetched >= page_meta["last_page"])
+        or (page_meta.get("total_items") is not None and len(items) >= page_meta["total_items"])
+    ):
+        stop_reason = "LAST_PAGE"
     _page_stat(site.get("id", ""), stop_reason=stop_reason, pages_fetched=pages_fetched,
-               duplicate_page=dup_pages > 0, row_candidates=len(soup.select(sel)) if soup else 0,
-               items=len(items))
+               pages_read=pages_fetched, items_read=len(items), duplicate_page=dup_pages > 0,
+               row_candidates=len(soup.select(sel)) if soup else 0, items=len(items), **page_meta)
     log.info("%s: %d건%s", site["name"], len(items),
              f" ({pages_fetched}p)" if pages_fetched > 1 else "")
     return items
@@ -4419,7 +4605,7 @@ def fetch_site_coverage(
             rows.append(row)
             continue
         try:
-            fetched = fn(site)
+            fetched = _apply_site_date_basis(fn(site), site)
             if fetched is None:
                 items = []
             elif isinstance(fetched, list):
@@ -4503,7 +4689,7 @@ def fetch_all(
     def _fetch(s: dict) -> list[dict]:
         fn = FETCHERS.get(s.get("type", ""))
         if fn:
-            return fn(s)
+            return _apply_site_date_basis(fn(s), s)
         log.warning("알 수 없는 타입: %s (%s)", s.get("type"), s.get("name"))
         return []
 
@@ -8312,6 +8498,10 @@ def execute_monitor(
     # deliver: 실제 발송(effective_send) 또는 초안 생성(draft_mode)
     deliver = effective_send or draft_mode
     now = datetime.now(KST)
+    try:
+        write_deadline_conflicts_report([], run_at=now)
+    except Exception as e:
+        log.warning("목록/상세 마감 충돌 리포트 초기화 실패(무시): %s", e)
     mode = "send" if effective_send else ("draft" if draft_mode else "preview")
     log.info("=== 모니터링 시작 v6 (%s) / mode=%s ===", now.strftime("%Y-%m-%d %H:%M KST"), mode)
 
@@ -8533,6 +8723,11 @@ def execute_monitor(
             )
     except Exception as e:
         log.warning("extraction retry 실패(무시·분류 계속): %s", e)
+
+    try:
+        write_deadline_conflicts_report(enriched_candidates, run_at=now)
+    except Exception as e:
+        log.warning("목록/상세 마감 충돌 리포트 저장 실패(무시): %s", e)
 
     # MAIL-P0D-01: ENRICH — 상세 추출 상태(detail_extraction.status) 기준으로 기록.
     try:
@@ -9204,6 +9399,26 @@ def write_coverage_anomaly_report(
                 f"{(a.get('url', '') or '')[:80]}"
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def write_deadline_conflicts_report(items: list[dict], run_at: datetime | None = None) -> Path:
+    """목록/상세 마감 충돌을 식별 가능한 최소 필드로 daily_review 입력에 저장한다."""
+    run_at = run_at or datetime.now(KST)
+    conflicts = []
+    for item in items or []:
+        conflict = item.get("deadline_conflict") if isinstance(item, dict) else None
+        if not isinstance(conflict, dict):
+            continue
+        conflicts.append({
+            "site_id": str(item.get("site_id") or ""),
+            "notice_id": str(item.get("id") or ""),
+            "list": str(conflict.get("list") or ""),
+            "detail": str(conflict.get("detail") or ""),
+        })
+    path = LOGS_DIR / f"deadline_conflicts_{run_at:%Y%m%d}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"conflicts": conflicts}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return path
 
 
