@@ -6,6 +6,7 @@
   "raw_all_enabled": true,
   "raw_all_recipients": [],
   "company_match_enabled": true,
+  "max_companies_per_notice": null,
   "max_posted_age_days": null,
   "date_unknown_policy": "recall",
   "date_unknown_max_age_days": 40,

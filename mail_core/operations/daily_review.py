@@ -505,6 +505,7 @@ def build_review(
     require_coverage: bool = True,
     extra_scan: Iterable[Path] | None = None,
     companies: list[dict[str, Any]] | None = None,
+    fanout_report_path: Path | None = None,
 ) -> ReviewReport:
     moment = now_kst(when)
     date_s = date_s or moment.date().isoformat()
@@ -544,6 +545,11 @@ def build_review(
             # 식별자·기업명·이메일 등 private 값을 리포트로 내보내지 않는다.
             checks.append(CheckResult("MDR-006", "기업 지역정보 갱신 필요", "WARN",
                                       f"지역정보 갱신 후 {age}일 경과(365일 초과)"))
+    fanout_path = fanout_report_path or (VAR_DIR / "reports" / "company_match" / f"fanout_{date_s}_{slot}.json")
+    fanout = _read_json(fanout_path) or {}
+    if isinstance(fanout, dict) and fanout.get("exceeded_notices", 0):
+        checks.append(CheckResult("MATCH_FANOUT_HIGH", "공고별 기업 매칭 상한 초과", "WARN",
+                                  f"상한 초과 공고 {int(fanout['exceeded_notices'])}건"))
     overall = "FAIL" if any(c.status == "FAIL" for c in checks) else "PASS"
     return ReviewReport(
         date=date_s,

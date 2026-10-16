@@ -10,8 +10,8 @@
 # 0. TASK LIST
 
 [x] MAIL-041 | 기관 주소와 지원지역을 분리하고 제외지역을 차단하며 오래된 기업 지역정보를 경고한다
-[~] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
-[ ] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
+[x] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
+[~] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
 [ ] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
 [ ] MAIL-046 | 그룹판정 키워드가 다른 단어 속 글자·형태 변화·약어·부정 문맥 때문에 틀리지 않게 한다.
 [ ] MAIL-047 | 소스별 게시일 기준을 정해 새 공고를 날짜 착오로 빠뜨리지 않고, 페이지·목록/상세 누락을 감지한다.
@@ -3594,7 +3594,7 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 최종 판정→카드→lint 경로 및 관련 테스트 통과, 허용된 PR 반영 후 완료.
 - 구현·검증: deadline_context 명시 시각/도착기준 추출, KST 당일 마감 후 판정·카드 제외, D-0만 시각 표시. 시작 시각 오인 방지·UTC 변환·도착기준 카드→lint 검증.
 - 관련 검증: `python -m pytest tests/test_deadline_time_mail042.py tests/test_deadline_shortform.py tests/test_deadline_fix.py tests/test_period_gate.py tests/test_digest_lint.py tests/test_digest_eight_columns.py tests/test_monitor.py tests/test_5field_casematrix.py tests/test_decision_matrix.py -q` → 415 passed.
-- REQUEST_SOLVED=NO — 구현·관련 검증 완료, PR 반영 대기. 외부 수집·실발송 없음.
+- REQUEST_SOLVED=YES — PR #375 및 리뷰 보완 #376 병합(4e6eba8e), GitHub checks PASS. 관련 날짜·버전 회귀 450 passed, 수집 스키마 회귀 82 passed. 외부 수집·실발송 없음.
 
 ## MAIL-043
 
@@ -3611,7 +3611,11 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 기본 상한 미설정 시 기존 결과 보존, 실제 상한값 설정·실데이터/Secret 수정·실제 발송·전체 pytest 금지.
 - 브랜치 codex/mail-043-keyword-company-match, tests/test_company_selfname_mail043.py 및 기업매칭·daily_review 관련 회귀, 보안 스캔→push→별도 PR.
 - 실제 기업매칭→검수 경로 검증 및 허용된 PR 반영 후 완료.
-- REQUEST_SOLVED=NO — MAIL-042 다음 순차 실행.
+- 구현: 회사명 동일 키워드 제거·정규화 멱등·회사명 단독 매칭 하드 제외. CompanyMatchFanout을 그룹 2차 필터와 dry-run CLI에 연결, 기본값 null(off), 동일 기업 중복 그룹은 중복 계산하지 않음. 상한은 tenant별 공고에 설정된 그룹/프로필 순서대로 적용.
+- daily_review MATCH_FANOUT_HIGH는 비식별 집계 파일만 읽고 WARN 1건 표시. 상한을 끄면 같은 회차의 이전 경고를 초기화.
+- preference/owner_interest 필드는 현재 repo 기업 프로필·매처에 없음. 기존처럼 적격 점수에 포함하지 않으며 별도 선호 기능을 신설하지 않음.
+- 검증: `python -m pytest tests/test_company_selfname_mail043.py tests/test_company_match.py tests/test_company_match_business_years.py tests/test_company_match_multi_region.py tests/test_run_company_match_region.py tests/test_mail_daily_review.py tests/test_mail_run_preview.py tests/test_monitor.py tests/test_p0_hardening.py tests/test_streamlit_settings_save.py -q` → 208 passed. 실제 CLI→매칭→파일리포트·검수 및 monitor 2차 매칭 경로 검증, 실제 발송 없음.
+- REQUEST_SOLVED=NO — 구현·관련 검증 완료, 별도 PR 반영 대기. 실제 상한값은 설정하지 않음.
 
 ## MAIL-045
 
