@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from datetime import datetime
 
+import pytest
+
 os.environ.setdefault("BIZINFO_API_KEY", "test_key")
 os.environ.setdefault("ANTHROPIC_API_KEY", "test_key")
 os.environ.setdefault("GMAIL_APP_PASSWORD", "test_password")
@@ -95,6 +97,17 @@ def test_legacy_keyword_match_uses_aliases_and_negation():
         {"title": "AI 기업 제외", "description": "", "author": ""},
         {"keywords": ["AI"], "logic": "OR"},
     )
+
+
+@pytest.mark.parametrize("legacy_keywords", [["AI"], {"keywords": ["AI"], "logic": "OR"}])
+def test_legacy_group_config_keeps_gate_and_records_negation(legacy_keywords):
+    evaluated = evaluate_notice(
+        _item("인천 AI 기업 제외 모집 공고"),
+        {"id": "legacy", "keywords": legacy_keywords, "exclude_keywords": []},
+        TODAY,
+    )
+    assert evaluated["group_keyword_pass"] is False
+    assert evaluated["negated_hits"] == ["AI"]
 
 
 def test_scoring_uses_same_alias_and_negation_rules():

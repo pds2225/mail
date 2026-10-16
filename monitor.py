@@ -5828,6 +5828,22 @@ def keyword_match(item: dict, kw_cfg: dict) -> bool:
 def _normalize_group(group: dict) -> dict:
     """구버전(keywords.logic) → 신버전(or_keywords/and_keyword_groups) 정규화.
     신버전 필드가 하나라도 있으면 그대로 반환."""
+    legacy_keywords = group.get("keywords")
+    if (
+        not ("or_keywords" in group or "and_keyword_groups" in group)
+        and legacy_keywords is not None
+    ):
+        if isinstance(legacy_keywords, list):
+            kws, logic = legacy_keywords, "OR"
+        elif isinstance(legacy_keywords, dict):
+            kws = legacy_keywords.get("keywords", [])
+            logic = str(legacy_keywords.get("logic", "OR")).upper()
+        else:
+            kws, logic = [], "OR"
+        if logic == "AND":
+            group = {**group, "or_keywords": [], "and_keyword_groups": [kws] if kws else []}
+        else:
+            group = {**group, "or_keywords": kws, "and_keyword_groups": []}
     if "or_keywords" in group or "and_keyword_groups" in group or "exclude_keywords" in group:
         if "required_conditions" not in group:
             group = {**group, "required_conditions": {"regions": group.get("regions", [])}}
@@ -5879,13 +5895,20 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
     kw_text = _keyword_match_text(item)
     negated_hits: list[str] = []
     if group is not None:
+        legacy_cfg = g.get("keywords")
+        if isinstance(legacy_cfg, dict):
+            legacy_keywords = legacy_cfg.get("keywords") or []
+        elif isinstance(legacy_cfg, list):
+            legacy_keywords = legacy_cfg
+        else:
+            legacy_keywords = []
         configured_keywords = [
             *(g.get("or_keywords") or []),
             *(keyword for group_keywords in (g.get("and_keyword_groups") or [])
               for keyword in (group_keywords or [])),
             *(g.get("exclude_keywords") or []),
             *(g.get("priority_keywords") or []),
-            *(((g.get("keywords") or {}).get("keywords")) or []),
+            *legacy_keywords,
         ]
         negated_hits = _negated_keyword_hits(kw_text, configured_keywords)
     reason_codes: list[str] = []
