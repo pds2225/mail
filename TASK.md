@@ -9,7 +9,10 @@
 
 # 0. TASK LIST
 
-[~] MAIL-041 | 기관 주소와 지원지역을 분리하고 제외지역을 차단하며 오래된 기업 지역정보를 경고한다
+[x] MAIL-041 | 기관 주소와 지원지역을 분리하고 제외지역을 차단하며 오래된 기업 지역정보를 경고한다
+[~] MAIL-042 | 마감 시각과 도착기준을 파싱해 당일 마감 판정·카드 표시를 정확히 한다
+[ ] MAIL-043 | 회사 이름만으로 매칭되는 오탐을 막고 공고별 기업 매칭 상한을 선택 설정으로 지원한다
+[ ] MAIL-045 | 접힌 상세 본문을 읽고 이미지 전용 공고는 확인필요로 표시한다
 
 <!--
 비개발자가 이 부분만 보고도 현재 작업을 이해·수정·삭제할 수 있어야 한다.
@@ -3568,7 +3571,57 @@ REQUEST_SOLVED=YES — Windows(cp949)에서도 `config/sites.json`을 UTF-8로 �
 - 과거 기관명 단독 차단 기대값 6건은 MAIL-041 정책으로 갱신. 명시적 서울 지원대상 차단은 유지 검증.
 - PR 리뷰 보완: 제외 부정문 무시, 제외지역 라벨/지원 대상에서 제외 인식, private 갱신일 roundtrip 보존. 예약 daily_review에 기존 private config env 참조만 연결(Secret 값·workflow trigger 변경 없음).
 - PR: https://github.com/pds2225/mail/pull/373
-- REQUEST_SOLVED=NO — 로컬 판정·리뷰 경로 검증 완료. workflow 파일 변경은 §17의 사람 병합 예외이므로 자동병합하지 않는다. 실제 수집·실메일 검증은 지시상 실행하지 않는다.
+- REQUEST_SOLVED=YES — PR #373 main 병합(03f1a6af754fa610092d4c209cb4d9fae633aa1d, 2026-10-16). 최신 main 제품 트리가 최종 검증 커밋 3582210과 동일함을 확인. 관련 560 passed 및 GitHub test/docs-gate/Vercel PASS. 실제 수집·실메일 실행 없음.
+
+## MAIL-042
+
+### 사용자 원문
+마감 시각, 회사 이름 오매칭, 더보기와 이미지 공고: 아직 PR이 없어요. Codex에서 TASK.md 다음 작업을 이어서 하라고 해 주세요.
+
+### MUST
+- 로컬 codex_tasks/codex/TASK_3_deadline_time_postal.md를 실행한다.
+- deadline_time HH:MM 추출(오후 6시 포함, 24시는 23:59), KST 당일 시각 이후 제외.
+- D-0에만 시각 추가, 기존 M/D (D-N) 유지, 도착분·소인 문구는 deadline_basis=도착 및 도착기준 표시.
+- digest_table·digest_lint 일치, tests/test_deadline_time_mail042.py 및 관련 회귀.
+
+### KEEP / FORBIDDEN / VERIFY / DONE
+- 기존 날짜 없는/시각 없는 동작 유지. 실제 발송·workflow 실행·실데이터/Secret 변경·전체 pytest 금지.
+- 최신 main 작업 브랜치 codex/mail-042-deadline-time-postal, 변경분 보안 스캔 후 push·별도 PR·요구사항 대조.
+- 최종 판정→카드→lint 경로 및 관련 테스트 통과, 허용된 PR 반영 후 완료.
+- REQUEST_SOLVED=NO — 착수 전.
+
+## MAIL-043
+
+### 사용자 원문
+마감 시각, 회사 이름 오매칭, 더보기와 이미지 공고: 아직 PR이 없어요. Codex에서 TASK.md 다음 작업을 이어서 하라고 해 주세요.
+
+### MUST
+- 로컬 codex_tasks/codex/TASK_4_keyword_company_match.md를 실행한다.
+- 회사명 및 공백·(주)·주식회사 변형과 같은 키워드를 근거에서 제외, 회사명만 있으면 미매칭.
+- 선택 max_companies_per_notice 기본 off, 설정 시 상한 적용 및 daily_review MATCH_FANOUT_HIGH 경고.
+- preference/owner_interest는 존재 여부 확인, 없으면 문서화만. 적격 점수에 대표자 선호를 넣지 않는다.
+
+### KEEP / FORBIDDEN / VERIFY / DONE
+- 기본 상한 미설정 시 기존 결과 보존, 실제 상한값 설정·실데이터/Secret 수정·실제 발송·전체 pytest 금지.
+- 브랜치 codex/mail-043-keyword-company-match, tests/test_company_selfname_mail043.py 및 기업매칭·daily_review 관련 회귀, 보안 스캔→push→별도 PR.
+- 실제 기업매칭→검수 경로 검증 및 허용된 PR 반영 후 완료.
+- REQUEST_SOLVED=NO — MAIL-042 다음 순차 실행.
+
+## MAIL-045
+
+### 사용자 원문
+마감 시각, 회사 이름 오매칭, 더보기와 이미지 공고: 아직 PR이 없어요. Codex에서 TASK.md 다음 작업을 이어서 하라고 해 주세요.
+
+### MUST
+- 로컬 codex_tasks/codex/TASK_6_detail_fold_image.md를 실행한다.
+- 숨김·접힘·더보기 컨테이너의 본문 텍스트도 추출(스크립트·스타일 제외).
+- 본문 80자 미만+본문 이미지 존재 시 body_status=IMAGE_ONLY, 잡메타 숨김·마감 미상 확인필요. OCR 추가 없음.
+
+### KEEP / FORBIDDEN / VERIFY / DONE
+- 기존 상세보강·표시 흐름 재사용, OCR/새 의존성·실제 수집/발송/workflow 실행·Secret 변경·전체 pytest 금지.
+- 브랜치 codex/mail-045-detail-fold-image, tests/test_detail_fold_image_mail045.py 및 상세·표시 관련 회귀, 보안 스캔→push→별도 PR.
+- 상세 HTML→지원내용 표시→lint 경로 검증 및 허용된 PR 반영 후 완료.
+- REQUEST_SOLVED=NO — MAIL-043 다음 순차 실행.
 
 # 9. 실제사용 시나리오
 
