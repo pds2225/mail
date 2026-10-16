@@ -75,11 +75,24 @@ TEST_RECIPIENT = "test-recipient@example.test"
 
 # ── 기업 프로필 로딩 ──────────────────────────────────────────────────────────
 
+def _company_name_key(value: str) -> str:
+    value = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    return re.sub(r"\s+|\(\s*[주유]\s*\)|주식회사|유한회사", "", value)
+
+
 def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
     """누락 필드를 안전한 기본값으로 보정한 기업 프로필을 반환."""
     region = raw.get("region") or {}
     if not isinstance(region, dict):
         region = {}
+    name_key = _company_name_key(raw.get("name") or "")
+    keywords = {key: list(raw.get(key) or []) for key in
+                ("industry_keywords", "interest_keywords", "exclude_keywords")}
+    removed = bool(raw.get("_self_name_removed"))
+    for key, values in keywords.items():
+        removed = removed or (key != "exclude_keywords" and any(
+            name_key and _company_name_key(value) == name_key for value in values))
+        keywords[key] = [value for value in values if not name_key or _company_name_key(value) != name_key]
     return {
         "id": str(raw.get("id") or raw.get("email") or "company"),
         "name": str(raw.get("name") or "이름없는 기업"),
@@ -91,9 +104,8 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
             "district": str(region.get("district") or ""),
         },
         "region_updated_at": str(raw.get("region_updated_at") or ""),
-        "industry_keywords": list(raw.get("industry_keywords") or []),
-        "interest_keywords": list(raw.get("interest_keywords") or []),
-        "exclude_keywords": list(raw.get("exclude_keywords") or []),
+        **keywords,
+        "_self_name_removed": removed,
         "has_factory": bool(raw.get("has_factory", False)),
         "export_focus": bool(raw.get("export_focus", False)),
         # MAIL-016: 기업 개별 업력 Hard Gate 용 최소 필드. business_stage 가 예비창업
@@ -516,6 +528,13 @@ def _hard_excluded(item: dict[str, Any], company: dict[str, Any] | None = None) 
     ineligible 일 때만 제외하고, unknown 은 통과시켜 다음 단계(점수 판정)로 넘긴다.
     """
     if company is not None:
+        name = _company_name_key(company.get("name") or "")
+        text = _haystack(item)
+        if company.get("_self_name_removed") and name and name in _company_name_key(text):
+            industry = _count_hits(text.lower(), company.get("industry_keywords") or [])[0]
+            interest = _count_hits(text.lower(), company.get("interest_keywords") or [])[0]
+            if not industry and not interest:
+                return "하드제외(COMPANY_NAME_ONLY)"
         excluded = region_exclusions("\n".join(str(item.get(k) or "") for k in
                                                ("title", "description", "target_field", "region_field")))
         city = str((company.get("region") or {}).get("city") or "")

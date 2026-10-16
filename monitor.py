@@ -6371,6 +6371,7 @@ def filter_for_group(items: list[dict], group: dict) -> list[dict]:
 
 def refine_included_by_company(
     included: list[dict], group: dict, settings: dict, companies_by_id: dict,
+    *, fanout=None,
 ) -> tuple[list[dict], list[dict]]:
     """evaluate_notice 통과분(included)을 그룹에 연결된 기업 프로필로 2차 정밀 컷오프.
 
@@ -6386,6 +6387,9 @@ def refine_included_by_company(
     if not company:
         return included, []
     result = _match_for_company(included, company)
+    if fanout is not None:
+        kept, capped = fanout.apply(result["matched"], company)
+        return kept, result["rejected"] + capped
     return result["matched"], result["rejected"]
 
 
@@ -8753,6 +8757,11 @@ def execute_monitor(
         except Exception as e:
             log.warning("기업 프로필 로드 실패 — 정밀 매칭 건너뜀: %s", e)
 
+    from mail_core.matching.company_fanout import CompanyMatchFanout
+    _company_fanout = CompanyMatchFanout(
+        settings.get("max_companies_per_notice") if settings.get("company_match_enabled") else None,
+        report_path=REPO_ROOT / "var" / "reports" / "company_match" / f"fanout_{now.date()}_{delivery_slot(now)}.json",
+    )
     sent_groups: list[dict] = []
     preview_groups: list[dict] = []
     for group in groups:
@@ -8786,7 +8795,7 @@ def execute_monitor(
             review_items = review_items + _score_demoted
             log.info("그룹 '%s' 점수/LLM 컷오프: %d건 → 검토 강등", group.get("name"), len(_score_demoted))
         # 2차 정밀 컷오프: 그룹에 연결된 기업 프로필 점수 미달은 검토로 강등
-        g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id)
+        g_items, _demoted = refine_included_by_company(g_items, group, settings, companies_by_id, fanout=_company_fanout)
         if _demoted:
             review_items = review_items + _demoted
             log.info("그룹 '%s' 기업매칭 컷오프: %d건 → 검토 강등", group.get("name"), len(_demoted))
