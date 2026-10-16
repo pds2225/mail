@@ -335,6 +335,35 @@ def run_checks(
             )
         )
 
+    # MAIL-047: 소스 수집 실행대장의 페이지/목록 미달을 일일 검수에도 노출한다.
+    incomplete_pages = []
+    if isinstance(coverage, dict):
+        for source in coverage.get("sources") or []:
+            reasons = set(source.get("reason_codes") or [])
+            detail = source.get("detail") or {}
+            page_stat = detail.get("page_stat") or source.get("page_stat") or {}
+            try:
+                page_short = (
+                    page_stat.get("pages_read") is not None
+                    and page_stat.get("last_page") is not None
+                    and int(page_stat["pages_read"]) < int(page_stat["last_page"])
+                ) or (
+                    page_stat.get("items_read") is not None
+                    and page_stat.get("total_items") is not None
+                    and int(page_stat["items_read"]) < int(page_stat["total_items"])
+                )
+            except (TypeError, ValueError):
+                page_short = False
+            if "PAGINATION_INCOMPLETE" in reasons or page_short:
+                incomplete_pages.append(str(source.get("site_id") or "unknown"))
+    if incomplete_pages:
+        checks.append(CheckResult(
+            "MDR-007", "페이지네이션 미완료", "WARN",
+            "확인 필요 소스: " + ", ".join(incomplete_pages[:20]),
+        ))
+    else:
+        checks.append(CheckResult("MDR-007", "페이지네이션 미완료", "PASS", "미달 신호 없음"))
+
     # MDR-003: 08:54 외부발송 징후
     if detect_external_send(scan_text):
         checks.append(
@@ -528,6 +557,14 @@ def build_review(
         run_duration_sec=run_duration_sec,
         require_coverage=require_coverage,
     )
+    conflict_path = (logs_dir or LOGS_DIR) / f"deadline_conflicts_{date_s.replace('-', '')}.json"
+    conflict_payload = _read_json(conflict_path) or {}
+    conflict_rows = conflict_payload.get("conflicts") if isinstance(conflict_payload, dict) else []
+    if conflict_rows:
+        checks.append(CheckResult(
+            "DEADLINE_CONFLICT", "목록/상세 마감일 불일치", "WARN",
+            f"상세 마감일 우선 적용, 검토 필요 {len(conflict_rows)}건",
+        ))
     # 오래된 기업 지역정보는 운영 검수 경고만 추가한다. 발송 판정에는 관여하지 않는다.
     if companies is None:
         from mail_core.matching.company_match import load_companies
