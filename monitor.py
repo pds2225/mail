@@ -1940,6 +1940,7 @@ def _persist_detail_extraction_meta(item: dict) -> None:
 def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, Any]:
     """상세 페이지에서 본문·지역·신청기간 추출."""
     result: dict[str, Any] = {}
+    body_node = None
     if "k-startup.go.kr" in url:
         for tit in soup.select("p.tit"):
             label = norm(tit.get_text())
@@ -1953,15 +1954,18 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, Any]:
             if val and key not in result:   # 같은 라벨 중복 시 첫 값만
                 result[key] = val
         body = soup.select_one(".view_cont, .content_view, #contents")
+        body_node = body or soup.select_one("#contentViewHtml, .app_notice_details-wrap, .content_wrap")
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
     elif "exportvoucher.com" in url:
         body = soup.select_one(".board_view, .view_cont, .bbs_view, article, #contents")
+        body_node = body
         if not body:
             body = soup
         result["body"] = body.get_text("\n", strip=True)[:12000]
     elif "nipa.kr" in url:
         body = soup.select_one(".detail") or soup.select_one(".tab3.bsnsWrap")
+        body_node = body
         if body:
             result["body"] = body.get_text("\n", strip=True)[:12000]
     elif "bizinfo.go.kr" in url:
@@ -1981,14 +1985,23 @@ def _parse_detail_from_page(soup: BeautifulSoup, url: str) -> dict[str, Any]:
             val = norm(txt_div.get_text("\n", strip=True))
             if val and key not in result:
                 result[key] = val[:12000] if key == "body" else val
+                if key == "body":
+                    body_node = txt_div
         if "body" not in result:
             body = soup.select_one("article, .view_cont, #contents, main, .content")
+            body_node = body
             if body:
                 result["body"] = body.get_text("\n", strip=True)[:12000]
     else:
         body = _extract_main_content(soup)
+        body_node = soup.select_one(GENERIC_CONTENT_SELECTORS)
         if body:
             result["body"] = body[:12000]
+    from mail_core.operations.detail_runtime_adapter import extract_body_candidate
+    candidate = extract_body_candidate(body_node)
+    if candidate and (candidate.get("has_folded_content") or candidate.get("body_status") in {"IMAGE_ONLY", "FOLDED_INCOMPLETE"}
+                      or any(host in url for host in ("k-startup.go.kr", "exportvoucher.com", "nipa.kr", "bizinfo.go.kr"))):
+        result.update(candidate)
     detail_tables = _extract_detail_tables(soup)
     if detail_tables["tables"]:
         result["tables"] = detail_tables
@@ -2028,6 +2041,8 @@ def enrich_item_from_detail(item: dict) -> dict:
         _persist_detail_extraction_meta(updated)
         return updated
     updated = {**item, "detail_enriched": True}
+    if fields.get("body_status"):
+        updated["body_status"] = fields["body_status"]
     detail_keys = set(fields)
     if fields.get("tables"):
         updated["detail_tables"] = fields["tables"]
@@ -2098,8 +2113,12 @@ def enrich_item_from_detail(item: dict) -> dict:
     if period.get("display"):
         detail_keys.update({"deadline", "application_period"})
     updated.update(_deadline_details(updated))
+    image_only = fields.get("body_status") == "IMAGE_ONLY"
+    folded_unavailable = fields.get("body_status") == "FOLDED_INCOMPLETE"
     updated = _with_detail_extraction(
-        updated, EXTRACTION_SUCCESS, "detail_parsed", detail_keys=detail_keys)
+        updated, PARSE_FAILED if image_only or folded_unavailable else EXTRACTION_SUCCESS,
+        "image_only_detail" if image_only else ("folded_body_unavailable" if folded_unavailable else "detail_parsed"),
+        detail_keys=detail_keys)
     _persist_detail_extraction_meta(updated)
     return updated
 
@@ -6614,6 +6633,8 @@ def _mail_target_text(item: dict) -> str:
 
 def _mail_support_blurb(item: dict, limit: int = MAIL_SUPPORT_BLURB_LIMIT) -> str:
     """구조화 지원내용을 우선하고, 모바일 한 화면 기준 160자로 제한한다."""
+    if item.get("body_status") == "IMAGE_ONLY":
+        return ""
     structured = _mail_clean_text(item.get("support_field"), limit=limit)
     description = _mail_clean_text(item.get("description"), limit=limit)
     candidate = structured if len(structured) >= 25 else description or structured
@@ -6932,6 +6953,8 @@ MAIL_SUPPORT_LINE_LIMIT = 60  # HTML 은 CSS ellipsis 로 한 줄 클립, plain 
 
 def _mail_support_summary(item: dict, limit: int = MAIL_SUPPORT_LINE_LIMIT) -> str:
     """카드 2줄(짧게): '최대 N만원 + 짧은 문구'. 기존 필드만 사용(새 AI 호출 없음)."""
+    if item.get("body_status") == "IMAGE_ONLY":
+        return ""
     try:
         amt = extract_support_amount(" ".join((
             _notice_text(item), str(item.get("support_field") or ""))))
