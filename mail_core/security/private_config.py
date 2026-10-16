@@ -213,6 +213,8 @@ def split_public_private(
         company.pop("email", None)
         if company_id:
             payload["companies"][company_id] = {"tenant_id": tenant, "email": email}
+            if "region_updated_at" in company:
+                payload["companies"][company_id]["region_updated_at"] = str(company.pop("region_updated_at") or "")
         public_company_list.append(company)
     public_companies: Any = {"companies": public_company_list} if isinstance(companies, dict) else public_company_list
 
@@ -268,6 +270,8 @@ def merge_companies(companies: Any, payload: dict[str, Any] | None = None) -> An
         record = private["companies"].get(str(company.get("id") or "")) or {}
         if record and normalize_tenant_id(record.get("tenant_id")) == tenant:
             company["email"] = str(record.get("email") or "").strip()
+            if "region_updated_at" in record:
+                company["region_updated_at"] = str(record.get("region_updated_at") or "")
         else:
             company["email"] = ""
         merged.append(company)

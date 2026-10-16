@@ -202,6 +202,9 @@ jobs:
         if: always()
         id: daily_review
         continue-on-error: true
+        env:
+          MAIL_PRIVATE_CONFIG_JSON: ${{ secrets.MAIL_PRIVATE_CONFIG_JSON }}
+          MAIL_PRIVATE_CONFIG_KEY: ${{ secrets.MAIL_PRIVATE_CONFIG_KEY }}
         run: |
           set +e
           python scripts/mail_daily_review.py --fail-on-error

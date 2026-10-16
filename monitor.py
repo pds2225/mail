@@ -282,6 +282,8 @@ def _applicant_restricted_regions(text: str) -> set[str]:
     """신청자를 특정 광역으로 한정하는 강신호('{광역}{소재/지역…} {기업…}')의 광역 약칭 집합."""
     if not text:
         return set()
+    from mail_core.matching.region_context import applicant_region_text
+    text = applicant_region_text(text)
     out: set[str] = set()
     # (a) 다지역 나열 "서울ㆍ인천ㆍ강원 소재 기업" — 나열된 광역 전부를 강신호로(대칭·recall).
     for mch in _APPLICANT_RESTRICT_LIST_RE.finditer(text):
@@ -1550,7 +1552,14 @@ def _applicant_target_text(item: dict) -> str:
         item.get("target_field", ""),
         item.get("target_age_field", ""),
     ]
-    return norm(" ".join(p for p in parts if p))
+    from mail_core.matching.region_context import applicant_region_text
+    return norm(applicant_region_text("\n".join(str(p) for p in parts if p)))
+
+
+def _applicant_region_exclusions(item: dict) -> dict:
+    from mail_core.matching.region_context import region_exclusions
+    return region_exclusions("\n".join(str(item.get(k) or "") for k in
+                                      ("title", "description", "target_field", "region_field")))
 
 
 def _region_field_short(region_field: str) -> str:
@@ -1596,7 +1605,8 @@ def _resolve_applicant_region_scope(item: dict) -> dict[str, Any]:
         for r in KNOWN_REGIONS
     )
 
-    rf = norm(item.get("region_field") or "")
+    from mail_core.matching.region_context import applicant_region_text
+    rf = norm(applicant_region_text(str(item.get("region_field") or "")))
     rf_short = _region_field_short(rf) if rf else ""
     # 메타 region_field='전국'은 본문에 지원대상 지역 단서가 없을 때만 보조(recall).
     if rf == "전국" and not has_applicant_local:
@@ -1613,13 +1623,24 @@ def _resolve_applicant_region_scope(item: dict) -> dict[str, Any]:
         ):
             nationwide = False
 
-    return {"regions": _unique(regions), "nationwide": nationwide}
+    exclusions = _applicant_region_exclusions(item)
+    excluded = set(exclusions["excluded_regions"])
+    regions = [r for r in regions if _short_region(r) not in excluded]
+    scope = {"regions": _unique(regions), "nationwide": nationwide, **exclusions}
+    if not regions and not nationwide:
+        from mail_core.matching.region_context import agency_region_hints
+        hints = agency_region_hints(f"{item.get('author', '')} {item.get('organizer_field', '')}")
+        if hints:
+            scope["agency_regions"] = hints
+    return scope
 
 
 def _detect_target_regions(text: str) -> dict[str, Any]:
     """지원 대상 지역 힌트 (전국 / 특정 시·도)."""
     if not text:
         return {"regions": [], "nationwide": False}
+    from mail_core.matching.region_context import applicant_region_text
+    text = applicant_region_text(text)
     regions: list[str] = []
     nationwide = False
     for phrase in ("전국", "국내 전체", "국내전체", "제한 없음"):
@@ -5417,12 +5438,10 @@ def _other_region_block(item: dict, own_meta: dict):
     """'지역=전국'으로 박혀도 명백한 타지역 한정이면 차단사유 반환(아니면 None) — recall-safe.
     own_meta={'label': 광역약칭(예 '경기'/'서울'/'인천'), 'districts': [자치구 풀네임...]}.
     own 신호(자치구 풀네임/광역명) 또는 사람이 쓴 제목·본문 '전국'이 있으면 None(미발동).
-    (A) own family 가 아닌 광역권 토큰(제목), (B) 기초자치단체·지역재단 주관 + 비-own 지역명."""
+    own family 가 아닌 광역권 토큰(제목). 기관명 단독은 제한 근거로 쓰지 않는다."""
     title = str(item.get("title", ""))
-    raw_text = f"{title} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
-    text = _notice_text(item)
-    org_text = f"{item.get('organizer_field','')} {item.get('author','')}"
-    own_blob = f"{raw_text} {item.get('organizer_field','')}".lower()
+    text = _applicant_target_text(item)
+    own_blob = f"{text} {item.get('region_field','')}".lower()
     own_label = (own_meta.get("label") or "").strip().lower()
     districts = [d for d in own_meta.get("districts", []) if d]
     extra = {str(r).strip().lower() for r in own_meta.get("extra", []) if str(r).strip()}
@@ -5441,12 +5460,7 @@ def _other_region_block(item: dict, own_meta: dict):
         norm_r = "수도권" if mch.group("r") == "수도" else mch.group("r")
         if norm_r.lower() not in fam:
             return "타지역 권역"
-    # (B) 기초자치단체/지역재단 주관 + 비-own 지역명 (전국운영기관 제외)
-    if _LOCAL_GOV_ORG_RE.search(org_text) and not _NATIONAL_SCOPE_ORG_RE.search(org_text):
-        own_loc = {own_label} | {d.lower() for d in districts} | extra
-        other = [loc for loc in _ALL_LOCALITIES if loc in org_text and loc.lower() not in own_loc]
-        if other:
-            return other[:3]
+    # 기관 소재지만으로 지원대상 지역을 제한하지 않는다(MAIL-041).
     return None
 
 
@@ -5461,8 +5475,10 @@ def _metro_peer_districts(city: str, label: str) -> list[str]:
 def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
-    text = _notice_text(item)
-    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    text = _applicant_target_text(item)
+    from mail_core.matching.region_context import applicant_region_text
+    raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
+                                             ("title", "description", "region_field")))
     city = group.get("applicant_region_city", "")
     label = (group.get("applicant_region_label") or _short_region(city) or city).lower()
     district = group.get("applicant_region_district", "")
@@ -5473,7 +5489,12 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
 
     def result(rs: str, ds: str, elig: list[str], excl: list[str]) -> dict:
         return {"region_status": rs, "district_status": ds,
-                "eligible_regions": _unique(elig), "excluded_regions": _unique(excl)}
+                "eligible_regions": _unique(elig), "excluded_regions": _unique(excl),
+                "island_excluded": _applicant_region_exclusions(item)["island_excluded"]}
+
+    exclusions = _applicant_region_exclusions(item)
+    if _short_region(city or label) in exclusions["excluded_regions"]:
+        return result("not_eligible", "not_eligible", [], exclusions["excluded_regions"])
 
     for phrase in group.get("region_exclude_phrases", []):
         if phrase in raw_text:
@@ -5576,12 +5597,19 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
 
 
 def classify_region(item: dict) -> dict:
-    text = _notice_text(item)
-    raw_text = f"{item.get('title','')} {item.get('description','')} {item.get('author','')} {item.get('region_field','')}"
+    text = _applicant_target_text(item)
+    from mail_core.matching.region_context import applicant_region_text
+    raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
+                                             ("title", "description", "region_field")))
     eligible_regions: list[str] = []
     excluded_regions: list[str] = []
     region_status = "unknown"
     district_status = "unknown"
+
+    exclusions = _applicant_region_exclusions(item)
+    if "인천" in exclusions["excluded_regions"]:
+        return {"region_status": "not_eligible", "district_status": "not_eligible",
+                "eligible_regions": [], **exclusions}
 
     if any(phrase in raw_text for phrase in REGION_EXCLUDE_PHRASES):
         return {
@@ -5704,6 +5732,7 @@ def classify_region(item: dict) -> dict:
         "district_status": district_status,
         "eligible_regions": _unique(eligible_regions),
         "excluded_regions": _unique(excluded_regions),
+        "island_excluded": exclusions["island_excluded"],
     }
 
 

@@ -52,7 +52,7 @@ SHORT_RUN_SEC = 300  # 5분
 class CheckResult:
     id: str
     label: str
-    status: str  # PASS | FAIL | SKIP
+    status: str  # PASS | FAIL | SKIP | WARN
     detail: str = ""
 
 
@@ -420,7 +420,7 @@ def render_markdown(report: ReviewReport) -> str:
         "",
     ]
     for c in report.checks:
-        mark = {"PASS": "PASS", "FAIL": "FAIL", "SKIP": "SKIP"}.get(c.status, "?")
+        mark = {"PASS": "PASS", "FAIL": "FAIL", "SKIP": "SKIP", "WARN": "WARN"}.get(c.status, "?")
         lines.append(f"- [{mark}] `{c.id}` {c.label}: {c.status} - {c.detail}")
     lines.extend(["", "## Inputs", ""])
     for k, v in report.inputs.items():
@@ -504,6 +504,7 @@ def build_review(
     run_duration_sec: float | None = None,
     require_coverage: bool = True,
     extra_scan: Iterable[Path] | None = None,
+    companies: list[dict[str, Any]] | None = None,
 ) -> ReviewReport:
     moment = now_kst(when)
     date_s = date_s or moment.date().isoformat()
@@ -526,6 +527,23 @@ def build_review(
         run_duration_sec=run_duration_sec,
         require_coverage=require_coverage,
     )
+    # 오래된 기업 지역정보는 운영 검수 경고만 추가한다. 발송 판정에는 관여하지 않는다.
+    if companies is None:
+        from mail_core.matching.company_match import load_companies
+        companies = load_companies()
+    for company in companies:
+        raw_date = str(company.get("region_updated_at") or "").strip()
+        if not raw_date:
+            continue
+        try:
+            updated = datetime.fromisoformat(raw_date.replace("Z", "+00:00"))
+            age = (datetime.fromisoformat(date_s).date() - now_kst(updated).date()).days
+        except ValueError:
+            continue
+        if age > 365:
+            # 식별자·기업명·이메일 등 private 값을 리포트로 내보내지 않는다.
+            checks.append(CheckResult("MDR-006", "기업 지역정보 갱신 필요", "WARN",
+                                      f"지역정보 갱신 후 {age}일 경과(365일 초과)"))
     overall = "FAIL" if any(c.status == "FAIL" for c in checks) else "PASS"
     return ReviewReport(
         date=date_s,
