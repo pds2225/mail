@@ -103,6 +103,8 @@ def _normalize_company(raw: dict[str, Any]) -> dict[str, Any]:
             "city": str(region.get("city") or ""),
             "district": str(region.get("district") or ""),
         },
+        "sites": [site for site in raw.get("sites", []) if isinstance(site, (dict, str))]
+        if isinstance(raw.get("sites"), list) else [],
         "region_updated_at": str(raw.get("region_updated_at") or ""),
         **keywords,
         "_self_name_removed": removed,
@@ -204,7 +206,8 @@ def _region_cluster_verdict(atext: str, city: str) -> tuple[bool, bool]:
 def _region_signals(item: dict[str, Any]):
     """monitor 의 검증된 '지원대상 지역' 판정을 재사용한다(지연 import — self-contained 유지).
 
-    반환 (restricted, regions, nationwide, atext) 또는 None(monitor 사용 불가 → 호출측 fallback).
+    반환 (restricted, regions, nationwide, atext, basis, relocation, participants)
+    또는 None(monitor 사용 불가 → 호출측 fallback).
     - restricted: '{광역} 소재 기업만' 같은 신청자격 강신호 광역 약칭 집합(보일러플레이트/개최지 제거됨)
     - regions:    지원대상 본문에서 감지된 광역 약칭 집합(개최지 언급 포함, 보조)
     - nationwide: 전국 대상 여부
@@ -226,7 +229,10 @@ def _region_signals(item: dict[str, Any]):
         sc = _scope(item)
         regions = {_sr(r) for r in (sc.get("regions") or [])}
         nationwide = bool(sc.get("nationwide"))
-        return restricted, regions, nationwide, atext
+        return (restricted, regions, nationwide, atext,
+                sc.get("region_basis", "unspecified"),
+                bool(sc.get("relocation_required")),
+                set(sc.get("participating_regions") or []))
     except Exception:
         return None
 
@@ -263,25 +269,53 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
     region = company.get("region") or {}
     city = short_region((region.get("city") or "").strip())
     district = (region.get("district") or "").strip()
+    sig = _region_signals(item)
+    region_basis = sig[4] if sig is not None else "unspecified"
+    headquarters = {"city": city, "district": district}
+    sites: list[dict[str, str]] = []
+    for site in company.get("sites") or []:
+        if isinstance(site, str):
+            site = {"city": site}
+        site_region = site.get("region") if isinstance(site.get("region"), dict) else site
+        site_city = short_region(str(site_region.get("city") or site_region.get("province") or "").strip())
+        site_district = str(site_region.get("district") or site_region.get("gu") or "").strip()
+        if site_city:
+            sites.append({"city": site_city, "district": site_district,
+                          "kind": str(site.get("kind") or site.get("type") or "").lower()})
+    if region_basis == "headquarters" or not sites:
+        locations = [headquarters] if city else []
+    elif region_basis == "factory" and any(s["kind"] in {"factory", "공장", "plant"} for s in sites):
+        locations = [{"city": s["city"], "district": s["district"]} for s in sites
+                     if s["kind"] in {"factory", "공장", "plant"}]
+    else:
+        locations = [{"city": s["city"], "district": s["district"]} for s in sites]
+    company_regions = {loc["city"] for loc in locations if loc.get("city")}
+    company_districts = {loc["district"] for loc in locations if loc.get("district")}
     region_score = 0
     region_status = "unknown"
-    own = {city} if city else set()
+    relocation_required = bool(sig[5]) if sig is not None else False
+    own = company_regions
 
     excluded = region_exclusions("\n".join(str(item.get(k) or "") for k in
                                            ("title", "description", "target_field", "region_field")))
-    sig = _region_signals(item)
     if sig is not None:
-        restricted, regions, nationwide, atext = sig
-        dist_in = bool(district) and bool(
-            re.search(rf"(?<![가-힣]){re.escape(district)}(?![가-힣])", atext))
+        restricted, regions, nationwide, atext, region_basis, relocation_required, _participants = sig
+        target_site_districts = {
+            loc["district"] for loc in locations if loc.get("district")
+            and (not regions or loc.get("city") in regions)
+        }
+        dist_in = any(bool(re.search(rf"(?<![가-힣]){re.escape(d)}(?![가-힣])", atext))
+                      for d in target_site_districts)
         own_restricted = bool(restricted & own)
         other_restricted = sorted(restricted - own)
         own_region_in = bool(regions & own)
         other_regions = sorted(regions - own)
         # 권역(수도권·충청권·호남권·경상권·강원권·제주권) 한정 신호 — own 이 그 권역 멤버면 적격, 아니면 차단
-        kwon_elig, kwon_blk = _region_cluster_verdict(atext, city)
+        cluster_verdicts = [_region_cluster_verdict(atext, loc) for loc in company_regions]
+        kwon_elig = any(v[0] for v in cluster_verdicts)
+        kwon_blk = bool(cluster_verdicts) and all(v[1] for v in cluster_verdicts)
 
-        if city in excluded["excluded_regions"]:
+        if company_regions & set(excluded["excluded_regions"]):
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
             mismatches.append("지원대상에서 명시적으로 제외된 지역")
@@ -295,12 +329,12 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
             if dist_in:
                 region_score = weights["region_district"]
                 region_status = "district"
-                reasons.append(f"소재 구 일치({district})")
+                reasons.append("소재 구 일치")
             else:
                 region_score = weights["region_city"]
                 region_status = "city"
                 reasons.append(
-                    f"소재 시 일치({city})" if (own_restricted or own_region_in) else "권역 대상")
+                    "사업장 지역 일치" if (own_restricted or own_region_in) else "권역 대상")
         elif kwon_blk:
             # 권역 한정인데 우리 지역이 그 권역에 속하지 않음 → 차단
             region_score = weights["region_mismatch_penalty"]
@@ -325,21 +359,21 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
     else:
         # ── fallback: monitor 사용 불가 시 자족 단어경계 판정 ──
         text = applicant_region_text(text)
-        company_region_mentioned = bool((city and city in text) or (district and district in text))
-        other_regions = [r for r in KNOWN_REGIONS if r and r in text and r != city]
+        company_region_mentioned = any(r in text for r in company_regions | company_districts)
+        other_regions = [r for r in KNOWN_REGIONS if r and r in text and r not in company_regions]
         has_nationwide = "전국" in text
-        if city in excluded["excluded_regions"]:
+        if company_regions & set(excluded["excluded_regions"]):
             region_score = weights["region_mismatch_penalty"]
             region_status = "other_only"
             mismatches.append("지원대상에서 명시적으로 제외된 지역")
-        elif district and district in text:
+        elif company_districts & set(re.findall(r"[가-힣]+(?:구|군|시)", text)):
             region_score = weights["region_district"]
             region_status = "district"
-            reasons.append(f"소재 구 일치({district})")
-        elif city and city in text:
+            reasons.append("소재 구 일치")
+        elif company_regions and any(r in text for r in company_regions):
             region_score = weights["region_city"]
             region_status = "city"
-            reasons.append(f"소재 시 일치({city})")
+            reasons.append("소재 시 일치")
         elif other_regions and not company_region_mentioned:
             if has_nationwide:
                 region_score = weights["region_mismatch_penalty"] // 2
@@ -369,6 +403,16 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
         except Exception:
             pass
     score += region_score
+    # 이전 조건 공고는 지역이 현재 맞지 않아도 향후 이전을 전제로 한 조건부 후보로 유지한다.
+    # 명시적 제외지역은 이전 조건으로 해제하지 않는다.
+    conditional_eligibility = bool(
+        relocation_required and region_status == "other_only"
+        and not (company_regions & set(excluded["excluded_regions"]))
+    )
+    if conditional_eligibility:
+        region_status = "relocation_conditional"
+        mismatches = [m for m in mismatches if "타지역 한정" not in m and "권역 한정" not in m]
+        reasons.append("이전 조건 충족 시 적격(조건부)")
 
     # 공장 조건
     factory_required = any(t in text for t in FACTORY_REQUIRED_TERMS)
@@ -410,6 +454,9 @@ def compute_match_score(item: dict[str, Any], company: dict[str, Any]) -> dict[s
             "interest_hits": interest_hits,
             "region_status": region_status,
             "region_score": region_score,
+            "region_basis": region_basis,
+            "relocation_required": relocation_required,
+            "conditional_eligibility": conditional_eligibility,
             "factory_required": factory_required,
             "export_signal": export_signal,
             "exclude_hits": exclude_hits,

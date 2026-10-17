@@ -74,7 +74,9 @@ def test_seoul_gyeonggi_targets_exclude_incheon():
 def test_islands_are_a_flag_not_a_positive_region(phrase):
     notice = item(f"지원대상: 전국 중소기업({phrase})")
     scope = mon._resolve_applicant_region_scope(notice)
-    assert scope == {"regions": [], "nationwide": True, "excluded_regions": [], "island_excluded": True}
+    assert scope == {"regions": [], "nationwide": True, "excluded_regions": [],
+                     "island_excluded": True, "region_basis": "unspecified",
+                     "relocation_required": False, "participating_regions": []}
     for city in ["인천", "서울", "부산"]:
         assert mon.classify_region_for_group(notice, group(city))["region_status"] == "eligible"
     assert mon.classify_region(notice)["island_excluded"]

@@ -1656,7 +1656,7 @@ def _region_field_short(region_field: str) -> str:
 def _resolve_applicant_region_scope(item: dict) -> dict[str, Any]:
     """지원대상 기준 지역 범위. 주관·개최지가 아닌 '누가 신청할 수 있는지'만 본다.
 
-    반환: {regions: [광역약칭...], nationwide: bool}
+    반환: 지원 지역, nationwide, 소재지 기준, 이전조건, 참여기관 참고지역 메타데이터
     - nationwide: 전국 어디서나 신청 가능
     - regions 비어있고 nationwide False: 지역 단서 없음
     - regions에 타 광역만: 해당 지역 소재 등 지원대상 한정
@@ -1709,7 +1709,12 @@ def _resolve_applicant_region_scope(item: dict) -> dict[str, Any]:
     exclusions = _applicant_region_exclusions(item)
     excluded = set(exclusions["excluded_regions"])
     regions = [r for r in regions if _short_region(r) not in excluded]
-    scope = {"regions": _unique(regions), "nationwide": nationwide, **exclusions}
+    from mail_core.matching.region_context import notice_region_metadata
+    metadata = notice_region_metadata(text)
+    raw_notice_text = "\n".join(str(item.get(k) or "") for k in
+                                  ("title", "description", "target_field", "region_field"))
+    metadata["participating_regions"] = notice_region_metadata(raw_notice_text)["participating_regions"]
+    scope = {"regions": _unique(regions), "nationwide": nationwide, **exclusions, **metadata}
     if not regions and not nationwide:
         from mail_core.matching.region_context import agency_region_hints
         hints = agency_region_hints(f"{item.get('author', '')} {item.get('organizer_field', '')}")
@@ -5704,6 +5709,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     """그룹 신청자 지역(광역+시·군) 기준 일반 지역 적합성 판정.
     인천 전용 classify_region 과 달리 임의 시·도/시·군을 지원한다."""
     text = _applicant_target_text(item)
+    app_scope = _resolve_applicant_region_scope(item)
     from mail_core.matching.region_context import applicant_region_text
     raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
                                              ("title", "description", "region_field")))
@@ -5716,9 +5722,20 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     own_regions = [r for r in ([label] + extra_regions) if r]
 
     def result(rs: str, ds: str, elig: list[str], excl: list[str]) -> dict:
+        excluded_own = _short_region(city or label) in exclusions["excluded_regions"]
+        target_regions = {_short_region(r) for r in (app_scope.get("regions") or [])}
+        conditional = (bool(app_scope.get("relocation_required")) and rs == "not_eligible"
+                       and not excluded_own and bool(target_regions & set(excl)))
+        if conditional:
+            rs, ds = "eligible", "eligible"
+            elig, excl = [city or label], []
         return {"region_status": rs, "district_status": ds,
                 "eligible_regions": _unique(elig), "excluded_regions": _unique(excl),
-                "island_excluded": _applicant_region_exclusions(item)["island_excluded"]}
+                "island_excluded": exclusions["island_excluded"],
+                "region_basis": app_scope.get("region_basis", "unspecified"),
+                "relocation_required": bool(app_scope.get("relocation_required")),
+                "participating_regions": list(app_scope.get("participating_regions") or []),
+                "conditional_eligibility": conditional}
 
     exclusions = _applicant_region_exclusions(item)
     if _short_region(city or label) in exclusions["excluded_regions"]:
@@ -5741,7 +5758,6 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     # 신청대상 지역을 먼저 정밀 판정. 제목 [지역]태그/신청한정 면제를 거친 "전국" substring
     # 대신 _resolve 의 nationwide(신청 전국 vs 개최지만 타지역 구분)로 판정 — '[대구] 전국
     # 박람회(대구 소재 한정)'가 '전국' 한 단어로 태그차단을 우회하던 빈틈 차단(recall 보존).
-    app_scope = _resolve_applicant_region_scope(item)
     app_text = _applicant_target_text(item)
     detected = [r.lower() for r in (app_scope.get("regions") or [])]
     nationwide = bool(app_scope.get("nationwide"))
@@ -5824,7 +5840,7 @@ def classify_region_for_group(item: dict, group: dict) -> dict:
     return result("unknown", "unknown", [], [])
 
 
-def classify_region(item: dict) -> dict:
+def _classify_region_incheon(item: dict) -> dict:
     text = _applicant_target_text(item)
     from mail_core.matching.region_context import applicant_region_text
     raw_text = applicant_region_text("\n".join(str(item.get(k) or "") for k in
@@ -5962,6 +5978,31 @@ def classify_region(item: dict) -> dict:
         "excluded_regions": _unique(excluded_regions),
         "island_excluded": exclusions["island_excluded"],
     }
+
+
+def classify_region(item: dict) -> dict:
+    """인천 판정에 공통 지역 기준·조건 메타데이터를 붙인다."""
+    result = _classify_region_incheon(item)
+    scope = _resolve_applicant_region_scope(item)
+    excluded_own = "인천" in (scope.get("excluded_regions") or [])
+    target_regions = {_short_region(r) for r in (scope.get("regions") or [])}
+    mismatch_regions = {_short_region(r) for r in (result.get("excluded_regions") or [])}
+    conditional = (bool(scope.get("relocation_required"))
+                   and result.get("region_status") == "not_eligible"
+                   and not excluded_own and bool(target_regions & mismatch_regions))
+    if conditional:
+        result["region_status"] = "eligible"
+        result["district_status"] = "eligible"
+        result["eligible_regions"] = [APPLICANT_REGION_CITY]
+        result["conditional_eligibility"] = True
+    else:
+        result["conditional_eligibility"] = False
+    result.update({
+        "region_basis": scope.get("region_basis", "unspecified"),
+        "relocation_required": bool(scope.get("relocation_required")),
+        "participating_regions": list(scope.get("participating_regions") or []),
+    })
+    return result
 
 
 def region_match(item: dict, group_regions: list[str], region_info: dict | None = None) -> bool:
@@ -8500,6 +8541,7 @@ def execute_monitor(
     now = datetime.now(KST)
     try:
         write_deadline_conflicts_report([], run_at=now)
+        write_region_scope_stats_report([], run_at=now)
     except Exception as e:
         log.warning("목록/상세 마감 충돌 리포트 초기화 실패(무시): %s", e)
     mode = "send" if effective_send else ("draft" if draft_mode else "preview")
@@ -8687,6 +8729,10 @@ def execute_monitor(
         holidays=business_holidays,
     )
     enriched_candidates = enrich_items(version_candidates)
+    try:
+        write_region_scope_stats_report(deduped, run_at=now)
+    except Exception as e:
+        log.warning("지역미상 비율 리포트 저장 실패(무시): %s", e)
 
     extraction_rates_by_site: dict = {}
     extraction_retry_plan: list = []
@@ -9419,6 +9465,23 @@ def write_deadline_conflicts_report(items: list[dict], run_at: datetime | None =
     path = LOGS_DIR / f"deadline_conflicts_{run_at:%Y%m%d}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"conflicts": conflicts}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def write_region_scope_stats_report(items: list[dict], run_at: datetime | None = None) -> Path:
+    """daily_review 용 실행별 지역미상 집계. 공고 식별정보는 저장하지 않는다."""
+    run_at = run_at or datetime.now(KST)
+    total = len(items or [])
+    unknown = 0
+    for item in items or []:
+        scope = _resolve_applicant_region_scope(item)
+        if not scope.get("regions") and not scope.get("nationwide"):
+            unknown += 1
+    ratio = (unknown / total) if total else 0.0
+    payload = {"total": total, "unknown": unknown, "ratio": round(ratio, 6)}
+    path = LOGS_DIR / f"region_scope_stats_{run_at:%Y%m%d}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return path
 
 
