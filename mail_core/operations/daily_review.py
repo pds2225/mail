@@ -565,6 +565,20 @@ def build_review(
             "DEADLINE_CONFLICT", "목록/상세 마감일 불일치", "WARN",
             f"상세 마감일 우선 적용, 검토 필요 {len(conflict_rows)}건",
         ))
+    region_stats_path = (logs_dir or LOGS_DIR) / f"region_scope_stats_{date_s.replace('-', '')}.json"
+    region_stats = _read_json(region_stats_path) or {}
+    if isinstance(region_stats, dict):
+        try:
+            region_total = max(0, int(region_stats.get("total", 0)))
+            region_unknown = max(0, int(region_stats.get("unknown", 0)))
+        except (TypeError, ValueError):
+            region_total = region_unknown = 0
+        region_ratio = region_unknown / region_total if region_total else 0.0
+        if region_total and region_ratio > 0.30:
+            checks.append(CheckResult(
+                "REGION_UNKNOWN_HIGH", "지역미상 과다", "WARN",
+                f"지역미상 {region_unknown}/{region_total}건 ({region_ratio:.1%}) — 30% 초과",
+            ))
     # 오래된 기업 지역정보는 운영 검수 경고만 추가한다. 발송 판정에는 관여하지 않는다.
     if companies is None:
         from mail_core.matching.company_match import load_companies

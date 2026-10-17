@@ -37,6 +37,14 @@ _CONTACT = re.compile(
 _AGENCY = re.compile(
     rf"(?:{_REGION})\s*(?:시청|도청|테크노파크|경제진흥원|산업진흥원|창조경제혁신센터)"
 )
+_REGION_BASIS = re.compile(
+    r"(?P<basis>본사|사업장|공장)\s*(?:주소|소재지|소재|기준|위치)"
+    r"|(?:소재지|소재)\s*(?:가\s*)?(?P<reverse>본사|사업장|공장)"
+)
+_RELOCATION_REQUIRED = re.compile(
+    r"(?:이전\s*(?:예정|조건|완료|후)|이전할\s*예정|이전하여\s*신청|이전\s*시\s*지원)"
+)
+_PARTICIPANT_SPAN = re.compile(r"(?:참여\s*기관|참여기관|참여\s*기업|공동수행기관)[^.!?;\n]*")
 
 
 def short_region(value: str) -> str:
@@ -50,7 +58,40 @@ def agency_region_hints(text: str) -> list[str]:
 
 def strip_agency_context(text: str) -> str:
     """줄바꿈·지원대상 라벨을 보존해 같은 줄의 신청자격까지 지우지 않는다."""
-    return _AGENCY.sub(" ", _CONTACT.sub(" ", text or ""))
+    source = text or ""
+    target = re.search(_TARGET_LABEL, source)
+    if target:
+        # 지원대상 라벨 뒤에서도 담당부서·문의처는 제거하되, '주관기관 소재지 기준'은
+        # 신청자격 문맥일 수 있으므로 연락처 제거 패턴에 잡히지 않게 잠시 보호한다.
+        prefix = _CONTACT.sub(" ", source[:target.start()])
+        suffix = source[target.start():]
+        lead_org = "__LEAD_APPLICANT_ORG__"
+        suffix = re.sub(r"주관\s*기관(?=\s*(?:소재|기준|은|이|의|으로))", lead_org, suffix)
+        suffix = _CONTACT.sub(" ", suffix).replace(lead_org, "주관기관")
+        source = prefix + suffix
+    else:
+        source = _CONTACT.sub(" ", source)
+    return _AGENCY.sub(" ", source)
+
+
+def notice_region_metadata(text: str) -> dict:
+    """공고의 지역 판정 기준과 조건을 지원대상 문구에서 추출한다."""
+    source = text or ""
+    basis_match = _REGION_BASIS.search(source)
+    basis_token = (basis_match.group("basis") or basis_match.group("reverse")) if basis_match else ""
+    basis = {"본사": "headquarters", "사업장": "business_site", "공장": "factory"}.get(
+        basis_token, "unspecified"
+    )
+    participant_regions = {
+        _ALIASES.get(token, token)
+        for span in _PARTICIPANT_SPAN.findall(source)
+        for token in _REGION_MATCHER.findall(span)
+    }
+    return {
+        "region_basis": basis,
+        "relocation_required": bool(_RELOCATION_REQUIRED.search(source)),
+        "participating_regions": sorted(participant_regions),
+    }
 
 
 def region_exclusions(text: str) -> dict:
@@ -67,5 +108,7 @@ def region_exclusions(text: str) -> dict:
 
 def applicant_region_text(text: str) -> str:
     """제외된 지역명도 긍정적인 지역 근거에서 제거한다."""
+    # 공동사업에서는 참여기관의 소재지가 신청자격 지역처럼 누출되지 않도록 한다.
+    text = _PARTICIPANT_SPAN.sub(" ", text or "")
     text = _NEGATED_EXCLUSION.sub(" ", strip_agency_context(text))
     return _ISLAND_EXCLUSION.sub(" ", _EXCLUSION.sub(" ", _EXCLUDED_LABEL.sub(" ", text)))
