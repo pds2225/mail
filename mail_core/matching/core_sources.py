@@ -67,24 +67,6 @@ BIZINFO_FIELD_ALIASES: dict[str, tuple[str, ...]] = {
 }
 
 # 목록 flag / 지원분야 문자열 → 지원유형 (기존 SUPPORT_TYPE_RULES 버킷만)
-LIST_CATEGORY_TO_SUPPORT: dict[str, str] = {
-    "사업화": "지원금/바우처",
-    "정책자금": "지원금/바우처",
-    "융자": "지원금/바우처",
-    "보증": "지원금/바우처",
-    "기술개발": "지원금/바우처",
-    "r&d": "지원금/바우처",
-    "팁스": "지원금/바우처",
-    "tips": "지원금/바우처",
-    "수출": "지원금/바우처",
-    "글로벌": "지원금/바우처",
-    "투자": "투자",
-    "멘토링": "컨설팅·교육·상담",
-    "컨설팅": "컨설팅·교육·상담",
-    "교육": "컨설팅·교육·상담",
-}
-
-
 def _norm(value: Any) -> str:
     return str(value or "").strip()
 
@@ -151,14 +133,8 @@ def attach_kstartup_list_structured(
 
 def map_category_to_support_types(text: str) -> list[str]:
     """목록/지원분야 문자열 → 지원유형 버킷(복수 가능)."""
-    low = _norm(text).lower()
-    if not low:
-        return []
-    matched: list[str] = []
-    for kw, bucket in LIST_CATEGORY_TO_SUPPORT.items():
-        if kw in low and bucket not in matched:
-            matched.append(bucket)
-    return matched
+    from mail_core.matching.support_types import map_category_to_support_types
+    return map_category_to_support_types(text)
 
 
 def _parse_posted(value: Any) -> date | None:

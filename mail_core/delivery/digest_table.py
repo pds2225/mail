@@ -52,6 +52,9 @@ def section_of(support: object) -> str:
     key = str(support or "").strip()
     if key in SECTION_ORDER:
         return key
+    for section in SECTION_ORDER:
+        if key.startswith(section + " 외 "):
+            return section
     return _SECTION_ALIAS.get(key, "기타")
 
 
