@@ -14,7 +14,9 @@ def test_deadline_without_time_is_recorded_and_assumed_to_end_at_2359():
     details = m._deadline_details(item)
     assert details["deadline_time"] == ""
     assert details["deadline_time_assumed"] is True
-    assert item["deadline_time_assumed"] is True
+    assert "deadline_time_assumed" not in item
+    evaluated = m.evaluate_notice(item, today=date(2026, 10, 20))
+    assert evaluated["deadline_time_assumed"] is True
     assert m.classify_deadline_status(item, now=datetime(2026, 10, 20, 23, 58, tzinfo=KST)) == "open"
     assert m.classify_deadline_status(item, now=datetime(2026, 10, 20, 23, 59, 1, tzinfo=KST)) == "closed"
 

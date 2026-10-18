@@ -1624,8 +1624,6 @@ def _deadline_details(item: dict) -> dict[str, Any]:
               for key in ("deadline_time", "deadline_basis")}
     dates = _parse_date_candidates(str(raw or body_period.get("display") or ""))
     assumed = bool(dates and not result["deadline_time"])
-    if isinstance(item, dict):
-        item["deadline_time_assumed"] = bool(item.get("deadline_time_assumed") or assumed)
     result["deadline_time_assumed"] = bool(item.get("deadline_time_assumed") or assumed)
     return result
 
@@ -2202,7 +2200,9 @@ def enrich_item_from_detail(item: dict) -> dict:
         updated["posted_date"] = labeled_posted
     if period.get("display"):
         detail_keys.update({"deadline", "application_period"})
-    updated.update(_deadline_details(updated))
+    deadline_details = _deadline_details(updated)
+    updated.update({key: value for key, value in deadline_details.items()
+                    if value and key != "deadline_time_assumed"})
     image_only = fields.get("body_status") == "IMAGE_ONLY"
     folded_unavailable = fields.get("body_status") == "FOLDED_INCOMPLETE"
     updated = _with_detail_extraction(
@@ -2547,8 +2547,9 @@ def _item(id_, title, link, author, desc, deadline, source,
             "description": desc, "deadline": deadline, "source": source,
             "posted_date": posted_date, "is_aggregator": is_aggregator}
     details = _deadline_details({"deadline": deadline})
-    if any(details.values()):
-        result.update(details)
+    explicit_details = {key: details[key] for key in ("deadline_time", "deadline_basis") if details[key]}
+    if explicit_details:
+        result.update(explicit_details)
     return result
 
 
@@ -6692,7 +6693,7 @@ def refine_included_by_score_llm(
     g = group
     if "score_threshold" not in g:
         g = {**group, "score_threshold": 0}
-    out = _score_and_filter(included, g, today=_now_kst().date())
+    out = _score_and_filter(included, {**g, "_run_now_kst": _now_kst().date()})
     passed = list(out.get("passed") or [])
     rejected = []
     for it in out.get("rejected") or []:
@@ -7625,7 +7626,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     # 상위 3건만 짧은 코멘트 — 비용·환각 최소화
     notes = []
     for it in sorted(items, key=_notice_sort_key)[:3]:
-        r = llm_relevance_check(it, group, today=_now_kst().date())
+        r = llm_relevance_check(it, {**group, "_run_now_kst": _now_kst().date()})
         reason = str(r.get("reason") or "").strip()
         if reason and r.get("is_relevant", True):
             title = strip_title_badges(_mail_clean_text(it.get("title"), limit=40))

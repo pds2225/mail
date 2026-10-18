@@ -194,7 +194,8 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any], *, today=No
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
     # 오늘(KST) 미주입 시 "2026년 공고라 신청 불가"처럼 연도만으로 오판하는 사고 방지
-    today_kst = (today or datetime.now(timezone(timedelta(hours=9))).date()).strftime("%Y-%m-%d")
+    run_date = today or group.get("_run_now_kst")
+    today_kst = (run_date or datetime.now(timezone(timedelta(hours=9))).date()).strftime("%Y-%m-%d")
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
         f"오늘(KST): {today_kst}\n"
@@ -278,6 +279,8 @@ def _llm_openai(prompt: str, model: str) -> dict[str, Any]:
 
 def score_and_filter(items: list[dict], group: dict, *, today=None) -> dict[str, Any]:
     """Backward compatible: if 'score_threshold' not in group, pass through."""
+    if today is not None:
+        group = {**group, "_run_now_kst": today}
     if "score_threshold" not in group:
         return {"passed": list(items), "rejected": [], "audit": []}
 
@@ -303,7 +306,7 @@ def score_and_filter(items: list[dict], group: dict, *, today=None) -> dict[str,
         }
 
         if llm_enabled and band[0] <= score <= band[1] and llm_call_count < llm_call_limit:
-            llm_result = llm_relevance_check(item, group, today=today)
+            llm_result = llm_relevance_check(item, group)
             llm_call_count += 1
             record["llm"] = llm_result
             if not llm_result.get("is_relevant", True):
