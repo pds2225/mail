@@ -125,8 +125,11 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
             if others:
                 region_mismatch = 1
 
+    # Priority keywords are a relevance bonus, never the sole suitability signal.
+    # Keep their contribution to at most 30 points on the 0..100 score scale.
+    priority_score = min(priority_hits * weights["priority_match"], 30)
     score = (
-        priority_hits * weights["priority_match"]
+        priority_score
         + or_hits * weights["or_keyword_match"]
         + and_group_hits * weights["and_group_match"]
         + or_cluster * weights["or_cluster_bonus"]
@@ -161,6 +164,8 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
         "score": int(score),
         "breakdown": {
             "priority_hits": priority_hits,
+            "priority_score": priority_score,
+            "priority_score_cap": 30,
             "or_hits": or_hits,
             "and_group_hits": and_group_hits,
             "or_cluster": or_cluster,
@@ -176,7 +181,7 @@ def compute_score(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]
     }
 
 
-def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str, Any]:
+def llm_relevance_check(item: dict[str, Any], group: dict[str, Any], *, today=None) -> dict[str, Any]:
     """LLM 2차 판정. 비용 절감을 위해 score 회색지대 아이템에만 호출.
 
     실패 시 'is_relevant': True 로 통과 (보수적). 호출 측에서 캐시/상한 제어.
@@ -189,7 +194,7 @@ def llm_relevance_check(item: dict[str, Any], group: dict[str, Any]) -> dict[str
     exclude_kw = ", ".join((group.get("exclude_keywords") or [])[:10])
     region = ", ".join((group.get("required_conditions") or {}).get("regions") or [])
     # 오늘(KST) 미주입 시 "2026년 공고라 신청 불가"처럼 연도만으로 오판하는 사고 방지
-    today_kst = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
+    today_kst = (today or datetime.now(timezone(timedelta(hours=9))).date()).strftime("%Y-%m-%d")
     prompt = (
         "다음 정부지원사업 공고가 아래 그룹 조건에 신청 가능/적합한지 판정하라.\n"
         f"오늘(KST): {today_kst}\n"
@@ -271,7 +276,7 @@ def _llm_openai(prompt: str, model: str) -> dict[str, Any]:
     return _parse_llm_json(raw)
 
 
-def score_and_filter(items: list[dict], group: dict) -> dict[str, Any]:
+def score_and_filter(items: list[dict], group: dict, *, today=None) -> dict[str, Any]:
     """Backward compatible: if 'score_threshold' not in group, pass through."""
     if "score_threshold" not in group:
         return {"passed": list(items), "rejected": [], "audit": []}
@@ -298,7 +303,7 @@ def score_and_filter(items: list[dict], group: dict) -> dict[str, Any]:
         }
 
         if llm_enabled and band[0] <= score <= band[1] and llm_call_count < llm_call_limit:
-            llm_result = llm_relevance_check(item, group)
+            llm_result = llm_relevance_check(item, group, today=today)
             llm_call_count += 1
             record["llm"] = llm_result
             if not llm_result.get("is_relevant", True):

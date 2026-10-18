@@ -5,9 +5,11 @@
 from __future__ import annotations
 
 import hashlib, html, imaplib, inspect, json, logging, os, re, smtplib, ssl, threading, time, unicodedata
-from datetime import datetime, timedelta, timezone
+from contextvars import ContextVar
+from datetime import date, datetime, timedelta, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from functools import wraps
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, urljoin, quote, urlsplit
@@ -115,6 +117,23 @@ DELIVERY_STATE_PATH = STATE_DIR / "delivery_state.json"
 
 # ── 상수 ─────────────────────────────────────────────────────────────────────
 KST            = timezone(timedelta(hours=9))
+RUN_NOW_KST: ContextVar[datetime | None] = ContextVar("RUN_NOW_KST", default=None)
+
+
+def _now_kst() -> datetime:
+    """Return the run's frozen KST timestamp, or live KST outside a monitor run."""
+    return RUN_NOW_KST.get() or datetime.now(KST)
+
+
+def _freeze_run_clock(func):
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        token = RUN_NOW_KST.set(_now_kst())
+        try:
+            return func(*args, **kwargs)
+        finally:
+            RUN_NOW_KST.reset(token)
+    return wrapped
 # Legacy Claude digest batch size. Deterministic fallback_body mails every matched
 # notice; do not reintroduce a silent body cap — deliver_with_outbox marks all
 # notice_ids seen, so omitting rows from the digest permanently drops them.
@@ -152,30 +171,16 @@ HTTP_HEADERS   = {
 }
 
 # 지원유형 분류 규칙
-SUPPORT_TYPE_RULES: dict[str, list[str]] = {
-    "투자":           ["투자", "엔젤", "벤처캐피탈", "시드투자", "지분투자", "VC"],
-    "지원금/바우처":   ["지원금", "바우처", "보조금", "참가비", "지원비", "수출바우처",
-                       "R&D", "사업화자금", "자금지원", "매칭지원", "보조",
-                       # 표시 완성도 보강(field 헌터 발굴, 기존 버킷 확장=게이트 중립): 전시·수출·판로·융자·도입지원
-                       "전시회", "박람회", "엑스포", "출품", "기획전", "수출지원", "판로개척", "판로지원",
-                       "해외바이어", "신용대출", "융자", "도입지원"],
-    "컨설팅·교육·상담": ["컨설팅", "교육", "상담", "멘토링", "코칭", "역량강화",
-                         "인력양성", "훈련", "세미나", "워크숍", "설명회",
-                         "기술지원단", "기술지원", "기술닥터"],
-}
+from mail_core.matching.support_types import classify_support_types, support_type_rules
+
+SUPPORT_TYPE_RULES = support_type_rules()
 ALL_SUPPORT_TYPES = list(SUPPORT_TYPE_RULES.keys()) + ["그외"]
 
-# K-Startup 상세 '지원분야'(공식 카테고리=권위값) → 우리 지원유형 버킷 매핑.
-# 제목 키워드 추측이 놓치는 '사업화/정책자금/융자' 등을 지원금/바우처로 정확화하고,
-# '멘토링·컨설팅·교육'은 컨설팅으로 확정한다. 키들은 소문자 비교(한글은 영향 없음).
-# '그외'로 가는 분야(시설·행사·글로벌 등)는 매핑하지 않는다(기본값과 동일 → 잡음 방지).
+# K-Startup 상세·목록 지원분야와 제목 분류는 config/support_types.json의 같은 사전을 사용한다.
 KSTARTUP_FIELD_TO_TYPE = {
-    "사업화": "지원금/바우처", "정책자금": "지원금/바우처", "융자": "지원금/바우처",
-    "보증": "지원금/바우처", "기술개발": "지원금/바우처", "r&d": "지원금/바우처",
-    "팁스": "지원금/바우처", "tips": "지원금/바우처",
-    "수출": "지원금/바우처", "글로벌": "지원금/바우처",
-    "투자": "투자",
-    "멘토링": "컨설팅·교육·상담", "컨설팅": "컨설팅·교육·상담", "교육": "컨설팅·교육·상담",
+    alias: support_type
+    for support_type, aliases in SUPPORT_TYPE_RULES.items()
+    for alias in aliases
 }
 
 # 지역 키워드 (전국 판별용)
@@ -1186,7 +1191,7 @@ def _detail_extraction_unreliable(item: dict) -> bool:
 def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: dict[str, dict]) -> tuple[list[dict], dict[str, dict]]:
     deliverable: list[dict] = []
     updates: dict[str, dict] = {}
-    now_iso = datetime.now(KST).isoformat()
+    now_iso = _now_kst().isoformat()
     for source in items:
         item = {**source, **_notice_date_fields(source)}
         iid = str(item.get("id") or "")
@@ -1251,7 +1256,7 @@ def classify_notice_versions(items: list[dict], seen_ids: set[str], versions: di
 
 
 def commit_notice_versions(versions: dict[str, dict], updates: dict[str, dict], seen_ids: set[str], *, now: datetime | None = None) -> dict[str, dict]:
-    now = now or datetime.now(KST)
+    now = now or _now_kst()
     merged = {str(k): dict(v) for k, v in versions.items() if isinstance(v, dict)}
     for iid, update in updates.items():
         record = dict(merged.get(iid) or {})
@@ -1424,7 +1429,7 @@ def is_imminent(deadline: str) -> bool:
     _parse_date_candidates 를 재사용해 한자리·한글·점·범위 표기를 모두 인식하도록 통일한다."""
     if not deadline:
         return False
-    today = datetime.now(KST).date()
+    today = _now_kst().date()
     return any(0 <= (parsed - today).days <= 7 for _pos, parsed in _parse_date_candidates(deadline))
 
 def extract_date_from_text(text: str) -> str:
@@ -1456,7 +1461,7 @@ def _parse_date_candidates(text: str, base_year: int | None = None) -> list[tupl
     """공고 날짜 표현에서 날짜 후보를 원문 위치순으로 반환."""
     if not text:
         return []
-    base_year = base_year or datetime.now(KST).year
+    base_year = base_year or _now_kst().year
     candidates: list[tuple[int, Any]] = []
     patterns = [
         (r"(\d{4})\s*[.\-/]\s*(\d{1,2})\s*\.?\s*[.\-/]\s*(\d{1,2})", 1),
@@ -1494,7 +1499,7 @@ def _parse_period_dates(segment: str, base_year: int | None = None) -> list[Any]
     """신청·모집 구간 텍스트에서 시작·종료일 후보를 추출."""
     if not segment:
         return []
-    base_year = base_year or datetime.now(KST).year
+    base_year = base_year or _now_kst().year
     ym = re.search(r"'?(\d{2})\s*년", segment)
     if ym:
         base_year = 2000 + int(ym.group(1))
@@ -1533,7 +1538,7 @@ def _infer_deadline_year(month: int, day: int, posted):
         if d and (posted - d).days > _YEARLESS_ROLL_DAYS:
             d = _valid_date(posted.year + 1, month, day)
         return d
-    today = datetime.now(KST).date()
+    today = _now_kst().date()
     d = _valid_date(today.year, month, day)
     if d and (today - d).days > 200:
         d = _valid_date(today.year + 1, month, day)
@@ -1609,14 +1614,20 @@ def extract_application_period(text: str, posted=None) -> dict[str, str]:
     return period
 
 
-def _deadline_details(item: dict) -> dict[str, str]:
+def _deadline_details(item: dict) -> dict[str, Any]:
     from mail_core.operations.deadline_context import extract_deadline_details
     body_period = extract_application_period(_notice_body_text(item), _posted_date(item))
     period = item.get("application_period") or {}
     raw = item.get("application_period_text") or item.get("deadline") or ""
     details = extract_deadline_details(raw)
-    return {key: str(item.get(key) or period.get(key) or body_period.get(key) or details[key])
-            for key in ("deadline_time", "deadline_basis")}
+    result = {key: str(item.get(key) or period.get(key) or body_period.get(key) or details[key])
+              for key in ("deadline_time", "deadline_basis")}
+    dates = _parse_date_candidates(str(raw or body_period.get("display") or ""))
+    assumed = bool(dates and not result["deadline_time"])
+    if isinstance(item, dict):
+        item["deadline_time_assumed"] = bool(item.get("deadline_time_assumed") or assumed)
+    result["deadline_time_assumed"] = bool(item.get("deadline_time_assumed") or assumed)
+    return result
 
 
 def resolve_item_deadline(item: dict) -> str:
@@ -2217,7 +2228,7 @@ def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict
             specialized_hosts=DETAIL_ENRICH_HOSTS,
             core_limit=int(os.environ.get("MONITOR_CORE_DETAIL_ENRICH", CORE_MAX_DETAIL_ENRICH)),
             other_limit=min(int(limit), OTHER_SPECIALIZED_DETAIL_ENRICH),
-            today=datetime.now(KST).date(),
+            today=_now_kst().date(),
         )
     except Exception:
         specialized = [
@@ -2281,7 +2292,7 @@ def enrich_items(items: list[dict], limit: int = MAX_DETAIL_ENRICH) -> list[dict
 
 def previous_business_day(from_dt: datetime | None = None, days_back: int = 1, holidays=None):
     """주말·설정 공휴일을 건너뛴 직전 영업일 계산."""
-    day = (from_dt or datetime.now(KST)).date()
+    day = (from_dt or _now_kst()).date()
     remaining = max(1, days_back)
     holiday_dates = _parse_business_holidays(holidays)
     while remaining:
@@ -2310,7 +2321,7 @@ def delivery_slot(now: datetime | None = None) -> str:
     forced = str(os.environ.get("MONITOR_DELIVERY_SLOT", "")).strip().lower()
     if forced in {"am", "pm"}:
         return forced
-    dt = now or datetime.now(KST)
+    dt = now or _now_kst()
     return "am" if dt.hour < DELIVERY_PM_CUTOFF_HOUR else "pm"
 
 
@@ -2333,7 +2344,7 @@ def delivery_cycle_date(now: datetime | None = None) -> str:
     날짜 필터·재조회 범위(`_recent_recheck_dates`)는 그대로 `days_back` 을 따른다.
     회차는 `delivery_slot()` — 환경변수 고정값 우선, 없으면 벽시계.
     """
-    dt = now or datetime.now(KST)
+    dt = now or _now_kst()
     return f"{dt.date()}#{delivery_slot(dt)}"
 
 
@@ -5039,7 +5050,7 @@ def partition_posted_dates(
     now_dt: datetime | None = None, holidays=None,
 ) -> tuple[list[dict], list[dict], list[dict]]:
     """최근 N영업일과 그 사이 주말·공휴일 게시물을 재조회한다."""
-    now = now_dt or datetime.now(KST)
+    now = now_dt or _now_kst()
     holiday_dates = _parse_business_holidays(holidays)
     target_dates = _recent_recheck_dates(now, days_back, holidays=holiday_dates)
     oldest, newest, today = min(target_dates), max(target_dates), now.date()
@@ -5145,7 +5156,7 @@ def _date_unknown_too_old(item: dict, max_age_days: int | None, now: datetime | 
     recency = _item_body_recency_date(item)
     if recency is None:
         return False
-    today = (now or datetime.now(KST)).date()
+    today = (now or _now_kst()).date()
     return (today - recency).days > max_age_days
 
 
@@ -5183,22 +5194,15 @@ def split_unknown_by_policy(
 
 def classify_support_type(item: dict) -> list[str]:
     text = f"{item.get('title','')} {item.get('description','')}".lower()
-    matched = [t for t, kws in SUPPORT_TYPE_RULES.items() if any(_kw_in_text(text, k.lower()) for k in kws)]
+    matched = classify_support_types(text)
     # K-Startup 상세 '지원분야'(권위 카테고리)가 있으면 정확 매핑을 합집합으로 보강 —
     # 키워드 추측이 놓친 '사업화/정책자금'을 지원금/바우처로, '멘토링ㆍ컨설팅ㆍ교육'을 컨설팅으로.
     sf = (item.get("support_field") or "").lower()
     if sf:
         had_keyword = bool(matched)
-        for kw, bucket in KSTARTUP_FIELD_TO_TYPE.items():
-            if kw in sf and bucket not in matched:
+        for bucket in classify_support_types(sf):
+            if bucket not in matched:
                 matched.append(bucket)
-        try:
-            from mail_core.matching.core_sources import map_category_to_support_types
-            for bucket in map_category_to_support_types(sf):
-                if bucket not in matched:
-                    matched.append(bucket)
-        except Exception:
-            pass
         # ★recall 1순위: support_field 만으로 기존 '그외'(미분류=관대 통과) 자격을 빼지 않는다.
         #   키워드 무매칭이던 공고는 '그외'를 유지 → goyang 등 그룹에서 부당 누락 방지.
         #   (지원분야 매핑은 표시 정확도용 — 매칭 게이트를 좁히지 않는다.)
@@ -5420,17 +5424,19 @@ def is_title_closed(item: dict) -> bool:
 
 def classify_deadline_status(item: dict, today=None, *, now=None) -> str:
     moment = now or (today if isinstance(today, datetime) else None)
-    today = today or (moment or datetime.now(KST)).astimezone(KST).date()
+    today = today or (moment or _now_kst()).astimezone(KST).date()
     if isinstance(today, datetime):
         today = today.replace(tzinfo=KST).date() if today.tzinfo is None else today.astimezone(KST).date()
     from mail_core.operations.deadline_context import deadline_has_passed
     def time_closed(end):
-        return end == today and deadline_has_passed(end, _deadline_details(item)["deadline_time"], today=today, now=moment)
+        details = _deadline_details(item)
+        cutoff = details["deadline_time"] or ("23:59" if details["deadline_time_assumed"] else "")
+        return end == today and deadline_has_passed(end, cutoff, today=today, now=moment)
     if is_title_closed(item):
         return "closed"
     # 명시된 접수 마감은 본문 속 '선착순/연장' 보일러플레이트보다 우선한다.
     if _deadline_details(item)["deadline_time"]:
-        explicit_end = _digest_deadline_end(item, today)
+        explicit_end = _digest_deadline_end(item, today, now=moment)
         if explicit_end and (explicit_end < today or time_closed(explicit_end)):
             return "closed"
     text = _notice_text(item)
@@ -6398,7 +6404,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
     # NOT_APPLICATION_LIKE: 모집·공모 등 application 신호가 전혀 없는 공고.
     # NOT_GRANT_NOTICE(EXCLUSION_RULES 경로)와 조건이 같지만 경로를 분리한 것 —
     # 전자는 evaluate_notice 의 application 게이트, 후자는 제목 앵커 상수 매칭.
-    if not application_like and not priority_keywords:
+    if not application_like:
         _add_reason("NOT_APPLICATION_LIKE")
 
     biz_years_status = business_years_status(item, g) if group is not None else "n/a"
@@ -6412,7 +6418,7 @@ def evaluate_notice(item: dict, group: dict | None = None, today=None, *, now=No
 
     relevance_score = 0
     relevance_score += len(set(matched_keywords)) * 2
-    relevance_score += len(set(priority_keywords)) * 10
+    relevance_score += min(len(set(priority_keywords)) * 10, 30)
     relevance_score += 5 if application_like else 0
     relevance_score += 4 if factory_condition else 0
     if service_hits and not application_like:
@@ -6686,7 +6692,7 @@ def refine_included_by_score_llm(
     g = group
     if "score_threshold" not in g:
         g = {**group, "score_threshold": 0}
-    out = _score_and_filter(included, g)
+    out = _score_and_filter(included, g, today=_now_kst().date())
     passed = list(out.get("passed") or [])
     rejected = []
     for it in out.get("rejected") or []:
@@ -6921,7 +6927,7 @@ def _mail_fit_reason(item: dict) -> str:
 
 def _mail_status_cell(item: dict, today=None) -> str:
     """기존 D-Day·신규 판정만 표시. 🆕 는 _change_type=NEW 일 때만."""
-    today = today or datetime.now(KST).date()
+    today = today or _now_kst().date()
     prefix = "🆕 " if item.get("_change_type") == "NEW" else ""
     try:
         status = classify_deadline_status(item, today)
@@ -6979,7 +6985,7 @@ _EXHIBITION_RE = re.compile(
     r"전시회|박람회|엑스포|EXPO|\bMWC|\bCES\b|기업관|공동관|한국관|부스|(?:전시|박람).*참가기업\s*모집", re.I)
 
 
-def _mail_support_cell(item: dict) -> str:
+def _mail_support_cell_base(item: dict) -> str:
     """원문/기존 _types 에서 확인된 지원 종류만. 금액 생성 금지."""
     try:
         types = " ".join(str(v) for v in (item.get("_types") or []) if str(v).strip())
@@ -7015,6 +7021,15 @@ def _mail_support_cell(item: dict) -> str:
         return "확인필요"
     except Exception:
         return "추출실패"
+
+
+def _mail_support_cell(item: dict) -> str:
+    """Show the chosen card section and disclose additional detected types."""
+    primary = _mail_support_cell_base(item)
+    types = [str(value).strip() for value in (item.get("_types") or []) if str(value).strip()]
+    if len(types) > 1 and primary not in ("확인필요", "추출실패"):
+        return f"{primary} 외 {len(types) - 1}"
+    return primary
 
 
 def _mail_target_cell(item: dict) -> str:
@@ -7114,7 +7129,7 @@ def format_deadline_label(end, today) -> str:
 
 
 def _mail_deadline_cell(item: dict, today=None) -> str:
-    today = today or datetime.now(KST).date()
+    today = today or _now_kst().date()
     try:
         end = _digest_deadline_end(item, today)
         if end is None:
@@ -7324,7 +7339,7 @@ def fallback_body(items: list[dict], today=None) -> str:
     """
     from mail_core.delivery.digest_table import render_plain
 
-    today = today or datetime.now(KST).date()
+    today = today or _now_kst().date()
     items = [it for it in (items or []) if not _digest_is_closed(it, today)]
     if not items:
         return render_plain([])
@@ -7359,7 +7374,7 @@ def _strip_non_application_periods(text: str) -> str:
     return " ".join(t.split())
 
 
-def _digest_deadline_end(item: dict, today):
+def _digest_deadline_end(item: dict, today, *, now=None):
     """카드에 표시하는 마감일(resolve_item_deadline)의 종료일. 읽을 수 없으면 None."""
     # 접수·신청기간 종료일 우선: 구조화 신청기간 → 본문 신청기간 라벨 → deadline 필드
     # (deadline 필드에 섞인 사업·협약·운영기간 구간은 지운다).
@@ -7373,6 +7388,39 @@ def _digest_deadline_end(item: dict, today):
             raw = _strip_non_application_periods(raw)
     if not raw:
         return None
+    # Explicitly numbered application rounds are independent deadlines. Preserve
+    # every round, but use the nearest still-open round for status and card output.
+    round_starts = list(re.finditer(r"(?<!\d)(\d+)\s*차\s*(?:모집|접수|신청|[:：]|[-~～])", raw))
+    if len(round_starts) >= 2:
+        rounds = []
+        for index, match in enumerate(round_starts):
+            stop = round_starts[index + 1].start() if index + 1 < len(round_starts) else len(raw)
+            segment = raw[match.end():stop]
+            dates_in_round = [d for _, d in _parse_date_candidates(segment, today.year)]
+            if dates_in_round:
+                rounds.append({"round": int(match.group(1)), "deadline": max(dates_in_round).isoformat()})
+        if len(rounds) >= 2:
+            item["rounds"] = rounds
+            dated = [(date.fromisoformat(r["deadline"]), r) for r in rounds]
+            current = now or (today if isinstance(today, datetime) else None)
+            if current is None:
+                current = _now_kst() if today == _now_kst().date() else datetime.combine(today, datetime.min.time(), KST)
+            elif current.tzinfo is None:
+                current = current.replace(tzinfo=KST)
+            current = current.astimezone(KST)
+            details = _deadline_details(item)
+            cutoff = details["deadline_time"] or "23:59"
+            cutoff_time = datetime.strptime(cutoff, "%H:%M").time()
+            upcoming = [
+                (deadline, round_info) for deadline, round_info in dated
+                if deadline > current.date() or (
+                    deadline == current.date()
+                    and current <= datetime.combine(deadline, cutoff_time, KST)
+                )
+            ]
+            chosen, chosen_round = min(upcoming, key=lambda pair: pair[0]) if upcoming else max(dated, key=lambda pair: pair[0])
+            item["selected_deadline_round"] = chosen_round["round"]
+            return chosen
     dates = [parsed for _pos, parsed in _parse_date_candidates(raw, today.year)]
     # 연도 포함 날짜가 없을 때만 연도 없는 M/D('9/28', '7.8') 를 추론
     if not dates or not re.search(r"\d{4}|'?\d{2}\s*[./\-]\s*\d{1,2}\s*[./\-]", raw):
@@ -7503,7 +7551,7 @@ def write_region_unknown_report(items: list[dict], group_name: str, *, run_at: d
     """메일에서 생략된 지역미상 전체 목록을 관리자 로그로 저장한다."""
     if not items:
         return None
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     slug = re.sub(r"[^0-9A-Za-z가-힣_-]+", "_", str(group_name or "group")).strip("_")[:50] or "group"
     path = LOGS_DIR / f"region_unknown_{run_at:%Y%m%d}_{slug}.md"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -7525,7 +7573,7 @@ def render_region_unknown(items: list[dict], limit: int = REGION_UNKNOWN_MAIL_LI
     """메일에는 최대 10건만 표시하고 나머지는 관리자 리포트로 분리한다."""
     if not items:
         return ""
-    _today = datetime.now(KST).date()
+    _today = _now_kst().date()
     items = [it for it in items if not _digest_is_closed(it, _today)]  # 만료 공고 제외(run #264)
     shown = select_region_unknown_for_mail(items, limit=limit)
     total = len(items) if total_count is None else int(total_count)
@@ -7577,7 +7625,7 @@ def claude_summarize(items: list[dict], group: dict) -> str:
     # 상위 3건만 짧은 코멘트 — 비용·환각 최소화
     notes = []
     for it in sorted(items, key=_notice_sort_key)[:3]:
-        r = llm_relevance_check(it, group)
+        r = llm_relevance_check(it, group, today=_now_kst().date())
         reason = str(r.get("reason") or "").strip()
         if reason and r.get("is_relevant", True):
             title = strip_title_badges(_mail_clean_text(it.get("title"), limit=40))
@@ -7705,14 +7753,14 @@ def _card_order(items: list[dict]) -> list[dict]:
 
 def _send_date_label(at: datetime | None = None) -> str:
     """제목 회차 표기 — 예약 회차가 아니라 실제 발송 시각(KST) 기준(03:46 발송이 '저녁'으로 찍히던 문제)."""
-    t = (at or datetime.now(KST)).astimezone(KST)
+    t = (at or _now_kst()).astimezone(KST)
     label = "오전" if t.hour < 12 else ("오후" if t.hour < 18 else "저녁")
     return f"{t.strftime('%m/%d')} {label}"
 
 
 def render_watchlist_body(items: list[dict], today=None) -> str:
     """🎯 집중 모니터링 본문 — 카드와 같은 제목 정리·마감 형식(M/D (D-N)·확인필요·상시), 만료 제외."""
-    today = today or datetime.now(KST).date()
+    today = today or _now_kst().date()
     shown = [it for it in items if not _digest_is_closed(it, today)]
     parts = ["🎯 집중 모니터링 — 지정 키워드/주소에 매칭된 공고입니다.\n\n"]
     for i, it in enumerate(shown, 1):
@@ -8493,6 +8541,7 @@ def _write_filter_traces(diagnostics: dict, *, group_id: str, run_id: str) -> No
         log.warning("filter_trace 기록 실패(무시): %s", e)
 
 
+@_freeze_run_clock
 def execute_monitor(
     *,
     allow_send: bool = False,
@@ -8538,7 +8587,7 @@ def execute_monitor(
 
     # deliver: 실제 발송(effective_send) 또는 초안 생성(draft_mode)
     deliver = effective_send or draft_mode
-    now = datetime.now(KST)
+    now = _now_kst()
     try:
         write_deadline_conflicts_report([], run_at=now)
         write_region_scope_stats_report([], run_at=now)
@@ -8965,7 +9014,7 @@ def execute_monitor(
         # 집중 모니터링 전용 메일 + 폰 푸시 (raw_all 설정과 무관하게 보장)
         if deliver:
             wl_recipients = watchlist["recipients"] or settings.get("raw_all_recipients") or []
-            wl_shown = [it for it in watch_hits if not _digest_is_closed(it, datetime.now(KST).date())]
+            wl_shown = [it for it in watch_hits if not _digest_is_closed(it, _now_kst().date())]
             if wl_recipients and wl_shown:
                 wl_body = render_watchlist_body(wl_shown)
                 wl_subject = f"🎯 [집중 모니터링] {len(wl_shown)}건 ({_send_date_label()})"
@@ -9323,7 +9372,7 @@ def write_coverage_report(
     *,
     run_at: datetime | None = None,
 ) -> Path:
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / "site_collection_coverage_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     headers = [
@@ -9361,7 +9410,7 @@ def write_today_missing_risk_report(
     *,
     run_at: datetime | None = None,
 ) -> Path:
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / "today_notice_missing_risk_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     queue = result.get("date_review_queue") or []
@@ -9393,7 +9442,7 @@ def write_review_queue_report(
     *,
     run_at: datetime | None = None,
 ) -> Path:
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     stamp = run_at.strftime("%Y%m%d")
     path = path or (LOGS_DIR / f"review_queue_{stamp}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -9422,7 +9471,7 @@ def write_coverage_anomaly_report(
     run_at: datetime | None = None,
 ) -> Path:
     """수집 이상탐지 결과를 별도 마크다운으로 저장(dry-run 보고서)."""
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / "coverage_anomaly_report.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -9450,7 +9499,7 @@ def write_coverage_anomaly_report(
 
 def write_deadline_conflicts_report(items: list[dict], run_at: datetime | None = None) -> Path:
     """목록/상세 마감 충돌을 식별 가능한 최소 필드로 daily_review 입력에 저장한다."""
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     conflicts = []
     for item in items or []:
         conflict = item.get("deadline_conflict") if isinstance(item, dict) else None
@@ -9470,7 +9519,7 @@ def write_deadline_conflicts_report(items: list[dict], run_at: datetime | None =
 
 def write_region_scope_stats_report(items: list[dict], run_at: datetime | None = None) -> Path:
     """daily_review 용 실행별 지역미상 집계. 공고 식별정보는 저장하지 않는다."""
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     total = len(items or [])
     unknown = 0
     for item in items or []:
@@ -9489,7 +9538,7 @@ def write_source_coverage_json(
     payload: dict, path: Path | None = None, *, run_at: datetime | None = None,
 ) -> Path:
     """기계 판독용 실행대장. logs/source_coverage_YYYYMMDD.json"""
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -9502,7 +9551,7 @@ def write_source_coverage_md(
     """관리자 확인용 실행대장 보고서. logs/source_coverage_YYYYMMDD.md"""
     from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / f"source_coverage_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_coverage_markdown(payload), encoding="utf-8")
@@ -9515,7 +9564,7 @@ def write_p0_collection_alert(
     """P0 누락위험 알림 사본. logs/p0_collection_alert_YYYYMMDD.md"""
     from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     path = path or (LOGS_DIR / f"p0_collection_alert_{run_at:%Y%m%d}.md")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(_ca.render_p0_alert_markdown(payload), encoding="utf-8")
@@ -9541,7 +9590,7 @@ def run_source_coverage_audit(
     try:
         from mail_core.operations import coverage_alert as _ca  # noqa: PLC0415
 
-        run_at = run_at or datetime.now(KST)
+        run_at = run_at or _now_kst()
         baseline = _ca.load_coverage_baseline()
         page_stats = page_stats_snapshot()
         try:
@@ -9655,7 +9704,7 @@ def _digest_delivered_count(run_result: dict) -> int:
 
 def _measure_recall_risk(run_result: dict, now: datetime | None = None) -> tuple[int, dict]:
     """빠질 뻔한 적합공고 계측 — 세 신호의 (건수, 근거)."""
-    now = now or datetime.now(KST)
+    now = now or _now_kst()
     today = now.date()
 
     # ① date_unknown 인데 신청신호가 있어 검토큐로 남은 것(메일 미포함) = 빠질 뻔
@@ -9754,7 +9803,7 @@ def measure_digest_quality(run_result: dict, *, now: datetime | None = None) -> 
        "delivered":K,"detail":{...},"generated_at":iso}
     임계 보수적: 근거 있는 위험이 0 이면 OK.
     """
-    now = now or datetime.now(KST)
+    now = now or _now_kst()
     recall_risk, recall_detail = _measure_recall_risk(run_result, now=now)
     precision_risk, precision_detail = _measure_precision_risk(run_result)
     delivered = _digest_delivered_count(run_result)
@@ -9792,7 +9841,7 @@ def write_digest_quality_report(
     run_at: datetime | None = None,
 ) -> Path:
     """계측 결과를 workspace/digest_quality_YYYYMMDD.json 으로 저장(gitignore 관례)."""
-    run_at = run_at or datetime.now(KST)
+    run_at = run_at or _now_kst()
     stamp = run_at.strftime("%Y%m%d")
     path = path or (BASE_DIR / "workspace" / f"digest_quality_{stamp}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -9919,7 +9968,7 @@ def run_smoke_test(only_to: str, today=None) -> int:
     if not target or "@" not in target:
         log.error("smoke-test 는 --only-to <주소> 와 함께만 실행할 수 있습니다")
         return 2
-    today = today or datetime.now(KST).date()
+    today = today or _now_kst().date()
     sample = [{
         "id": "smoke-1", "title": "[테스트] 공고 메일 발송 점검", "author": "MAIL 스모크 테스트",
         "support_field": "바우처 최대 1천만원", "description": "발송 경로 점검용 예시 공고 (실제 공고 아님)",
@@ -10070,7 +10119,7 @@ if __name__ == "__main__":
                     _settings_ee = load_settings()
                     _groups_ee = load_groups()
                     _wl_ee = load_watchlist()
-                    _td = delivery_cycle_date(datetime.now(KST))
+                    _td = delivery_cycle_date(_now_kst())
                     _skip_ee = should_skip_fetch_already_delivered(
                         target_date=str(_td),
                         groups=_groups_ee,
