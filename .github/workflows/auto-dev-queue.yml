@@ -11,6 +11,15 @@ on:
         options:
           - 'true'
           - 'false'
+      timeout_minutes:
+        description: '최대 실행시간(분)'
+        required: false
+        default: '360'
+        type: choice
+        options:
+          - '60'
+          - '180'
+          - '360'
 
   # schedule 트리거 제거(2026-07): AUTO_DEV_PAT 만료로 매일 checkout 단계에서 실패했고,
   # AUTO_DEV_AGENT="false"(에이전트 미연동)라 스케줄 실행이 실질 작업을 못 함.
@@ -31,7 +40,7 @@ permissions:
 jobs:
   run-queue:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: ${{ fromJSON(inputs.timeout_minutes || '360') }}
 
     steps:
       - name: 코드 체크아웃
