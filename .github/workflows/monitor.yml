@@ -1,26 +1,24 @@
-name: 수출지원 모니터링 자동 실행
+name: ?섏텧吏??紐⑤땲?곕쭅 ?먮룞 ?ㅽ뻾
 
 on:
   schedule:
-    # 하루 2회 발송 (2026-07-30 사용자 지정): 07:30 KST, 18:30 KST
-    #   07:30 KST = 22:30 UTC (전날)  /  18:30 KST = 09:30 UTC
-    # ※ GitHub 예약 실행은 혼잡 시 지연된다(이 저장소 실측 ~50분). 도착이 늦으면
-    #   cron 을 그만큼 앞으로 당긴다.
-    # ※ 회차(am/pm)는 아래 MONITOR_DELIVERY_SLOT 으로 cron 별로 고정한다.
-    #   벽시계(DELIVERY_PM_CUTOFF_HOUR=14)만 쓰면 오전 cron 이 14:00 KST 이후 도착하거나
-    #   오후 수동 따라잡기가 #pm 키를 써서 저녁 18:30 이 already_delivered 로 스킵된다.
-    #   cron 식을 바꾸면 MONITOR_DELIVERY_SLOT 매핑도 같이 갱신할 것.
+    # ?섎（ 2??諛쒖넚 (2026-07-30 ?ъ슜??吏??: 07:30 KST, 18:30 KST
+    #   07:30 KST = 22:30 UTC (?꾨궇)  /  18:30 KST = 09:30 UTC
+    # ??GitHub ?덉빟 ?ㅽ뻾? ?쇱옟 ??吏?곕맂??????μ냼 ?ㅼ륫 ~50遺?. ?꾩갑????쑝硫?    #   cron ??洹몃쭔???욎쑝濡??밴릿??
+    # ???뚯감(am/pm)???꾨옒 MONITOR_DELIVERY_SLOT ?쇰줈 cron 蹂꾨줈 怨좎젙?쒕떎.
+    #   踰쎌떆怨?DELIVERY_PM_CUTOFF_HOUR=14)留??곕㈃ ?ㅼ쟾 cron ??14:00 KST ?댄썑 ?꾩갑?섍굅??    #   ?ㅽ썑 ?섎룞 ?곕씪?↔린媛 #pm ?ㅻ? ?⑥꽌 ???18:30 ??already_delivered 濡??ㅽ궢?쒕떎.
+    #   cron ?앹쓣 諛붽씀硫?MONITOR_DELIVERY_SLOT 留ㅽ븨??媛숈씠 媛깆떊??寃?
     - cron: '30 22 * * *'
     - cron: '30 9 * * *'
   workflow_dispatch:
-    # 수동 실행 버튼 (Actions 탭에서 즉시 실행 가능)
+    # ?섎룞 ?ㅽ뻾 踰꾪듉 (Actions ??뿉??利됱떆 ?ㅽ뻾 媛??
     inputs:
       group_id:
-        description: '단일 그룹 ID (예: grp_prestartup_ai). 미지정 시 모든 활성 그룹.'
+        description: '?⑥씪 洹몃９ ID (?? grp_prestartup_ai). 誘몄?????紐⑤뱺 ?쒖꽦 洹몃９.'
         required: false
         default: ''
       delivery_slot:
-        description: "발송 회차 (am=오전 따라잡기, pm=저녁, auto=실행 시각 기준)"
+        description: "諛쒖넚 ?뚯감 (am=?ㅼ쟾 ?곕씪?↔린, pm=??? auto=?ㅽ뻾 ?쒓컖 湲곗?)"
         required: false
         default: auto
         type: choice
@@ -29,19 +27,18 @@ on:
           - am
           - pm
       only_to:
-        description: '테스트 전용: 지정하면 이번 수동 실행의 모든 수신자를 이 주소 하나로 강제한다(실제 그룹·전체 수신자는 발송되지 않음). schedule 자동실행에는 절대 적용되지 않는다.'
+        description: '?뚯뒪???꾩슜: 吏?뺥븯硫??대쾲 ?섎룞 ?ㅽ뻾??紐⑤뱺 ?섏떊?먮? ??二쇱냼 ?섎굹濡?媛뺤젣?쒕떎(?ㅼ젣 洹몃９쨌?꾩껜 ?섏떊?먮뒗 諛쒖넚?섏? ?딆쓬). schedule ?먮룞?ㅽ뻾?먮뒗 ?덈? ?곸슜?섏? ?딅뒗??'
         required: false
         default: ''
       smoke_test:
-        description: '빠른 점검: 수집·AI 없이 테스트 digest 1통만 only_to 로 보낸다(only_to 필수, 수 분 내 종료).'
+        description: '鍮좊Ⅸ ?먭?: ?섏쭛쨌AI ?놁씠 ?뚯뒪??digest 1?듬쭔 only_to 濡?蹂대궦??only_to ?꾩닔, ??遺???醫낅즺).'
         required: false
         default: false
         type: boolean
 
-# 동시 실행 방지(#17): 수동 실행이 예약 실행과 겹치면 두 개의 발송 run 이 동시에 돌아
-# 중복 발송·seen_ids 커밋백 경쟁이 날 수 있다. 같은 그룹으로 묶어 한 번에 하나만 진행한다.
-#  cancel-in-progress: false — 진행 중인 발송을 중간에 죽이지 않는다(반쪽 발송 방지). 나중에 온
-#  run 은 앞 run 이 끝날 때까지 대기(최대 1개 pending). 발송은 멱등(delivery_state)이라 안전.
+# ?숈떆 ?ㅽ뻾 諛⑹?(#17): ?섎룞 ?ㅽ뻾???덉빟 ?ㅽ뻾怨?寃뱀튂硫???媛쒖쓽 諛쒖넚 run ???숈떆???뚯븘
+# 以묐났 諛쒖넚쨌seen_ids 而ㅻ컠諛?寃쎌웳???????덈떎. 媛숈? 洹몃９?쇰줈 臾띠뼱 ??踰덉뿉 ?섎굹留?吏꾪뻾?쒕떎.
+#  cancel-in-progress: false ??吏꾪뻾 以묒씤 諛쒖넚??以묎컙??二쎌씠吏 ?딅뒗??諛섏そ 諛쒖넚 諛⑹?). ?섏쨷????#  run ? ??run ???앸궇 ?뚭퉴吏 ?湲?理쒕? 1媛?pending). 諛쒖넚? 硫깅벑(delivery_state)?대씪 ?덉쟾.
 concurrency:
   group: monitor-daily-send
   cancel-in-progress: false
@@ -50,52 +47,50 @@ jobs:
   monitor:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # seen_ids 등 상태파일을 state 브랜치에 push
+      contents: write   # seen_ids ???곹깭?뚯씪??state 釉뚮옖移섏뿉 push
 
     steps:
-      - name: 코드 체크아웃
+      - name: 肄붾뱶 泥댄겕?꾩썐
         uses: actions/checkout@v4
 
-      - name: Python 설정
+      - name: Python ?ㅼ젙
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 패키지 설치
+      - name: ?⑦궎吏 ?ㅼ튂
         run: pip install -r requirements.txt
 
-      # 상태파일(seen_ids 등)은 보호된 main 대신 별도 state 브랜치에 저장한다(main push 는
-      # 브랜치 보호로 거부됨). 실행 전에 state 브랜치의 최신본을 작업트리에 덮어쓴다.
-      # state 브랜치가 아직 없으면(첫 실행) main 에 있는 사본을 그대로 쓰고, 실행 후 저장 단계가
-      # 그 결과로 state 브랜치를 새로 만든다. 비었거나 JSON 파싱이 안 되는 파일은 덮어쓰지 않는다.
-      - name: 상태파일 복원(state 브랜치 우선)
+      # ?곹깭?뚯씪(seen_ids ??? 蹂댄샇??main ???蹂꾨룄 state 釉뚮옖移섏뿉 ??ν븳??main push ??      # 釉뚮옖移?蹂댄샇濡?嫄곕???. ?ㅽ뻾 ?꾩뿉 state 釉뚮옖移섏쓽 理쒖떊蹂몄쓣 ?묒뾽?몃━????뼱?대떎.
+      # state 釉뚮옖移섍? ?꾩쭅 ?놁쑝硫?泥??ㅽ뻾) main ???덈뒗 ?щ낯??洹몃?濡??곌퀬, ?ㅽ뻾 ??????④퀎媛
+      # 洹?寃곌낵濡?state 釉뚮옖移섎? ?덈줈 留뚮뱺?? 鍮꾩뿀嫄곕굹 JSON ?뚯떛?????섎뒗 ?뚯씪? ??뼱?곗? ?딅뒗??
+      - name: ?곹깭?뚯씪 蹂듭썝(state 釉뚮옖移??곗꽑)
         run: |
           STATE_FILES="var/state/seen_ids.json var/state/notice_versions.json var/state/delivery_state.json var/outbox/delivery_outbox.enc data/golden/feedback_labels.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl"
           if git ls-remote --exit-code --heads origin state >/dev/null; then :; else
             rc=$?
             if [ "$rc" -eq 2 ]; then
-              echo "state 브랜치 없음 — main 사본으로 시작(저장 단계가 state 브랜치를 생성)"; exit 0
+              echo "state 釉뚮옖移??놁쓬 ??main ?щ낯?쇰줈 ?쒖옉(????④퀎媛 state 釉뚮옖移섎? ?앹꽦)"; exit 0
             fi
-            echo "::error::state 브랜치 조회 실패(exit $rc) — 오래된 main 사본으로 중복 발송될 수 있어 중단"; exit 1
+            echo "::error::state 釉뚮옖移?議고쉶 ?ㅽ뙣(exit $rc) ???ㅻ옒??main ?щ낯?쇰줈 以묐났 諛쒖넚?????덉뼱 以묐떒"; exit 1
           fi
           git fetch --no-tags --depth=1 origin +refs/heads/state:refs/remotes/origin/state
           for f in $STATE_FILES; do
             if ! git cat-file -e "origin/state:$f" 2>/dev/null; then
-              echo "state 브랜치에 $f 없음 — main 사본 유지"; continue
+              echo "state 釉뚮옖移섏뿉 $f ?놁쓬 ??main ?щ낯 ?좎?"; continue
             fi
             git show "origin/state:$f" > /tmp/state_restore.tmp
             if ! python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" /tmp/state_restore.tmp; then
-              echo "::warning::state 브랜치 $f 가 비었거나 파싱 실패 — main 사본 유지"; continue
+              echo "::warning::state 釉뚮옖移?$f 媛 鍮꾩뿀嫄곕굹 ?뚯떛 ?ㅽ뙣 ??main ?щ낯 ?좎?"; continue
             fi
             mkdir -p "$(dirname "$f")"
             cp -f /tmp/state_restore.tmp "$f"
-            echo "복원: $f (state 브랜치)"
+            echo "蹂듭썝: $f (state 釉뚮옖移?"
           done
 
-      # 커버리지 baseline(사이트별 평소 수집건수 이력)을 실행 간에 유지한다.
-      # GitHub Actions 는 매번 새 환경이라 캐시로 넘겨주지 않으면 이력이 사라져
-      # 이상탐지가 영원히 발동하지 못한다(restore-keys 로 가장 최근 것을 복원).
-      - name: 커버리지 baseline 복원(전날까지 이력)
+      # 而ㅻ쾭由ъ? baseline(?ъ씠?몃퀎 ?됱냼 ?섏쭛嫄댁닔 ?대젰)???ㅽ뻾 媛꾩뿉 ?좎??쒕떎.
+      # GitHub Actions ??留ㅻ쾲 ???섍꼍?대씪 罹먯떆濡??섍꺼二쇱? ?딆쑝硫??대젰???щ씪??      # ?댁긽?먯?媛 ?곸썝??諛쒕룞?섏? 紐삵븳??restore-keys 濡?媛??理쒓렐 寃껋쓣 蹂듭썝).
+      - name: 而ㅻ쾭由ъ? baseline 蹂듭썝(?꾨궇源뚯? ?대젰)
         uses: actions/cache/restore@v4
         with:
           path: var/state/coverage_baseline.json
@@ -103,10 +98,10 @@ jobs:
           restore-keys: |
             coverage-baseline-
 
-      # 필드별 읽기율과 반복 실패 fingerprint를 실행 간 유지한다. 기업마당·K-Startup은
-      # 첫 실패부터 P0, NIPA·KITA는 동일 결함 2회면 P1→P0로 올린다.
-      # 정상 중앙값보다 20%p 급락해도 회귀로 판정한다.
-      - name: 핵심소스 필드품질 학습이력 복원
+      # ?꾨뱶蹂??쎄린?④낵 諛섎났 ?ㅽ뙣 fingerprint瑜??ㅽ뻾 媛??좎??쒕떎. 湲곗뾽留덈떦쨌K-Startup?
+      # 泥??ㅽ뙣遺??P0, NIPA쨌KITA???숈씪 寃고븿 2?뚮㈃ P1?뭁0濡??щ┛??
+      # ?뺤긽 以묒븰媛믩낫??20%p 湲됰씫?대룄 ?뚭?濡??먯젙?쒕떎.
+      - name: ?듭떖?뚯뒪 ?꾨뱶?덉쭏 ?숈뒿?대젰 蹂듭썝
         uses: actions/cache/restore@v4
         with:
           path: var/state/source_field_quality_history.json
@@ -114,39 +109,38 @@ jobs:
           restore-keys: |
             source-field-quality-
 
-      # timeout 240: 정상 ~1h40m, hung 3h+ 여유. 자동 re-dispatch 없음(사람 승인).
-      - name: 공고 digest 자동발송 (+커버리지 이상탐지·크래시 알림)
+      # timeout 240: ?뺤긽 ~1h40m, hung 3h+ ?ъ쑀. ?먮룞 re-dispatch ?놁쓬(?щ엺 ?뱀씤).
+      - name: 怨듦퀬 digest ?먮룞諛쒖넚 (+而ㅻ쾭由ъ? ?댁긽?먯?쨌?щ옒???뚮┝)
         timeout-minutes: 240
         env:
           BIZINFO_API_KEY:    ${{ secrets.BIZINFO_API_KEY }}
-          # 선택: 공공데이터포털 기업마당 서비스키. bizinfo.go.kr 직결이 러너 IP 에서
-          #   WAF/지역차단(timeout)될 때 data.go.kr 폴백을 켠다(시크릿 없으면 폴백 비활성).
+          # ?좏깮: 怨듦났?곗씠?고룷??湲곗뾽留덈떦 ?쒕퉬?ㅽ궎. bizinfo.go.kr 吏곴껐???щ꼫 IP ?먯꽌
+          #   WAF/吏??감??timeout)????data.go.kr ?대갚??耳좊떎(?쒗겕由??놁쑝硫??대갚 鍮꾪솢??.
           DATA_GO_KR_KEY:     ${{ secrets.DATA_GO_KR_KEY }}
           ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NTFY_TOPIC:         ${{ secrets.NTFY_TOPIC }}
-          # 수신자·회사 이메일은 Git 평문 JSON 대신 암호화된 Secret payload 에서만 결합한다.
+          # ?섏떊?먃룻쉶???대찓?쇱? Git ?됰Ц JSON ????뷀샇?붾맂 Secret payload ?먯꽌留?寃고빀?쒕떎.
           MAIL_PRIVATE_CONFIG_JSON: ${{ secrets.MAIL_PRIVATE_CONFIG_JSON }}
           MAIL_PRIVATE_CONFIG_KEY:  ${{ secrets.MAIL_PRIVATE_CONFIG_KEY }}
           MAIL_DELIVERY_STATE_SECRET: ${{ secrets.MAIL_DELIVERY_STATE_SECRET }}
           MAIL_FEEDBACK_SECRET: ${{ secrets.MAIL_FEEDBACK_SECRET }}
-          # 발송 회차 고정: schedule 은 cron 식→am/pm, workflow_dispatch 는 inputs.
-          # auto/빈 값은 monitor.delivery_slot 이 벽시계로 폴백.
+          # 諛쒖넚 ?뚯감 怨좎젙: schedule ? cron ?앪넂am/pm, workflow_dispatch ??inputs.
+          # auto/鍮?媛믪? monitor.delivery_slot ??踰쎌떆怨꾨줈 ?대갚.
           MONITOR_DELIVERY_SLOT: ${{ github.event_name == 'schedule' && (github.event.schedule == '30 22 * * *' && 'am' || github.event.schedule == '30 9 * * *' && 'pm' || 'auto') || inputs.delivery_slot || 'auto' }}
-          # 2026-10 실행 시간 예산(분, 시작 기준): 240분 timeout 전에 수집을 끊고 발송·상태저장까지 끝낸다.
-          #   실측(10/4~10/12): 커버리지 감사 55~158분, 상세보강 35~155분+, 발송 ~3분, 발송 후 계측 0~10분.
+          # 2026-10 ?ㅽ뻾 ?쒓컙 ?덉궛(遺? ?쒖옉 湲곗?): 240遺?timeout ?꾩뿉 ?섏쭛???딄퀬 諛쒖넚쨌?곹깭??κ퉴吏 ?앸궦??
+          #   ?ㅼ륫(10/4~10/12): 而ㅻ쾭由ъ? 媛먯궗 55~158遺? ?곸꽭蹂닿컯 35~155遺?, 諛쒖넚 ~3遺? 諛쒖넚 ??怨꾩륫 0~10遺?
           MONITOR_COVERAGE_BUDGET_MIN: '75'
           MONITOR_COLLECT_BUDGET_MIN: '150'
           MONITOR_POST_SEND_SKIP_MIN: '180'
-        # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 암호화된 그룹 수신자에게
-        # 매일 08:00 KST 실제 발송한다.
-        # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
-        # --coverage-alert: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
-        # --group: workflow_dispatch 에서 지정한 단일 그룹만 실행(미지정 시 전체).
-        # --only-to: workflow_dispatch 에서만 지정 가능한 테스트 전용 안전장치. schedule
-        #   실행은 github.event.inputs 자체가 비어 있어 항상 빈 문자열 → 이 플래그가 절대
-        #   자동 예약 발송에 섞이지 않는다.
+        # ?ъ슜??紐낆떆 ?뱀씤(2026-07-14): 怨듦퀬 digest ?먮룞諛쒖넚 ?ы솢?깊솕. ?뷀샇?붾맂 洹몃９ ?섏떊?먯뿉寃?        # 留ㅼ씪 08:00 KST ?ㅼ젣 諛쒖넚?쒕떎.
+        # --persist-seen: 諛쒖넚??怨듦퀬 id 瑜?seen_ids.json ??湲곕줉(?ㅼ쓬??以묐났 ?щ컻??諛⑹?).
+        #: ?됱냼 N嫄??섏쭛?섎뜕 ?ъ씠?멸? 0嫄?湲됯컧/?ㅽ뙣 ??PC ?대찓???뚮┝(?꾨씫 諛⑹?).
+        # --group: workflow_dispatch ?먯꽌 吏?뺥븳 ?⑥씪 洹몃９留??ㅽ뻾(誘몄??????꾩껜).
+        # --only-to: workflow_dispatch ?먯꽌留?吏??媛?ν븳 ?뚯뒪???꾩슜 ?덉쟾?μ튂. schedule
+        #   ?ㅽ뻾? github.event.inputs ?먯껜媛 鍮꾩뼱 ?덉뼱 ??긽 鍮?臾몄옄???????뚮옒洹멸? ?덈?
+        #   ?먮룞 ?덉빟 諛쒖넚???욎씠吏 ?딅뒗??
         run: |
           GROUP_FLAG=""
           if [ -n "${{ github.event.inputs.group_id }}" ]; then
@@ -158,31 +152,28 @@ jobs:
           fi
           if [ "${{ github.event.inputs.smoke_test }}" = "true" ]; then
             if [ -z "${{ github.event.inputs.only_to }}" ]; then
-              echo "::error::smoke_test 는 only_to 와 함께만 실행할 수 있습니다"; exit 2
+              echo "::error::smoke_test ??only_to ? ?④퍡留??ㅽ뻾?????덉뒿?덈떎"; exit 2
             fi
             python scripts/monitor_runtime.py --smoke-test $ONLY_TO_FLAG
             exit $?
           fi
-          python scripts/monitor_runtime.py --send --persist-seen --coverage-alert $GROUP_FLAG $ONLY_TO_FLAG
+          python scripts/monitor_runtime.py --send --persist-seen $GROUP_FLAG $ONLY_TO_FLAG
 
-      - name: 커버리지 baseline 저장(다음 실행 비교용)
+      - name: 而ㅻ쾭由ъ? baseline ????ㅼ쓬 ?ㅽ뻾 鍮꾧탳??
         if: always()
         uses: actions/cache/save@v4
         with:
           path: var/state/coverage_baseline.json
           key: coverage-baseline-${{ github.run_id }}
 
-      - name: 핵심소스 필드품질 학습이력 저장
-        if: always()
+      - name: ?듭떖?뚯뒪 ?꾨뱶?덉쭏 ?숈뒿?대젰 ???        if: always()
         uses: actions/cache/save@v4
         with:
           path: var/state/source_field_quality_history.json
           key: source-field-quality-${{ github.run_id }}
 
-      # P0 수집누락 실행대장·알림 사본 보존. var/logs/는 .gitignore 대상이라 커밋되지 않으므로
-      # 아티팩트로 남기지 않으면 러너 종료와 함께 사라진다("만들었는데 아무도 못 봄" 방지).
-      - name: 소스 실행대장·P0 알림 아티팩트 업로드
-        if: always()
+      # P0 ?섏쭛?꾨씫 ?ㅽ뻾??Β룹븣由??щ낯 蹂댁〈. var/logs/??.gitignore ??곸씠??而ㅻ컠?섏? ?딆쑝誘濡?      # ?꾪떚?⑺듃濡??④린吏 ?딆쑝硫??щ꼫 醫낅즺? ?④퍡 ?щ씪吏꾨떎("留뚮뱾?덈뒗???꾨Т??紐?遊? 諛⑹?).
+      - name: ?뚯뒪 ?ㅽ뻾??Β텾0 ?뚮┝ ?꾪떚?⑺듃 ?낅줈??        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: source-coverage-${{ github.run_id }}
@@ -196,9 +187,9 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
-      # 발송 직후 당일 메타 검수(MDR = L규칙 스타일). SMTP/IMAP 추가 호출 없음.
-      # FAIL 이어도 발송은 이미 끝났으므로 continue-on-error — 커밋백·아티팩트는 계속.
-      - name: 발송 후 일일 검수(MDR)·컨텍스트 적재
+      # 諛쒖넚 吏곹썑 ?뱀씪 硫뷀? 寃??MDR = L洹쒖튃 ?ㅽ???. SMTP/IMAP 異붽? ?몄텧 ?놁쓬.
+      # FAIL ?댁뼱??諛쒖넚? ?대? ?앸궗?쇰?濡?continue-on-error ??而ㅻ컠諛굿룹븘?고뙥?몃뒗 怨꾩냽.
+      - name: 諛쒖넚 ???쇱씪 寃??MDR)쨌而⑦뀓?ㅽ듃 ?곸옱
         if: always()
         id: daily_review
         continue-on-error: true
@@ -211,12 +202,11 @@ jobs:
           code=$?
           echo "review_exit=$code" >> "$GITHUB_OUTPUT"
           if [ "$code" -ne 0 ]; then
-            echo "::warning::mail_daily_review FAIL (exit $code) — var/reviews · ledger.jsonl 확인"
+            echo "::warning::mail_daily_review FAIL (exit $code) ??var/reviews 쨌 ledger.jsonl ?뺤씤"
           fi
           exit "$code"
 
-      - name: 일일 검수 아티팩트 업로드
-        if: always()
+      - name: ?쇱씪 寃???꾪떚?⑺듃 ?낅줈??        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mail-daily-review-${{ github.run_id }}
@@ -226,13 +216,13 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      # MAIL-035: 실행 기록(공고별 단계/필터 추적, raw store, 그룹별 digest dump+lint) 30일 보관.
-      # digest dump 는 monitor 가 수신자 마스킹·피드백 토큰/이메일 제거 후 기록한다. raw 는 200MB 초과 시 생략.
-      - name: 실행 기록 묶기(raw 이메일 마스킹·압축·크기 제한)
+      # MAIL-035: ?ㅽ뻾 湲곕줉(怨듦퀬蹂??④퀎/?꾪꽣 異붿쟻, raw store, 洹몃９蹂?digest dump+lint) 30??蹂닿?.
+      # digest dump ??monitor 媛 ?섏떊??留덉뒪?뮤룻뵾?쒕갚 ?좏겙/?대찓???쒓굅 ??湲곕줉?쒕떎. raw ??200MB 珥덇낵 ???앸왂.
+      - name: ?ㅽ뻾 湲곕줉 臾띔린(raw ?대찓??留덉뒪?뮤룹븬異빧룻겕湲??쒗븳)
         if: always()
         run: |
-          # 모든 기록을 var/logs/run_records/ 한 곳에 상대경로로 모은다(아티팩트 루트 = run_records,
-          # ../·절대경로 없음). raw 는 이메일 마스킹 사본만 tgz 로 묶는다(200MB 초과 시 생략).
+          # 紐⑤뱺 湲곕줉??var/logs/run_records/ ??怨녹뿉 ?곷?寃쎈줈濡?紐⑥????꾪떚?⑺듃 猷⑦듃 = run_records,
+          # ../쨌?덈?寃쎈줈 ?놁쓬). raw ???대찓??留덉뒪???щ낯留?tgz 濡?臾띕뒗??200MB 珥덇낵 ???앸왂).
           R=var/logs/run_records
           rm -rf "$R" && mkdir -p "$R"
           cp var/logs/notice_stage_trace_*.jsonl "$R"/ 2>/dev/null || true
@@ -242,24 +232,23 @@ jobs:
             size_mb=$(du -sm var/raw | cut -f1)
             if [ "$size_mb" -le 200 ]; then
               python scripts/mask_raw_emails.py var/raw "$R/_raw_tmp/raw"
-              tar czf "$R/raw_store.tgz" -C "$R/_raw_tmp" raw && echo "raw_store ${size_mb}MB 마스킹·압축"
+              tar czf "$R/raw_store.tgz" -C "$R/_raw_tmp" raw && echo "raw_store ${size_mb}MB 留덉뒪?뮤룹븬異?
               rm -rf "$R/_raw_tmp"
             else
-              echo "::warning::var/raw ${size_mb}MB > 200MB — raw 아티팩트 생략"
+              echo "::warning::var/raw ${size_mb}MB > 200MB ??raw ?꾪떚?⑺듃 ?앸왂"
             fi
           fi
-          # 안전망: dump·trace 에 이메일 주소·피드백 토큰이 남아 있으면 그 파일은 업로드에서 뺀다
-          find "$R" -type f \( -name '*.json' -o -name '*.jsonl' \) -print0 | while IFS= read -r -d '' f; do
+          # ?덉쟾留? dump쨌trace ???대찓??二쇱냼쨌?쇰뱶諛??좏겙???⑥븘 ?덉쑝硫?洹??뚯씪? ?낅줈?쒖뿉??類??          find "$R" -type f \( -name '*.json' -o -name '*.jsonl' \) -print0 | while IFS= read -r -d '' f; do
             if grep -qE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|MAIL-FB' "$f"; then
-              echo "::warning::$f 에 이메일/토큰 흔적 — 업로드 제외"; rm -f "$f"
+              echo "::warning::$f ???대찓???좏겙 ?붿쟻 ???낅줈???쒖쇅"; rm -f "$f"
             fi
           done
           ls -la "$R"
 
-      # 내려받기: gh run download <run_id> -n run-records-<run_id> -D <폴더>
-      #   (gh 2.63.1 은 -D 없이 단일 아티팩트를 받으면 'would result in path traversal' 오탐 — cli/cli#10007,
-      #    2.63.2+ 에서 수정. -D 를 주거나 gh 를 올리면 된다.)
-      - name: 실행 기록 아티팩트 업로드(공고 추적·digest dump·raw)
+      # ?대젮諛쏄린: gh run download <run_id> -n run-records-<run_id> -D <?대뜑>
+      #   (gh 2.63.1 ? -D ?놁씠 ?⑥씪 ?꾪떚?⑺듃瑜?諛쏆쑝硫?'would result in path traversal' ?ㅽ깘 ??cli/cli#10007,
+      #    2.63.2+ ?먯꽌 ?섏젙. -D 瑜?二쇨굅??gh 瑜??щ━硫??쒕떎.)
+      - name: ?ㅽ뻾 湲곕줉 ?꾪떚?⑺듃 ?낅줈??怨듦퀬 異붿쟻쨌digest dump쨌raw)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -268,12 +257,10 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      # 상태파일 저장: 보호된 main 이 아니라 보호 없는 state 브랜치에 push 한다(main push 는
-      # 'protected branch hook declined' 로 매번 거부돼 seen_ids 가 저장되지 않았다).
-      # if: always() — 발송 단계가 240분 timeout/실패로 끝나도(이미 보낸 뒤일 수 있음) 저장한다.
-      # 비었거나 JSON 파싱이 안 되는 파일은 push 하지 않는다. state 는 어떤 워크플로도 트리거하지 않는다.
-      - name: seen_ids·공고버전·O/X 피드백 state 브랜치 저장
-        if: always()
+      # ?곹깭?뚯씪 ??? 蹂댄샇??main ???꾨땲??蹂댄샇 ?녿뒗 state 釉뚮옖移섏뿉 push ?쒕떎(main push ??      # 'protected branch hook declined' 濡?留ㅻ쾲 嫄곕???seen_ids 媛 ??λ릺吏 ?딆븯??.
+      # if: always() ??諛쒖넚 ?④퀎媛 240遺?timeout/?ㅽ뙣濡??앸굹???대? 蹂대궦 ?ㅼ씪 ???덉쓬) ??ν븳??
+      # 鍮꾩뿀嫄곕굹 JSON ?뚯떛?????섎뒗 ?뚯씪? push ?섏? ?딅뒗?? state ???대뼡 ?뚰겕?뚮줈???몃━嫄고븯吏 ?딅뒗??
+      - name: seen_ids쨌怨듦퀬踰꾩쟾쨌O/X ?쇰뱶諛?state 釉뚮옖移????        if: always()
         env:
           GMAIL_ADDRESS:      ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
@@ -283,23 +270,22 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # 사용자가 digest 하단 '⭕ 맞아요/❌ 아니에요' 를 누르면 [MAIL-FB] 메일이 자기 함으로
-          # 온다. 읽기전용 IMAP 으로 그 O/X 를 수집해 골든 라벨(data/golden/feedback_labels.jsonl,
-          # tier C=사람확인)에 누적한다. 수집 실패는 발송·중복방지와 무관하므로 경고만 낸다.
-          python scripts/collect_feedback.py --days 60 || echo "::warning::O/X 피드백 수집 실패(무시) — 발송·중복방지엔 영향 없음"
+          # ?ъ슜?먭? digest ?섎떒 '狩?留욎븘?????꾨땲?먯슂' 瑜??꾨Ⅴ硫?[MAIL-FB] 硫붿씪???먭린 ?⑥쑝濡?          # ?⑤떎. ?쎄린?꾩슜 IMAP ?쇰줈 洹?O/X 瑜??섏쭛??怨⑤뱺 ?쇰꺼(data/golden/feedback_labels.jsonl,
+          # tier C=?щ엺?뺤씤)???꾩쟻?쒕떎. ?섏쭛 ?ㅽ뙣??諛쒖넚쨌以묐났諛⑹?? 臾닿??섎?濡?寃쎄퀬留??몃떎.
+          python scripts/collect_feedback.py --days 60 || echo "::warning::O/X ?쇰뱶諛??섏쭛 ?ㅽ뙣(臾댁떆) ??諛쒖넚쨌以묐났諛⑹????곹뼢 ?놁쓬"
           WS="$GITHUB_WORKSPACE"
           WT="$RUNNER_TEMP/state-wt"
           STATE_FILES="var/state/seen_ids.json var/state/notice_versions.json var/state/delivery_state.json var/outbox/delivery_outbox.enc data/golden/feedback_labels.jsonl docs/project/mail_daily_reviews/context/ledger.jsonl"
-          # 1) 이번 실행의 상태파일 검증 — 깨진 파일은 저장 대상에서 뺀다(빈/손상 파일 push 방지).
+          # 1) ?대쾲 ?ㅽ뻾???곹깭?뚯씪 寃利???源⑥쭊 ?뚯씪? ?????곸뿉??類??鍮??먯긽 ?뚯씪 push 諛⑹?).
           VALID=""
           for f in $STATE_FILES; do
             [ -f "$f" ] || continue
             if python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" "$f"; then VALID="$VALID $f"; else
-              echo "::warning::$f 가 비었거나 파싱 실패 — state 브랜치에 저장하지 않음"
+              echo "::warning::$f 媛 鍮꾩뿀嫄곕굹 ?뚯떛 ?ㅽ뙣 ??state 釉뚮옖移섏뿉 ??ν븯吏 ?딆쓬"
             fi
           done
-          if [ -z "$VALID" ]; then echo "::warning::저장할 유효한 상태파일 없음"; exit 0; fi
-          # 2) state 브랜치 worktree 에 반영·push. 원격이 앞서가면 다시 받아 병합 후 재시도(최대 3회).
+          if [ -z "$VALID" ]; then echo "::warning::??ν븷 ?좏슚???곹깭?뚯씪 ?놁쓬"; exit 0; fi
+          # 2) state 釉뚮옖移?worktree ??諛섏쁺쨌push. ?먭꺽???욎꽌媛硫??ㅼ떆 諛쏆븘 蹂묓빀 ???ъ떆??理쒕? 3??.
           for i in 1 2 3; do
             git worktree remove --force "$WT" 2>/dev/null || rm -rf "$WT"
             git worktree prune
@@ -309,8 +295,8 @@ jobs:
               NEW_BRANCH=0
             else
               rc=$?
-              if [ "$rc" -ne 2 ]; then echo "::warning::state 브랜치 조회 실패(exit $rc) — 재시도 ($i)"; sleep 3; continue; fi
-              # 첫 실행: 상태파일만 담는 orphan state 브랜치를 만든다.
+              if [ "$rc" -ne 2 ]; then echo "::warning::state 釉뚮옖移?議고쉶 ?ㅽ뙣(exit $rc) ???ъ떆??($i)"; sleep 3; continue; fi
+              # 泥??ㅽ뻾: ?곹깭?뚯씪留??대뒗 orphan state 釉뚮옖移섎? 留뚮뱺??
               git worktree add --detach "$WT" HEAD
               (cd "$WT" && git checkout -q --orphan state && git rm -rfq --cached . && git clean -fdxq)
               NEW_BRANCH=1
@@ -321,34 +307,34 @@ jobs:
                 cp -f "$f" "$WT/$f"; continue
               fi
               cmp -s "$WT/$f" "$WS/$f" && continue
-              # 원격 state 사본(target)에 이번 실행 사본(incoming)을 병합 — 병합 실패 시 커밋 금지.
+              # ?먭꺽 state ?щ낯(target)???대쾲 ?ㅽ뻾 ?щ낯(incoming)??蹂묓빀 ??蹂묓빀 ?ㅽ뙣 ??而ㅻ컠 湲덉?.
               case "$f" in
                 var/state/seen_ids.json)        python scripts/merge_seen_ids.py "$WT/$f" "$WS/$f" ;;
                 var/state/notice_versions.json) python scripts/merge_notice_versions.py "$WT/$f" "$WS/$f" ;;
                 var/state/delivery_state.json)  python scripts/merge_delivery_state.py "$WT/$f" "$WS/$f" ;;
                 var/outbox/delivery_outbox.enc) python scripts/merge_delivery_outbox.py "$WT/$f" "$WS/$f" ;;
                 *.jsonl) python scripts/merge_jsonl_append.py "$WT/$f" "$WS/$f" || cp -f "$WS/$f" "$WT/$f" ;;
-              esac || { echo "::error::$f 병합 실패 — 이번 시도 커밋 생략"; continue 2; }
-              python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" "$WT/$f" || { echo "::error::병합 결과 $f 파싱 실패 — 이번 시도 커밋 생략"; continue 2; }
+              esac || { echo "::error::$f 蹂묓빀 ?ㅽ뙣 ???대쾲 ?쒕룄 而ㅻ컠 ?앸왂"; continue 2; }
+              python -c 'import json,sys;n,p=sys.argv[1:3];d=open(p,"rb").read();assert d.strip(),"empty";n.endswith(".json") and json.loads(d);[json.loads(l) for l in d.splitlines() if l.strip()] if n.endswith(".jsonl") else 0' "$f" "$WT/$f" || { echo "::error::蹂묓빀 寃곌낵 $f ?뚯떛 ?ㅽ뙣 ???대쾲 ?쒕룄 而ㅻ컠 ?앸왂"; continue 2; }
             done
             cd "$WT"
             git add -f $VALID
             if git diff --cached --quiet; then
-              echo "state 브랜치에 이미 반영됨 — 커밋 생략"; exit 0
+              echo "state 釉뚮옖移섏뿉 ?대? 諛섏쁺????而ㅻ컠 ?앸왂"; exit 0
             fi
-            git commit -q -m "chore(state): update seen_ids·공고버전·피드백·일일검수 $(date +'%Y-%m-%d') [skip ci]"
+            git commit -q -m "chore(state): update seen_ids쨌怨듦퀬踰꾩쟾쨌?쇰뱶諛굿룹씪?쇨???$(date +'%Y-%m-%d') [skip ci]"
             if git push origin HEAD:refs/heads/state; then
-              echo "state 브랜치 push 성공 (시도 $i)"; exit 0
+              echo "state 釉뚮옖移?push ?깃났 (?쒕룄 $i)"; exit 0
             fi
-            echo "push 거부 — state 브랜치 다시 받아 병합 후 재시도 ($i)"
+            echo "push 嫄곕? ??state 釉뚮옖移??ㅼ떆 諛쏆븘 蹂묓빀 ???ъ떆??($i)"
             cd "$WS"
             sleep 3
           done
-          echo "::error::state 브랜치 push 3회 실패 — seen_ids 미저장(다음 실행에서 중복 발송 가능)"
+          echo "::error::state 釉뚮옖移?push 3???ㅽ뙣 ??seen_ids 誘몄????ㅼ쓬 ?ㅽ뻾?먯꽌 以묐났 諛쒖넚 媛??"
           exit 1
 
-      # failure·cancelled 모두 알림. 자동 재실행 금지 — 사람만 re-dispatch.
-      - name: 실패·취소 시 폰 알림(MDR 상태 포함)
+      # failure쨌cancelled 紐⑤몢 ?뚮┝. ?먮룞 ?ъ떎??湲덉? ???щ엺留?re-dispatch.
+      - name: ?ㅽ뙣쨌痍⑥냼 ?????뚮┝(MDR ?곹깭 ?ы븿)
         if: failure() || cancelled()
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
@@ -361,6 +347,6 @@ jobs:
               -H "Title: mail monitor FAIL/CANCEL" \
               -H "Priority: urgent" \
               -H "Tags: rotating_light" \
-              -d "run=${{ github.run_id }} status=${{ job.status }} MDR_exit=${mdr_exit:-n/a} coverage=${cov}. 자동재실행없음 — Actions에서 확인/수동재실행." \
+              -d "run=${{ github.run_id }} status=${{ job.status }} MDR_exit=${mdr_exit:-n/a} coverage=${cov}. ?먮룞?ъ떎?됱뾾????Actions?먯꽌 ?뺤씤/?섎룞?ъ떎??" \
               "https://ntfy.sh/$NTFY_TOPIC" || true
           fi
