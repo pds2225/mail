@@ -142,7 +142,7 @@ jobs:
         # 사용자 명시 승인(2026-07-14): 공고 digest 자동발송 재활성화. 암호화된 그룹 수신자에게
         # 매일 08:00 KST 실제 발송한다.
         # --persist-seen: 발송한 공고 id 를 seen_ids.json 에 기록(다음날 중복 재발송 방지).
-        # --coverage-alert: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
+        #: 평소 N건 수집되던 사이트가 0건/급감/실패 시 PC 이메일 알림(누락 방지).
         # --group: workflow_dispatch 에서 지정한 단일 그룹만 실행(미지정 시 전체).
         # --only-to: workflow_dispatch 에서만 지정 가능한 테스트 전용 안전장치. schedule
         #   실행은 github.event.inputs 자체가 비어 있어 항상 빈 문자열 → 이 플래그가 절대
@@ -163,7 +163,7 @@ jobs:
             python scripts/monitor_runtime.py --smoke-test $ONLY_TO_FLAG
             exit $?
           fi
-          python scripts/monitor_runtime.py --send --persist-seen --coverage-alert $GROUP_FLAG $ONLY_TO_FLAG
+          python scripts/monitor_runtime.py --send --persist-seen $GROUP_FLAG $ONLY_TO_FLAG
 
       - name: 커버리지 baseline 저장(다음 실행 비교용)
         if: always()
