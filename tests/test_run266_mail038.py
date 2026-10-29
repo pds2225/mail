@@ -1,6 +1,8 @@
 """MAIL-038: run #266(10/14 12:20 KST 발송) digest dump 실제 문자열 회귀."""
 from datetime import datetime
 
+import pytest
+
 import monitor
 from mail_core.delivery import digest_lint as dl
 
@@ -49,7 +51,18 @@ def test_title_amount_preferred_over_page_amount():
     assert monitor._mail_support_summary(no_title_amt).startswith("최대 3,900만원")
 
 
-def test_feedback_order_matches_card_order(monkeypatch):
+@pytest.mark.parametrize(("day", "expected_ids"), [
+    (14, ["a", "c", "b"]),  # run #266: section order differs from input order
+    (21, ["a", "c"]),       # expired notices must disappear from both lists
+    (28, ["a"]),
+    (31, []),
+])
+def test_feedback_order_matches_card_order(monkeypatch, day, expected_ids):
+    now = NOW.replace(day=day)
+    # Production run_monitor freezes _now_kst for all renderers. Passing now to
+    # the assembler alone leaves fallback_body on the wall clock instead.
+    monkeypatch.setattr(monitor, "_now_kst", lambda: now)
+    monkeypatch.setenv("MONITOR_DIGEST_LLM", "0")
     monkeypatch.setattr(monitor, "_feedback_links_enabled", lambda: True)
     items = [
         _item("2026년 강원 미래모빌리티 기업지원 프로그램 모집 공고(재공고)", "2026-10-30", id="a",
@@ -60,10 +73,15 @@ def test_feedback_order_matches_card_order(monkeypatch):
     ]
     out = monitor._build_group_mail_content(
         group={"name": "g"}, g_items=items, ru_mail_items=[], ru_items=[], ru_limit=10, filtered_new=items,
-        window_label="w", days_back=3, date_str="10/14 오후", now=NOW)
+        window_label="w", days_back=3, date_str=monitor._send_date_label(now), now=now)
     body = out["body"]
+    if not expected_ids:
+        assert "📋" not in body and "🙋" not in body
+        assert "그룹 매칭 0건" in body
+        return
     cards = body[body.index("📋"):body.index("🙋")]
     card_titles = [l for l in cards.split("\n") if l and not l.startswith(" ") and not l.startswith(("■", "📋", "─"))]
     fb = body[body.index("🙋"):]
     fb_titles = [l.split(". ", 1)[1] for l in fb.split("\n") if l[:1].isdigit() and ". " in l]
-    assert fb_titles == card_titles and len(fb_titles) == 3
+    expected_titles = [next(it["title"] for it in items if it["id"] == nid) for nid in expected_ids]
+    assert fb_titles == card_titles == expected_titles
