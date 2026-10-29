@@ -10,8 +10,8 @@
     "counts": {
       "total": 154,
       "ALREADY_DONE": 42,
-      "COVERED_BY_TASK": 112,
-      "OPEN": 0,
+      "COVERED_BY_TASK": 108,
+      "OPEN": 4,
       "BLOCKED": 0,
       "DEFERRED": 0,
       "N_A": 0,
@@ -4492,7 +4492,7 @@
       "impact": "다른 사람이 피드백 가능",
       "risk_level": "P1",
       "recommended_response": "수신자별 서명토큰",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "OPEN",
       "task_ids": [
         "MAIL-014",
         "MAIL-027"
@@ -4504,10 +4504,12 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/feedback.py",
+        "mail_core/delivery/feedback_token.py",
+        "docs/risk_register/MAIL-027_feedback_open_audit_20261030.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-027 direct fixture audit on main 59e311843c58611fb187e957fd4c8a3e831a99ca: Fixed-time links to different recipients have identical signed subjects: HMAC payload has verdict/id/issued_at only, so forwarded valid tokens are not recipient-bound. Related regressions: 35 passed. No production writes or network. Verified 2026-10-30T04:58:26+09:00 (Asia/Seoul).",
+      "last_verified_at": "2026-10-30T04:58:26+09:00"
     },
     {
       "risk_no": 131,
@@ -4517,7 +4519,7 @@
       "impact": "같은 공고에 반복 피드백",
       "risk_level": "P1",
       "recommended_response": "1회성 또는 최신 응답만 유효",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "OPEN",
       "task_ids": [
         "MAIL-014",
         "MAIL-027"
@@ -4529,10 +4531,12 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/feedback.py",
+        "mail_core/delivery/feedback_token.py",
+        "docs/risk_register/MAIL-027_feedback_open_audit_20261030.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-027 direct fixture audit on main 59e311843c58611fb187e957fd4c8a3e831a99ca: Same unexpired token verifies repeatedly. Explicit-path fixture merge of newer O then older X ends as X with last_seen moved backward; neither one-time consumption nor latest-time-only updates are enforced. Related regressions: 35 passed. No production writes or network. Verified 2026-10-30T04:58:26+09:00 (Asia/Seoul).",
+      "last_verified_at": "2026-10-30T04:58:26+09:00"
     },
     {
       "risk_no": 132,
@@ -4624,7 +4628,7 @@
       "impact": "회신분석 오류",
       "risk_level": "P1",
       "recommended_response": "버튼형 구조화 피드백 우선",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "OPEN",
       "task_ids": [
         "MAIL-014",
         "MAIL-027"
@@ -4636,10 +4640,13 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/feedback.py",
+        "mail_core/delivery/feedback_token.py",
+        "docs/risk_register/MAIL-027_feedback_open_audit_20261030.md",
+        "scripts/collect_feedback.py"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-027 direct fixture audit on main 59e311843c58611fb187e957fd4c8a3e831a99ca: Fake read-only IMAP with a valid signed Re: subject and Auto-Submitted: auto-replied is accepted. Collector requests SUBJECT DATE only and does not check automated-reply headers. Related regressions: 35 passed. No production writes or network. Verified 2026-10-30T04:58:26+09:00 (Asia/Seoul).",
+      "last_verified_at": "2026-10-30T04:58:26+09:00"
     },
     {
       "risk_no": 136,
@@ -4784,7 +4791,7 @@
       "impact": "특정 기업 취향이 전체 규칙에 반영",
       "risk_level": "P1",
       "recommended_response": "전역·그룹·기업·수신자 레벨 분리",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "OPEN",
       "task_ids": [
         "MAIL-014",
         "MAIL-027",
@@ -4798,10 +4805,12 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/feedback.py",
+        "mail_core/delivery/feedback_token.py",
+        "docs/risk_register/MAIL-027_feedback_open_audit_20261030.md"
       ],
-      "audit_note": "",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "MAIL-027 direct fixture audit on main 59e311843c58611fb187e957fd4c8a3e831a99ca: Explicit-path fixture merges group-a/user-a O and group-b/user-b X for the same notice into a single X row; group_id/recipient are not retained and storage is keyed by notice id alone. Related regressions: 35 passed. No production writes or network. Verified 2026-10-30T04:58:26+09:00 (Asia/Seoul).",
+      "last_verified_at": "2026-10-30T04:58:26+09:00"
     },
     {
       "risk_no": 142,
