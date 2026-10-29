@@ -438,6 +438,16 @@ run #266(10/14 12:20 발송) run-records 점검에서 나온 문제 4종을 한 
 ### 8-16. DONE
 REQUEST_SOLVED=YES
 
+### 2026-10-30 CI follow-up
+
+- TASK_START_SHA: ac371f2016a30330e02ff862fcb83a96220b5b84
+- TASK_BLOB_SHA: 1ea4fc36ff4fafbd2512b9fcf752fdd624ef01b3
+- WORK_BRANCH: fix/mail-038-feedback-card-order-ci
+- Unchanged main reproduces the feedback/card-order failure: the assembler receives 10/14 while fallback_body reads the wall clock (10/30), dropping two expired cards. Production run_monitor already freezes the shared clock; the fixture must do the same.
+- Preserve exact title/order assertions; cover 10/14 (3 cards), 10/21 (2), 10/28 (1), and 10/31 (0), including exclusion from feedback. Disable optional LLM notes in this deterministic fixture. No production/mail/config changes.
+- Related digest, feedback, mobile rendering, truncation and run-clock tests: 138 passed. Local full suite not run; PR checks remain required before merge.
+- Follow-up scope: merge this CI repair after green checks, then update PR #397 against main and merge only after green checks; no protection bypass.
+
 
 ## MAIL-037
 
