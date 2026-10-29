@@ -48,11 +48,11 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 [x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
-[ ] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
+[~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 [x] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [x] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [x] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
-[~] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
+[ ] MAIL-027 | 피드백 129~142 리스크를 대조해 남은 보안·정답품질·학습안전 문제만 해결한다
 [ ] MAIL-028 | 상태관리 143~154 리스크를 대조해 남은 동시쓰기·복구·백업 문제만 해결한다
 [x] MAIL-029 | 실제 발송될 메일을 /run에서 그룹별로 미리 본다
 [x] MAIL-030 | Vercel 실사용 /run 이 cryptography 모듈 누락으로 500 에러 나는 것을 고친다
@@ -2804,7 +2804,7 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 
 ### 8-4. 현재상태
 
-- STATUS: READY
+- STATUS: ACTIVE
 - SOURCE: PR #327 post-merge Codex review P1/P2
 - DEPENDS_ON: MAIL-021
 - 실제 메일 발송·삭제·라벨 변경 없음
@@ -2814,10 +2814,10 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 - [x] manualContent 생성 시 source file SHA/version을 함께 반환한다.
 - [x] 저장 직전 또는 적용 시 source SHA가 최신 원격과 동일한지 확인한다.
 - [x] 원격 변경이 있으면 기존 최신 변경을 보존한 채 O/X/config patch만 재적용하거나 충돌로 중단한다.
-- [ ] concurrent writer가 추가한 feedback row가 사라지지 않는 회귀테스트를 추가한다.
+- [x] concurrent writer가 추가한 feedback row가 사라지지 않는 회귀테스트를 추가한다.
 - [x] protected-main 수동저장 안내에 Create pull request 단계를 포함한다.
 - [x] PR 생성 후 merge 전 상태를 저장완료로 표시하지 않는다.
-- [ ] 기존 token direct-save 경로도 stale SHA 충돌을 안전하게 처리하는지 확인한다.
+- [x] 기존 token direct-save 경로도 stale SHA 충돌을 안전하게 처리하는지 확인한다.
 
 ### 8-6. KEEP
 
@@ -2836,12 +2836,22 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 
 ### 8-8. VERIFY
 
-- [ ] A가 snapshot 생성 후 B가 원격 파일 수정 → A 저장 시 B 변경 보존
-- [ ] feedback_labels.jsonl 동시 append 보존
+- [x] A가 snapshot 생성 후 B가 원격 파일 수정 → A 저장 시 B 변경 보존 (fixture HTTP/CAS 경로)
+- [x] feedback_labels.jsonl 동시 append 보존 (fixture HTTP/CAS 경로)
 - [ ] groups/settings 동시 수정 충돌 처리
 - [ ] protected-main에서 Propose → PR 생성 → Checks → merge 흐름 확인
 - [ ] 사용자 UI가 SAVED / PR_PENDING / CONFLICT / FAILED를 구분
 - [ ] 관련 web tests + build + 실제 preview E2E
+
+### 2026-10-30 remaining MUST verification
+
+- TASK_START_SHA: 59e311843c58611fb187e957fd4c8a3e831a99ca
+- TASK_BLOB_SHA: 7d90b2dc736fec5ad3e9ab3910163b9253ed214d
+- WORK_BRANCH: test/mail-023-concurrent-feedback-20261030
+- `web/__tests__/review-concurrent-save.test.ts` exercises the real review route and `github-apply.ts` with fixture auth/HTTP: B append before read is preserved; append between read/PUT produces CONFLICT for GitHub 409/422, does not overwrite or blindly retry, and a fresh user retry preserves B.
+- Existing `putRepoTextFile` supplies the source blob SHA and maps 409/422 to `GithubFileConflictError`; the route returns HTTP 409 / applied=false / CONFLICT. No production code change needed.
+- Related web tests: 22 passed across review concurrency, review apply, config apply, GitHub helper/auth and no-mail-send tests.
+- No live feedback/config writes or mail sending. Actual preview write E2E remains unverified, so the whole MAIL-023 remains REQUEST_SOLVED=NO.
 
 ### 8-9. DONE
 
