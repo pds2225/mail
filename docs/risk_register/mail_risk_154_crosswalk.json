@@ -9,8 +9,8 @@
     "source_row_count": 154,
     "counts": {
       "total": 154,
-      "ALREADY_DONE": 41,
-      "COVERED_BY_TASK": 113,
+      "ALREADY_DONE": 42,
+      "COVERED_BY_TASK": 112,
       "OPEN": 0,
       "BLOCKED": 0,
       "DEFERRED": 0,
@@ -33,11 +33,11 @@
       "P2": 20,
       "P0": 27
     },
-    "warning": "ALREADY_DONE 26건은 코드/회귀 evidence를 직접 확인했다. COVERED_BY_TASK는 담당 TASK가 있지만 아직 gap/추가검증이 남아 있다.",
+    "warning": "ALREADY_DONE 42건은 코드/회귀 evidence를 직접 확인했다. COVERED_BY_TASK는 담당 TASK가 있지만 아직 gap/추가검증이 남아 있다.",
     "unresolved_by_risk_level": {
       "P1": 86,
       "P2": 17,
-      "P0": 10
+      "P0": 9
     },
     "verified_done_risk_nos": [
       1,
@@ -78,6 +78,7 @@
       120,
       126,
       129,
+      132,
       143,
       147,
       149
@@ -4541,7 +4542,7 @@
       "impact": "임의 공고·기업의 라벨 조작",
       "risk_level": "P0",
       "recommended_response": "HMAC 서명·만료시간 적용",
-      "risk_status": "COVERED_BY_TASK",
+      "risk_status": "ALREADY_DONE",
       "task_ids": [
         "MAIL-014",
         "MAIL-027"
@@ -4553,10 +4554,13 @@
       },
       "atomic_task_status": {},
       "evidence_sources": [
-        "TASK.md"
+        "mail_core/delivery/feedback_token.py",
+        "mail_core/delivery/feedback.py",
+        "tests/test_feedback_token.py",
+        "https://github.com/pds2225/mail/pull/343"
       ],
-      "audit_note": "Existing HMAC feedback-token code/tests found; verify before ALREADY_DONE.",
-      "last_verified_at": "2026-09-20"
+      "audit_note": "Verified on main 65aef0de616fa876547dc253927f815b1d8e0957: issued_at-bound HMAC; default 14-day TTL; expired, legacy timestamp-less and >300-second future tokens fail closed. Existing mailto/parser roundtrip preserved. tests/test_feedback_token.py: 12 passed (Python 3.12, explicit workspace basetemp). PR #343 merged as e1bca3c0 with successful CI. Verified at 2026-10-30T04:50:55+09:00 (Asia/Seoul).",
+      "last_verified_at": "2026-10-30T04:50:55+09:00"
     },
     {
       "risk_no": 133,
