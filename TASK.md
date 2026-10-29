@@ -3253,6 +3253,12 @@ ALREADY_DONE이고, 남은 8개(117/121/122/123/124/125/127/128)는 전부 P1·P
 - [x] 기존 mailto/IMAP read-only 흐름은 유지한다.
 - [x] CI 회귀 통과 및 main 병합 후 Risk 132 crosswalk를 ALREADY_DONE으로 갱신한다.
 
+### 2026-10-30 bounded evidence audit
+
+- Risk 130/131/135/141: OPEN confirmed by isolated fixture probes; see `docs/risk_register/MAIL-027_feedback_open_audit_20261030.md`.
+- Related feedback regression tests: 35 passed. No production labels/settings/mailbox writes or external network in probes.
+- Risk 132 remains ALREADY_DONE; other risks retain prior status pending direct evidence. No new feature implemented.
+
 ### DONE
 REQUEST_SOLVED=NO — Risk 129~142 전체 근거 상태 확정 + Gold 오염 경로가 없음을 검증한 뒤 YES.
 
