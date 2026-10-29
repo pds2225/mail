@@ -48,7 +48,7 @@ REQUEST_SOLVED=YES가 아닌 작업은 완료 표시 금지.
 [x] MAIL-020 | 공고검수 저장 시 GitHub 일반 오류 화면이 뜨지 않게 한다
 [x] MAIL-021 | config-pending 저장 오류가 검수·그룹·설정에서 재발하지 않게 한다
 [ ] MAIL-022 | 과거 O/X 판정 이력을 전수 분석해 공고 선별 정확도를 측정·개선한다
-[~] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
+[!] MAIL-023 | 수동 저장의 동시수정 유실을 막고 PR 생성까지 안전하게 완료되게 한다
 [x] MAIL-024 | 수집 1~20 리스크를 최신 코드와 대조해 남은 수집 안정성·보안 문제만 해결한다
 [x] MAIL-025 | 상세보강 21~34 리스크를 대조해 남은 첨부·파싱·보안 문제만 해결한다
 [x] MAIL-026 | 발송 113~128 리스크를 대조해 남은 중복·반송·수신자·발송안전 문제만 해결한다
@@ -2804,7 +2804,7 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 
 ### 8-4. 현재상태
 
-- STATUS: ACTIVE
+- STATUS: BLOCKED
 - SOURCE: PR #327 post-merge Codex review P1/P2
 - DEPENDS_ON: MAIL-021
 - 실제 메일 발송·삭제·라벨 변경 없음
@@ -2851,6 +2851,8 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 - `web/__tests__/review-concurrent-save.test.ts` exercises the real review route and `github-apply.ts` with fixture auth/HTTP: B append before read is preserved; append between read/PUT produces CONFLICT for GitHub 409/422, does not overwrite or blindly retry, and a fresh user retry preserves B.
 - Existing `putRepoTextFile` supplies the source blob SHA and maps 409/422 to `GithubFileConflictError`; the route returns HTTP 409 / applied=false / CONFLICT. No production code change needed.
 - Related web tests: 22 passed across review concurrency, review apply, config apply, GitHub helper/auth and no-mail-send tests.
+- `npm run build`: PASS including type checking. PR #397 web-test/Vercel/docs-gate/approval: PASS.
+- CI BLOCKER: Python test job failed only `tests/test_run266_mail038.py::test_feedback_order_matches_card_order` (1828 passed, 6 skipped). The same single test also fails on unchanged main 59e311843c58611fb187e957fd4c8a3e831a99ca. No relevant production/test file differs from main. Preserve the failing check; no bypass or unrelated MAIL-038 fix. PR remains unmerged until checks pass.
 - No live feedback/config writes or mail sending. Actual preview write E2E remains unverified, so the whole MAIL-023 remains REQUEST_SOLVED=NO.
 
 ### 8-9. DONE
