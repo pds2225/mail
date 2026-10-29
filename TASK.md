@@ -2862,7 +2862,7 @@ REQUEST_SOLVED=YES — config-pending/apply-admin direct-push 의존으로 저�
 - Existing `putRepoTextFile` supplies the source blob SHA and maps 409/422 to `GithubFileConflictError`; the route returns HTTP 409 / applied=false / CONFLICT. No production code change needed.
 - Related web tests: 22 passed across review concurrency, review apply, config apply, GitHub helper/auth and no-mail-send tests.
 - `npm run build`: PASS including type checking. PR #397 web-test/Vercel/docs-gate/approval: PASS.
-- CI BLOCKER: Python test job failed only `tests/test_run266_mail038.py::test_feedback_order_matches_card_order` (1828 passed, 6 skipped). The same single test also fails on unchanged main 59e311843c58611fb187e957fd4c8a3e831a99ca. No relevant production/test file differs from main. Preserve the failing check; no bypass or unrelated MAIL-038 fix. PR remains unmerged until checks pass.
+- Historical CI blocker: Python test job failed only `tests/test_run266_mail038.py::test_feedback_order_matches_card_order` (1828 passed, 6 skipped), also reproduced on unchanged main 59e311843c58611fb187e957fd4c8a3e831a99ca. Resolved separately by PR #399 (6d1948ac4f4e1fb8ef1010e6b34f180308ee22f6); main merged into PR #397 without rewriting history. Related Python integration checks: 36 passed. PR #397 still requires all refreshed checks green before merge; no protection bypass.
 - No live feedback/config writes or mail sending. Actual preview write E2E remains unverified, so the whole MAIL-023 remains REQUEST_SOLVED=NO.
 
 ### 8-9. DONE
